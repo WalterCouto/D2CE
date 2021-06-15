@@ -1,10 +1,11 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -13,104 +14,222 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
-#pragma hdrstop
-
-#include <cmath>
+#include "pch.h"
+#include "D2Editor.h"
 #include "D2LevelInfoForm.h"
-//---------------------------------------------------------------------------
-#pragma package(smart_init)
-#pragma resource "*.dfm"
-TLevelInfoForm *LevelInfoForm;
-//---------------------------------------------------------------------------
-__fastcall TLevelInfoForm::TLevelInfoForm(TComponent* Owner)
-   : TForm(Owner)
+#include "afxdialogex.h"
+#include "D2MainForm.h"
+#include "d2ce\ExperienceConstants.h"
+
+namespace
 {
-   LevelInfoGrid->Cells[0][0] = "LEVEL";
-   LevelInfoGrid->ColWidths[0] = 46;
+    template <class charT>
+    class num_printer
+        : public std::numpunct<charT>
+    {
+    public:
+        num_printer(charT thousands, charT decimals) : thousands(thousands), decimals(decimals) {}
+    protected:
+        charT do_decimal_point() const { return decimals; }
+        charT do_thousands_sep() const { return thousands; }
+        std::string do_grouping() const { return "\3"; }
+    private:
+        charT thousands, decimals;
+    };
 
-   LevelInfoGrid->Cells[1][0] = "MIN EXP REQ";
-   LevelInfoGrid->ColWidths[1] = 90;
+    void AddListColData(CListCtrl& ctrl, std::uint32_t row, std::uint32_t col, std::uint32_t value)
+    {
+        CString str;
+#ifdef _UNICODE
+        std::locale local(std::locale(""), new num_printer<wchar_t>(',', '.'));
+        std::wstringstream ss;
+        ss.imbue(local);
+        ss << value;
+#else
+        std::locale local(std::locale(""), new num_printer<char>(',', '.'));
+        std::stringstream ss;
+        ss.imbue(local);
+        ss << value;
+#endif
+        str = ss.str().c_str();
 
-   LevelInfoGrid->Cells[2][0] = "BELT MAX GOLD";
-   LevelInfoGrid->ColWidths[2] = 110;
+        LVITEM lv;
+        lv.iItem = row;
+        lv.iSubItem = col;
+        lv.pszText = (LPTSTR)(LPCTSTR)str;
+        lv.mask = LVIF_TEXT;
+        if (col == 0)
+        {
+            ctrl.InsertItem(&lv);
+        }
+        else
+        {
+            ctrl.SetItem(&lv);
+        }
+    }
+}
 
-   LevelInfoGrid->Cells[3][0] = "STASH MAX GOLD";
-   LevelInfoGrid->ColWidths[3] = 122;
+//---------------------------------------------------------------------------
+// CD2LevelInfoForm dialog
 
-   FillArrays();
-   FillCells();
+IMPLEMENT_DYNAMIC(CD2LevelInfoForm, CDialogEx)
+
+//---------------------------------------------------------------------------
+CD2LevelInfoForm::CD2LevelInfoForm(CWnd* pParent /*=nullptr*/)
+    : CDialogEx(IDD_D2LEVELINFO_DIALOG, pParent)
+{
+    Modal = FALSE;
+    Version = d2ce::EnumCharVersion::v110;
+    if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
+    {
+        auto& CharInfo = ((CD2MainForm*)pParent)->CharInfo;
+        if (CharInfo != nullptr)
+        {
+            Version = CharInfo->getVersion();
+        }
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TLevelInfoForm::CloseButtonClick(TObject *Sender)
+CD2LevelInfoForm::~CD2LevelInfoForm()
 {
-   Close();
 }
 //---------------------------------------------------------------------------
-void __fastcall TLevelInfoForm::D2VersionClick(TObject *Sender)
+void CD2LevelInfoForm::DoDataExchange(CDataExchange* pDX)
 {
-   FillArrays();
-   FillCells();
+    CDialogEx::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_LEVELINFO_GRID, LevelInfoGrid);
 }
 //---------------------------------------------------------------------------
-void TLevelInfoForm::FillArrays()
+BEGIN_MESSAGE_MAP(CD2LevelInfoForm, CDialogEx)
+END_MESSAGE_MAP()
+
+// CD2LevelInfoForm message handlers
+
+//---------------------------------------------------------------------------
+BOOL CD2LevelInfoForm::OnInitDialog()
 {
-   int goldValue = 50000;
+    __super::OnInitDialog();
 
-   for (int i = 1; i <= NUM_OF_LEVELS; ++i)
-   {
-      // store gold values
-      MaxBeltGold[i-1] = i * 10000;
+    // setup the paths selection list
+    LevelInfoGrid.SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
+    LevelInfoGrid.InsertColumn(0, _T("LEVEL"), LVCFMT_RIGHT, 46);
+    LevelInfoGrid.InsertColumn(1, _T("MIN EXP REQ"), LVCFMT_RIGHT, 90);
+    LevelInfoGrid.InsertColumn(2, _T("BELT MAX GOLD"), LVCFMT_RIGHT, 110);
+    LevelInfoGrid.InsertColumn(3, _T("STASH MAX GOLD"), LVCFMT_RIGHT, 122);
+    FillCells();
 
-      if (i > 30 && D2Version->ItemIndex == 1)
-      {
-         long goldlimit = 2500000;
-         goldValue = goldlimit - std::floor(static_cast<double>((NUM_OF_LEVELS - i) / 2)) * 50000;
-      }
-      else if (i > 9 && (i % 10 == 0))
-         goldValue += 50000;
-
-      MaxStashGold[i-1] = goldValue;
-
-      // store experience values
-      Exp[i-1] = MinExpRequired[i-1];
-   }
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // EXCEPTION: OCX Property Pages should return FALSE
 }
 //---------------------------------------------------------------------------
-void TLevelInfoForm::FillCells()
+void CD2LevelInfoForm::FillCells()
 {
-   FormatStrArray(Exp);
-   FormatStrArray(MaxBeltGold);
-   FormatStrArray(MaxStashGold);
+    LevelInfoGrid.DeleteAllItems();
+    std::uint32_t goldValue = 2500000;
+    for (std::uint32_t i = 1; i <= d2ce::NUM_OF_LEVELS; ++i)
+    {
+        AddListColData(LevelInfoGrid, i - 1, 0, i);
+        AddListColData(LevelInfoGrid, i - 1, 1, d2ce::MinExpRequired[i - 1]);
+        AddListColData(LevelInfoGrid, i - 1, 2, i * 10000);
 
-   for (int i = 1; i < LevelInfoGrid->RowCount; ++i)
-   {
-      LevelInfoGrid->Cells[0][i] = i;
-      LevelInfoGrid->Cells[1][i] = Exp[i-1];
-      LevelInfoGrid->Cells[2][i] = MaxBeltGold[i-1];
-      LevelInfoGrid->Cells[3][i] = MaxStashGold[i-1];
-   }
+        if (Version < d2ce::EnumCharVersion::v110) // 1.00 - 1.09 character
+        {
+            if (i < 31)
+            {
+                goldValue = (i / 10 + 1) * 50000;
+            }
+            else if (Version >= d2ce::EnumCharVersion::v107) // 1.07 - 1.09 character
+            {
+                goldValue = (i / 2 + 1) * 50000;
+            }
+            else // pre 1.07 character
+            {
+                if (i < 90)
+                {
+                    goldValue = (i / 10 + 1) * 50000;
+                }
+                else
+                {
+                    goldValue = 2000000;
+                }
+            }
+        }
+
+        AddListColData(LevelInfoGrid, i - 1, 3, goldValue);
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TLevelInfoForm::FormatStrArray(AnsiString *strArray)
+INT_PTR CD2LevelInfoForm::DoModal()
 {
-   int strLength;
-
-   for (int i = 0; i < NUM_OF_LEVELS; ++i)
-   {
-      strLength = strArray[i].Length();
-
-      while(strLength > 3)
-      {
-         strLength -= 3;
-         strArray[i] = strArray[i].Insert(",", strLength+1);
-      }
-   }
+    Modal = true;
+    auto ret = __super::DoModal();
+    Modal = false;
+    return ret;
 }
 //---------------------------------------------------------------------------
+void CD2LevelInfoForm::OnOK()
+{
+    if (Modal)
+    {
+        __super::OnOK();
+        return;
+    }
 
+    DestroyWindow();
+}
+//---------------------------------------------------------------------------
+void CD2LevelInfoForm::OnCancel()
+{
+    if (Modal)
+    {
+        __super::OnCancel();
+        return;
+    }
+
+    DestroyWindow();
+}
+//---------------------------------------------------------------------------
+BOOL CD2LevelInfoForm::Show(CWnd* pParent)
+{
+    if (!::IsWindow(GetSafeHwnd()))
+    {
+        Modal = FALSE;
+        BOOL bCreated = __super::Create(IDD_D2LEVELINFO_DIALOG, pParent);
+        if (!bCreated)
+        {
+            return FALSE;
+        }
+
+        Version = d2ce::EnumCharVersion::v110;
+        if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
+        {
+            auto& CharInfo = ((CD2MainForm*)pParent)->CharInfo;
+            if (CharInfo != nullptr)
+            {
+                Version = CharInfo->getVersion();
+            }
+        }
+    }
+
+    ShowWindow(SW_SHOWNORMAL);
+    return TRUE;
+}
+//---------------------------------------------------------------------------
+void CD2LevelInfoForm::ResetVersion(d2ce::EnumCharVersion version)
+{
+    if (!::IsWindow(GetSafeHwnd()))
+    {
+        return;
+    }
+
+    if (version != Version)
+    {
+        Version = version;
+        FillCells();
+    }
+}
+//---------------------------------------------------------------------------

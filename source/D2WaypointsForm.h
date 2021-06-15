@@ -1,10 +1,11 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -13,59 +14,55 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#ifndef D2WaypointsFormH
-#define D2WaypointsFormH
-//---------------------------------------------------------------------------
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <ComCtrls.hpp>
-#include <CheckLst.hpp>
-#include <ExtCtrls.hpp>
-#include <bitset>
-#include "WaypointConstants.h"
-//---------------------------------------------------------------------------
-class TWaypointsForm : public TForm
-{
-__published:	// IDE-managed Components
-   TButton *CloseButton;
-   TPanel *DifficultyPanel;
-   TPageControl *WPPageCtrl;
-   TTabSheet *Act1Tab;
-   TCheckListBox *Act1WP;
-   TTabSheet *Act2Tab;
-   TCheckListBox *Act2WP;
-   TTabSheet *Act3Tab;
-   TCheckListBox *Act3WP;
-   TTabSheet *Act4Tab;
-   TCheckListBox *Act4WP;
-   TTabSheet *Act5Tab;
-   TCheckListBox *Act5WP;
-   TRadioGroup *ViewOptions;
-   TButton *ActivateAllButton;
-   void __fastcall WPClickCheck(TObject *Sender);
-   void __fastcall FormShow(TObject *Sender);
-   void __fastcall ViewOptionsClick(TObject *Sender);
-   void __fastcall ButtonClick(TObject *Sender);
-private:	// User declarations
-   std::bitset<NUM_OF_WAYPOINTS> NormalWP[2], NightmareWP[2], HellWP[2];
-   bool NormalChanged, NightmareChanged, HellChanged;
+#pragma once
 
-   void InitializeWaypoints();
-   void SaveWaypoints();
-   void UpdateTabs();
-public:		// User declarations
-   __fastcall TWaypointsForm(TComponent* Owner);
-   bool isWaypointsChanged() const;
-};
 //---------------------------------------------------------------------------
-extern PACKAGE TWaypointsForm *WaypointsForm;
+#include "d2ce\Constants.h"
+#include "d2ce\WaypointConstants.h"
+#include "D2MainForm.h"
+
 //---------------------------------------------------------------------------
+class CD2WaypointsForm : public CDialogEx
+{
+    DECLARE_DYNAMIC(CD2WaypointsForm)
+
+public:
+    CD2WaypointsForm(CD2MainForm& form);
+    virtual ~CD2WaypointsForm();
+
+    // Dialog Data
+#ifdef AFX_DESIGN_TIME
+    enum { IDD = IDD_WAYPOINTS_DIALOG };
 #endif
 
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+    void ViewOptionsClick(UINT nID);
+    void WPClickCheck(UINT nID);
+    afx_msg void OnBnClickedOk();
+    afx_msg void OnBnClickedCancel();
+    afx_msg void OnBnClickedActivateAll();
+    DECLARE_MESSAGE_MAP()
+
+public:
+    virtual BOOL OnInitDialog();
+    bool isWaypointsChanged() const;
+
+private:
+    void DDX_CheckWaypoints(CDataExchange* pDX);
+    void SaveWaypoints();
+
+private:
+    d2ce::ActsInfo Acts;
+    std::bitset<d2ce::NUM_OF_WAYPOINTS> NormalWP, NightmareWP, HellWP;
+    int ItemIndex = 0;
+    bool isExpansionCharacter = false;
+    bool Changed[d2ce::NUM_OF_DIFFICULTY] = { false, false, false };
+    CD2MainForm& MainForm;
+};
+//---------------------------------------------------------------------------

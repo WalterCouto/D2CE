@@ -1,6 +1,7 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,67 +14,59 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program; If not, see <http://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#ifndef D2SkillTreeFormH
-#define D2SkillTreeFormH
-//---------------------------------------------------------------------------
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <Grids.hpp>
-#include <ComCtrls.hpp>
-#include <ExtCtrls.hpp>
-//---------------------------------------------------------------------------
-class TSkillTrees : public TForm
-{
-__published:	// IDE-managed Components
-   TButton *CloseButton;
-   TRadioGroup *ViewOption;
-   TStringGrid *SkillsGrid;
-   TPageControl *TabPageCtrl;
-   TTabSheet *SkillsTab1;
-   TTabSheet *SkillsTab2;
-   TTabSheet *SkillsTab3;
-   TStringGrid *TabSkillsGrid1;
-   TStringGrid *TabSkillsGrid2;
-   TStringGrid *TabSkillsGrid3;
-   TGroupBox *SetSkillsBox;
-   TEdit *SkillValue;
-   TButton *GoButton;
-   TUpDown *UpDownControl;
-   void __fastcall ButtonClick(TObject *Sender);
-   void __fastcall FormShow(TObject *Sender);
-   void __fastcall SkillsGridSetEditText(TObject *Sender, int ACol,
-          int ARow, const AnsiString Value);
-   void __fastcall ComponentKeyPress(TObject *Sender, char &Key);
-   void __fastcall SkillsGridGetEditText(TObject *Sender, int ACol,
-          int ARow, AnsiString &Value);
-   void __fastcall ViewOptionClick(TObject *Sender);
-   void __fastcall TabSkillsGridGetEditText(TObject *Sender, int ACol,
-          int ARow, AnsiString &Value);
-   void __fastcall TabSkillsGridSetEditText(TObject *Sender,
-          int ACol, int ARow, const AnsiString Value);
-   void __fastcall FormCreate(TObject *Sender);
-   void __fastcall FormDestroy(TObject *Sender);
-   void __fastcall SkillValueExit(TObject *Sender);
-private:	   // User declarations
-   TStringList *SkillsList;
-   bool SkillsChanged;
-   char *Skills;
+#pragma once
 
-   void AssignValues();
-   void SetGrid();
-   void SetTabs();
-public:		// User declarations
-   __fastcall TSkillTrees(TComponent* Owner);
-};
 //---------------------------------------------------------------------------
-extern PACKAGE TSkillTrees *SkillTrees;
+#include "D2MainForm.h"
+
 //---------------------------------------------------------------------------
+class CD2SkillTreeForm : public CDialogEx
+{
+    DECLARE_DYNAMIC(CD2SkillTreeForm)
+
+public:
+    CD2SkillTreeForm(CD2MainForm& form);
+    virtual ~CD2SkillTreeForm();
+
+    // Dialog Data
+#ifdef AFX_DESIGN_TIME
+    enum { IDD = IDD_SKILLS_DIALOG };
 #endif
 
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+    void OnSkillKillFocus(UINT nID);
+    afx_msg void OnBnClickedOk();
+    afx_msg void OnBnClickedCancel();
+    afx_msg void OnBnClickedSetAll();
+    DECLARE_MESSAGE_MAP()
+
+public:
+    virtual BOOL OnInitDialog();
+    bool isSkillChoicesChanged() const;
+
+private:
+    CString ToText(CWnd* Sender);
+    std::string ToStdString(CWnd* Sender);
+    std::uint32_t ToInt(UINT nID);
+    void SetInt(UINT nID, std::uint32_t newValue);
+    void SaveSkills();
+    void UpdateCaption();
+
+private:
+    std::uint8_t Skills[d2ce::NUM_OF_SKILLS];
+    bool SkillsChanged = false;
+    CD2MainForm& MainForm;
+    d2ce::EnumCharClass Class = d2ce::EnumCharClass::Amazon;
+    std::uint32_t SkillChoices = 0;
+    std::uint32_t SkillsUsed = 0;
+    std::uint32_t EarnedSkillPoints = 0;
+    CString origCaption;
+};
+//---------------------------------------------------------------------------

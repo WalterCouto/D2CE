@@ -1,10 +1,11 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -13,596 +14,450 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
-#pragma hdrstop
-
+#include "pch.h"
+#include "D2Editor.h"
 #include "D2QuestsForm.h"
-#include "D2MainForm.h"
+#include "afxdialogex.h"
+
+constexpr uint16_t questCompletedFlag = 0x9001;
+
 //---------------------------------------------------------------------------
-#pragma package(smart_init)
-#pragma resource "*.dfm"
-TQuestsForm *QuestsForm;
+// CD2QuestsForm dialog
+
+IMPLEMENT_DYNAMIC(CD2QuestsForm, CDialogEx)
+
 //---------------------------------------------------------------------------
-__fastcall TQuestsForm::TQuestsForm(TComponent* Owner)
-   : TForm(Owner)
+CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
+    : CDialogEx(IDD_QUESTS_DIALOG, (CWnd*)&form), MainForm(form), Acts(form.getQuests()), OrigActs(form.getQuests())
 {
+    // Initialize Quests
+    isExpansionCharacter = MainForm.isExpansionCharacter();
+    ItemIndex = static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::ActStatusEnter(TObject *Sender)
+CD2QuestsForm::~CD2QuestsForm()
 {
-   actStatus_entered = true;
+}
+
+//---------------------------------------------------------------------------
+void CD2QuestsForm::DoDataExchange(CDataExchange* pDX)
+{
+    CDialogEx::DoDataExchange(pDX);
+    DDX_CheckQuests(pDX);
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::ActStatusExit(TObject *Sender)
+BOOL CD2QuestsForm::PreTranslateMessage(MSG* pMsg)
 {
-   actStatus_entered = false;
+    if (pMsg->message == WM_KEYDOWN)
+    {
+        if (pMsg->wParam == VK_RETURN)
+        {
+            TCHAR szClass[10];
+            CWnd* pWndFocus = GetFocus();
+            if (((pWndFocus = GetFocus()) != NULL) &&
+                IsChild(pWndFocus) &&
+                GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
+                (lstrcmpi(szClass, _T("EDIT")) == 0))
+            {
+                // pressing the ENTER key will take the focus to the next control
+                pMsg->wParam = VK_TAB;
+            }
+        }
+    }
+    return __super::PreTranslateMessage(pMsg);
+}
+
+//---------------------------------------------------------------------------
+BEGIN_MESSAGE_MAP(CD2QuestsForm, CDialogEx)
+    ON_CONTROL_RANGE(BN_CLICKED, IDC_RADIO_DIFFICULTY_NORMAL, IDC_RADIO_DIFFICULTY_HELL, ViewOptionsClick)
+    ON_CONTROL_RANGE(BN_CLICKED, IDC_CHECK_ACTI_QUEST_1, IDC_CHECK_ACTV_QUEST_6, QuestsChange)
+    ON_CONTROL_RANGE(BN_CLICKED, IDC_CHECK_QUEST_FARM, IDC_CHECK_QUEST_FARM, QuestsChange)
+    ON_CONTROL_RANGE(BN_CLICKED, IDC_CHECK_ACTI_RESET_STATS, IDC_CHECK_ACTI_RESET_STATS, QuestsChange)
+    ON_BN_CLICKED(IDOK, &CD2QuestsForm::OnBnClickedOk)
+    ON_BN_CLICKED(IDCANCEL, &CD2QuestsForm::OnBnClickedCancel)
+    ON_BN_CLICKED(IDC_COMPLETE_ALL, &CD2QuestsForm::OnBnClickedCompleteAll)
+    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
+    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
+END_MESSAGE_MAP()
+
+//---------------------------------------------------------------------------
+// CD2QuestsForm message handlers
+//---------------------------------------------------------------------------
+BOOL CD2QuestsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+    ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
+
+    TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
+    TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
+    static CString strTipText;
+    UINT_PTR nID = pNMHDR->idFrom;
+
+    CRect rect;
+    if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
+        pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
+    {
+        ::GetWindowRect((HWND)nID, &rect);
+        ScreenToClient(&rect);
+        nID = ((UINT_PTR)(WORD)::GetDlgCtrlID((HWND)nID));
+    }
+
+    d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
+    if (nID >= IDC_CHECK_ACTI_QUEST_1 && nID <= IDC_CHECK_ACTV_QUEST_6)
+    {
+        ::SendMessage(pNMHDR->hwndFrom, TTM_SETMAXTIPWIDTH, 0, 300);
+
+        // Get Quest help
+        std::uint8_t actNumber = (nID < IDC_CHECK_ACTV_QUEST_1) ? std::uint8_t((nID - IDC_CHECK_ACTI_QUEST_1) / 6) : std::uint8_t(4);
+        d2ce::EnumAct act = static_cast<d2ce::EnumAct>(actNumber);
+        std::uint8_t quest = (nID < IDC_CHECK_ACTV_QUEST_1) ? std::uint8_t((nID - IDC_CHECK_ACTI_QUEST_1) % 6) : std::uint8_t(nID - IDC_CHECK_ACTV_QUEST_1);
+        std::string notes = Acts.getQuestNotes(diff, act, quest);
+        strTipText = CString(notes.c_str());
+    }
+    else if (nID == IDC_CHECK_ACTI_RESET_STATS)
+    {
+        // Get Quest help
+        if (Acts.getStatsReset(diff))
+        {
+            strTipText = _T("Akara Has Reset Stat/Skill Points");
+        }
+        else
+        {
+            strTipText = _T("Akara Has Yet To Reset Stat/Skill Points");
+        }
+    }
+    else if (nID == IDC_CHECK_QUEST_FARM)
+    {
+        // Get Quest help
+        strTipText.Empty();
+        if (Acts.getMooMooFarmComplete(diff))
+        {
+            strTipText = _T("Secret Cow Level Completed");
+        }
+    }
+    else
+    {
+        strTipText.Empty();
+    }
+
+#ifndef _UNICODE
+    if (pNMHDR->code == TTN_NEEDTEXTA)
+        pTTTA->lpszText = (LPSTR)((LPCSTR)strTipText);
+    else
+        _mbstowcsz(pTTTW->szText, strTipText, (sizeof(pTTTW->szText) / sizeof(pTTTW->szText[0])));
+#else
+    if (pNMHDR->code == TTN_NEEDTEXTA)
+        _wcstombsz(pTTTA->szText, strTipText, (sizeof(pTTTA->szText) / sizeof(pTTTA->szText[0])));
+    else
+        pTTTW->lpszText = (LPWSTR)((LPCTSTR)strTipText);
+#endif
+    * pResult = 0;
+
+    ::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE);
+
+    return TRUE;
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::ButtonClick(TObject *Sender)
+BOOL CD2QuestsForm::OnInitDialog()
 {
-   if (Sender == CloseButton)
-   {
-      if (NormalChanged || NightmareChanged || HellChanged)
-      {
-         MainForm->CharInfo->updateQuests(qi);
-         MainForm->JustOpened = false;
-         MainForm->StatsChanged();
-      }
+    __super::OnInitDialog();
 
-      Close();
-   }
-   else if (Sender == CompleteAllButton)
-   {
-      CompleteAllQuests();
+    EnableToolTips(TRUE);
 
-      A1Q1->ItemIndex = 2;
-      A1Q2->ItemIndex = 2;
-      A1Q3->ItemIndex = 2;
-      A1Q4->ItemIndex = 2;
-      A1Q5->ItemIndex = 3;
-      A1Q6->ItemIndex = 2;
+    if (!isExpansionCharacter)
+    {
+        // Hide all of Act V and Mo Mo Farm
+        CWnd* pWnd = GetDlgItem(IDC_STATIC_ACTV);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+            pWnd->ShowWindow(SW_HIDE);
+        }
 
-      A2Q1->ItemIndex = 2;
-      A2Q2->ItemIndex = 2;
-      A2Q3->ItemIndex = 2;
-      A2Q4->ItemIndex = 2;
-      A2Q5->ItemIndex = 2;
-      A2Q6->ItemIndex = 2;
-      Act2Status->ItemIndex = 1;
+        for (std::uint32_t i = 0; i < d2ce::NUM_OF_QUESTS; i++)
+        {
+            pWnd = GetDlgItem(IDC_CHECK_ACTV_QUEST_1 + i);
+            if (pWnd != nullptr)
+            {
+                pWnd->EnableWindow(FALSE);
+                pWnd->ShowWindow(SW_HIDE);
+            }
+        }
+    }
 
-      A3Q1->ItemIndex = 2;
-      A3Q2->ItemIndex = 2;
-      A3Q3->ItemIndex = 2;
-      A3Q4->ItemIndex = 2;
-      A3Q5->ItemIndex = 2;
-      A3Q6->ItemIndex = 2;
-      Act3Status->ItemIndex = 1;
-
-      A4Q1->ItemIndex = 2;
-      A4Q2->ItemIndex = 2;
-      A4Q3->ItemIndex = 2;
-      Act4Status->ItemIndex = 1;
-
-      if (MainForm->CharInfo->isExpansionCharacter())
-      {
-         A5Q1->ItemIndex = 3;
-         A5Q2->ItemIndex = 3;
-         A5Q3->ItemIndex = 3;
-         A5Q4->ItemIndex = 3;
-         A5Q5->ItemIndex = 2;
-         A5Q6->ItemIndex = 2;
-         Act5Status->ItemIndex = 1;
-      }
-
-      UpdateQuestValues();
-
-      switch(Difficulty->ItemIndex)
-      {
-         case 0: NormalChanged = true;
-                 break;
-         case 1: NightmareChanged = true;
-                 break;
-         case 2: HellChanged = true;
-                 break;
-      }
-   }
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // EXCEPTION: OCX Property Pages should return FALSE
 }
 //---------------------------------------------------------------------------
-void TQuestsForm::CompleteAllQuests()
+void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
 {
-   for (int j = 0; j < NUM_OF_ACTS; ++j)
-   {
-      if ((j == NUM_OF_ACTS-1) && !MainForm->CharInfo->isExpansionCharacter())
-         break;
+    d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
 
-      qi[Difficulty->ItemIndex].Completed[j] = 1;
-      for (int k = 0; k < NUM_OF_QUESTS; ++k)
-         qi[Difficulty->ItemIndex].Quests[j][k] |= Completed;
-   }
+    int value = 0;
+    std::uint32_t numQuests = IDC_CHECK_ACTIV_QUEST_3 - IDC_CHECK_ACTI_QUEST_1 + 1;
+
+    // Save checkbox values before difficulty level
+    if (pDX->m_bSaveAndValidate)
+    {
+        std::uint8_t actNumber = 0;
+        std::uint8_t questNumber = 0;
+        d2ce::EnumAct act = d2ce::EnumAct::I;
+
+        // update non-Expansion Quests
+        for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTI_QUEST_1; i < numQuests; ++i, ++nIDC)
+        {
+            actNumber = std::uint8_t(i / d2ce::NUM_OF_QUESTS);
+            act = static_cast<d2ce::EnumAct>(actNumber);
+            questNumber = std::uint8_t(i % d2ce::NUM_OF_QUESTS);
+
+            DDX_Check(pDX, nIDC, value);
+            switch (value)
+            {
+            case 0:
+                Acts.resetQuest(diff, act, questNumber);
+                break;
+            case 1:
+                // Only change "Completed" bits if quest was not already in completed state
+                // so that we preserve current state
+                if (!Acts.getQuestCompleted(diff, act, questNumber))
+                {
+                    if (OrigActs.getQuestCompleted(diff, act, questNumber))
+                    {
+                        // Use the original value
+                        Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                    }
+                    else
+                    {
+                        Acts.completeQuest(diff, act, questNumber);
+                    }
+                }
+                break;
+            case 2:
+                // Only change "Started" bits if quest was not already in started state
+                // so that we preserve current state
+                if (!Acts.getQuestStarted(diff, act, questNumber))
+                {
+                    if (OrigActs.getQuestStarted(diff, act, questNumber))
+                    {
+                        // Use the original value
+                        Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                    }
+                    else
+                    {
+                        Acts.startQuest(diff, act, questNumber);
+                    }
+                }
+                break;
+            }
+        }
+
+        if (isExpansionCharacter)
+        {
+            // update Expansion Quests
+            actNumber = 4;
+            act = d2ce::EnumAct::V;
+            questNumber = 0;
+            for (std::uint32_t nIDC = IDC_CHECK_ACTV_QUEST_1; questNumber < d2ce::NUM_OF_QUESTS; ++questNumber, ++nIDC)
+            {
+                DDX_Check(pDX, nIDC, value);
+                switch (value)
+                {
+                case 0:
+                    Acts.resetQuest(diff, act, questNumber);
+                    break;
+                case 1:
+                    // Only change "Completed" bits if quest was not already in completed state
+                    // so that we preserve current state
+                    if (!Acts.getQuestCompleted(diff, act, questNumber))
+                    {
+                        if (OrigActs.getQuestCompleted(diff, act, questNumber))
+                        {
+                            // Use the original value
+                            Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                        }
+                        else
+                        {
+                            Acts.completeQuest(diff, act, questNumber);
+                        }
+                    }
+                    break;
+                case 2:
+                    // Only change "Started" bits if quest was not already in started state
+                    // so that we preserve current state
+                    if (!Acts.getQuestStarted(diff, act, questNumber))
+                    {
+                        if (OrigActs.getQuestStarted(diff, act, questNumber))
+                        {
+                            // Use the original value
+                            Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                        }
+                        else
+                        {
+                            Acts.startQuest(diff, act, questNumber);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Handle other cases
+        DDX_Check(pDX, IDC_CHECK_QUEST_FARM, value);
+        if (value == 1)
+        {
+            Acts.setMooMooFarmComplete(diff);
+        }
+        else
+        {
+            Acts.clearMooMooFarmComplete(diff);
+        }
+
+        DDX_Check(pDX, IDC_CHECK_ACTI_RESET_STATS, value);
+        if (value == 1)
+        {
+            Acts.setStatsReset(diff);
+        }
+        else
+        {
+            Acts.clearStatsReset(diff);
+        }
+    }
+
+    // Update radio after checkboxes
+    auto oldItemIndex = ItemIndex;
+    DDX_Radio(pDX, IDC_RADIO_DIFFICULTY_NORMAL, ItemIndex);
+
+    // load checkbox values after difficulty level
+    if (!pDX->m_bSaveAndValidate || (oldItemIndex != ItemIndex))
+    {
+        CDataExchange dx(this, FALSE);
+        std::uint8_t actNumber = 0;
+        std::uint8_t questNumber = 0;
+        d2ce::EnumAct act = d2ce::EnumAct::I;
+        diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
+
+        // update non-Expansion Quests
+        for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTI_QUEST_1; i < numQuests; ++i, ++nIDC)
+        {
+            actNumber = std::uint8_t(i / d2ce::NUM_OF_QUESTS);
+            act = static_cast<d2ce::EnumAct>(actNumber);
+            questNumber = std::uint8_t(i % d2ce::NUM_OF_QUESTS);
+            if (Acts.getQuestYetToStart(diff, act, questNumber))
+            {
+                value = 0;
+            }
+            else if (Acts.getQuestCompleted(diff, act, questNumber))
+            {
+                value = 1;
+            }
+            else
+            {
+                value = 2;
+            }
+
+            DDX_Check(&dx, nIDC, value);
+        }
+
+        if (isExpansionCharacter)
+        {
+            // update Expansion Quests
+            actNumber = 4;
+            act = d2ce::EnumAct::V;
+            questNumber = 0;
+            for (std::uint32_t nIDC = IDC_CHECK_ACTV_QUEST_1; questNumber < d2ce::NUM_OF_QUESTS; ++questNumber, ++nIDC)
+            {
+                if (Acts.getQuestYetToStart(diff, act, questNumber))
+                {
+                    value = 0;
+                }
+                else if (Acts.getQuestCompleted(diff, act, questNumber))
+                {
+                    value = 1;
+                }
+                else
+                {
+                    value = 2;
+                }
+
+                DDX_Check(&dx, nIDC, value);
+            }
+        }
+
+
+        value = 0;
+        if (!Acts.getQuestCompleted(diff, d2ce::EnumAct::I, 0))
+        {
+            GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(FALSE);
+            Acts.clearStatsReset(diff);
+        }
+        else
+        {
+            GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
+            if (Acts.getStatsReset(diff))
+            {
+                value = 1;
+            }
+        }
+        DDX_Check(&dx, IDC_CHECK_ACTI_RESET_STATS, value);
+
+        GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(Acts.getQuestYetToStart(diff, d2ce::EnumAct::I, 3) ? FALSE : TRUE);
+        value = Acts.getMooMooFarmComplete(diff) ? 1 : 0;
+        DDX_Check(&dx, IDC_CHECK_QUEST_FARM, value);
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::FormShow(TObject *Sender)
+void CD2QuestsForm::ViewOptionsClick(UINT /*nID*/)
 {
-   // if expansion set character, activate Act 5 tab
-   Act5Tab->TabVisible = MainForm->CharInfo->isExpansionCharacter();
-
-   qi = MainForm->CharInfo->getQuests();
-
-   actStatus_entered = false;
-   NormalChanged = NightmareChanged = HellChanged = false;
-
-   // initialize questStatus array
-   memset(questStatus, 0, sizeof(questStatus));
-
-   QuestsPage->ActivePageIndex = 0;
-   Difficulty->ItemIndex = 0;
-
-   UpdatePage(QuestsPage->ActivePageIndex);
+    UpdateData(TRUE); // save results
 }
 //---------------------------------------------------------------------------
-bool TQuestsForm::isQuestsChanged() const
+void CD2QuestsForm::QuestsChange(UINT /*nID*/)
 {
-   return (NormalChanged || NightmareChanged || HellChanged);
+    UpdateData(TRUE); // save results
+    Changed = true;
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::QuestsChange(TObject *Sender)
+void CD2QuestsForm::SaveQuests()
 {
-   switch(QuestsPage->ActivePageIndex)
-   {
-      // act 1
-      case 0: if (Sender == A1Q1)
-                 switch(A1Q1->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][0] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][0] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][0] = Completed;
-                            break;
-                 }
-              else if (Sender == A1Q2)
-                 switch(A1Q2->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][1] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][1] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][1] = Completed;
-                            break;
-                 }
-              else if (Sender == A1Q3)
-                 switch(A1Q3->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][3] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][3] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][3] = Completed;
-                            break;
-                 }
-              else if (Sender == A1Q4)
-                 switch(A1Q4->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][4] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][4] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][4] = Completed;
-                            break;
-                 }
-              else if (Sender == A1Q5)
-                 switch(A1Q5->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][2] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][2] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][2] = Imbue;
-                            break;
-                    case 3: qi[Difficulty->ItemIndex].Quests[0][2] = Completed;
-                            break;
-                 }
-              else if (Sender == A1Q6)
-                 switch(A1Q6->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[0][5] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[0][5] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[0][5] = Completed;
-                            break;
-                 }
-              break;
-
-      // act 2
-      case 1: if (Sender == A2Q1)
-                 switch(A2Q1->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][0] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][0] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][0] = Completed;
-                            break;
-                 }
-              else if (Sender == A2Q2)
-                 switch(A2Q2->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][1] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][1] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][1] = Completed;
-                            break;
-                 }
-              else if (Sender == A2Q3)
-                 switch(A2Q3->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][2] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][2] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][2] = Completed;
-                            break;
-                 }
-              else if (Sender == A2Q4)
-                 switch(A2Q4->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][3] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][3] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][3] = Completed;
-                            break;
-                 }
-              else if (Sender == A2Q5)
-                 switch(A2Q5->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][4] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][4] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][4] = Completed;
-                            break;
-                 }
-              else if (Sender == A2Q6)
-                 switch(A2Q6->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[1][5] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[1][5] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[1][5] = Completed;
-                            break;
-                 }
-              break;
-
-      // act 3
-      case 2: if (Sender == A3Q1)
-                 switch(A3Q1->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][3] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][3] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][3] = Completed;
-                            break;
-                 }
-              else if (Sender == A3Q2)
-                 switch(A3Q2->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][2] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][2] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][2] = Completed;
-                            break;
-                 }
-              else if (Sender == A3Q3)
-                 switch(A3Q3->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][1] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][1] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][1] = Completed;
-                            break;
-                 }
-              else if (Sender == A3Q4)
-                 switch(A3Q4->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][0] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][0] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][0] = Completed;
-                            break;
-                 }
-              else if (Sender == A3Q5)
-                 switch(A3Q5->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][4] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][4] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][4] = Completed;
-                            break;
-                 }
-              else if (Sender == A3Q6)
-                 switch(A3Q6->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[2][5] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[2][5] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[2][5] = Completed;
-                            break;
-                 }
-              break;
-
-      // act 4
-      case 3: if (Sender == A4Q1)
-                 switch(A4Q1->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[3][0] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[3][0] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[3][0] = Completed;
-                            break;
-                 }
-              else if (Sender == A4Q2)
-                 switch(A4Q2->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[3][2] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[3][2] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[3][2] = Completed;
-                            break;
-                 }
-              else if (Sender == A4Q3)
-                 switch(A4Q3->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[3][1] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[3][1] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[3][1] = Completed;
-                            break;
-                 }
-              break;
-
-      // act 5
-      case 4: if (Sender == A5Q1)
-                 switch(A5Q1->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][0] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][0] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][0] = AddSocket;
-                            break;
-                    case 3: qi[Difficulty->ItemIndex].Quests[4][0] = Completed;
-                            break;
-                 }
-              else if (Sender == A5Q2)
-                 switch(A5Q2->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][1] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][1] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][1] = Runes;
-                            break;
-                    case 3: qi[Difficulty->ItemIndex].Quests[4][1] = Completed;
-                            break;
-                 }
-              else if (Sender == A5Q3)
-                 switch(A5Q3->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][2] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][2] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][2] = Scroll;
-                            break;
-                    case 3: qi[Difficulty->ItemIndex].Quests[4][2] = Completed;
-                            break;
-                 }
-              else if (Sender == A5Q4)
-                 switch(A5Q4->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][3] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][3] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][3] = Personalize;
-                            break;
-                    case 3: qi[Difficulty->ItemIndex].Quests[4][3] = Completed;
-                            break;
-                 }
-              else if (Sender == A5Q5)
-                 switch(A5Q5->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][4] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][4] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][4] = Completed;
-                            break;
-                 }
-              else if (Sender == A5Q6)
-                 switch(A5Q6->ItemIndex)
-                 {
-                    case 0: qi[Difficulty->ItemIndex].Quests[4][5] = NotStarted;
-                            break;
-                    case 1: qi[Difficulty->ItemIndex].Quests[4][5] = Started;
-                            break;
-                    case 2: qi[Difficulty->ItemIndex].Quests[4][5] = Completed;
-                            break;
-                 }
-              break;
-   }
-
-   switch(Difficulty->ItemIndex)
-   {
-      case 0: NormalChanged = true;
-              break;
-      case 1: NightmareChanged = true;
-              break;
-      case 2: HellChanged = true;
-              break;
-   }
+    if (Changed)
+    {
+        MainForm.updateQuests(Acts);
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TQuestsForm::QuestsPageChange(TObject *Sender)
+void CD2QuestsForm::OnBnClickedOk()
 {
-   UpdatePage(QuestsPage->ActivePageIndex);
+    SaveQuests();
+    __super::OnOK();
 }
 //---------------------------------------------------------------------------
-// this function updates the combo boxes when the difficulty has been changed
-void __fastcall TQuestsForm::RadioClick(TObject *Sender)
+void CD2QuestsForm::OnBnClickedCancel()
 {
-   if (Sender == Act2Status || Sender == Act3Status || Sender == Act4Status
-       || Sender == Act5Status)
-   {
-      if (!actStatus_entered) return;
-
-      switch(QuestsPage->ActivePageIndex)
-      {
-         case 1: qi[Difficulty->ItemIndex].Completed[0] = Act2Status->ItemIndex;
-                 break;
-         case 2: qi[Difficulty->ItemIndex].Completed[1] = Act3Status->ItemIndex;
-                 break;
-         case 3: qi[Difficulty->ItemIndex].Completed[2] = Act4Status->ItemIndex;
-                 break;
-         case 4: qi[Difficulty->ItemIndex].Completed[3] = Act5Status->ItemIndex;
-                 break;
-      }
-
-      switch(Difficulty->ItemIndex)
-      {
-         case 0: NormalChanged = true;
-                 break;
-         case 1: NightmareChanged = true;
-                 break;
-         case 2: HellChanged = true;
-                 break;
-      }
-   }
-   else if (Sender == Difficulty)
-      UpdatePage(QuestsPage->ActivePageIndex);
+    Changed = false;
+    __super::OnCancel();
 }
 //---------------------------------------------------------------------------
-// makes sure the combo boxes are displaying the right values
-void __fastcall TQuestsForm::UpdatePage(int currentAct)
+void CD2QuestsForm::OnBnClickedCompleteAll()
 {
-   UpdateQuestValues();
-
-   switch(currentAct)
-   {
-      case 0: A1Q1->ItemIndex = questStatus[0][0];
-              A1Q2->ItemIndex = questStatus[0][1];
-              A1Q3->ItemIndex = questStatus[0][3];
-              A1Q4->ItemIndex = questStatus[0][4];
-              A1Q5->ItemIndex = questStatus[0][2];
-              A1Q6->ItemIndex = questStatus[0][5];
-              break;
-
-      case 1: A2Q1->ItemIndex = questStatus[1][0];
-              A2Q2->ItemIndex = questStatus[1][1];
-              A2Q3->ItemIndex = questStatus[1][2];
-              A2Q4->ItemIndex = questStatus[1][3];
-              A2Q5->ItemIndex = questStatus[1][4];
-              A2Q6->ItemIndex = questStatus[1][5];
-              Act2Status->ItemIndex = qi[Difficulty->ItemIndex].Completed[0];
-              break;
-
-      case 2: A3Q1->ItemIndex = questStatus[2][3];
-              A3Q2->ItemIndex = questStatus[2][2];
-              A3Q3->ItemIndex = questStatus[2][1];
-              A3Q4->ItemIndex = questStatus[2][0];
-              A3Q5->ItemIndex = questStatus[2][4];
-              A3Q6->ItemIndex = questStatus[2][5];
-              Act3Status->ItemIndex = qi[Difficulty->ItemIndex].Completed[1];
-              break;
-
-      case 3: A4Q1->ItemIndex = questStatus[3][0];
-              A4Q2->ItemIndex = questStatus[3][2];
-              A4Q3->ItemIndex = questStatus[3][1];
-              Act4Status->ItemIndex = qi[Difficulty->ItemIndex].Completed[2];
-              break;
-
-      case 4: A5Q1->ItemIndex = questStatus[4][0];
-              A5Q2->ItemIndex = questStatus[4][1];
-              A5Q3->ItemIndex = questStatus[4][2];
-              A5Q4->ItemIndex = questStatus[4][3];
-              A5Q5->ItemIndex = questStatus[4][4];
-              A5Q6->ItemIndex = questStatus[4][5];
-              Act5Status->ItemIndex = qi[Difficulty->ItemIndex].Completed[3];
-              break;
-   }
+    Changed = true;
+    HWND hWndCtrl;
+    std::uint32_t lastQuestIDC = isExpansionCharacter ? IDC_CHECK_ACTV_QUEST_6 : IDC_CHECK_ACTIV_QUEST_3;
+    for (std::uint32_t nIDC = IDC_CHECK_ACTI_QUEST_1; nIDC <= lastQuestIDC; ++nIDC)
+    {
+        GetDlgItem(nIDC, &hWndCtrl);
+        ::SendMessage(hWndCtrl, BM_SETCHECK, (WPARAM)1, 0L);
+    }
+    GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
+    GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(TRUE);
+    UpdateData(TRUE); // save results
 }
 //---------------------------------------------------------------------------
-void TQuestsForm::UpdateQuestValues()
+bool CD2QuestsForm::isQuestsChanged() const
 {
-   for (int j = 0; j < NUM_OF_QUESTS; j++)
-   {
-      // skip unnecessary processing of quests for act 4
-      if (QuestsPage->ActivePageIndex == 3 && j > 2) break;
-
-      // not started
-      if (qi[Difficulty->ItemIndex].Quests[QuestsPage->ActivePageIndex][j] == 0)
-         questStatus[QuestsPage->ActivePageIndex][j] = 0;
-      // started / in progress
-      else if ((qi[Difficulty->ItemIndex].Quests[QuestsPage->ActivePageIndex][j] & 0x0001) == 0)
-         questStatus[QuestsPage->ActivePageIndex][j] = 1;
-      // completed
-      else if ((qi[Difficulty->ItemIndex].Quests[QuestsPage->ActivePageIndex][j] & 0x0001) == 1)
-         questStatus[QuestsPage->ActivePageIndex][j] = 2;
-   }
-
-   // special cases
-   // act 1, quest 5: imbue
-   if ((qi[Difficulty->ItemIndex].Quests[0][2] & 0x000F) == 0x000E)
-      questStatus[0][2] = 2;
-   // act 1, quest 5: completed
-   else if ((qi[Difficulty->ItemIndex].Quests[0][2] & 0x0001) == 1)
-      questStatus[0][2] = 3;
-
-   // act 5, quest 1: add sockets
-   if ((qi[Difficulty->ItemIndex].Quests[4][0] & 0x00FF) == AddSocket)
-      questStatus[4][0] = 2;
-   // act 5, quest 1: completed
-   else if ((qi[Difficulty->ItemIndex].Quests[4][0] & 0x0001) == 0x0001)
-      questStatus[4][0] = 3;
-
-   // act 5, quest 2: rune reward
-   if (MainForm->CharInfo->maskMSB(qi[Difficulty->ItemIndex].Quests[4][1]) == Runes)
-      questStatus[4][1] = 2;
-   // act 5, quest 3: completed
-   else if ((qi[Difficulty->ItemIndex].Quests[4][1] & 0x0001) == 0x0001)
-      questStatus[4][1] = 3;
-
-   // act 5, quest 3: scroll of resistance
-   if ((qi[Difficulty->ItemIndex].Quests[4][0] & 0x0008) == Scroll)
-      questStatus[4][2] = 2;
-   // act 5, quest 3: completed
-   else if ((qi[Difficulty->ItemIndex].Quests[4][0] & 0x0001) == 0x0001)
-      questStatus[4][2] = 3;
-
-   // act 5, quest 4: personalize item
-   if ((qi[Difficulty->ItemIndex].Quests[4][3] & 0x00FF) == Personalize)
-      questStatus[4][3] = 2;
-   // act 5, quest 4: completed
-   else if ((qi[Difficulty->ItemIndex].Quests[4][3] & 0x0001) == 0x0001)
-      questStatus[4][3] = 3;
+    return Changed;
 }
 //---------------------------------------------------------------------------
 

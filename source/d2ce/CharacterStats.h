@@ -1,0 +1,118 @@
+/*
+    Diablo II Character Editor
+    Copyright (C) 2021 Walter Couto
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+//---------------------------------------------------------------------------
+
+#pragma once
+
+#include "CharacterConstants.h"
+#include "DataTypes.h"
+
+namespace d2ce
+{
+    //---------------------------------------------------------------------------
+    class CharacterStats
+    {
+        friend class Character;
+
+    private:
+        mutable std::vector<std::uint8_t> data;
+
+    protected:
+        std::uint32_t stats_location = 0;
+        bool update_locations = true;
+
+        /*
+           The next short field is for character file version prior to 1.09.
+           It is bit field that indicates the presence or absence of each particular statistic.
+           If the bit is 0, the corresponding statistic is zero and not stored in the file.
+           If the bit is 1, the statistic has a long value stored in the file.
+           Note that many of the statistics are never zero, so they will always be present; but there is a bit assigned to them nonetheless.
+
+           The bits are assigned as follows:
+           LSB:  0 Strength
+                 1 Energy
+                 2 Dexterity
+                 3 Vitality
+                 4 Stat Points Remaining
+                 5 Skill Choices Remaining
+                 6 Life (current)
+                 7 Life (max)
+                 8 Mana (current)
+                 9 Mana (max)
+                 10 Stamina (current)
+                 11 Stamina (max)
+                 12 Level
+                 13 Experience
+                 14 Gold in Inventory
+           MSB:  15 Gold in Stash
+        */
+        bitmask::bitmask<EnumCharStatInfo> StatInfo = EnumCharStatInfo::All; // pos 562 (pre-1.09)
+
+        CharStats Cs;                 // Strength:  pos 565 (pre-1.09)
+                                      // Energy:    pos 569 (pre-1.09)
+                                      // Dexterity: pos 573 (pre-1.09)
+                                      // Vitality:  pos 577 (pre-1.09)
+
+        std::uint8_t nullByte = 0;
+
+    private:
+        void checkStatInfo();
+        EnumCharStatInfo GetStatInfoMask(uint16_t stat);
+        std::uint32_t* GetStatBuffer(uint16_t stat);
+
+        std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
+        bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
+        size_t readNextStat(std::FILE* charfile, size_t& current_bit_offset, uint16_t& stat);
+        size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, uint16_t stat);
+        bool readStats(std::FILE* charfile);
+        bool readStats_109(std::FILE* charfile);
+
+        size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
+        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, uint16_t stat);
+        size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat);
+        size_t writeBufferBits(std::FILE* charfile);
+        bool writeStats_109(std::FILE* charfile);
+
+    protected:
+        bool readStats(EnumCharVersion version, std::FILE* charfile);
+        bool writeStats(std::FILE* charfile);
+        std::uint32_t getHeaderLocation();
+
+    public:
+        CharacterStats();
+        ~CharacterStats();
+
+        void clear();
+
+        void clearSkillChoices();
+
+        void fillCharacterStats(CharStats& cs);
+        void updateCharacterStats(const CharStats& cs);
+
+        std::uint32_t getLevel() const;
+        std::uint32_t getExperience() const;
+        std::uint32_t getSkillChoices() const;
+        std::uint32_t getMaxGoldInBelt() const;
+        std::uint32_t getMaxGoldInStash() const;
+        std::uint32_t getMinExperienceRequired() const;
+        std::uint32_t getNextExperienceLevel() const;
+    };
+    //---------------------------------------------------------------------------
+}
+//---------------------------------------------------------------------------
+

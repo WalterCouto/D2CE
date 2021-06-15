@@ -1,10 +1,11 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -13,43 +14,48 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#ifndef D2LevelInfoFormH
-#define D2LevelInfoFormH
-//---------------------------------------------------------------------------
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <Grids.hpp>
-#include <ExtCtrls.hpp>
-#include "ExperienceConstants.h"
-//---------------------------------------------------------------------------
-class TLevelInfoForm : public TForm
-{
-__published:	// IDE-managed Components
-   TStringGrid *LevelInfoGrid;
-   TButton *CloseButton;
-   TRadioGroup *D2Version;
-   void __fastcall CloseButtonClick(TObject *Sender);
-   void __fastcall D2VersionClick(TObject *Sender);
-private:
-   AnsiString Exp[NUM_OF_LEVELS],
-              MaxBeltGold[NUM_OF_LEVELS],
-              MaxStashGold[NUM_OF_LEVELS];
+#pragma once
 
-   void FillArrays();
-   void FillCells();
-   void __fastcall FormatStrArray(AnsiString *strArray);
-public:		// User declarations
-   __fastcall TLevelInfoForm(TComponent* Owner);
-};
+#include "d2ce\CharacterConstants.h"
+
 //---------------------------------------------------------------------------
-extern PACKAGE TLevelInfoForm *LevelInfoForm;
-//---------------------------------------------------------------------------
+class CD2LevelInfoForm : public CDialogEx
+{
+    DECLARE_DYNAMIC(CD2LevelInfoForm)
+
+public:
+    CD2LevelInfoForm(CWnd* pParent = nullptr);   // standard constructor
+    virtual ~CD2LevelInfoForm();
+
+    // Dialog Data
+#ifdef AFX_DESIGN_TIME
+    enum { IDD = IDD_D2LEVELINFO_DIALOG };
 #endif
 
+protected:
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual void OnOK();
+    virtual void OnCancel();
+
+    DECLARE_MESSAGE_MAP()
+
+    void FillCells();
+
+public:
+    CListCtrl LevelInfoGrid;
+    virtual BOOL OnInitDialog();
+
+private:
+    d2ce::EnumCharVersion Version = d2ce::EnumCharVersion::v110;
+    BOOL Modal = FALSE;
+
+public:
+    virtual INT_PTR DoModal();
+    BOOL Show(CWnd* pParentWnd = NULL);
+    void ResetVersion(d2ce::EnumCharVersion version);
+};
+//---------------------------------------------------------------------------

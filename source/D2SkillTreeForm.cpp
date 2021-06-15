@@ -1,10 +1,11 @@
 /*
-    Diablo 2 Character Editor
+    Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -13,251 +14,310 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //---------------------------------------------------------------------------
 
-#include <vcl.h>
-#pragma hdrstop
-
+#include "pch.h"
+#include "D2Editor.h"
 #include "D2SkillTreeForm.h"
-#include "D2MainForm.h"
-#include "SkillConstants.h"
+#include "d2ce\SkillConstants.h"
+#include "afxdialogex.h"
+
 //---------------------------------------------------------------------------
-#pragma package(smart_init)
-#pragma resource "*.dfm"
-TSkillTrees *SkillTrees;
+// CD2SkillTreeForm dialog
+
 //---------------------------------------------------------------------------
-__fastcall TSkillTrees::TSkillTrees(TComponent* Owner)
-   : TForm(Owner)
+IMPLEMENT_DYNAMIC(CD2SkillTreeForm, CDialogEx)
+
+//---------------------------------------------------------------------------
+CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
+    : CDialogEx(IDD_SKILLS_DIALOG, (CWnd*)&form), MainForm(form)
+{
+    Class = MainForm.getCharacterClass();
+    SkillChoices = MainForm.getSkillChoices();
+    std::memcpy(Skills, MainForm.getSkills(), sizeof(Skills));
+
+    SkillsUsed = 0;
+    for (std::uint32_t i = 0; i < d2ce::NUM_OF_SKILLS; ++i)
+    {
+        SkillsUsed += Skills[i];
+    }
+
+    // Fix up Skill Choices
+    EarnedSkillPoints = MainForm.getSkillPointsEarned();
+    if (SkillsUsed >= EarnedSkillPoints)
+    {
+        SkillChoices = 0;
+    }
+    else
+    {
+        SkillChoices = EarnedSkillPoints - SkillsUsed;
+    }
+}
+//---------------------------------------------------------------------------
+CD2SkillTreeForm::~CD2SkillTreeForm()
 {
 }
 //---------------------------------------------------------------------------
-void TSkillTrees::AssignValues()
+void CD2SkillTreeForm::DoDataExchange(CDataExchange* pDX)
 {
-   AnsiString temp;
-   SkillsList->Clear();
-
-   for (int i = 0; i < NUM_OF_SKILLS; i++)
-   {
-      temp = SkillsNames[MainForm->CharClass->ItemIndex][i];
-      temp += "=";
-      temp += i;
-      SkillsList->Add(temp);
-   }
+    __super::DoDataExchange(pDX);
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::ButtonClick(TObject *Sender)
+BOOL CD2SkillTreeForm::PreTranslateMessage(MSG* pMsg)
 {
-   if (Sender == CloseButton)
-   {
-      if (SkillsChanged)
-      {
-         MainForm->CharInfo->updateSkills(Skills);
-         SkillsChanged = false;
-         MainForm->JustOpened = false;
-         MainForm->OthersChanged = true;
-         MainForm->StatsChanged();
-      }
-
-      Close();
-   }
-   else if (Sender == GoButton)
-   {
-      memset(Skills, SkillValue->Text.ToInt(), NUM_OF_SKILLS);
-
-      SkillsChanged = true;
-
-      AssignValues();
-      SetGrid();
-      SetTabs();
-   }
+    if (pMsg->message == WM_KEYDOWN)
+    {
+        if (pMsg->wParam == VK_RETURN)
+        {
+            TCHAR szClass[10];
+            CWnd* pWndFocus = GetFocus();
+            if (((pWndFocus = GetFocus()) != NULL) &&
+                IsChild(pWndFocus) &&
+                GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
+                (lstrcmpi(szClass, _T("EDIT")) == 0))
+            {
+                // pressing the ENTER key will take the focus to the next control
+                pMsg->wParam = VK_TAB;
+            }
+        }
+    }
+    return __super::PreTranslateMessage(pMsg);
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::FormCreate(TObject *Sender)
+CString CD2SkillTreeForm::ToText(CWnd* Sender)
 {
-   SkillsGrid->Cells[0][0] = "SKILL";
-   SkillsGrid->Cells[1][0] = "VALUE";
-   SkillsGrid->ColWidths[1] = 58;
+    CString strClassName;
+    if (::GetClassName(Sender->GetSafeHwnd(), strClassName.GetBuffer(_MAX_PATH), _MAX_PATH))
+    {
+        if (strClassName.CompareNoCase(_T("Edit")) == 0 || strClassName.CompareNoCase(_T("STATIC")) == 0)
+        {
+            CString sWindowText;
+            Sender->GetWindowText(sWindowText);
+            return sWindowText;
+        }
 
-   TabSkillsGrid1->Cells[0][0] = "SKILL (sorted by level)";
-   TabSkillsGrid1->Cells[1][0] = "VALUE";
-   TabSkillsGrid1->ColWidths[1] = 66;
+        if (strClassName.CompareNoCase(_T("ComboBox")) == 0)
+        {
+            CString sWindowText;
+            ((CComboBox*)Sender)->GetLBText(((CComboBox*)Sender)->GetCurSel(), sWindowText);
+            return sWindowText;
+        }
+    }
 
-   TabSkillsGrid2->Cells[0][0] = "SKILL (sorted by level)";
-   TabSkillsGrid2->Cells[1][0] = "VALUE";
-   TabSkillsGrid2->ColWidths[1] = 66;
-
-   TabSkillsGrid3->Cells[0][0] = "SKILL (sorted by level)";
-   TabSkillsGrid3->Cells[1][0] = "VALUE";
-   TabSkillsGrid3->ColWidths[1] = 66;
-
-   SkillsChanged = false;
-
-   SkillsList = new TStringList;
-   SkillsList->Sorted = true;
+    return CString();
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::FormDestroy(TObject *Sender)
+std::string CD2SkillTreeForm::ToStdString(CWnd* Sender)
 {
-   delete SkillsList;
+    return (LPCSTR)CStringA(ToText(Sender));
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::FormShow(TObject *Sender)
+std::uint32_t CD2SkillTreeForm::ToInt(UINT nID)
 {
-   ViewOption->ItemIndex = 0;
-   TabPageCtrl->ActivePage = SkillsTab1;
-   SkillValue->Text = "";
+    CWnd* Sender = GetDlgItem(nID);
+    if (Sender == nullptr)
+    {
+        return 0;
+    }
 
-   Skills = MainForm->CharInfo->getSkills();
-   AssignValues();
-   SetGrid();
-   SetTabs();
+    CString strClassName;
+    if (::GetClassName(Sender->GetSafeHwnd(), strClassName.GetBuffer(_MAX_PATH), _MAX_PATH))
+    {
+        if (strClassName.CompareNoCase(_T("Edit")) == 0 || strClassName.CompareNoCase(_T("STATIC")) == 0)
+        {
+            std::string sWindowText(ToStdString(Sender));
+            char* ptr = nullptr;
+            return std::strtoul(sWindowText.c_str(), &ptr, 10);
+        }
+
+        if (strClassName.CompareNoCase(_T("ComboBox")) == 0)
+        {
+            return ((CComboBox*)Sender)->GetCurSel();
+        }
+    }
+
+    return 0;
 }
 //---------------------------------------------------------------------------
-void TSkillTrees::SetGrid()
+void CD2SkillTreeForm::SetInt(UINT nID, std::uint32_t newValue)
 {
-   for (int i = 0; i < SkillsGrid->RowCount-1; ++i)
-   {
-      SkillsGrid->Cells[0][i+1] = SkillsList->Names[i];
-      SkillsGrid->Cells[1][i+1] = IntToStr(Skills[SkillsList->Values[
-                                         SkillsList->Names[i]].ToInt()]);
-   }
+    CWnd* Sender = GetDlgItem(nID);
+    if (Sender == nullptr)
+    {
+        return;
+    }
+
+    CString strClassName;
+    if (::GetClassName(Sender->GetSafeHwnd(), strClassName.GetBuffer(_MAX_PATH), _MAX_PATH))
+    {
+        if (strClassName.CompareNoCase(_T("Edit")) == 0 || strClassName.CompareNoCase(_T("STATIC")) == 0)
+        {
+            CString sWindowText;
+            sWindowText.Format(_T("%lu"), newValue);
+            Sender->SetWindowText(sWindowText);
+            return;
+        }
+
+        if (strClassName.CompareNoCase(_T("ComboBox")) == 0)
+        {
+            ((CComboBox*)Sender)->SetCurSel(newValue);
+            return;
+        }
+    }
+}
+
+//---------------------------------------------------------------------------
+BEGIN_MESSAGE_MAP(CD2SkillTreeForm, CDialogEx)
+    ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT_TREE_1_SKILL_1, IDC_EDIT_TREE_3_SKILL_10, OnSkillKillFocus)
+    ON_BN_CLICKED(IDOK, &CD2SkillTreeForm::OnBnClickedOk)
+    ON_BN_CLICKED(IDCANCEL, &CD2SkillTreeForm::OnBnClickedCancel)
+    ON_BN_CLICKED(IDC_SET_ALL_SKILLS, &CD2SkillTreeForm::OnBnClickedSetAll)
+END_MESSAGE_MAP()
+
+//---------------------------------------------------------------------------
+// CD2SkillTreeForm message handlers
+
+//---------------------------------------------------------------------------
+BOOL CD2SkillTreeForm::OnInitDialog()
+{
+    __super::OnInitDialog();
+    GetWindowText(origCaption);
+    UpdateCaption();
+
+    // Fill out tab names.
+    auto classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
+    const auto& tabNames = d2ce::TabNames[classNumber];
+    for (UINT i = 0, nIDC = IDC_STATIC_TREE_1; i < 3; ++i, ++nIDC)
+    {
+        GetDlgItem(nIDC)->SetWindowText(CString(tabNames[i].c_str()));
+    }
+
+    // Fill out skill names and values;
+    const auto& tabSkillPos = d2ce::TabSkillPos[classNumber];
+    const auto& skillsNames = d2ce::SkillsNames[classNumber];
+    std::uint8_t Pos = 0;
+    for (UINT i = 0, nIDC = IDC_STATIC_TREE_1_SKILL_1, nEditIDC = IDC_EDIT_TREE_1_SKILL_1; i < d2ce::NUM_OF_SKILLS; ++i, ++nIDC, ++nEditIDC)
+    {
+        Pos = tabSkillPos[i];
+        GetDlgItem(nIDC)->SetWindowText(CString(skillsNames[Pos].c_str()));
+        ((CEdit*)GetDlgItem(nEditIDC))->LimitText(2);
+        SetInt(nEditIDC, Skills[Pos]);
+    }
+    ((CEdit*)GetDlgItem(IDC_EDIT_SET_ALL_SKILLS))->LimitText(2);
+    SetInt(IDC_EDIT_SET_ALL_SKILLS, 0);
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // EXCEPTION: OCX Property Pages should return FALSE
 }
 //---------------------------------------------------------------------------
-void TSkillTrees::SetTabs()
+void CD2SkillTreeForm::OnSkillKillFocus(UINT nID)
 {
-   SkillsTab1->Caption = TabNames[MainForm->CharClass->ItemIndex][0];
-   SkillsTab2->Caption = TabNames[MainForm->CharClass->ItemIndex][1];
-   SkillsTab3->Caption = TabNames[MainForm->CharClass->ItemIndex][2];
+    // Fill out skill names
+    const auto& tabSkillPos = d2ce::TabSkillPos[static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class)];
+    auto Pos = tabSkillPos[nID - IDC_EDIT_TREE_1_SKILL_1];
+    std::uint8_t skillValue = (std::uint8_t)ToInt(nID);
+    if (skillValue > d2ce::MAX_SKILL_VALUE)
+    {
+        skillValue = d2ce::MAX_SKILL_VALUE;
+        SetInt(nID, skillValue);
+    }
 
-   // fill all 10 cells for each skill tab
-   for (int i = 0; i < 10; i++)
-   {
-      TabSkillsGrid1->Cells[0][i+1] = TabSkills[MainForm->CharClass->ItemIndex][i];
-      TabSkillsGrid1->Cells[1][i+1] = IntToStr(Skills[TabSkillPos[
-                                             MainForm->CharClass->ItemIndex][i]]);
+    // value actually changed?
+    if (skillValue != Skills[Pos])
+    {
+        auto oldValue = Skills[Pos];
+        Skills[Pos] = skillValue;
+        if (oldValue > skillValue)
+        {
+            SkillsUsed -= (oldValue - skillValue);
+        }
+        else
+        {
+            SkillsUsed += (skillValue - oldValue);
+        }
 
-      TabSkillsGrid2->Cells[0][i+1] = TabSkills[MainForm->CharClass->ItemIndex][i+10];
-      TabSkillsGrid2->Cells[1][i+1] = IntToStr(Skills[TabSkillPos[
-                                             MainForm->CharClass->ItemIndex][i+10]]);
 
-      TabSkillsGrid3->Cells[0][i+1] = TabSkills[MainForm->CharClass->ItemIndex][i+20];
-      TabSkillsGrid3->Cells[1][i+1] = IntToStr(Skills[TabSkillPos[
-                                             MainForm->CharClass->ItemIndex][i+20]]);
-   }
+        if (SkillsUsed + SkillChoices < EarnedSkillPoints)
+        {
+            SkillChoices = std::min(EarnedSkillPoints - SkillsUsed, d2ce::MAX_SKILL_CHOICES);
+            UpdateCaption();
+        }
+        SkillsChanged = true;
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::SkillsGridGetEditText(TObject *Sender,
-      int ACol, int ARow, AnsiString &Value)
+void CD2SkillTreeForm::SaveSkills()
 {
-   Value = Skills[SkillsList->Values[SkillsList->Names[ARow-1]].ToInt()];
+    if (SkillsChanged)
+    {
+        MainForm.updateSkills(Skills);
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::ComponentKeyPress(TObject *Sender, char &Key)
+void CD2SkillTreeForm::UpdateCaption()
 {
-   // only allow numerals
-   if (!(Key >= '0' && Key <= '9') && !(Key == VK_BACK))
-      Key = 0;
+    if (!origCaption.IsEmpty())
+    {
+        std::wstringstream ss;
+        ss << origCaption.GetString();
+        if (SkillChoices > 0)
+        {
+            ss << _T(" (Skill Choices Remaining: ");
+            ss << SkillChoices;
+            ss << _T(")");
+        }
+
+        SetWindowText(ss.str().c_str());
+    }
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::SkillsGridSetEditText(TObject *Sender,
-      int ACol, int ARow, const AnsiString Value)
+void CD2SkillTreeForm::OnBnClickedOk()
 {
-   int skillValue;
-   try
-   {
-      skillValue = Value.ToInt();
-   }
-   catch(const EConvertError& e)
-   {
-      skillValue = Skills[SkillsList->Values[SkillsList->Names[ARow-1]].ToInt()];
-   }
+    SaveSkills();
+    __super::OnOK();
 
-      if (skillValue > MAX_SKILL_VALUE)
-         skillValue = MAX_SKILL_VALUE;
-
-      // value actually changed?
-      if (skillValue != Skills[SkillsList->Values[SkillsList->Names[ARow-1]].ToInt()])
-      {
-         Skills[SkillsList->Values[SkillsList->Names[ARow-1]].ToInt()] = skillValue;
-         SkillsChanged = true;
-      }
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::SkillValueExit(TObject *Sender)
+void CD2SkillTreeForm::OnBnClickedCancel()
 {
-   if (SkillValue->Text.IsEmpty())
-      return;
-   else if (SkillValue->Text.ToInt() > MAX_SKILL_VALUE)
-      SkillValue->Text = MAX_SKILL_VALUE;
+    SkillsChanged = false;
+    __super::OnCancel();
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::TabSkillsGridGetEditText(TObject *Sender,
-      int ACol, int ARow, AnsiString &Value)
+void CD2SkillTreeForm::OnBnClickedSetAll()
 {
-   if (Sender == TabSkillsGrid1)
-      Value = Skills[TabSkillPos[MainForm->CharClass->ItemIndex][ARow-1]];
-   else if (Sender == TabSkillsGrid2)
-      Value = Skills[TabSkillPos[MainForm->CharClass->ItemIndex][ARow+10-1]];
-   else if (Sender== TabSkillsGrid3)
-      Value = Skills[TabSkillPos[MainForm->CharClass->ItemIndex][ARow+20-1]];
+    std::uint8_t skillValue = (std::uint8_t)ToInt(IDC_EDIT_SET_ALL_SKILLS);
+    if (skillValue > d2ce::MAX_SKILL_VALUE)
+    {
+        skillValue = d2ce::MAX_SKILL_VALUE;
+        SetInt(IDC_EDIT_SET_ALL_SKILLS, skillValue);
+    }
+
+    // Save Values
+    SkillsChanged = true;
+    std::memset(Skills, skillValue, d2ce::NUM_OF_SKILLS);
+    for (std::uint32_t nEditIDC = IDC_EDIT_TREE_1_SKILL_1; nEditIDC <= IDC_EDIT_TREE_3_SKILL_10; ++nEditIDC)
+    {
+        SetInt(nEditIDC, skillValue);
+    }
+
+    SkillsUsed = d2ce::NUM_OF_SKILLS * skillValue;
+    if (SkillsUsed >= EarnedSkillPoints)
+    {
+        SkillChoices = 0;
+    }
+    else
+    {
+        SkillChoices = EarnedSkillPoints - SkillsUsed;
+    }
+    UpdateCaption();
 }
 //---------------------------------------------------------------------------
-void __fastcall TSkillTrees::TabSkillsGridSetEditText(TObject *Sender,
-      int ACol, int ARow, const AnsiString Value)
+bool CD2SkillTreeForm::isSkillChoicesChanged() const
 {
-   int Pos, skillValue;
-
-   // find correct position in Skill array
-   if (Sender == TabSkillsGrid1)
-      Pos = TabSkillPos[MainForm->CharClass->ItemIndex][ARow-1];
-   else if (Sender == TabSkillsGrid2)
-      Pos = TabSkillPos[MainForm->CharClass->ItemIndex][ARow+10-1];
-   else if (Sender == TabSkillsGrid3)
-      Pos = TabSkillPos[MainForm->CharClass->ItemIndex][ARow+20-1];
-
-   try
-   {
-      skillValue = Value.ToInt();
-   }
-   catch(const EConvertError& e)
-   {
-      skillValue = Skills[Pos];
-   }
-
-   if (skillValue > MAX_SKILL_VALUE)
-      skillValue = MAX_SKILL_VALUE;
-
-   // value actually changed?
-   if (skillValue != Skills[Pos])
-   {
-      Skills[Pos] = skillValue;
-      SkillsChanged = true;
-   }
-}
-//---------------------------------------------------------------------------
-void __fastcall TSkillTrees::ViewOptionClick(TObject *Sender)
-{
-   switch(ViewOption->ItemIndex)
-   {
-      // view all
-      case 0: TabPageCtrl->Enabled = false;
-              TabPageCtrl->Visible = false;
-              SkillsGrid->Enabled = true;
-              SkillsGrid->Visible = true;
-              SetGrid();
-              break;
-
-      // view by type
-      case 1: SkillsGrid->Enabled = false;
-              SkillsGrid->Visible = false;
-              TabPageCtrl->Enabled = true;
-              TabPageCtrl->Visible = true;
-              SetTabs();
-              break;
-   }
+    return SkillsChanged;
 }
 //---------------------------------------------------------------------------
 

@@ -1,36 +1,54 @@
+/*
+    Diablo II Character Editor
+    Copyright (C) 2000-2003  Burton Tsang
+    Copyright (C) 2021 Walter Couto
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 //---------------------------------------------------------------------------
 
-#ifndef D2GemsFormH
-#define D2GemsFormH
+#pragma once
+
 //---------------------------------------------------------------------------
-#include <Classes.hpp>
-#include <Controls.hpp>
-#include <StdCtrls.hpp>
-#include <Forms.hpp>
-#include <ExtCtrls.hpp>
-#include <ComCtrls.hpp>
+#include "D2MainForm.h"
+
 //---------------------------------------------------------------------------
-class TConvertGemsForm : public TForm
+class CD2GemsForm : public CDialogEx
 {
-__published:	// IDE-managed Components
-   TPanel *ButtonPanel;
-   TButton *ConvertButton;
-   TButton *CloseButton;
-   TPanel *Panel1;
-   TLabel *Label1;
-   TComboBox *OldGem;
-   TLabel *Label2;
-   TComboBox *NewGem;
-   TStatusBar *GemStatusBar;
-   void __fastcall CloseButtonClick(TObject *Sender);
-   void __fastcall ConvertButtonClick(TObject *Sender);
-   void __fastcall FormShow(TObject *Sender);
-private:	// User declarations
-public:		// User declarations
-   __fastcall TConvertGemsForm(TComponent* Owner);
-};
-//---------------------------------------------------------------------------
-extern PACKAGE TConvertGemsForm *ConvertGemsForm;
-//---------------------------------------------------------------------------
+	DECLARE_DYNAMIC(CD2GemsForm)
+
+public:
+	CD2GemsForm(CD2MainForm& form);
+	virtual ~CD2GemsForm();
+
+// Dialog Data
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_GPS_CONVERTER_DIALOG };
 #endif
 
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+    afx_msg void OnBnClickedConvert();
+	DECLARE_MESSAGE_MAP()
+
+private:
+    CD2MainForm& MainForm;
+    std::map<size_t, std::uint64_t> GemIdxMap;
+    std::map<std::uint64_t, size_t> NumGemMap;
+
+public:
+    virtual BOOL OnInitDialog();
+};
+//---------------------------------------------------------------------------
