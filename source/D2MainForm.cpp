@@ -55,7 +55,7 @@ namespace
         memDestDC.SelectObject(&image2);
 
         // StretchBlt from src to dest
-        memDestDC.StretchBlt(0, 0, rect.Width(), rect.Height(), & memSrcDc, 0, 0, bmp.bmWidth - 1, bmp.bmHeight - 1, SRCCOPY);
+        memDestDC.StretchBlt(0, 0, rect.Width(), rect.Height(), &memSrcDc, 0, 0, bmp.bmWidth - 1, bmp.bmHeight - 1, SRCCOPY);
 
         HGDIOBJ hbitmap_detach = image.Detach();
         if (hbitmap_detach)
@@ -213,33 +213,34 @@ protected:
             return _T("");
         }
 
-        CString sFieldPath(languageString);
-        sFieldPath += lpszVariable;
-
+        CString variable = lpszVariable;
         std::uint32_t  cbValue = 0;
-        LPTSTR lpszValue = nullptr;
-
-        VerQueryValue(&pbData[0], sFieldPath, (VOID**)&lpszValue, &cbValue);
-
         CString sVersion;
-        if (lpszValue != nullptr)
-        {
-            sVersion = lpszValue;
-            sVersion.Trim();
-        }
-        else if (sFieldPath.CompareNoCase(_T("FileVersion")) == 0)
+        if (variable.CompareNoCase(_T("FileVersion")) == 0)
         {
             VS_FIXEDFILEINFO* fi = NULL;
             UINT uLen = 0;
             VerQueryValue(&pbData[0], _T("\\"), (LPVOID*)&fi, &uLen);
             sVersion.Format(_T("%d.%d.%d"), HIWORD(fi->dwFileVersionMS), LOWORD(fi->dwFileVersionMS), HIWORD(fi->dwFileVersionLS));
         }
-        else if (sFieldPath.CompareNoCase(_T("ProductVersion")) == 0)
+        else if (variable.CompareNoCase(_T("ProductVersion")) == 0)
         {
             VS_FIXEDFILEINFO* fi = NULL;
             UINT uLen = 0;
             VerQueryValue(&pbData[0], _T("\\"), (LPVOID*)&fi, &uLen);
             sVersion.Format(_T("%d.%d.%d"), HIWORD(fi->dwProductVersionMS), LOWORD(fi->dwProductVersionMS), HIWORD(fi->dwProductVersionLS));
+        }
+        else
+        {
+            CString sFieldPath(languageString);
+            sFieldPath += variable;
+            LPTSTR lpszValue = nullptr;
+            VerQueryValue(&pbData[0], sFieldPath, (VOID**)&lpszValue, &cbValue);
+            if (lpszValue != nullptr)
+            {
+                sVersion = lpszValue;
+                sVersion.Trim();
+            }
         }
 
         return sVersion;
@@ -250,7 +251,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 protected:
-    CString ProductNameAndVersion = _T("Diablo II Character Editor, Version 2.0.0");
+    CString ProductNameAndVersion = _T("Diablo II Character Editor, Version 2.0.1");
     CString LegalCopyright = _T("Copyright (c) 2021 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
 };
 
@@ -513,8 +514,6 @@ IMPLEMENT_DYNAMIC(CD2MainForm, CDialogEx)
 //---------------------------------------------------------------------------
 CD2MainForm::CD2MainForm(WORD fontSize, CWnd* pParent /*=nullptr*/)
     : CDialogEx()
-    , IsExpansionCharacter(FALSE)
-    , IsHardcoreCharacter(FALSE)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -656,8 +655,6 @@ CD2MainForm::CD2MainForm(WORD fontSize, CWnd* pParent /*=nullptr*/)
 
 CD2MainForm::CD2MainForm(CWnd* pParent /*=nullptr*/)
     : CDialogEx(IDD_D2EDITOR_DIALOG, pParent)
-    , IsExpansionCharacter(FALSE)
-    , IsHardcoreCharacter(FALSE)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -706,11 +703,9 @@ void CD2MainForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MAX_ALL_BTN, MaxAllButton);
     DDX_Control(pDX, IDC_QUESTS_BTN, QuestsButton);
     DDX_Control(pDX, IDC_WAYPOINTS_BTN, WaypointsButton);
-    DDX_Check(pDX, IDC_EXPANSION_CHECK, IsExpansionCharacter);
-    DDX_Check(pDX, IDC_HARDCORE_CHECK, IsHardcoreCharacter);
     DDX_Control(pDX, IDC_QUIT_BTN, QuitButton);
     DDX_Control(pDX, IDC_BACKGROUND_BOX, BackgroundBox);
-    
+
 }
 //---------------------------------------------------------------------------
 BOOL CD2MainForm::PreTranslateMessage(MSG* pMsg)
@@ -846,9 +841,9 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXFILLSTACKABLES, &CD2MainForm::OnUpdateOptionsMaxfillstackables)
     ON_COMMAND(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnOptionsMaxdurabilityforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
-        ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
-        ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
-        END_MESSAGE_MAP()
+    ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
+END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
 // CD2MainForm message handlers
@@ -906,7 +901,7 @@ BOOL CD2MainForm::OnInitDialog()
         TRACE0("Failed to create status bar\n");
     }
     OnSetMessageString(AFX_IDS_IDLEMESSAGE);
-    
+
 
     CDC* pDC = GetDC();
     CRect rect;
@@ -941,7 +936,7 @@ BOOL CD2MainForm::OnInitDialog()
     LOGFONT lf;
     pWndFont->GetLogFont(&lf);
     lf.lfWeight = FW_BOLD;
-    BoldFont.CreateFontIndirect(&lf);
+    m_boldFont.CreateFontIndirect(&lf);
 
     //This is where we actually draw it on the screen
     RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST,
@@ -964,7 +959,7 @@ BOOL CD2MainForm::OnInitDialog()
     GoldInBelt.SetLimitText(6);
     GoldInStash.SetLimitText(7);
 
-    UpdateCharInfoBox(FALSE);
+    EnableCharInfoBox(FALSE);
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 //---------------------------------------------------------------------------
@@ -979,7 +974,7 @@ void CD2MainForm::OnSysCommand(UINT nID, LPARAM lParam)
 
     if ((nID & 0xFFF0) == SC_CLOSE)
     {
-        if (CharInfo != nullptr && CharInfo->is_open() && DoFileCloseAction() == IDCANCEL)
+        if (CharInfo.is_open() && (DoFileCloseAction() == IDCANCEL))
         {
             return;
         }
@@ -1043,7 +1038,7 @@ HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         pDC->SetBkMode(TRANSPARENT);
         if (ctrlEditted.find(pWnd->GetDlgCtrlID()) != ctrlEditted.end())
         {
-            pDC->SelectObject(&BoldFont);
+            pDC->SelectObject(&m_boldFont);
         }
 
         return (HBRUSH)BlackBrush;
@@ -1060,7 +1055,7 @@ HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         pDC->SetBkMode(TRANSPARENT);
         if (ctrlEditted.find(pWnd->GetDlgCtrlID()) != ctrlEditted.end())
         {
-            pDC->SelectObject(&BoldFont);
+            pDC->SelectObject(&m_boldFont);
         }
 
         return (HBRUSH)BlackBrush;
@@ -1099,7 +1094,7 @@ LRESULT CD2MainForm::OnSetMessageString(WPARAM wParam, LPARAM /*lParam*/)
 
     if (nIDMsg)
     {
-        if (nIDMsg == AFX_IDS_IDLEMESSAGE && CharInfo == nullptr)
+        if ((nIDMsg == AFX_IDS_IDLEMESSAGE) && !CharInfo.is_open())
         {
             StatusBar.SetWindowText(_T("Click on File, Open or press CTRL-O to start"));
         }
@@ -1110,17 +1105,17 @@ LRESULT CD2MainForm::OnSetMessageString(WPARAM wParam, LPARAM /*lParam*/)
             switch (nIDMsg)
             {
             case IDC_GOLD_IN_BELT:
-                strStatusText.Format(strStatusText, MAXGOLD);
+                strStatusText.Format(strStatusText, CharInfo.getMaxGoldInBelt());
                 break;
             case IDC_GOLD_IN_STASH:
-                strStatusText.Format(strStatusText, MAXSTASHGOLD);
+                strStatusText.Format(strStatusText, CharInfo.getMaxGoldInStash());
                 break;
             }
             StatusBar.SetWindowText(strStatusText);
         }
         else
         {
-            if (CharInfo == nullptr)
+            if (!CharInfo.is_open())
             {
                 StatusBar.SetWindowText(_T("Click on File, Open or press CTRL-O to start"));
             }
@@ -1299,40 +1294,40 @@ BOOL CD2MainForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         switch (nID)
         {
         case IDC_GOLD_IN_BELT:
-            strTipText.Format(strTipText, MAXGOLD);
-            strPromtpText.Format(strPromtpText, MAXGOLD);
+            strTipText.Format(strTipText, CharInfo.getMaxGoldInBelt());
+            strPromtpText.Format(strPromtpText, CharInfo.getMaxGoldInBelt());
             break;
         case IDC_GOLD_IN_STASH:
-            strTipText.Format(strTipText, MAXSTASHGOLD);
-            strPromtpText.Format(strPromtpText, MAXSTASHGOLD);
+            strTipText.Format(strTipText, CharInfo.getMaxGoldInStash());
+            strPromtpText.Format(strPromtpText, CharInfo.getMaxGoldInStash());
             break;
         case IDC_CHAR_STRENGTH:
-            strTipText.Format(strTipText, MINSTRENGTH);
-            strPromtpText.Format(strPromtpText, MINSTRENGTH);
+            strTipText.Format(strTipText, CharInfo.getMinStrength());
+            strPromtpText.Format(strPromtpText, CharInfo.getMinStrength());
             break;
         case IDC_CHAR_ENERGY:
-            strTipText.Format(strTipText, MINENERGY);
-            strPromtpText.Format(strPromtpText, MINENERGY);
+            strTipText.Format(strTipText, CharInfo.getMinEnergy());
+            strPromtpText.Format(strPromtpText, CharInfo.getMinEnergy());
             break;
         case IDC_CHAR_DEXTERITY:
-            strTipText.Format(strTipText, MINDEXTERITY);
-            strPromtpText.Format(strPromtpText, MINDEXTERITY);
+            strTipText.Format(strTipText, CharInfo.getMinDexterity());
+            strPromtpText.Format(strPromtpText, CharInfo.getMinDexterity());
             break;
         case IDC_CHAR_VITALITY:
-            strTipText.Format(strTipText, MINVITALITY);
-            strPromtpText.Format(strPromtpText, MINVITALITY);
+            strTipText.Format(strTipText, CharInfo.getMinVitality());
+            strPromtpText.Format(strPromtpText, CharInfo.getMinVitality());
             break;
         case IDC_MAX_LIFE:
-            strTipText.Format(strTipText, MINHITPOINTS >> 8);
-            strPromtpText.Format(strPromtpText, MINHITPOINTS >> 8);
+            strTipText.Format(strTipText, CharInfo.getMaxHitPoints() >> 8);
+            strPromtpText.Format(strPromtpText, CharInfo.getMaxHitPoints() >> 8);
             break;
         case IDC_MAX_MANA:
-            strTipText.Format(strTipText, MINMANA >> 8);
-            strPromtpText.Format(strPromtpText, MINMANA >> 8);
+            strTipText.Format(strTipText, CharInfo.getMaxMana() >> 8);
+            strPromtpText.Format(strPromtpText, CharInfo.getMaxMana() >> 8);
             break;
         case IDC_MAX_STAMINA:
-            strTipText.Format(strTipText, MINSTAMINA >> 8);
-            strPromtpText.Format(strPromtpText, MINSTAMINA >> 8);
+            strTipText.Format(strTipText, CharInfo.getMaxStamina() >> 8);
+            strPromtpText.Format(strPromtpText, CharInfo.getMaxStamina() >> 8);
             break;
         }
 
@@ -1358,11 +1353,11 @@ BOOL CD2MainForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
     ::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE);
 
     return TRUE;
-    }
+}
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsCheckChar()
 {
-    if (CharInfo == nullptr)
+    if (!CharInfo.is_open())
     {
         return;
     }
@@ -1370,26 +1365,20 @@ void CD2MainForm::OnOptionsCheckChar()
     bool statChanged = false;
     bool bFoundIssue = false;
 
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+
     // does a valid level range check
-    std::uint32_t curLevel = ToInt(&CharLevel);
-    if (curLevel < 1 || curLevel > d2ce::NUM_OF_LEVELS)
+    if (cs.Level < 1 || cs.Level > d2ce::NUM_OF_LEVELS)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Level\" amount exceeds the recommended maximum limit.\n")
             _T("Would you like the amount changed to the recommended maximum limit?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            curLevel = d2ce::NUM_OF_LEVELS;
-            SetInt(&CharLevel, curLevel);
-            ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-            std::uint32_t reqExpereince = d2ce::MinExpRequired[curLevel - 1];
-            if ((std::uint32_t)ToInt(&Experience) < reqExpereince)
-            {
-                SetInt(&Experience, reqExpereince);
-                ctrlEditted.insert(Experience.GetDlgCtrlID());
-            }
-            UpdateMaxGold();
-            UpdateMinStats();
+            cs.Level = d2ce::NUM_OF_LEVELS;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
         else
@@ -1405,271 +1394,295 @@ void CD2MainForm::OnOptionsCheckChar()
     std::uint32_t value = (std::uint32_t)ToInt(&Experience);
     // find the correct level
     while ((expLevel > 1) && (value < d2ce::MinExpRequired[expLevel - 1]))
+    {
         --expLevel;
+    }
 
-    if (expLevel > curLevel)
+    if (expLevel > cs.Level)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Your character's level is too low for the experience achieved.\n")
             _T("Would you like the amount changed to match your character's experience?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            std::uint32_t oldLevel = curLevel;
-            curLevel = expLevel;
-            SetInt(&CharLevel, curLevel);
-            ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-            UpdateMaxGold();
-            UpdateMinStats();
-            CheckStatsSkillsLevel(oldLevel);
+            cs.Level = expLevel;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
-    else if (expLevel < curLevel)
+    else if (expLevel < cs.Level)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient experience based on current level.\n")
             _T("Would you like experience changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&Experience, d2ce::MinExpRequired[curLevel - 1]);
-            ctrlEditted.insert(Experience.GetDlgCtrlID());
+            cs.Experience = d2ce::MinExpRequired[cs.Level - 1];
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
     // does a level-gold check
-    if (ToInt(&GoldInBelt) > MAXGOLD)
+    if (ToInt(&GoldInBelt) > cs.getMaxGoldInBelt())
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Gold In Belt\" amount exceeds the maximum limit.\n")
             _T("Would you like the amount changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&GoldInBelt, MAXGOLD);
-            ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+            cs.GoldInBelt = cs.getMaxGoldInBelt();
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&GoldInStash) > MAXSTASHGOLD)
+    if (ToInt(&GoldInStash) > cs.getMaxGoldInStash())
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Gold In Stash\" amount exceeds the maximum limit.\n")
             _T("Would you like the amount changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&GoldInStash, MAXSTASHGOLD);
-            ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
+            cs.GoldInStash = cs.getMaxGoldInStash();
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&CharVitality) < MINVITALITY)
+    if (ToInt(&CharVitality) < cs.Vitality)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Vitality\" based on the character's class.\n")
             _T("Would you like the amount changed to match your character's class?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&CharVitality, MINVITALITY);
-            ctrlEditted.insert(CharVitality.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&CharEnergy) < MINENERGY)
+    if (ToInt(&CharEnergy) < cs.Energy)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Energy\" based for the character's class.\n")
             _T("Would you like the amount changed to match your character's class?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&CharEnergy, MINENERGY);
-            ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&CharDexterity) < MINDEXTERITY)
+    if (ToInt(&CharDexterity) < cs.Dexterity)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Dexterity\" based for the character's class.\n")
             _T("Would you like the amount changed to match your character's class?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&CharEnergy, MINDEXTERITY);
-            ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&CharStrength) < MINSTRENGTH)
+    if (ToInt(&CharStrength) < cs.Strength)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Strength\" based for the character's class.\n")
             _T("Would you like the amount changed to match your character's class?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&CharEnergy, MINSTRENGTH);
-            ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    UpdateMinStats(false);
-    if (ToInt(&MaxLife) < (MINHITPOINTS & d2ce::LMS_MASK))
+    if (ToInt(&MaxLife) < cs.MaxLife)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Hit Points\" based on current level, class and stats.\n")
             _T("Would you like the amount changed to match your character's level, class and stats?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&MaxLife, MINHITPOINTS);
-            SetInt(&CurLife, MINHITPOINTS);
-            ctrlEditted.insert(MaxLife.GetDlgCtrlID());
-            ctrlEditted.insert(CurLife.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&MaxStamina) < (MINSTAMINA & d2ce::LMS_MASK))
+    if (ToInt(&MaxStamina) < cs.MaxStamina)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Stamina\" based on current level and stats.\n")
             _T("Would you like the amount changed to match your character's level and stats?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&MaxStamina, MINSTAMINA);
-            SetInt(&CurStamina, MINSTAMINA);
-            ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-            ctrlEditted.insert(CurStamina.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&MaxMana) < (MINMANA & d2ce::LMS_MASK))
+    if (ToInt(&MaxMana) < cs.MaxMana)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Mana\" based on current level and stats.\n")
             _T("Would you like the amount changed to match your character's level and stats?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            SetInt(&MaxMana, MINMANA);
-            SetInt(&CurMana, MINMANA);
-            ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-            ctrlEditted.insert(CurMana.GetDlgCtrlID());
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
 
     // Check Stat points
-    std::uint32_t curTotalStatPoints = ToInt(&CharStrength) + ToInt(&CharDexterity) + ToInt(&CharVitality) + ToInt(&CharEnergy);
-    std::uint32_t earnedStatPoints = CharInfo->getStatPointsEarned(curLevel) + MINSTRENGTH + MINDEXTERITY + MINVITALITY + MINENERGY;
-    if ((curTotalStatPoints >= 4 * d2ce::MAX_BASICSTATS) && (Cs.StatsLeft > 0))
+    if ((CharInfo.getStatPointsUsed() >= 4 * d2ce::MAX_BASICSTATS) && (cs.StatsLeft > 0))
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("No more stat points can be assigned but the amount left to assign is non-zero.\n")
             _T("Would you like the amount of stat points remaining to be set to zero?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
+            cs.StatsLeft = 0;
             Cs.StatsLeft = 0;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             StatsLeftChanged = true;
             statChanged = true;
         }
     }
 
-    if ((curTotalStatPoints + Cs.StatsLeft) < earnedStatPoints)
+    std::uint32_t totalStatPoints = CharInfo.getTotalStatPoints();
+    std::uint32_t earnedStatPoints = CharInfo.getTotalStartStatPoints() + CharInfo.getStatPointsEarned();
+    if (totalStatPoints < earnedStatPoints)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Total Stat Points\" based on current level and quests completed.\n")
             _T("Would you like the amount changed to match your character's level and quests completed?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            Cs.StatsLeft = std::min(earnedStatPoints - curTotalStatPoints, d2ce::MAX_BASICSTATS);
+            cs.StatsLeft = std::min(earnedStatPoints - CharInfo.getStatPointsUsed(), d2ce::MAX_BASICSTATS);
+            Cs.StatsLeft = cs.StatsLeft;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             StatsLeftChanged = true;
             statChanged = true;
         }
     }
-    else if ((curTotalStatPoints + Cs.StatsLeft) > earnedStatPoints)
+    else if (totalStatPoints > earnedStatPoints)
     {
-        expLevel = CharInfo->getLevelFromStatPointsEarned(curTotalStatPoints - MINSTRENGTH - MINDEXTERITY - MINVITALITY - MINENERGY);
-        if (expLevel > curLevel)
+        expLevel = CharInfo.getLevelFromTotalStatPoints();
+        if (expLevel > cs.Level)
         {
             bFoundIssue = true;
-            if (AfxMessageBox(_T("Your character's level is too low for the value of \"Total Stat Points\".\n")
-                _T("Would you like the amount changed to match your character's \"Total Stat Points\"?"),
-                MB_ICONQUESTION | MB_YESNO) == IDYES)
+            if (expLevel > d2ce::NUM_OF_LEVELS)
             {
-                std::uint32_t oldLevel = curLevel;
-                curLevel = expLevel;
-                SetInt(&CharLevel, curLevel);
-                ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-                std::uint32_t reqExpereince = d2ce::MinExpRequired[curLevel - 1];
-                if ((std::uint32_t)ToInt(&Experience) < reqExpereince)
+                // stats do not make sense
+                if (AfxMessageBox(_T("\"Total Stat Points\" is higher then what can be achieved in the game.\n")
+                    _T("Would you like to reset your stat points inorder to reallocate them?"),
+                    MB_ICONQUESTION | MB_YESNO) == IDYES)
                 {
-                    SetInt(&Experience, reqExpereince);
-                    ctrlEditted.insert(Experience.GetDlgCtrlID());
+                    CharInfo.resetStats();
+                    CharInfo.fillCharacterStats(cs);
+                    Cs.StatsLeft = cs.StatsLeft;
+                    Cs.SkillChoices = cs.SkillChoices;
+                    StatsLeftChanged = true;
+                    SkillChoicesChanged = true;
+                    statChanged = true;
                 }
-                UpdateMaxGold();
-                UpdateMinStats();
-                CheckStatsSkillsLevel(oldLevel);
-                statChanged = true;
+            }
+            else
+            {
+                if (AfxMessageBox(_T("Your character's level is too low for the value of \"Total Stat Points\".\n")
+                    _T("Would you like the amount changed to match your character's \"Total Stat Points\"?"),
+                    MB_ICONQUESTION | MB_YESNO) == IDYES)
+                {
+                    cs.Level = expLevel;
+                    CharInfo.updateCharacterStats(cs);
+                    UpdateCharInfo();
+                    statChanged = true;
+                }
             }
         }
     }
 
     // Check Skill points
-    if ((Cs.SkillChoices > 0) && CharInfo->areSkillsMaxed())
+    if ((cs.SkillChoices > 0) && CharInfo.areSkillsMaxed())
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("No more skill points can be assigned but the amount left to assign is non-zero.\n")
             _T("Would you like the amount of skill points remaining to be set to zero?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
+            cs.SkillChoices = 0;
             Cs.SkillChoices = 0;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             SkillChoicesChanged = true;
             statChanged = true;
         }
     }
 
-    std::uint32_t curPoints = CharInfo->getSkillPointUsed();
-    std::uint32_t earnedPoints = CharInfo->getSkillPointsEarned(curLevel);
-    if ((curPoints + Cs.SkillChoices) < earnedPoints)
+    std::uint32_t totalPoints = CharInfo.getTotalSkillPoints();
+    std::uint32_t earnedPoints = CharInfo.getSkillPointsEarned();
+    if (totalPoints < earnedPoints)
     {
-        bFoundIssue = true;
+        bFoundIssue = true; 
         if (AfxMessageBox(_T("Insufficient \"Total Skill Points\" based on current level and quests completed.\n")
             _T("Would you like the amount changed to match your character's level and quests completed?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            Cs.SkillChoices = std::min(earnedPoints - curPoints, d2ce::MAX_SKILL_CHOICES);
+            cs.SkillChoices = std::min(earnedPoints - CharInfo.getSkillPointsUsed(), d2ce::MAX_SKILL_CHOICES);
+            Cs.SkillChoices = cs.SkillChoices;
             SkillChoicesChanged = true;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
             statChanged = true;
         }
     }
-    else if ((curPoints + Cs.SkillChoices) > earnedPoints)
+    else if (totalPoints > earnedPoints)
     {
-        expLevel = CharInfo->getLevelFromSkillPointsEarned(curPoints);
-        if (expLevel > curLevel)
+        expLevel = CharInfo.getLevelFromTotalSkillPoints();
+        if (expLevel > cs.Level)
         {
             bFoundIssue = true;
-            if (AfxMessageBox(_T("Your character's level is too low for the value of \"Total Skill Points\".\n")
-                _T("Would you like the amount changed to match your character's \"Total Skill Points\"?"),
-                MB_ICONQUESTION | MB_YESNO) == IDYES)
+            if (expLevel > d2ce::NUM_OF_LEVELS)
             {
-                std::uint32_t oldLevel = curLevel;
-                curLevel = expLevel;
-                SetInt(&CharLevel, curLevel);
-                ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-                std::uint32_t reqExpereince = d2ce::MinExpRequired[curLevel - 1];
-                if ((std::uint32_t)ToInt(&Experience) < reqExpereince)
+                // stats do not make sense
+                if (AfxMessageBox(_T("\"Total Skill Points\" is higher then what can be achieved in the game.\n")
+                    _T("Would you like to reset your skill points inorder to reallocate them?"),
+                    MB_ICONQUESTION | MB_YESNO) == IDYES)
                 {
-                    SetInt(&Experience, reqExpereince);
-                    ctrlEditted.insert(Experience.GetDlgCtrlID());
+                    CharInfo.resetStats();
+                    CharInfo.fillCharacterStats(cs);
+                    Cs.StatsLeft = cs.StatsLeft;
+                    Cs.SkillChoices = cs.SkillChoices;
+                    StatsLeftChanged = true;
+                    SkillChoicesChanged = true;
+                    statChanged = true;
                 }
-                UpdateMaxGold();
-                UpdateMinStats();
-                CheckStatsSkillsLevel(oldLevel);
-                statChanged = true;
+            }
+            else
+            {
+                if (AfxMessageBox(_T("Your character's level is too low for the value of \"Total Skill Points\".\n")
+                    _T("Would you like the amount changed to match your character's \"Total Skill Points\"?"),
+                    MB_ICONQUESTION | MB_YESNO) == IDYES)
+                {
+                    cs.Level = expLevel;
+                    CharInfo.updateCharacterStats(cs);
+                    UpdateCharInfo();
+                    statChanged = true;
+                }
             }
         }
     }
@@ -1704,32 +1717,26 @@ void CD2MainForm::OnOptionsCheckChar()
 
 void CD2MainForm::OnUpdateOptionsCheckChar(CCmdUI* pCmdUI)
 {
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(TRUE);
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 bool CD2MainForm::CheckIsHardcoreDead(bool& bStatChanged)
 {
     bStatChanged = false;
     bool bFoundIssue = false;
-    if (CharInfo == nullptr)
+    if (!CharInfo.is_open())
     {
         return bFoundIssue;
     }
 
-    if (CharInfo->isHardcoreCharacter() && CharInfo->isDeadCharacter())
+    if (CharInfo.isHardcoreCharacter() && CharInfo.isDeadCharacter())
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("Your \"Hardcore\" character is dead and is no longer playable!\n")
             _T("Would you like to resurrect this character?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            CharInfo->setIsDeadCharacter(false);
+            CharInfo.setIsDeadCharacter(false);
             bStatChanged = true;
             StatusChanged = true;
         }
@@ -1753,41 +1760,46 @@ void CD2MainForm::ClearAllBoolVars()
 void CD2MainForm::OnCbnSelchangeCharClassCmb()
 {
     UpdateTitleDisplay();
-    UpdateMinStats();
     d2ce::BasicStats bs;
-    CharInfo->fillBasicStats(bs);
-    if (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()) == bs.Class)
-    {
-        auto iter = ctrlEditted.find(CharClass.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
+    CharInfo.fillBasicStats(bs);
+    if (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()) != bs.Class)
     {
         ctrlEditted.insert(CharClass.GetDlgCtrlID());
+        bs.Class = static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
+        CharInfo.updateBasicStats(bs);
+        UpdateTitleDisplay();
+        UpdateCharInfo();
         StatsChanged();
     }
-
-    UpdateStartStats();
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnBnClickedHardcoreCheck()
 {
     UpdateData(TRUE);
-    UpdateTitleDisplay();
-
-    if (NewStatusSelected())
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+    if (getCharacterStatus() != bs.Status)
     {
+        bs.Status = getCharacterStatus();
+        StatusChanged = true;
+        CharInfo.updateBasicStats(bs);
+        UpdateTitleDisplay();
+        UpdateCharInfo();
         StatsChanged();
     }
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnBnClickedResurrectedCheck()
 {
-    if (NewStatusSelected())
+    UpdateData(TRUE);
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+    if (getCharacterStatus() != bs.Status)
     {
+        bs.Status = getCharacterStatus();
+        StatusChanged = true;
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
         StatsChanged();
     }
 }
@@ -1795,107 +1807,61 @@ void CD2MainForm::OnBnClickedResurrectedCheck()
 void CD2MainForm::OnBnClickedExpansionCheck()
 {
     UpdateData(TRUE);
-    UpdateTitleDisplay();
-
-    bool bCharClassChanged = false;
-    if (!IsExpansionCharacter)
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+    if (getCharacterStatus() != bs.Status)
     {
-        CString curSel = ToText(&CharClass);
-        if (curSel == _T("Druid") || curSel == _T("Assassin"))
-        {
-            if (!CharInfo->isExpansionCharacter())
-            {
-                // Restore original character
-                CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(CharInfo->getClass()));
-            }
-            else
-            {
-                CharClass.SetCurSel(0);
-            }
-            bCharClassChanged = true;
-        }
-
-        // remove expansion set classes from combo box component
-        auto pos = CharClass.FindStringExact(0, _T("Druid"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-
-        pos = CharClass.FindStringExact(0, _T("Assassin"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-    }
-    else if (CharClass.GetCount() < d2ce::NUM_OF_CLASSES)
-    {
-        // add the expansion set characters to combo box component
-        CharClass.AddString(_T("Druid"));
-        CharClass.AddString(_T("Assassin"));
-
-        if (CharInfo->isExpansionCharacter())
-        {
-            // Restore original character if it was an expansion character
-            switch (CharInfo->getClass())
-            {
-            case d2ce::EnumCharClass::Druid:
-            case d2ce::EnumCharClass::Assassin:
-                bCharClassChanged = true;
-                CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(CharInfo->getClass()));
-                break;
-            }
-        }
-    }
-
-    if (NewStatusSelected())
-    {
-        if (bCharClassChanged)
-        {
-            OnCbnSelchangeCharClassCmb();
-        }
-        else
-        {
-            StatsChanged();
-        }
-    }
-    else if (bCharClassChanged)
-    {
-        OnCbnSelchangeCharClassCmb();
+        bs.Status = getCharacterStatus();
+        StatusChanged = true;
+        CharInfo.updateBasicStats(bs);
+        UpdateTitleDisplay();
+        UpdateClassDisplay();
+        UpdateStartingActDisplay();
+        UpdateCharInfo();
+        StatsChanged();
     }
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnBnClickedLadderCheck()
 {
-    if (NewStatusSelected())
+    UpdateData(TRUE);
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+    if (getCharacterStatus() != bs.Status)
     {
+        bs.Status = getCharacterStatus();
+        StatusChanged = true;
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
         StatsChanged();
     }
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnCbnSelchangeCharTitleCmb()
 {
-    if (NewTitleSelected())
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+    if (getCharacterTitle() != bs.Title)
     {
+        bs.Title = getCharacterTitle();
+        ctrlEditted.insert(CharTitle.GetDlgCtrlID());
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
         StatsChanged();
     }
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnCbnSelchangeStartingActCmb()
 {
+    d2ce::EnumAct startingAct = static_cast<d2ce::EnumAct>(StartingAct.GetCurSel());
     d2ce::BasicStats bs;
-    CharInfo->fillBasicStats(bs);
-    if (static_cast<d2ce::EnumAct>(StartingAct.GetCurSel()) == bs.StartingAct)
+    CharInfo.fillBasicStats(bs);
+    if (bs.StartingAct != startingAct)
     {
-        auto iter = ctrlEditted.find(StartingAct.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
+        bs.StartingAct = startingAct;
         ctrlEditted.insert(StartingAct.GetDlgCtrlID());
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
         StatsChanged();
     }
 }
@@ -1903,9 +1869,13 @@ void CD2MainForm::OnCbnSelchangeStartingActCmb()
 void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 {
     d2ce::BasicStats bs;
-    CharInfo->fillBasicStats(bs);
-    if (bs.DifficultyLastPlayed != static_cast<d2ce::EnumDifficulty>(Difficulty.GetCurSel()))
+    CharInfo.fillBasicStats(bs);
+    if (bs.DifficultyLastPlayed != getDifficultyLastPlayed())
     {
+        bs.DifficultyLastPlayed = getDifficultyLastPlayed();
+        ctrlEditted.insert(Difficulty.GetDlgCtrlID());
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
         StatsChanged();
     }
 }
@@ -1915,12 +1885,10 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 */
 void CD2MainForm::DisplayCharInfo()
 {
-    IsExpansionCharacter = CharInfo->isExpansionCharacter() ? TRUE : FALSE;
-    IsHardcoreCharacter = CharInfo->isHardcoreCharacter() ? TRUE : FALSE;
     CharTitle.SetCurSel(-1);
     SetupBasicStats();
 
-    hasUpgradableRejuvenations = CharInfo->anyUpgradableRejuvenations();
+    hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
     if (!hasUpgradableRejuvenations)
     {
         // implies no potions or all Full Rejuvenation potions so nothing to upgrade
@@ -1928,13 +1896,13 @@ void CD2MainForm::DisplayCharInfo()
     }
     else
     {
-        hasUpgradablePotions = CharInfo->anyUpgradablePotions();
+        hasUpgradablePotions = CharInfo.anyUpgradablePotions();
     }
 
-    hasUpgradableGems = CharInfo->anyUpgradableGems();
+    hasUpgradableGems = CharInfo.anyUpgradableGems();
 
     d2ce::CharStats cs;
-    CharInfo->fillCharacterStats(cs);
+    CharInfo.fillCharacterStats(cs);
 
     SetInt(&CharLevel, cs.Level);
 
@@ -1953,2199 +1921,389 @@ void CD2MainForm::DisplayCharInfo()
     SetInt(&Experience, cs.Experience);
     SetInt(&GoldInBelt, cs.GoldInBelt);
     SetInt(&GoldInStash, cs.GoldInStash);
-    UpdateMaxGold();
-    UpdateStartStats();
-    UpdateMinStats(false);
     CheckStatsLeft();
 
-    EarnedStatPoints = CharInfo->getStatPointsEarned(cs.Level) + MINSTRENGTH + MINDEXTERITY + MINVITALITY + MINENERGY;
-    EarnedSkillPoints = CharInfo->getSkillPointsEarned(cs.Level);
-
-    CharStatusLadder.EnableWindow(CharInfo->getVersion() >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
-    s_levelInfo.ResetVersion(CharInfo->getVersion());
+    CharStatusLadder.EnableWindow(CharInfo.getVersion() >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
+    s_levelInfo.ResetVersion(CharInfo.getVersion());
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::OnFileOpen()
+void CD2MainForm::UpdateCharInfo()
 {
-    CString	defaultDirectory = InitialDir;
-    if (!curPathName.IsEmpty())
-    {
-        defaultDirectory = ExtractFilePath(curPathName);
-        if (defaultDirectory.IsEmpty())
-        {
-            defaultDirectory = InitialDir;
-        }
-    }
-
-    // close any open files
-    if (CharInfo != nullptr && CharInfo->is_open() && DoFileCloseAction() == IDCANCEL)
-    {
-        return;
-    }
-
-    CFileDialog fileDialog(TRUE, _T("d2s"), NULL,
-        OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
-        _T("Diablo II Character Files (*.d2s)|*.d2s|All Files (*.*)|*.*||"), this);
-
-    fileDialog.m_ofn.lpstrInitialDir = (LPCTSTR)defaultDirectory;
-    if (fileDialog.DoModal() != IDOK)
-    {
-        return;
-    }
-
-    AfxGetApp()->AddToRecentFileList(fileDialog.GetPathName());
-
-    OpenFile(fileDialog.GetPathName().GetString());
-}
-//---------------------------------------------------------------------------
-LRESULT CD2MainForm::OnMRUFileOpen(WPARAM, LPARAM lParam)
-{
-    OpenFile((LPCTSTR)lParam);
-    return 0;
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OpenFile(LPCTSTR filename)
-{
-    // close any open files
-    if (CharInfo != nullptr && CharInfo->is_open() && DoFileCloseAction() == IDCANCEL)
-    {
-        return;
-    }
-
-    // allocate memory for character to be loaded
-    if (CharInfo == nullptr)
-    {
-        CharInfo.reset(new d2ce::Character());
-    }
-
-    CStringA newPathNameA(filename);
-
-    // return if open not successful
-    if (!CharInfo->open(newPathNameA), false)
-    {
-        CString errorMsg(CharInfo->getLastError().message().c_str());
-        if (errorMsg.IsEmpty())
-        {
-            errorMsg = _T("Not a valid Diablo II save file.");
-        }
-        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
-
-        Editted = false;
-        OnFileClose();
-        return;
-    }
-
-    if (static_cast<d2ce::CharacterErrc>(CharInfo->getLastError().value()) == d2ce::CharacterErrc::InvalidChecksum)
-    {
-        // Checksum is invalid
-        if (AfxMessageBox(_T("Character File checksum is not valid.\nDo you wish to correct it now?"), MB_ICONERROR | MB_YESNO) == IDYES)
-        {
-            // The checksum was updated on load, so just save the file
-            CharInfo->save();
-        }
-    }
-
-    curPathName = filename;
-    UpdateCharInfoBox(TRUE);
-
-    if (FileExists(ChangeFileExt(curPathName, _T(".bak"))))
-    {
-        RestoreActionEnabled = TRUE;
-    }
-
-    CharInfo->fillCharacterStats(Cs);
-    DisplayCharInfo();
-    ctrlEditted.clear();
-    StatusBar.SetWindowText(_T("Character stats have been refreshed"));
-    UpdateAppTitle();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnFileClose()
-{
-    DoFileCloseAction();
-}
-
-void CD2MainForm::OnUpdateFileClose(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(TRUE);
-}
-//---------------------------------------------------------------------------
-int CD2MainForm::DoFileCloseAction()
-{
-    int ret = IDYES;
-    if (Editted)
-    {
-        ret = AfxMessageBox(_T("Character has been modified.\nSave file?"), MB_ICONQUESTION | MB_YESNOCANCEL);
-        switch (ret)
-        {
-        case IDYES:
-            OnFileSave();
-            break;
-        case IDCANCEL:
-            return ret;
-        }
-    }
-
-    CharInfo.reset();
-    s_levelInfo.ResetVersion(d2ce::EnumCharVersion::v110);
-
-    MAXGOLD = d2ce::GOLD_IN_BELT_LIMIT;
-    MAXSTASHGOLD = d2ce::GOLD_IN_STASH_LIMIT;
-    MINHITPOINTS = 0x100;
-    MINSTAMINA = 0x100;
-    MINMANA = 0x100;
-    MINVITALITY = 1;
-    MINENERGY = 1;
-    MINDEXTERITY = 1;
-    MINSTRENGTH = 1;
-    EarnedStatPoints = 0;
-    EarnedSkillPoints = 0;
-
-    curPathName.Empty();
-    Initialize();
-
-    RestoreActionEnabled = FALSE;
-
-    UpdateCharInfoBox(FALSE);
-    OnSetMessageString(AFX_IDS_IDLEMESSAGE);
-    return ret;
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnFileSave()
-{
-    if (BackupChar)
-        WriteBackupFile();
+    bool statsChanged = false;
 
     d2ce::BasicStats bs;
-    strcpy_s(bs.Name, 16, ToTextA(&CharName));
-    bs.Status = getStatus();
-    bs.Title = d2ce::EnumCharTitle::None;
-    switch (CharTitle.GetCurSel())
+    CharInfo.fillBasicStats(bs);
+
+    auto strValue = ToStdString(&CharName);
+    if (_stricmp(strValue.c_str(), CharInfo.getName()) != 0)
     {
-    case 1:
-        bs.Title = d2ce::EnumCharTitle::SirDame;
-        if (isExpansionCharacter())
+        SetText(&CharName, CharInfo.getName());
+        if (_stricmp(CharInfo.getName(), Bs.Name) == 0)
         {
-            bs.Title |= d2ce::EnumCharTitle::Slayer;
-        }
-        break;
-
-    case 2:
-        bs.Title = d2ce::EnumCharTitle::LordLady;
-        if (isExpansionCharacter())
-        {
-            bs.Title |= d2ce::EnumCharTitle::Champion;
-        }
-        break;
-
-    case 3:
-        bs.Title = d2ce::EnumCharTitle::BaronBaroness;
-        if (isExpansionCharacter())
-        {
-            bs.Title |= d2ce::EnumCharTitle::MPatriarch;
-        }
-        break;
-    }
-
-    bs.Class = static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
-    bs.DifficultyLastPlayed = static_cast<d2ce::EnumDifficulty>(Difficulty.GetCurSel());
-    bs.StartingAct = static_cast<d2ce::EnumAct>(StartingAct.GetCurSel());
-    CharInfo->updateBasicStats(bs);
-
-    std::uint32_t totalStatPoints = 0;
-    Cs.Dexterity = ToInt(&CharDexterity);
-    totalStatPoints += Cs.Dexterity;
-    Cs.Energy = ToInt(&CharEnergy);
-    totalStatPoints += Cs.Energy;
-    Cs.Strength = ToInt(&CharStrength);
-    totalStatPoints += Cs.Strength;
-    Cs.Vitality = ToInt(&CharVitality);
-    totalStatPoints += Cs.Vitality;
-    if (totalStatPoints < 4 * d2ce::MAX_BASICSTATS)
-    {
-        if (totalStatPoints + Cs.StatsLeft < EarnedStatPoints)
-        {
-            Cs.StatsLeft = std::min(EarnedStatPoints - totalStatPoints, d2ce::MAX_BASICSTATS);
-        }
-    }
-    else
-    {
-        Cs.StatsLeft = 0;
-    }
-
-    if (!CharInfo->areSkillsMaxed())
-    {
-        std::uint32_t totalSkillPoints = CharInfo->getSkillPointUsed();
-        if (totalSkillPoints  + Cs.SkillChoices < EarnedSkillPoints)
-        {
-            Cs.SkillChoices = std::min(EarnedSkillPoints - totalSkillPoints, d2ce::MAX_SKILL_CHOICES);
-        }
-    }
-    else
-    {
-        Cs.SkillChoices = 0;
-    }
-
-    Cs.CurLife = ToInt(&CurLife);
-    Cs.MaxLife = ToInt(&MaxLife);
-    Cs.CurMana = ToInt(&CurMana);
-    Cs.MaxMana = ToInt(&MaxMana);
-    Cs.CurStamina = ToInt(&CurStamina);
-    Cs.MaxStamina = ToInt(&MaxStamina);
-
-    Cs.Level = ToInt(&CharLevel);
-    Cs.Experience = ToInt(&Experience);
-    Cs.GoldInBelt = ToInt(&GoldInBelt);
-    Cs.GoldInStash = ToInt(&GoldInStash);
-
-    CharInfo->updateCharacterStats(Cs);
-    if (!CharInfo->save())
-    {
-        CString errorMsg(CharInfo->getLastError().message().c_str());
-        if (errorMsg.IsEmpty())
-        {
-            errorMsg = _T("Corrupted Diablo II save file discovered!");
-        }
-
-        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
-
-        Editted = false;
-        OnFileClose();
-        return;
-    }
-
-    CharInfo->fillCharacterStats(Cs);
-
-    if (ctrlEditted.find(CharName.GetDlgCtrlID()) != ctrlEditted.end())
-    {
-        Editted = false;
-        CharInfo->close();
-        RenameCharacterFiles(ToStdString(&CharName));
-
-        // return if open not successful
-        CStringA newPathNameA(curPathName);
-        if (!CharInfo->open(newPathNameA))
-        {
-            CString errorMsg(CharInfo->getLastError().message().c_str());
-            if (errorMsg.IsEmpty())
+            auto iter = ctrlEditted.find(CharName.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
             {
-                errorMsg = _T("Not a valid Diablo II save file.");
-            }
-            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
-
-            Editted = false;
-            OnFileClose();
-            return;
-        }
-    }
-
-    Initialize();
-    CheckStatsLeft();
-
-    CString msg(_T("Character stats saved"));
-    StatusBar.SetWindowText(msg);
-    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
-}
-
-void CD2MainForm::OnUpdateFileSave(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(Editted ? TRUE : FALSE);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnAppExit()
-{
-    SendMessage(WM_SYSCOMMAND, SC_CLOSE, 0);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::Initialize()
-{
-    ClearAllBoolVars();
-    ctrlEditted.clear();
-}
-//---------------------------------------------------------------------------
-/*
-   Returns true if the user selected a new character status
-*/
-bool CD2MainForm::NewStatusSelected()
-{
-    StatusChanged = CharInfo->getStatus() != getStatus() ? true : false;
-    return StatusChanged;
-}
-//---------------------------------------------------------------------------
-bitmask::bitmask<d2ce::EnumCharStatus> CD2MainForm::getStatus()
-{
-    auto status = CharInfo->getStatus();
-    if (CharStatusResurrected.GetCheck() == 1)
-    {
-        status |= d2ce::EnumCharStatus::Resurrected;
-    }
-    else
-    {
-        status &= ~d2ce::EnumCharStatus::Resurrected;
-    }
-
-    if (CharStatusHardcore.GetCheck() == 1)
-    {
-        status |= d2ce::EnumCharStatus::Hardcore;
-        status &= ~d2ce::EnumCharStatus::Resurrected; // can't be resurrected
-    }
-    else
-    {
-        status &= ~d2ce::EnumCharStatus::Hardcore;
-    }
-
-    if (CharStatusExpansion.GetCheck() == 1)
-    {
-        status |= d2ce::EnumCharStatus::Expansion;
-    }
-    else
-    {
-        status &= ~d2ce::EnumCharStatus::Expansion;
-    }
-
-    if (CharStatusLadder.GetCheck() == 1)
-    {
-        status |= d2ce::EnumCharStatus::Ladder;
-    }
-    else
-    {
-        status &= ~d2ce::EnumCharStatus::Ladder;
-    }
-
-    return status;
-}
-//---------------------------------------------------------------------------
-/*
-   Returns true if the user selected a new character title
-*/
-bool CD2MainForm::NewTitleSelected()
-{
-    // Get previous Selections
-    int prevSel = (CharInfo->getTitle().bits() & 0x0C) >> 2;
-
-    if (CharTitle.GetCurSel() != prevSel)
-    {
-        ctrlEditted.insert(CharTitle.GetDlgCtrlID());
-        return true;
-    }
-
-    auto iter = ctrlEditted.find(CharTitle.GetDlgCtrlID());
-    if (iter != ctrlEditted.end())
-    {
-        ctrlEditted.erase(iter);
-    }
-    return false;
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnViewRefresh()
-{
-    if (Editted)
-    {
-        if (AfxMessageBox(_T("Character has been modified.\nAre you sure you want to refresh and lose all your changes?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
-        {
-            return;
-        }
-    }
-
-    Initialize();
-
-    CharInfo->refresh();
-    CharInfo->fillCharacterStats(Cs);
-    DisplayCharInfo();
-
-    ctrlEditted.clear();
-
-    StatusBar.SetWindowText(_T("Character stats have been refreshed"));
-}
-
-void CD2MainForm::OnUpdateViewRefresh(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(TRUE);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::RenameCharacterFiles(const std::string& newNameA)
-{
-    CString curName = ExtractFileName(curPathName);
-    CString curPath = ExtractFilePath(curPathName) + _T("\\");
-    CString fullFileName = curPathName;
-    CString newName(newNameA.c_str());
-
-    // remove file extension
-    CString sExt = ExtractFileExt(curName);
-    if (!sExt.IsEmpty())
-    {
-        curName.Delete(curName.GetLength() - sExt.GetLength(), sExt.GetLength());
-    }
-
-    // do nothing if name hasn't changed
-    if (curName.CompareNoCase(newName) == 0)
-    {
-        return;
-    }
-
-    // otherwise rename the other files that belong to this character
-    curName = curPathName;
-    if (!sExt.IsEmpty())
-    {
-        curName.Delete(curName.GetLength() - sExt.GetLength(), sExt.GetLength());
-    }
-    curName += ".*";
-
-    CString existingFileName;
-    CString newFileName;
-    WIN32_FIND_DATA wfd;
-    HANDLE hFind = ::FindFirstFile(curName, &wfd);
-    if (hFind != INVALID_HANDLE_VALUE)
-    {
-        do
-        {
-            if ((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-            {
-                existingFileName = curPath + wfd.cFileName;
-                sExt = ExtractFileExt(existingFileName);
-                newFileName = curPath + newName + sExt;
-                auto result = MoveFile(existingFileName, newFileName);
-                if (result != 0)
-                {
-                    AfxMessageBox(_T("Problem renaming: ") + existingFileName, MB_OK | MB_ICONERROR);
-                }
-            }
-        } while (::FindNextFile(hFind, &wfd));
-
-        ::FindClose(hFind);
-    }
-
-    curPathName = curPath + newName + _T(".d2s");
-    UpdateAppTitle();
-}
-//-------------------------------------------------------------------------
-void CD2MainForm::OnBnClickedMaxAllBtn()
-{
-    OnOptionsMaxEverything();
-}
-void CD2MainForm::OnOptionsMaxEverything()
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    ctrlEditted.clear();
-    SetInt(&CharLevel, d2ce::NUM_OF_LEVELS);
-    ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-
-    EarnedStatPoints = MINSTRENGTH + MINDEXTERITY + MINVITALITY + MINENERGY + d2ce::MAX_STAT_POINTS;
-    std::uint32_t curTotalStatPoints = ToInt(&CharStrength) + ToInt(&CharDexterity) + ToInt(&CharVitality) + ToInt(&CharEnergy);
-    if ((curTotalStatPoints + Cs.StatsLeft) < EarnedStatPoints)
-    {
-        // we have more stats to give
-        Cs.StatsLeft = std::min(EarnedStatPoints - curTotalStatPoints, d2ce::MAX_BASICSTATS);
-        StatsLeftChanged = true;
-    }
-
-    SetInt(&Experience, d2ce::MAX_EXPERIENCE);
-    ctrlEditted.insert(Experience.GetDlgCtrlID());
-    SetText(&NextExperience, _T("NONE"));
-
-    UpdateMaxGold();
-    SetInt(&GoldInBelt, MAXGOLD);
-    ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
-    SetInt(&GoldInStash, MAXSTASHGOLD);
-    ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
-
-    EarnedSkillPoints = d2ce::MAX_SKILL_CHOICES_EARNED;
-    std::uint32_t curTotalSkillPoints = CharInfo->getSkillPointUsed();
-    if ((curTotalSkillPoints + Cs.SkillChoices) < EarnedSkillPoints)
-    {
-        // we have more skills to aquire
-        Cs.SkillChoices = std::min(EarnedSkillPoints - curTotalSkillPoints, d2ce::MAX_SKILL_CHOICES);
-        SkillChoicesChanged = true;
-    }
-
-    CharInfo->upgradeGems();
-    CharInfo->upgradePotions();
-    CharInfo->fillAllStackables();
-    CharInfo->maxDurabilityAllItems();
-    ItemsChanged = true;
-
-    UpdateMinStats();
-    CheckStatsLeft();
-    StatsChanged();
-}
-void CD2MainForm::OnUpdateOptionsMaxEverything(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(MaxAllButton.IsWindowEnabled());
-}
-//---------------------------------------------------------------------------
-/*
-   Looks in the Registry for the location of where Diablo II is installed
-   and sets the Open Dialog to start in the "save" directory
-*/
-#define MAX_VALUE_NAME 4096
-void CD2MainForm::SetStartDir()
-{
-    // Check to see if this is the one to use by camparing the driver's path
-    HKEY regKey = 0;
-    if (::RegOpenKeyEx(HKEY_CURRENT_USER, _T("SOFTWARE\\Blizzard Entertainment\\Diablo II"), 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
-    {
-        if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Blizzard Entertainment\\Diablo II"), 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
-        {
-            InitialDir.Empty();
-            return;
-        }
-    }
-
-    std::vector<wchar_t> valueName(MAX_VALUE_NAME + 1, 0);
-    DWORD valueNameLength = MAX_VALUE_NAME;
-    DWORD valueType = 0;
-    if ((RegQueryValueEx(regKey, _T("NewSavePath"), 0, &valueType, (LPBYTE)&valueName[0], &valueNameLength) == ERROR_SUCCESS) && (valueType == REG_SZ))
-    {
-        InitialDir = &valueName[0];
-    }
-    else if ((RegQueryValueEx(regKey, _T("Save Path"), 0, &valueType, (LPBYTE)&valueName[0], &valueNameLength) == ERROR_SUCCESS) && (valueType == REG_SZ))
-    {
-        InitialDir = &valueName[0];
-    }
-
-    RegCloseKey(regKey);
-    regKey = 0;
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::SetupBasicStats()
-{
-    d2ce::BasicStats bs;
-    CharInfo->fillBasicStats(bs);
-
-    // display character stats
-    SetText(&CharName, &bs.Name[0]);
-
-    if (IsHardcoreCharacter)
-    {
-        if (CharInfo->isResurrectedCharacter())
-        {
-            // Hardcore characters can't ever have been ressurrected
-            CharInfo->setIsResurrectedCharacter(false);
-            StatusChanged = true;
-            Editted = true;
-        }
-
-        bool deadStatChanged = false;
-        if (CheckIsHardcoreDead(deadStatChanged))
-        {
-            Editted = true;
-        }
-    }
-
-    // set state of Status checkbox
-    CharStatusHardcore.SetCheck(IsHardcoreCharacter ? 1 : 0);
-    CharStatusResurrected.SetCheck(CharInfo->isResurrectedCharacter() ? 1 : 0);
-    CharStatusExpansion.SetCheck(IsExpansionCharacter ? 1 : 0);
-    CharStatusLadder.SetCheck(CharInfo->isLadderCharacter() ? 1 : 0);
-
-    if (!IsExpansionCharacter)
-    {
-        // remove expansion set classes from combo box component
-        auto pos = CharClass.FindStringExact(0, _T("Druid"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-
-        pos = CharClass.FindStringExact(0, _T("Assassin"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-    }
-    else if (CharClass.GetCount() < d2ce::NUM_OF_CLASSES)
-    {
-        // add the expansion set characters to combo box component
-        CharClass.AddString(_T("Druid"));
-        CharClass.AddString(_T("Assassin"));
-    }
-
-    CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(bs.Class));
-    UpdateTitleDisplay();
-    Difficulty.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(bs.DifficultyLastPlayed));
-
-    if (!IsExpansionCharacter)
-    {
-        auto pos = StartingAct.FindStringExact(0, _T("V"));
-        if (pos != CB_ERR)
-        {
-            StartingAct.DeleteString(pos);
-        }
-    }
-    else if (StartingAct.GetCount() < d2ce::NUM_OF_ACTS)
-    {
-        StartingAct.AddString(_T("V"));
-    }
-
-    StartingAct.SetCurSel(static_cast <std::underlying_type_t<d2ce::EnumAct>>(bs.StartingAct));
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::StatsChanged()
-{
-    if (!Editted && (ItemsChanged || !ctrlEditted.empty() || StatusChanged ||
-        StatsLeftChanged || SkillChoicesChanged || WaypointsChanged || QuestsChanged))
-    {
-        Editted = true;
-        UpdateAppTitle();
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::CheckStatsSkillsLevel(std::uint32_t prevLevel)
-{
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-
-    // Check Stats Left 
-    std::uint32_t curTotalStatPoints = ToInt(&CharStrength) + ToInt(&CharDexterity) + ToInt(&CharVitality) + ToInt(&CharEnergy);
-    if ((prevLevel > curLevel) && (Cs.StatsLeft > 0))
-    {
-        // we went down so reduce by that amount StatsLeft and check if there is any missing
-        std::uint32_t statsLeftReduced = (prevLevel - curLevel) * 5;
-        if (Cs.StatsLeft > statsLeftReduced)
-        {
-            Cs.StatsLeft -= statsLeftReduced;
-        }
-        else
-        {
-            Cs.StatsLeft = 0;
-        }
-        StatsLeftChanged = true;
-    }
-
-    // Make sure we have enough Stat Points for this level
-    EarnedStatPoints = CharInfo->getStatPointsEarned(curLevel) + MINSTRENGTH + MINDEXTERITY + MINVITALITY + MINENERGY;
-    if (curTotalStatPoints < 4 * d2ce::MAX_BASICSTATS)
-    {
-        if (curTotalStatPoints + Cs.StatsLeft < EarnedStatPoints)
-        {
-            Cs.StatsLeft = std::min(EarnedStatPoints - curTotalStatPoints, d2ce::MAX_BASICSTATS);
-            StatsLeftChanged = true;
-        }
-    }
-    else if(Cs.StatsLeft > 0)
-    {
-        Cs.StatsLeft = 0;
-        StatsLeftChanged = true;
-    }
-
-    // Adjust Skills Left
-    std::uint32_t curPoints = CharInfo->getSkillPointUsed();
-    if ((prevLevel > curLevel) && (Cs.SkillChoices > 0))
-    {
-        // we went down so reduce by that amount StatsLeft and check if there is any missing
-        std::uint32_t skillChoicesReduced = prevLevel - curLevel;
-        if (Cs.SkillChoices > skillChoicesReduced)
-        {
-            Cs.SkillChoices -= skillChoicesReduced;
-        }
-        else
-        {
-            Cs.SkillChoices = 0;
-        }
-        SkillChoicesChanged = true;
-    }
-
-    EarnedSkillPoints = CharInfo->getSkillPointsEarned(curLevel);
-    if (!CharInfo->areSkillsMaxed())
-    {
-        if (curPoints + Cs.SkillChoices < EarnedSkillPoints)
-        {
-            Cs.SkillChoices = std::min(EarnedSkillPoints - curPoints, d2ce::MAX_SKILL_CHOICES);
-            SkillChoicesChanged = true;
-        }
-    }
-    else if (Cs.SkillChoices > 0)
-    {
-        Cs.SkillChoices = 0;
-        SkillChoicesChanged = true;
-    }
-
-    CheckStatsLeft();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateStatsLeft()
-{
-    std::uint32_t statsLeft = Cs.StatsLeft;
-    std::uint32_t totalStatPoints = ToInt(&CharStrength) + ToInt(&CharDexterity) + ToInt(&CharVitality) + ToInt(&CharEnergy);
-    EarnedStatPoints = CharInfo->getStatPointsEarned(Cs.Level) + MINSTRENGTH + MINDEXTERITY + MINVITALITY + MINENERGY;
-    if (totalStatPoints < 4 * d2ce::MAX_BASICSTATS)
-    {
-        if (totalStatPoints + Cs.StatsLeft < EarnedStatPoints)
-        {
-            statsLeft = std::min(EarnedStatPoints - totalStatPoints, d2ce::MAX_BASICSTATS);
-        }
-    }
-    else
-    {
-        statsLeft = 0;
-    }
-
-    if (statsLeft != Cs.StatsLeft)
-    {
-        Cs.StatsLeft = statsLeft;
-        StatsLeftChanged = true;
-        CheckStatsLeft();
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::CheckStatsLeft()
-{
-    if (Cs.StatsLeft > 0)
-    {
-        if (ToInt(&CharStrength) < d2ce::MAX_BASICSTATS)
-        {
-            StrengthPlusButton.ShowWindow(SW_SHOWNORMAL);
-            StrengthPlusButton.EnableWindow(TRUE);
-        }
-
-        if (ToInt(&CharDexterity) < d2ce::MAX_BASICSTATS)
-        {
-            DexterityPlusButton.ShowWindow(SW_SHOWNORMAL);
-            DexterityPlusButton.EnableWindow(TRUE);
-        }
-
-        if (ToInt(&CharVitality) < d2ce::MAX_BASICSTATS)
-        {
-            VitalityPlusButton.ShowWindow(SW_SHOWNORMAL);
-            VitalityPlusButton.EnableWindow(TRUE);
-        }
-
-        if (ToInt(&CharEnergy) < d2ce::MAX_BASICSTATS)
-        {
-            EnergyPlusButton.ShowWindow(SW_SHOWNORMAL);
-            EnergyPlusButton.EnableWindow(TRUE);
-        }
-
-        StatsLeft.ShowWindow(SW_SHOWNORMAL);
-        StatsLeftCtrl.ShowWindow(SW_SHOWNORMAL);
-        SetInt(&StatsLeft, Cs.StatsLeft);
-    }
-    else
-    {
-        StrengthPlusButton.EnableWindow(FALSE);
-        StrengthPlusButton.ShowWindow(SW_HIDE);
-        DexterityPlusButton.EnableWindow(FALSE);
-        DexterityPlusButton.ShowWindow(SW_HIDE);
-        VitalityPlusButton.EnableWindow(FALSE);
-        VitalityPlusButton.ShowWindow(SW_HIDE);
-        VitalityPlusButton.EnableWindow(FALSE);
-        EnergyPlusButton.ShowWindow(SW_HIDE);
-
-        StatsLeft.SetWindowText(_T(""));
-        StatsLeft.ShowWindow(SW_HIDE);
-        StatsLeftCtrl.ShowWindow(SW_HIDE);
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateMaxGold()
-{
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-    MAXGOLD = curLevel * 10000;
-
-    if (CharInfo->getVersion() >= d2ce::EnumCharVersion::v110) // 1.10+ character
-    {
-        MAXSTASHGOLD = d2ce::GOLD_IN_STASH_LIMIT;
-    }
-    else if (curLevel < 31) // 1.00 - 1.09 character
-    {
-        MAXSTASHGOLD = (curLevel / 10 + 1) * 50000;
-    }
-    else if (CharInfo->getVersion() >= d2ce::EnumCharVersion::v107) // 1.07 - 1.09 character
-    {
-        MAXSTASHGOLD = (curLevel / 2 + 1) * 50000;
-    }
-    else // pre 1.07 character
-    {
-        if (curLevel < 90)
-        {
-            MAXSTASHGOLD = (curLevel / 10 + 1) * 50000;
-        }
-        else
-        {
-            MAXSTASHGOLD = 2000000;
-        }
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateStartStats()
-{
-    switch (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()))
-    {
-    case d2ce::EnumCharClass::Amazon:
-        MINVITALITY = d2ce::AMAZON_VITALITY_MIN;
-        MINENERGY = d2ce::AMAZON_ENERGY_MIN;
-        MINDEXTERITY = d2ce::AMAZON_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::AMAZON_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Assassin:
-        MINVITALITY = d2ce::ASSASSIN_VITALITY_MIN;
-        MINENERGY = d2ce::ASSASSIN_ENERGY_MIN;
-        MINDEXTERITY = d2ce::ASSASSIN_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::ASSASSIN_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Sorceress:
-        MINVITALITY = d2ce::SORCERESS_VITALITY_MIN;
-        MINENERGY = d2ce::SORCERESS_ENERGY_MIN;
-        MINDEXTERITY = d2ce::SORCERESS_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::SORCERESS_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Barbarian:
-        MINVITALITY = d2ce::BARBARIAN_VITALITY_MIN;
-        MINENERGY = d2ce::BARBARIAN_ENERGY_MIN;
-        MINDEXTERITY = d2ce::BARBARIAN_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::BARBARIAN_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Druid:
-        MINVITALITY = d2ce::DRUID_VITALITY_MIN;
-        MINENERGY = d2ce::DRUID_ENERGY_MIN;
-        MINDEXTERITY = d2ce::DRUID_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::DRUID_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Necromancer:
-        MINVITALITY = d2ce::NECROMANCER_VITALITY_MIN;
-        MINENERGY = d2ce::NECROMANCER_ENERGY_MIN;
-        MINDEXTERITY = d2ce::NECROMANCER_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::NECROMANCER_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Paladin:
-        MINVITALITY = d2ce::PALADIN_VITALITY_MIN;
-        MINENERGY = d2ce::PALADIN_ENERGY_MIN;
-        MINDEXTERITY = d2ce::PALADIN_DEXTERITY_MIN;
-        MINSTRENGTH = d2ce::PALADIN_STRENGTH_MIN;
-        break;
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateMinStats(bool applyChanges)
-{
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-    std::uint32_t curVitality = std::min(ToInt(&CharVitality), d2ce::MAX_BASICSTATS);
-    std::uint32_t curEnergy = std::min(ToInt(&CharEnergy), d2ce::MAX_BASICSTATS);
-    switch (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()))
-    {
-    case d2ce::EnumCharClass::Amazon:
-        curVitality = std::max(curVitality, d2ce::AMAZON_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::AMAZON_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x3200 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::AMAZON_VITALITY_MIN) << 8) * 3);
-        MINSTAMINA = 0x5400 + ((curLevel + curVitality - d2ce::AMAZON_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x0F00 + std::uint32_t(((curLevel + curEnergy - d2ce::AMAZON_ENERGY_MIN - 1) << 8) * 1.5);
-        break;
-
-    case d2ce::EnumCharClass::Assassin:
-        curVitality = std::max(curVitality, d2ce::ASSASSIN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::ASSASSIN_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x5400 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 3);
-        MINSTAMINA = 0x5F00 + ((curLevel - 1) << 8) + std::uint32_t((((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 1.25));
-        MINMANA = 0x1900 + std::uint32_t(((curLevel - 1) << 8) * 1.5) + std::uint32_t((((curEnergy - d2ce::ASSASSIN_ENERGY_MIN) << 8) * 1.75));
-        break;
-
-    case d2ce::EnumCharClass::Sorceress:
-        curVitality = std::max(curVitality, d2ce::SORCERESS_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::SORCERESS_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x5400 + ((curLevel - 1) << 8) + (((curVitality - d2ce::SORCERESS_VITALITY_MIN) << 8) * 2);
-        MINSTAMINA = 0x4A00 + ((curLevel + curVitality - d2ce::SORCERESS_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x2300 + ((curLevel + curEnergy - d2ce::SORCERESS_ENERGY_MIN - 1) << 8) * 2;
-        break;
-
-    case d2ce::EnumCharClass::Barbarian:
-        curVitality = std::max(curVitality, d2ce::BARBARIAN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::BARBARIAN_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x3700 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::BARBARIAN_VITALITY_MIN) << 8) * 4);
-        MINSTAMINA = 0x5C00 + ((curLevel + curVitality - d2ce::BARBARIAN_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x0A00 + ((curLevel + curEnergy - d2ce::BARBARIAN_ENERGY_MIN - 1) << 8);
-        break;
-
-    case d2ce::EnumCharClass::Druid:
-        curVitality = std::max(curVitality, d2ce::DRUID_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::DRUID_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x3700 + std::uint32_t((((curLevel - 1) << 8) * 1.5)) + (((curVitality - d2ce::DRUID_VITALITY_MIN) << 8) * 2);
-        MINSTAMINA = 0x5400 + ((curLevel + curVitality - d2ce::DRUID_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x0A00 + ((curLevel - 1) << 8) + (((curEnergy - d2ce::DRUID_ENERGY_MIN) << 8) * 2);
-        break;
-
-    case d2ce::EnumCharClass::Necromancer:
-        curVitality = std::max(curVitality, d2ce::NECROMANCER_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::NECROMANCER_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x2D00 + std::uint32_t((((curLevel - 1) << 8) * 1.5)) + (((curVitality - d2ce::NECROMANCER_VITALITY_MIN) << 8) * 2);
-        MINSTAMINA = 0x4F00 + ((curLevel + curVitality - d2ce::NECROMANCER_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x1900 + ((curLevel + curEnergy - d2ce::NECROMANCER_ENERGY_MIN - 1) << 8) * 2;
-        break;
-
-    case d2ce::EnumCharClass::Paladin:
-        curVitality = std::max(curVitality, d2ce::PALADIN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::PALADIN_ENERGY_MIN); // start stat
-        MINHITPOINTS = 0x3700 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::PALADIN_VITALITY_MIN) << 8) * 3);
-        MINSTAMINA = 0x5900 + ((curLevel + curVitality - d2ce::PALADIN_VITALITY_MIN - 1) << 8);
-        MINMANA = 0x0F00 + std::uint32_t(((curLevel + curEnergy - d2ce::PALADIN_ENERGY_MIN - 1) << 8) * 1.5);
-        break;
-    }
-
-    // you get +20 Life for completing Act 3 Quest 1 (The Golden Bird) for each difficulty level
-    MINHITPOINTS += CharInfo->getLifePointsEarned() << 8;
-
-    if (applyChanges)
-    {
-        // Make sure the values make sense
-        bool statsChanged = false;
-        std::uint32_t value = std::min(ToInt(&MaxLife), d2ce::MAX_LMS);
-        if (value < MINHITPOINTS)
-        {
-            SetInt(&MaxLife, MINHITPOINTS);
-            SetInt(&CurLife, MINHITPOINTS);
-            ctrlEditted.insert(MaxLife.GetDlgCtrlID());
-            ctrlEditted.insert(CurLife.GetDlgCtrlID());
-            statsChanged = true;
-        }
-
-        value = std::min(ToInt(&MaxStamina), d2ce::MAX_LMS);
-        if (value < MINSTAMINA)
-        {
-            SetInt(&MaxStamina, MINSTAMINA);
-            SetInt(&CurStamina, MINSTAMINA);
-            ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-            ctrlEditted.insert(CurStamina.GetDlgCtrlID());
-            statsChanged = true;
-        }
-
-        value = std::min(ToInt(&MaxMana), d2ce::MAX_LMS);
-        if (value < MINMANA)
-        {
-            SetInt(&MaxMana, MINMANA);
-            SetInt(&CurMana, MINMANA);
-            ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-            ctrlEditted.insert(CurMana.GetDlgCtrlID());
-            statsChanged = true;
-        }
-
-        if (statsChanged)
-        {
-            StatsChanged();
-        }
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateAppTitle()
-{
-    CString newAppTitle;
-    if (newAppTitle.LoadString(AFX_IDS_APP_TITLE) != 0)
-    {
-        if (!curPathName.IsEmpty())
-        {
-            newAppTitle += _T(" - ") + ExtractFileName(curPathName);
-            if (Editted)
-            {
-                newAppTitle += "*";
-            }
-            switch (CharInfo->getVersion())
-            {
-            case d2ce::EnumCharVersion::v110:
-                newAppTitle += _T(" (Version 1.10-1.14d)");
-                break;
-            case d2ce::EnumCharVersion::v109:
-                newAppTitle += _T(" (Version 1.09)");
-                break;
-            case d2ce::EnumCharVersion::v108:
-                newAppTitle += _T(" (Version Standard 1.08)");
-                break;
-            case d2ce::EnumCharVersion::v107:
-                newAppTitle += _T(" (Version 1.07/Expansion 1.08)");
-                break;
-            case d2ce::EnumCharVersion::v100:
-                newAppTitle += _T(" (Version 1.00 - 1.06)");
-                break;
-            }
-        }
-        SetWindowText(newAppTitle);
-    }
-}
-//---------------------------------------------------------------------------
-/*
-   Makes sure the correct gender titles are displayed based on the
-   character's class
-*/
-void CD2MainForm::UpdateTitleDisplay()
-{
-    int curSel = CharTitle.GetCurSel();
-    if (curSel < 0)
-    {
-        curSel = (CharInfo->getTitle().bits() & 0x0C) >> 2;
-    }
-
-    CharTitle.ResetContent();
-
-    const char** pValidTitles = nullptr;
-    switch (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()))
-    {
-    case d2ce::EnumCharClass::Amazon:
-    case d2ce::EnumCharClass::Assassin:
-    case d2ce::EnumCharClass::Sorceress: // add titles for female characters
-        if (IsExpansionCharacter)
-        {
-            if (IsHardcoreCharacter)
-            {
-                pValidTitles = HardcoreExpansionTitle;
-            }
-            else
-            {
-                pValidTitles = FemaleHardcoreTitle;
-            }
-        }
-        else if (IsHardcoreCharacter)
-        {
-            pValidTitles = FemaleHardcoreTitle;
-        }
-        else
-        {
-            pValidTitles = FemaleTitle;
-        }
-        break;
-    case d2ce::EnumCharClass::Barbarian:
-    case d2ce::EnumCharClass::Druid:
-    case d2ce::EnumCharClass::Necromancer:
-    case d2ce::EnumCharClass::Paladin: // add titles for male characters
-    default:
-        if (IsExpansionCharacter)
-        {
-            if (IsHardcoreCharacter)
-            {
-                pValidTitles = HardcoreExpansionTitle;
-            }
-            else
-            {
-                pValidTitles = MaleHardcoreTitle;
-            }
-        }
-        else if (IsHardcoreCharacter)
-        {
-            pValidTitles = MaleHardcoreTitle;
-        }
-        else
-        {
-            pValidTitles = MaleTitle;
-        }
-        break;
-    }
-
-    if (pValidTitles != nullptr)
-    {
-        for (std::uint32_t i = 0; i < NUM_OF_TITLES; i++)
-        {
-            CharTitle.AddString(CString(pValidTitles[i]));
-        }
-    }
-
-    CharTitle.SetCurSel(curSel);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnOptionsUpgradeGems()
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    auto numConverted = CharInfo->upgradeGems();
-    CString msg;
-    msg.Format(_T("%zd gem(s) have been upgraded to perfect state"), numConverted);
-    if (numConverted > 0)
-    {
-        hasUpgradableGems = false;
-        StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
-    }
-
-    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
-}
-void CD2MainForm::OnUpdateOptionsUpgradeGems(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(hasUpgradableGems ? TRUE : FALSE);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnOptionsUpgradePotions()
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    auto numConverted = CharInfo->upgradePotions();
-    CString msg;
-    msg.Format(_T("%zd potion(s) have been upgraded to their highest level"), numConverted);
-    if (numConverted > 0)
-    {
-        hasUpgradablePotions = false;
-        hasUpgradableRejuvenations = CharInfo->anyUpgradableRejuvenations();
-        StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
-    }
-
-    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
-}
-
-void CD2MainForm::OnUpdateOptionsUpgradePotions(CCmdUI* pCmdUI)
-{
-    pCmdUI->Enable(hasUpgradablePotions ? TRUE : FALSE);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnOptionsUpgradeRejuvenation()
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    auto numConverted = CharInfo->upgradeRejuvenationPotions();
-    CString msg;
-    msg.Format(_T("%zd potion(s) have been upgraded to Full Rejuvenation potions"), numConverted);
-    if (numConverted > 0)
-    {
-        hasUpgradableRejuvenations = false;
-        hasUpgradablePotions = false;
-        StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
-    }
-
-    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
-}
-
-void CD2MainForm::OnUpdateOptionsUpgradeRejuvenation(CCmdUI* pCmdUI)
-{
-    pCmdUI->Enable(hasUpgradableRejuvenations ? TRUE : FALSE);
-}
-//---------------------------------------------------------------------------
-/*
-   Makes a backup copy of the character file and overwrites any
-   existing backup file
-*/
-void CD2MainForm::WriteBackupFile()
-{
-    CStringA oldPathNameA(curPathName);
-    CString backupname = ChangeFileExt(curPathName, _T(".bak"));
-    if (CopyFile(curPathName, backupname, false))
-    {
-        RestoreActionEnabled = TRUE;
-    }
-}
-
-//---------------------------------------------------------------------------
-void CD2MainForm::OnViewSkillTree()
-{
-    CD2SkillTreeForm dlg(*this);
-    dlg.DoModal();
-}
-
-void CD2MainForm::OnUpdateViewSkillTree(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(EditSkillsButton.IsWindowEnabled());
-}
-
-void CD2MainForm::OnBnClickedEditSkillsBtn()
-{
-    OnViewSkillTree();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnViewQuests()
-{
-    CD2QuestsForm dlg(*this);
-    dlg.DoModal();
-}
-
-void CD2MainForm::OnUpdateViewQuests(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(QuestsButton.IsWindowEnabled());
-}
-
-void CD2MainForm::OnBnClickedQuestsBtn()
-{
-    OnViewQuests();
-}
-//---------------------------------------------------------------------------
-const d2ce::ActsInfo& CD2MainForm::getQuests()
-{
-    if (CharInfo == nullptr)
-    {
-        static d2ce::ActsInfo dummuy;
-        return dummuy;
-    }
-
-    return CharInfo->getQuests();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::updateQuests(const d2ce::ActsInfo& qi)
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    CharInfo->updateQuests(qi);
-    QuestsChanged = true;
-    StatsChanged();
-}
-//---------------------------------------------------------------------------
-d2ce::EnumCharClass CD2MainForm::getCharacterClass()
-{
-    if (CharInfo == nullptr)
-    {
-        return d2ce::EnumCharClass::Amazon;
-    }
-
-    return static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
-}
-//---------------------------------------------------------------------------
-std::uint8_t(&CD2MainForm::getSkills())[d2ce::NUM_OF_SKILLS]
-{
-    static std::uint8_t dummy[d2ce::NUM_OF_SKILLS] = {0};
-    if (CharInfo == nullptr)
-    {
-        return dummy;
-    }
-
-    return CharInfo->getSkills();
-}
-std::uint32_t CD2MainForm::getSkillChoices()
-{
-    return Cs.SkillChoices;
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::updateSkills(const std::uint8_t (&updated_skills)[d2ce::NUM_OF_SKILLS])
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    CharInfo->updateSkills(updated_skills);
-    if (!CharInfo->areSkillsMaxed())
-    {
-        std::uint32_t totalSkillPoints = CharInfo->getSkillPointUsed();
-        if (totalSkillPoints + Cs.SkillChoices < EarnedSkillPoints)
-        {
-            Cs.SkillChoices = std::min(EarnedSkillPoints - totalSkillPoints, d2ce::MAX_SKILL_CHOICES);
-        }
-    }
-    else
-    {
-        Cs.SkillChoices = 0;
-    }
-
-    SkillChoicesChanged = true;
-    StatsChanged();
-}
-//---------------------------------------------------------------------------
-const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getGPSs()
-{
-    static std::vector<std::reference_wrapper<d2ce::Item>> dummy;
-
-    if (CharInfo == nullptr)
-    {
-        return dummy;
-    }
-
-    return CharInfo->getGPSs();
-}
-//---------------------------------------------------------------------------
-/*
-   Converts the specified original gems, potions or skulls to the specified
-   final gem, potion or skull.
-   Returns the number of gems converted.
-*/
-size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4])
-{
-    if (CharInfo == nullptr)
-    {
-        return 0;
-    }
-
-    auto numConverted = CharInfo->convertGPSs(existingGem, desiredGem);
-    if (numConverted > 0)
-    {
-        hasUpgradableRejuvenations = CharInfo->anyUpgradableRejuvenations();
-        if (!hasUpgradableRejuvenations)
-        {
-            // implies no potions or all Full Rejuvenation potions so nothing to upgrade
-            hasUpgradablePotions = false;
-        }
-        else
-        {
-            hasUpgradablePotions = CharInfo->anyUpgradablePotions();
-        }
-
-        hasUpgradableGems = CharInfo->anyUpgradableGems();
-
-        ItemsChanged = true;
-        StatsChanged();
-    }
-
-    return numConverted;
-}
-//---------------------------------------------------------------------------
-uint32_t CD2MainForm::getSkillPointsEarned() const
-{
-    if (CharInfo == nullptr)
-    {
-        return 0;
-    }
-
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-    return CharInfo->getSkillPointsEarned(curLevel);
-}
-//---------------------------------------------------------------------------
-uint32_t CD2MainForm::getStatPointsEarned() const
-{
-    if (CharInfo == nullptr)
-    {
-        return 0;
-    }
-
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-    return CharInfo->getStatPointsEarned(curLevel);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnViewWaypoints()
-{
-    CD2WaypointsForm dlg(*this);
-    dlg.DoModal();
-}
-
-void CD2MainForm::OnUpdateViewWaypoints(CCmdUI* pCmdUI)
-{
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(WaypointsButton.IsWindowEnabled());
-}
-
-void CD2MainForm::OnBnClickedWaypointsBtn()
-{
-    OnViewWaypoints();
-}
-//---------------------------------------------------------------------------
-std::uint64_t CD2MainForm::getWaypoints(d2ce::EnumDifficulty difficulty) const
-{
-    if (CharInfo == nullptr)
-    {
-        return 0;
-    }
-
-    return CharInfo->getWaypoints(difficulty);
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue)
-{
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    CharInfo->setWaypoints(difficulty, newvalue);
-    WaypointsChanged = true;
-    StatsChanged();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharName()
-{
-    prev_name = ToStdString(&CharName);
-}
-void CD2MainForm::OnEnChangeCharName()
-{
-    ctrlEditted.insert(CharName.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharName()
-{
-    auto newName = ToStdString(&CharName);
-    if (newName != prev_name)
-    {
-        CString newFileName = ExtractFilePath(curPathName) + _T("\\") + ToText(&CharName) + _T(".d2s");
-        if (FileExists(newFileName) && Editted)
-        {
-            AfxMessageBox(_T("A file with that name already exists.  Please select another name."), MB_OK | MB_ICONEXCLAMATION);
-            SetText(&CharName, prev_name.c_str());
-
-            if (_stricmp(prev_name.c_str(), CharInfo->getName()) == 0)
-            {
-                auto iter = ctrlEditted.find(CharName.GetDlgCtrlID());
-                if (iter != ctrlEditted.end())
-                {
-                    ctrlEditted.erase(iter);
-                }
-            }
-            else
-            {
-                ctrlEditted.insert(CharName.GetDlgCtrlID());
+                ctrlEditted.erase(iter);
             }
         }
         else
         {
             ctrlEditted.insert(CharName.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharDexterity()
-{
-    OrigValue = ToInt(&CharDexterity);
-}
-void CD2MainForm::OnEnChangeCharDexterity()
-{
-    ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharDexterity()
-{
-    std::uint32_t value = ToInt(&CharDexterity);
-    if (value > d2ce::MAX_BASICSTATS)
-    {
-        value = d2ce::MAX_BASICSTATS;
-        SetInt(&CharDexterity, value);
-    }
-    else if (value < MINDEXTERITY)
-    {
-        value = MINDEXTERITY;
-        SetInt(&CharDexterity, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CharDexterity, value);
-        ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
-        UpdateStatsLeft();
-        StatsChanged();
-    }
-    else if (value == Cs.Dexterity)
-    {
-        auto iter = ctrlEditted.find(CharDexterity.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
+            statsChanged = true;
         }
     }
-    else
+
+    if (getCharacterClass() != bs.Class)
     {
-        ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
-    }
-}
-void CD2MainForm::OnBnClickedDexterityPlus()
-{
-    std::uint32_t value = ToInt(&CharDexterity);
-    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
-    {
-        ++value;
-        --Cs.StatsLeft;
-        StatsLeftChanged = true;
-        ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
-        SetInt(&CharDexterity, value);
-        CheckStatsLeft();
-        StatsChanged();
-        return;
+        UpdateClassDisplay();
     }
 
-    // should not happen
-    CheckStatsLeft();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnChangeCharEnergy()
-{
-    ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnSetfocusCharEnergy()
-{
-    OrigValue = ToInt(&CharEnergy);
-}
-void CD2MainForm::OnEnKillfocusCharEnergy()
-{
-    std::uint32_t value = ToInt(&CharEnergy);
-    if (value > d2ce::MAX_BASICSTATS)
+    if (CharStatusHardcore.GetCheck() != (bs.isHardcoreCharacter() ? 1 : 0))
     {
-        value = d2ce::MAX_BASICSTATS;
-        SetInt(&CharEnergy, value);
-        UpdateMinStats();
-    }
-    else if (value < MINENERGY)
-    {
-        value = MINENERGY;
-        SetInt(&CharEnergy, value);
-        UpdateMinStats();
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CharEnergy, value);
-        UpdateMinStats();
-        ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-        UpdateStatsLeft();
-        StatsChanged();
-    }
-    else if (value == Cs.Energy)
-    {
-        auto iter = ctrlEditted.find(CharEnergy.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        CharStatusHardcore.SetCheck(bs.isHardcoreCharacter() ? 1 : 0);
+        if (CharStatusExpansion.GetCheck() != (bs.isExpansionCharacter() ? 1 : 0))
         {
-            ctrlEditted.erase(iter);
+            CharStatusExpansion.SetCheck(bs.isExpansionCharacter() ? 1 : 0);
+            UpdateClassDisplay();
+            UpdateStartingActDisplay();
         }
+        UpdateTitleDisplay();
+        StatusChanged = true;
+        statsChanged = true;
     }
-    else
+    else if (CharStatusExpansion.GetCheck() != (bs.isExpansionCharacter() ? 1 : 0))
     {
-        ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnBnClickedEnergyPlus()
-{
-    std::uint32_t value = ToInt(&CharEnergy);
-    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
-    {
-        ++value;
-        --Cs.StatsLeft;
-        StatsLeftChanged = true;
-        ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-        SetInt(&CharEnergy, value);
-        UpdateMinStats();
-        CheckStatsLeft();
-        StatsChanged();
-        return;
+        CharStatusExpansion.SetCheck(bs.isExpansionCharacter() ? 1 : 0);
+        UpdateTitleDisplay();
+        UpdateClassDisplay();
+        UpdateStartingActDisplay();
+        StatusChanged = true;
+        statsChanged = true;
     }
 
-    // should not happen
-    CheckStatsLeft();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharLevel()
-{
-    OrigValue = ToInt(&CharLevel);
-}
-void CD2MainForm::OnEnChangeCharLevel()
-{
-    ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharLevel()
-{
-    std::uint32_t newLevel = ToInt(&CharLevel);
-    if (newLevel < 1 || newLevel > d2ce::NUM_OF_LEVELS)
+    if (CharStatusResurrected.GetCheck() != (bs.isResurrectedCharacter() ? 1 : 0))
     {
-        newLevel = CharInfo->getLevel();
-        SetInt(&CharLevel, newLevel);
-        SetInt(&Experience, d2ce::MinExpRequired[newLevel - 1]);
-        UpdateMaxGold();
-        UpdateMinStats();
+        CharStatusResurrected.SetCheck(bs.isResurrectedCharacter() ? 1 : 0);
+        StatusChanged = true;
+        statsChanged = true;
     }
 
-    if (OrigValue != newLevel)
+    if (CharStatusLadder.GetCheck() != (bs.isLadderCharacter() ? 1 : 0))
     {
-        SetInt(&CharLevel, newLevel);
-        ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-
-        SetInt(&Experience, d2ce::MinExpRequired[newLevel - 1]);
-        ctrlEditted.insert(Experience.GetDlgCtrlID());
-
-        UpdateMaxGold();
-        UpdateMinStats();
-        CheckStatsSkillsLevel(OrigValue);
-        StatsChanged();
+        CharStatusResurrected.SetCheck(CharInfo.isResurrectedCharacter() ? 1 : 0);
+        StatusChanged = true;
+        statsChanged = true;
     }
-    else if (newLevel == Cs.Level)
+
+    if (getCharacterTitle() != bs.Title)
     {
-        auto iter = ctrlEditted.find(CharLevel.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        CharTitle.SetCurSel((bs.Title.bits() & 0x0C) >> 2);
+        if (bs.Title == Bs.Title)
         {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharStrength()
-{
-    OrigValue = ToInt(&CharStrength);
-}
-void CD2MainForm::OnEnChangeCharStrength()
-{
-    ctrlEditted.insert(CharStrength.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharStrength()
-{
-    std::uint32_t value = ToInt(&CharStrength);
-    if (value > d2ce::MAX_BASICSTATS)
-    {
-        value = d2ce::MAX_BASICSTATS;
-        SetInt(&CharStrength, value);
-    }
-    else if (value < MINSTRENGTH)
-    {
-        value = MINSTRENGTH;
-        SetInt(&CharStrength, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CharStrength, value);
-        ctrlEditted.insert(CharStrength.GetDlgCtrlID());
-        UpdateStatsLeft();
-        StatsChanged();
-    }
-    else if (value == Cs.Strength)
-    {
-        auto iter = ctrlEditted.find(CharStrength.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CharStrength.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnBnClickedStrengthPlus()
-{
-    std::uint32_t value = ToInt(&CharStrength);
-    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
-    {
-        ++value;
-        --Cs.StatsLeft;
-        StatsLeftChanged = true;
-        ctrlEditted.insert(CharStrength.GetDlgCtrlID());
-        SetInt(&CharStrength, value);
-        CheckStatsLeft();
-        StatsChanged();
-        return;
-    }
-
-    // should not happen
-    CheckStatsLeft();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharVitality()
-{
-    OrigValue = ToInt(&CharVitality);
-}
-void CD2MainForm::OnEnChangeCharVitality()
-{
-    ctrlEditted.insert(CharVitality.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharVitality()
-{
-    std::uint32_t value = ToInt(&CharVitality);
-    if (value > d2ce::MAX_BASICSTATS)
-    {
-        value = d2ce::MAX_BASICSTATS;
-        SetInt(&CharVitality, value);
-        UpdateMinStats();
-    }
-    else if (value < MINVITALITY)
-    {
-        value = MINVITALITY;
-        SetInt(&CharVitality, value);
-        UpdateMinStats();
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CharVitality, value);
-        UpdateMinStats();
-        ctrlEditted.insert(CharVitality.GetDlgCtrlID());
-        UpdateStatsLeft();
-        StatsChanged();
-    }
-    else if (value == Cs.Vitality)
-    {
-        auto iter = ctrlEditted.find(CharVitality.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CharVitality.GetDlgCtrlID());
-    }
-}
-void CD2MainForm::OnBnClickedVitalityPlus()
-{
-    std::uint32_t value = ToInt(&CharVitality);
-    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
-    {
-        ++value;
-        --Cs.StatsLeft;
-        StatsLeftChanged = true;
-        ctrlEditted.insert(CharVitality.GetDlgCtrlID());
-        SetInt(&CharVitality, value);
-        UpdateMinStats();
-        CheckStatsLeft();
-        StatsChanged();
-        return;
-    }
-
-    // should not happen
-    CheckStatsLeft();
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCurLife()
-{
-    OrigValue = ToInt(&CurLife);
-}
-void CD2MainForm::OnEnChangeCurLife()
-{
-    ctrlEditted.insert(CurLife.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCurLife()
-{
-    std::uint32_t value = ToInt(&CurLife);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&CurLife, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CurLife, value);
-        ctrlEditted.insert(CurLife.GetDlgCtrlID());
-
-        if (ToInt(&MaxLife) < value)
-        {
-            SetInt(&MaxLife, value);
-            UpdateMinStats();
-            ctrlEditted.insert(MaxLife.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.CurLife)
-    {
-        auto iter = ctrlEditted.find(CurLife.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CurLife.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusMaxLife()
-{
-    OrigValue = ToInt(&MaxLife);
-}
-void CD2MainForm::OnEnChangeMaxLife()
-{
-    ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusMaxLife()
-{
-    UpdateMinStats();
-    std::uint32_t value = ToInt(&MaxLife);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&MaxLife, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&MaxLife, value);
-        ctrlEditted.insert(MaxLife.GetDlgCtrlID());
-
-        if (ToInt(&CurLife) > value)
-        {
-            SetInt(&CurLife, value);
-            ctrlEditted.insert(CurLife.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.MaxLife)
-    {
-        auto iter = ctrlEditted.find(MaxLife.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(MaxLife.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCurMana()
-{
-    OrigValue = ToInt(&CurMana);
-}
-void CD2MainForm::OnEnChangeCurMana()
-{
-    ctrlEditted.insert(CurMana.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCurMana()
-{
-    std::uint32_t value = ToInt(&CurMana);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&CurMana, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CurMana, value);
-        ctrlEditted.insert(CurMana.GetDlgCtrlID());
-
-        if (ToInt(&MaxMana) < value)
-        {
-            SetInt(&MaxMana, value);
-            UpdateMinStats();
-            ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.CurMana)
-    {
-        auto iter = ctrlEditted.find(CurMana.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CurMana.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusMaxMana()
-{
-    OrigValue = ToInt(&CurLife);
-}
-void CD2MainForm::OnEnChangeMaxMana()
-{
-    ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusMaxMana()
-{
-    UpdateMinStats();
-    std::uint32_t value = ToInt(&MaxMana);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&MaxMana, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&MaxMana, value);
-        ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-
-        if (ToInt(&CurMana) > value)
-        {
-            SetInt(&CurMana, value);
-            ctrlEditted.insert(CurMana.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.MaxMana)
-    {
-        auto iter = ctrlEditted.find(MaxMana.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(MaxMana.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCurStamina()
-{
-    OrigValue = ToInt(&CurStamina);
-}
-void CD2MainForm::OnEnChangeCurStamina()
-{
-    ctrlEditted.insert(CurStamina.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCurStamina()
-{
-    std::uint32_t value = ToInt(&CurStamina);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&CurStamina, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&CurStamina, value);
-        ctrlEditted.insert(CurStamina.GetDlgCtrlID());
-
-        if (ToInt(&MaxStamina) < value)
-        {
-            SetInt(&MaxStamina, value);
-            UpdateMinStats();
-            ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.CurStamina)
-    {
-        auto iter = ctrlEditted.find(CurStamina.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(CurStamina.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusMaxStamina()
-{
-    OrigValue = ToInt(&MaxStamina);
-}
-void CD2MainForm::OnEnChangeMaxStamina()
-{
-    ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusMaxStamina()
-{
-    UpdateMinStats();
-    std::uint32_t value = ToInt(&MaxStamina);
-    if (value > d2ce::MAX_LMS)
-    {
-        value = d2ce::MAX_LMS;
-        SetInt(&MaxStamina, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&MaxStamina, value);
-        ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-
-        if (ToInt(&CurStamina) > value)
-        {
-            SetInt(&CurStamina, value);
-            ctrlEditted.insert(CurStamina.GetDlgCtrlID());
-        }
-
-        StatsChanged();
-    }
-    else if (value == Cs.MaxStamina)
-    {
-        auto iter = ctrlEditted.find(MaxStamina.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusCharExperience()
-{
-    OrigValue = ToInt(&Experience);
-}
-void CD2MainForm::OnEnChangeCharExperience()
-{
-    ctrlEditted.insert(Experience.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusCharExperience()
-{
-    std::uint32_t value = (std::uint32_t)ToInt(&Experience);
-    if (value > d2ce::MAX_EXPERIENCE)
-    {
-        value = d2ce::MAX_EXPERIENCE;
-        SetInt(&Experience, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&Experience, value);
-        ctrlEditted.insert(Experience.GetDlgCtrlID());
-
-        // otherwise updates level if experience has been reduced
-        if (value < OrigValue)
-        {
-            int oldLevel = ToInt(&CharLevel);
-            int newLevel = oldLevel;
-
-            // find the correct level
-            while ((newLevel > 1) && (value < d2ce::MinExpRequired[newLevel - 1]))
-                --newLevel;
-
-            if (newLevel != oldLevel)
+            auto iter = ctrlEditted.find(CharTitle.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
             {
-                SetInt(&CharLevel, newLevel);
-                ctrlEditted.insert(CharLevel.GetDlgCtrlID());
-                UpdateMaxGold();
+                ctrlEditted.erase(iter);
             }
         }
-
-        StatsChanged();
-    }
-    else if (value == Cs.Experience)
-    {
-        auto iter = ctrlEditted.find(Experience.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        else
         {
-            ctrlEditted.erase(iter);
+            ctrlEditted.insert(CharTitle.GetDlgCtrlID());
+            statsChanged = true;
         }
     }
-    else
+
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+
+    std::uint32_t value = ToInt(&CharLevel);
+    if (value != cs.Level)
     {
-        ctrlEditted.insert(Experience.GetDlgCtrlID());
+        SetInt(&CharLevel, cs.Level);
+        if (value == Cs.Level)
+        {
+            auto iter = ctrlEditted.find(CharLevel.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CharStrength);
+    if (value != cs.Strength)
+    {
+        SetInt(&CharStrength, cs.Strength);
+        if (value == Cs.Strength)
+        {
+            auto iter = ctrlEditted.find(CharStrength.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CharStrength.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CharEnergy);
+    if (value != cs.Energy)
+    {
+        SetInt(&CharEnergy, cs.Energy);
+        if (value == Cs.Energy)
+        {
+            auto iter = ctrlEditted.find(CharEnergy.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CharDexterity);
+    if (value != cs.Dexterity)
+    {
+        SetInt(&CharDexterity, cs.Dexterity);
+        if (value == Cs.Dexterity)
+        {
+            auto iter = ctrlEditted.find(CharDexterity.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CharVitality);
+    if (value != cs.Vitality)
+    {
+        SetInt(&CharVitality, cs.Vitality);
+        if (value == Cs.Vitality)
+        {
+            auto iter = ctrlEditted.find(CharVitality.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CharVitality.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&Experience);
+    if (value != cs.Experience)
+    {
+        SetInt(&Experience, cs.Experience);
+        if (value == Cs.Experience)
+        {
+            auto iter = ctrlEditted.find(Experience.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(Experience.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&GoldInBelt);
+    if (value != cs.GoldInBelt)
+    {
+        SetInt(&GoldInBelt, cs.GoldInBelt);
+        if (value == Cs.GoldInBelt)
+        {
+            auto iter = ctrlEditted.find(GoldInBelt.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&GoldInStash);
+    if (value != cs.GoldInStash)
+    {
+        SetInt(&GoldInStash, cs.GoldInStash);
+        if (value == Cs.GoldInStash)
+        {
+            auto iter = ctrlEditted.find(GoldInStash.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&MaxLife);
+    if (value != cs.MaxLife)
+    {
+        SetInt(&MaxLife, cs.MaxLife);
+        if (value == Cs.MaxLife)
+        {
+            auto iter = ctrlEditted.find(MaxLife.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(MaxLife.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CurLife);
+    if (value != cs.CurLife)
+    {
+        SetInt(&CurLife, cs.CurLife);
+        if (value == Cs.CurLife)
+        {
+            auto iter = ctrlEditted.find(CurLife.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CurLife.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&MaxStamina);
+    if (value != cs.MaxStamina)
+    {
+        SetInt(&MaxStamina, cs.MaxStamina);
+        if (value == Cs.MaxStamina)
+        {
+            auto iter = ctrlEditted.find(MaxStamina.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CurStamina);
+    if (value != cs.CurStamina)
+    {
+        SetInt(&CurStamina, cs.CurStamina);
+        if (value == Cs.CurStamina)
+        {
+            auto iter = ctrlEditted.find(CurStamina.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CurStamina.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&MaxMana);
+    if (value != cs.MaxMana)
+    {
+        SetInt(&MaxMana, cs.MaxMana);
+        if (value == Cs.MaxMana)
+        {
+            auto iter = ctrlEditted.find(MaxMana.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(MaxMana.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    value = ToInt(&CurMana);
+    if (value != cs.CurMana)
+    {
+        SetInt(&CurMana, cs.CurMana);
+        if (value == Cs.CurMana)
+        {
+            auto iter = ctrlEditted.find(CurMana.GetDlgCtrlID());
+            if (iter != ctrlEditted.end())
+            {
+                ctrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            ctrlEditted.insert(CurMana.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    if (Cs.StatsLeft != cs.StatsLeft)
+    {
+        Cs.StatsLeft = cs.StatsLeft;
+        StatsLeftChanged = true;
+        statsChanged = true;
+    }
+
+    if (Cs.SkillChoices != cs.SkillChoices)
+    {
+        Cs.SkillChoices = cs.SkillChoices;
+        SkillChoicesChanged = true;
+        statsChanged = true;
+    }
+
+    if (statsChanged)
+    {
+        CheckStatsLeft();
+        StatsChanged();
     }
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusGoldInBelt()
-{
-    OrigValue = ToInt(&GoldInBelt);
-}
-void CD2MainForm::OnEnChangeGoldInBelt()
-{
-    ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusGoldInBelt()
-{
-    std::uint32_t value = ToInt(&GoldInBelt);
-    if (value > MAXGOLD)
-    {
-        value = MAXGOLD;
-        SetInt(&GoldInBelt, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&GoldInBelt, value);
-        ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
-        StatsChanged();
-    }
-    else if (value == Cs.GoldInBelt)
-    {
-        auto iter = ctrlEditted.find(GoldInBelt.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::OnEnSetfocusGoldInStash()
-{
-    OrigValue = ToInt(&GoldInStash);
-}
-void CD2MainForm::OnEnChangeGoldInStash()
-{
-    ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
-}
-void CD2MainForm::OnEnKillfocusGoldInStash()
-{
-    std::uint32_t value = ToInt(&GoldInStash);
-    if (value > MAXSTASHGOLD)
-    {
-        value = MAXSTASHGOLD;
-        SetInt(&GoldInStash, value);
-    }
-
-    if (OrigValue != value)
-    {
-        SetInt(&GoldInStash, value);
-        ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
-        StatsChanged();
-    }
-    else if (value == Cs.GoldInBelt)
-    {
-        auto iter = ctrlEditted.find(GoldInStash.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
-        {
-            ctrlEditted.erase(iter);
-        }
-    }
-    else
-    {
-        ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
-    }
-}
-//---------------------------------------------------------------------------
-void CD2MainForm::UpdateCharInfoBox(BOOL bEnable)
+void CD2MainForm::EnableCharInfoBox(BOOL bEnable)
 {
     CharName.EnableWindow(bEnable);
     CharStatusHardcore.EnableWindow(bEnable);
@@ -4203,8 +2361,6 @@ void CD2MainForm::UpdateCharInfoBox(BOOL bEnable)
         GoldInStash.SetWindowText(_T(""));
         CharTitle.SetCurSel(-1);
         CharTitle.ResetContent();
-        IsExpansionCharacter = FALSE;
-        IsHardcoreCharacter = FALSE;
 
         // Update Static so we refresh properly
         SetText(&NextExperience, _T(""));
@@ -4221,6 +2377,1059 @@ void CD2MainForm::UpdateCharInfoBox(BOOL bEnable)
         StatsLeft.ShowWindow(SW_HIDE);
         StatsLeftCtrl.ShowWindow(SW_HIDE);
     }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnFileOpen()
+{
+    CString	defaultDirectory = InitialDir;
+    if (!curPathName.IsEmpty())
+    {
+        defaultDirectory = ExtractFilePath(curPathName);
+        if (defaultDirectory.IsEmpty())
+        {
+            defaultDirectory = InitialDir;
+        }
+    }
+
+    // close any open files
+    if (CharInfo.is_open() && (DoFileCloseAction() == IDCANCEL))
+    {
+        return;
+    }
+
+    CFileDialog fileDialog(TRUE, _T("d2s"), NULL,
+        OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
+        _T("Diablo II Character Files (*.d2s)|*.d2s|All Files (*.*)|*.*||"), this);
+
+    fileDialog.m_ofn.lpstrInitialDir = (LPCTSTR)defaultDirectory;
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    AfxGetApp()->AddToRecentFileList(fileDialog.GetPathName());
+
+    OpenFile(fileDialog.GetPathName().GetString());
+}
+//---------------------------------------------------------------------------
+LRESULT CD2MainForm::OnMRUFileOpen(WPARAM, LPARAM lParam)
+{
+    OpenFile((LPCTSTR)lParam);
+    return 0;
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OpenFile(LPCTSTR filename)
+{
+    // close any open files
+    if (CharInfo.is_open() && (DoFileCloseAction() == IDCANCEL))
+    {
+        return;
+    }
+
+    CStringA newPathNameA(filename);
+
+    // return if open not successful
+    if (!CharInfo.open(newPathNameA), false)
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Not a valid Diablo II save file.");
+        }
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+        return;
+    }
+
+    if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::InvalidChecksum)
+    {
+        // Checksum is invalid
+        if (AfxMessageBox(_T("Character File checksum is not valid.\nDo you wish to correct it now?"), MB_ICONERROR | MB_YESNO) == IDYES)
+        {
+            // The checksum was updated on load, so just save the file
+            CharInfo.save();
+        }
+    }
+
+    curPathName = filename;
+    EnableCharInfoBox(TRUE);
+
+    if (FileExists(ChangeFileExt(curPathName, _T(".bak"))))
+    {
+        hasBackupFile = true;
+    }
+
+    CharInfo.fillBasicStats(Bs);
+    CharInfo.fillCharacterStats(Cs);
+    DisplayCharInfo();
+    ctrlEditted.clear();
+    StatusBar.SetWindowText(_T("Character stats have been refreshed"));
+    UpdateAppTitle();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnFileClose()
+{
+    DoFileCloseAction();
+}
+
+void CD2MainForm::OnUpdateFileClose(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+int CD2MainForm::DoFileCloseAction()
+{
+    int ret = IDYES;
+    if (Editted)
+    {
+        ret = AfxMessageBox(_T("Character has been modified.\nSave file?"), MB_ICONQUESTION | MB_YESNOCANCEL);
+        switch (ret)
+        {
+        case IDYES:
+            OnFileSave();
+            break;
+        case IDCANCEL:
+            return ret;
+        }
+    }
+
+    CharInfo.close();
+    s_levelInfo.ResetVersion(d2ce::EnumCharVersion::v110);
+
+    curPathName.Empty();
+    Initialize();
+
+    hasBackupFile = false;
+
+    EnableCharInfoBox(FALSE);
+    OnSetMessageString(AFX_IDS_IDLEMESSAGE);
+    return ret;
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnFileSave()
+{
+    if (BackupChar)
+    {
+        WriteBackupFile();
+    }
+
+    if (!CharInfo.save())
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+        return;
+    }
+
+    curPathName = CharInfo.getPathName();
+
+    if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::AuxFileRenameError)
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("One or more auxiliary Character Files (.key, .ma*) could not be renamed!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONWARNING);
+    }
+
+    CharInfo.fillBasicStats(Bs);
+    CharInfo.fillCharacterStats(Cs);
+
+    Initialize();
+    CheckStatsLeft();
+
+    CString msg(_T("Character stats saved"));
+    StatusBar.SetWindowText(msg);
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+
+void CD2MainForm::OnUpdateFileSave(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && Editted) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnAppExit()
+{
+    SendMessage(WM_SYSCOMMAND, SC_CLOSE, 0);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::Initialize()
+{
+    ClearAllBoolVars();
+    ctrlEditted.clear();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnViewRefresh()
+{
+    if (Editted)
+    {
+        if (AfxMessageBox(_T("Character has been modified.\nAre you sure you want to refresh and lose all your changes?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+        {
+            return;
+        }
+    }
+
+    Initialize();
+
+    CharInfo.refresh();
+    CharInfo.fillBasicStats(Bs);
+    CharInfo.fillCharacterStats(Cs);
+    DisplayCharInfo();
+
+    ctrlEditted.clear();
+
+    StatusBar.SetWindowText(_T("Character stats have been refreshed"));
+}
+
+void CD2MainForm::OnUpdateViewRefresh(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
+}
+//-------------------------------------------------------------------------
+void CD2MainForm::OnBnClickedMaxAllBtn()
+{
+    OnOptionsMaxEverything();
+}
+void CD2MainForm::OnOptionsMaxEverything()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Level = d2ce::NUM_OF_LEVELS;
+    cs.Experience = d2ce::MAX_EXPERIENCE;
+    cs.GoldInBelt = cs.getMaxGoldInBelt();
+    cs.GoldInStash = cs.getMaxGoldInStash();
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+
+    CharInfo.upgradeGems();
+    CharInfo.upgradePotions();
+    CharInfo.fillAllStackables();
+    CharInfo.maxDurabilityAllItems();
+    ItemsChanged = true;
+    CheckStatsLeft();
+    StatsChanged();
+}
+void CD2MainForm::OnUpdateOptionsMaxEverything(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? MaxAllButton.IsWindowEnabled() : FALSE);
+}
+//---------------------------------------------------------------------------
+/*
+   Looks in the Registry for the location of where Diablo II is installed
+   and sets the Open Dialog to start in the "save" directory
+*/
+#define MAX_VALUE_NAME 4096
+void CD2MainForm::SetStartDir()
+{
+    // Check to see if this is the one to use by camparing the driver's path
+    HKEY regKey = 0;
+    if (::RegOpenKeyEx(HKEY_CURRENT_USER, _T("SOFTWARE\\Blizzard Entertainment\\Diablo II"), 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
+    {
+        if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Blizzard Entertainment\\Diablo II"), 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
+        {
+            InitialDir.Empty();
+            return;
+        }
+    }
+
+    std::vector<wchar_t> valueName(MAX_VALUE_NAME + 1, 0);
+    DWORD valueNameLength = MAX_VALUE_NAME;
+    DWORD valueType = 0;
+    if ((RegQueryValueEx(regKey, _T("NewSavePath"), 0, &valueType, (LPBYTE)&valueName[0], &valueNameLength) == ERROR_SUCCESS) && (valueType == REG_SZ))
+    {
+        InitialDir = &valueName[0];
+    }
+    else if ((RegQueryValueEx(regKey, _T("Save Path"), 0, &valueType, (LPBYTE)&valueName[0], &valueNameLength) == ERROR_SUCCESS) && (valueType == REG_SZ))
+    {
+        InitialDir = &valueName[0];
+    }
+
+    RegCloseKey(regKey);
+    regKey = 0;
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::SetupBasicStats()
+{
+    d2ce::BasicStats bs;
+    CharInfo.fillBasicStats(bs);
+
+    // display character stats
+    SetText(&CharName, &bs.Name[0]);
+
+    if (bs.isHardcoreCharacter())
+    {
+        if (bs.isResurrectedCharacter())
+        {
+            // Hardcore characters can't ever have been ressurrected
+            CharInfo.setIsResurrectedCharacter(false);
+            StatusChanged = true;
+            Editted = true;
+        }
+
+        bool deadStatChanged = false;
+        if (CheckIsHardcoreDead(deadStatChanged))
+        {
+            Editted = true;
+        }
+    }
+
+    // set state of Status checkbox
+    CharStatusHardcore.SetCheck(bs.isHardcoreCharacter() ? 1 : 0);
+    CharStatusResurrected.SetCheck(bs.isResurrectedCharacter() ? 1 : 0);
+    CharStatusExpansion.SetCheck(bs.isExpansionCharacter() ? 1 : 0);
+    CharStatusLadder.SetCheck(bs.isLadderCharacter() ? 1 : 0);
+
+    UpdateTitleDisplay();
+    UpdateClassDisplay();
+    Difficulty.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(bs.DifficultyLastPlayed));
+    UpdateStartingActDisplay();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::StatsChanged()
+{
+    if (!Editted && (ItemsChanged || !ctrlEditted.empty() || StatusChanged ||
+        StatsLeftChanged || SkillChoicesChanged || WaypointsChanged || QuestsChanged))
+    {
+        Editted = true;
+        UpdateAppTitle();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::CheckStatsLeft()
+{
+    if (Cs.StatsLeft > 0)
+    {
+        if (ToInt(&CharStrength) < d2ce::MAX_BASICSTATS)
+        {
+            StrengthPlusButton.ShowWindow(SW_SHOWNORMAL);
+            StrengthPlusButton.EnableWindow(TRUE);
+        }
+
+        if (ToInt(&CharDexterity) < d2ce::MAX_BASICSTATS)
+        {
+            DexterityPlusButton.ShowWindow(SW_SHOWNORMAL);
+            DexterityPlusButton.EnableWindow(TRUE);
+        }
+
+        if (ToInt(&CharVitality) < d2ce::MAX_BASICSTATS)
+        {
+            VitalityPlusButton.ShowWindow(SW_SHOWNORMAL);
+            VitalityPlusButton.EnableWindow(TRUE);
+        }
+
+        if (ToInt(&CharEnergy) < d2ce::MAX_BASICSTATS)
+        {
+            EnergyPlusButton.ShowWindow(SW_SHOWNORMAL);
+            EnergyPlusButton.EnableWindow(TRUE);
+        }
+
+        StatsLeft.ShowWindow(SW_SHOWNORMAL);
+        StatsLeftCtrl.ShowWindow(SW_SHOWNORMAL);
+        SetInt(&StatsLeft, Cs.StatsLeft);
+    }
+    else
+    {
+        StrengthPlusButton.EnableWindow(FALSE);
+        StrengthPlusButton.ShowWindow(SW_HIDE);
+        DexterityPlusButton.EnableWindow(FALSE);
+        DexterityPlusButton.ShowWindow(SW_HIDE);
+        VitalityPlusButton.EnableWindow(FALSE);
+        VitalityPlusButton.ShowWindow(SW_HIDE);
+        VitalityPlusButton.EnableWindow(FALSE);
+        EnergyPlusButton.ShowWindow(SW_HIDE);
+
+        StatsLeft.SetWindowText(_T(""));
+        StatsLeft.ShowWindow(SW_HIDE);
+        StatsLeftCtrl.ShowWindow(SW_HIDE);
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::UpdateAppTitle()
+{
+    CString newAppTitle;
+    if (newAppTitle.LoadString(AFX_IDS_APP_TITLE) != 0)
+    {
+        if (!curPathName.IsEmpty())
+        {
+            newAppTitle += _T(" - ") + ExtractFileName(curPathName);
+            if (Editted)
+            {
+                newAppTitle += "*";
+            }
+            switch (CharInfo.getVersion())
+            {
+            case d2ce::EnumCharVersion::v110:
+                newAppTitle += _T(" (Version 1.10-1.14d)");
+                break;
+            case d2ce::EnumCharVersion::v109:
+                newAppTitle += _T(" (Version 1.09)");
+                break;
+            case d2ce::EnumCharVersion::v108:
+                newAppTitle += _T(" (Version Standard 1.08)");
+                break;
+            case d2ce::EnumCharVersion::v107:
+                newAppTitle += _T(" (Version 1.07/Expansion 1.08)");
+                break;
+            case d2ce::EnumCharVersion::v100:
+                newAppTitle += _T(" (Version 1.00 - 1.06)");
+                break;
+            }
+        }
+        SetWindowText(newAppTitle);
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::UpdateClassDisplay()
+{
+    // Check if we need to add before selected class
+    if (CharInfo.isExpansionCharacter())
+    {
+        if (CharClass.GetCount() < d2ce::NUM_OF_CLASSES)
+        {
+            // add the expansion set characters to combo box component
+            CharClass.AddString(_T("Druid"));
+            CharClass.AddString(_T("Assassin"));
+        }
+    }
+
+    CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(CharInfo.getClass()));
+
+    // Check if we need to remove after selecting class
+    if (!CharInfo.isExpansionCharacter())
+    {
+        // remove expansion set classes from combo box component
+        auto pos = CharClass.FindStringExact(0, _T("Druid"));
+        if (pos != CB_ERR)
+        {
+            CharClass.DeleteString(pos);
+        }
+
+        pos = CharClass.FindStringExact(0, _T("Assassin"));
+        if (pos != CB_ERR)
+        {
+            CharClass.DeleteString(pos);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+/*
+   Makes sure the correct gender titles are displayed based on the
+   character's class
+*/
+void CD2MainForm::UpdateTitleDisplay()
+{
+    int curSel = CharTitle.GetCurSel();
+    if (curSel < 0)
+    {
+        curSel = (CharInfo.getTitle().bits() & 0x0C) >> 2;
+    }
+
+    CharTitle.ResetContent();
+
+    const char** pValidTitles = nullptr;
+    switch (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()))
+    {
+    case d2ce::EnumCharClass::Amazon:
+    case d2ce::EnumCharClass::Assassin:
+    case d2ce::EnumCharClass::Sorceress: // add titles for female characters
+        if (CharInfo.isExpansionCharacter())
+        {
+            if (CharInfo.isHardcoreCharacter())
+            {
+                pValidTitles = HardcoreExpansionTitle;
+            }
+            else
+            {
+                pValidTitles = FemaleHardcoreTitle;
+            }
+        }
+        else if (CharInfo.isHardcoreCharacter())
+        {
+            pValidTitles = FemaleHardcoreTitle;
+        }
+        else
+        {
+            pValidTitles = FemaleTitle;
+        }
+        break;
+    case d2ce::EnumCharClass::Barbarian:
+    case d2ce::EnumCharClass::Druid:
+    case d2ce::EnumCharClass::Necromancer:
+    case d2ce::EnumCharClass::Paladin: // add titles for male characters
+    default:
+        if (CharInfo.isExpansionCharacter())
+        {
+            if (CharInfo.isHardcoreCharacter())
+            {
+                pValidTitles = HardcoreExpansionTitle;
+            }
+            else
+            {
+                pValidTitles = MaleHardcoreTitle;
+            }
+        }
+        else if (CharInfo.isHardcoreCharacter())
+        {
+            pValidTitles = MaleHardcoreTitle;
+        }
+        else
+        {
+            pValidTitles = MaleTitle;
+        }
+        break;
+    }
+
+    if (pValidTitles != nullptr)
+    {
+        for (std::uint32_t i = 0; i < NUM_OF_TITLES; i++)
+        {
+            CharTitle.AddString(CString(pValidTitles[i]));
+        }
+    }
+
+    CharTitle.SetCurSel(curSel);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::UpdateStartingActDisplay()
+{
+    // Check if we need to add before selected starting Act
+    if (CharInfo.isExpansionCharacter())
+    {
+        if (StartingAct.GetCount() < d2ce::NUM_OF_ACTS)
+        {
+            StartingAct.AddString(_T("V"));
+        }
+    }
+
+    StartingAct.SetCurSel(static_cast <std::underlying_type_t<d2ce::EnumAct>>(CharInfo.getStartingAct()));
+
+    // Check if we need to remove after selected starting Act
+    if (!CharInfo.isExpansionCharacter())
+    {
+        auto pos = StartingAct.FindStringExact(0, _T("V"));
+        if (pos != CB_ERR)
+        {
+            StartingAct.DeleteString(pos);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsUpgradeGems()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    auto numConverted = CharInfo.upgradeGems();
+    CString msg;
+    msg.Format(_T("%zd gem(s) have been upgraded to perfect state"), numConverted);
+    if (numConverted > 0)
+    {
+        hasUpgradableGems = false;
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+void CD2MainForm::OnUpdateOptionsUpgradeGems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && hasUpgradableGems) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsUpgradePotions()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    auto numConverted = CharInfo.upgradePotions();
+    CString msg;
+    msg.Format(_T("%zd potion(s) have been upgraded to their highest level"), numConverted);
+    if (numConverted > 0)
+    {
+        hasUpgradablePotions = false;
+        hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsUpgradePotions(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(hasUpgradablePotions ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsUpgradeRejuvenation()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    auto numConverted = CharInfo.upgradeRejuvenationPotions();
+    CString msg;
+    msg.Format(_T("%zd potion(s) have been upgraded to Full Rejuvenation potions"), numConverted);
+    if (numConverted > 0)
+    {
+        hasUpgradableRejuvenations = false;
+        hasUpgradablePotions = false;
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsUpgradeRejuvenation(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(hasUpgradableRejuvenations ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+/*
+   Makes a backup copy of the character file and overwrites any
+   existing backup file
+*/
+void CD2MainForm::WriteBackupFile()
+{
+    CStringA oldPathNameA(curPathName);
+    CString backupname = ChangeFileExt(curPathName, _T(".bak"));
+    if (CopyFile(curPathName, backupname, false))
+    {
+        hasBackupFile = true;
+    }
+}
+
+//---------------------------------------------------------------------------
+void CD2MainForm::OnViewSkillTree()
+{
+    CD2SkillTreeForm dlg(*this);
+    dlg.DoModal();
+}
+
+void CD2MainForm::OnUpdateViewSkillTree(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? EditSkillsButton.IsWindowEnabled() : FALSE);
+}
+
+void CD2MainForm::OnBnClickedEditSkillsBtn()
+{
+    OnViewSkillTree();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnViewQuests()
+{
+    CD2QuestsForm dlg(*this);
+    dlg.DoModal();
+}
+
+void CD2MainForm::OnUpdateViewQuests(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? QuestsButton.IsWindowEnabled() : FALSE);
+}
+
+void CD2MainForm::OnBnClickedQuestsBtn()
+{
+    OnViewQuests();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnViewWaypoints()
+{
+    CD2WaypointsForm dlg(*this);
+    dlg.DoModal();
+}
+
+void CD2MainForm::OnUpdateViewWaypoints(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? WaypointsButton.IsWindowEnabled() : FALSE);
+}
+
+void CD2MainForm::OnBnClickedWaypointsBtn()
+{
+    OnViewWaypoints();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharName()
+{
+    prev_name = ToStdString(&CharName);
+}
+void CD2MainForm::OnEnChangeCharName()
+{
+    ctrlEditted.insert(CharName.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharName()
+{
+    auto newName = ToStdString(&CharName);
+    if (newName != prev_name)
+    {
+        CString newFileName = ExtractFilePath(curPathName) + _T("\\") + ToText(&CharName) + _T(".d2s");
+        if (FileExists(newFileName) && Editted)
+        {
+            AfxMessageBox(_T("A file with that name already exists.  Please select another name."), MB_OK | MB_ICONEXCLAMATION);
+            SetText(&CharName, prev_name.c_str());
+            return;
+        }
+
+        ctrlEditted.insert(CharName.GetDlgCtrlID());
+        d2ce::BasicStats bs;
+        CharInfo.fillBasicStats(bs);
+        strcpy_s(bs.Name, sizeof(bs.Name), newName.c_str());
+        bs.Name[15] = 0; // must be zero
+        CharInfo.updateBasicStats(bs);
+        UpdateCharInfo();
+        StatsChanged();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharDexterity()
+{
+    OrigValue = ToInt(&CharDexterity);
+}
+void CD2MainForm::OnEnChangeCharDexterity()
+{
+    ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharDexterity()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Dexterity = std::min(ToInt(&CharDexterity), d2ce::MAX_BASICSTATS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+void CD2MainForm::OnBnClickedDexterityPlus()
+{
+    std::uint32_t value = ToInt(&CharDexterity);
+    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
+    {
+        ++value;
+        --Cs.StatsLeft;
+        StatsLeftChanged = true;
+        d2ce::CharStats cs;
+        CharInfo.fillCharacterStats(cs);
+        cs.Energy = std::min(value, d2ce::MAX_BASICSTATS);
+        cs.StatsLeft = Cs.StatsLeft;
+        CharInfo.updateCharacterStats(cs);
+        UpdateCharInfo();
+        return;
+    }
+
+    // should not happen
+    CheckStatsLeft();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnChangeCharEnergy()
+{
+    ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnSetfocusCharEnergy()
+{
+    OrigValue = ToInt(&CharEnergy);
+}
+void CD2MainForm::OnEnKillfocusCharEnergy()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Energy = std::min(ToInt(&CharEnergy), d2ce::MAX_BASICSTATS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnBnClickedEnergyPlus()
+{
+    std::uint32_t value = ToInt(&CharEnergy);
+    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
+    {
+        ++value;
+        --Cs.StatsLeft;
+        StatsLeftChanged = true;
+        d2ce::CharStats cs;
+        CharInfo.fillCharacterStats(cs);
+        cs.Energy = std::min(value, d2ce::MAX_BASICSTATS);
+        cs.StatsLeft = Cs.StatsLeft;
+        CharInfo.updateCharacterStats(cs);
+        UpdateCharInfo();
+        return;
+    }
+
+    // should not happen
+    CheckStatsLeft();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharLevel()
+{
+    OrigValue = ToInt(&CharLevel);
+}
+void CD2MainForm::OnEnChangeCharLevel()
+{
+    ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharLevel()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    std::uint32_t level = std::min(std::max(ToInt(&CharLevel), std::uint32_t(1)), d2ce::NUM_OF_LEVELS);
+    if (level != cs.Level)
+    {
+        cs.Level = level;
+        ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+        CharInfo.updateCharacterStats(cs);
+        UpdateCharInfo();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharStrength()
+{
+    OrigValue = ToInt(&CharStrength);
+}
+void CD2MainForm::OnEnChangeCharStrength()
+{
+    ctrlEditted.insert(CharStrength.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharStrength()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Strength = std::min(ToInt(&CharStrength), d2ce::MAX_BASICSTATS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnBnClickedStrengthPlus()
+{
+    std::uint32_t value = ToInt(&CharStrength);
+    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
+    {
+        ++value;
+        --Cs.StatsLeft;
+        StatsLeftChanged = true;
+        d2ce::CharStats cs;
+        CharInfo.fillCharacterStats(cs);
+        cs.Strength = std::min(value, d2ce::MAX_BASICSTATS);
+        cs.StatsLeft = Cs.StatsLeft;
+        CharInfo.updateCharacterStats(cs);
+        UpdateCharInfo();
+        return;
+    }
+
+    // should not happen
+    CheckStatsLeft();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharVitality()
+{
+    OrigValue = ToInt(&CharVitality);
+}
+void CD2MainForm::OnEnChangeCharVitality()
+{
+    ctrlEditted.insert(CharVitality.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharVitality()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Vitality = std::min(ToInt(&CharVitality), d2ce::MAX_BASICSTATS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+void CD2MainForm::OnBnClickedVitalityPlus()
+{
+    std::uint32_t value = ToInt(&CharVitality);
+    if (value < d2ce::MAX_BASICSTATS && Cs.StatsLeft > 0)
+    {
+        ++value;
+        --Cs.StatsLeft;
+        StatsLeftChanged = true;
+        d2ce::CharStats cs;
+        CharInfo.fillCharacterStats(cs);
+        cs.Vitality = std::min(value, d2ce::MAX_BASICSTATS);
+        cs.StatsLeft = Cs.StatsLeft;
+        CharInfo.updateCharacterStats(cs);
+        UpdateCharInfo();
+        return;
+    }
+
+    // should not happen
+    CheckStatsLeft();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCurLife()
+{
+    OrigValue = ToInt(&CurLife);
+}
+void CD2MainForm::OnEnChangeCurLife()
+{
+    ctrlEditted.insert(CurLife.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCurLife()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.CurLife = std::min(ToInt(&CurLife), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusMaxLife()
+{
+    OrigValue = ToInt(&MaxLife);
+}
+void CD2MainForm::OnEnChangeMaxLife()
+{
+    ctrlEditted.insert(MaxLife.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusMaxLife()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.MaxLife = std::min(ToInt(&MaxLife), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCurMana()
+{
+    OrigValue = ToInt(&CurMana);
+}
+void CD2MainForm::OnEnChangeCurMana()
+{
+    ctrlEditted.insert(CurMana.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCurMana()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.CurMana = std::min(ToInt(&CurMana), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusMaxMana()
+{
+    OrigValue = ToInt(&CurLife);
+}
+void CD2MainForm::OnEnChangeMaxMana()
+{
+    ctrlEditted.insert(MaxMana.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusMaxMana()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.MaxMana = std::min(ToInt(&MaxMana), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCurStamina()
+{
+    OrigValue = ToInt(&CurStamina);
+}
+void CD2MainForm::OnEnChangeCurStamina()
+{
+    ctrlEditted.insert(CurStamina.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCurStamina()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.CurStamina = std::min(ToInt(&CurStamina), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusMaxStamina()
+{
+    OrigValue = ToInt(&MaxStamina);
+}
+void CD2MainForm::OnEnChangeMaxStamina()
+{
+    ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusMaxStamina()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.MaxStamina = std::min(ToInt(&MaxStamina), d2ce::MAX_LMS);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusCharExperience()
+{
+    OrigValue = ToInt(&Experience);
+}
+void CD2MainForm::OnEnChangeCharExperience()
+{
+    ctrlEditted.insert(Experience.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusCharExperience()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.Experience = std::min(ToInt(&Experience), d2ce::MAX_EXPERIENCE);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusGoldInBelt()
+{
+    OrigValue = ToInt(&GoldInBelt);
+}
+void CD2MainForm::OnEnChangeGoldInBelt()
+{
+    ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusGoldInBelt()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.GoldInBelt = ToInt(&GoldInBelt);;
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnEnSetfocusGoldInStash()
+{
+    OrigValue = ToInt(&GoldInStash);
+}
+void CD2MainForm::OnEnChangeGoldInStash()
+{
+    ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
+}
+void CD2MainForm::OnEnKillfocusGoldInStash()
+{
+    d2ce::CharStats cs;
+    CharInfo.fillCharacterStats(cs);
+    cs.GoldInStash = ToInt(&GoldInStash);
+    CharInfo.updateCharacterStats(cs);
+    UpdateCharInfo();
 }
 //---------------------------------------------------------------------------
 std::string CD2MainForm::ToStdString(const CWnd* Sender) const
@@ -4400,16 +3609,6 @@ void CD2MainForm::SetInt(CWnd* Sender, std::uint32_t newValue)
     }
 }
 //---------------------------------------------------------------------------
-bool CD2MainForm::isExpansionCharacter() const
-{
-    return IsExpansionCharacter ? true : false;
-}
-//---------------------------------------------------------------------------
-d2ce::EnumDifficulty CD2MainForm::getDifficultyLastPlayed()
-{
-    return CharInfo != nullptr ? CharInfo->getDifficultyLastPlayed() : d2ce::EnumDifficulty::Normal;
-}
-//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsBackupChar()
 {
     BackupChar = !BackupChar;
@@ -4423,12 +3622,12 @@ void CD2MainForm::OnUpdateOptionsBackupChar(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsRestoreChar()
 {
-    if (!RestoreActionEnabled)
+    if (!hasBackupFile)
     {
         return;
     }
 
-    RestoreActionEnabled = FALSE;
+    hasBackupFile = false;
     CStringA origNameA(ExtractFileName(RemoveFileExtFromPath(curPathName)));
     CStringA oldPathNameA(curPathName);
     CStringA backupname(ChangeFileExt(curPathName, _T(".bak")));
@@ -4453,16 +3652,10 @@ void CD2MainForm::OnOptionsRestoreChar()
         return;
     }
 
-    // allocate memory for character to be loaded
-    if (CharInfo == nullptr)
-    {
-        CharInfo.reset(new d2ce::Character());
-    }
-
     // return if open not successful
-    if (!CharInfo->open(oldPathNameA))
+    if (!CharInfo.open(oldPathNameA))
     {
-        CString errorMsg(CharInfo->getLastError().message().c_str());
+        CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
         {
             errorMsg = _T("Not a valid Diablo II save file.");
@@ -4474,35 +3667,11 @@ void CD2MainForm::OnOptionsRestoreChar()
         return;
     }
 
-    // check if we have to rename
-    if (_stricmp((LPCSTR)origNameA, CharInfo->getName()) != 0)
-    {
-        Editted = false;
-        CharInfo->close();
-
-        RenameCharacterFiles(ToStdString(&CharName));
-
-        // return if open not successful
-        CStringA newPathNameA(curPathName);
-        if (!CharInfo->open(newPathNameA))
-        {
-            CString errorMsg(CharInfo->getLastError().message().c_str());
-            if (errorMsg.IsEmpty())
-            {
-                errorMsg = _T("Not a valid Diablo II save file.");
-            }
-            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
-
-            Editted = false;
-            OnFileClose();
-            return;
-        }
-    }
-
     Initialize();
-    UpdateCharInfoBox(TRUE);
+    EnableCharInfoBox(TRUE);
 
-    CharInfo->fillCharacterStats(Cs);
+    CharInfo.fillBasicStats(Bs);
+    CharInfo.fillCharacterStats(Cs);
     DisplayCharInfo();
     ctrlEditted.clear();
     CString msg(_T("Character stats have been restored"));
@@ -4513,13 +3682,7 @@ void CD2MainForm::OnOptionsRestoreChar()
 
 void CD2MainForm::OnUpdateOptionsRestoreChar(CCmdUI* pCmdUI)
 {
-    if (CharInfo == nullptr)
-    {
-        pCmdUI->Enable(FALSE);
-        return;
-    }
-
-    pCmdUI->Enable(RestoreActionEnabled);
+    pCmdUI->Enable(CharInfo.is_open() && hasBackupFile ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnViewLevelReq()
@@ -4535,17 +3698,12 @@ void CD2MainForm::OnOptionsGpsConvertor()
 
 void CD2MainForm::OnUpdateOptionsGpsConvertor(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(CharInfo == nullptr ? FALSE : (CharInfo->getNumberOfGPSs() == 0 ? FALSE : TRUE));
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfGPSs() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxfillstackables()
 {
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    auto numConverted = CharInfo->fillAllStackables();
+    auto numConverted = CharInfo.fillAllStackables();
     CString msg;
     msg.Format(_T("%zd stackable item(s) have been fully filled"), numConverted);
     if (numConverted > 0)
@@ -4561,17 +3719,12 @@ void CD2MainForm::OnOptionsMaxfillstackables()
 
 void CD2MainForm::OnUpdateOptionsMaxfillstackables(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(CharInfo == nullptr ? FALSE : (CharInfo->getNumberOfStackables() == 0 ? FALSE : TRUE));
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfStackables() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 {
-    if (CharInfo == nullptr)
-    {
-        return;
-    }
-
-    auto numConverted = CharInfo->maxDurabilityAllItems();
+    auto numConverted = CharInfo.maxDurabilityAllItems();
     CString msg;
     msg.Format(_T("%zd item(s) have been given the highest durability value"), numConverted);
     if (numConverted > 0)
@@ -4587,45 +3740,207 @@ void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 
 void CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(CharInfo == nullptr ? FALSE : (CharInfo->getNumberOfArmor() == 0 && CharInfo->getNumberOfWeapons() == 0 ? FALSE : TRUE));
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsResetStats()
 {
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
-
-    // Reset Character Stats
-    SetInt(&CharVitality, MINVITALITY);
-    ctrlEditted.insert(CharVitality.GetDlgCtrlID());
-    SetInt(&CharEnergy, MINENERGY);
-    ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
-    SetInt(&CharDexterity, MINDEXTERITY);
-    ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
-    SetInt(&CharStrength, MINSTRENGTH);
-    ctrlEditted.insert(CharStrength.GetDlgCtrlID());
-    Cs.StatsLeft = CharInfo->getStatPointsEarned(curLevel);
-    StatsLeftChanged = true;
-    CheckStatsLeft();
-
-    // Reset Character Skills
-    CharInfo->resetSkills();
-    Cs.SkillChoices = CharInfo->getSkillPointsEarned(curLevel);
-    SkillChoicesChanged = true;
-
-    // update min/max stats
-    UpdateMinStats(false);
-    SetInt(&MaxLife, MINHITPOINTS);
-    SetInt(&CurLife, MINHITPOINTS);
-    SetInt(&MaxStamina, MINSTAMINA);
-    SetInt(&CurStamina, MINSTAMINA);
-    SetInt(&MaxMana, MINMANA);
-    SetInt(&CurMana, MINMANA);
-
-    StatsChanged();
+    CharInfo.resetStats();
+    UpdateCharInfo();
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnUpdateOptionsResetStats(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(CharInfo == nullptr ? FALSE : TRUE);
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+d2ce::EnumCharVersion CD2MainForm::getCharacterVersion() const
+{
+    return CharInfo.getVersion();
+}
+//---------------------------------------------------------------------------
+bitmask::bitmask<d2ce::EnumCharStatus> CD2MainForm::getCharacterStatus() const
+{
+    auto status = CharInfo.getStatus();
+    if (CharStatusResurrected.GetCheck() == 1)
+    {
+        status |= d2ce::EnumCharStatus::Resurrected;
+    }
+    else
+    {
+        status &= ~d2ce::EnumCharStatus::Resurrected;
+    }
+
+    if (CharStatusHardcore.GetCheck() == 1)
+    {
+        status |= d2ce::EnumCharStatus::Hardcore;
+        status &= ~d2ce::EnumCharStatus::Resurrected; // can't be resurrected
+    }
+    else
+    {
+        status &= ~d2ce::EnumCharStatus::Hardcore;
+    }
+
+    if (CharStatusExpansion.GetCheck() == 1)
+    {
+        status |= d2ce::EnumCharStatus::Expansion;
+    }
+    else
+    {
+        status &= ~d2ce::EnumCharStatus::Expansion;
+    }
+
+    if (CharStatusLadder.GetCheck() == 1)
+    {
+        status |= d2ce::EnumCharStatus::Ladder;
+    }
+    else
+    {
+        status &= ~d2ce::EnumCharStatus::Ladder;
+    }
+
+    return status;
+}
+//---------------------------------------------------------------------------
+bitmask::bitmask<d2ce::EnumCharTitle> CD2MainForm::getCharacterTitle() const
+{
+    bitmask::bitmask<d2ce::EnumCharTitle> title = d2ce::EnumCharTitle::None;
+    switch (CharTitle.GetCurSel())
+    {
+    case 1:
+        title = d2ce::EnumCharTitle::SirDame;
+        if (isExpansionCharacter())
+        {
+            title |= d2ce::EnumCharTitle::Slayer;
+        }
+        break;
+
+    case 2:
+        title = d2ce::EnumCharTitle::LordLady;
+        if (isExpansionCharacter())
+        {
+            title |= d2ce::EnumCharTitle::Champion;
+        }
+        break;
+
+    case 3:
+        title = d2ce::EnumCharTitle::BaronBaroness;
+        if (isExpansionCharacter())
+        {
+            title |= d2ce::EnumCharTitle::MPatriarch;
+        }
+        break;
+    }
+
+    return title;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumCharClass CD2MainForm::getCharacterClass() const
+{
+    return static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
+}
+//---------------------------------------------------------------------------
+d2ce::EnumDifficulty CD2MainForm::getDifficultyLastPlayed() const
+{
+    return static_cast<d2ce::EnumDifficulty>(Difficulty.GetCurSel());
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::isExpansionCharacter() const
+{
+    return CharInfo.isExpansionCharacter();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getSkillPointsEarned() const
+{
+    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
+    return CharInfo.getSkillPointsEarned(curLevel);
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getStatPointsEarned() const
+{
+    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
+    return CharInfo.getStatPointsEarned(curLevel);
+}
+//---------------------------------------------------------------------------
+const d2ce::ActsInfo& CD2MainForm::getQuests()
+{
+    return CharInfo.getQuests();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::updateQuests(const d2ce::ActsInfo& qi)
+{
+    CharInfo.updateQuests(qi);
+    QuestsChanged = true;
+    StatsChanged();
+}
+//---------------------------------------------------------------------------
+std::uint64_t CD2MainForm::getWaypoints(d2ce::EnumDifficulty difficulty) const
+{
+    return CharInfo.getWaypoints(difficulty);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue)
+{
+    CharInfo.setWaypoints(difficulty, newvalue);
+    WaypointsChanged = true;
+    StatsChanged();
+}
+//---------------------------------------------------------------------------
+std::uint8_t(&CD2MainForm::getSkills())[d2ce::NUM_OF_SKILLS]
+{
+    return CharInfo.getSkills();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::updateSkills(const std::uint8_t(&updated_skills)[d2ce::NUM_OF_SKILLS])
+{
+    CharInfo.updateSkills(updated_skills);
+    SkillChoicesChanged = true;
+    UpdateCharInfo();
+    StatsChanged();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getSkillPointsUsed() const
+{
+    return CharInfo.getSkillPointsUsed();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getSkillChoices() const
+{
+    return CharInfo.getSkillChoices();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getGPSs()
+{
+    return CharInfo.getGPSs();
+}
+//---------------------------------------------------------------------------
+/*
+   Converts the specified original gems, potions or skulls to the specified
+   final gem, potion or skull.
+   Returns the number of gems converted.
+*/
+size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4])
+{
+    auto numConverted = CharInfo.convertGPSs(existingGem, desiredGem);
+    if (numConverted > 0)
+    {
+        hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+        if (!hasUpgradableRejuvenations)
+        {
+            // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+            hasUpgradablePotions = false;
+        }
+        else
+        {
+            hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+        }
+
+        hasUpgradableGems = CharInfo.anyUpgradableGems();
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numConverted;
 }
 //---------------------------------------------------------------------------

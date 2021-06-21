@@ -21,6 +21,8 @@
 #pragma once
 
 #include "ExperienceConstants.h"
+#include "bitmask.hpp"
+#include <system_error>
 
 namespace d2ce
 {
@@ -36,32 +38,6 @@ namespace d2ce
 
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };
-
-    // This bit field indicates the presence or absence of each particular statistic.
-    // If the bit is 0, the corresponding statistic is zero and not stored in the file.
-    // If the bit is 1, the statistic has a long value stored in the file.  
-    // Note that many of the statistics are never zero, so they will always be present; but there is a bit assigned to them nonetheless
-    enum class EnumCharStatInfo : std::uint16_t 
-    { 
-        Strength     = 0x0001,
-        Energy       = 0x0002,
-        Dexterity    = 0x0004,
-        Vitality     = 0x0008,
-        StatPoints   = 0x0010,
-        SkillChoices = 0x0020,
-        CurLife      = 0x0040,
-        MaxLife      = 0x0080,
-        CurMana      = 0x0100,
-        MaxMana      = 0x0200,
-        CurStamina   = 0x0400,
-        MaxStamina   = 0x0800,
-        Level        = 0x1000,
-        Experience   = 0x2000,
-        GoldInBelt   = 0x4000,
-        GoldInStash  = 0x8000,
-        All          = 0xFFFF
-    };
-    BITMASK_DEFINE_VALUE_MASK(EnumCharStatInfo, 0xFFFF);
 
     // character status
     enum class EnumCharStatus : std::uint8_t { NoDeaths, Hardcore = 0x04, Resurrected = 0x08, Expansion = 0x20, Ladder = 0x40, Dead = 0x0C };
@@ -91,6 +67,7 @@ namespace d2ce
         InvalidCharSkills,
         InvalidItemInventory,
         FileRenameError,
+        AuxFileRenameError,
     };
 
     struct CharacterErrCategory : std::error_category

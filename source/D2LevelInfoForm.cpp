@@ -83,14 +83,10 @@ CD2LevelInfoForm::CD2LevelInfoForm(CWnd* pParent /*=nullptr*/)
     : CDialogEx(IDD_D2LEVELINFO_DIALOG, pParent)
 {
     Modal = FALSE;
-    Version = d2ce::EnumCharVersion::v110;
+    Version = d2ce::APP_CHAR_VERSION;
     if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
     {
-        auto& CharInfo = ((CD2MainForm*)pParent)->CharInfo;
-        if (CharInfo != nullptr)
-        {
-            Version = CharInfo->getVersion();
-        }
+        Version = ((CD2MainForm*)pParent)->getCharacterVersion();
     }
 }
 //---------------------------------------------------------------------------
@@ -129,7 +125,7 @@ BOOL CD2LevelInfoForm::OnInitDialog()
 void CD2LevelInfoForm::FillCells()
 {
     LevelInfoGrid.DeleteAllItems();
-    std::uint32_t goldValue = 2500000;
+    std::uint32_t goldValue = d2ce::GOLD_IN_STASH_LIMIT;
     for (std::uint32_t i = 1; i <= d2ce::NUM_OF_LEVELS; ++i)
     {
         AddListColData(LevelInfoGrid, i - 1, 0, i);
@@ -204,14 +200,10 @@ BOOL CD2LevelInfoForm::Show(CWnd* pParent)
             return FALSE;
         }
 
-        Version = d2ce::EnumCharVersion::v110;
+        Version = d2ce::APP_CHAR_VERSION;
         if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
         {
-            auto& CharInfo = ((CD2MainForm*)pParent)->CharInfo;
-            if (CharInfo != nullptr)
-            {
-                Version = CharInfo->getVersion();
-            }
+            Version = ((CD2MainForm*)pParent)->getCharacterVersion();
         }
     }
 

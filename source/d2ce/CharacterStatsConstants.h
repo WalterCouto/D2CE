@@ -19,47 +19,38 @@
 
 #pragma once
 
+#include <cstdint>
+#include "bitmask.hpp"
+
 namespace d2ce
 {
-    constexpr std::uint32_t BARBARIAN_VITALITY_MIN = 25;
-    constexpr std::uint32_t PALADIN_VITALITY_MIN = 25;
-    constexpr std::uint32_t DRUID_VITALITY_MIN = 25;
-    constexpr std::uint32_t AMAZON_VITALITY_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_VITALITY_MIN = 20;
-    constexpr std::uint32_t NECROMANCER_VITALITY_MIN = 15;
-    constexpr std::uint32_t SORCERESS_VITALITY_MIN = 10;
-
-    constexpr std::uint32_t SORCERESS_ENERGY_MIN = 35;
-    constexpr std::uint32_t NECROMANCER_ENERGY_MIN = 25;
-    constexpr std::uint32_t ASSASSIN_ENERGY_MIN = 25;
-    constexpr std::uint32_t DRUID_ENERGY_MIN = 20;
-    constexpr std::uint32_t AMAZON_ENERGY_MIN = 15;
-    constexpr std::uint32_t PALADIN_ENERGY_MIN = 15;
-    constexpr std::uint32_t BARBARIAN_ENERGY_MIN = 10;
-
-    constexpr std::uint32_t AMAZON_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t NECROMANCER_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t SORCERESS_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t BARBARIAN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t PALADIN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t DRUID_DEXTERITY_MIN = 20;
-
-    constexpr std::uint32_t BARBARIAN_STRENGTH_MIN = 30;
-    constexpr std::uint32_t SORCERESS_STRENGTH_MIN = 25;
-    constexpr std::uint32_t AMAZON_STRENGTH_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_STRENGTH_MIN = 20;
-    constexpr std::uint32_t NECROMANCER_STRENGTH_MIN = 15;
-    constexpr std::uint32_t PALADIN_STRENGTH_MIN = 15;
-    constexpr std::uint32_t DRUID_STRENGTH_MIN = 15;
-
     constexpr std::uint32_t GOLD_IN_BELT_LIMIT = 990000;
     constexpr std::uint32_t GOLD_IN_STASH_LIMIT = 2500000;
 
-    // 98 skill points for leveling up 1-99. Additional 4 per difficulty from quests
-    constexpr std::uint32_t MAX_SKILL_CHOICES_EARNED = 110;
-
-    //  495 stat points for leveling up 1-99. Additional 5 per difficulty from quests
-    constexpr std::uint32_t MAX_STAT_POINTS = 510;
+    // This bit field indicates the presence or absence of each particular statistic.
+    // If the bit is 0, the corresponding statistic is zero and not stored in the file.
+    // If the bit is 1, the statistic has a long value stored in the file.  
+    // Note that many of the statistics are never zero, so they will always be present; but there is a bit assigned to them nonetheless
+    enum class EnumCharStatInfo : std::uint16_t
+    {
+        Strength = 0x0001,
+        Energy = 0x0002,
+        Dexterity = 0x0004,
+        Vitality = 0x0008,
+        StatPoints = 0x0010,
+        SkillChoices = 0x0020,
+        CurLife = 0x0040,
+        MaxLife = 0x0080,
+        CurMana = 0x0100,
+        MaxMana = 0x0200,
+        CurStamina = 0x0400,
+        MaxStamina = 0x0800,
+        Level = 0x1000,
+        Experience = 0x2000,
+        GoldInBelt = 0x4000,
+        GoldInStash = 0x8000,
+        All = 0xFFFF
+    };
+    BITMASK_DEFINE_VALUE_MASK(EnumCharStatInfo, 0xFFFF);
 }
 //---------------------------------------------------------------------------

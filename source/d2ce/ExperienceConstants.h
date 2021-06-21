@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace d2ce
 {
     constexpr std::uint32_t MAX_BASICSTATS = 0x03FF;     // strength, dexterity, vitality, energy max value (10 bits)

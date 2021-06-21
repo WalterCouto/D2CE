@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D2Editor", "D2Editor.vcxproj", "{D2C5172F-2473-4D78-A927-9FACE0B4543E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D2EditorTests", "d2ceTests\D2EditorTests.vcxproj", "{108774AB-D159-4987-9E39-00912B0EBF6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D2C5172F-2473-4D78-A927-9FACE0B4543E}.Release|x64.Build.0 = Release|x64
 		{D2C5172F-2473-4D78-A927-9FACE0B4543E}.Release|x86.ActiveCfg = Release|Win32
 		{D2C5172F-2473-4D78-A927-9FACE0B4543E}.Release|x86.Build.0 = Release|Win32
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Debug|x64.ActiveCfg = Debug|x64
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Debug|x64.Build.0 = Debug|x64
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Debug|x86.ActiveCfg = Debug|Win32
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Debug|x86.Build.0 = Debug|Win32
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Release|x64.ActiveCfg = Release|x64
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Release|x64.Build.0 = Release|x64
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Release|x86.ActiveCfg = Release|Win32
+		{108774AB-D159-4987-9E39-00912B0EBF6D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

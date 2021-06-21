@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace d2ce
 {
     // difficulty levels

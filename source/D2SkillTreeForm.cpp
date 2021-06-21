@@ -35,14 +35,9 @@ CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
     : CDialogEx(IDD_SKILLS_DIALOG, (CWnd*)&form), MainForm(form)
 {
     Class = MainForm.getCharacterClass();
+    SkillsUsed = MainForm.getSkillPointsUsed();
     SkillChoices = MainForm.getSkillChoices();
     std::memcpy(Skills, MainForm.getSkills(), sizeof(Skills));
-
-    SkillsUsed = 0;
-    for (std::uint32_t i = 0; i < d2ce::NUM_OF_SKILLS; ++i)
-    {
-        SkillsUsed += Skills[i];
-    }
 
     // Fix up Skill Choices
     EarnedSkillPoints = MainForm.getSkillPointsEarned();
@@ -232,18 +227,35 @@ void CD2SkillTreeForm::OnSkillKillFocus(UINT nID)
         if (oldValue > skillValue)
         {
             SkillsUsed -= (oldValue - skillValue);
+            if (SkillsUsed + SkillChoices < EarnedSkillPoints)
+            {
+                SkillChoices = std::min(EarnedSkillPoints - SkillsUsed, d2ce::MAX_SKILL_CHOICES);
+                UpdateCaption();
+            }
         }
         else
         {
-            SkillsUsed += (skillValue - oldValue);
+            std::uint8_t diff = (std::uint8_t)(skillValue - oldValue);
+            SkillsUsed += diff;
+            if (SkillChoices > 0)
+            {
+                if (SkillChoices > diff)
+                {
+                    SkillChoices -= diff;
+                }
+                else
+                {
+                    SkillChoices = 0;
+                }
+
+                if (SkillsUsed + SkillChoices < EarnedSkillPoints)
+                {
+                    SkillChoices = std::min(EarnedSkillPoints - SkillsUsed, d2ce::MAX_SKILL_CHOICES);
+                }
+                UpdateCaption();
+            }
         }
 
-
-        if (SkillsUsed + SkillChoices < EarnedSkillPoints)
-        {
-            SkillChoices = std::min(EarnedSkillPoints - SkillsUsed, d2ce::MAX_SKILL_CHOICES);
-            UpdateCaption();
-        }
         SkillsChanged = true;
     }
 }

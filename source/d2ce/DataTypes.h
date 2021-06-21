@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CharacterConstants.h"
+#include "CharacterStatsConstants.h"
 #include "Constants.h"
 
 namespace d2ce
@@ -31,7 +32,7 @@ namespace d2ce
         char Name[NAME_LENGTH];                                             // pos 8 (pre-1.09, otherwise pos 20),
                                                                             // name includes terminating NULL
         bitmask::bitmask<EnumCharStatus> Status = EnumCharStatus::NoDeaths; // pos 24 (pos 36, 1.09+ only), determines character status
-        EnumCharClass Class = EnumCharClass::Amazon;             // pos 34 (pre-1.09, otherwise pos 40),
+        EnumCharClass Class = EnumCharClass::Amazon;                        // pos 34 (pre-1.09, otherwise pos 40),
         bitmask::bitmask<EnumCharTitle> Title = EnumCharTitle::None;
         EnumDifficulty DifficultyLastPlayed = EnumDifficulty::Normal;
         EnumAct StartingAct = EnumAct::I;
@@ -141,7 +142,6 @@ namespace d2ce
 
     struct CharStats
     {
-        EnumCharVersion Version = APP_CHAR_VERSION; // Version for Character file
         std::uint32_t Strength = 0;          // pos 565 (pre-1.09)
         std::uint32_t Energy = 0;            // pos 569 (pre-1.09)
         std::uint32_t Dexterity = 0;         // pos 573 (pre-1.09)
@@ -165,11 +165,11 @@ namespace d2ce
             return curLevel * 10000;
         }
 
-        std::uint32_t getMaxGoldInStash() const
+        std::uint32_t getMaxGoldInStash(EnumCharVersion version = APP_CHAR_VERSION) const
         {
-            if (Version >= EnumCharVersion::v110) // 1.10+ character
+            if (version >= EnumCharVersion::v110) // 1.10+ character
             {
-                return 2500000;
+                return d2ce::GOLD_IN_STASH_LIMIT;
             }
 
             std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
@@ -178,7 +178,7 @@ namespace d2ce
                 return (curLevel / 10 + 1) * 50000;
             }
 
-            if (Version >= EnumCharVersion::v107) // 1.07 - 1.09 character
+            if (version >= EnumCharVersion::v107) // 1.07 - 1.09 character
             {
                 return (curLevel / 2 + 1) * 50000;
             }
@@ -194,8 +194,8 @@ namespace d2ce
 
         std::uint32_t getMinExperienceRequired() const
         {
-            std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
-            if (curLevel + 1 <= d2ce::NUM_OF_LEVELS)
+            std::uint32_t curLevel = std::max(0u, std::min(Level, NUM_OF_LEVELS));
+            if (curLevel <= d2ce::NUM_OF_LEVELS)
             {
                 return MinExpRequired[curLevel];
             }

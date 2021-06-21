@@ -23,7 +23,7 @@
 #include "D2QuestsForm.h"
 #include "afxdialogex.h"
 
-constexpr uint16_t questCompletedFlag = 0x9001;
+constexpr std::uint16_t questCompletedFlag = 0x9001;
 
 //---------------------------------------------------------------------------
 // CD2QuestsForm dialog

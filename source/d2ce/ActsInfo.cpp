@@ -18,6 +18,8 @@
 //---------------------------------------------------------------------------
 
 #include "pch.h"
+#include <cstdint>
+#include <locale>
 #include "ActsInfo.h"
 
 namespace d2ce
@@ -32,11 +34,11 @@ namespace d2ce
 
     constexpr std::uint32_t MIN_START_WAYPOINTS_POS = 633;
 
-    constexpr uint16_t questNotStarted = 0x0000;
-    constexpr uint16_t questStarted = 0x0004;
-    constexpr uint16_t questCompletedFlag = 0x9001;
+    constexpr std::uint16_t questNotStarted = 0x0000;
+    constexpr std::uint16_t questStarted = 0x0004;
+    constexpr std::uint16_t questCompletedFlag = 0x9001;
 
-    static const uint16_t questCompleted[][d2ce::NUM_OF_QUESTS] = {
+    static const std::uint16_t questCompleted[][d2ce::NUM_OF_QUESTS] = {
         {0x1001,0x101d,0x900d,0x101d,0x1055,0x101d}, // Act I
         {0x101d,0x1c39,0x100d,0x1181,0x1005,0x1e25}, // Act II
         {0x1001,0x10fd,0x11d9,0x1001,0x100d,0x1871}, // Act III
@@ -44,12 +46,12 @@ namespace d2ce
         {0x9021,0x1001,0x178d,0x901d,0x132d,0x169d}  // Act V
     };
 
-    constexpr uint16_t questMooMooFarm = 0x0400;
+    constexpr std::uint16_t questMooMooFarm = 0x0400;
 }
 
-uint16_t& d2ce::ActsInfo::getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
+std::uint16_t& d2ce::ActsInfo::getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
 {
-    static uint16_t dummy = 0;
+    static std::uint16_t dummy = 0;
 
     if (quest >= (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS))
     {
@@ -85,7 +87,7 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
         auto cur_pos = std::ftell(charfile);
         if (Version >= EnumCharVersion::v109)
         {
-            if (cur_pos < MIN_START_QUEST_POS)
+            if (cur_pos < (long)MIN_START_QUEST_POS)
             {
                 cur_pos = MIN_START_QUEST_POS;
                 std::fseek(charfile, cur_pos, SEEK_SET);
@@ -195,7 +197,7 @@ bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
         auto cur_pos = std::ftell(charfile);
         if (Version >= EnumCharVersion::v109)
         {
-            if (cur_pos < MIN_START_WAYPOINTS_POS)
+            if (cur_pos < (long)MIN_START_WAYPOINTS_POS)
             {
                 cur_pos = MIN_START_WAYPOINTS_POS;
                 std::fseek(charfile, cur_pos, SEEK_SET);
@@ -406,6 +408,11 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
     return *this;
 }
 //---------------------------------------------------------------------------
+void d2ce::ActsInfo::swap(ActsInfo& other)
+{
+    std::swap(*this, other);
+}
+//---------------------------------------------------------------------------
 void d2ce::ActsInfo::clear()
 {
     *this = ActsInfo();
@@ -446,7 +453,7 @@ bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
     return false;
 }
 //---------------------------------------------------------------------------
-uint16_t d2ce::ActsInfo::getQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
+std::uint16_t d2ce::ActsInfo::getQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
 {
     if (quest >= (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS))
     {
@@ -456,7 +463,7 @@ uint16_t d2ce::ActsInfo::getQuestData(EnumDifficulty diff, EnumAct act, std::uin
     return getQuestDataRef(diff, act, quest);
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, uint16_t questValue)
+void d2ce::ActsInfo::setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, std::uint16_t questValue)
 {
     if (quest >= (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS))
     {
@@ -1019,9 +1026,9 @@ bool d2ce::ActsInfo::drankPotionOfLife(EnumDifficulty diff) const
 
 }
 //---------------------------------------------------------------------------
-uint16_t d2ce::ActsInfo::getLifePointsEarned() const
+std::uint16_t d2ce::ActsInfo::getLifePointsEarned() const
 {
-    uint16_t points = 0;
+    std::uint16_t points = 0;
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
     for (auto diff : all_diff)
     {
@@ -1034,9 +1041,9 @@ uint16_t d2ce::ActsInfo::getLifePointsEarned() const
     return points;
 }
 //---------------------------------------------------------------------------
-uint16_t d2ce::ActsInfo::getSkillPointsEarned() const
+std::uint16_t d2ce::ActsInfo::getSkillPointsEarned() const
 {
-    uint16_t skills = 0;
+    std::uint16_t skills = 0;
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
     for (auto diff : all_diff)
     {
@@ -1062,9 +1069,9 @@ uint16_t d2ce::ActsInfo::getSkillPointsEarned() const
     return skills;
 }
 //---------------------------------------------------------------------------
-uint16_t d2ce::ActsInfo::getStatPointsEarned() const
+std::uint16_t d2ce::ActsInfo::getStatPointsEarned() const
 {
-    uint16_t stats = 0;
+    std::uint16_t stats = 0;
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
     for (auto diff : all_diff)
     {

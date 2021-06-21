@@ -71,7 +71,13 @@ namespace d2ce
     public:
         Item();
         Item(size_t itemsize);
+        Item(const Item& other);
         ~Item();
+
+        Item& operator=(const Item& other);
+        Item& operator=(Item&& other) noexcept;
+
+        void swap(Item& other);
 
         std::uint8_t& operator [](size_t position) const;
 
@@ -116,7 +122,7 @@ namespace d2ce
         bool setMaxDurability(std::uint8_t durability);
 
     public:
-        std::vector<Item> Items; // socketed items
+        std::vector<Item> SocketedItems; // socketed items
     };
 
     //---------------------------------------------------------------------------
@@ -132,20 +138,20 @@ namespace d2ce
             merc_location = 0,   // Expansion character only
             golem_location = 0;  // Expansion character only
 
-        uint16_t NumOfItems = 0;           // # of items (according to file) in inventory excluding 
+        std::uint16_t NumOfItems = 0;           // # of items (according to file) in inventory excluding 
                                            // gems in socketed items
-        std::vector<Item> Items;           // items in inventory
+        std::vector<Item> Inventory;       // items in inventory
 
         std::vector<std::reference_wrapper<Item>> GPSs;       // inventory of all Gems, Potions or Skulls
         std::vector<std::reference_wrapper<Item>> Stackables; // inventory of all Stackable (includes some weapons)
         std::vector<std::reference_wrapper<Item>> Armor;      // inventory of all Armor
         std::vector<std::reference_wrapper<Item>> Weapons;    // inventory of all Weapons (includes stackable weapons)
 
-        uint16_t NumOfCorpseItems = 0;     // # of items included in the Corpse section (according to file), non zero if you are currently dead
+        std::uint16_t NumOfCorpseItems = 0;     // # of items included in the Corpse section (according to file), non zero if you are currently dead
         std::vector<Item> CorpseItems;     // items on our Corpse
 
         // Expansion Character data
-        uint16_t NumOfMercItems = 0;       // # of Mercenary items (according to file)
+        std::uint16_t NumOfMercItems = 0;       // # of Mercenary items (according to file)
         std::vector<Item> MercItems;       // items mercenary is currently wearing.
 
         std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
@@ -157,8 +163,8 @@ namespace d2ce
     private:
         void findItems();
 
-        bool readItems(std::FILE* charfile, std::uint32_t& location, uint16_t& numItems, std::vector<Item>& Items);
-        bool fillItemsArray(std::FILE* charfile, std::uint32_t location, uint16_t numItems, std::vector<Item>& items);
+        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::vector<Item>& Items);
+        bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::vector<Item>& items);
 
         bool readCorpseItems(std::FILE* charfile);
         void readMercItems(std::FILE* charfile);
@@ -173,6 +179,15 @@ namespace d2ce
         bool writeItems(std::FILE* charfile, bool isExpansion = false);
 
     public:
+        Items();
+        Items(const Items& other);
+        ~Items();
+
+        Items& operator=(const Items& other);
+        Items& operator=(Items&& other) noexcept;
+
+        void swap(Items& other);
+
         void clear();
 
         bool anyUpgradableGems() const;

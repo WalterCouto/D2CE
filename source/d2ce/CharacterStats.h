@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "CharacterConstants.h"
+#include "CharacterStatsConstants.h"
+#include "SkillConstants.h"
 #include "DataTypes.h"
 
 namespace d2ce
@@ -31,10 +32,12 @@ namespace d2ce
 
     private:
         mutable std::vector<std::uint8_t> data;
-
-    protected:
-        std::uint32_t stats_location = 0;
+        std::uint32_t stats_location = 0,
+            skills_location = 0;
         bool update_locations = true;
+
+        EnumCharVersion Version = APP_CHAR_VERSION;  // Version for Character file
+        EnumCharClass Class = EnumCharClass::Amazon; // Class for Character file
 
         /*
            The next short field is for character file version prior to 1.09.
@@ -63,35 +66,56 @@ namespace d2ce
         */
         bitmask::bitmask<EnumCharStatInfo> StatInfo = EnumCharStatInfo::All; // pos 562 (pre-1.09)
 
+        std::uint8_t nullByte = 0;
+
+        std::uint32_t min_hit_points = 0x100, min_stamina = 0x100, min_mana = 0x100;
+        void updateMinStats();
+
+        std::uint32_t min_vitality = 1, min_energy = 1, min_dexterity = 1, min_strength = 1;
+        void updateStartStats();
+        
+        void updateSkillChoices(std::uint16_t skillPointsEarned);
+
+        void updateLifePointsEarned(std::uint16_t lifePointsEarned);
+        void updatePointsEarned(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarne);
+
+        void checkStatInfo();
+        EnumCharStatInfo GetStatInfoMask(std::uint16_t stat);
+        std::uint32_t* GetStatBuffer(std::uint16_t stat);
+
+        std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
+        bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
+        size_t readNextStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t& stat);
+        size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
+        bool readStats(std::FILE* charfile);
+        bool readStats_109(std::FILE* charfile);
+        bool readSkills(std::FILE* charfile);
+
+        size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
+        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
+        size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat);
+        size_t writeBufferBits(std::FILE* charfile);
+        bool writeStats_109(std::FILE* charfile);
+        bool writeSkills(std::FILE* charfile);
+
+    protected:
         CharStats Cs;                 // Strength:  pos 565 (pre-1.09)
                                       // Energy:    pos 569 (pre-1.09)
                                       // Dexterity: pos 573 (pre-1.09)
                                       // Vitality:  pos 577 (pre-1.09)
 
-        std::uint8_t nullByte = 0;
-
-    private:
-        void checkStatInfo();
-        EnumCharStatInfo GetStatInfoMask(uint16_t stat);
-        std::uint32_t* GetStatBuffer(uint16_t stat);
-
-        std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
-        bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
-        size_t readNextStat(std::FILE* charfile, size_t& current_bit_offset, uint16_t& stat);
-        size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, uint16_t stat);
-        bool readStats(std::FILE* charfile);
-        bool readStats_109(std::FILE* charfile);
-
-        size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
-        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, uint16_t stat);
-        size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat);
-        size_t writeBufferBits(std::FILE* charfile);
-        bool writeStats_109(std::FILE* charfile);
+        std::uint8_t Skills[NUM_OF_SKILLS] = { 0 };
 
     protected:
-        bool readStats(EnumCharVersion version, std::FILE* charfile);
+        bool readStats(EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
         bool writeStats(std::FILE* charfile);
         std::uint32_t getHeaderLocation();
+
+        void resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned);
+        void updateSkills(const std::uint8_t(&updated_skills)[NUM_OF_SKILLS], std::uint16_t skillPointsEarned);
+        void resetSkills(std::uint16_t skillPointsEarned);
+
+        void updateClass(EnumCharClass charClass);
 
     public:
         CharacterStats();
@@ -99,18 +123,38 @@ namespace d2ce
 
         void clear();
 
-        void clearSkillChoices();
-
         void fillCharacterStats(CharStats& cs);
         void updateCharacterStats(const CharStats& cs);
 
         std::uint32_t getLevel() const;
         std::uint32_t getExperience() const;
-        std::uint32_t getSkillChoices() const;
         std::uint32_t getMaxGoldInBelt() const;
         std::uint32_t getMaxGoldInStash() const;
         std::uint32_t getMinExperienceRequired() const;
         std::uint32_t getNextExperienceLevel() const;
+        std::uint32_t getMinStrength() const;
+        std::uint32_t getMinEnergy() const;
+        std::uint32_t getMinDexterity() const;
+        std::uint32_t getMinVitality() const;
+        std::uint32_t getMaxHitPoints() const;
+        std::uint32_t getMaxStamina() const;
+        std::uint32_t getMaxMana() const;
+
+        std::uint32_t getTotalStartStatPoints() const;
+        std::uint32_t getTotalStatPoints() const;
+        std::uint32_t getStatPointsUsed() const;
+        std::uint32_t getStatLeft() const;
+
+        // Skills
+        std::uint8_t(&getSkills())[NUM_OF_SKILLS];
+
+        std::uint32_t getTotalSkillPoints() const;
+        std::uint32_t getSkillPointsUsed() const;
+        std::uint32_t getSkillChoices() const;
+
+        bool areSkillsMaxed() const;
+        void maxSkills();
+        void clearSkillChoices();
     };
     //---------------------------------------------------------------------------
 }

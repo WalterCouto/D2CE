@@ -34,21 +34,21 @@ namespace d2ce
         // works for Act IV but only indexes 0, 1 and 2 are valid for quest data and the "Completed" flag is at index 3, the rest is padding
         struct ActInfo
         {
-            uint16_t Intro = 0;                     // has player read/heard intro
-            uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
-            uint16_t Completed = 0;
+            std::uint16_t Intro = 0;                     // has player read/heard intro
+            std::uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
+            std::uint16_t Completed = 0;
         };
 
         struct ActVInfo // works for Act V
         {
-            uint16_t Intro = 0;             // has player read/heard intro
-            uint16_t Padding1[2];
-            uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
+            std::uint16_t Intro = 0;             // has player read/heard intro
+            std::uint16_t Padding1[2];
+            std::uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
 
             // Not part of Act V quests
             std::uint8_t ResetStats = 0;
             std::uint8_t Padding2 = 0;
-            uint16_t Padding3[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
+            std::uint16_t Padding3[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
         };
 
         struct ActsInfoData // Each difficulty level contain this structure
@@ -81,7 +81,7 @@ namespace d2ce
         std::uint8_t waypoints_version[4] = { 0x01, 0x00, 0x00, 0x00 };
 
     private:
-        uint16_t& getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
+        std::uint16_t& getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
 
         bool readQuests(std::FILE* charfile);
         bool readWaypoints(std::FILE* charfile);
@@ -100,6 +100,8 @@ namespace d2ce
         ActsInfo& operator=(const ActsInfo& other);
         ActsInfo& operator=(ActsInfo&& other) noexcept;
 
+        void swap(ActsInfo& other);
+
         void clear();
 
         // Act info
@@ -107,8 +109,8 @@ namespace d2ce
         bool getActCompleted(EnumDifficulty diff, EnumAct act) const;
 
         // Act Quest info
-        uint16_t getQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
-        void setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, uint16_t questValue);
+        std::uint16_t getQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
+        void setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, std::uint16_t questValue);
         std::string getQuestNotes(EnumDifficulty diff, EnumAct act, std::uint8_t quest);
 
         bool getQuestYetToStart(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
@@ -128,9 +130,9 @@ namespace d2ce
 
         bool drankPotionOfLife(EnumDifficulty diff) const;
 
-        uint16_t getLifePointsEarned() const;
-        uint16_t getSkillPointsEarned() const;
-        uint16_t getStatPointsEarned() const;
+        std::uint16_t getLifePointsEarned() const;
+        std::uint16_t getSkillPointsEarned() const;
+        std::uint16_t getStatPointsEarned() const;
 
         void updateQuests(const ActsInfo& qi); // only update quests from acts
         void updateActs(const ActsInfo& qi); // only update both quests and waypoints from acts

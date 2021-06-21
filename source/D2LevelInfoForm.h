@@ -50,7 +50,7 @@ public:
     virtual BOOL OnInitDialog();
 
 private:
-    d2ce::EnumCharVersion Version = d2ce::EnumCharVersion::v110;
+    d2ce::EnumCharVersion Version = d2ce::APP_CHAR_VERSION;
     BOOL Modal = FALSE;
 
 public:

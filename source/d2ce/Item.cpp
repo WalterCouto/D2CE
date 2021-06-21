@@ -19,7 +19,11 @@
 //---------------------------------------------------------------------------
 
 #include "pch.h"
+#include <map>
+#include <bitset>
+#include <sstream>
 #include "Item.h"
+
 //---------------------------------------------------------------------------
 namespace d2ce
 {
@@ -31,6 +35,8 @@ namespace d2ce
     constexpr std::uint8_t ITEM_MARKER[] = { 0x4A, 0x4D };        // alternatively "JM"
     constexpr std::uint8_t MERC_ITEM_MARKER[] = { 0x6A, 0x66 };   // alternatively "jf"
     constexpr std::uint8_t GOLEM_ITEM_MARKER[] = { 0x6B, 0x66 };  // alternatively "jk"
+
+    constexpr std::uint32_t MIN_START_STATS_POS = 765;
 
 #define readtemp_bits(data,start,size) \
     ((*((std::uint64_t*) &(data)[(start) / 8]) >> ((start) & 7))& (((std::uint64_t)1 << (size)) - 1))
@@ -433,9 +439,88 @@ d2ce::Item::Item()
 d2ce::Item::Item(size_t itemsize) : data(itemsize)
 {
 }
+d2ce::Item::Item(const Item& other)
+{
+    *this = other;
+}
 //---------------------------------------------------------------------------
 d2ce::Item::~Item()
 {
+}
+//---------------------------------------------------------------------------
+d2ce::Item& d2ce::Item::operator=(const Item& other)
+{
+    // Guard self assignment
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    data = other.data;
+    SocketedItems = other.SocketedItems;
+
+    FileVersion = other.FileVersion;
+    start_bit_offset = other.start_bit_offset;
+    is_potion_bit_offset = other.is_potion_bit_offset;
+    location_bit_offset = other.location_bit_offset;
+    type_code_offset = other.type_code_offset;
+    extended_data_offset = other.extended_data_offset;
+    item_id_bit_offset = other.item_id_bit_offset;
+    item_level_bit_offset = other.item_level_bit_offset;
+    multi_graphic_bit_offset = other.multi_graphic_bit_offset;
+    autoAffix_bit_offset = other.autoAffix_bit_offset;
+    quality_bit_offset = other.quality_bit_offset;
+    personalized_bit_offset = other.personalized_bit_offset;
+    armor_or_weapon_bit_offset = other.armor_or_weapon_bit_offset;
+    durability_bit_offset = other.durability_bit_offset;
+    stackable_bit_offset = other.stackable_bit_offset;
+    socket_count_bit_offset = other.socket_count_bit_offset;
+    bonus_bits_bit_offset = other.bonus_bits_bit_offset;
+    magical_props_bit_offset = other.magical_props_bit_offset;
+    set_bonus_props_bit_offset = other.set_bonus_props_bit_offset;
+    runeword_props_bit_offset = other.runeword_props_bit_offset;
+    item_end_bit_offset = other.item_end_bit_offset;
+    return *this;
+}
+d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
+{
+    // Guard self assignment
+    if (this == &other)
+    {
+        return *this;
+    }
+
+    data.swap(other.data);
+    other.data.clear();
+    SocketedItems.swap(other.SocketedItems);
+    other.SocketedItems.clear();
+    FileVersion = std::exchange(other.FileVersion, APP_CHAR_VERSION);
+    start_bit_offset = std::exchange(other.start_bit_offset, 16);
+    is_potion_bit_offset = std::exchange(other.is_potion_bit_offset, 36);
+    location_bit_offset = std::exchange(other.location_bit_offset, 58);
+    type_code_offset = std::exchange(other.type_code_offset, 76);
+    extended_data_offset = std::exchange(other.extended_data_offset, 108);
+    item_id_bit_offset = std::exchange(other.item_id_bit_offset, 0);
+    item_level_bit_offset = std::exchange(other.item_level_bit_offset, 0);
+    multi_graphic_bit_offset = std::exchange(other.multi_graphic_bit_offset, 0);
+    autoAffix_bit_offset = std::exchange(other.autoAffix_bit_offset, 0);
+    quality_bit_offset = std::exchange(other.quality_bit_offset, 0);
+    personalized_bit_offset = std::exchange(other.personalized_bit_offset, 0);
+    armor_or_weapon_bit_offset = std::exchange(other.armor_or_weapon_bit_offset, 0);
+    durability_bit_offset = std::exchange(other.durability_bit_offset, 0);
+    stackable_bit_offset = std::exchange(other.stackable_bit_offset, 0);
+    socket_count_bit_offset = std::exchange(other.socket_count_bit_offset, 0);
+    bonus_bits_bit_offset = std::exchange(other.bonus_bits_bit_offset, 0);
+    magical_props_bit_offset = std::exchange(other.magical_props_bit_offset, 0);
+    set_bonus_props_bit_offset = std::exchange(other.set_bonus_props_bit_offset, 0);
+    runeword_props_bit_offset = std::exchange(other.runeword_props_bit_offset, 0);
+    item_end_bit_offset = std::exchange(other.item_end_bit_offset, 0);
+    return *this;
+}
+//---------------------------------------------------------------------------
+void d2ce::Item::swap(Item& other)
+{
+    std::swap(*this, other);
 }
 //---------------------------------------------------------------------------
 std::uint8_t& d2ce::Item::operator [](size_t position) const
@@ -453,7 +538,7 @@ size_t d2ce::Item::size() const
 size_t d2ce::Item::getFullSize() const
 {
     size_t byteSize = data.size();
-    for (auto& item : Items)
+    for (auto& item : SocketedItems)
     {
         byteSize += item.getFullSize();
     }
@@ -475,8 +560,7 @@ void d2ce::Item::reserve(size_t itemsize)
 //---------------------------------------------------------------------------
 void d2ce::Item::clear()
 {
-    data.clear();
-    Items.clear();
+    *this = Item();
 }
 //---------------------------------------------------------------------------
 void d2ce::Item::push_back(const std::uint8_t& value)
@@ -486,7 +570,7 @@ void d2ce::Item::push_back(const std::uint8_t& value)
 //---------------------------------------------------------------------------
 d2ce::EnumItemVersion d2ce::Item::Version() const
 {
-    uint16_t value = 0;
+    std::uint16_t value = 0;
     if (FileVersion < EnumCharVersion::v115) // pre-1.15 character file
     {
         value = read_uint32_bits(start_bit_offset + 32, 8);
@@ -1655,7 +1739,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 {
     FileVersion = version;
     data.clear();
-    Items.clear();
+    SocketedItems.clear();
 
     // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80
     data.reserve(80);
@@ -2014,11 +2098,11 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     auto numSocketed = socketedItemCount();
     if (numSocketed > 0)
     {
-        Items.reserve(numSocketed);
+        SocketedItems.reserve(numSocketed);
         for (std::uint8_t i = 0; !feof(charfile) && i < numSocketed; ++i)
         {
-            Items.resize(Items.size() + 1);
-            auto& childItem = Items.back();
+            SocketedItems.resize(SocketedItems.size() + 1);
+            auto& childItem = SocketedItems.back();
             if (!childItem.readItem(FileVersion, charfile))
             {
                 return false;
@@ -2049,7 +2133,7 @@ bool d2ce::Item::writeItem(std::FILE* charfile)
     }
 
     // now write child items
-    for (auto& item : Items)
+    for (auto& item : SocketedItems)
     {
         if (!item.writeItem(charfile))
         {
@@ -2381,7 +2465,7 @@ void d2ce::Items::findItems()
     const std::uint8_t& gem = strcode[0];
     const std::uint8_t& gemcondition = strcode[1];
     const std::uint8_t& gemcolour = strcode[2];
-    for (auto& item : Items)
+    for (auto& item : Inventory)
     {
         if (item.isStackable())
         {
@@ -2545,7 +2629,7 @@ void d2ce::Items::findItems()
     } // end for
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, uint16_t& numItems, std::vector<d2ce::Item>& items)
+bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::vector<d2ce::Item>& items)
 {
     numItems = 0;
     items.clear();
@@ -2555,9 +2639,9 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, uint16
         location = 0;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)765)
+        if (cur_pos < (long)MIN_START_STATS_POS)
         {
-            cur_pos = (long)765;
+            cur_pos = MIN_START_STATS_POS;
             std::fseek(charfile, cur_pos, SEEK_SET);
         }
 
@@ -2614,7 +2698,7 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, uint16
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, uint16_t numItems, std::vector<d2ce::Item>& items)
+bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::vector<d2ce::Item>& items)
 {
     std::fseek(charfile, location, SEEK_SET);
     while (items.size() < numItems)
@@ -2649,9 +2733,9 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         bool bFoundMercMarker = false;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)765)
+        if (cur_pos < (long)MIN_START_STATS_POS)
         {
-            cur_pos = (long)765;
+            cur_pos = MIN_START_STATS_POS;
             std::fseek(charfile, cur_pos, SEEK_SET);
         }
 
@@ -2701,7 +2785,7 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
         auto cur_pos = std::ftell(charfile);
         if (cur_pos < (long)items_location)
         {
-            cur_pos = (long)items_location;
+            cur_pos = items_location;
             std::fseek(charfile, cur_pos, SEEK_SET);
         }
 
@@ -2760,7 +2844,7 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
 bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 {
     std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
-    NumOfCorpseItems = (uint16_t)CorpseItems.size();
+    NumOfCorpseItems = (std::uint16_t)CorpseItems.size();
     std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
     corpse_location = std::ftell(charfile);
     for (auto& item : CorpseItems)
@@ -2778,7 +2862,7 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile)
 {
     std::fwrite(MERC_ITEM_MARKER, sizeof(MERC_ITEM_MARKER), 1, charfile);
     std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
-    NumOfMercItems = (uint16_t)MercItems.size();
+    NumOfMercItems = (std::uint16_t)MercItems.size();
     std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
     merc_location = std::ftell(charfile);
     for (auto& item : MercItems)
@@ -2815,7 +2899,7 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
-    if (!readItems(charfile, items_location, NumOfItems, Items) || items_location == 0)
+    if (!readItems(charfile, items_location, NumOfItems, Inventory) || items_location == 0)
     {
         return false;
     }
@@ -2840,9 +2924,9 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
 {
     // Write Items
     std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
-    NumOfItems = (uint16_t)Items.size();
+    NumOfItems = (std::uint16_t)Inventory.size();
     std::fwrite(&NumOfItems, sizeof(NumOfItems), 1, charfile);
-    for (auto& item : Items)
+    for (auto& item : Inventory)
     {
         if (!item.writeItem(charfile))
         {
@@ -2867,33 +2951,111 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::clear()
+d2ce::Items::Items()
 {
-    Version = APP_CHAR_VERSION;
+}
+//---------------------------------------------------------------------------
+d2ce::Items::Items(const Items& other)
+{
+    *this = other;
+}
+//---------------------------------------------------------------------------
+d2ce::Items::~Items()
+{
+}
+//---------------------------------------------------------------------------
+d2ce::Items& d2ce::Items::operator=(const Items& other)
+{
+    // Guard self assignment
+    if (this == &other)
+    {
+        return *this;
+    }
 
-    NumOfItems = 0;
+    Version = other.Version;
+
+    items_location = other.items_location;
+    corpse_location = other.corpse_location;
+    merc_location = other.merc_location;
+    golem_location = other.golem_location;
+
+    NumOfItems = other.NumOfItems;
+    Inventory = other.Inventory;
+
+    NumOfCorpseItems = other.NumOfCorpseItems;
+    CorpseItems = other.CorpseItems;
+
+    NumOfMercItems = other.NumOfMercItems;
+    MercItems = other.MercItems;
+
+    HasGolem = other.HasGolem;
+    GolemItem = other.GolemItem;
+
+    update_locations = other.update_locations;
+    isFileExpansionCharacter = other.isFileExpansionCharacter;
+
+    // refetch references to items
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
-    Items.clear();
+    findItems();
+    return *this;
+}
+d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
+{
+    // Guard self assignment
+    if (this == &other)
+    {
+        return *this;
+    }
 
-    NumOfCorpseItems = 0;
-    CorpseItems.clear();
+    Version = std::exchange(other.Version, APP_CHAR_VERSION);
 
-    NumOfMercItems = 0;
-    MercItems.clear();
+    items_location = std::exchange(other.items_location, 0);
+    corpse_location = std::exchange(other.corpse_location, 0);
+    merc_location = std::exchange(other.merc_location, 0);
+    golem_location = std::exchange(other.golem_location, 0);
 
-    HasGolem = 0;
-    GolemItem.clear();
+    // copy reference to items
+    GPSs.swap(other.GPSs);
+    other.Inventory.clear();
+    Stackables.swap(other.Stackables);
+    other.Stackables.clear();
+    Armor.swap(other.Armor);
+    other.Armor.clear();
+    Weapons.swap(other.Weapons);
+    other.Weapons.clear();
 
-    items_location = 0;
-    corpse_location = 0;
-    merc_location = 0;
-    golem_location = 0;
-    update_locations = true;
+    NumOfItems = std::exchange(other.NumOfItems, std::uint16_t(0));
+    Inventory.swap(other.Inventory);
+    other.Inventory.clear();
 
-    isFileExpansionCharacter = false;
+    NumOfCorpseItems = std::exchange(other.NumOfCorpseItems, std::uint16_t(0));
+    CorpseItems.swap(other.CorpseItems);
+    other.CorpseItems.clear();
+
+    NumOfMercItems = std::exchange(other.NumOfMercItems, std::uint16_t(0));
+    MercItems.swap(other.MercItems);
+    other.MercItems.clear();
+
+    HasGolem = std::exchange(other.HasGolem, std::uint8_t(0));
+    GolemItem.swap(other.GolemItem);
+    other.GolemItem.clear();
+
+    update_locations = std::exchange(other.update_locations, true);
+    isFileExpansionCharacter = std::exchange(other.isFileExpansionCharacter, false);
+    return *this;
+}
+//---------------------------------------------------------------------------
+void d2ce::Items::swap(Items& other)
+{
+    std::swap(*this, other);
+}
+//---------------------------------------------------------------------------
+void d2ce::Items::clear()
+{
+    *this = Items();
 }
 //---------------------------------------------------------------------------
 /*
@@ -3059,14 +3221,14 @@ bool d2ce::Items::anyUpgradableRejuvenations() const
 */
 size_t d2ce::Items::getNumberOfItems() const
 {
-    return Items.size();
+    return Inventory.size();
 }
 //---------------------------------------------------------------------------
 // number of bytes to store all item sections
 size_t d2ce::Items::getByteSize() const
 {
     size_t byteSize = GolemItem.getFullSize();
-    for (auto& item : Items)
+    for (auto& item : Inventory)
     {
         byteSize += item.getFullSize();
     }
@@ -3391,6 +3553,14 @@ size_t d2ce::Items::maxDurabilityAllItems()
     for (auto& item : Weapons)
     {
         if (item.get().setMaxDurability(MAX_DURABILITY))
+        {
+            ++itemsFilled;
+        }
+    }
+
+    for (auto& item : MercItems)
+    {
+        if (item.setMaxDurability(MAX_DURABILITY))
         {
             ++itemsFilled;
         }

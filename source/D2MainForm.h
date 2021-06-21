@@ -47,7 +47,7 @@ protected:
 
 protected:
     CString GetValidText(LPCTSTR value) const;
-}; 
+};
 
 class CStatsLeftImage : public CStatic
 {
@@ -93,7 +93,7 @@ protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
     virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-// Implementation
+    // Implementation
 protected:
     HICON m_hIcon = NULL;
 
@@ -101,15 +101,7 @@ protected:
     UINT m_nIDLastMessage = 0;
     double m_dpiFactor = 1.0;
 
-    CFont BoldFont;
-    std::uint32_t OrigValue = 0; // used for set focus and kill focus
-
-    BOOL RestoreActionEnabled = FALSE;
-    BOOL IsExpansionCharacter = FALSE;
-    BOOL IsHardcoreCharacter = FALSE;
-
-    std::uint32_t EarnedStatPoints = 0;
-    std::uint32_t EarnedSkillPoints = 0;
+    CFont m_boldFont;
 
     // Generated message map functions
     virtual BOOL OnInitDialog();
@@ -235,13 +227,14 @@ private:	// User declarations
         SkillChoicesChanged = false, // has skill choices remaining been changed
         WaypointsChanged = false,    // has list of active waypoints changed
         QuestsChanged = false;       // has the list of completed quests changed
-    std::uint32_t MAXGOLD = d2ce::GOLD_IN_BELT_LIMIT, MAXSTASHGOLD = d2ce::GOLD_IN_STASH_LIMIT;
-    std::uint32_t MINHITPOINTS = 0x100, MINSTAMINA = 0x100, MINMANA = 0x100;
-    std::uint32_t MINVITALITY = 1, MINENERGY = 1, MINDEXTERITY = 1, MINSTRENGTH = 1;
     bool hasUpgradableGems = false;
     bool hasUpgradablePotions = false;
     bool hasUpgradableRejuvenations = false;
-    d2ce::CharStats Cs;
+    bool hasBackupFile = false;
+    std::uint32_t OrigValue = 0; // used for set focus and kill focus
+    d2ce::Character CharInfo;
+    d2ce::BasicStats Bs; // original values
+    d2ce::CharStats Cs;  // original values
     std::vector<WORD> m_vecTemplate;
 
     CCharNameEdit CharName;
@@ -294,30 +287,25 @@ private:	// User declarations
     std::set<UINT> ctrlEditted;
     CString curPathName;
 
+private:
     void OpenFile(LPCTSTR filename);
     void ClearAllBoolVars();
     void DisplayCharInfo();
+    void UpdateCharInfo();
+    void EnableCharInfoBox(BOOL bEnable);
     int DoFileCloseAction();
     void Initialize();
-    bitmask::bitmask<d2ce::EnumCharStatus> getStatus();
-    bool NewStatusSelected();
-    bool NewTitleSelected();
-    void RenameCharacterFiles(const std::string& newName);
     void SetStartDir();
     void UpdateAppTitle();
+    void UpdateClassDisplay();
     void UpdateTitleDisplay();
+    void UpdateStartingActDisplay();
     void WriteBackupFile();
     void SetupBasicStats();
     void StatsChanged();
     bool CheckIsHardcoreDead(bool& bStatChanged);
 
-    void CheckStatsSkillsLevel(std::uint32_t prevLevel);
-    void UpdateStatsLeft();
     void CheckStatsLeft();
-    void UpdateMaxGold();
-    void UpdateStartStats();
-    void UpdateMinStats(bool applyChanges = true);
-    void UpdateCharInfoBox(BOOL bEnable);
     std::string ToStdString(const CWnd* Sender) const;
     CString ToText(const CWnd* Sender) const;
     CStringA ToTextA(const CWnd* Sender) const;
@@ -327,21 +315,35 @@ private:	// User declarations
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
 public:
-    std::unique_ptr<d2ce::Character> CharInfo;
+    // Character Stats
+    d2ce::EnumCharVersion getCharacterVersion() const;
+    bitmask::bitmask<d2ce::EnumCharStatus> getCharacterStatus() const;
+    bitmask::bitmask<d2ce::EnumCharTitle> getCharacterTitle() const;
+    d2ce::EnumCharClass getCharacterClass() const;
+    d2ce::EnumDifficulty getDifficultyLastPlayed() const;
 
     bool isExpansionCharacter() const;
-    d2ce::EnumDifficulty getDifficultyLastPlayed();
-    std::uint64_t getWaypoints(d2ce::EnumDifficulty difficulty) const;
-    void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
-    const d2ce::ActsInfo& getQuests();
-    void updateQuests(const d2ce::ActsInfo& qi);
-    d2ce::EnumCharClass getCharacterClass();
-    std::uint8_t (&getSkills())[d2ce::NUM_OF_SKILLS];
-    std::uint32_t getSkillChoices();
-    void updateSkills(const std::uint8_t(&updated_skills)[d2ce::NUM_OF_SKILLS]);
-    const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
-    size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
+
     uint32_t getSkillPointsEarned() const;
     uint32_t getStatPointsEarned() const;
+
+    // Quests
+    const d2ce::ActsInfo& getQuests();
+    void updateQuests(const d2ce::ActsInfo& qi);
+
+    // Waypoints
+    std::uint64_t getWaypoints(d2ce::EnumDifficulty difficulty) const;
+    void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
+
+    // Skills
+    std::uint8_t(&getSkills())[d2ce::NUM_OF_SKILLS];
+    void updateSkills(const std::uint8_t(&updated_skills)[d2ce::NUM_OF_SKILLS]);
+
+    std::uint32_t getSkillPointsUsed() const;
+    std::uint32_t getSkillChoices() const;
+
+    // Items
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
+    size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
 };
 //---------------------------------------------------------------------------

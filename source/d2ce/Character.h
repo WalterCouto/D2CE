@@ -69,8 +69,6 @@ namespace d2ce
         ActsInfo Acts;
 
         CharacterStats Cs; // pos 765 (pos 562 pre-1.09) 
-
-        std::uint8_t Skills[NUM_OF_SKILLS];
         
         mutable Items items;
 
@@ -84,8 +82,7 @@ namespace d2ce
             class_location = 0,
             level_location = 0,
             starting_location = 0,
-            stats_header_location = 0,
-            skills_location = 0;
+            stats_header_location = 0;
         bool update_locations = true;
 
         void calculateChecksum();
@@ -96,14 +93,11 @@ namespace d2ce
         void readBasicInfo();
         bool readActs();
         bool readStats();
-        bool readSkills();
         bool readItems();
 
-        void writeName();
-        void writeBasicStats();
+        void writeBasicInfo();
         bool writeActs();
         bool writeStats();
-        bool writeSkills();
         bool writeItems();
         void writeTempFile();
 
@@ -116,6 +110,7 @@ namespace d2ce
         bool refresh();
         bool save();
         void close();
+        const char *getPathName() const;
 
         bool is_open() const;
         std::error_code getLastError() const;
@@ -124,15 +119,17 @@ namespace d2ce
         void fillBasicStats(BasicStats& bs);
         void fillCharacterStats(CharStats& cs);
 
-        void updateBasicStats(const BasicStats& bs);
-        void updateCharacterStats(const CharStats& cs);
+        void updateBasicStats(BasicStats& bs);
+        void updateCharacterStats(CharStats& cs);
+
+        void resetStats(); // both skills and stats
 
         EnumCharVersion getVersion() const;
         const char (&getName())[NAME_LENGTH];
         bitmask::bitmask<EnumCharStatus> getStatus() const;
         bitmask::bitmask<EnumCharTitle> getTitle() const;
         EnumCharClass getClass() const;
-        EnumDifficulty getDifficultyLastPlayed();
+        EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
 
         bool isExpansionCharacter() const;
@@ -148,14 +145,27 @@ namespace d2ce
 
         std::uint32_t getLevel() const;
         std::uint32_t getExperience() const;
+        std::uint32_t getMaxGoldInBelt() const;
+        std::uint32_t getMaxGoldInStash() const;
+        std::uint32_t getMinStrength() const;
+        std::uint32_t getMinEnergy() const;
+        std::uint32_t getMinDexterity() const;
+        std::uint32_t getMinVitality() const;
+        std::uint32_t getMaxHitPoints() const;
+        std::uint32_t getMaxStamina() const;
+        std::uint32_t getMaxMana() const;
 
-        std::uint16_t getLifePointsEarned() const;
         std::uint32_t getSkillPointsEarned() const;
         std::uint32_t getSkillPointsEarned(std::uint32_t level) const;
+        std::uint32_t getLevelFromTotalSkillPoints() const;
         std::uint32_t getLevelFromSkillPointsEarned(std::uint32_t earned) const;
+        std::uint32_t getTotalStartStatPoints() const;
+        std::uint32_t getTotalStatPoints() const;
+        std::uint32_t getStatPointsUsed() const;
         std::uint32_t getStatPointsEarned() const;
         std::uint32_t getStatPointsEarned(std::uint32_t level) const;
-        std::uint32_t getLevelFromStatPointsEarned(uint32_t earned) const;
+        std::uint32_t getLevelFromTotalStatPoints() const;
+        std::uint32_t getLevelFromStatPointsEarned(std::uint32_t earned) const;
 
         // Quests
         const ActsInfo& getQuests();
@@ -169,7 +179,8 @@ namespace d2ce
         std::uint8_t(&getSkills())[NUM_OF_SKILLS];
         void updateSkills(const std::uint8_t (&updated_skills)[NUM_OF_SKILLS]);
 
-        std::uint32_t getSkillPointUsed() const;
+        std::uint32_t getTotalSkillPoints() const;
+        std::uint32_t getSkillPointsUsed() const;
         std::uint32_t getSkillChoices() const;
 
         bool areSkillsMaxed() const;

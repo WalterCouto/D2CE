@@ -19,16 +19,16 @@
 //---------------------------------------------------------------------------
 
 #include "pch.h"
+#include <filesystem>
 #include "Character.h"
 #include "CharacterConstants.h"
+#include "ExperienceConstants.h"
 #include "ItemConstants.h"
 #include "SkillConstants.h"
 //---------------------------------------------------------------------------
 namespace d2ce
 {
     constexpr std::uint8_t HEADER[] = { 0x55, 0xAA, 0x55, 0xAA };
-
-    constexpr std::uint8_t SKILLS_MARKER[] = { 0x69, 0x66 };             // alternatively "if"
 }
 //---------------------------------------------------------------------------
 
@@ -66,6 +66,9 @@ std::string d2ce::CharacterErrCategory::message(int ev) const
     case CharacterErrc::FileRenameError:
         return "Unable to rename Diablo II character file.";
 
+    case CharacterErrc::AuxFileRenameError:
+        return "One or more auxiliary Character Files (.key, .ma*) could not be renamed.";
+
     default:
         return "(unrecognized error)";
     }
@@ -99,7 +102,7 @@ d2ce::Character::~Character()
 void d2ce::Character::initialize()
 {
     std::memset(Header, 0, sizeof(Header));
-    Version = 0;
+    Version = static_cast<std::underlying_type_t<EnumCharVersion>>(APP_CHAR_VERSION);
     FileSize = 0;
     Checksum = 0;
     WeaponSet = 0;
@@ -117,7 +120,6 @@ void d2ce::Character::initialize()
     Acts.clear();
 
     Cs.clear();
-    std::memset(Skills, 0, sizeof(Skills));
 
     error_code.clear();
 
@@ -130,7 +132,6 @@ void d2ce::Character::initialize()
     level_location = 0;
     starting_location = 0;
     stats_header_location = 0;
-    skills_location = 0;
     update_locations = true;
 
     if (charfile != nullptr)
@@ -307,19 +308,12 @@ bool d2ce::Character::refresh()
         return false;
     }
 
+    // From this point on, the location is variable
     if (!readStats())
     {
         // bad file
         close();
         error_code = std::make_error_code(CharacterErrc::InvalidCharStats);
-        return false;
-    }
-
-    if(!readSkills())
-    {
-        // bad file
-        close();
-        error_code = std::make_error_code(CharacterErrc::InvalidCharSkills);
         return false;
     }
 
@@ -341,7 +335,7 @@ void d2ce::Character::readBasicInfo()
     std::fread(&Version, sizeof(Version), 1, charfile);
 
     Bs.Version = getVersion();
-    Cs.Cs.Version = Bs.Version;
+    Cs.Version = Bs.Version;
 
     filesize_location = 0;
     checksum_location = 0;
@@ -356,6 +350,7 @@ void d2ce::Character::readBasicInfo()
 
     name_location = std::ftell(charfile);
     std::fread(Bs.Name, sizeof(Bs.Name), 1, charfile);
+    Bs.Name[15] = 0; // must be zero
     std::uint8_t value = 0;
     std::fread(&value, sizeof(value), 1, charfile);
     Bs.Status = static_cast<EnumCharStatus>(value);
@@ -433,66 +428,15 @@ bool d2ce::Character::readActs()
 //---------------------------------------------------------------------------
 bool d2ce::Character::readStats()
 {
-    if (Cs.readStats(Bs.Version, charfile))
+    if (Cs.readStats(Bs.Version, Bs.Class, charfile))
     {
         stats_header_location = Cs.getHeaderLocation();
         DisplayLevel = (std::uint8_t)Cs.Cs.Level; // updates character's display level
+        Cs.updateLifePointsEarned(Acts.getLifePointsEarned());
         return true;
     }
 
     return false;
-}
-//---------------------------------------------------------------------------
-bool d2ce::Character::readSkills()
-{
-    if (update_locations)
-    {
-        // find stats location
-        skills_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)stats_header_location)
-        {
-            cur_pos = (long)stats_header_location;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != SKILLS_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != SKILLS_MARKER[1])
-            {
-                continue;
-            }
-
-            // found skills marker (0x6669). 
-            skills_location = std::ftell(charfile);
-            break;
-        }
-
-        if (skills_location == 0)
-        {
-            return false;
-        }
-    }
-    else
-    {
-        if (skills_location == 0)
-        {
-            return false;
-        }
-
-        std::fseek(charfile, skills_location, SEEK_SET);
-    }
-
-    std::fread(Skills, sizeof(Skills), 1, charfile);
-    return true;
 }
 bool d2ce::Character::readItems()
 {
@@ -507,12 +451,11 @@ bool d2ce::Character::save()
     }
 
     error_code.clear();
-    writeBasicStats();
+    writeBasicInfo();
     writeActs();
 
     // From this point on, the location is variable
     writeStats();
-    writeSkills();
 
     // Write Character, Corpse, Mercenary and Golem items
     writeItems();
@@ -557,12 +500,14 @@ bool d2ce::Character::save()
         tempfilename = filename;
         std::filesystem::path p = filename;
         p.replace_extension();
+        std::string origFileNameBase = p.string();
         std::string tempname = p.filename().string();
 
         // compare filename (w/o extension) to character's name
         if (tempname.compare(0, tempname.length(), Bs.Name) != 0)
         {
-            filename = p.replace_filename(Bs.Name).string();
+            std::string fileNameBase = p.replace_filename(Bs.Name).string();
+            filename = fileNameBase + ".d2s";
             std::fclose(charfile);
             charfile = nullptr;
             if (std::rename(tempfilename.c_str(), filename.c_str()))
@@ -574,6 +519,67 @@ bool d2ce::Character::save()
             if (!open(filename.c_str(), false)) // checksum is calulated and written below
             {
                 return false;
+            }
+
+            // rename other files (don't error out if it fails)
+            tempfilename = origFileNameBase + ".key";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".key";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
+            }
+
+            tempfilename = origFileNameBase + ".ma0";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".ma0";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
+            }
+
+            tempfilename = origFileNameBase + ".ma1";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".ma1";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
+            }
+
+            tempfilename = origFileNameBase + ".ma2";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".ma2";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
+            }
+
+            tempfilename = origFileNameBase + ".ma3";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".ma3";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
+            }
+
+            tempfilename = origFileNameBase + ".map";
+            if (std::filesystem::exists(tempfilename))
+            {
+                tempname = fileNameBase + ".map";
+                if (std::rename(tempfilename.c_str(), tempname.c_str()))
+                {
+                    error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                }
             }
         }
     }
@@ -606,21 +612,10 @@ bool d2ce::Character::save()
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::writeName()
+void d2ce::Character::writeBasicInfo()
 {
-    // make sure name is saved correctly
-    std::string temp(Bs.Name);
-    std::memset(Bs.Name, 0, sizeof(Bs.Name));
-    strcpy_s(Bs.Name, temp.length() + 1, temp.c_str());
-
     std::fseek(charfile, name_location, SEEK_SET);
     std::fwrite(Bs.Name, sizeof(Bs.Name), 1, charfile);
-    std::fflush(charfile);
-}
-//---------------------------------------------------------------------------
-void d2ce::Character::writeBasicStats()
-{
-    writeName();
 
     // ladder is for 1.10 or higher
     if (Bs.Version < EnumCharVersion::v110)
@@ -668,15 +663,6 @@ bool d2ce::Character::writeStats()
     return Cs.writeStats(charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::writeSkills()
-{
-    std::fwrite(SKILLS_MARKER, sizeof(SKILLS_MARKER), 1, charfile);
-    skills_location = std::ftell(charfile);
-    std::fwrite(Skills, sizeof(Skills), 1, charfile);
-    std::fflush(charfile);
-    return true;
-}
-//---------------------------------------------------------------------------
 bool d2ce::Character::writeItems()
 {
     return items.writeItems(charfile, isExpansionCharacter());
@@ -709,11 +695,6 @@ void d2ce::Character::writeTempFile()
     // From this point on, the location is variable
     Cs.writeStats(tempfile);
 
-    std::fwrite(SKILLS_MARKER, sizeof(SKILLS_MARKER), 1, tempfile);
-    skills_location = std::ftell(charfile);
-    std::fwrite(Skills, sizeof(Skills), 1, tempfile);
-    std::fflush(tempfile);
-
     // Write Character, Corpse, Mercenary and Golem items
     items.writeItems(tempfile, isExpansionCharacter());
     std::fclose(tempfile);
@@ -727,6 +708,11 @@ void d2ce::Character::close()
     }
     charfile = nullptr;
     initialize();
+}
+//---------------------------------------------------------------------------
+const char* d2ce::Character::getPathName() const
+{
+    return filename.c_str();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::is_open() const
@@ -749,9 +735,12 @@ void d2ce::Character::fillCharacterStats(CharStats& cs)
     Cs.fillCharacterStats(cs);
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::updateBasicStats(const BasicStats& bs)
+void d2ce::Character::updateBasicStats(BasicStats& bs)
 {
+    auto oldClass = Bs.Class;
+    std::string oldName(Bs.Name);
     std::memcpy(&Bs, &bs, sizeof(BasicStats));
+    Bs.Name[15] = 0; // must be zero
     Bs.Version = getVersion();
 
     // ladder is for 1.10 or higher
@@ -767,21 +756,137 @@ void d2ce::Character::updateBasicStats(const BasicStats& bs)
 
     if (Bs.Version < EnumCharVersion::v109)
     {
+        if (Bs.Version < EnumCharVersion::v107 || Bs.Version == EnumCharVersion::v108)
+        {
+            // expansion not supported
+            Bs.Status &= ~EnumCharStatus::Expansion;
+        }
+
+        if (!isExpansionCharacter())
+        {
+            Bs.StartingAct = std::min(EnumAct::IV, Bs.StartingAct);
+        }
+
         DifficultyAndAct = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
         DifficultyAndAct <<= 4;
         DifficultyAndAct |= (static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed) & 0x0F);
     }
     else
     {
+        if (!isExpansionCharacter())
+        {
+            Bs.StartingAct = std::min(EnumAct::IV, Bs.StartingAct);
+        }
+
         std::memset(StartingAct, 0, sizeof(StartingAct));
         StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
     }
+
+    // Check class
+    if (!isExpansionCharacter())
+    {
+        switch (Bs.Class)
+        {
+        case EnumCharClass::Druid:
+        case EnumCharClass::Assassin:
+            switch (oldClass)
+            {
+            case EnumCharClass::Druid:
+            case EnumCharClass::Assassin:
+                break;
+            default:
+                Bs.Class = oldClass;
+                break;
+            }
+            break;
+        default:
+            bs.Class = EnumCharClass::Amazon;
+            break;
+        }
+    }
+
+    // Check Name
+    // Remove any invalid characters from the number
+    std::string curName(Bs.Name);
+    std::string strNewText;
+    for (size_t iPos = 0, numberOfUnderscores = 0, nLen = curName.size(); iPos < nLen; ++iPos)
+    {
+        char c = curName[iPos];
+        if (std::isalpha(c))
+        {
+            strNewText += c;
+        }
+        else if ((c == '_' || c == '-') && strNewText.size() != 0 && numberOfUnderscores < 1)
+        {
+            strNewText += c;
+            ++numberOfUnderscores;
+        }
+    }
+
+    // trim bad characters
+    strNewText.erase(strNewText.find_last_not_of("_-") + 1);
+    if (strNewText.size() < 2)
+    {
+        strNewText = oldName;
+    }
+
+    std::memset(Bs.Name, 0, sizeof(Bs.Name));
+    strcpy_s(Bs.Name, strNewText.length() + 1, strNewText.c_str());
+    Bs.Name[15] = 0; // must be zero
+
+    // Check Title
+    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
+    Bs.Title = EnumCharTitle::None;
+    switch (titlePos)
+    {
+    case 1:
+        Bs.Title = EnumCharTitle::SirDame;
+        if (isExpansionCharacter())
+        {
+            Bs.Title |= EnumCharTitle::Slayer;
+        }
+        break;
+
+    case 2:
+        Bs.Title = d2ce::EnumCharTitle::LordLady;
+        if (isExpansionCharacter())
+        {
+            Bs.Title |= EnumCharTitle::Champion;
+        }
+        break;
+
+    case 3:
+        bs.Title = EnumCharTitle::BaronBaroness;
+        if (isExpansionCharacter())
+        {
+            bs.Title |= EnumCharTitle::MPatriarch;
+        }
+        break;
+    }
+
+    // update values sent in to reflect any updates made
+    std::memcpy(&bs, &Bs, sizeof(BasicStats));
+
+    if (oldClass != Bs.Class)
+    {
+        // classed changed
+        Cs.updateClass(Bs.Class);
+    }
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::updateCharacterStats(const CharStats& cs)
+void d2ce::Character::updateCharacterStats(CharStats& cs)
 {
     Cs.updateCharacterStats(cs);
-    DisplayLevel = (std::uint8_t)Cs.Cs.Level; // updates character's display level
+    DisplayLevel = (std::uint8_t)Cs.getLevel(); // updates character's display level
+    Cs.updatePointsEarned(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
+
+    // update values sent in to reflect any updates made
+    Cs.fillCharacterStats(cs);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::resetStats()
+{
+    Cs.resetStats(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharVersion d2ce::Character::getVersion() const
@@ -814,7 +919,7 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
     return EnumCharVersion::v115;
 }
 //---------------------------------------------------------------------------
-const char (&d2ce::Character::getName())[NAME_LENGTH]
+const char(&d2ce::Character::getName())[NAME_LENGTH]
 {
     return Bs.Name;
 }
@@ -837,7 +942,7 @@ d2ce::EnumCharClass d2ce::Character::getClass() const
 /*
    Returns a value indicating the difficulty level the character last played at
 */
-d2ce::EnumDifficulty d2ce::Character::getDifficultyLastPlayed()
+d2ce::EnumDifficulty d2ce::Character::getDifficultyLastPlayed() const
 {
     return Bs.DifficultyLastPlayed;
 }
@@ -910,37 +1015,109 @@ std::uint32_t d2ce::Character::getExperience() const
     return Cs.getExperience();
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::Character::getLifePointsEarned() const
+std::uint32_t d2ce::Character::getMaxGoldInBelt() const
 {
-    return Acts.getLifePointsEarned();
+    return Cs.getMaxGoldInBelt();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxGoldInStash() const
+{
+    return Cs.getMaxGoldInStash();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinStrength() const
+{
+    return Cs.getMinStrength();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinEnergy() const
+{
+    return Cs.getMinEnergy();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinDexterity() const
+{
+    return Cs.getMinDexterity();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinVitality() const
+{
+    return Cs.getMinVitality();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxHitPoints() const
+{
+    return Cs.getMaxHitPoints();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxStamina() const
+{
+    return Cs.getMaxStamina();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxMana() const
+{
+    return Cs.getMaxMana();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getSkillPointsEarned() const
+{
+    return getSkillPointsEarned(Cs.getLevel());
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getSkillPointsEarned(std::uint32_t level) const
 {
     return (std::min(d2ce::NUM_OF_LEVELS, level) - 1) + Acts.getSkillPointsEarned();
 }
-std::uint32_t d2ce::Character::getSkillPointsEarned() const
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getLevelFromTotalSkillPoints() const
 {
-    return getSkillPointsEarned(Cs.getLevel());
+    return getLevelFromSkillPointsEarned(getTotalSkillPoints());
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromSkillPointsEarned(std::uint32_t earned) const
 {
-    return std::min(d2ce::NUM_OF_LEVELS, earned - Acts.getSkillPointsEarned() + 1);
+    return std::min(d2ce::NUM_OF_LEVELS + 1, earned - Acts.getSkillPointsEarned() + 1);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getTotalStartStatPoints() const
+{
+    return Cs.getTotalStartStatPoints();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getTotalStatPoints() const
+{
+    return Cs.getTotalStatPoints();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getStatPointsUsed() const
+{
+    return Cs.getStatPointsUsed();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getStatPointsEarned() const
+{
+    return getStatPointsEarned(Cs.getLevel());
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getStatPointsEarned(std::uint32_t level) const
 {
     return std::uint16_t(std::min(d2ce::NUM_OF_LEVELS, level) - 1) * 5 + Acts.getStatPointsEarned();
 }
-std::uint32_t d2ce::Character::getStatPointsEarned() const
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getLevelFromTotalStatPoints() const
 {
-    return getStatPointsEarned(Cs.getLevel());
+    if (Cs.getTotalStatPoints() <= Cs.getTotalStartStatPoints())
+    {
+        return 1;
+    }
+
+    return getLevelFromStatPointsEarned(Cs.getTotalStatPoints() - Cs.getTotalStartStatPoints());
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromStatPointsEarned(std::uint32_t earned) const
 {
-    return std::min(d2ce::NUM_OF_LEVELS, (earned - Acts.getStatPointsEarned()) / 5 + 1);
+    return std::min(d2ce::NUM_OF_LEVELS + 1, (earned - Acts.getStatPointsEarned()) / 5 + 1);
 }
 //---------------------------------------------------------------------------
 const d2ce::ActsInfo& d2ce::Character::getQuests()
@@ -951,6 +1128,7 @@ const d2ce::ActsInfo& d2ce::Character::getQuests()
 void d2ce::Character::updateQuests(const ActsInfo& qi)
 {
     Acts.updateQuests(qi);
+    Cs.updatePointsEarned(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
 }
 //---------------------------------------------------------------------------
 std::uint64_t d2ce::Character::getWaypoints(d2ce::EnumDifficulty difficulty) const
@@ -965,23 +1143,22 @@ void d2ce::Character::setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_
 //---------------------------------------------------------------------------
 std::uint8_t(&d2ce::Character::getSkills())[NUM_OF_SKILLS]
 {
-    return Skills;
+    return Cs.getSkills();
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::updateSkills(const std::uint8_t(&updated_skills)[NUM_OF_SKILLS])
 {
-    std::memcpy(Skills, updated_skills, sizeof(Skills));
+    Cs.updateSkills(updated_skills, Acts.getSkillPointsEarned());
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::Character::getSkillPointUsed() const
+std::uint32_t d2ce::Character::getTotalSkillPoints() const
 {
-    std::uint32_t skillUsed = 0;
-    for (std::uint32_t i = 0; i < NUM_OF_SKILLS; ++i)
-    {
-        skillUsed += Skills[i];
-    }
-
-    return skillUsed;
+    return Cs.getTotalSkillPoints();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getSkillPointsUsed() const
+{
+    return Cs.getSkillPointsUsed();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getSkillChoices() const
@@ -991,25 +1168,17 @@ std::uint32_t d2ce::Character::getSkillChoices() const
 //---------------------------------------------------------------------------
 bool d2ce::Character::areSkillsMaxed() const
 {
-    for (std::uint32_t i = 0; i < NUM_OF_SKILLS; ++i)
-    {
-        if (Skills[i] != MAX_SKILL_VALUE)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return Cs.areSkillsMaxed();
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::maxSkills()
 {
-    std::memset(Skills, MAX_SKILL_VALUE, sizeof(Skills));
+    Cs.maxSkills();
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::resetSkills()
 {
-    std::memset(Skills, 0, sizeof(Skills));
+    Cs.resetSkills(Acts.getSkillPointsEarned());
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::clearSkillChoices()
