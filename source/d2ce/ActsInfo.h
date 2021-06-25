@@ -21,6 +21,7 @@
 
 #include "Constants.h"
 #include "DataTypes.h"
+#include "sstream"
 
 namespace d2ce
 {
@@ -47,8 +48,8 @@ namespace d2ce
 
             // Not part of Act V quests
             std::uint8_t ResetStats = 0;
-            std::uint8_t Padding2 = 0;
-            std::uint16_t Padding3[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
+            std::uint8_t Completed = 0;             // Difficulty has been complated
+            std::uint16_t Padding2[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
         };
 
         struct ActsInfoData // Each difficulty level contain this structure
@@ -68,14 +69,20 @@ namespace d2ce
         // pos 486 (pre-1.09, otherwise pos 691), waypoints for hell level
         std::uint16_t Waypoints_unknown[NUM_OF_DIFFICULTY] = { 0x0102, 0x0102, 0x0102 };
         std::uint64_t Waypoints[NUM_OF_DIFFICULTY] = { 0 };
-        std::uint16_t Waypoints_extraBits[14][NUM_OF_DIFFICULTY] = { 0 };
+        std::uint8_t Waypoints_extraBits[NUM_OF_DIFFICULTY][14] = { 0 };
+
+        // NPC
+        std::uint64_t NPCIntroductions[NUM_OF_DIFFICULTY] = { 0 };
+        std::uint64_t NPCCongrats[NUM_OF_DIFFICULTY] = { 0 };
 
         EnumCharVersion Version = APP_CHAR_VERSION; // Version for Character file
 
-        std::uint32_t quests_start_location = 0, 
+        std::uint32_t quests_start_location = 0,
             quests_location = 0,
             waypoints_start_location = 0,
-            waypoints_location = 0;
+            waypoints_location = 0,
+            npc_start_location = 0,
+            npc_location = 0;
         bool update_locations = true;
         std::uint8_t quests_version[4] = { 0x06, 0x00, 0x00, 0x00 };
         std::uint8_t waypoints_version[4] = { 0x01, 0x00, 0x00, 0x00 };
@@ -85,12 +92,27 @@ namespace d2ce
 
         bool readQuests(std::FILE* charfile);
         bool readWaypoints(std::FILE* charfile);
+        bool readNPC(std::FILE* charfile);
         bool writeQuests(std::FILE* charfile);
         bool writeWaypoints(std::FILE* charfile);
+        bool writeNPC(std::FILE* charfile);
 
     protected:
         bool readActs(EnumCharVersion version, std::FILE* charfile);
         bool writeActs(std::FILE* charfile);
+
+        void questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
+        std::string getQuestsJsonName(EnumDifficulty diff) const;
+        std::string getDifficultyJsonName(EnumDifficulty diff) const;
+        std::string getActJsonName(EnumAct act) const;
+        std::string getQuestJsonName(EnumAct act, std::uint8_t quest) const;
+        std::string getQuestBitJsonName(std::uint8_t bit, bool& isOptional) const;
+
+        void waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
+        std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint) const;
+
+        void npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
+        std::string getNpcJsonName(std::uint8_t npc, bool isExpansion) const;
 
     public:
         ActsInfo();
@@ -109,6 +131,7 @@ namespace d2ce
         bool getActCompleted(EnumDifficulty diff, EnumAct act) const;
 
         // Act Quest info
+        std::string getQuestName(EnumAct act, std::uint8_t quest) const;
         std::uint16_t getQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
         void setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, std::uint16_t questValue);
         std::string getQuestNotes(EnumDifficulty diff, EnumAct act, std::uint8_t quest);
@@ -129,6 +152,7 @@ namespace d2ce
         void clearMooMooFarmComplete(EnumDifficulty diff);
 
         bool drankPotionOfLife(EnumDifficulty diff) const;
+        bool readTheScrollOfResistance(EnumDifficulty diff) const;
 
         std::uint16_t getLifePointsEarned() const;
         std::uint16_t getSkillPointsEarned() const;
@@ -140,6 +164,13 @@ namespace d2ce
         // Waypoints
         std::uint64_t getWaypoints(d2ce::EnumDifficulty difficulty) const;
         void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
+        bool getWaypointActivated(EnumDifficulty diff, EnumAct act, std::uint8_t waypoint) const;
+
+        // NPCs
+        std::uint64_t getNpcIntroductions(d2ce::EnumDifficulty difficulty) const;
+        std::uint64_t getNpcCongrats(d2ce::EnumDifficulty difficulty) const;
+        void setNpcIntroductions(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
+        void setNpcCongrats(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
     };
 }
 //---------------------------------------------------------------------------

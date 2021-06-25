@@ -30,5 +30,6 @@ namespace d2ce
 
     constexpr std::uint32_t NUM_OF_CLASSES = 7;
     constexpr std::uint32_t NUM_OF_DIFFICULTY = 3;
+    constexpr std::uint32_t NUM_OF_SKILL_HOTKEYS = 16;
 }
 //---------------------------------------------------------------------------

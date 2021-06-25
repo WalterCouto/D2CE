@@ -22,6 +22,8 @@
 
 #include "CharacterConstants.h"
 #include "ItemConstants.h"
+#include "DataTypes.h"
+#include "sstream"
 
 namespace d2ce
 {
@@ -36,15 +38,24 @@ namespace d2ce
         size_t start_bit_offset = 16;
         mutable size_t is_potion_bit_offset = 36;
         size_t location_bit_offset = 58;
+        size_t equipped_id_offset = 61;
+        size_t position_offset = 65;
+        size_t alt_position_id_offset = 73;
         size_t type_code_offset = 76;
         size_t extended_data_offset = 108;
+        mutable size_t quest_difficulty_offset = 0;
+        mutable size_t nr_of_items_in_sockets_offset = 0;
+        mutable size_t nr_of_items_in_sockets_bits = 3;
         mutable size_t item_id_bit_offset = 0;
         mutable size_t item_level_bit_offset = 0;
+        mutable size_t quality_bit_offset = 0;
         mutable size_t multi_graphic_bit_offset = 0;
         mutable size_t autoAffix_bit_offset = 0;
-        mutable size_t quality_bit_offset = 0;
+        size_t quality_attrib_bit_offset = 0;
+        size_t runeword_id_bit_offset = 0;
         size_t personalized_bit_offset = 0;
-        size_t armor_or_weapon_bit_offset = 0;
+        size_t realm_bit_offset = 0;
+        size_t defense_rating_bit_offset = 0;
         size_t durability_bit_offset = 0;
         size_t stackable_bit_offset = 0;
         size_t socket_count_bit_offset = 0;
@@ -57,7 +68,8 @@ namespace d2ce
     private:
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
         bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
-        bool readPropertyList(std::FILE* charfile, size_t& current_bit_offset);
+        bool parsePropertyList(std::FILE* charfile, size_t& current_bit_offset);
+        bool readPropertyList(size_t& current_bit_offset, std::vector<MagicalAttribute>& attrib) const;
         std::uint8_t getEncodedChar(std::FILE* charfile, size_t& current_bit_offset);
 
         bool updateBits(size_t start, std::uint8_t size, std::uint32_t value);
@@ -67,6 +79,12 @@ namespace d2ce
     protected:
         bool readItem(EnumCharVersion version, std::FILE* charfile);
         bool writeItem(std::FILE* charfile);
+
+        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem = true) const;
+        void unknownAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void byteRangeAsJson(std::stringstream& ss, const std::string& parentIndent, size_t startByte, size_t numBytes) const;
+
+        std::uint16_t getRawVersion() const;
 
     public:
         Item();
@@ -100,29 +118,65 @@ namespace d2ce
         bool isEthereal() const;
         bool isPersonalized() const;
         bool isRuneword() const;
-        std::uint8_t getLocation() const;
-        bool calculateItemCode(std::uint8_t(&strcode)[4]) const;
+        EnumItemLocation getLocation() const;
+        EnumEquippedId getEquippedId() const;
+        std::uint8_t getPositionX() const;
+        std::uint8_t getPositionY() const;
+        EnumAltItemLocation getAltPositionId() const;
+        bool getItemCode(std::uint8_t(&strcode)[4]) const;
+        EnumItemType getItemType() const;
+        std::string getItemTypeName() const;
         bool updateGem(const std::uint8_t(&newgem)[4]);
+        std::uint8_t getQuestDifficulty() const;
         std::uint8_t socketedItemCount() const;
+        bool getEarAttributes(EarAttributes& attrib) const;
+        bool getRequirements(ItemRequirements& req) const;
+        bool getCategories(std::vector<std::string>& categories) const;
+        bool getDimensions(ItemDimensions& dimensions) const;
 
         // Extended information
-        std::uint32_t Id() const;
-        std::uint8_t Level() const;
-        EnumItemQuality Quality() const;
+        std::uint32_t getId() const;
+        std::uint8_t getLevel() const;
+        EnumItemQuality getQuality() const;
+        bool getMagicalAffixes(MagicalAffixes& affixes) const;
+        bool getRunewordAttributes(RunewordAttributes& attrib) const;
+        std::string getPersonalizedName() const;
+        bool getSetAttributes(SetAttributes& attrib) const;
+        bool getRareOrCraftedAttributes(RareAttributes& attrib) const;
+        bool getUniqueAttributes(UniqueAttributes& attrib) const;
+        bool getMagicalAttributes(std::vector<MagicalAttribute>& attribs) const;
+        bool getCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs) const;
         bool hasMultipleGraphics() const;
+        std::uint8_t getPictureId() const;
         bool isAutoAffix() const;
+        std::uint8_t getInferiorQualityId() const;
         bool isArmor() const;
         bool isWeapon() const;
         bool isTome() const;
         bool isStackable() const;
+        bool isRune() const;
         std::uint8_t totalNumberOfSockets() const;
         std::uint16_t getQuantity() const;
         bool setQuantity(std::uint16_t quantity);
-        std::uint8_t getMaxDurability() const;
-        bool setMaxDurability(std::uint8_t durability);
+        std::uint16_t getDefenseRating() const;
+        bool getDurability(ItemDurability& attrib) const;
+        bool setDurability(const ItemDurability& attrib);
+        bool getDamage(ItemDamage& damage) const;
+        bool getRealmDataFlag() const;
+
+        // Helper methods that return the text displayed on tooltips
+        std::string getDisplayedItemName() const;
+        std::string getDisplayedSocketedRunes() const;
+        std::string getDisplayedItemAttributes(EnumCharClass charClass) const;
+        bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
+        bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
+        bool getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
 
     public:
         std::vector<Item> SocketedItems; // socketed items
+
+    protected:
+        std::vector<MagicalAttribute> socketedMagicalAttributes;
     };
 
     //---------------------------------------------------------------------------
@@ -138,7 +192,7 @@ namespace d2ce
             merc_location = 0,   // Expansion character only
             golem_location = 0;  // Expansion character only
 
-        std::uint16_t NumOfItems = 0;           // # of items (according to file) in inventory excluding 
+        std::uint16_t NumOfItems = 0;      // # of items (according to file) in inventory excluding 
                                            // gems in socketed items
         std::vector<Item> Inventory;       // items in inventory
 
@@ -147,11 +201,11 @@ namespace d2ce
         std::vector<std::reference_wrapper<Item>> Armor;      // inventory of all Armor
         std::vector<std::reference_wrapper<Item>> Weapons;    // inventory of all Weapons (includes stackable weapons)
 
-        std::uint16_t NumOfCorpseItems = 0;     // # of items included in the Corpse section (according to file), non zero if you are currently dead
-        std::vector<Item> CorpseItems;     // items on our Corpse
+        std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non zero if you are currently dead
+        std::vector<Item> CorpseItems;      // items on our Corpse
 
         // Expansion Character data
-        std::uint16_t NumOfMercItems = 0;       // # of Mercenary items (according to file)
+        std::uint16_t NumOfMercItems = 0;  // # of Mercenary items (according to file)
         std::vector<Item> MercItems;       // items mercenary is currently wearing.
 
         std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
@@ -177,6 +231,13 @@ namespace d2ce
     protected:
         bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
         bool writeItems(std::FILE* charfile, bool isExpansion = false);
+
+        void itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
+        void corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
+        bool mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
+        bool golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
+        bool itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
 
     public:
         Items();
@@ -218,6 +279,9 @@ namespace d2ce
         size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
         size_t fillAllStackables();
         size_t maxDurabilityAllItems();
+
+        bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
     };
     //---------------------------------------------------------------------------
 }

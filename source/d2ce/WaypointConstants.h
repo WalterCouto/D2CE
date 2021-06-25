@@ -26,5 +26,6 @@ namespace d2ce
     constexpr std::uint32_t TOTAL_NUM_OF_WAYPOINTS_EXPANSION = 39;
     constexpr std::uint32_t TOTAL_NUM_OF_WAYPOINTS = 30;
     constexpr std::uint32_t MAX_WAYPOINTS_PER_ACT = 9;
+    constexpr std::uint32_t NUM_WAYPOINTS_ACT_IV = 3;
 }
 //---------------------------------------------------------------------------

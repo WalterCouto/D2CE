@@ -42,7 +42,7 @@ namespace
                     return _T("Chipped Amethysts");
                 case 'f': // flawed
                     return _T("Flawed Amethysts");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Amethysts");
                 case 'z': // flawless
                     return _T("Flawless Amethysts");
@@ -57,7 +57,7 @@ namespace
                     return _T("Chipped Topazes");
                 case 'f': // flawed
                     return _T("Flawed Topazes");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Topazes");
                 case 'l': // flawless
                     return _T("Flawless Topazes");
@@ -72,7 +72,7 @@ namespace
                     return _T("Chipped Sapphires");
                 case 'f': // flawed
                     return _T("Flawed Sapphires");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Sapphires");
                 case 'l': // flawless
                     return _T("Flawless Sapphires");
@@ -87,7 +87,7 @@ namespace
                     return _T("Chipped Emeralds");
                 case 'f': // flawed
                     return _T("Flawed Emeralds");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Emeralds");
                 case 'l': // flawless
                     return _T("Flawless Emeralds");
@@ -102,7 +102,7 @@ namespace
                     return _T("Chipped Rubies");
                 case 'f': // flawed
                     return _T("Flawed Rubies");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Rubies");
                 case 'l': // flawless
                     return _T("Flawless Rubies");
@@ -117,7 +117,7 @@ namespace
                     return _T("Chipped Diamonds");
                 case 'f': // flawed
                     return _T("Flawed Diamonds");
-                case 'u': // regular
+                case 's': // regular
                     return _T("Regular Diamonds");
                 case 'l': // flawless
                     return _T("Flawless Diamonds");
@@ -363,7 +363,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'z': // flawless
                     return idx + 21;
@@ -379,7 +379,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'l': // flawless
                     return idx + 21;
@@ -395,7 +395,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'l': // flawless
                     return idx + 21;
@@ -411,7 +411,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'l': // flawless
                     return idx + 21;
@@ -427,7 +427,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'l': // flawless
                     return idx + 21;
@@ -443,7 +443,7 @@ namespace
                     return idx;
                 case 'f': // flawed
                     return idx + 7;
-                case 'u': // regular
+                case 's': // regular
                     return idx + 14;
                 case 'l': // flawless
                     return idx + 21;
@@ -642,7 +642,7 @@ BOOL CD2GemsForm::OnInitDialog()
         for (auto& item : gems)
         {
             std::memset(gemCode, 0, sizeof(gemCode));
-            if (!item.get().calculateItemCode(gemCode))
+            if (!item.get().getItemCode(gemCode))
             {
                 continue;
             }

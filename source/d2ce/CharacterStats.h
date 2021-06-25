@@ -22,6 +22,7 @@
 #include "CharacterStatsConstants.h"
 #include "SkillConstants.h"
 #include "DataTypes.h"
+#include "sstream"
 
 namespace d2ce
 {
@@ -80,7 +81,7 @@ namespace d2ce
         void updatePointsEarned(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarne);
 
         void checkStatInfo();
-        EnumCharStatInfo GetStatInfoMask(std::uint16_t stat);
+        EnumCharStatInfo GetStatInfoMask(std::uint16_t stat) const;
         std::uint32_t* GetStatBuffer(std::uint16_t stat);
 
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
@@ -117,6 +118,11 @@ namespace d2ce
 
         void updateClass(EnumCharClass charClass);
 
+        std::string getAttributeJsonName(std::uint16_t stat) const;
+        void attributesAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void skillsAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent) const;
+
     public:
         CharacterStats();
         ~CharacterStats();
@@ -146,6 +152,10 @@ namespace d2ce
         std::uint32_t getStatLeft() const;
 
         // Skills
+        std::uint8_t getSkillId(std::uint32_t skill) const;
+        std::string getSkillNameById(std::uint32_t id) const;
+        std::string getSkillName(std::uint32_t skill) const;
+        std::uint8_t getSkillPoints(std::uint32_t skill) const;
         std::uint8_t(&getSkills())[NUM_OF_SKILLS];
 
         std::uint32_t getTotalSkillPoints() const;

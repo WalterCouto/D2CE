@@ -25,8 +25,14 @@
 
 namespace d2ce
 {
+    constexpr std::uint8_t START_SKILL_ID = 6;
     constexpr std::uint32_t NUM_OF_SKILLS = 30;
     constexpr std::uint8_t MAX_SKILL_VALUE = 20;
+
+    const std::map<size_t, std::string> GenericSkillNames = {
+        {0, "Attack"}, {1, "Kick"}, {2, "Throw"}, {3, "Unsummon"}, {4, "Left Hand Throw"}, {5, "Left Hand Swing"},
+        {217, "Scroll of Identify"}, {218, "Tome of Identify"}, {219, "Scroll of Town Portal"}, {220, "Tome of Town Portal"}
+    };
     
     // skill names in original array position as found in character file
     const std::string SkillsNames[NUM_OF_CLASSES][NUM_OF_SKILLS] =
@@ -37,7 +43,7 @@ namespace d2ce
                "Charged Strike", "Plague Javelin", "Strafe", "Immolation Arrow",
                "Decoy", "Evade", "Fend", "Freezing Arrow", "Valkyrie", "Pierce",
                "Lightning Strike", "Lightning Fury"},
-              {"Firebolt", "Warmth", "Charged Bolt", "Ice Bolt", "Frozen Armor",
+              {"Fire Bolt", "Warmth", "Charged Bolt", "Ice Bolt", "Frozen Armor",
                "Inferno", "Static Field", "Telekinesis", "Frost Nova", "Ice Blast",
                "Blaze", "Fire Ball", "Nova", "Lightning", "Shiver Armor",
                "Fire Wall", "Enchant", "Chain Lightning", "Teleport",

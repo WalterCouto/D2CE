@@ -20,12 +20,15 @@
 
 #pragma once
 
+#include "Constants.h"
 #include "ExperienceConstants.h"
 #include "bitmask.hpp"
 #include <system_error>
 
 namespace d2ce
 {
+    const static std::string jsonIndentStr("    ");
+
     constexpr std::uint32_t MIN_START_POS = 48;
 
     constexpr std::uint32_t HEADER_LENGTH = 4;
@@ -38,6 +41,8 @@ namespace d2ce
 
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };
+
+    const std::string ClassNames[NUM_OF_CLASSES] = { "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"};
 
     // character status
     enum class EnumCharStatus : std::uint8_t { NoDeaths, Hardcore = 0x04, Resurrected = 0x08, Expansion = 0x20, Ladder = 0x40, Dead = 0x0C };

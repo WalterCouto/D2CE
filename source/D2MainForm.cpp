@@ -816,6 +816,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE, &CD2MainForm::OnUpdateFileClose)
     ON_COMMAND(ID_FILE_OPEN, &CD2MainForm::OnFileOpen)
     ON_MESSAGE(WM_OPEN_DLG_FILE, &CD2MainForm::OnMRUFileOpen)
+    ON_COMMAND(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnFileExportAsJson)
+    ON_UPDATE_COMMAND_UI(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnUpdateFileExportAsJson)
     ON_COMMAND(ID_VIEW_REFRESH, &CD2MainForm::OnViewRefresh)
     ON_UPDATE_COMMAND_UI(ID_VIEW_REFRESH, &CD2MainForm::OnUpdateViewRefresh)
     ON_CBN_SELCHANGE(IDC_DIFFICULTY, &CD2MainForm::OnCbnSelchangeDifficultyCmb)
@@ -843,7 +845,7 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
-END_MESSAGE_MAP()
+    END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
 // CD2MainForm message handlers
@@ -2429,7 +2431,7 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
     CStringA newPathNameA(filename);
 
     // return if open not successful
-    if (!CharInfo.open(newPathNameA), false)
+    if (!CharInfo.open(newPathNameA, false))
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -2557,6 +2559,48 @@ void CD2MainForm::OnFileSave()
 void CD2MainForm::OnUpdateFileSave(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable((CharInfo.is_open() && Editted) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnFileExportAsJson()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    CString filename(CharInfo.getName());
+    filename += ".json";
+
+    CFileDialog fileDialog(FALSE, _T("json"), filename,
+        OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+        _T("JSON file  (*.json)|*.json|"), this);
+
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    CStringA jsonFileName(fileDialog.GetPathName());
+    std::FILE* jsonFile = NULL;
+    fopen_s(&jsonFile, jsonFileName.GetString(), "wb");
+    std::rewind(jsonFile);
+
+    auto output = CharInfo.asJson();
+    if (!output.empty())
+    {
+        std::fwrite(output.c_str(), output.size(), 1, jsonFile);
+    }
+
+    std::fclose(jsonFile);
+
+    CString msg(_T("Character stats exported to JSON"));
+    StatusBar.SetWindowText(msg);
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+
+void CD2MainForm::OnUpdateFileExportAsJson(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnAppExit()
@@ -2856,7 +2900,7 @@ void CD2MainForm::UpdateTitleDisplay()
             }
             else
             {
-                pValidTitles = FemaleHardcoreTitle;
+                pValidTitles = FemaleExpansionTitle;
             }
         }
         else if (CharInfo.isHardcoreCharacter())
@@ -2881,7 +2925,7 @@ void CD2MainForm::UpdateTitleDisplay()
             }
             else
             {
-                pValidTitles = MaleHardcoreTitle;
+                pValidTitles = MaleExpansionTitle;
             }
         }
         else if (CharInfo.isHardcoreCharacter())
@@ -3943,4 +3987,3 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
 
     return numConverted;
 }
-//---------------------------------------------------------------------------

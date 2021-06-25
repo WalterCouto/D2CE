@@ -27,6 +27,7 @@
 #include "ActsInfo.h"
 #include "CharacterStats.h"
 #include "Item.h"
+#include "sstream"
 
 namespace d2ce
 {
@@ -37,38 +38,47 @@ namespace d2ce
         // the following variables are what would be found in the character file format
         // variables that are commented out means that no functions have been
         // declared that use them
-        std::uint8_t Header[HEADER_LENGTH];
+        std::uint8_t Header[HEADER_LENGTH] = { 0x55, 0xAA, 0x55, 0xAA };
         std::uint32_t Version = 0;           // pos 4 in file, character file version
         std::uint32_t FileSize = 0;          // pos 8 (1.09+ only), file's size
         long Checksum = 0;                   // pos 12 (1.09+ only), stores (possible) checksum
-        std::uint32_t WeaponSet = 0;         // pos 16 (1.09+ only)
-        BasicStats Bs;                       // Name:   pos 8 (pre-1.09, otherwise pos 20),
+        std::uint32_t WeaponSet = 0;         // pos 16 (1.09+, otherwise pos 26 uint16_t)
+        BasicStats Bs;                       // Name:   pos 20 (1.09+, otherwise pos 8),
                                              //         name includes terminating NULL
-                                             // Status: pos 24 (pos 36, 1.09+ only), determines character status
-                                             // Title:  pos 25 (pos 37, 1.09+ only), character's title
-                                             // Class:  pos 34 (pre-1.09, otherwise pos 40),
-        std::uint8_t DisplayLevel = 1;       // pos 36 (pre-1.09, otherwise pos 43),
+                                             // Status: pos 36 (1.09+, otherwise, pos 24), determines character status
+                                             // Title:  pos 37 (1.09+, otherwise pos 25), character's title
+                                             // Class:  pos 40 (1.09+, otherwise pos 34),
+        std::uint8_t DisplayLevel = 1;       // pos 43 (1.09+, otherwise pos 36),
                                              // level displayed at character selection screen
-     //   time_t FileDateTime;               // pos 48 (1.09+ only), file date and time
+        std::uint32_t Created = 0;           // pos 44 (1.09+ only), file date and time
                                              // using the Standard C time() function
-        std::uint8_t DifficultyAndAct = 0;   // pos 88 (used in pre-1.09 only)
-                                             // four most significant bits = difficulty level last played,
-                                             // four least significant bits = which act is character saved at
+        std::uint32_t LastPlayed = 0;        // pos 48 (1.09+ only), file date and time
+                                             // using the Standard C time() function
+        std::uint32_t AssignedSkills[NUM_OF_SKILL_HOTKEYS] = { 0xFFFF }; // pos 56 (1.09+, otherwise pos 70 and size 8)
+        std::uint32_t LeftSkill = 0;         // pos 120 (1.09+, otherwise pos 86)
+        std::uint32_t RightSkill = 0;        // pos 124 (1.09+, otherwise pos 87)
+        std::uint32_t LeftSwapSkill = 0;     // pos 128 (1.09+ only)
+        std::uint32_t RightSwapSkill = 0;    // pos 132 (1.09+ only)
         std::uint8_t StartingAct[NUM_OF_DIFFICULTY]; // pos 168 (normal, nightmare, hell; used in 1.09+ only)
                                                      // four MSBs value always 8 (hex, i.e. 0x80)
                                                      // four least significant bits = which act is character saved at
-    //   std::uint32_t HirelingExperience;   // pos 187 (1.09+ only), hireling's experience
+        std::uint32_t MapID = 0;             // pos 171 (1.09+, otherwise 126)
 
+        MercInfo Merc;                       // Dead:       pos 177 (1.09+ only)
+                                             // Id:         pos 179 (1.09+ only)
+                                             // NameId:     pos 183 (1.09+ only)
+                                             // Type:       pos 185 (1.09+ only)
+                                             // Experience: pos 187 (1.09+ only), hireling's experience
 
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
         // hell act info starts at pos 537 (1.09+ only)
-        // pos 438 (pre-1.09, otherwise pos 643), waypoints for normal level
-        // pos 462 (pre-1.09, otherwise pos 667), waypoints for nightmare level
-        // pos 486 (pre-1.09, otherwise pos 691), waypoints for hell level
+        // pos 643 (1.09+, otherwise pos 438), waypoints for normal level
+        // pos 667 (1.09+, otherwise pos 462), waypoints for nightmare level
+        // pos 691 (1.09+, otherwise pos 486), waypoints for hell level
         ActsInfo Acts;
 
-        CharacterStats Cs; // pos 765 (pos 562 pre-1.09) 
+        CharacterStats Cs; // pos 765 (1.09+, otherwise pos 562) 
         
         mutable Items items;
 
@@ -82,6 +92,10 @@ namespace d2ce
             class_location = 0,
             level_location = 0,
             starting_location = 0,
+            assigned_skilled_location = 0,
+            difficulty_location = 0,
+            mapid_location = 0,
+            mercInfo_location = 0,
             stats_header_location = 0;
         bool update_locations = true;
 
@@ -101,6 +115,8 @@ namespace d2ce
         bool writeItems();
         void writeTempFile();
 
+        void headerAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+
     public:
         Character();
         ~Character();
@@ -111,9 +127,13 @@ namespace d2ce
         bool save();
         void close();
         const char *getPathName() const;
+        std::string asJson() const;
 
         bool is_open() const;
         std::error_code getLastError() const;
+
+        // Mercenary Info
+        void fillMercenaryInfo(MercInfo& merc);
 
         // Character Stats
         void fillBasicStats(BasicStats& bs);
@@ -125,10 +145,11 @@ namespace d2ce
         void resetStats(); // both skills and stats
 
         EnumCharVersion getVersion() const;
-        const char (&getName())[NAME_LENGTH];
+        const char (&getName() const)[NAME_LENGTH];
         bitmask::bitmask<EnumCharStatus> getStatus() const;
         bitmask::bitmask<EnumCharTitle> getTitle() const;
         EnumCharClass getClass() const;
+        std::string getClassName() const;
         EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
 

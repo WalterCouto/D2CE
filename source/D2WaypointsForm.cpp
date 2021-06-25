@@ -203,7 +203,7 @@ void CD2WaypointsForm::DDX_CheckWaypoints(CDataExchange* pDX)
     GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::I) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::III) ? FALSE : TRUE);
-    if (!isExpansionCharacter)
+    if (isExpansionCharacter)
     {
         GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::IV) ? FALSE : TRUE);
     }

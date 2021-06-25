@@ -112,8 +112,13 @@ void d2ce::Character::initialize()
     Bs.Title = EnumCharTitle::None;
     Bs.Class = EnumCharClass::Amazon;
     DisplayLevel = 1;
+    LastPlayed = 0;
+    std::memset(AssignedSkills, 0xFFFF, sizeof(AssignedSkills));
+    LeftSkill = 0;
+    RightSkill = 0;
+    LeftSwapSkill = 0;
+    RightSwapSkill = 0;
 
-    DifficultyAndAct = 0;
     Bs.DifficultyLastPlayed = EnumDifficulty::Normal;
     std::memset(StartingAct, 0, sizeof(StartingAct));
     Bs.StartingAct = EnumAct::I;
@@ -131,6 +136,9 @@ void d2ce::Character::initialize()
     class_location = 0;
     level_location = 0;
     starting_location = 0;
+    assigned_skilled_location = 0;
+    difficulty_location = 0;
+    mapid_location = 0;
     stats_header_location = 0;
     update_locations = true;
 
@@ -367,6 +375,8 @@ void d2ce::Character::readBasicInfo()
 
     if (Bs.Version < EnumCharVersion::v109)
     {
+        std::fread(&value, sizeof(value), 1, charfile);
+        WeaponSet = value;
         class_location = 34;
     }
     else
@@ -392,16 +402,52 @@ void d2ce::Character::readBasicInfo()
 
     if (Bs.Version < EnumCharVersion::v109)
     {
-        starting_location = 88;
-        std::fseek(charfile, starting_location, SEEK_SET);
-        std::fread(&DifficultyAndAct, sizeof(DifficultyAndAct), 1, charfile);
-        Bs.DifficultyLastPlayed = static_cast<EnumDifficulty>(DifficultyAndAct & 0x0F);
-        Bs.StartingAct = static_cast<EnumAct>(DifficultyAndAct >> 4);
+        starting_location = 70;
+        assigned_skilled_location = starting_location;
+        std::fseek(charfile, assigned_skilled_location, SEEK_SET);
+
+        std::uint8_t tempValue = 0;
+        for (size_t idx = 0; idx < NUM_OF_SKILL_HOTKEYS; ++idx)
+        {
+            std::fread(&tempValue, sizeof(tempValue), 1, charfile);
+            AssignedSkills[idx] = (tempValue == 0xFF ? 0xFFFF : tempValue);
+        }
+
+        std::fread(&tempValue, sizeof(tempValue), 1, charfile);
+        LeftSkill = tempValue;
+
+        std::fread(&tempValue, sizeof(tempValue), 1, charfile);
+        RightSkill = tempValue;
+
+        difficulty_location = std::ftell(charfile);
+        std::uint8_t difficultyAndAct = 0;
+        std::fread(&difficultyAndAct, sizeof(difficultyAndAct), 1, charfile);
+        Bs.DifficultyLastPlayed = static_cast<EnumDifficulty>(difficultyAndAct & 0x0F);
+        Bs.StartingAct = static_cast<EnumAct>(difficultyAndAct >> 4);
+
+        std::memset(StartingAct, 0, sizeof(StartingAct));
+        StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
+
+        mapid_location = 126;
+        std::fread(&MapID, sizeof(MapID), 1, charfile);
     }
     else
     {
-        starting_location = 168;
+        starting_location = 44;
         std::fseek(charfile, starting_location, SEEK_SET);
+        std::fread(&Created, sizeof(Created), 1, charfile);
+        std::fread(&LastPlayed, sizeof(LastPlayed), 1, charfile);
+
+        assigned_skilled_location = 56;
+        std::fseek(charfile, assigned_skilled_location, SEEK_SET);
+        std::fread(&AssignedSkills, sizeof(AssignedSkills), 1, charfile);
+        std::fread(&LeftSkill, sizeof(LeftSkill), 1, charfile);
+        std::fread(&RightSkill, sizeof(RightSkill), 1, charfile);
+        std::fread(&LeftSwapSkill, sizeof(LeftSkill), 1, charfile);
+        std::fread(&RightSwapSkill, sizeof(RightSkill), 1, charfile);
+
+        difficulty_location = 168;
+        std::fseek(charfile, difficulty_location, SEEK_SET);
         std::fread(StartingAct, sizeof(StartingAct), 1, charfile);
         if (StartingAct[0] != 0)
         {
@@ -418,6 +464,18 @@ void d2ce::Character::readBasicInfo()
             Bs.DifficultyLastPlayed = EnumDifficulty::Hell;
             Bs.StartingAct = static_cast<EnumAct>(StartingAct[2] & ~0x80);
         }
+
+        mapid_location = 171;
+        std::fseek(charfile, mapid_location, SEEK_SET);
+        std::fread(&MapID, sizeof(MapID), 1, charfile);
+
+        mercInfo_location = 177;
+        std::fseek(charfile, mercInfo_location, SEEK_SET);
+        std::fread(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
+        std::fread(&Merc.Id, sizeof(Merc.Id), 1, charfile);
+        std::fread(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
+        std::fread(&Merc.Type, sizeof(Merc.Type), 1, charfile);
+        std::fread(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
     }
 }
 //---------------------------------------------------------------------------
@@ -438,6 +496,7 @@ bool d2ce::Character::readStats()
 
     return false;
 }
+//---------------------------------------------------------------------------
 bool d2ce::Character::readItems()
 {
     return items.readItems(Bs.Version, charfile, isExpansionCharacter());
@@ -504,7 +563,7 @@ bool d2ce::Character::save()
         std::string tempname = p.filename().string();
 
         // compare filename (w/o extension) to character's name
-        if (tempname.compare(0, tempname.length(), Bs.Name) != 0)
+        if (_stricmp(tempname.c_str(), Bs.Name) != 0)
         {
             std::string fileNameBase = p.replace_filename(Bs.Name).string();
             filename = fileNameBase + ".d2s";
@@ -634,6 +693,12 @@ void d2ce::Character::writeBasicInfo()
     value = Bs.Title.bits();
     std::fwrite(&value, sizeof(value), 1, charfile);
 
+    if (Bs.Version < EnumCharVersion::v109)
+    {
+        value = (std::uint8_t)WeaponSet;
+        std::fwrite(&value, sizeof(value), 1, charfile);
+    }
+
     std::fseek(charfile, class_location, SEEK_SET);
     value = static_cast<std::underlying_type_t<EnumCharClass>>(Bs.Class);
     std::fwrite(&value, sizeof(value), 1, charfile);
@@ -644,11 +709,49 @@ void d2ce::Character::writeBasicInfo()
     std::fseek(charfile, starting_location, SEEK_SET);
     if (Bs.Version < EnumCharVersion::v109)
     {
-        std::fwrite(&DifficultyAndAct, sizeof(DifficultyAndAct), 1, charfile);
+        std::uint8_t tempValue = 0;
+        for (size_t idx = 0; idx < NUM_OF_SKILL_HOTKEYS; ++idx)
+        {
+            tempValue = (AssignedSkills[idx] >= 0xFFFF ? 0xFF : (std::uint8_t)AssignedSkills[idx]);
+            std::fwrite(&tempValue, sizeof(tempValue), 1, charfile);
+        }
+
+        tempValue = (std::uint8_t)LeftSkill;
+        std::fwrite(&tempValue, sizeof(tempValue), 1, charfile);
+
+        tempValue = (std::uint8_t)RightSkill;
+        std::fwrite(&tempValue, sizeof(tempValue), 1, charfile);
+
+        std::uint8_t difficultyAndAct = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
+        difficultyAndAct <<= 4;
+        difficultyAndAct |= (static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed) & 0x0F);
+        std::fwrite(&difficultyAndAct, sizeof(difficultyAndAct), 1, charfile);
+
+        std::fseek(charfile, mapid_location, SEEK_SET);
+        std::fwrite(&MapID, sizeof(MapID), 1, charfile);
     }
     else
     {
+        std::fwrite(&Created, sizeof(Created), 1, charfile);
+        std::fwrite(&LastPlayed, sizeof(LastPlayed), 1, charfile);
+
+        std::fseek(charfile, assigned_skilled_location, SEEK_SET);
+        std::fwrite(&AssignedSkills, sizeof(AssignedSkills), 1, charfile);
+        std::fwrite(&LeftSkill, sizeof(LeftSkill), 1, charfile);
+        std::fwrite(&RightSkill, sizeof(RightSkill), 1, charfile);
+        std::fwrite(&LeftSwapSkill, sizeof(LeftSkill), 1, charfile);
+        std::fwrite(&RightSwapSkill, sizeof(RightSkill), 1, charfile);
+
+        std::fseek(charfile, difficulty_location, SEEK_SET);
         std::fwrite(StartingAct, sizeof(StartingAct), 1, charfile);
+        std::fwrite(&MapID, sizeof(MapID), 1, charfile);
+
+        std::fseek(charfile, mercInfo_location, SEEK_SET);
+        std::fwrite(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
+        std::fwrite(&Merc.Id, sizeof(Merc.Id), 1, charfile);
+        std::fwrite(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
+        std::fwrite(&Merc.Type, sizeof(Merc.Type), 1, charfile);
+        std::fwrite(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
     }
     std::fflush(charfile);
 }
@@ -700,6 +803,104 @@ void d2ce::Character::writeTempFile()
     std::fclose(tempfile);
 }
 //---------------------------------------------------------------------------
+void d2ce::Character::headerAsJson(std::stringstream& ss, const std::string& parentIndent) const
+{
+    std::string attribParentIndent = parentIndent + jsonIndentStr;
+    ss << "\n" << parentIndent << "\"header\": {";
+    ss << "\n" << attribParentIndent << "\"identifier\": \"" << std::hex << (std::uint32_t)*((std::uint32_t*)Header) << "\"";
+    ss << ",\n" << attribParentIndent << "\"version\": " << std::dec << Version;
+    if (Bs.Version >= EnumCharVersion::v109)
+    {
+        ss << ",\n" << attribParentIndent << "\"filesize\": " << std::dec << FileSize;
+        ss << ",\n" << attribParentIndent << "\"checksum\": \"" << std::hex << Checksum << "\"";
+    }
+
+    ss << ",\n" << attribParentIndent << "\"name\": \"" << Bs.Name << "\"";
+
+    // status
+    ss << ",\n" << attribParentIndent << "\"status\": {";
+    ss << "\n" << attribParentIndent << jsonIndentStr << "\"hardcore\": " << (isHardcoreCharacter() ? "true" : "false");
+    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"died\": " << (isResurrectedCharacter() ? "true" : "false");
+    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"expansion\": " << (isExpansionCharacter() ? "true" : "false");
+    if (isLadderCharacter())
+    {
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"ladder\": true";
+    }
+
+    if (isDeadCharacter())
+    {
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"dead\": true";
+    }
+    ss << "\n" << attribParentIndent << "}";
+
+    ss << ",\n" << attribParentIndent << "\"progression\": " << std::dec << std::uint16_t(getTitle().bits());
+    ss << ",\n" << attribParentIndent << "\"active_arms\": " << std::dec << WeaponSet;
+    ss << ",\n" << attribParentIndent << "\"class\": \"" << getClassName() << "\"";
+    ss << ",\n" << attribParentIndent << "\"level\": " << std::dec << std::uint16_t(DisplayLevel);
+    if (Bs.Version >= EnumCharVersion::v109)
+    {
+        ss << ",\n" << attribParentIndent << "\"created\": " << std::dec << Created;
+        ss << ",\n" << attribParentIndent << "\"last_played\": " << std::dec << LastPlayed;
+    }
+
+    // assigned_skills
+    ss << ",\n" << attribParentIndent << "\"assigned_skills\": [";
+    bool bHasItems = false;
+    for (auto& skillId : AssignedSkills)
+    {
+        if (skillId == 0xFFFF)
+        {
+            continue;
+        }
+
+        if (bHasItems)
+        {
+            ss << ",";
+        }
+
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << Cs.getSkillNameById(skillId) << "\"";
+        bHasItems = true;
+    }
+
+    if (bHasItems)
+    {
+        ss << "\n" << parentIndent;
+    }
+    ss << "]";
+
+    ss << ",\n" << attribParentIndent << "\"left_skill\": \"" << Cs.getSkillNameById(LeftSkill) << "\"";
+    ss << ",\n" << attribParentIndent << "\"right_skill\": \"" << Cs.getSkillNameById(RightSkill) << "\"";
+    if (Bs.Version >= EnumCharVersion::v109)
+    {
+        ss << ",\n" << attribParentIndent << "\"left_swap_skill\": \"" << Cs.getSkillNameById(LeftSwapSkill) << "\"";
+        ss << ",\n" << attribParentIndent << "\"right_swap_skill\": \"" << Cs.getSkillNameById(RightSwapSkill) << "\"";
+    }
+
+    // StartingAct
+    ss << ",\n" << attribParentIndent << "\"difficulty\": {";
+    ss << "\n" << attribParentIndent << jsonIndentStr << "\"Normal\": " << std::dec << std::uint16_t(StartingAct[0]);
+    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Nightmare\": " << std::dec << std::uint16_t(StartingAct[1]);
+    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Hell\": " << std::dec << std::uint16_t(StartingAct[2]);
+    ss << "\n" << attribParentIndent << "}";
+    ss << ",\n" << attribParentIndent << "\"map_id\": " << std::dec << MapID;
+
+    if (Bs.Version >= EnumCharVersion::v109)
+    {
+        ss << ",\n" << attribParentIndent << "\"dead_merc\": " << std::dec << Merc.Dead;
+        ss << ",\n" << attribParentIndent << "\"merc_id\": \"" << std::hex << Merc.Id << "\"";
+        ss << ",\n" << attribParentIndent << "\"merc_name_id\": " << std::dec << Merc.NameId;
+        ss << ",\n" << attribParentIndent << "\"merc_type\": " << std::dec << Merc.Type;
+        ss << ",\n" << attribParentIndent << "\"merc_experience\": " << std::dec << Merc.Experience;
+    }
+    ss << ",";
+    Acts.questsAsJson(ss, isExpansionCharacter(), attribParentIndent);
+    ss << ",";
+    Acts.waypointsAsJson(ss, isExpansionCharacter(), attribParentIndent);
+    ss << ",";
+    Acts.npcAsJson(ss, isExpansionCharacter(), attribParentIndent);
+    ss << "\n" << parentIndent << "}";
+}
+//---------------------------------------------------------------------------
 void d2ce::Character::close()
 {
     if (charfile != nullptr)
@@ -715,6 +916,19 @@ const char* d2ce::Character::getPathName() const
     return filename.c_str();
 }
 //---------------------------------------------------------------------------
+std::string d2ce::Character::asJson() const
+{
+    std::stringstream ss;
+    ss << "{";
+    headerAsJson(ss, jsonIndentStr);
+    ss << ",";
+    Cs.asJson(ss, jsonIndentStr);
+    ss << ",";
+    items.asJson(ss, jsonIndentStr, getLevel());
+    ss << "\n}";
+    return ss.str();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Character::is_open() const
 {
     return charfile == nullptr ? false : true;
@@ -723,6 +937,11 @@ bool d2ce::Character::is_open() const
 std::error_code d2ce::Character::getLastError() const
 {
     return error_code;
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::fillMercenaryInfo(MercInfo& merc)
+{
+    std::memcpy(&merc, &Merc, sizeof(MercInfo));
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::fillBasicStats(BasicStats& bs)
@@ -761,26 +980,15 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
             // expansion not supported
             Bs.Status &= ~EnumCharStatus::Expansion;
         }
-
-        if (!isExpansionCharacter())
-        {
-            Bs.StartingAct = std::min(EnumAct::IV, Bs.StartingAct);
-        }
-
-        DifficultyAndAct = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
-        DifficultyAndAct <<= 4;
-        DifficultyAndAct |= (static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed) & 0x0F);
     }
-    else
+
+    if (!isExpansionCharacter())
     {
-        if (!isExpansionCharacter())
-        {
-            Bs.StartingAct = std::min(EnumAct::IV, Bs.StartingAct);
-        }
-
-        std::memset(StartingAct, 0, sizeof(StartingAct));
-        StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
+        Bs.StartingAct = std::min(EnumAct::IV, Bs.StartingAct);
     }
+
+    std::memset(StartingAct, 0, sizeof(StartingAct));
+    StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
 
     // Check class
     if (!isExpansionCharacter())
@@ -793,6 +1001,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
             {
             case EnumCharClass::Druid:
             case EnumCharClass::Assassin:
+                Bs.Class = EnumCharClass::Amazon;
                 break;
             default:
                 Bs.Class = oldClass;
@@ -800,7 +1009,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
             }
             break;
         default:
-            bs.Class = EnumCharClass::Amazon;
+            Bs.Class = EnumCharClass::Amazon;
             break;
         }
     }
@@ -856,10 +1065,10 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
         break;
 
     case 3:
-        bs.Title = EnumCharTitle::BaronBaroness;
+        Bs.Title = EnumCharTitle::BaronBaroness;
         if (isExpansionCharacter())
         {
-            bs.Title |= EnumCharTitle::MPatriarch;
+            Bs.Title |= EnumCharTitle::MPatriarch;
         }
         break;
     }
@@ -919,7 +1128,7 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
     return EnumCharVersion::v115;
 }
 //---------------------------------------------------------------------------
-const char(&d2ce::Character::getName())[NAME_LENGTH]
+const char(&d2ce::Character::getName() const)[NAME_LENGTH]
 {
     return Bs.Name;
 }
@@ -937,6 +1146,17 @@ bitmask::bitmask<d2ce::EnumCharTitle> d2ce::Character::getTitle() const
 d2ce::EnumCharClass d2ce::Character::getClass() const
 {
     return Bs.Class;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::Character::getClassName() const
+{
+    auto idx = (std::uint8_t)getClass();
+    if (idx < NUM_OF_CLASSES)
+    {
+        return ClassNames[idx];
+    }
+
+    return "";
 }
 //---------------------------------------------------------------------------
 /*

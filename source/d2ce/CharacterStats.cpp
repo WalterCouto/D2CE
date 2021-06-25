@@ -19,6 +19,7 @@
 
 #include "pch.h"
 #include "CharacterStats.h"
+#include "SkillConstants.h"
 //---------------------------------------------------------------------------
 namespace d2ce
 {
@@ -57,12 +58,12 @@ namespace d2ce
     constexpr std::uint32_t DRUID_DEXTERITY_MIN = 20;
 
     constexpr std::uint32_t BARBARIAN_STRENGTH_MIN = 30;
-    constexpr std::uint32_t SORCERESS_STRENGTH_MIN = 25;
     constexpr std::uint32_t AMAZON_STRENGTH_MIN = 20;
     constexpr std::uint32_t ASSASSIN_STRENGTH_MIN = 20;
+    constexpr std::uint32_t PALADIN_STRENGTH_MIN = 25;
     constexpr std::uint32_t NECROMANCER_STRENGTH_MIN = 15;
-    constexpr std::uint32_t PALADIN_STRENGTH_MIN = 15;
     constexpr std::uint32_t DRUID_STRENGTH_MIN = 15;
+    constexpr std::uint32_t SORCERESS_STRENGTH_MIN = 10;
 
     // 98 skill points for leveling up 1-99. Additional 4 per difficulty from quests
     constexpr std::uint32_t MAX_SKILL_CHOICES_EARNED = 110;
@@ -289,7 +290,7 @@ void d2ce::CharacterStats::checkStatInfo()
     }
 }
 //---------------------------------------------------------------------------
-d2ce::EnumCharStatInfo d2ce::CharacterStats::GetStatInfoMask(std::uint16_t stat)
+d2ce::EnumCharStatInfo d2ce::CharacterStats::GetStatInfoMask(std::uint16_t stat) const
 {
     switch (stat)
     {
@@ -949,6 +950,117 @@ void d2ce::CharacterStats::updateClass(EnumCharClass charClass)
     }
 }
 //---------------------------------------------------------------------------
+std::string d2ce::CharacterStats::getAttributeJsonName(std::uint16_t stat) const
+{
+    switch (stat)
+    {
+    case 0:
+        return "strength";
+    case 1:
+        return "energy";
+    case 2:
+        return "dexterity";
+    case 3:
+        return "vitality";
+    case 4:
+        return "unused_stats";
+    case 5:
+        return "unused_skill_points";
+    case 6:
+        return "current_hp";
+    case 7:
+        return "max_hp";
+    case 8:
+        return "current_mana";
+    case 9:
+        return "max_mana";
+    case 10:
+        return "current_stamina";
+    case 11:
+        return "max_stamina";
+    case 12:
+        return "level";
+    case 13:
+        return "experience";
+    case 14:
+        return "gold";
+    case 15:
+        return "stashed_gold";
+    }
+
+    return "";
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::attributesAsJson(std::stringstream& ss, const std::string& parentIndent) const
+{
+    (const_cast<CharacterStats*>(this))->checkStatInfo();
+    ss << "\n" << parentIndent << "\"attributes\": {";
+
+    bool bFirstItem = true;
+    std::uint32_t* pStatValue = nullptr;
+    std::uint32_t statValue = 0;
+    EnumCharStatInfo mask = EnumCharStatInfo::All;
+    for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
+    {
+        mask = GetStatInfoMask(stat);
+        pStatValue = (const_cast<CharacterStats*>(this))->GetStatBuffer(stat);
+        if (pStatValue == nullptr || ((StatInfo & mask) != mask))
+        {
+            continue;
+        }
+
+        if (bFirstItem)
+        {
+            bFirstItem = false;
+        }
+        else
+        {
+            ss << ",";
+        }
+
+        statValue = *pStatValue;
+        switch (stat)
+        {
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+            statValue >>= 8;
+            break;
+        }
+        ss << "\n" << parentIndent << jsonIndentStr << "\"" << getAttributeJsonName(stat) << "\": " << std::dec << statValue;
+    }
+    ss << "\n" << parentIndent << "}";
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::skillsAsJson(std::stringstream& ss, const std::string& parentIndent) const
+{
+    ss << "\n" << parentIndent << "\"skills\": [";
+    for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
+    {
+        if (skill != 0)
+        {
+            ss << ",";
+        }
+
+        ss << "\n" << parentIndent << "  {";
+        ss << "\n" << parentIndent << jsonIndentStr << "\"id\": " << std::dec << std::uint16_t(getSkillId(skill));
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"points\": " << std::dec << std::uint16_t(getSkillPoints(skill));
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"name\": \"" << getSkillName(skill) << "\"";
+        ss << "\n" << parentIndent << "  }";
+    }
+    ss << "\n" << jsonIndentStr << "]";
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::asJson(std::stringstream& ss, const std::string& parentIndent) const
+{
+    attributesAsJson(ss, parentIndent);
+    ss << ",";
+    skillsAsJson(ss, parentIndent);
+}
+//---------------------------------------------------------------------------
 void d2ce::CharacterStats::clear()
 {
     Class = EnumCharClass::Amazon;
@@ -1172,6 +1284,69 @@ std::uint32_t d2ce::CharacterStats::getStatPointsUsed() const
 std::uint32_t d2ce::CharacterStats::getStatLeft() const
 {
     return Cs.StatsLeft;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::CharacterStats::getSkillId(std::uint32_t skill) const
+{
+    if (skill > NUM_OF_SKILLS)
+    {
+        return 0;
+    }
+
+    size_t idx = START_SKILL_ID + skill;
+    auto classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
+    idx += classNumber * NUM_OF_SKILLS;
+    return (std::uint8_t)idx;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::CharacterStats::getSkillNameById(std::uint32_t id) const
+{
+    if (id >= 0xFF)
+    {
+        return "";
+    }
+
+    auto iter = GenericSkillNames.find(id);
+    if (iter != GenericSkillNames.end())
+    {
+        return iter->second;
+    }
+
+    auto classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
+    std::uint32_t skillOffset = START_SKILL_ID + classNumber * NUM_OF_SKILLS;
+    if (id < skillOffset)
+    {
+        return "";
+    }
+
+    std::uint32_t skill = id - skillOffset;
+    if (skill >= NUM_OF_SKILLS)
+    {
+        return "";
+    }
+
+    return SkillsNames[classNumber][skill];
+}
+//---------------------------------------------------------------------------
+std::string d2ce::CharacterStats::getSkillName(std::uint32_t skill) const
+{
+    if (skill > NUM_OF_SKILLS)
+    {
+        return "";
+    }
+
+    auto classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
+    return SkillsNames[classNumber][skill];
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::CharacterStats::getSkillPoints(std::uint32_t skill) const
+{
+    if (skill >= NUM_OF_SKILLS)
+    {
+        return 0;
+    }
+
+    return Skills[skill];
 }
 //---------------------------------------------------------------------------
 std::uint8_t(&d2ce::CharacterStats::getSkills())[NUM_OF_SKILLS]

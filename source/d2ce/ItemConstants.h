@@ -22,10 +22,6 @@
 
 namespace d2ce
 {
-    // values that are found in the various item fields
-    constexpr std::uint8_t BELT = 0x02;
-    constexpr std::uint8_t GLUED_IN_SOCKET = 0x06;
-
     // item version
     enum class EnumItemVersion : std::uint32_t
     {
@@ -35,6 +31,14 @@ namespace d2ce
         v108, // v1.08/1.09 normal or expansion
         v110, // v1.10 normal or expansion
         v115, // v1.15 Diable II Resurrected
+    };
+
+    enum class EnumItemType : std::uint8_t
+    {
+        Armor = 1,
+        Shield,
+        Weapon,
+        Other
     };
 
     enum class EnumItemQuality : std::uint8_t
@@ -49,6 +53,40 @@ namespace d2ce
         UNIQUE,
         CRAFT,
         TEMPERED
+    };
+
+    enum class EnumEquippedId : std::uint8_t
+    {
+        NONE = 0,
+        HEAD,
+        NECK,
+        TORSO,
+        HAND_RIGHT,
+        HAND_LEFT,
+        RIGHT_FINGER,
+        LEFT_FINGER,
+        WAIST,
+        FEET,
+        HANDS,
+        ALT_HAND_RIGHT,
+        ALT_HAND_LEFT,
+    };
+
+    enum class EnumItemLocation : std::uint8_t
+    {
+        STORED = 0x00,
+        EQUIPPED = 0x01,
+        BELT = 0x02,
+        BUFFER = 0x04,
+        SOCKET = 0x06,
+    };
+
+    enum class EnumAltItemLocation : std::uint8_t
+    {
+        UKNOWN = 0x00,
+        INVENTORY = 0x01,
+        HORADRIC_CUBE = 0x04,
+        STASH = 0x05
     };
 }
 //---------------------------------------------------------------------------
