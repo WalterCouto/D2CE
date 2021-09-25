@@ -7,6 +7,13 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define NOMINMAX
+#include <algorithm>
+using std::max;
+using std::min;
+
+#include "windows.h"
+
 #include <cstdint>
 #include <locale>
 #include <filesystem>
@@ -16,5 +23,7 @@
 #include <bitset>
 #include <sstream>
 #include <string>
+#include "..\d2ce\Character.h"
+#include <fstream>
 
 #endif //PCH_H

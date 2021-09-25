@@ -19,6 +19,15 @@
     <Filter Include="Source Files\d2ce">
       <UniqueIdentifier>{2906c093-06d9-4c85-9606-bc86cad93813}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples">
+      <UniqueIdentifier>{8e4fdd13-8ce9-48f3-8e6e-35ecfd08397b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\char">
+      <UniqueIdentifier>{0d798dc2-3a50-40e1-a088-98509b54299e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\char\96">
+      <UniqueIdentifier>{6d05878d-8c44-456d-a600-4fefa910805f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -83,5 +92,31 @@
     <ClInclude Include="..\d2ce\WaypointConstants.h">
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\examples\chars\96\Merlina.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Merlina.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Walter.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Walter.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\WhirlWind.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\WhirlWind.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Merlina_Two.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Merlina_Two.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
