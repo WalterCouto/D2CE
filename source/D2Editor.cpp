@@ -18,7 +18,7 @@
 
 Revision History
 ================
-Version 2.01 (June 23, 2021)
+Version 2.01 (Sept 25, 2021)
    - Updated: Moved logic in UI down to Character class for consistency.
               Refactored and cleaned up code to simplify logic
    - Updated: Fixed bug in About window to properly show version as 3 digits.
@@ -26,6 +26,10 @@ Version 2.01 (June 23, 2021)
    - Updated: Max Durability For All Items now also updates Mercenary Items.
 
    - Added: Unit test project and tests.
+   - Added: Reading of Merc and NPC sections
+   - Added: logic to fetch magical properties for an item
+   - Added: JSON export option in File menu that produces output compatible 
+            with https://github.com/nokka/d2s
 
    - Removed: remove long revision history prior to 2.00 as it is not
               relevant any longer and you can get that detail from the
