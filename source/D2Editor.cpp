@@ -18,6 +18,9 @@
 
 Revision History
 ================
+Version 2.02 (Oct 1, 2021)
+   - Updated: Logic to account for Diablo II Ressurected Saved Games folder
+
 Version 2.01 (Sept 25, 2021)
    - Updated: Moved logic in UI down to Character class for consistency.
               Refactored and cleaned up code to simplify logic

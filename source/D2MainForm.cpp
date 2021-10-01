@@ -2681,7 +2681,33 @@ void CD2MainForm::OnUpdateOptionsMaxEverything(CCmdUI* pCmdUI)
 #define MAX_VALUE_NAME 4096
 void CD2MainForm::SetStartDir()
 {
-    // Check to see if this is the one to use by camparing the driver's path
+    // get the 'Saved Games' shell directory and try searching there
+    PWSTR saveBasePath;
+    if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_SavedGames, 0, nullptr, &saveBasePath)))
+    {
+        std::filesystem::path savePath(saveBasePath);
+        CoTaskMemFree(saveBasePath);
+
+        // Look for Ressurected path first
+        auto d2Path = savePath / _T("Diablo II Resurrected");
+        if (std::filesystem::exists(d2Path))
+        {
+            d2Path += _T("\\");
+            InitialDir = d2Path.string().c_str();
+            return;
+        }
+
+        // Fall back on classic Diablo II
+        d2Path = savePath / _T("Diablo II");
+        if (std::filesystem::exists(d2Path))
+        {
+            d2Path += _T("\\");
+            InitialDir = d2Path.string().c_str();
+            return;
+        }
+    }
+
+    // Search the Classic register position for the path to use
     HKEY regKey = 0;
     if (::RegOpenKeyEx(HKEY_CURRENT_USER, _T("SOFTWARE\\Blizzard Entertainment\\Diablo II"), 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
     {

@@ -44,8 +44,8 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II V1.14d (It has the logic for V1.00 through V1.09 including the Lord of Destruction expansion set so it should work the same as version 1.92 on those files)**
-- Starting with Diablo II V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing files marked as v1.10 or higher when determining the limit for your gold in your stash.
+- Tested with Diablo II Ressurected V1.01 and Diablo II Classic V1.14d (It has the logic for V1.00 through V1.09 including the Lord of Destruction expansion set so it should work the same as version 1.92 of the orginal code on those files)**
+- Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Ressurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - You must close the character file before playing Diablo II. This is because there are no options to enable file sharing for the read and write functions I'm using in ANSI C++.
 
 ### Distribution
@@ -69,6 +69,9 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.02 (Oct 1, 2021)**<br>
+- Updated: Logic to account for Diablo II Ressurected Saved Games folder<br>
+
 **Version 2.01 (Sept 25, 2021)**<br>
 - Updated: Moved logic in UI down to Character class for consistency. Refactored and cleaned up code to simplify logic<br>
 - Updated: Fixed bug in About window to properly show version as 3 digits.<br>
