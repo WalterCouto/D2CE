@@ -1,10 +1,23 @@
 #include "pch.h"
 #include "CppUnitTest.h"
+#include <algorithm>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace D2EditorTests
 {
+    static std::string& ConvertNewLines(std::string& data)
+    {
+        auto pos = data.find("\r\n");
+        while (pos != std::string::npos)
+        {
+            data.replace(pos, 2, "\n");
+            pos = data.find("\r\n");
+        }
+
+        return data;
+    }
+
     static::std::string GetTempPathName()
     {
         static std::string tempPath;
@@ -26,6 +39,20 @@ namespace D2EditorTests
         {
             std::stringstream ss;
             ss << GetTempPathName() << "\\char\\96";
+            char96TempPath = ss.str();
+            std::filesystem::create_directories(char96TempPath);
+        }
+
+        return char96TempPath;
+    }
+
+    static std::string GetChar97TempPathName()
+    {
+        static std::string char96TempPath;
+        if (char96TempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetTempPathName() << "\\char\\97";
             char96TempPath = ss.str();
             std::filesystem::create_directories(char96TempPath);
         }
@@ -76,10 +103,30 @@ namespace D2EditorTests
         return char96Path;
     }
 
+    static std::string GetChar97PathName()
+    {
+        static std::string char97Path;
+        if (char97Path.empty())
+        {
+            std::stringstream ss;
+            ss << GetPathName() << "\\examples\\char\\97";
+            char97Path = ss.str();
+        }
+
+        return char97Path;
+    }
+
     static bool LoadChar96File(const char* fileName, d2ce::Character& character, bool validateChecksum)
     {
         std::stringstream ss;
         ss << GetChar96PathName() << "\\" << fileName;
+        return character.open(ss.str().c_str(), validateChecksum);
+    }
+
+    static bool LoadChar97File(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::stringstream ss;
+        ss << GetChar97PathName() << "\\" << fileName;
         return character.open(ss.str().c_str(), validateChecksum);
     }
 
@@ -103,6 +150,26 @@ namespace D2EditorTests
         return character.open(tempFile.c_str(), validateChecksum);
     }
 
+    static bool LoadChar97TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::string tempFile;
+        {
+            std::stringstream ss;
+            ss << GetChar97TempPathName() << "\\" << fileName;
+            tempFile = ss.str();
+        }
+
+        std::string origFile;
+        {
+            std::stringstream ss;
+            ss << GetChar97PathName() << "\\" << fileName;
+            origFile = ss.str();
+        }
+        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
+        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
+        return character.open(tempFile.c_str(), validateChecksum);
+    }
+
     static std::string GetChar96ExpectedJsonOutput(const d2ce::Character& character)
     {
         std::stringstream ss;
@@ -115,7 +182,22 @@ namespace D2EditorTests
 #endif
         Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
         std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return text;
+        return ConvertNewLines(text);
+    }
+
+    static std::string GetChar97ExpectedJsonOutput(const d2ce::Character& character)
+    {
+        std::stringstream ss;
+        ss << GetChar97PathName() << "\\" << character.getName() << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
     }
 
 
@@ -146,12 +228,18 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen4)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport1)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Merlina.d2s", character, true));
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar96ExpectedJsonOutput(character));
+            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
         }
 
         TEST_METHOD(TestJsonExport2)
@@ -159,7 +247,7 @@ namespace D2EditorTests
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Walter.d2s", character, true));
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar96ExpectedJsonOutput(character));
+            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
         }
 
         TEST_METHOD(TestJsonExport3)
@@ -167,7 +255,15 @@ namespace D2EditorTests
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar96ExpectedJsonOutput(character));
+            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport4)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
         }
 
         TEST_METHOD(TestJsonTestComplexChange)

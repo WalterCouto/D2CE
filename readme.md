@@ -69,6 +69,11 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.03 (Oct 2, 2021)**<br>
+- Updated: Fix up handling of Simple Quest Items<br>
+- Updated: Properly identify "Scroll of Inifuss" and "Key to the Cairn Stones" items<br>
+- Updated: Update json unit test to ignore newline differences<br>
+
 **Version 2.02 (Oct 1, 2021)**<br>
 - Updated: Logic to account for Diablo II Ressurected Saved Games folder<br>
 

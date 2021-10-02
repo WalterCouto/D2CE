@@ -2130,8 +2130,8 @@ namespace d2ce
             {"tr2", {"Scroll of Malah", {0, 0, false, false, 0, 0}, {0, 0}, {2, 2}, false, "invscb", 0, {"Quest"}}},
             {"vip", {"Viper Amulet", {0, 0, false, false, 0, 0}, {0, 0}, {1, 1}, false, "invvip", 0, {"Amulet", "Miscellaneous"}}},
             {"bey", {"Baal's Eye", {0, 0, false, false, 0, 0}, {0, 0}, {1, 1}, false, "inveye", 0, {"Quest"}}},
-            {"bks", {"Bark Scroll", {0, 0, false, false, 0, 0}, {0, 0}, {2, 2}, false, "invscb", 0, {"Quest"}}},
-            {"bkd", {"Deciphered Bark Scroll", {0, 0, false, false, 0, 0}, {0, 0}, {2, 2}, false, "invscb", 0, {"Quest"}}},
+            {"bks", {"Scroll of Inifuss", {0, 0, false, false, 0, 0}, {0, 0}, {2, 2}, false, "invscb", 0, {"Quest"}}},
+            {"bkd", {"Key to the Cairn Stones", {0, 0, false, false, 0, 0}, {0, 0}, {2, 2}, false, "invscb", 0, {"Quest"}}},
             {"dhn", {"Diablo's Horn", {0, 0, false, false, 0, 0}, {0, 0}, {1, 1}, false, "invfang", 0, {"Quest"}}},
             {"g34", {"Gold Bird", {0, 0, false, false, 0, 0}, {0, 0}, {1, 2}, false, "invgbi", 0, {"Quest"}}},
             {"hrb", {"Herb", {0, 0, false, false, 0, 0}, {0, 0}, {1, 1}, false, "invhrb", 0, {"Herb", "Miscellaneous"}}},
@@ -9780,7 +9780,18 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     {
         quest_difficulty_offset = 0;
         nr_of_items_in_sockets_offset = extended_data_offset;
-        nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
+        nr_of_items_in_sockets_bits = 1;
+        if (itemType.isQuestItem())
+        {
+            quest_difficulty_offset = extended_data_offset;
+            nr_of_items_in_sockets_offset = quest_difficulty_offset + 2;
+            nr_of_items_in_sockets_bits = 1;
+            if (!skipBits(charfile, current_bit_offset, 2))
+            {
+                return false;
+            }
+        }
+
         item_end_bit_offset = current_bit_offset;
         return true;
     }

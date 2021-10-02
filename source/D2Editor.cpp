@@ -18,6 +18,11 @@
 
 Revision History
 ================
+Version 2.03 (Oct 2, 2021)
+   - Updated: Fix up handling of Simple Quest Items
+   - Updated: Properly identify "Scroll of Inifuss" and 
+              "Key to the Cairn Stones" items
+
 Version 2.02 (Oct 1, 2021)
    - Updated: Logic to account for Diablo II Ressurected Saved Games folder
 

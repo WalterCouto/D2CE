@@ -28,6 +28,9 @@
     <Filter Include="examples\char\96">
       <UniqueIdentifier>{6d05878d-8c44-456d-a600-4fefa910805f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples\char\97">
+      <UniqueIdentifier>{77c067de-5b9a-477b-bf9e-b11dc153c4b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -117,6 +120,12 @@
     </CustomBuild>
     <CustomBuild Include="..\examples\chars\96\Merlina_Two.json">
       <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Scroll_Test.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Scroll_Test.json">
+      <Filter>examples\char\97</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
