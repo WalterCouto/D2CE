@@ -26,6 +26,7 @@
 #include "DataTypes.h"
 #include "ActsInfo.h"
 #include "CharacterStats.h"
+#include "Mercenary.h"
 #include "Item.h"
 #include "sstream"
 
@@ -64,7 +65,7 @@ namespace d2ce
                                                      // four least significant bits = which act is character saved at
         std::uint32_t MapID = 0;             // pos 171 (1.09+, otherwise 126)
 
-        MercInfo Merc;                       // Dead:       pos 177 (1.09+ only)
+        Mercenary Merc;                      // Dead:       pos 177 (1.09+ only)
                                              // Id:         pos 179 (1.09+ only)
                                              // NameId:     pos 183 (1.09+ only)
                                              // Type:       pos 185 (1.09+ only)
@@ -95,7 +96,6 @@ namespace d2ce
             assigned_skilled_location = 0,
             difficulty_location = 0,
             mapid_location = 0,
-            mercInfo_location = 0,
             stats_header_location = 0;
         bool update_locations = true;
 
@@ -133,7 +133,11 @@ namespace d2ce
         std::error_code getLastError() const;
 
         // Mercenary Info
-        void fillMercenaryInfo(MercInfo& merc);
+        Mercenary& getMercenaryInfo();
+        const std::vector<d2ce::Item>& getMercItems() const;
+
+        bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
 
         // Character Stats
         void fillBasicStats(BasicStats& bs);
@@ -228,6 +232,9 @@ namespace d2ce
         size_t upgradePotions();
         bool anyUpgradableRejuvenations() const;
         size_t upgradeRejuvenationPotions();
+
+        bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
     };
 }
 //---------------------------------------------------------------------------

@@ -18,6 +18,10 @@
 
 Revision History
 ================
+Version 2.04 (Oct 5, 2021)
+   - Added: Mercenary class to encapsulate Mercenary information and items
+   - Added: Mercenary Dialog to allow editing of Mercenary Info
+
 Version 2.03 (Oct 2, 2021)
    - Updated: Fix up handling of Simple Quest Items
    - Updated: Properly identify "Scroll of Inifuss" and 

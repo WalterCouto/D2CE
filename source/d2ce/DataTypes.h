@@ -160,6 +160,26 @@ namespace d2ce
         std::uint32_t GoldInBelt = 0;
         std::uint32_t GoldInStash = 0;
 
+        void clear()
+        {
+            Strength = 0;
+            Energy = 0;
+            Dexterity = 0;
+            Vitality = 0;
+            StatsLeft = 0;
+            SkillChoices = 0;
+            CurLife = 0;
+            MaxLife = 0;
+            CurMana = 0;
+            MaxMana = 0;
+            CurStamina = 0;
+            MaxStamina = 0;
+            Level = 1;
+            Experience = 0;
+            GoldInBelt = 0;
+            GoldInStash = 0;
+        }
+
         std::uint32_t getMaxGoldInBelt() const
         {
             std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
@@ -195,10 +215,10 @@ namespace d2ce
 
         std::uint32_t getMinExperienceRequired() const
         {
-            std::uint32_t curLevel = std::max(0u, std::min(Level, NUM_OF_LEVELS));
+            std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
             if (curLevel <= d2ce::NUM_OF_LEVELS)
             {
-                return MinExpRequired[curLevel];
+                return MinExpRequired[curLevel - 1];
             }
 
             return std::uint32_t(-1);
@@ -609,34 +629,38 @@ namespace d2ce
         }
     };
 
-    struct ItemDamage
+    struct BaseDamage
     {
         std::uint16_t Min = 0;
-        std::uint16_t Max = 0;
-        bool OneOrTwoHanded = false;
-        bool TwoHanded = false;
-        std::uint16_t Min2 = 0;
-        std::uint16_t Max2 = 0;
-        std::uint16_t MissleMin = 0;
-        std::uint16_t MisselMax = 0;
-
+        std::uint16_t Max = 0; 
+        
         void clear()
         {
             Min = 0;
             Max = 0;
-            OneOrTwoHanded = false;
-            TwoHanded = false;
-            Min2 = 0;
-            Max2 = 0;
-            MissleMin = 0;
-            MisselMax = 0;
+        }
+    };
+
+    struct ItemDamage
+    {
+        BaseDamage OneHanded;
+        bool bOneOrTwoHanded = false;
+        bool bTwoHanded = false;
+        BaseDamage TwoHanded;
+        BaseDamage Missile;
+
+        void clear()
+        {
+            OneHanded.clear();
+            TwoHanded.clear();
+            Missile.clear();
         }
 
         void asJson(std::stringstream& ss, const std::string& parentIndent) const
         {
             ss << "\n" << parentIndent << "\"base_damage\": {";
             bool bFirstItem = true;
-            if (Max != 0)
+            if (OneHanded.Max != 0)
             {
                 if (bFirstItem)
                 {
@@ -646,11 +670,11 @@ namespace d2ce
                 {
                     ss << ",";
                 }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"mindam\": " << std::dec << Min;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxdam\": " << std::dec << Max;
+                ss << "\n" << parentIndent << jsonIndentStr << "\"mindam\": " << std::dec << OneHanded.Min;
+                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxdam\": " << std::dec << OneHanded.Max;
             }
 
-            if (TwoHanded)
+            if (bTwoHanded)
             {
                 if (bFirstItem)
                 {
@@ -660,11 +684,11 @@ namespace d2ce
                 {
                     ss << ",";
                 }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"twohandmindam\": " << std::dec << Min2;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"twohandmaxdam\": " << std::dec << Max2;
+                ss << "\n" << parentIndent << jsonIndentStr << "\"twohandmindam\": " << std::dec << TwoHanded.Min;
+                ss << ",\n" << parentIndent << jsonIndentStr << "\"twohandmaxdam\": " << std::dec << TwoHanded.Max;
             }
 
-            if (MisselMax != 0)
+            if (Missile.Max != 0)
             {
                 if (bFirstItem)
                 {
@@ -674,8 +698,8 @@ namespace d2ce
                 {
                     ss << ",";
                 }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"minmisdam\": " << std::dec << MissleMin;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxmisdam\": " << std::dec << MisselMax;
+                ss << "\n" << parentIndent << jsonIndentStr << "\"minmisdam\": " << std::dec << Missile.Min;
+                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxmisdam\": " << std::dec << Missile.Max;
             }
             ss << "\n" << parentIndent << "}";
         }

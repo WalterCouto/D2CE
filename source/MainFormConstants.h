@@ -1,6 +1,5 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2000-2003  Burton Tsang
     Copyright (C) 2021 Walter Couto
 
     This program is free software: you can redistribute it and/or modify

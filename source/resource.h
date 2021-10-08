@@ -20,6 +20,7 @@
 #define IDD_SKILLS_DIALOG               144
 #define IDD_GPS_CONVERTER_DIALOG        147
 #define IDB_STATS_LEFT_BITMAP           152
+#define IDD_MERC_DIALOG                 153
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -49,6 +50,7 @@
 #define IDC_RESURRECTED_CHECK           1028
 #define IDC_EXPANSION_CHECK             1029
 #define IDC_LADDER_CHECK                1030
+#define IDC_ATTRIBUTE                   1031
 #define IDC_QUIT_BTN                    1032
 #define IDC_ABOUT_VERSION               1033
 #define IDC_APP_COPYRIGHT               1034
@@ -202,6 +204,8 @@
 #define IDC_DEXTERITY_PLUS_BTN          1106
 #define IDC_STATS_LEFT_IMAGE            1107
 #define IDC_BACKGROUND_BOX              1108
+#define IDC_MERC_HIRED                  1109
+#define IDC_TYPE_DASH_2                 1110
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -222,14 +226,15 @@
 #define ID_OPTIONS_MAXDURABILITYFORALLITEMS 32789
 #define ID_OPTIONS_RESET_STATS          32790
 #define ID_FILE_EXPORT_AS_JSON          32791
+#define ID_VIEW_MERCENARY               32792
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        153
-#define _APS_NEXT_COMMAND_VALUE         32792
-#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_RESOURCE_VALUE        156
+#define _APS_NEXT_COMMAND_VALUE         32793
+#define _APS_NEXT_CONTROL_VALUE         1111
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

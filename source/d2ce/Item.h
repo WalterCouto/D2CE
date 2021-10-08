@@ -58,6 +58,7 @@ namespace d2ce
         size_t defense_rating_bit_offset = 0;
         size_t durability_bit_offset = 0;
         size_t stackable_bit_offset = 0;
+        size_t gld_stackable_bit_offset = 0;
         size_t socket_count_bit_offset = 0;
         size_t bonus_bits_bit_offset = 0;
         size_t magical_props_bit_offset = 0;
@@ -158,9 +159,11 @@ namespace d2ce
         std::uint8_t totalNumberOfSockets() const;
         std::uint16_t getQuantity() const;
         bool setQuantity(std::uint16_t quantity);
+        bool setMaxQuantity();
         std::uint16_t getDefenseRating() const;
         bool getDurability(ItemDurability& attrib) const;
         bool setDurability(const ItemDurability& attrib);
+        bool setMaxDurability();
         bool getDamage(ItemDamage& damage) const;
         bool getRealmDataFlag() const;
 
@@ -261,17 +264,17 @@ namespace d2ce
 
         size_t getByteSize() const; // number of bytes to store all item sections
 
-        size_t getNumberOfGPSs();
-        const std::vector<std::reference_wrapper<Item>>& getGPSs();
+        size_t getNumberOfGPSs() const;
+        const std::vector<std::reference_wrapper<Item>>& getGPSs() const;
 
-        size_t getNumberOfStackables();
-        const std::vector<std::reference_wrapper<Item>>& getStackables();
+        size_t getNumberOfStackables() const;
+        const std::vector<std::reference_wrapper<Item>>& getStackables() const;
 
-        size_t getNumberOfArmor();
-        const std::vector<std::reference_wrapper<Item>>& getArmor();
+        size_t getNumberOfArmor() const;
+        const std::vector<std::reference_wrapper<Item>>& getArmor() const;
 
-        size_t getNumberOfWeapons();
-        const std::vector<std::reference_wrapper<Item>>& getWeapons();
+        size_t getNumberOfWeapons() const;
+        const std::vector<std::reference_wrapper<Item>>& getWeapons() const;
 
         size_t upgradeGems();
         size_t upgradePotions();
@@ -282,6 +285,11 @@ namespace d2ce
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
+
+        // Mercenary
+        const std::vector<Item>& getMercItems() const;
+        bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
     };
     //---------------------------------------------------------------------------
 }

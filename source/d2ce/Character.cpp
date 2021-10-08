@@ -86,7 +86,7 @@ namespace std
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-d2ce::Character::Character()
+d2ce::Character::Character() : Merc(*this)
 {
     initialize();
 }
@@ -122,6 +122,7 @@ void d2ce::Character::initialize()
     Bs.DifficultyLastPlayed = EnumDifficulty::Normal;
     std::memset(StartingAct, 0, sizeof(StartingAct));
     Bs.StartingAct = EnumAct::I;
+    Merc.clear();
     Acts.clear();
 
     Cs.clear();
@@ -469,13 +470,7 @@ void d2ce::Character::readBasicInfo()
         std::fseek(charfile, mapid_location, SEEK_SET);
         std::fread(&MapID, sizeof(MapID), 1, charfile);
 
-        mercInfo_location = 177;
-        std::fseek(charfile, mercInfo_location, SEEK_SET);
-        std::fread(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
-        std::fread(&Merc.Id, sizeof(Merc.Id), 1, charfile);
-        std::fread(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
-        std::fread(&Merc.Type, sizeof(Merc.Type), 1, charfile);
-        std::fread(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
+        Merc.readInfo(Bs.Version, charfile);
     }
 }
 //---------------------------------------------------------------------------
@@ -746,12 +741,7 @@ void d2ce::Character::writeBasicInfo()
         std::fwrite(StartingAct, sizeof(StartingAct), 1, charfile);
         std::fwrite(&MapID, sizeof(MapID), 1, charfile);
 
-        std::fseek(charfile, mercInfo_location, SEEK_SET);
-        std::fwrite(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
-        std::fwrite(&Merc.Id, sizeof(Merc.Id), 1, charfile);
-        std::fwrite(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
-        std::fwrite(&Merc.Type, sizeof(Merc.Type), 1, charfile);
-        std::fwrite(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
+        Merc.writeInfo(charfile);
     }
     std::fflush(charfile);
 }
@@ -886,11 +876,8 @@ void d2ce::Character::headerAsJson(std::stringstream& ss, const std::string& par
 
     if (Bs.Version >= EnumCharVersion::v109)
     {
-        ss << ",\n" << attribParentIndent << "\"dead_merc\": " << std::dec << Merc.Dead;
-        ss << ",\n" << attribParentIndent << "\"merc_id\": \"" << std::hex << Merc.Id << "\"";
-        ss << ",\n" << attribParentIndent << "\"merc_name_id\": " << std::dec << Merc.NameId;
-        ss << ",\n" << attribParentIndent << "\"merc_type\": " << std::dec << Merc.Type;
-        ss << ",\n" << attribParentIndent << "\"merc_experience\": " << std::dec << Merc.Experience;
+        ss << ",";
+        Merc.asJson(ss, attribParentIndent);
     }
     ss << ",";
     Acts.questsAsJson(ss, isExpansionCharacter(), attribParentIndent);
@@ -939,9 +926,24 @@ std::error_code d2ce::Character::getLastError() const
     return error_code;
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::fillMercenaryInfo(MercInfo& merc)
+d2ce::Mercenary& d2ce::Character::getMercenaryInfo()
 {
-    std::memcpy(&merc, &Merc, sizeof(MercInfo));
+    return Merc;
+}
+//---------------------------------------------------------------------------
+const std::vector<d2ce::Item>& d2ce::Character::getMercItems() const
+{
+    return items.getMercItems();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const
+{
+    return items.getMercItemBonuses(attribs);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs) const
+{
+    return items.getDisplayedMercItemBonuses(attribs, Merc.getLevel());
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::fillBasicStats(BasicStats& bs)
@@ -1513,5 +1515,15 @@ bool d2ce::Character::anyUpgradableRejuvenations() const
 size_t d2ce::Character::upgradeRejuvenationPotions()
 {
     return items.upgradeRejuvenationPotions();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
+{
+    return items.getItemBonuses(attribs);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const
+{
+    return items.getDisplayedItemBonuses(attribs, getLevel());
 }
 //---------------------------------------------------------------------------

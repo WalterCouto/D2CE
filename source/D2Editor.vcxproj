@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -214,10 +214,13 @@
     <ClInclude Include="d2ce\CharacterStats.h" />
     <ClInclude Include="d2ce\CharacterStatsConstants.h" />
     <ClInclude Include="d2ce\Constants.h" />
+    <ClInclude Include="d2ce\Mercenary.h" />
+    <ClInclude Include="d2ce\MercenaryConstants.h" />
     <ClInclude Include="D2Editor.h" />
     <ClInclude Include="D2GemsForm.h" />
     <ClInclude Include="D2LevelInfoForm.h" />
     <ClInclude Include="D2MainForm.h" />
+    <ClInclude Include="D2MercenaryForm.h" />
     <ClInclude Include="D2QuestsForm.h" />
     <ClInclude Include="D2SkillTreeForm.h" />
     <ClInclude Include="D2WaypointsForm.h" />
@@ -237,10 +240,12 @@
     <ClCompile Include="d2ce\ActsInfo.cpp" />
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
+    <ClCompile Include="d2ce\Mercenary.cpp" />
     <ClCompile Include="D2Editor.cpp" />
     <ClCompile Include="D2GemsForm.cpp" />
     <ClCompile Include="D2LevelInfoForm.cpp" />
     <ClCompile Include="D2MainForm.cpp" />
+    <ClCompile Include="D2MercenaryForm.cpp" />
     <ClCompile Include="D2QuestsForm.cpp" />
     <ClCompile Include="D2SkillTreeForm.cpp" />
     <ClCompile Include="D2WaypointsForm.cpp" />

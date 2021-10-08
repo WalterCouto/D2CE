@@ -96,6 +96,15 @@
     <ClInclude Include="d2ce\CharacterStatsConstants.h">
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
+    <ClInclude Include="d2ce\Mercenary.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\MercenaryConstants.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="D2MercenaryForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -133,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="d2ce\Item.cpp">
       <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\Mercenary.cpp">
+      <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
+    <ClCompile Include="D2MercenaryForm.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

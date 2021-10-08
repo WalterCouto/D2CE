@@ -164,6 +164,7 @@
     <ClCompile Include="..\d2ce\Character.cpp" />
     <ClCompile Include="..\d2ce\CharacterStats.cpp" />
     <ClCompile Include="..\d2ce\Item.cpp" />
+    <ClCompile Include="..\d2ce\Mercenary.cpp" />
     <ClCompile Include="D2EditorTests.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -184,6 +185,8 @@
     <ClInclude Include="..\d2ce\ExperienceConstants.h" />
     <ClInclude Include="..\d2ce\Item.h" />
     <ClInclude Include="..\d2ce\ItemConstants.h" />
+    <ClInclude Include="..\d2ce\Mercenary.h" />
+    <ClInclude Include="..\d2ce\MercenaryConstants.h" />
     <ClInclude Include="..\d2ce\SkillConstants.h" />
     <ClInclude Include="..\d2ce\WaypointConstants.h" />
     <ClInclude Include="pch.h" />

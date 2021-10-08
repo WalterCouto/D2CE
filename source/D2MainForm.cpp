@@ -27,6 +27,7 @@
 #include "D2WaypointsForm.h"
 #include "D2QuestsForm.h"
 #include "D2GemsForm.h"
+#include "D2MercenaryForm.h"
 #include "d2ce\ExperienceConstants.h"
 #include "d2ce\Constants.h"
 #include "afxdialogex.h"
@@ -845,6 +846,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
+    ON_COMMAND(ID_VIEW_MERCENARY, &CD2MainForm::OnViewMercenary)
+    ON_UPDATE_COMMAND_UI(ID_VIEW_MERCENARY, &CD2MainForm::OnUpdateViewMercenary)
     END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -1756,6 +1759,7 @@ void CD2MainForm::ClearAllBoolVars()
     SkillChoicesChanged = false;
     WaypointsChanged = false;
     QuestsChanged = false;
+    MercChanged = false;
     UpdateAppTitle();
 }
 //---------------------------------------------------------------------------
@@ -2774,7 +2778,8 @@ void CD2MainForm::SetupBasicStats()
 void CD2MainForm::StatsChanged()
 {
     if (!Editted && (ItemsChanged || !ctrlEditted.empty() || StatusChanged ||
-        StatsLeftChanged || SkillChoicesChanged || WaypointsChanged || QuestsChanged))
+        StatsLeftChanged || SkillChoicesChanged || WaypointsChanged || QuestsChanged ||
+        MercChanged))
     {
         Editted = true;
         UpdateAppTitle();
@@ -3824,6 +3829,22 @@ void CD2MainForm::OnUpdateOptionsResetStats(CCmdUI* pCmdUI)
     pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnViewMercenary()
+{
+    CD2MercenaryForm dlg(*this);
+    dlg.DoModal();
+    if (dlg.MercChanged())
+    {
+        MercChanged = true;
+        StatsChanged();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnUpdateViewMercenary(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && CharInfo.getVersion() >= d2ce::EnumCharVersion::v109)? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 d2ce::EnumCharVersion CD2MainForm::getCharacterVersion() const
 {
     return CharInfo.getVersion();
@@ -3915,6 +3936,11 @@ d2ce::EnumDifficulty CD2MainForm::getDifficultyLastPlayed() const
     return static_cast<d2ce::EnumDifficulty>(Difficulty.GetCurSel());
 }
 //---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterLevel() const
+{
+    return CharInfo.getLevel();
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::isExpansionCharacter() const
 {
     return CharInfo.isExpansionCharacter();
@@ -3930,6 +3956,11 @@ std::uint32_t CD2MainForm::getStatPointsEarned() const
 {
     std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
     return CharInfo.getStatPointsEarned(curLevel);
+}
+//---------------------------------------------------------------------------
+d2ce::Mercenary& CD2MainForm::getMercenaryInfo()
+{
+    return CharInfo.getMercenaryInfo();
 }
 //---------------------------------------------------------------------------
 const d2ce::ActsInfo& CD2MainForm::getQuests()
@@ -4013,3 +4044,4 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
 
     return numConverted;
 }
+//---------------------------------------------------------------------------

@@ -51,6 +51,9 @@
     <ClCompile Include="..\d2ce\Item.cpp">
       <Filter>Source Files\d2ce</Filter>
     </ClCompile>
+    <ClCompile Include="..\d2ce\Mercenary.cpp">
+      <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -93,6 +96,12 @@
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
     <ClInclude Include="..\d2ce\WaypointConstants.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\Mercenary.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\MercenaryConstants.h">
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
   </ItemGroup>

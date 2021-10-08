@@ -226,7 +226,8 @@ private:	// User declarations
         StatsLeftChanged = false,    // has the number of stats point left changed
         SkillChoicesChanged = false, // has skill choices remaining been changed
         WaypointsChanged = false,    // has list of active waypoints changed
-        QuestsChanged = false;       // has the list of completed quests changed
+        QuestsChanged = false,       // has the list of completed quests 
+        MercChanged = false;         // has the Merc info changed
     bool hasUpgradableGems = false;
     bool hasUpgradablePotions = false;
     bool hasUpgradableRejuvenations = false;
@@ -321,11 +322,16 @@ public:
     bitmask::bitmask<d2ce::EnumCharTitle> getCharacterTitle() const;
     d2ce::EnumCharClass getCharacterClass() const;
     d2ce::EnumDifficulty getDifficultyLastPlayed() const;
+    std::uint32_t getCharacterLevel() const;
 
     bool isExpansionCharacter() const;
 
     uint32_t getSkillPointsEarned() const;
     uint32_t getStatPointsEarned() const;
+
+
+    // Mercenary
+    d2ce::Mercenary& getMercenaryInfo();
 
     // Quests
     const d2ce::ActsInfo& getQuests();
@@ -347,5 +353,7 @@ public:
     size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
     afx_msg void OnFileExportAsJson();
     afx_msg void OnUpdateFileExportAsJson(CCmdUI* pCmdUI);
+    afx_msg void OnViewMercenary();
+    afx_msg void OnUpdateViewMercenary(CCmdUI* pCmdUI);
 };
 //---------------------------------------------------------------------------
