@@ -55,7 +55,7 @@ namespace d2ce
         std::uint16_t Resist = 0;
         std::uint16_t ResistPerLvl = 0;
     };
-   
+
     const std::vector<MercStatInfo>& getMercStatInfo(d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass)
     {
         static std::vector<MercStatInfo> RoughScoutNormal = { { 3, { 100, 105 }, 45, 9, 15, 8, 35, 10, 45, 16, 10, 12, { 1, 3 }, 2, 0, 8 },
@@ -74,7 +74,7 @@ namespace d2ce
         static std::vector<MercStatInfo> DesertMercenaryNightmare = { { 43, { 120 }, 567, 25, 377, 19, 113, 14, 87, 12, 385, 24, { 22, 29 }, 6, 83, 7 },
             { 75, { 120 }, 1367, 40, 985, 28, 169, 14, 135, 12, 1153, 36, { 46, 53 }, 8, 139, 4 }
         };
-        static std::vector<MercStatInfo> DesertMercenaryHell = { { 75, { 130 }, 1230, 40, 887, 28, 165, 14, 131, 12, 1038, 36, { 44, 51 }, 8, 136, 4 }};
+        static std::vector<MercStatInfo> DesertMercenaryHell = { { 75, { 130 }, 1230, 40, 887, 28, 165, 14, 131, 12, 1038, 36, { 44, 51 }, 8, 136, 4 } };
 
         static std::vector<MercStatInfo> IronWolfNormal = { { 15, { 110, 120, 110 }, 160, 9, 80, 5, 49, 10, 40, 8, 15, 12, { 1, 7 }, 4, 25, 7 },
             { 49, { 110, 120, 110 }, 466, 18, 250, 13, 92, 10, 74, 8, 423, 24, { 18, 24 }, 4, 85, 7 },
@@ -219,7 +219,7 @@ namespace d2ce
 
         return (dexterity - statInfo.Dexterity + (statInfo.DexPerLvl - 1)) / statInfo.DexPerLvl;
     }
-    
+
     std::uint32_t getMerExpPerLevel(d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
     {
         // all levels have the same ExprPerLevel values, so get the first one
@@ -389,8 +389,8 @@ void d2ce::Mercenary::fillMercStats(CharStats& cs) const
     }
 
     auto levelDiff = cs.Level - statInfo.Level;
-    cs.Strength += (levelDiff * statInfo.StrPerLvl)/8;
-    cs.Dexterity += (levelDiff * statInfo.DexPerLvl)/8;
+    cs.Strength += (levelDiff * statInfo.StrPerLvl) / 8;
+    cs.Dexterity += (levelDiff * statInfo.DexPerLvl) / 8;
     cs.CurLife += (levelDiff * statInfo.LifePerLvl);
     cs.MaxLife = cs.CurLife;
 }
@@ -787,7 +787,7 @@ void d2ce::Mercenary::setAttributeId(std::uint8_t attributeId)
 
     d2ce::MercInfo oldMerc;
     fillMercInfo(oldMerc);
-    auto oldAttributeId = getAttributeId(); 
+    auto oldAttributeId = getAttributeId();
     if (oldAttributeId > attributeId)
     {
         Merc.Type -= (oldAttributeId - attributeId);
@@ -796,7 +796,7 @@ void d2ce::Mercenary::setAttributeId(std::uint8_t attributeId)
     {
         Merc.Type += (attributeId - oldAttributeId);
     }
-    
+
     // check experience
     setExperience(Merc.Experience);
 
@@ -919,7 +919,7 @@ void d2ce::Mercenary::getDamage(BaseDamage& damage) const
 
     const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
-    std::uint16_t dmgDiff = std::uint16_t((levelDiff * statInfo.DmgPerLvl)/8);
+    std::uint16_t dmgDiff = std::uint16_t((levelDiff * statInfo.DmgPerLvl) / 8);
     damage.Min = statInfo.Damage.Min + dmgDiff;
     damage.Max = statInfo.Damage.Max + dmgDiff;
 }
@@ -963,7 +963,7 @@ std::int16_t d2ce::Mercenary::getResistance() const
 
     const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
     std::int16_t levelDiff = std::int16_t(level - statInfo.Level);
-    std::int16_t resist = std::int16_t(statInfo.Resist + (levelDiff * statInfo.ResistPerLvl)/4);
+    std::int16_t resist = std::int16_t(statInfo.Resist + (levelDiff * statInfo.ResistPerLvl) / 4);
 
     // Apply current difficulty penalty
     switch (CharInfo.getDifficultyLastPlayed())
