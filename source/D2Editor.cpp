@@ -120,7 +120,7 @@ Version 2.00 (June 18, 2021)
    - Added: Max Quanity For All Stackables menu item that fully fills all
             stackables.
    - Added: Max Durability For All Items which makes all Armour and Weapons
-            have maximum durablity without being indestructable.
+            have maximum durablity without being Indestructible.
    - Added: Reset Stats menu item under Options which will do exactly what
             Akara does after completing The Den of Evil.
 
@@ -144,8 +144,8 @@ Version 2.00 (June 18, 2021)
 
 // CD2EditorApp
 
-BEGIN_MESSAGE_MAP(CD2EditorApp, CWinApp)
-    ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+BEGIN_MESSAGE_MAP(CD2EditorApp, CWinAppEx)
+    ON_COMMAND(ID_HELP, &CWinAppEx::OnHelp)
 END_MESSAGE_MAP()
 
 
@@ -250,13 +250,9 @@ BOOL CD2EditorApp::InitInstance()
     InitCtrls.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&InitCtrls);
 
-    CWinApp::InitInstance();
+    __super::InitInstance();
 
     AfxEnableControlContainer();
-
-    // Create the shell manager, in case the dialog contains
-    // any shell tree view or shell list view controls.
-    CShellManager* pShellManager = new CShellManager;
 
     // Activate "Windows Native" visual manager for enabling themes in MFC controls
     CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
@@ -270,7 +266,15 @@ BOOL CD2EditorApp::InitInstance()
     // such as the name of your company or organization
     SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-    LoadStdProfileSettings();  // Load standard INI file options (including MRU)
+    LoadStdProfileSettings();  // Load standard INI file options (including MRU)InitContextMenuManager();
+
+    InitKeyboardManager();
+
+    InitTooltipManager();
+    CMFCToolTipInfo ttParams;
+    ttParams.m_bVislManagerTheme = TRUE;
+    theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
+        RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
     m_haccel = LoadAccelerators(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
 
@@ -281,12 +285,6 @@ BOOL CD2EditorApp::InitInstance()
     {
         TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
         TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
-    }
-
-    // Delete the shell manager created above.
-    if (pShellManager != nullptr)
-    {
-        delete pShellManager;
     }
 
 #if !defined(_AFXDLL) && !defined(_AFX_NO_MFC_CONTROLS_IN_DIALOGS)

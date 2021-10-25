@@ -134,6 +134,7 @@ namespace d2ce
         bool getRequirements(ItemRequirements& req) const;
         bool getCategories(std::vector<std::string>& categories) const;
         bool getDimensions(ItemDimensions& dimensions) const;
+        std::string getInvFile() const;
 
         // Extended information
         std::uint32_t getId() const;
@@ -261,6 +262,7 @@ namespace d2ce
         // returns the number of items in character's inventory.
         // Value returned excludes socketed gems/jewels/runes.
         size_t getNumberOfItems() const;
+        const std::vector<d2ce::Item>& getInventoryItems() const;
 
         size_t getByteSize() const; // number of bytes to store all item sections
 

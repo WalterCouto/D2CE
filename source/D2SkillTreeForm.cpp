@@ -24,6 +24,10 @@
 #include "d2ce\SkillConstants.h"
 #include "afxdialogex.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 //---------------------------------------------------------------------------
 // CD2SkillTreeForm dialog
 

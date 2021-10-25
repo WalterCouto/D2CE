@@ -23,6 +23,10 @@
 #include "D2QuestsForm.h"
 #include "afxdialogex.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 constexpr std::uint16_t questCompletedFlag = 0x9001;
 
 //---------------------------------------------------------------------------

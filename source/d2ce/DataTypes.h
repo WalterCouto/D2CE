@@ -336,33 +336,65 @@ namespace d2ce
             }
             else
             {
-                bool bFirstItem = true;
+                size_t idx = 0;
                 for (const auto& val : Values)
                 {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
+                    if(idx != 0)
                     {
                         ss << ",";
                     }
 
                     if (val == 0)
                     {
-                        ss << "\n" << attribParentIndent << jsonIndentStr << "null";
+                        // Check if zero is a valid value
+                        switch (idx)
+                        {
+                        case 0:
+                            switch (Id)
+                            {
+                            case 97:
+                            case 107:
+                            case 151:
+                            case 188:
+                                ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
+                                break;
+                            }
+                            break;
+
+                        case 1:
+                            switch (Id)
+                            {
+                            case 151:
+                            case 188:
+                            case 195:
+                            case 196:
+                            case 197:
+                            case 198:
+                            case 199:
+                            case 201:
+                            case 204:
+                                ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
+                                break;
+                            }
+                            break;
+
+                        default:
+                            ss << "\n" << attribParentIndent << jsonIndentStr << "null";
+                            break;
+                        }
                     }
                     else
                     {
                         ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
                     }
+                    ++idx;
                 }
                 ss << "\n" << attribParentIndent << "]";
                 ss << ",\n" << attribParentIndent << "\"name\": \"" << Name << "\"";
                 if (!OpStats.empty())
                 {
                     ss << ",\n" << attribParentIndent << "\"op_stats\": [";
-                    bFirstItem = true;
+                    bool bFirstItem = true;
                     for (const auto& val : OpStats)
                     {
                         if (bFirstItem)

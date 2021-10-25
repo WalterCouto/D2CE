@@ -33,7 +33,7 @@ namespace d2ce
     constexpr std::uint16_t MAX_KEY_QUANTITY = 12;      // max # of keys stacked
     constexpr std::uint16_t MAX_GLD_QUANTITY = 4095;    // max gld amount
     constexpr std::uint16_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
-    constexpr std::uint16_t MAX_DURABILITY = 0xFF;      // max durability of an item (0 is indestructable)
+    constexpr std::uint16_t MAX_DURABILITY = 0xFF;      // max durability of an item (0 is Indestructible)
 
     constexpr std::uint8_t ITEM_MARKER[] = { 0x4A, 0x4D };        // alternatively "JM"
     constexpr std::uint8_t MERC_ITEM_MARKER[] = { 0x6A, 0x66 };   // alternatively "jf"
@@ -267,7 +267,7 @@ namespace d2ce
         {185, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused185"},
         {186, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused186"},
         {187, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused187"},
-        {188, 0,  3,   0, 16,  0,  0,                                        "+{2} to {0} Skills ({1} Only)",               "item_addskill_tab"},
+        {188, 4,  3,   0, 16,  0,  0,                                        "+{2} to {0} Skills ({1} Only)",               "item_addskill_tab"},
         {189, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused189"},
         {190, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused190"},
         {191, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused191"},
@@ -1501,32 +1501,32 @@ namespace d2ce
         static const std::map<std::string, ItemType> shieldBases = {
             {"buc", {"Buckler", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"sml", {"Small Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {22, 0}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"lrg", {"Large Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {34, 0}, {3, 2}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"kit", {"Kite Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0}, {3, 2}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"tow", {"Tower Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {75, 0}, {3, 2}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"gts", {"Gothic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {4, 2}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"bsh", {"Bone Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {3, 2}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"spk", {"Spiked Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {3, 2}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"lrg", {"Large Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {34, 0}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"kit", {"Kite Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"tow", {"Tower Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {75, 0}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"gts", {"Gothic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"bsh", {"Bone Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"spk", {"Spiked Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"xuc", {"Defender", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 22}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"xml", {"Round Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {53, 0, 25}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xrg", {"Scutum", {{ 0, 0 }, false, false, { 0, 0 }}, {71, 0, 25}, {3, 2}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xit", {"Dragon Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 25}, {3, 2}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xow", {"Pavise", {{ 0, 0 }, false, false, { 0, 0 }}, {133, 0, 25}, {3, 2}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xts", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {4, 2}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xsh", {"Grim Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {3, 2}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xpk", {"Barbed Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {3, 2}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xrg", {"Scutum", {{ 0, 0 }, false, false, { 0, 0 }}, {71, 0, 25}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xit", {"Dragon Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 25}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xow", {"Pavise", {{ 0, 0 }, false, false, { 0, 0 }}, {133, 0, 25}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xts", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xsh", {"Grim Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"xpk", {"Barbed Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"uuc", {"Heater", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 43}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"uml", {"Luna", {{ 0, 0 }, false, false, { 0, 0 }}, {100, 0, 45}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"urg", {"Hyperion", {{ 0, 0 }, false, false, { 0, 0 }}, {127, 0, 48}, {3, 2}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uit", {"Monarch", {{ 0, 0 }, false, false, { 0, 0 }}, {156, 0, 54}, {3, 2}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uow", {"Aegis", {{ 0, 0 }, false, false, { 0, 0 }}, {219, 0, 59}, {3, 2}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uts", {"Ward", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 63}, {4, 2}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"ush", {"Troll Nest", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 57}, {3, 2}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"upk", {"Blade Barrier", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 51}, {3, 2}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"urg", {"Hyperion", {{ 0, 0 }, false, false, { 0, 0 }}, {127, 0, 48}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"uit", {"Monarch", {{ 0, 0 }, false, false, { 0, 0 }}, {156, 0, 54}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"uow", {"Aegis", {{ 0, 0 }, false, false, { 0, 0 }}, {219, 0, 59}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"uts", {"Ward", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 63}, {2, 5}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"ush", {"Troll Nest", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 57}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
+            {"upk", {"Blade Barrier", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 51}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
             {"pa1", {"Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"pa2", {"Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {26, 0, 6}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa3", {"Heraldic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {40, 0, 12}, {4, 2}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa4", {"Aerin Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 15}, {4, 2}, false,"invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
+            {"pa3", {"Heraldic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {40, 0, 12}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
+            {"pa4", {"Aerin Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 15}, {2, 4}, false,"invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"pa5", {"Crown Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 18}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"ne1", {"Preserved Head", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0, 3}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
             {"ne2", {"Zombie Head", {{ 0, 0 }, false, false, { 0, 0 }}, {14, 0, 6}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
@@ -2015,7 +2015,7 @@ namespace d2ce
             {"6hx", {"Colossus Crossbow", {{ 0, 0 }, false, true, { 32, 91 }}, {163, 77, 56}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
             {"6rx", {"Demon Crossbow", {{ 0, 0 }, false, true, { 26, 40 }}, {141, 98, 63}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
             {"ob1", {"Eagle Orb", {{ 2, 5 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob2", {"Sacred Globe", {{ 3, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
+            {"ob2", {"Sacred Globe", {{ 3, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
             {"ob3", {"Smoked Sphere", {{ 4, 10 }, false, false, { 0, 0 }}, {0, 0, 8}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
             {"ob4", {"Clasped Orb", {{ 5, 12 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
             {"ob5", {"Dragon Stone", {{ 8, 18 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
@@ -2148,7 +2148,7 @@ namespace d2ce
             {"qbr", {"Khalim's Brain", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbrnz", 0, {"Quest"}}},
             {"qey", {"Khalim's Eye", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "inveye", 0, {"Quest"}}},
             {"qhr", {"Khalim's Heart", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhrt", 0, {"Quest"}}},
-            {"bbb", {"Lam Esens Tome", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invbbb", 0, {"Quest"}}},
+            {"bbb", {"Lam Esen's Tome", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invbbb", 0, {"Quest"}}},
             {"mbr", {"Mephisto's Brain", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbrnz", 0, {"Quest"}}},
             {"luv", {"Mephisto Key", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invkey", 0, {"Key", "Miscellaneous"}}},
             {"mss", {"Mephisto Soul Stone", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmss", 0, {"Quest"}}},
@@ -2162,9 +2162,9 @@ namespace d2ce
             {"ceh", {"Charged Essense of Hatred", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invceh", 0, {"Quest"}}},
             {"bet", {"Burning Essence of Terror", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbet", 0, {"Quest"}}},
             {"fed", {"Festering Essence of Destruction", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invfed", 0, {"Quest"}}},
-            {"cm1", {"Small Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invchm", 0, {"Small Charm", "Charm", "Miscellaneous"}}},
-            {"cm2", {"Large Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invwnd", 0, {"Medium Charm", "Charm", "Miscellaneous"}}},
-            {"cm3", {"Grand Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invsst", 0, {"Large Charm", "Charm", "Miscellaneous"}}},
+            {"cm1", {"Small Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invchm1", 0, {"Small Charm", "Charm", "Miscellaneous"}}},
+            {"cm2", {"Large Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invchm2", 0, {"Medium Charm", "Charm", "Miscellaneous"}}},
+            {"cm3", {"Grand Charm", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invchm3", 0, {"Large Charm", "Charm", "Miscellaneous"}}},
         };
 
         std::string testStr("   ");
@@ -2220,7 +2220,7 @@ namespace d2ce
             {"gpr", {"Perfect Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsre", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
             {"gcw", {"Chipped Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgswa", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
             {"gfw", {"Flawed Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgswb", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsw", {"Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgswe", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+            {"gsw", {"Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgswc", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
             {"glw", {"Flawless Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgswd", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
             {"gpw", {"Perfect Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgswe", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
             {"hp1", {"Minor Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp1", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
@@ -2271,7 +2271,7 @@ namespace d2ce
             {"r31", {"Jah Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 65}, {1, 1}, false, "invrJo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
             {"r32", {"Cham Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 67}, {1, 1}, false, "invrCham", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
             {"r33", {"Zod Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 69}, {1, 1}, false, "invrZod", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"jew", {"Jewel", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invgswe", 0, {"Jewel", "Socket Filler", "Miscellaneous"}}},
+            {"jew", {"Jewel", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invjew", 0, {"Jewel", "Socket Filler", "Miscellaneous"}}},
         };
 
         std::string testStr("   ");
@@ -4340,9 +4340,9 @@ namespace d2ce
         case 418: return "of Firebolts";
         case 419: return "of Firebolts";
         case 420: return "of Firebolts";
-        case 421: return "of Charged Shield";
-        case 422: return "of Charged Shield";
-        case 423: return "of Charged Shield";
+        case 421: return "of Charged Bolt";
+        case 422: return "of Charged Bolt";
+        case 423: return "of Charged Bolt";
         case 424: return "of Icebolt";
         case 425: return "of Frozen Armor";
         case 426: return "of Static Field";
@@ -5296,6 +5296,47 @@ namespace d2ce
             std::stringstream ssValue;
             switch (attrib.Id)
             {
+                // values at index 0 and 1 are 256 * the posion damage over the duration of damage
+            case 57:
+                switch (idx)
+                {
+                case 0:
+                case 1:
+                    ssValue << std::dec << ((value * attrib.Values[2] + 128) / 256);
+                    break;
+
+                    // value at index 3 is 25 * duration of postion damage
+                case 2:
+                    ssValue << std::dec << (value / 25);
+                    break;
+
+                default:
+                    ssValue << std::dec << value;
+                    break;
+                }
+                break;
+
+                // Class name is index 0
+            case 83:
+                switch (idx)
+                {
+                case 0:
+                    if (value < NUM_OF_CLASSES)
+                    {
+                        ssValue << ClassNames[value];
+                    }
+                    else
+                    {
+                        ssValue << std::dec << value;
+                    }
+                    break;
+
+                default:
+                    ssValue << std::dec << value;
+                    break;
+                }
+                break;
+
                 // skill name is index 0
             case 97:
                 switch (idx)
@@ -5475,7 +5516,7 @@ namespace d2ce
                     case 3:
                     case 4:
                     case 5:
-                        attrib.OpValue = (charLevel * attrib.Values[0]) / (2 * stat->opAttribs.op);
+                        attrib.OpValue = (charLevel * attrib.Values[0]) / (2 * std::int64_t(stat->opAttribs.op));
                         attrib.OpStats = stat->opAttribs.op_stats;
                         value = attrib.OpValue;
                         break;
@@ -8616,6 +8657,23 @@ bool d2ce::Item::getDimensions(ItemDimensions& dimensions) const
     return false;
 }
 //---------------------------------------------------------------------------
+std::string d2ce::Item::getInvFile() const
+{
+    if (isEar())
+    {
+        return "invear";
+    }
+
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.inv_file;
+    }
+
+    return "";
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getId() const
 {
     if (isSimpleItem())
@@ -9489,7 +9547,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
             {
                 ss << "\n";
             }
-            ss << "One-Hand Damage: "  << std::dec << itemType.dam.OneHanded.Min << " to " << itemType.dam.OneHanded.Max;
+            ss << "One-Hand Damage: " << std::dec << itemType.dam.OneHanded.Min << " to " << itemType.dam.OneHanded.Max;
         }
 
         if (itemType.dam.bTwoHanded)
@@ -9572,7 +9630,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
         ss << "Required Level: " << std::dec << itemType.req.Level;
     }
 
-    return "";
+    return ss.str();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
@@ -10678,8 +10736,7 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
         const ItemStat* stat = &itemStats[id];
 
         // saveBits being zero or >= 64 is unrecoverably bad, and
-        // encode type 4 is only used by stats that were never implemented (time-based stats)
-        if (stat->saveBits == 0 || stat->saveBits >= 64 || stat->encode == 4)
+        if (stat->saveBits == 0 || stat->saveBits >= 64)
         {
             // corrupt file
             return false;
@@ -10717,6 +10774,22 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
             }
 
             numParms = 4;
+        }
+        else if (stat->encode == 4)
+        {
+            if (stat->saveBits != 3 || stat->saveParamBits != 16)
+            {
+                // time-based stats were never implemented, so it's a corrupt file
+                return false;
+            }
+
+            if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
+            {
+                // corrupt file
+                return false;
+            }
+
+            numParms = 3;
         }
         else if (stat->saveParamBits > 0)
         {
@@ -10796,7 +10869,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
 
         // saveBits being zero or >= 64 is unrecoverably bad, and
         // encode type 4 is only used by stats that were never implemented (time-based stats)
-        if (stat->saveBits == 0 || stat->saveBits >= 64 || stat->encode == 4)
+        if (stat->saveBits == 0 || stat->saveBits >= 64)
         {
             // corrupt file
             return false;
@@ -10843,7 +10916,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         {
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
-                // corrupt file
+                // time-based stats were never implemented, so it's a corrupt file
                 return false;
             }
 
@@ -10858,32 +10931,11 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         }
         else if (stat->saveParamBits > 0)
         {
-            if (stat->id == 188)
-            {
-                // special case for + x to a certain skill tree
-                if (stat->saveBits != 3 || stat->saveParamBits != 16)
-                {
-                    // corrupt file
-                    return false;
-                }
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveParamBits) - stat->saveAdd);
+            current_bit_offset += stat->saveParamBits;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat->saveAdd);
-                current_bit_offset += 3;
-
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat->saveAdd);
-                current_bit_offset += 13;
-
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-                current_bit_offset += stat->saveBits;
-            }
-            else
-            {
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveParamBits) - stat->saveAdd);
-                current_bit_offset += stat->saveParamBits;
-
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-                current_bit_offset += stat->saveBits;
-            }
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
+            current_bit_offset += stat->saveBits;
         }
         else
         {
@@ -11860,6 +11912,11 @@ bool d2ce::Items::anyUpgradableRejuvenations() const
 size_t d2ce::Items::getNumberOfItems() const
 {
     return Inventory.size();
+}
+//---------------------------------------------------------------------------
+const std::vector<d2ce::Item>& d2ce::Items::getInventoryItems() const
+{
+    return Inventory;
 }
 //---------------------------------------------------------------------------
 // number of bytes to store all item sections

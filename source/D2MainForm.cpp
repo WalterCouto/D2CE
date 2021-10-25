@@ -31,6 +31,8 @@
 #include "d2ce\ExperienceConstants.h"
 #include "d2ce\Constants.h"
 #include "afxdialogex.h"
+#include "resource.h"
+#include <regex>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -711,22 +713,34 @@ void CD2MainForm::DoDataExchange(CDataExchange* pDX)
 //---------------------------------------------------------------------------
 BOOL CD2MainForm::PreTranslateMessage(MSG* pMsg)
 {
-    if (pMsg->message == WM_KEYDOWN)
+    CWnd* pWndFocus = GetFocus();
+    if (pWndFocus != NULL && IsChild(pWndFocus))
     {
-        if (pMsg->wParam == VK_RETURN)
+        UINT message = pMsg->message;
+        if ((message == WM_MOUSEMOVE || message == WM_NCMOUSEMOVE ||
+            message == WM_LBUTTONUP || message == WM_RBUTTONUP ||
+            message == WM_MBUTTONUP) &&
+            (GetKeyState(VK_LBUTTON) >= 0 && GetKeyState(VK_RBUTTON) >= 0 &&
+                GetKeyState(VK_MBUTTON) >= 0))
         {
-            TCHAR szClass[10];
-            CWnd* pWndFocus = GetFocus();
-            if (((pWndFocus = GetFocus()) != NULL) &&
-                IsChild(pWndFocus) &&
-                GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
-                (lstrcmpi(szClass, _T("EDIT")) == 0))
+            CheckToolTipCtrl();
+        }
+
+        if (pMsg->message == WM_KEYDOWN)
+        {
+            if (pMsg->wParam == VK_RETURN)
             {
-                // pressing the ENTER key will take the focus to the next control
-                pMsg->wParam = VK_TAB;
+                TCHAR szClass[10];
+                if (GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
+                    (lstrcmpi(szClass, _T("EDIT")) == 0))
+                {
+                    // pressing the ENTER key will take the focus to the next control
+                    pMsg->wParam = VK_TAB;
+                }
             }
         }
     }
+
     return __super::PreTranslateMessage(pMsg);
 }
 
@@ -864,6 +878,8 @@ BOOL CD2MainForm::OnInitDialog()
     __super::OnInitDialog();
 
     EnableToolTips(TRUE);
+
+    CheckToolTipCtrl();
 
     CString appTitle;
     if (appTitle.LoadString(AFX_IDS_APP_TITLE) != 0)
@@ -3684,6 +3700,30 @@ void CD2MainForm::SetInt(CWnd* Sender, std::uint32_t newValue)
     }
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::CheckToolTipCtrl()
+{
+    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
+    if (pToolTip != NULL && (pToolTip->GetOwner() != this || DYNAMIC_DOWNCAST(CMFCToolTipCtrl, pToolTip) == NULL))
+    {
+        pToolTip->DestroyWindow();
+        delete pToolTip;
+        AfxGetModuleThreadState()->m_pToolTip = NULL;
+        pToolTip = NULL;
+    }
+
+    if (pToolTip == NULL)
+    {
+        CMFCToolTipInfo ttParams;
+        ttParams.m_bVislManagerTheme = TRUE;
+        pToolTip = new CMFCToolTipCtrl(&ttParams);
+        if (pToolTip->Create(this, TTS_ALWAYSTIP))
+        {
+            pToolTip->SendMessage(TTM_ACTIVATE, FALSE);
+            AfxGetModuleThreadState()->m_pToolTip = pToolTip;
+        }
+    }
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsBackupChar()
 {
     BackupChar = !BackupChar;
@@ -3843,6 +3883,11 @@ void CD2MainForm::OnViewMercenary()
 void CD2MainForm::OnUpdateViewMercenary(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable((CharInfo.is_open() && CharInfo.getVersion() >= d2ce::EnumCharVersion::v109)? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+d2ce::Character& CD2MainForm::getCharacterInfo()
+{
+    return CharInfo;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharVersion CD2MainForm::getCharacterVersion() const
@@ -4043,5 +4088,67 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
     }
 
     return numConverted;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap)
+{
+    CStringA invFile(item.getInvFile().c_str());
+    if (invFile.IsEmpty())
+    {
+        return false;
+    }
+
+    static std::string resourceHeader;
+    if (resourceHeader.empty())
+    {
+        HINSTANCE hInstance = ::GetModuleHandle(NULL);
+        HRSRC hres = ::FindResource(hInstance, MAKEINTRESOURCE(IDR_RESOURCE_HEADER), _T("TEXT"));
+        if (hres == NULL)
+        {
+            return false;
+        }
+
+        DWORD dwSizeBytes = ::SizeofResource(hInstance, hres);
+        if (dwSizeBytes == 0)
+        {
+            return false;
+        }
+
+        HGLOBAL hglobal = ::LoadResource(hInstance, hres);
+        if (hglobal == NULL)
+        {
+            return false;
+        }
+
+        BYTE* pRes = (BYTE*)LockResource(hglobal);
+        if (pRes == nullptr)
+        {
+            ::FreeResource(hglobal);
+            return false;
+        }
+
+        resourceHeader.assign((char*)pRes, dwSizeBytes);
+        ::FreeResource(hglobal);
+
+        if (resourceHeader.empty())
+        {
+            return false;
+        }
+    }
+
+    std::stringstream ss;
+    ss << "^[\\s]*#define\\s+IDB_";
+    ss << invFile.MakeUpper().GetString();
+    ss << "\\s+([0-9]+)\\s*$";
+    std::regex regexDefine(ss.str(), std::regex::ECMAScript | std::regex::icase);
+    std::cmatch m;
+    auto pStr = resourceHeader.c_str();
+    if(std::regex_search(pStr, m, regexDefine))
+    {
+        bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+        return bitmap.GetSafeHandle() == NULL ? false : true;
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------

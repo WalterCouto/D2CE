@@ -23,6 +23,10 @@
 #include "D2GemsForm.h"
 #include "afxdialogex.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 namespace
 {
     CString GetGPSNameFromCode(const std::uint8_t(&gemCode)[4])

@@ -31,7 +31,7 @@
 // See D2Editor.cpp for the implementation of this class
 //
 
-class CD2EditorApp : public CWinApp
+class CD2EditorApp : public CWinAppEx
 {
 public:
     CD2EditorApp();

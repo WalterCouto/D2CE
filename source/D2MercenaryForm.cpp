@@ -22,6 +22,11 @@
 #include "D2MercenaryForm.h"
 #include "afxdialogex.h"
 #include "D2MainForm.h"
+#include "D2ItemToolTipCtrl.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 namespace
 {
@@ -38,6 +43,100 @@ namespace
     private:
         charT thousands, decimals;
     };
+
+    void ScaleImage(CDC* pDC, CBitmap& image, const CRect& rectLocation)
+    {
+        auto rectBoxWidth = rectLocation.Width() / 2.0;
+
+        BITMAP bmp;
+        image.GetBitmap(&bmp);
+
+        auto imageNumBoxesWide = std::max(1L, bmp.bmWidth / 30);
+        auto imageNumBoxesHeight = std::max(1L, bmp.bmHeight / 30);
+        CRect rect;
+        rect.top = 0;
+        rect.left = 0;
+        rect.right = (LONG)(imageNumBoxesWide * rectBoxWidth);
+        rect.bottom = (LONG)(imageNumBoxesHeight * rectBoxWidth);
+
+        // select the source CBitmap in a memory DC;
+        CDC memSrcDc;
+        memSrcDc.CreateCompatibleDC(pDC);
+        memSrcDc.SelectObject(&image); //now bitmap is an instance of CBitmap class
+
+        // Create your new CBitmap with the new desired size and select it into a destination memory DC
+        CDC memDestDC;
+        CBitmap image2;
+        memDestDC.CreateCompatibleDC(pDC);
+        image2.CreateCompatibleBitmap(&memSrcDc, rect.Width(), rect.Height());
+        memDestDC.SelectObject(&image2);
+
+        // StretchBlt from src to dest
+        memDestDC.StretchBlt(0, 0, rect.Width(), rect.Height(), &memSrcDc, 0, 0, bmp.bmWidth - 1, bmp.bmHeight - 1, SRCCOPY);
+
+        HGDIOBJ hbitmap_detach = image.Detach();
+        if (hbitmap_detach)
+        {
+            DeleteObject(hbitmap_detach);
+        }
+
+        image.Attach(image2.Detach());
+    }
+
+    void MergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay)
+    {
+        BITMAP bmp;
+        image.GetBitmap(&bmp);
+
+        BITMAP bmp2;
+        overlay.GetBitmap(&bmp2);
+
+        // select the source CBitmaps in a memory DC;
+        CDC memSrcDc;
+        memSrcDc.CreateCompatibleDC(pDC);
+        memSrcDc.SelectObject(&image); //now bitmap is an instance of CBitmap class
+
+        CDC memSrcDc2;
+        memSrcDc2.CreateCompatibleDC(pDC);
+        memSrcDc2.SelectObject(&overlay); //now bitmap is an instance of CBitmap class
+
+        // Create your new CBitmap with the new desired size and select it into a destination memory DC
+        CDC memDestDC;
+        CBitmap image2;
+        memDestDC.CreateCompatibleDC(pDC);
+        image2.CreateCompatibleBitmap(&memSrcDc, bmp.bmWidth, bmp.bmHeight);
+        memDestDC.SelectObject(&image2);
+
+        auto top = (bmp.bmHeight - bmp2.bmHeight) / 2;
+        auto left = (bmp.bmWidth - bmp2.bmWidth) / 2;
+
+        // StretchBlt from src to dest
+        memDestDC.BitBlt(0, 0, bmp.bmWidth, bmp.bmHeight, &memSrcDc, 0, 0, SRCCOPY);
+
+        // combine bmps
+        memDestDC.TransparentBlt(left, top, bmp.bmWidth - left, bmp.bmHeight - top, &memSrcDc2, 0, 0, bmp2.bmWidth, bmp2.bmHeight, ::GetPixel(memSrcDc2, 0, 0));
+
+        HGDIOBJ hbitmap_detach = image.Detach();
+        if (hbitmap_detach)
+        {
+            DeleteObject(hbitmap_detach);
+        }
+
+        image.Attach(image2.Detach());
+    }
+
+    void DrawItem(CPaintDC& dc, CBitmap& bmp, CStatic& box, CWnd& parent)
+    {
+        CRect rect;
+        box.GetWindowRect(&rect);
+        parent.ScreenToClient(&rect);
+
+        CDC memDC;
+        memDC.CreateCompatibleDC(&dc);
+        CBitmap* pOld = memDC.SelectObject(&bmp);
+        dc.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &memDC, 0, 0, SRCCOPY);
+        memDC.SelectObject(pOld);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -76,9 +175,48 @@ void CD2MercenaryForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAR_DEXTERITY, MercDexterity);
     DDX_Control(pDX, IDC_CUR_LIFE, MercLife);
     DDX_Control(pDX, IDC_CHAR_EXPERIENCE, Experience);
+    DDX_Control(pDX, IDC_INV_HEAD, InvHeadBox);
+    DDX_Control(pDX, IDC_INV_HAND_RIGHT, InvHandRightBox);
+    DDX_Control(pDX, IDC_INV_TORSO, InvTorsoBox);
+    DDX_Control(pDX, IDC_INV_HAND_LEFT, InvHandLeftBox);
 }
 //---------------------------------------------------------------------------
+BOOL CD2MercenaryForm::PreTranslateMessage(MSG* pMsg)
+{
+    CWnd* pWndFocus = GetFocus();
+    if (pWndFocus != NULL && IsChild(pWndFocus))
+    {
+        UINT message = pMsg->message;
+        if ((message == WM_MOUSEMOVE || message == WM_NCMOUSEMOVE ||
+            message == WM_LBUTTONUP || message == WM_RBUTTONUP ||
+            message == WM_MBUTTONUP) &&
+            (GetKeyState(VK_LBUTTON) >= 0 && GetKeyState(VK_RBUTTON) >= 0 &&
+                GetKeyState(VK_MBUTTON) >= 0))
+        {
+            CheckToolTipCtrl();
+        }
+
+        if (pMsg->message == WM_KEYDOWN)
+        {
+            if (pMsg->wParam == VK_RETURN)
+            {
+                TCHAR szClass[10];
+                if (GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
+                    (lstrcmpi(szClass, _T("EDIT")) == 0))
+                {
+                    // pressing the ENTER key will take the focus to the next control
+                    pMsg->wParam = VK_TAB;
+                }
+            }
+        }
+    }
+
+    return __super::PreTranslateMessage(pMsg);
+}
+
+//---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
+    ON_WM_PAINT()
     ON_EN_CHANGE(IDC_CHAR_LEVEL, &CD2MercenaryForm::OnEnChangeMercLevel)
     ON_EN_KILLFOCUS(IDC_CHAR_LEVEL, &CD2MercenaryForm::OnEnKillfocusMercLevel)
     ON_EN_CHANGE(IDC_CHAR_EXPERIENCE, &CD2MercenaryForm::OnEnChangeMercExperience)
@@ -92,10 +230,21 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_BN_CLICKED(IDCANCEL, &CD2MercenaryForm::OnBnClickedCancel)
     ON_BN_CLICKED(IDC_MERC_HIRED, &CD2MercenaryForm::OnClickedMercHired)
     ON_BN_CLICKED(IDC_RESURRECTED_CHECK, &CD2MercenaryForm::OnClickedResurrectedCheck)
+    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
+    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
 // D2MercenaryForm message handlers
+void CD2MercenaryForm::OnPaint()
+{
+    CPaintDC dc(this);
+
+    DrawItem(dc, InvHeadImage, InvHeadBox, *this);
+    DrawItem(dc, InvHandRightImage, InvHandRightBox, *this);
+    DrawItem(dc, InvTorsoImage, InvTorsoBox, *this);
+    DrawItem(dc, InvHandLeftImage, InvHandLeftBox, *this);
+}
 
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::DisplayMercInfo()
@@ -378,6 +527,101 @@ void CD2MercenaryForm::UpdateModified()
     }
 }
 //---------------------------------------------------------------------------
+void CD2MercenaryForm::LoadMercItemImages()
+{
+    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
+
+    // load base images
+    CDC* pDC = GetDC();
+    CRect rect;
+    InvHeadBox.GetClientRect(&rect);
+    InvHeadImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVE_0_1)));
+    ScaleImage(pDC, InvHeadImage, rect);
+    pToolTip->DelTool(this, IDC_INV_HEAD);
+
+    InvHandRightBox.GetClientRect(&rect);
+    InvHandRightImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_WEAPONS)));
+    ScaleImage(pDC, InvHandRightImage, rect);
+    pToolTip->DelTool(this, IDC_INV_HAND_RIGHT);
+
+    InvTorsoBox.GetClientRect(&rect);
+    InvTorsoImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_ARMOR)));
+    ScaleImage(pDC, InvTorsoImage, rect);
+    pToolTip->DelTool(this, IDC_INV_TORSO);
+
+    InvHandLeftBox.GetClientRect(&rect);
+    InvHandLeftImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_WEAPONS)));
+    ScaleImage(pDC, InvHandLeftImage, rect);
+    pToolTip->DelTool(this, IDC_INV_HAND_LEFT);
+
+    for (const auto& item : Merc.getItems())
+    {
+        CBitmap bitmap;
+        switch (item.getEquippedId())
+        {
+        case d2ce::EnumEquippedId::HEAD:
+            if (!MainForm.getItemBitmap(item, bitmap))
+            {
+                continue;
+            }
+
+            InvHeadBox.GetClientRect(&rect);
+            ScaleImage(pDC, bitmap, rect);
+            MergeImage(pDC, InvHeadImage, bitmap);
+
+            InvHeadBox.GetWindowRect(&rect);
+            ScreenToClient(&rect);
+            pToolTip->AddTool(this, _T("Head"), rect, IDC_INV_HEAD);
+            break;
+
+        case d2ce::EnumEquippedId::HAND_RIGHT:
+            if (!MainForm.getItemBitmap(item, bitmap))
+            {
+                continue;
+            }
+
+            InvHandRightBox.GetClientRect(&rect);
+            ScaleImage(pDC, bitmap, rect);
+            MergeImage(pDC, InvHandRightImage, bitmap);
+
+            InvHandRightBox.GetWindowRect(&rect);
+            ScreenToClient(&rect);
+            pToolTip->AddTool(this, _T("Right Hand"), rect, IDC_INV_HAND_RIGHT);
+            break;
+
+        case d2ce::EnumEquippedId::TORSO:
+            if (!MainForm.getItemBitmap(item, bitmap))
+            {
+                continue;
+            }
+
+            InvTorsoBox.GetClientRect(&rect);
+            ScaleImage(pDC, bitmap, rect);
+            MergeImage(pDC, InvTorsoImage, bitmap);
+
+            InvTorsoBox.GetWindowRect(&rect);
+            ScreenToClient(&rect);
+            pToolTip->AddTool(this, _T("Torso"), rect, IDC_INV_TORSO);
+            break;
+
+        case d2ce::EnumEquippedId::HAND_LEFT:
+            if (!MainForm.getItemBitmap(item, bitmap))
+            {
+                continue;
+            }
+
+            InvHandLeftBox.GetClientRect(&rect);
+            ScaleImage(pDC, bitmap, rect);
+            MergeImage(pDC, InvHandLeftImage, bitmap);
+
+            InvHandLeftBox.GetWindowRect(&rect);
+            ScreenToClient(&rect);
+            pToolTip->AddTool(this, _T("Left Hand"), rect, IDC_INV_HAND_LEFT);
+            break;
+        }
+    }
+}
+//---------------------------------------------------------------------------
 std::string CD2MercenaryForm::ToStdString(const CWnd* Sender) const
 {
     return (LPCSTR)CStringA(ToText(Sender));
@@ -484,9 +728,37 @@ void CD2MercenaryForm::SetInt(CWnd* Sender, std::uint32_t newValue)
     }
 }
 //---------------------------------------------------------------------------
+void CD2MercenaryForm::CheckToolTipCtrl()
+{
+    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
+    if (pToolTip != NULL && (pToolTip->GetOwner() != this || DYNAMIC_DOWNCAST(CD2ItemToolTipCtrl, pToolTip) == NULL))
+    {
+        pToolTip->DestroyWindow();
+        delete pToolTip;
+        AfxGetModuleThreadState()->m_pToolTip = NULL;
+        pToolTip = NULL;
+    }
+
+    if (pToolTip == NULL)
+    {
+        CMFCToolTipInfo ttParams;
+        ttParams.m_bVislManagerTheme = TRUE;
+        pToolTip = new CD2ItemToolTipCtrl(MainForm.getCharacterInfo(), true, &ttParams);
+        if (pToolTip->Create(this, TTS_ALWAYSTIP))
+        {
+            pToolTip->SetDelayTime(TTDT_AUTOPOP, 0x7FFF);
+            pToolTip->SendMessage(TTM_ACTIVATE, FALSE);
+            AfxGetModuleThreadState()->m_pToolTip = pToolTip;
+        }
+    }
+}
+//---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::OnInitDialog()
 {
     __super::OnInitDialog();
+
+    EnableToolTips(TRUE);
+    CheckToolTipCtrl();
 
     //------------------
     // Create bold font:
@@ -502,6 +774,7 @@ BOOL CD2MercenaryForm::OnInitDialog()
     Experience.SetLimitText(10);
 
     DisplayMercInfo();
+    LoadMercItemImages();
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // EXCEPTION: OCX Property Pages should return FALSE
@@ -601,6 +874,83 @@ void CD2MercenaryForm::OnCbnSelchangeMercName()
     }
 }
 //---------------------------------------------------------------------------
+BOOL CD2MercenaryForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+    ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
+
+    TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
+    TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
+    CString strTipText;
+    UINT_PTR nID = pNMHDR->idFrom;
+
+    CRect rect;
+    if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
+        pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
+    {
+        ::GetWindowRect((HWND)nID, &rect);
+        ScreenToClient(&rect);
+        nID = ((UINT_PTR)(DWORD)::GetDlgCtrlID((HWND)nID));
+    }
+
+    if ((nID != 0) && (nID != ID_VIEW_STATUS_BAR))
+    {
+        switch (nID)
+        {
+        case IDC_CHAR_NAME:
+            strTipText = _T("Mercenary's Name");
+            break;
+
+        case IDC_CHAR_CLASS_CMB:
+            strTipText = _T("Mercenary's Class");
+            break;
+
+        case IDC_DIFFICULTY:
+            strTipText = _T("Difficulty");
+            break;
+
+        case IDC_ATTRIBUTE:
+            strTipText = _T("Type/Ability/Aura");
+            break;
+
+        case IDC_CHAR_LEVEL:
+            strTipText.Format(_T("Level (%lu-%ld)"), Merc.getMinLevel(), Merc.getMaxLevel());
+            break;
+
+        case IDC_CHAR_EXPERIENCE:
+            strTipText = _T("Mercenary's Current experience");
+            break;
+
+        case IDC_CUR_LIFE:
+            strTipText = _T("Max Hit Points");
+            break;
+
+        case IDC_CHAR_STRENGTH:
+            strTipText = _T("Strength");
+            break;
+
+        case IDC_CHAR_DEXTERITY:
+            strTipText = _T("Dexterity");
+            break;
+        }
+    }
+#ifndef _UNICODE
+    if (pNMHDR->code == TTN_NEEDTEXTA)
+        lstrcpyn(pTTTA->szText, strTipText, (sizeof(pTTTA->szText) / sizeof(pTTTA->szText[0])));
+    else
+        _mbstowcsz(pTTTW->szText, strTipText, (sizeof(pTTTW->szText) / sizeof(pTTTW->szText[0])));
+#else
+    if (pNMHDR->code == TTN_NEEDTEXTA)
+        _wcstombsz(pTTTA->szText, strTipText, (sizeof(pTTTA->szText) / sizeof(pTTTA->szText[0])));
+    else
+        lstrcpyn(pTTTW->szText, strTipText, (sizeof(pTTTW->szText) / sizeof(pTTTW->szText[0])));
+#endif
+    * pResult = 0;
+
+    ::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE);
+
+    return TRUE;
+}
+//---------------------------------------------------------------------------
 HBRUSH CD2MercenaryForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
     HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
@@ -663,3 +1013,24 @@ void CD2MercenaryForm::OnClickedResurrectedCheck()
     UpdateModified();
 }
 //---------------------------------------------------------------------------
+INT_PTR CD2MercenaryForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
+{
+    // check child windows first by calling CMFCBaseToolBar
+    INT_PTR nHit = __super::OnToolHitTest(point, pTI);
+    if (nHit != -1)
+    {
+        return nHit;
+    }
+
+    TOOLINFO ti;
+    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
+    if (pToolTip != NULL && (pToolTip->GetOwner() == this))
+    {
+        if (pToolTip->HitTest((CWnd*)this, point, &ti))
+        {
+            return ti.uId;
+        }
+    }
+
+    return nHit;
+}

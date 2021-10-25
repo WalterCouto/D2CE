@@ -41,12 +41,13 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
     // Implementation
 protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
-
+    afx_msg void OnPaint();
     afx_msg void OnEnChangeMercLevel();
     afx_msg void OnEnKillfocusMercLevel();
     afx_msg void OnEnChangeMercExperience();
@@ -55,8 +56,8 @@ protected:
     afx_msg void OnCbnSelchangeAttribute();
     afx_msg void OnCbnSelchangeMercClass();
     afx_msg void OnCbnSelchangeMercName();
-
 	DECLARE_MESSAGE_MAP()
+    BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
     CButton MercHired;
@@ -75,6 +76,14 @@ private:
     CEdit MercDexterity;
     CEdit MercLife;
     CEdit Experience;
+    CStatic InvHeadBox;
+    CBitmap InvHeadImage;
+    CStatic InvHandRightBox;
+    CBitmap InvHandRightImage;
+    CStatic InvTorsoBox;
+    CBitmap InvTorsoImage;
+    CStatic InvHandLeftBox;
+    CBitmap InvHandLeftImage;
 
     std::set<UINT> ctrlEditted;
 
@@ -89,6 +98,7 @@ private:
     void UpdateMercNames();
     void UpdateAttributes();
     void UpdateModified();
+    void LoadMercItemImages();
 
     std::string ToStdString(const CWnd* Sender) const;
     CString ToText(const CWnd* Sender) const;
@@ -98,11 +108,14 @@ private:
     std::uint32_t ToInt(const CWnd* Sender) const;
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
+    void CheckToolTipCtrl();
+
 public:
     afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedCancel();
     afx_msg void OnClickedMercHired();
     afx_msg void OnClickedResurrectedCheck();
+    virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 };
 //---------------------------------------------------------------------------

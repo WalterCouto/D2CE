@@ -24,12 +24,13 @@
 #include "MainFormConstants.h"
 #include "afxdialogex.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 //---------------------------------------------------------------------------
 // CD2WaypointsForm dialog
 IMPLEMENT_DYNAMIC(CD2WaypointsForm, CDialogEx)
-
-
-
 
 //---------------------------------------------------------------------------
 CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)

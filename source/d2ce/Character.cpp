@@ -1417,6 +1417,11 @@ size_t d2ce::Character::getNumberOfItems() const
     return items.getNumberOfItems();
 }
 //---------------------------------------------------------------------------
+const std::vector<d2ce::Item>& d2ce::Character::getInventoryItems() const
+{
+    return items.getInventoryItems();
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfArmor() const
 {
     return items.getNumberOfArmor();

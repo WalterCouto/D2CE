@@ -215,6 +215,7 @@ namespace d2ce
 
         // Items
         size_t getNumberOfItems() const;
+        const std::vector<d2ce::Item>& getInventoryItems() const;
 
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;

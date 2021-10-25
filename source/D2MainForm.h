@@ -315,8 +315,11 @@ private:
     std::uint32_t ToInt(const CWnd* Sender) const;
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
+    void CheckToolTipCtrl();
+
 public:
     // Character Stats
+    d2ce::Character& getCharacterInfo();
     d2ce::EnumCharVersion getCharacterVersion() const;
     bitmask::bitmask<d2ce::EnumCharStatus> getCharacterStatus() const;
     bitmask::bitmask<d2ce::EnumCharTitle> getCharacterTitle() const;
@@ -328,7 +331,6 @@ public:
 
     uint32_t getSkillPointsEarned() const;
     uint32_t getStatPointsEarned() const;
-
 
     // Mercenary
     d2ce::Mercenary& getMercenaryInfo();
@@ -351,6 +353,7 @@ public:
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
     size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
+    bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap);
     afx_msg void OnFileExportAsJson();
     afx_msg void OnUpdateFileExportAsJson(CCmdUI* pCmdUI);
     afx_msg void OnViewMercenary();
