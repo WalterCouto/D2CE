@@ -232,6 +232,10 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_BN_CLICKED(IDC_RESURRECTED_CHECK, &CD2MercenaryForm::OnClickedResurrectedCheck)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
+    ON_WM_CONTEXTMENU()
+    ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2MercenaryForm::OnItemContextFix)
+    ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2MercenaryForm::OnItemContextLoad)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2MercenaryForm::OnItemContextMaxdurability)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -240,10 +244,25 @@ void CD2MercenaryForm::OnPaint()
 {
     CPaintDC dc(this);
 
-    DrawItem(dc, InvHeadImage, InvHeadBox, *this);
-    DrawItem(dc, InvHandRightImage, InvHandRightBox, *this);
-    DrawItem(dc, InvTorsoImage, InvTorsoBox, *this);
-    DrawItem(dc, InvHandLeftImage, InvHandLeftBox, *this);
+    if (InvHeadImage.GetSafeHandle() != 0)
+    {
+        DrawItem(dc, InvHeadImage, InvHeadBox, *this);
+    }
+
+    if (InvHeadImage.GetSafeHandle() != 0)
+    {
+        DrawItem(dc, InvHandRightImage, InvHandRightBox, *this);
+    }
+
+    if (InvTorsoImage.GetSafeHandle() != 0)
+    {
+        DrawItem(dc, InvTorsoImage, InvTorsoBox, *this);
+    }
+
+    if (InvHandLeftImage.GetSafeHandle() != 0)
+    {
+        DrawItem(dc, InvHandLeftImage, InvHandLeftBox, *this);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -529,8 +548,12 @@ void CD2MercenaryForm::UpdateModified()
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::LoadMercItemImages()
 {
-    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
+    if (!MainForm.isExpansionCharacter())
+    {
+        return;
+    }
 
+    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
     // load base images
     CDC* pDC = GetDC();
     CRect rect;
@@ -571,7 +594,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHeadBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, _T("Head"), rect, IDC_INV_HEAD);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HEAD);
             break;
 
         case d2ce::EnumEquippedId::HAND_RIGHT:
@@ -586,7 +609,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHandRightBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, _T("Right Hand"), rect, IDC_INV_HAND_RIGHT);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HAND_RIGHT);
             break;
 
         case d2ce::EnumEquippedId::TORSO:
@@ -601,7 +624,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvTorsoBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, _T("Torso"), rect, IDC_INV_TORSO);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_TORSO);
             break;
 
         case d2ce::EnumEquippedId::HAND_LEFT:
@@ -616,7 +639,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHandLeftBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, _T("Left Hand"), rect, IDC_INV_HAND_LEFT);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HAND_LEFT);
             break;
         }
     }
@@ -931,6 +954,13 @@ BOOL CD2MercenaryForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         case IDC_CHAR_DEXTERITY:
             strTipText = _T("Dexterity");
             break;
+
+        case IDC_INV_HEAD:
+        case IDC_INV_HAND_RIGHT:
+        case IDC_INV_TORSO:
+        case IDC_INV_HAND_LEFT:
+            strTipText = _T("N/A");
+            break;
         }
     }
 #ifndef _UNICODE
@@ -976,7 +1006,7 @@ void CD2MercenaryForm::OnBnClickedOk()
 void CD2MercenaryForm::OnBnClickedCancel()
 {
     Merc.updateMercInfo(OrigMerc);
-    UpdateModified();
+    ctrlEditted.clear();
     __super::OnCancel();
 }
 //---------------------------------------------------------------------------
@@ -1022,15 +1052,118 @@ INT_PTR CD2MercenaryForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
         return nHit;
     }
 
-    TOOLINFO ti;
+    TOOLINFO ti = { 0 };
     auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
     if (pToolTip != NULL && (pToolTip->GetOwner() == this))
     {
-        if (pToolTip->HitTest((CWnd*)this, point, &ti))
+        TOOLINFO* pTi = pTI = nullptr ? &ti : pTI;
+        if (pToolTip->HitTest((CWnd*)this, point, pTi))
         {
-            return ti.uId;
+            return pTi->uId;
         }
     }
 
     return nHit;
 }
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+    CurrItem = nullptr;
+
+    CPoint hitTestPoint = point;
+    ScreenToClient(&hitTestPoint);
+    TOOLINFO ti = { 0 };
+    auto nHit = OnToolHitTest(hitTestPoint, &ti);
+    if (nHit == -1)
+    {
+        return;
+    }
+
+    d2ce::EnumEquippedId equippedId = d2ce::EnumEquippedId::NONE;
+    switch (nHit)
+    {
+    case IDC_INV_HEAD:
+        equippedId = d2ce::EnumEquippedId::HEAD;
+        break;
+
+    case IDC_INV_HAND_RIGHT:
+        equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
+        break;
+
+    case IDC_INV_TORSO:
+        equippedId = d2ce::EnumEquippedId::TORSO;
+        break;
+
+    case IDC_INV_HAND_LEFT:
+        equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+        break;
+
+    default:
+        return;
+    }
+
+    auto& mercItems = MainForm.getCharacterInfo().getMercItems();
+    for (auto& item : mercItems)
+    {
+        if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
+            (item.getEquippedId() != equippedId))
+        {
+            continue;
+        }
+
+        CurrItem = const_cast<d2ce::Item*>(&item);
+        break;
+    }
+
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    CMenu menu;
+    VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+
+    CMenu* pPopup = menu.GetSubMenu(0);
+    ENSURE(pPopup != NULL);
+
+    if (!CurrItem->isStackable())
+    {
+        pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
+    }
+
+    pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextFix()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.repairItem(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextLoad()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemMaxQuantity(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextMaxdurability()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemMaxDurability(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------

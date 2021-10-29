@@ -3956,7 +3956,7 @@
                 }
             ],
             "type_name": "Large Charm",
-            "inv_file": "invwnd",
+            "inv_file": "invchm2",
             "inv_height": 2,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -5242,7 +5242,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6022,7 +6022,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6736,7 +6736,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -8489,7 +8489,7 @@
                 }
             ],
             "type_name": "Large Charm",
-            "inv_file": "invwnd",
+            "inv_file": "invchm2",
             "inv_height": 2,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -8892,7 +8892,7 @@
                 }
             ],
             "type_name": "Large Charm",
-            "inv_file": "invwnd",
+            "inv_file": "invchm2",
             "inv_height": 2,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -9656,7 +9656,7 @@
                 }
             ],
             "type_name": "Jewel",
-            "inv_file": "invgswe",
+            "inv_file": "invjew",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -10936,8 +10936,8 @@
             "type_name": "Kite Shield",
             "reqstr": 47,
             "inv_file": "invkit",
-            "inv_height": 2,
-            "inv_width": 3,
+            "inv_height": 3,
+            "inv_width": 2,
             "inv_transform": 2,
             "displayed_magic_attributes": [],
             "displayed_runeword_attributes": [],
@@ -12582,8 +12582,8 @@
             "type_name": "Gothic Shield",
             "reqstr": 60,
             "inv_file": "invgts",
-            "inv_height": 2,
-            "inv_width": 4,
+            "inv_height": 4,
+            "inv_width": 2,
             "inv_transform": 2,
             "displayed_magic_attributes": [
                 {

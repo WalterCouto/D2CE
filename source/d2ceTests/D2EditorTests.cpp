@@ -32,13 +32,69 @@ namespace D2EditorTests
         return tempPath;
     }
 
+    static std::string GetCharBaseTempPathName()
+    {
+        static std::string charBaseTempPath;
+        if (charBaseTempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetTempPathName() << "\\char";
+            charBaseTempPath = ss.str();
+            std::filesystem::create_directories(charBaseTempPath);
+        }
+
+        return charBaseTempPath;
+    }
+
+    static std::string GetChar87TempPathName()
+    {
+        static std::string char87TempPath;
+        if (char87TempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBaseTempPathName() << "\\87";
+            char87TempPath = ss.str();
+            std::filesystem::create_directories(char87TempPath);
+        }
+
+        return char87TempPath;
+    }
+
+    static std::string GetChar89TempPathName()
+    {
+        static std::string char89TempPath;
+        if (char89TempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBaseTempPathName() << "\\89";
+            char89TempPath = ss.str();
+            std::filesystem::create_directories(char89TempPath);
+        }
+
+        return char89TempPath;
+    }
+
+    static std::string GetChar92TempPathName()
+    {
+        static std::string char92TempPath;
+        if (char92TempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBaseTempPathName() << "\\92";
+            char92TempPath = ss.str();
+            std::filesystem::create_directories(char92TempPath);
+        }
+
+        return char92TempPath;
+    }
+
     static std::string GetChar96TempPathName()
     {
         static std::string char96TempPath;
         if (char96TempPath.empty())
         {
             std::stringstream ss;
-            ss << GetTempPathName() << "\\char\\96";
+            ss << GetCharBaseTempPathName() << "\\96";
             char96TempPath = ss.str();
             std::filesystem::create_directories(char96TempPath);
         }
@@ -48,16 +104,16 @@ namespace D2EditorTests
 
     static std::string GetChar97TempPathName()
     {
-        static std::string char96TempPath;
-        if (char96TempPath.empty())
+        static std::string char97TempPath;
+        if (char97TempPath.empty())
         {
             std::stringstream ss;
-            ss << GetTempPathName() << "\\char\\97";
-            char96TempPath = ss.str();
-            std::filesystem::create_directories(char96TempPath);
+            ss << GetCharBaseTempPathName() << "\\97";
+            char97TempPath = ss.str();
+            std::filesystem::create_directories(char97TempPath);
         }
 
-        return char96TempPath;
+        return char97TempPath;
     }
 
     static std::string GetPathName()
@@ -90,13 +146,65 @@ namespace D2EditorTests
         return modulePathName;
     }
 
+    static::std::string GetCharBasePathName()
+    {
+        static std::string charBasePath;
+        if (charBasePath.empty())
+        {
+            std::stringstream ss;
+            ss << GetPathName() << "\\examples\\char";
+            charBasePath = ss.str();
+        }
+
+        return charBasePath;
+    }
+
+    static std::string GetChar87PathName()
+    {
+        static std::string char87Path;
+        if (char87Path.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBasePathName() << "\\87";
+            char87Path = ss.str();
+        }
+
+        return char87Path;
+    }
+
+    static std::string GetChar89PathName()
+    {
+        static std::string char89Path;
+        if (char89Path.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBasePathName() << "\\89";
+            char89Path = ss.str();
+        }
+
+        return char89Path;
+    }
+
+    static std::string GetChar92PathName()
+    {
+        static std::string char92Path;
+        if (char92Path.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBasePathName() << "\\92";
+            char92Path = ss.str();
+        }
+
+        return char92Path;
+    }
+
     static std::string GetChar96PathName()
     {
         static std::string char96Path;
         if (char96Path.empty())
         {
             std::stringstream ss;
-            ss << GetPathName() << "\\examples\\char\\96";
+            ss << GetCharBasePathName() << "\\96";
             char96Path = ss.str();
         }
 
@@ -109,11 +217,32 @@ namespace D2EditorTests
         if (char97Path.empty())
         {
             std::stringstream ss;
-            ss << GetPathName() << "\\examples\\char\\97";
+            ss << GetCharBasePathName() << "\\97";
             char97Path = ss.str();
         }
 
         return char97Path;
+    }
+
+    static bool LoadChar87File(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::stringstream ss;
+        ss << GetChar87PathName() << "\\" << fileName;
+        return character.open(ss.str().c_str(), validateChecksum);
+    }
+
+    static bool LoadChar89File(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::stringstream ss;
+        ss << GetChar89PathName() << "\\" << fileName;
+        return character.open(ss.str().c_str(), validateChecksum);
+    }
+
+    static bool LoadChar92File(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::stringstream ss;
+        ss << GetChar92PathName() << "\\" << fileName;
+        return character.open(ss.str().c_str(), validateChecksum);
     }
 
     static bool LoadChar96File(const char* fileName, d2ce::Character& character, bool validateChecksum)
@@ -128,6 +257,66 @@ namespace D2EditorTests
         std::stringstream ss;
         ss << GetChar97PathName() << "\\" << fileName;
         return character.open(ss.str().c_str(), validateChecksum);
+    }
+
+    static bool LoadChar87TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::string tempFile;
+        {
+            std::stringstream ss;
+            ss << GetChar87TempPathName() << "\\" << fileName;
+            tempFile = ss.str();
+        }
+
+        std::string origFile;
+        {
+            std::stringstream ss;
+            ss << GetChar87PathName() << "\\" << fileName;
+            origFile = ss.str();
+        }
+        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
+        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
+        return character.open(tempFile.c_str(), validateChecksum);
+    }
+
+    static bool LoadChar89TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::string tempFile;
+        {
+            std::stringstream ss;
+            ss << GetChar89TempPathName() << "\\" << fileName;
+            tempFile = ss.str();
+        }
+
+        std::string origFile;
+        {
+            std::stringstream ss;
+            ss << GetChar89PathName() << "\\" << fileName;
+            origFile = ss.str();
+        }
+        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
+        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
+        return character.open(tempFile.c_str(), validateChecksum);
+    }
+
+    static bool LoadChar92TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
+    {
+        std::string tempFile;
+        {
+            std::stringstream ss;
+            ss << GetChar92TempPathName() << "\\" << fileName;
+            tempFile = ss.str();
+        }
+
+        std::string origFile;
+        {
+            std::stringstream ss;
+            ss << GetChar92PathName() << "\\" << fileName;
+            origFile = ss.str();
+        }
+        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
+        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
+        return character.open(tempFile.c_str(), validateChecksum);
     }
 
     static bool LoadChar96TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
@@ -170,6 +359,51 @@ namespace D2EditorTests
         return character.open(tempFile.c_str(), validateChecksum);
     }
 
+    static std::string GetChar87ExpectedJsonOutput(const d2ce::Character& character)
+    {
+        std::stringstream ss;
+        ss << GetChar87PathName() << "\\" << character.getName() << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
+    }
+
+    static std::string GetChar89ExpectedJsonOutput(const d2ce::Character& character)
+    {
+        std::stringstream ss;
+        ss << GetChar89PathName() << "\\" << character.getName() << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
+    }
+
+    static std::string GetChar92ExpectedJsonOutput(const d2ce::Character& character)
+    {
+        std::stringstream ss;
+        ss << GetChar92PathName() << "\\" << character.getName() << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
+    }
+
     static std::string GetChar96ExpectedJsonOutput(const d2ce::Character& character)
     {
         std::stringstream ss;
@@ -199,7 +433,6 @@ namespace D2EditorTests
         std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
         return ConvertNewLines(text);
     }
-
 
     TEST_CLASS(D2EditorTests)
     {
@@ -234,6 +467,30 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen5)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen6)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen7)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen8)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport1)
         {
             d2ce::Character character;
@@ -264,6 +521,38 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
             auto json = character.asJson();
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport5)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar87ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport6)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar89ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport7)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport8)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
         }
 
         TEST_METHOD(TestJsonTestComplexChange)

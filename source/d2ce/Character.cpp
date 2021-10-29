@@ -368,6 +368,12 @@ void d2ce::Character::readBasicInfo()
     if (Bs.Version < EnumCharVersion::v110)
     {
         Bs.Status &= ~EnumCharStatus::Ladder;
+
+        if (Bs.Version < EnumCharVersion::v107 || Bs.Version == EnumCharVersion::v108)
+        {
+            // expansion not supported
+            Bs.Status &= ~EnumCharStatus::Expansion;
+        }
     }
 
     value = 0;
@@ -1430,6 +1436,11 @@ size_t d2ce::Character::getNumberOfArmor() const
 size_t d2ce::Character::getNumberOfWeapons() const
 {
     return items.getNumberOfWeapons();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::fixAllItems()
+{
+    return items.fixAllItems();
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::maxDurabilityAllItems()

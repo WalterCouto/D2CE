@@ -39,7 +39,7 @@ namespace d2ce
     constexpr std::uint8_t MERC_ITEM_MARKER[] = { 0x6A, 0x66 };   // alternatively "jf"
     constexpr std::uint8_t GOLEM_ITEM_MARKER[] = { 0x6B, 0x66 };  // alternatively "jk"
 
-    constexpr std::uint32_t MIN_START_STATS_POS = 765;
+    constexpr std::uint32_t MIN_START_STATS_POS = 641;
 
 #define readtemp_bits(data,start,size) \
     ((*((std::uint64_t*) &(data)[(start) / 8]) >> ((start) & 7))& (((std::uint64_t)1 << (size)) - 1))
@@ -9194,6 +9194,12 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
 
     }  // end switch
 
+    if (getQuantity() == quantity)
+    {
+        // nothing to do
+        return false;
+    }
+
     if (gld_stackable_bit_offset != 0)
     {
         return updateBits(gld_stackable_bit_offset, 12, quantity);
@@ -9201,7 +9207,6 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
 
     return updateBits(stackable_bit_offset, 9, quantity);
 }
-
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMaxQuantity()
 {
@@ -9250,6 +9255,13 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
     {
         return false;
     }
+    
+    if (attrib.Current == oldAttrib.Current &&
+        attrib.Max == oldAttrib.Max)
+    {
+        // nothing to do
+        return false;
+    }
 
     if (!updateBits(durability_bit_offset, 8, attrib.Max))
     {
@@ -9261,12 +9273,30 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
         return false;
     }
 
-    return false;
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::fixDurability()
+{
+    ItemDurability attrib;
+    if (!getDurability(attrib))
+    {
+        return false;
+    }
+
+    if (attrib.Current == attrib.Max)
+    {
+        // nothing to do
+        return false;
+    }
+
+    attrib.Current = attrib.Max;
+    return setDurability(attrib);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMaxDurability()
 {
-    static ItemDurability maxDurability = { MAX_DURABILITY , MAX_DURABILITY };
+    static ItemDurability maxDurability = { MAX_DURABILITY, MAX_DURABILITY };
     return setDurability(maxDurability);
 }
 //---------------------------------------------------------------------------
@@ -10097,7 +10127,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         {
             // Defense rating
             defense_rating_bit_offset = current_bit_offset;
-            if (!skipBits(charfile, current_bit_offset, 11))
+            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? 11 : 10)))
             {
                 return false;
             }
@@ -10108,7 +10138,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         if (readBits(charfile, current_bit_offset, 8) > 0)
         {
             // current durability value (8 bits + unknown single bit)
-            if (!skipBits(charfile, current_bit_offset, 9))
+            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? 9 : 8)))
             {
                 return false;
             }
@@ -12278,14 +12308,52 @@ size_t d2ce::Items::fillAllStackables()
     return itemsFilled;
 }
 //---------------------------------------------------------------------------
+size_t d2ce::Items::fixAllItems()
+{
+    size_t itemsFixed = 0;
+    for (auto& item : Armor)
+    {
+        if (item.get().fixDurability())
+        {
+            ++itemsFixed;
+        }
+    }
+
+    for (auto& item : Weapons)
+    {
+        if (item.get().fixDurability())
+        {
+            ++itemsFixed;
+        }
+    }
+
+    for (auto& item : MercItems)
+    {
+        if (item.fixDurability())
+        {
+            ++itemsFixed;
+        }
+    }
+
+    if (HasGolem)
+    {
+        if (GolemItem.fixDurability())
+        {
+            ++itemsFixed;
+        }
+    }
+
+    return itemsFixed;
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Items::maxDurabilityAllItems()
 {
-    size_t itemsFilled = 0;
+    size_t itemsFixed = 0;
     for (auto& item : Armor)
     {
         if (item.get().setMaxDurability())
         {
-            ++itemsFilled;
+            ++itemsFixed;
         }
     }
 
@@ -12293,7 +12361,7 @@ size_t d2ce::Items::maxDurabilityAllItems()
     {
         if (item.get().setMaxDurability())
         {
-            ++itemsFilled;
+            ++itemsFixed;
         }
     }
 
@@ -12301,11 +12369,19 @@ size_t d2ce::Items::maxDurabilityAllItems()
     {
         if (item.setMaxDurability())
         {
-            ++itemsFilled;
+            ++itemsFixed;
         }
     }
 
-    return itemsFilled;
+    if (HasGolem)
+    {
+        if (GolemItem.setMaxDurability())
+        {
+            ++itemsFixed;
+        }
+    }
+
+    return itemsFixed;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

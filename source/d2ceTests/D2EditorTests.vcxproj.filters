@@ -31,6 +31,15 @@
     <Filter Include="examples\char\97">
       <UniqueIdentifier>{77c067de-5b9a-477b-bf9e-b11dc153c4b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples\char\87">
+      <UniqueIdentifier>{0e4435bc-b6b6-49d4-ad9e-b8eddf021df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\char\89">
+      <UniqueIdentifier>{1a7d4c28-c7db-40d6-9017-bb9736485c65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="examples\char\92">
+      <UniqueIdentifier>{bc28abbe-cbc3-4a4c-a07e-47052e8ca9d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -135,6 +144,30 @@
     </CustomBuild>
     <CustomBuild Include="..\examples\chars\97\Scroll_Test.json">
       <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\87\testtt.d2s">
+      <Filter>examples\char\87</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\87\testtt.json">
+      <Filter>examples\char\87</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\89\fddfss.d2s">
+      <Filter>examples\char\89</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\89\fddfss.json">
+      <Filter>examples\char\89</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\92\afa.d2s">
+      <Filter>examples\char\92</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\92\afa.json">
+      <Filter>examples\char\92</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\92\sdfsf.d2s">
+      <Filter>examples\char\92</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\92\sdfsf.json">
+      <Filter>examples\char\92</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

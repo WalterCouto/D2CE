@@ -856,6 +856,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_GPS_CONVERTOR, &CD2MainForm::OnUpdateOptionsGpsConvertor)
     ON_COMMAND(ID_OPTIONS_MAXFILLSTACKABLES, &CD2MainForm::OnOptionsMaxfillstackables)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXFILLSTACKABLES, &CD2MainForm::OnUpdateOptionsMaxfillstackables)
+    ON_COMMAND(ID_OPTIONS_FIXALLITEMS, &CD2MainForm::OnOptionsFixallitems)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_FIXALLITEMS, &CD2MainForm::OnUpdateOptionsFixallitems)
     ON_COMMAND(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnOptionsMaxdurabilityforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
@@ -3837,6 +3839,27 @@ void CD2MainForm::OnUpdateOptionsMaxfillstackables(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfStackables() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsFixallitems()
+{
+    auto numConverted = CharInfo.fixAllItems();
+    CString msg;
+    msg.Format(_T("%zd item(s) have been fixed"), numConverted);
+    if (numConverted > 0)
+    {
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsFixallitems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 {
     auto numConverted = CharInfo.maxDurabilityAllItems();
@@ -4150,5 +4173,41 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap)
     }
 
     return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::repairItem(d2ce::Item& item)
+{
+    bool ret = item.fixDurability();
+    if(ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemMaxQuantity(d2ce::Item& item)
+{
+    bool ret = item.setMaxQuantity();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemMaxDurability(d2ce::Item& item)
+{
+    bool ret = item.setMaxDurability();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
 }
 //---------------------------------------------------------------------------

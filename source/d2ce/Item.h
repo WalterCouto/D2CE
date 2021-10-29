@@ -164,6 +164,7 @@ namespace d2ce
         std::uint16_t getDefenseRating() const;
         bool getDurability(ItemDurability& attrib) const;
         bool setDurability(const ItemDurability& attrib);
+        bool fixDurability();
         bool setMaxDurability();
         bool getDamage(ItemDamage& damage) const;
         bool getRealmDataFlag() const;
@@ -283,6 +284,7 @@ namespace d2ce
         size_t upgradeRejuvenationPotions();
         size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
         size_t fillAllStackables();
+        size_t fixAllItems();
         size_t maxDurabilityAllItems();
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;

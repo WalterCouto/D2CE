@@ -228,55 +228,32 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 	CurrItem = nullptr;
 	const auto& charItems = IsMerc ? CharInfo.getMercItems() : CharInfo.getInventoryItems();
 	CurrID = (UINT)pNMHDR->idFrom;
+	d2ce::EnumEquippedId equippedId = d2ce::EnumEquippedId::NONE;
 	switch (CurrID)
 	{
 	case IDC_INV_HEAD:
-		for (const auto& item : charItems)
-		{
-			if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
-				(item.getEquippedId() != d2ce::EnumEquippedId::HEAD))
-			{
-				continue;
-			}
-
-			CurrItem = &item;
-			break;
-		}
+		equippedId = d2ce::EnumEquippedId::HEAD;
 		break;
 
 	case IDC_INV_HAND_RIGHT:
-		for (const auto& item : charItems)
-		{
-			if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
-				(item.getEquippedId() != d2ce::EnumEquippedId::HAND_RIGHT))
-			{
-				continue;
-			}
-
-			CurrItem = &item;
-			break;
-		}
+		equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
 		break;
 
 	case IDC_INV_TORSO:
-		for (const auto& item : charItems)
-		{
-			if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
-				(item.getEquippedId() != d2ce::EnumEquippedId::TORSO))
-			{
-				continue;
-			}
-
-			CurrItem = &item;
-			break;
-		}
+		equippedId = d2ce::EnumEquippedId::TORSO;
 		break;
 
 	case IDC_INV_HAND_LEFT:
+		equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+		break;
+	}
+
+	if (equippedId != d2ce::EnumEquippedId::NONE)
+	{
 		for (const auto& item : charItems)
 		{
 			if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
-				(item.getEquippedId() != d2ce::EnumEquippedId::HAND_LEFT))
+				(item.getEquippedId() != equippedId))
 			{
 				continue;
 			}
@@ -284,7 +261,6 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 			CurrItem = &item;
 			break;
 		}
-		break;
 	}
 
 	__super::OnShow (pNMHDR, pResult);

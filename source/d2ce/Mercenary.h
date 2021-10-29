@@ -61,7 +61,7 @@ namespace d2ce
         void fillMercInfo(MercInfo& merc) const;
         void updateMercInfo(MercInfo& merc);
 
-        // Read=Only stats
+        // Read-Only stats
         // Level, Experience, Strength, Dexterity and Life are set
         void fillMercStats(CharStats& cs) const;
         

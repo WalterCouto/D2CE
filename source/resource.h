@@ -334,6 +334,7 @@
 #define IDB_INV_RING_AMULET_0_0         489
 #define IDB_INV_RING_AMULET_0_1         490
 #define IDB_INV_WEAPONS                 491
+#define IDR_ITEM_MENU                   492
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -544,13 +545,18 @@
 #define ID_OPTIONS_RESET_STATS          32790
 #define ID_FILE_EXPORT_AS_JSON          32791
 #define ID_VIEW_MERCENARY               32792
+#define ID_OPTIONS_FIXALLITEMS          32793
+#define ID_OPTIONS_REFILLALLSTACKABLES  32794
+#define ID_ITEM_CONTEXT_LOAD            32795
+#define ID_ITEM_CONTEXT_FIX             32796
+#define ID_ITEM_CONTEXT_MAXDURABILITY   32797
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        492
-#define _APS_NEXT_COMMAND_VALUE         32793
+#define _APS_NEXT_RESOURCE_VALUE        493
+#define _APS_NEXT_COMMAND_VALUE         32798
 #define _APS_NEXT_CONTROL_VALUE         1114
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

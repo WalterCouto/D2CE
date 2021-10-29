@@ -34,6 +34,8 @@ public:
 
     bool MercChanged() const;
 
+    virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MERC_DIALOG };
@@ -56,6 +58,15 @@ protected:
     afx_msg void OnCbnSelchangeAttribute();
     afx_msg void OnCbnSelchangeMercClass();
     afx_msg void OnCbnSelchangeMercName();
+    afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+    afx_msg void OnBnClickedOk();
+    afx_msg void OnBnClickedCancel();
+    afx_msg void OnClickedMercHired();
+    afx_msg void OnClickedResurrectedCheck();
+    afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+    afx_msg void OnItemContextFix();
+    afx_msg void OnItemContextLoad();
+    afx_msg void OnItemContextMaxdurability();
 	DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -92,6 +103,7 @@ private:
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;
     d2ce::MercInfo OrigMerc;
+    d2ce::Item* CurrItem = nullptr;
 
     void DisplayMercInfo();
     void EnableMercInfoBox();
@@ -109,13 +121,5 @@ private:
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
     void CheckToolTipCtrl();
-
-public:
-    afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-    afx_msg void OnBnClickedOk();
-    afx_msg void OnBnClickedCancel();
-    afx_msg void OnClickedMercHired();
-    afx_msg void OnClickedResurrectedCheck();
-    virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 };
 //---------------------------------------------------------------------------

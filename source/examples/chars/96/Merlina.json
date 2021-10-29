@@ -4341,7 +4341,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -5918,7 +5918,7 @@
                 }
             ],
             "type_name": "Jewel",
-            "inv_file": "invgswe",
+            "inv_file": "invjew",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6955,7 +6955,7 @@
                 }
             ],
             "type_name": "Jewel",
-            "inv_file": "invgswe",
+            "inv_file": "invjew",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -7092,7 +7092,7 @@
                 }
             ],
             "type_name": "Jewel",
-            "inv_file": "invgswe",
+            "inv_file": "invjew",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -8140,7 +8140,7 @@
                 }
             ],
             "type_name": "Large Charm",
-            "inv_file": "invwnd",
+            "inv_file": "invchm2",
             "inv_height": 2,
             "inv_width": 1,
             "displayed_magic_attributes": [

@@ -219,6 +219,7 @@ namespace d2ce
 
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;
+        size_t fixAllItems();
         size_t maxDurabilityAllItems();
 
         size_t getNumberOfStackables() const;

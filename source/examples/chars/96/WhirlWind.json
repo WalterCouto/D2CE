@@ -2948,7 +2948,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -3390,7 +3390,7 @@
                 }
             ],
             "type_name": "Large Charm",
-            "inv_file": "invwnd",
+            "inv_file": "invchm2",
             "inv_height": 2,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -3411,7 +3411,7 @@
                         3
                     ],
                     "name": "item_addclassskills",
-                    "description": "+3 to 4 Skill Levels"
+                    "description": "+3 to Barbarian Skill Levels"
                 },
                 {
                     "id": 0,
@@ -3626,7 +3626,7 @@
                         3
                     ],
                     "name": "item_addclassskills",
-                    "description": "+3 to 4 Skill Levels"
+                    "description": "+3 to Barbarian Skill Levels"
                 },
                 {
                     "id": 0,
@@ -3898,7 +3898,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         2
                     ],
@@ -3918,7 +3918,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         2
                     ],
@@ -3932,7 +3932,7 @@
                         2
                     ],
                     "name": "item_addclassskills",
-                    "description": "+2 to 4 Skill Levels"
+                    "description": "+2 to Barbarian Skill Levels"
                 },
                 {
                     "id": 99,
@@ -4126,7 +4126,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         2
                     ],
@@ -4138,7 +4138,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         2
                     ],
@@ -4152,7 +4152,7 @@
                         2
                     ],
                     "name": "item_addclassskills",
-                    "description": "+2 to 4 Skill Levels"
+                    "description": "+2 to Barbarian Skill Levels"
                 },
                 {
                     "id": 99,
@@ -6232,7 +6232,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6394,7 +6394,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6556,7 +6556,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -6709,7 +6709,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6718,14 +6718,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6754,7 +6754,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6766,7 +6766,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6871,7 +6871,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6880,14 +6880,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6916,7 +6916,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -6928,7 +6928,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -8490,7 +8490,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -8652,7 +8652,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -9029,7 +9029,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9038,14 +9038,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9074,7 +9074,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9086,7 +9086,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9200,7 +9200,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -9353,7 +9353,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9362,14 +9362,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9398,7 +9398,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9410,7 +9410,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9524,7 +9524,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -9686,7 +9686,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -9839,7 +9839,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9848,14 +9848,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9884,7 +9884,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -9896,7 +9896,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10001,7 +10001,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10010,14 +10010,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10046,7 +10046,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10058,7 +10058,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10172,7 +10172,7 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -10712,7 +10712,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10721,14 +10721,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10757,7 +10757,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10769,7 +10769,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10874,7 +10874,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10883,14 +10883,14 @@
                 }
             ],
             "type_name": "Grand Charm",
-            "inv_file": "invsst",
+            "inv_file": "invchm3",
             "inv_height": 3,
             "inv_width": 1,
             "displayed_magic_attributes": [
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10919,7 +10919,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -10931,7 +10931,7 @@
                 {
                     "id": 188,
                     "values": [
-                        null,
+                        0,
                         4,
                         1
                     ],
@@ -11043,7 +11043,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11197,7 +11197,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11351,7 +11351,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11505,7 +11505,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11659,7 +11659,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11813,7 +11813,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -11967,7 +11967,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -12121,7 +12121,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -12275,7 +12275,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -12429,7 +12429,7 @@
                 }
             ],
             "type_name": "Small Charm",
-            "inv_file": "invchm",
+            "inv_file": "invchm1",
             "inv_height": 1,
             "inv_width": 1,
             "displayed_magic_attributes": [
@@ -14220,7 +14220,7 @@
         {
             "id": 188,
             "values": [
-                null,
+                0,
                 4,
                 2
             ],
