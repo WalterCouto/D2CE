@@ -352,11 +352,16 @@ namespace d2ce
                         case 0:
                             switch (Id)
                             {
+                            case 83:
                             case 97:
                             case 107:
                             case 151:
                             case 188:
                                 ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
+                                break;
+
+                            default:
+                                ss << "\n" << attribParentIndent << jsonIndentStr << "null";
                                 break;
                             }
                             break;
@@ -374,6 +379,10 @@ namespace d2ce
                             case 201:
                             case 204:
                                 ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
+                                break;
+
+                            default:
+                                ss << "\n" << attribParentIndent << jsonIndentStr << "null";
                                 break;
                             }
                             break;
@@ -661,6 +670,22 @@ namespace d2ce
         }
     };
 
+    struct BaseResistance
+    {
+        std::int16_t Cold = 0;
+        std::int16_t Fire = 0;
+        std::int16_t Lightning = 0;
+        std::int16_t Poison = 0;
+
+        void clear()
+        {
+            Cold = 0;
+            Fire = 0;
+            Lightning = 0;
+            Poison = 0;
+        }
+    };
+
     struct BaseDamage
     {
         std::uint16_t Min = 0;
@@ -670,6 +695,12 @@ namespace d2ce
         {
             Min = 0;
             Max = 0;
+        }
+
+        void add(const BaseDamage& other)
+        {
+            Min += other.Min;
+            Max += other.Max;
         }
     };
 

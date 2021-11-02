@@ -157,13 +157,14 @@ namespace d2ce
         bool isTome() const;
         bool isStackable() const;
         bool isRune() const;
+        bool isCharm() const;
         std::uint8_t totalNumberOfSockets() const;
         std::uint16_t getQuantity() const;
         bool setQuantity(std::uint16_t quantity);
         bool setMaxQuantity();
         std::uint16_t getDefenseRating() const;
         bool getDurability(ItemDurability& attrib) const;
-        bool setDurability(const ItemDurability& attrib);
+        bool setDurability(const ItemDurability& durability);
         bool fixDurability();
         bool setMaxDurability();
         bool getDamage(ItemDamage& damage) const;
@@ -172,7 +173,10 @@ namespace d2ce
         // Helper methods that return the text displayed on tooltips
         std::string getDisplayedItemName() const;
         std::string getDisplayedSocketedRunes() const;
-        std::string getDisplayedItemAttributes(EnumCharClass charClass) const;
+        std::uint16_t getDisplayedDefenseRating(std::uint32_t charLevel) const;
+        bool getDisplayedDurability(ItemDurability& durability, std::uint32_t charLevel) const;
+        bool getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel) const;
+        std::string getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const;
         bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
         bool getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
@@ -288,12 +292,27 @@ namespace d2ce
         size_t maxDurabilityAllItems();
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        bool getCharmBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
+        std::uint16_t getCombinedDefenseRating(std::uint32_t charLevel) const;
+        bool getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel) const;
 
         // Mercenary
         const std::vector<Item>& getMercItems() const;
         bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
+        std::uint16_t getCombinedMercDefenseRating(std::uint32_t charLevel) const;
+        bool getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLevel) const;
+
+        // Corpse
+        const std::vector<Item>& getCorpseItems() const;
+
+        // Golem Info
+        bool hasGolem() const;
+        const d2ce::Item& getGolemItem() const;
+
+    public:
+        static std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx);
     };
     //---------------------------------------------------------------------------
 }

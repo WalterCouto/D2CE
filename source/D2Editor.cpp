@@ -18,7 +18,12 @@
 
 Revision History
 ================
-Version 2.04 (Nov 1, 2021)
+Version 2.04 (Nov 5, 2021)
+   - Updated: Fix up handling of reading pre 1.09 file items
+   - Updated: Application Title will show "Diablo II: Resurrected Character Editor"
+     unless an older Diablo II version file is loaded
+   - Updated: Added current changes to user guide
+
    - Added: Mercenary class to encapsulate Mercenary information and items
    - Added: Mercenary Dialog to allow editing of Mercenary Info
    - Added: more unit tests to cover older file versions

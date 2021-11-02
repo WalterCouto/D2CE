@@ -87,6 +87,12 @@ private:
     CEdit MercDexterity;
     CEdit MercLife;
     CEdit Experience;
+    CEdit MercDefense;
+    CEdit MercDamage;
+    CEdit ResistFire;
+    CEdit ResistCold;
+    CEdit ResistLightning;
+    CEdit ResistPoison;
     CStatic InvHeadBox;
     CBitmap InvHeadImage;
     CStatic InvHandRightBox;

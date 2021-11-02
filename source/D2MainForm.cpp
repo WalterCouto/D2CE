@@ -2855,8 +2855,17 @@ void CD2MainForm::CheckStatsLeft()
 //---------------------------------------------------------------------------
 void CD2MainForm::UpdateAppTitle()
 {
+    UINT uID = AFX_IDS_APP_TITLE;
+    if (!curPathName.IsEmpty())
+    {
+        if (CharInfo.getVersion() <= d2ce::EnumCharVersion::v110)
+        {
+            uID = IDS_OLD_APP_TITLE;
+        }
+    }
+
     CString newAppTitle;
-    if (newAppTitle.LoadString(AFX_IDS_APP_TITLE) != 0)
+    if (newAppTitle.LoadString(uID) != 0)
     {
         if (!curPathName.IsEmpty())
         {

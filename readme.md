@@ -30,6 +30,7 @@ You can edit the following stats:<br>
 - Maximum Life<br>
 - Maximum Mana<br>
 - Maximum Stamina<br>
+- Mercenary state, class, name, Level and Experience<br>
 - Skills<br>
 - Quests<br>
 - Waypoints<br>
@@ -69,9 +70,14 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.04 (Oct 5, 2021)**<br>
+**Version 2.04 (Nov 5, 2021)**<br>
+- Updated:  Fix up handling of reading pre 1.09 file items<br>
+- Updated: Application Title will show "Diablo II: Resurrected Character Editor" unless an older Diablo II version file is loaded<br>
+- Updated: Added current changes to user guide
+
 - Added: Mercenary class to encapsulate Mercenary information and items<br>
 - Added: Mercenary Dialog to allow editing of Mercenary Info<br>
+- Added: more unit tests to cover older file versions<br>
 
 **Version 2.03 (Oct 2, 2021)**<br>
 - Updated: Fix up handling of Simple Quest Items<br>

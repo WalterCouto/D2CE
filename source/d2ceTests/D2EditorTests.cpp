@@ -491,6 +491,12 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen9)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport1)
         {
             d2ce::Character character;
@@ -553,6 +559,14 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
             auto json = character.asJson();
             Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport9)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
         }
 
         TEST_METHOD(TestJsonTestComplexChange)

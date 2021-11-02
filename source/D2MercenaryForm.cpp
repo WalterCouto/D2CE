@@ -173,12 +173,18 @@ void CD2MercenaryForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAR_LEVEL, MercLevel);
     DDX_Control(pDX, IDC_CHAR_STRENGTH, MercStrength);
     DDX_Control(pDX, IDC_CHAR_DEXTERITY, MercDexterity);
+    DDX_Control(pDX, IDC_CHAR_DEFENSE, MercDefense);
+    DDX_Control(pDX, IDC_CHAR_DAMAGE, MercDamage);
     DDX_Control(pDX, IDC_CUR_LIFE, MercLife);
     DDX_Control(pDX, IDC_CHAR_EXPERIENCE, Experience);
-    DDX_Control(pDX, IDC_INV_HEAD, InvHeadBox);
-    DDX_Control(pDX, IDC_INV_HAND_RIGHT, InvHandRightBox);
-    DDX_Control(pDX, IDC_INV_TORSO, InvTorsoBox);
-    DDX_Control(pDX, IDC_INV_HAND_LEFT, InvHandLeftBox);
+    DDX_Control(pDX, IDC_CHAR_RESIST_FIRE, ResistFire);
+    DDX_Control(pDX, IDC_CHAR_RESIST_COLD, ResistCold);
+    DDX_Control(pDX, IDC_CHAR_RESIST_LIGHTNING, ResistLightning);
+    DDX_Control(pDX, IDC_CHAR_RESIST_POISON, ResistPoison);
+    DDX_Control(pDX, IDC_INV_MERC_HEAD, InvHeadBox);
+    DDX_Control(pDX, IDC_INV_MERC_HAND_RIGHT, InvHandRightBox);
+    DDX_Control(pDX, IDC_INV_MERC_TORSO, InvTorsoBox);
+    DDX_Control(pDX, IDC_INV_MERC_HAND_LEFT, InvHandLeftBox);
 }
 //---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::PreTranslateMessage(MSG* pMsg)
@@ -294,6 +300,24 @@ void CD2MercenaryForm::DisplayMercInfo()
     SetInt(&MercDexterity, cs.Dexterity);
     SetInt(&MercLife, cs.CurLife);
     SetInt(&Experience, cs.Experience);
+    SetInt(&MercDefense, Merc.getDefenseRating());
+
+    d2ce::BaseResistance resist;
+    Merc.getResistance(resist);
+    SetInt(&ResistFire, resist.Fire);
+    SetInt(&ResistCold, resist.Cold);
+    SetInt(&ResistLightning, resist.Lightning);
+    SetInt(&ResistPoison, resist.Poison);
+
+    CString sDamage;
+    d2ce::BaseDamage damage;
+    Merc.getDamage(damage);
+    if (damage.Max != 0)
+    {
+        sDamage.Format(_T("%ld-%d"), damage.Min, damage.Max);
+    }
+    MercDamage.SetWindowText(sDamage);
+
     UpdateModified();
 }
 //---------------------------------------------------------------------------
@@ -315,7 +339,13 @@ void CD2MercenaryForm::EnableMercInfoBox()
     Experience.EnableWindow(bEnable);
     MercStrength.EnableWindow(bEnable);
     MercDexterity.EnableWindow(bEnable);
+    MercDamage.EnableWindow(bEnable);
+    MercDefense.EnableWindow(bEnable);
     MercLife.EnableWindow(bEnable);
+    ResistFire.EnableWindow(bEnable);
+    ResistCold.EnableWindow(bEnable);
+    ResistLightning.EnableWindow(bEnable);
+    ResistPoison.EnableWindow(bEnable);
     if (!bEnable)
     {
         Attribute.ResetContent();
@@ -330,8 +360,14 @@ void CD2MercenaryForm::EnableMercInfoBox()
         MercLevel.SetWindowText(_T(""));
         MercStrength.SetWindowText(_T(""));
         MercDexterity.SetWindowText(_T(""));
+        MercDamage.SetWindowText(_T(""));
+        MercDefense.SetWindowText(_T(""));
         Experience.SetWindowText(_T(""));
         MercLife.SetWindowText(_T(""));
+        ResistFire.SetWindowText(_T(""));
+        ResistCold.SetWindowText(_T(""));
+        ResistLightning.SetWindowText(_T(""));
+        ResistPoison.SetWindowText(_T(""));
     }
     else if (bIsBarbarian)
     {
@@ -560,22 +596,22 @@ void CD2MercenaryForm::LoadMercItemImages()
     InvHeadBox.GetClientRect(&rect);
     InvHeadImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVE_0_1)));
     ScaleImage(pDC, InvHeadImage, rect);
-    pToolTip->DelTool(this, IDC_INV_HEAD);
+    pToolTip->DelTool(this, IDC_INV_MERC_HEAD);
 
     InvHandRightBox.GetClientRect(&rect);
     InvHandRightImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_WEAPONS)));
     ScaleImage(pDC, InvHandRightImage, rect);
-    pToolTip->DelTool(this, IDC_INV_HAND_RIGHT);
+    pToolTip->DelTool(this, IDC_INV_MERC_HAND_RIGHT);
 
     InvTorsoBox.GetClientRect(&rect);
     InvTorsoImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_ARMOR)));
     ScaleImage(pDC, InvTorsoImage, rect);
-    pToolTip->DelTool(this, IDC_INV_TORSO);
+    pToolTip->DelTool(this, IDC_INV_MERC_TORSO);
 
     InvHandLeftBox.GetClientRect(&rect);
     InvHandLeftImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_WEAPONS)));
     ScaleImage(pDC, InvHandLeftImage, rect);
-    pToolTip->DelTool(this, IDC_INV_HAND_LEFT);
+    pToolTip->DelTool(this, IDC_INV_MERC_HAND_LEFT);
 
     for (const auto& item : Merc.getItems())
     {
@@ -594,7 +630,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHeadBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HEAD);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_MERC_HEAD);
             break;
 
         case d2ce::EnumEquippedId::HAND_RIGHT:
@@ -609,7 +645,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHandRightBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HAND_RIGHT);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_MERC_HAND_RIGHT);
             break;
 
         case d2ce::EnumEquippedId::TORSO:
@@ -624,7 +660,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvTorsoBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_TORSO);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_MERC_TORSO);
             break;
 
         case d2ce::EnumEquippedId::HAND_LEFT:
@@ -639,7 +675,7 @@ void CD2MercenaryForm::LoadMercItemImages()
 
             InvHandLeftBox.GetWindowRect(&rect);
             ScreenToClient(&rect);
-            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_HAND_LEFT);
+            pToolTip->AddTool(this, LPSTR_TEXTCALLBACK, rect, IDC_INV_MERC_HAND_LEFT);
             break;
         }
     }
@@ -731,7 +767,19 @@ void CD2MercenaryForm::SetInt(CWnd* Sender, std::uint32_t newValue)
     if (Sender->IsKindOf(RUNTIME_CLASS(CEdit)) || Sender->IsKindOf(RUNTIME_CLASS(CStatic)))
     {
         CString sWindowText;
-        sWindowText.Format(_T("%lu"), newValue);
+        switch (Sender->GetDlgCtrlID())
+        {
+        case IDC_CHAR_RESIST_FIRE:
+        case IDC_CHAR_RESIST_COLD:
+        case IDC_CHAR_RESIST_LIGHTNING:
+        case IDC_CHAR_RESIST_POISON:
+            sWindowText.Format(_T("%lu%%"), newValue);
+            break;
+        default:
+            sWindowText.Format(_T("%lu"), newValue);
+            break;
+        }
+
         Sender->SetWindowText(sWindowText);
         if (Sender->IsKindOf(RUNTIME_CLASS(CStatic)))
         {
@@ -766,7 +814,7 @@ void CD2MercenaryForm::CheckToolTipCtrl()
     {
         CMFCToolTipInfo ttParams;
         ttParams.m_bVislManagerTheme = TRUE;
-        pToolTip = new CD2ItemToolTipCtrl(MainForm.getCharacterInfo(), true, &ttParams);
+        pToolTip = new CD2ItemToolTipCtrl(MainForm.getCharacterInfo(), &ttParams);
         if (pToolTip->Create(this, TTS_ALWAYSTIP))
         {
             pToolTip->SetDelayTime(TTDT_AUTOPOP, 0x7FFF);
@@ -955,10 +1003,10 @@ BOOL CD2MercenaryForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
             strTipText = _T("Dexterity");
             break;
 
-        case IDC_INV_HEAD:
-        case IDC_INV_HAND_RIGHT:
-        case IDC_INV_TORSO:
-        case IDC_INV_HAND_LEFT:
+        case IDC_INV_MERC_HEAD:
+        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_MERC_TORSO:
+        case IDC_INV_MERC_HAND_LEFT:
             strTipText = _T("N/A");
             break;
         }
@@ -1082,19 +1130,19 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     d2ce::EnumEquippedId equippedId = d2ce::EnumEquippedId::NONE;
     switch (nHit)
     {
-    case IDC_INV_HEAD:
+    case IDC_INV_MERC_HEAD:
         equippedId = d2ce::EnumEquippedId::HEAD;
         break;
 
-    case IDC_INV_HAND_RIGHT:
+    case IDC_INV_MERC_HAND_RIGHT:
         equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
         break;
 
-    case IDC_INV_TORSO:
+    case IDC_INV_MERC_TORSO:
         equippedId = d2ce::EnumEquippedId::TORSO;
         break;
 
-    case IDC_INV_HAND_LEFT:
+    case IDC_INV_MERC_HAND_LEFT:
         equippedId = d2ce::EnumEquippedId::HAND_LEFT;
         break;
 

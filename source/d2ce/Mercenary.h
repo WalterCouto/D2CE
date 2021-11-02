@@ -86,7 +86,7 @@ namespace d2ce
         void getDamage(BaseDamage& damage) const;
         std::uint16_t getDefenseRating() const;
         std::uint16_t getAttackRating() const;
-        std::int16_t getResistance() const;
+        void getResistance(BaseResistance& resist) const;
 
         bool isHired() const;
         void setIsHired(bool bIsHired);

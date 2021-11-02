@@ -239,17 +239,16 @@ namespace d2ce
         return statInfo.ExpPerLevel.at(attributeId);
     }
 
-    std::uint32_t getMercExprForLevel(std::uint32_t level, std::uint32_t expPerLevel, const std::vector<MercStatInfo>& mercStats)
+    std::uint32_t getMercExprForLevel(std::uint32_t level, std::uint32_t expPerLevel)
     {
         // Mercenary's max level is 98
         level = std::max(std::uint32_t(1), std::min(level, NUM_OF_LEVELS - 1));
-        const auto& statInfo = getMercStatInfoForLevel(level, mercStats);
-        return expPerLevel * (level + 1) * level * level + d2ce::MinExpRequired[statInfo.Level];
+        return expPerLevel * (level + 1) * level * level;
     }
 
     std::uint32_t getMercExprForLevel(std::uint32_t level, d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
     {
-        return getMercExprForLevel(level, getMerExpPerLevel(diff, mercClass, attributeId), getMercStatInfo(diff, mercClass));
+        return getMercExprForLevel(level, getMerExpPerLevel(diff, mercClass, attributeId));
     }
 
     std::uint32_t getMercLevelForExpr(std::uint32_t experience, d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
@@ -259,7 +258,7 @@ namespace d2ce
         const auto& mercStats = getMercStatInfo(diff, mercClass);
         const auto& statInfo = getMercStatInfoForLevel(1, mercStats); // get bottom lowest level
         std::uint32_t level = statInfo.Level;
-        while (experience >= getMercExprForLevel(level + 1, expPerLevel, mercStats) && level < d2ce::NUM_OF_LEVELS - 1)
+        while (experience >= getMercExprForLevel(level + 1, expPerLevel) && level < d2ce::NUM_OF_LEVELS - 1)
         {
             ++level;
         }
@@ -382,17 +381,41 @@ void d2ce::Mercenary::fillMercStats(CharStats& cs) const
     cs.Dexterity = statInfo.Dexterity;
     cs.CurLife = statInfo.Life;
     cs.MaxLife = cs.CurLife;
-    if (statInfo.Level >= cs.Level)
+    if (cs.Level > statInfo.Level )
     {
-        // min level
-        return;
+        auto levelDiff = cs.Level - statInfo.Level;
+        cs.Strength += (levelDiff * statInfo.StrPerLvl) / 8;
+        cs.Dexterity += (levelDiff * statInfo.DexPerLvl) / 8;
+        cs.CurLife += (levelDiff * statInfo.LifePerLvl);
+        cs.MaxLife = cs.CurLife;
     }
 
-    auto levelDiff = cs.Level - statInfo.Level;
-    cs.Strength += (levelDiff * statInfo.StrPerLvl) / 8;
-    cs.Dexterity += (levelDiff * statInfo.DexPerLvl) / 8;
-    cs.CurLife += (levelDiff * statInfo.LifePerLvl);
-    cs.MaxLife = cs.CurLife;
+    // Apply item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getItemBonuses(magicalAttributes))
+    {
+        for (auto& attrib : magicalAttributes)
+        {
+            switch (attrib.Id)
+            {
+            case 0:
+            case 220:
+                cs.Strength += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                break;
+
+            case 2:
+            case 221:
+                cs.Dexterity += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                break;
+
+            case 7:
+            case 216:
+                cs.CurLife += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                cs.MaxLife = cs.CurLife;
+                break;
+            }
+        }
+    }
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getLevel() const
@@ -922,6 +945,19 @@ void d2ce::Mercenary::getDamage(BaseDamage& damage) const
     std::uint16_t dmgDiff = std::uint16_t((levelDiff * statInfo.DmgPerLvl) / 8);
     damage.Min = statInfo.Damage.Min + dmgDiff;
     damage.Max = statInfo.Damage.Max + dmgDiff;
+
+    // Apply item bonuses
+    BaseDamage bonus;
+    if (CharInfo.getCombinedMercDamage(bonus))
+    {
+        damage.Min += bonus.Min;
+        damage.Max += bonus.Max;
+    }
+
+    if (damage.Min > damage.Max)
+    {
+        damage.Max = damage.Min + 1;
+    }
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Mercenary::getDefenseRating() const
@@ -935,7 +971,10 @@ std::uint16_t d2ce::Mercenary::getDefenseRating() const
 
     const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
-    return statInfo.Defense + levelDiff * statInfo.DefPerLvl;
+    std::uint16_t defenseRating = statInfo.Defense + levelDiff * statInfo.DefPerLvl;
+
+    // Apply item bonuses
+    return defenseRating + CharInfo.getCombinedMercDefenseRating();
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Mercenary::getAttackRating() const
@@ -949,35 +988,129 @@ std::uint16_t d2ce::Mercenary::getAttackRating() const
 
     const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
-    return statInfo.AttackRating + levelDiff * statInfo.ARPerLvl;
+    std::uint16_t attackRating = statInfo.AttackRating + levelDiff * statInfo.ARPerLvl;
+
+    // Apply item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getItemBonuses(magicalAttributes))
+    {
+        std::uint64_t eAr = 0;
+        std::uint64_t ar = 0;
+        for (auto& attrib : magicalAttributes)
+        {
+            switch (attrib.Id)
+            {
+            case 19:
+            case 224:
+                ar += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 119:
+            case 225:
+                eAr += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+            }
+
+            attackRating += std::uint16_t((attackRating * eAr) / 100 + ar);
+        }
+    }
+
+    return attackRating;
 }
 //---------------------------------------------------------------------------
-std::int16_t d2ce::Mercenary::getResistance() const
+void d2ce::Mercenary::getResistance(BaseResistance& resist) const
 {
+    resist.clear();
     if (!isHired())
     {
-        return 0;
+        return;
     }
 
     auto level = getLevel();
 
     const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
     std::int16_t levelDiff = std::int16_t(level - statInfo.Level);
-    std::int16_t resist = std::int16_t(statInfo.Resist + (levelDiff * statInfo.ResistPerLvl) / 4);
+    std::int16_t baseResist = std::int16_t(statInfo.Resist + (levelDiff * statInfo.ResistPerLvl) / 4);
+    resist.Cold = baseResist;
+    resist.Fire = resist.Cold;
+    resist.Lightning = resist.Cold;
+    resist.Poison = resist.Cold;
+
+    std::int16_t maxColdResist = 75;
+    std::int16_t maxFireResist = 75;
+    std::int16_t maxLightningResist = 75;
+    std::int16_t maxPoisonResist = 75;
+
+    // Apply item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getItemBonuses(magicalAttributes))
+    {
+        for (auto& attrib : magicalAttributes)
+        {
+            switch (attrib.Id)
+            {
+            case 39:
+            case 231:
+                resist.Fire += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 40:
+                maxFireResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 41:
+            case 232:
+                resist.Lightning += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 42:
+                maxLightningResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 43:
+            case 230:
+                resist.Cold += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 44:
+                maxColdResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 45:
+            case 233:
+                resist.Poison += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+
+            case 46:
+                maxPoisonResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                break;
+            }
+        }
+    }
 
     // Apply current difficulty penalty
     switch (CharInfo.getDifficultyLastPlayed())
     {
     case EnumDifficulty::Nightmare:
-        resist -= 40;
+        resist.Cold -= 40;
+        resist.Fire -= 40;
+        resist.Lightning -= 40;
+        resist.Poison -= 40;
         break;
 
     case EnumDifficulty::Hell:
-        resist -= 100;
+        resist.Cold -= 100;
+        resist.Fire -= 100;
+        resist.Lightning -= 100;
+        resist.Poison -= 100;
         break;
     }
 
-    return std::min(std::max(std::int16_t(-100), resist), std::int16_t(75));
+    resist.Cold = std::min(std::max(std::int16_t(-100), resist.Cold), maxColdResist);
+    resist.Fire = std::min(std::max(std::int16_t(-100), resist.Fire), maxFireResist);
+    resist.Lightning = std::min(std::max(std::int16_t(-100), resist.Lightning), maxLightningResist);
+    resist.Poison = std::min(std::max(std::int16_t(-100), resist.Poison), maxPoisonResist);
+
 }
 //---------------------------------------------------------------------------
 bool d2ce::Mercenary::isHired() const

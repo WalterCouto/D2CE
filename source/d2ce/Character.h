@@ -138,6 +138,15 @@ namespace d2ce
 
         bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+        std::uint16_t getCombinedMercDefenseRating() const;
+        bool getCombinedMercDamage(BaseDamage& damage) const;
+
+        // Corpse Items
+        const std::vector<d2ce::Item>& getCorpseItems() const;
+
+        // Golem Info
+        bool hasGolem() const;
+        const d2ce::Item& getGolemItem() const;
 
         // Character Stats
         void fillBasicStats(BasicStats& bs);

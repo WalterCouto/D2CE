@@ -169,5 +169,11 @@
     <CustomBuild Include="..\examples\chars\92\sdfsf.json">
       <Filter>examples\char\92</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\MfBowzon.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\MfBowzon.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

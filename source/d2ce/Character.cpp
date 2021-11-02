@@ -952,6 +952,31 @@ bool d2ce::Character::getDisplayedMercItemBonuses(std::vector<MagicalAttribute>&
     return items.getDisplayedMercItemBonuses(attribs, Merc.getLevel());
 }
 //---------------------------------------------------------------------------
+std::uint16_t d2ce::Character::getCombinedMercDefenseRating() const
+{
+    return items.getCombinedMercDefenseRating(Merc.getLevel());
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getCombinedMercDamage(BaseDamage& damage) const
+{
+    return items.getCombinedMercDamage(damage, Merc.getLevel());
+}
+//---------------------------------------------------------------------------
+const std::vector<d2ce::Item>& d2ce::Character::getCorpseItems() const
+{
+    return items.getCorpseItems();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::hasGolem() const
+{
+    return items.hasGolem();
+}
+//---------------------------------------------------------------------------
+const d2ce::Item& d2ce::Character::getGolemItem() const
+{
+    return items.getGolemItem();
+}
+//---------------------------------------------------------------------------
 void d2ce::Character::fillBasicStats(BasicStats& bs)
 {
     std::memcpy(&bs, &Bs, sizeof(BasicStats));

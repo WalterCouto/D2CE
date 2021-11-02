@@ -71,7 +71,7 @@ namespace
 IMPLEMENT_DYNAMIC(CD2ItemToolTipCtrl, CMFCToolTipCtrl)
 
 //---------------------------------------------------------------------------
-CD2ItemToolTipCtrl::CD2ItemToolTipCtrl(d2ce::Character& charInfo, bool isMerc, CMFCToolTipInfo* pParams/* = NULL*/) : CMFCToolTipCtrl(pParams), CharInfo(charInfo), IsMerc(isMerc)
+CD2ItemToolTipCtrl::CD2ItemToolTipCtrl(d2ce::Character& charInfo, CMFCToolTipInfo* pParams/* = NULL*/) : CMFCToolTipCtrl(pParams), CharInfo(charInfo)
 {
 }
 //---------------------------------------------------------------------------
@@ -130,7 +130,8 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 	}
 
 	// Other non-magical
-	strText = CurrItem->getDisplayedItemAttributes(CharInfo.getClass()).c_str();
+	auto charLevel = IsMerc ? CharInfo.getMercenaryInfo().getLevel() : CharInfo.getLevel();
+	strText = CurrItem->getDisplayedItemAttributes(CharInfo.getClass(), charLevel).c_str();
 	if (!strText.IsEmpty())
 	{
 		CSize prevSizeText = sizeText;
@@ -142,7 +143,6 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
 	// magical props
 	std::vector<d2ce::MagicalAttribute> magicalAttributes;
-	auto charLevel = IsMerc ? CharInfo.getMercenaryInfo().getLevel() : CharInfo.getLevel();
 	if(CurrItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
 	{
 		for (const auto& attrib : magicalAttributes)
@@ -225,8 +225,9 @@ END_MESSAGE_MAP()
 //---------------------------------------------------------------------------
 void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	CurrItem = nullptr;
-	const auto& charItems = IsMerc ? CharInfo.getMercItems() : CharInfo.getInventoryItems();
+	IsMerc = false;
+	bool isGolem = false;
+	bool isCorpse = false;
 	CurrID = (UINT)pNMHDR->idFrom;
 	d2ce::EnumEquippedId equippedId = d2ce::EnumEquippedId::NONE;
 	switch (CurrID)
@@ -235,7 +236,27 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 		equippedId = d2ce::EnumEquippedId::HEAD;
 		break;
 
+	case IDC_INV_CORPSE_HEAD:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::HEAD;
+		break;
+
+	case IDC_INV_MERC_HEAD:
+		IsMerc = true;
+		equippedId = d2ce::EnumEquippedId::HEAD;
+		break;
+
 	case IDC_INV_HAND_RIGHT:
+		equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
+		break;
+
+	case IDC_INV_CORPSE_HAND_RIGHT:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
+		break;
+
+	case IDC_INV_MERC_HAND_RIGHT:
+		IsMerc = true;
 		equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
 		break;
 
@@ -243,13 +264,57 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 		equippedId = d2ce::EnumEquippedId::TORSO;
 		break;
 
+	case IDC_INV_CORPSE_TORSO:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::TORSO;
+		break;
+
+	case IDC_INV_MERC_TORSO:
+		IsMerc = true;
+		equippedId = d2ce::EnumEquippedId::TORSO;
+		break;
+
 	case IDC_INV_HAND_LEFT:
 		equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+		break;
+
+	case IDC_INV_CORPSE_HAND_LEFT:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+		break;
+
+	case IDC_INV_MERC_HAND_LEFT:
+		IsMerc = true;
+		equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+		break;
+
+	case IDC_INV_ALT_HAND_RIGHT:
+		equippedId = d2ce::EnumEquippedId::ALT_HAND_RIGHT;
+		break;
+
+	case IDC_INV_CORPSE_ALT_HAND_RIGHT:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::ALT_HAND_RIGHT;
+		break;
+
+	case IDC_INV_ALT_HAND_LEFT:
+		equippedId = d2ce::EnumEquippedId::ALT_HAND_LEFT;
+		break;
+
+	case IDC_INV_CORPSE_ALT_HAND_LEFT:
+		isCorpse = true;
+		equippedId = d2ce::EnumEquippedId::ALT_HAND_LEFT;
+		break;
+
+	case IDC_INV_GOLEM:
+		isGolem = true;
+		equippedId = d2ce::EnumEquippedId::NONE;
 		break;
 	}
 
 	if (equippedId != d2ce::EnumEquippedId::NONE)
 	{
+		const auto& charItems = IsMerc ? CharInfo.getMercItems() : (isCorpse ? CharInfo.getCorpseItems() : CharInfo.getInventoryItems());
 		for (const auto& item : charItems)
 		{
 			if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
@@ -261,6 +326,10 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 			CurrItem = &item;
 			break;
 		}
+	}
+	else if(isGolem && CharInfo.hasGolem())
+	{
+		CurrItem = &CharInfo.getGolemItem();
 	}
 
 	__super::OnShow (pNMHDR, pResult);

@@ -29,7 +29,7 @@ class CD2ItemToolTipCtrl : public CMFCToolTipCtrl
 
 // Construction
 public:
-	CD2ItemToolTipCtrl(d2ce::Character& charInfo, bool bIsMerc = false, CMFCToolTipInfo * pParams = NULL);
+	CD2ItemToolTipCtrl(d2ce::Character& charInfo, CMFCToolTipInfo * pParams = NULL);
 
 // Overrides
 public:

@@ -294,11 +294,11 @@ namespace d2ce
         {212, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused211"},
         {213, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused212"},
         {214, 0,  6,   0,  0,  0,  0,                           "+{0} to Defense (Based on Character Level)",             "item_armor_perlevel", {4, 3, "level", {"armorclass"}}},
-        {215, 0,  6,   0,  0,  0,  0,                     "{0}% Enhanced Defense (Based on Character Level)",      "item_armorpercent_perlevel", {5, 3, "level", {"armorclass"}}},
+        {215, 0,  6,   0,  0,  0,  0,                     "{0}% Enhanced Defense (Based on Character Level)",      "item_armorpercent_perlevel", {5, 3, "level", {"item_armorpercent"}}},
         {216, 0,  6,   0,  0,  0,  0,                              "+{0} to Life (Based on Character Level)",                "item_hp_perlevel", {2, 3, "level", {"maxhp"}}},
         {217, 0,  6,   0,  0,  0,  0,                              "+{0} to Mana (Based on Character Level)",              "item_mana_perlevel", {2, 3, "level", {"maxmana"}}},
         {218, 0,  6,   0,  0,  0,  0,                    "+{0} to Maximum Damage (Based on Character Level)",         "item_maxdamage_perlevel", {4, 3, "level", {"maxdamage", "secondary_maxdamage","item_throw_maxdamage"}}},
-        {219, 0,  6,   0,  0,  0,  0,              "{0}% Enhanced Maximum Damage (Based on Character Level)", "item_maxdamage_percent_perlevel", {5, 3, "level", {"maxdamage", "secondary_maxdamage","item_throw_maxdamage"}}},
+        {219, 0,  6,   0,  0,  0,  0,              "{0}% Enhanced Maximum Damage (Based on Character Level)", "item_maxdamage_percent_perlevel", {5, 3, "level", {"item_maxdamage_percent", "secondary_maxdamage","item_throw_maxdamage"}}},
         {220, 0,  6,   0,  0,  0,  0,                          "+{0} to Strength (Based on Character Level)",          "item_strength_perlevel", {2, 3, "level", {"strength"}}},
         {221, 0,  6,   0,  0,  0,  0,                         "+{0} to Dexterity (Based on Character Level)",         "item_dexterity_perlevel", {2, 3, "level", {"dexterity"}}},
         {222, 0,  6,   0,  0,  0,  0,                            "+{0} to Energy (Based on Character Level)",            "item_energy_perlevel", {2, 3, "level", {"energy"}}},
@@ -650,6 +650,11 @@ namespace d2ce
         bool isRune() const
         {
             return std::find(categories.begin(), categories.end(), "Rune") != categories.end() ? true : false;
+        }
+
+        bool isCharm() const
+        {
+            return std::find(categories.begin(), categories.end(), "Charm") != categories.end() ? true : false;
         }
 
         EnumItemType getEnumItemType() const
@@ -5259,6 +5264,250 @@ namespace d2ce
         }
     }
 
+    std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat)
+    {
+        if (idx >= attrib.Values.size())
+        {
+            return 0;
+        }
+
+        auto value = attrib.Values[idx];
+        std::stringstream ssValue;
+        switch (attrib.Id)
+        {
+            // values at index 0 and 1 are 256 * the posion damage over the duration of damage
+        case 57:
+            switch (idx)
+            {
+            case 0:
+            case 1:
+                return (value * attrib.Values[2] + 128) / 256;
+
+                // value at index 3 is 25 * duration of postion damage
+            case 2:
+                return value / 25;
+            }
+            break;
+
+            // value at index 0 with range 0 to 128 must be converted to a percentage
+        case 112:
+            switch (idx)
+            {
+            case 0:
+                return  (value * 100) / 128;
+            }
+            break;
+
+            // value at index 0 is durability units per 100 seconds
+        case 252:
+            switch (idx)
+            {
+            case 0:
+                return 100 / value;
+            }
+            break;
+
+        default:
+            if ((idx == 0) && (stat.opAttribs.op_base == "level"))
+            {
+                // stats based on character level
+                switch (stat.opAttribs.op_param)
+                {
+                case 1:
+                    attrib.OpValue = (charLevel * attrib.Values[0]) / 100;
+                    attrib.OpStats = stat.opAttribs.op_stats;
+                    return  attrib.OpValue;
+
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    attrib.OpValue = (charLevel * attrib.Values[0]) / (2 * std::int64_t(stat.opAttribs.op));
+                    attrib.OpStats = stat.opAttribs.op_stats;
+                    return attrib.OpValue;
+                }
+            }
+            break;
+        }
+
+        return value;
+    }
+
+    std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat)
+    {
+        if (idx >= attrib.Values.size())
+        {
+            return "";
+        }
+
+        auto value = getMagicalAttributeValue(attrib, charLevel, idx, stat);
+        std::stringstream ssValue;
+        switch (attrib.Id)
+        {
+            // Class name is index 0
+        case 83:
+            switch (idx)
+            {
+            case 0:
+                if (value < NUM_OF_CLASSES)
+                {
+                    ssValue << ClassNames[value];
+                }
+                else
+                {
+                    ssValue << std::dec << value;
+                }
+                break;
+
+            default:
+                ssValue << std::dec << value;
+                break;
+            }
+            break;
+
+            // skill name is index 0
+        case 97:
+            switch (idx)
+            {
+            case 0:
+            {
+                auto iter = GenericSkillNames.find(value);
+                if (iter != GenericSkillNames.end())
+                {
+                    ssValue << iter->second;
+                }
+                else
+                {
+                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    if (classIdx < NUM_OF_CLASSES)
+                    {
+                        ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
+                    }
+                    else
+                    {
+                        ssValue << std::dec << value;
+                    }
+                }
+                break;
+            }
+
+            default:
+                ssValue << std::dec << value;
+                break;
+            }
+            break;
+
+            // Character specific Skill index is index 0
+        case 107:
+            switch (idx)
+            {
+            case 0:
+            {
+                auto iter = GenericSkillNames.find(value);
+                if (iter != GenericSkillNames.end())
+                {
+                    ssValue << iter->second;
+                }
+                else
+                {
+                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    if (classIdx < NUM_OF_CLASSES)
+                    {
+                        ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS] << " (" << ClassNames[classIdx] << " Only)";
+                    }
+                    else
+                    {
+                        ssValue << std::dec << value;
+                    }
+                }
+                break;
+            }
+
+            default:
+                ssValue << std::dec << value;
+                break;
+            }
+            break;
+
+            // Skill name is index 0 and class name is index 1
+        case 151:
+        case 188:
+            switch (idx)
+            {
+            case 0:
+                if ((value < NUM_OF_SKILLS) && (attrib.Values[1] < NUM_OF_CLASSES))
+                {
+                    ssValue << SkillsNames[attrib.Values[1]][value];
+                }
+                else
+                {
+                    ssValue << std::dec << value;
+                }
+                break;
+
+            case 1:
+                if (value < NUM_OF_CLASSES)
+                {
+                    ssValue << ClassNames[value];
+                }
+                else
+                {
+                    ssValue << std::dec << value;
+                }
+                break;
+
+            default:
+                ssValue << std::dec << value;
+                break;
+            }
+            break;
+
+            // Skill name is index 1, all others are raw values
+        case 195:
+        case 196:
+        case 197:
+        case 198:
+        case 199:
+        case 201:
+        case 204:
+            switch (idx)
+            {
+            case 1:
+            {
+                auto iter = GenericSkillNames.find(value);
+                if (iter != GenericSkillNames.end())
+                {
+                    ssValue << iter->second;
+                }
+                else
+                {
+                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    if (classIdx < NUM_OF_CLASSES)
+                    {
+                        ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
+                    }
+                    else
+                    {
+                        ssValue << std::dec << value;
+                    }
+                }
+                break;
+            }
+
+            default:
+                ssValue << std::dec << value;
+                break;
+            }
+            break;
+
+        default:
+            ssValue << std::dec << value;
+            break;
+        }
+
+        return ssValue.str();
+    }
+
     bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel)
     {
         if (attrib.Desc.empty() || attrib.Values.empty())
@@ -5289,246 +5538,12 @@ namespace d2ce
             break;
         }
 
-        const ItemStat* stat = &itemStats[attrib.Id];
-        size_t idx = 0;
-        for (auto value : attrib.Values)
+        const auto& stat = itemStats[attrib.Id];
+        for (size_t idx = 0; idx < attrib.Values.size(); ++idx)
         {
-            std::stringstream ssValue;
-            switch (attrib.Id)
-            {
-                // values at index 0 and 1 are 256 * the posion damage over the duration of damage
-            case 57:
-                switch (idx)
-                {
-                case 0:
-                case 1:
-                    ssValue << std::dec << ((value * attrib.Values[2] + 128) / 256);
-                    break;
-
-                    // value at index 3 is 25 * duration of postion damage
-                case 2:
-                    ssValue << std::dec << (value / 25);
-                    break;
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // Class name is index 0
-            case 83:
-                switch (idx)
-                {
-                case 0:
-                    if (value < NUM_OF_CLASSES)
-                    {
-                        ssValue << ClassNames[value];
-                    }
-                    else
-                    {
-                        ssValue << std::dec << value;
-                    }
-                    break;
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // skill name is index 0
-            case 97:
-                switch (idx)
-                {
-                case 0:
-                {
-                    auto iter = GenericSkillNames.find(value);
-                    if (iter != GenericSkillNames.end())
-                    {
-                        ssValue << iter->second;
-                    }
-                    else
-                    {
-                        size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
-                        if (classIdx < NUM_OF_CLASSES)
-                        {
-                            ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
-                        }
-                        else
-                        {
-                            ssValue << std::dec << value;
-                        }
-                    }
-                    break;
-                }
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // Character specific Skill index is index 0
-            case 107:
-                switch (idx)
-                {
-                case 0:
-                {
-                    auto iter = GenericSkillNames.find(value);
-                    if (iter != GenericSkillNames.end())
-                    {
-                        ssValue << iter->second;
-                    }
-                    else
-                    {
-                        size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
-                        if (classIdx < NUM_OF_CLASSES)
-                        {
-                            ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS] << " (" << ClassNames[classIdx] << " Only)";
-                        }
-                        else
-                        {
-                            ssValue << std::dec << value;
-                        }
-                    }
-                    break;
-                }
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // value at index 0 with range 0 to 128 must be converted to a percentage
-            case 112:
-                switch (idx)
-                {
-                case 0:
-                    ssValue << std::dec << ((value * 100) / 128);
-                    break;
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // Skill name is index 0 and class name is index 1
-            case 151:
-            case 188:
-                switch (idx)
-                {
-                case 0:
-                    if ((value < NUM_OF_SKILLS) && (attrib.Values[1] < NUM_OF_CLASSES))
-                    {
-                        ssValue << SkillsNames[attrib.Values[1]][value];
-                    }
-                    else
-                    {
-                        ssValue << std::dec << value;
-                    }
-                    break;
-
-                case 1:
-                    if (value < NUM_OF_CLASSES)
-                    {
-                        ssValue << ClassNames[value];
-                    }
-                    else
-                    {
-                        ssValue << std::dec << value;
-                    }
-                    break;
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // Skill name is index 1, all others are raw values
-            case 195:
-            case 196:
-            case 197:
-            case 198:
-            case 199:
-            case 201:
-            case 204:
-                switch (idx)
-                {
-                case 1:
-                {
-                    auto iter = GenericSkillNames.find(value);
-                    if (iter != GenericSkillNames.end())
-                    {
-                        ssValue << iter->second;
-                    }
-                    else
-                    {
-                        size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
-                        if (classIdx < NUM_OF_CLASSES)
-                        {
-                            ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
-                        }
-                        else
-                        {
-                            ssValue << std::dec << value;
-                        }
-                    }
-                    break;
-                }
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-                // value at index 0 is durability units per 100 seconds
-            case 252:
-                switch (idx)
-                {
-                case 0:
-                    ssValue << std::dec << (100 / value); // number of seconds per durablity unit
-                    break;
-
-                default:
-                    ssValue << std::dec << value;
-                    break;
-                }
-                break;
-
-            default:
-                if ((idx == 0) && (stat->opAttribs.op_base == "level"))
-                {
-                    // stats based on character level
-                    switch (stat->opAttribs.op_param)
-                    {
-                    case 1:
-                        attrib.OpValue = (charLevel * attrib.Values[0]) / 100;
-                        attrib.OpStats = stat->opAttribs.op_stats;
-                        value = attrib.OpValue;
-                        break;
-
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        attrib.OpValue = (charLevel * attrib.Values[0]) / (2 * std::int64_t(stat->opAttribs.op));
-                        attrib.OpStats = stat->opAttribs.op_stats;
-                        value = attrib.OpValue;
-                        break;
-                    }
-                }
-                ssValue << std::dec << value;
-                break;
-            }
-
             std::stringstream ssReplace;
             ssReplace << "{";
-            ssReplace << idx++;
+            ssReplace << idx;
             ssReplace << "}";
             replaceStr = ssReplace.str();
 
@@ -5538,7 +5553,7 @@ namespace d2ce
                 continue;
             }
 
-            attrib.Desc.replace(repIdx, replaceStr.size(), ssValue.str());
+            attrib.Desc.replace(repIdx, replaceStr.size(), formatMagicalAttributeValue(attrib, charLevel, idx, stat));
         }
 
         return true;
@@ -9126,6 +9141,18 @@ bool d2ce::Item::isRune() const
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isCharm() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isCharm();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::totalNumberOfSockets() const
 {
     if (isSimpleItem() || (socket_count_bit_offset == 0))
@@ -9230,21 +9257,21 @@ std::uint16_t d2ce::Item::getDefenseRating() const
     return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, 11) - stat.saveAdd);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::getDurability(ItemDurability& attrib) const
+bool d2ce::Item::getDurability(ItemDurability& durability) const
 {
-    attrib.clear();
+    durability.clear();
     if (durability_bit_offset == 0)
     {
         return false;
     }
 
-    attrib.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, 8);
-    if (attrib.Max == 0)
+    durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, 8);
+    if (durability.Max == 0)
     {
         return false;
     }
 
-    attrib.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + 8, 8);
+    durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + 8, 8);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -9505,7 +9532,208 @@ std::string d2ce::Item::getDisplayedSocketedRunes() const
     return ss.str();
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) const
+std::uint16_t d2ce::Item::getDisplayedDefenseRating(std::uint32_t charLevel) const
+{
+    if (defense_rating_bit_offset == 0)
+    {
+        return 0;
+    }
+
+    auto defenseRating = getDefenseRating();
+
+    // Calculate item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getCombinedMagicalAttributes(magicalAttributes))
+    {
+        checkForRelatedMagicalAttributes(magicalAttributes);
+
+        std::uint64_t eDef = 0;
+        std::uint64_t def = 0;
+        for (auto& attrib : magicalAttributes)
+        {
+            const auto& stat = itemStats[attrib.Id];
+            switch (attrib.Id)
+            {
+            case 16:
+            case 215:
+                eDef += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 31:
+            case 214:
+                def += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+            }
+        }
+
+        defenseRating += std::uint16_t((defenseRating * eDef) / 100 + def);
+    }
+
+    return defenseRating;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedDurability(ItemDurability& durability, std::uint32_t charLevel) const
+{
+    if (!getDurability(durability))
+    {
+        return false;
+    }
+
+    // Calculate item bonus
+    std::uint64_t eDur = 0;
+    std::uint64_t dur = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getCombinedMagicalAttributes(magicalAttributes))
+    {
+        checkForRelatedMagicalAttributes(magicalAttributes);
+        for (auto& attrib : magicalAttributes)
+        {
+            const auto& stat = itemStats[attrib.Id];
+            switch (attrib.Id)
+            {
+            case 73:
+                dur += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 75:
+                eDur += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+            }
+        }
+
+        durability.Max += std::uint16_t((durability.Max * eDur) / 100 + dur);
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel) const
+{
+    if (!getDamage(damage))
+    {
+        return false;
+    }
+
+    // Calculate item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getCombinedMagicalAttributes(magicalAttributes))
+    {
+        checkForRelatedMagicalAttributes(magicalAttributes);
+
+        // Calculate item bonus
+        std::uint64_t eDmg = 0;
+        std::uint64_t eDmgMax = 0;
+        std::uint64_t dmgMin = 0;
+        std::uint64_t dmgMax = 0;
+        std::uint64_t dmgMin2 = 0;
+        std::uint64_t dmgMax2 = 0;
+        std::uint64_t dmgMinThrow = 0;
+        std::uint64_t dmgMaxThrow = 0;
+        for (auto& attrib : magicalAttributes)
+        {
+            const auto& stat = itemStats[attrib.Id];
+            switch (attrib.Id)
+            {
+            case 17:
+                eDmg += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 21:
+                dmgMin += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 22:
+                dmgMax += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 23:
+                dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
+                break;
+
+            case 24:
+                dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
+                break;
+
+            case 219:
+                eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                break;
+
+            case 159:
+                dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
+                break;
+
+            case 160:
+                dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
+                break;
+            }
+        }
+
+        if (dmgMin == 0)
+        {
+            dmgMin = std::max(dmgMinThrow, dmgMin2);
+        }
+
+        if (dmgMax == 0)
+        {
+            dmgMax = std::max(dmgMaxThrow, dmgMax2);
+        }
+
+        if (isEthereal())
+        {
+            if (damage.OneHanded.Max != 0)
+            {
+                damage.OneHanded.Min += std::uint16_t((std::uint64_t(damage.OneHanded.Min) * 50) / 100);
+                damage.OneHanded.Max += std::uint16_t((std::uint64_t(damage.OneHanded.Max) * 50) / 100);
+            }
+
+            if (damage.bTwoHanded)
+            {
+                damage.TwoHanded.Min += std::uint16_t((std::uint64_t(damage.TwoHanded.Min) * 50) / 100);
+                damage.TwoHanded.Max += std::uint16_t((std::uint64_t(damage.TwoHanded.Max) * 50) / 100);
+            }
+
+            if (damage.Missile.Max != 0)
+            {
+                damage.Missile.Min += std::uint16_t((std::uint64_t(damage.Missile.Min) * 50) / 100);
+                damage.Missile.Max += std::uint16_t((std::uint64_t(damage.Missile.Max) * 50) / 100);
+            }
+        }
+
+        if (damage.OneHanded.Max != 0)
+        {
+            damage.OneHanded.Min += std::uint16_t((damage.OneHanded.Min * eDmg) / 100 + dmgMin);
+            damage.OneHanded.Max += std::uint16_t((damage.OneHanded.Max * (eDmg + eDmgMax)) / 100 + dmgMax);
+            if (damage.OneHanded.Min > damage.OneHanded.Max)
+            {
+                damage.OneHanded.Max = damage.OneHanded.Min + 1;
+            }
+        }
+
+        if (damage.bTwoHanded)
+        {
+            damage.TwoHanded.Min += std::uint16_t((damage.TwoHanded.Min * eDmg) / 100 + dmgMin);
+            damage.TwoHanded.Max += std::uint16_t((damage.TwoHanded.Max * (eDmg + eDmgMax)) / 100 + dmgMax);
+            if (damage.TwoHanded.Min > damage.TwoHanded.Max)
+            {
+                damage.TwoHanded.Max = damage.TwoHanded.Min + 1;
+            }
+        }
+
+        if (damage.Missile.Max != 0)
+        {
+            damage.Missile.Min += std::uint16_t((damage.Missile.Min * eDmg) / 100 + dmgMin);
+            damage.Missile.Max += std::uint16_t((damage.Missile.Max * (eDmg + eDmgMax)) / 100 + dmgMax);
+            if (damage.Missile.Min > damage.Missile.Max)
+            {
+                damage.Missile.Max = damage.Missile.Min + 1;
+            }
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const
 {
     if (isEar())
     {
@@ -9551,7 +9779,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
         ss << "Quantity: " << std::dec << getQuantity();
     }
 
-    auto defenseRating = getDefenseRating();
+    auto defenseRating = getDisplayedDefenseRating(charLevel);
     if (defenseRating > 0)
     {
         if (bFirst)
@@ -9562,12 +9790,15 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
         {
             ss << "\n";
         }
+
         ss << "Defense: " << std::dec << defenseRating;
     }
 
     if (itemType.isWeapon())
     {
-        if (itemType.dam.OneHanded.Max != 0)
+        ItemDamage dam;
+        getDisplayedDamage(dam, charLevel);
+        if (dam.OneHanded.Max != 0)
         {
             if (bFirst)
             {
@@ -9577,10 +9808,11 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
             {
                 ss << "\n";
             }
-            ss << "One-Hand Damage: " << std::dec << itemType.dam.OneHanded.Min << " to " << itemType.dam.OneHanded.Max;
+
+            ss << "One-Hand Damage: " << std::dec << dam.OneHanded.Min << " to " << dam.OneHanded.Max;
         }
 
-        if (itemType.dam.bTwoHanded)
+        if (dam.bTwoHanded)
         {
             if (bFirst)
             {
@@ -9590,10 +9822,11 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
             {
                 ss << "\n";
             }
-            ss << "Two-Hand Damage: " << std::dec << itemType.dam.TwoHanded.Min << " to " << itemType.dam.TwoHanded.Max;
+
+            ss << "Two-Hand Damage: " << std::dec << dam.TwoHanded.Min << " to " << dam.TwoHanded.Max;
         }
 
-        if (itemType.dam.Missile.Max != 0)
+        if (dam.Missile.Max != 0)
         {
             if (bFirst)
             {
@@ -9603,12 +9836,13 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
             {
                 ss << "\n";
             }
-            ss << "Throw Damage: " << std::dec << itemType.dam.Missile.Min << " to " << std::dec << itemType.dam.Missile.Max;
+
+            ss << "Throw Damage: " << std::dec << dam.Missile.Min << " to " << std::dec << dam.Missile.Max;
         }
     }
 
     ItemDurability durability;
-    if (getDurability(durability))
+    if (getDisplayedDurability(durability, charLevel))
     {
         if (bFirst)
         {
@@ -9618,20 +9852,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
         {
             ss << "\n";
         }
-        ss << "Durability: " << std::dec << durability.Current << " of " << std::dec << durability.Max;
-    }
 
-    if (itemType.req.Strength > 0)
-    {
-        if (bFirst)
-        {
-            bFirst = false;
-        }
-        else
-        {
-            ss << "\n";
-        }
-        ss << "Required Strength: " << std::dec << itemType.req.Strength;
+        ss << "Durability: " << std::dec << durability.Current << " of " << std::dec << durability.Max;
     }
 
     if (itemType.req.Dexterity > 0)
@@ -9645,6 +9867,19 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass) cons
             ss << "\n";
         }
         ss << "Required Dexterity: " << std::dec << itemType.req.Dexterity;
+    }
+
+    if (itemType.req.Strength > 0)
+    {
+        if (bFirst)
+        {
+            bFirst = false;
+        }
+        else
+        {
+            ss << "\n";
+        }
+        ss << "Required Strength: " << std::dec << itemType.req.Strength;
     }
 
     if (itemType.req.Level > 0)
@@ -12059,6 +12294,160 @@ bool d2ce::Items::getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& att
     return bFormatted;
 }
 //---------------------------------------------------------------------------
+std::uint16_t d2ce::Items::getCombinedMercDefenseRating(std::uint32_t charLevel) const
+{
+    // Combine all equipped defense ratings
+    EnumItemLocation location_id = EnumItemLocation::STORED;
+    std::uint64_t eDef = 0;
+    std::uint64_t defenseRating = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    for (auto& item : MercItems)
+    {
+        location_id = item.getLocation();
+        if (location_id == EnumItemLocation::EQUIPPED)
+        {
+            defenseRating += item.getDefenseRating();
+            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            {
+                for (auto& attrib : magicalAttributes)
+                {
+                    switch (attrib.Id)
+                    {
+                    case 16:
+                    case 215:
+                        eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 31:
+                    case 214:
+                        defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    defenseRating += (defenseRating * eDef) / 100;
+    return std::uint16_t(defenseRating);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLevel) const
+{
+    ItemDamage itemDamage;
+    damage.clear();
+
+    EnumItemLocation location_id = EnumItemLocation::STORED;
+    std::uint64_t eDmg = 0;
+    std::uint64_t eDmgMax = 0;
+    std::uint64_t dmgMin = 0;
+    std::uint64_t dmgMax = 0;
+    std::uint64_t dmgMin2 = 0;
+    std::uint64_t dmgMax2 = 0;
+    std::uint64_t dmgMinThrow = 0;
+    std::uint64_t dmgMaxThrow = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    for (auto& item : MercItems)
+    {
+        location_id = item.getLocation();
+        if (location_id == EnumItemLocation::EQUIPPED)
+        {
+            if (item.getDamage(itemDamage))
+            {
+                if (item.isEthereal())
+                {
+                    itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
+                    itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+                }
+                damage.add(itemDamage.OneHanded);
+            }
+
+            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            {
+                for (auto& attrib : magicalAttributes)
+                {
+                    switch (attrib.Id)
+                    {
+                    case 17:
+                        eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 21:
+                        dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 22:
+                        dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 23:
+                        dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                        break;
+
+                    case 24:
+                        dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                        break;
+
+                    case 219:
+                        eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 159:
+                        dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                        break;
+
+                    case 160:
+                        dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                        break;
+                    }
+                }
+
+                if (dmgMin == 0)
+                {
+                    dmgMin = std::max(dmgMinThrow, dmgMin2);
+                }
+
+                if (dmgMax == 0)
+                {
+                    dmgMax = std::max(dmgMaxThrow, dmgMax2);
+                }
+
+                if (dmgMin != 0)
+                {
+                    damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
+                }
+
+                if (dmgMax != 0)
+                {
+                    damage.Max += std::uint16_t( ((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+                }
+
+                if (damage.Min > damage.Max)
+                {
+                    damage.Max = damage.Min + 1;
+                }
+            }
+        }
+    }
+
+    return damage.Max != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+const std::vector< d2ce::Item>& d2ce::Items::getCorpseItems() const
+{
+    return CorpseItems;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::hasGolem() const
+{
+    return HasGolem != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+const d2ce::Item& d2ce::Items::getGolemItem() const
+{
+    return GolemItem;
+}
+//---------------------------------------------------------------------------
 /*
    Converts the all gems to their perfect state
    Returns the number of gems converted.
@@ -12392,11 +12781,9 @@ bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
     std::vector<MagicalAttribute> tempAttribs;
     std::multimap<size_t, size_t> itemIndexMap;
     EnumItemLocation location_id = EnumItemLocation::STORED;
-    EnumEquippedId equipped_id = EnumEquippedId::NONE;
     for (auto& item : Inventory)
     {
         location_id = item.getLocation();
-        equipped_id = item.getEquippedId();
         if (location_id == EnumItemLocation::EQUIPPED)
         {
             if (item.getCombinedMagicalAttributes(tempAttribs))
@@ -12408,6 +12795,42 @@ bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
 
     return true;
 }
+//---------------------------------------------------------------------------
+bool d2ce::Items::getCharmBonuses(std::vector<MagicalAttribute>& attribs) const
+{
+    attribs.clear();
+
+    // Combine all charm magical properties
+    std::vector<MagicalAttribute> tempAttribs;
+    std::multimap<size_t, size_t> itemIndexMap;
+    EnumItemLocation location_id = EnumItemLocation::STORED;
+    EnumAltItemLocation altLocation_id = EnumAltItemLocation::UKNOWN;
+    for (auto& item : Inventory)
+    {
+        if (!item.isCharm())
+        {
+            continue;
+        }
+
+        location_id = item.getLocation();
+        if (location_id != EnumItemLocation::STORED)
+        {
+            continue;
+        }
+
+        altLocation_id = item.getAltPositionId();
+        if (altLocation_id == EnumAltItemLocation::INVENTORY)
+        {
+            if (item.getCombinedMagicalAttributes(tempAttribs))
+            {
+                combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
+            }
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Items::getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
 {
     if (!getItemBonuses(attribs))
@@ -12427,5 +12850,150 @@ bool d2ce::Items::getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs
     // Sort display items in proper order
     std::sort(attribs.begin(), attribs.end(), magicalAttributeSorter);
     return bFormatted;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Items::getCombinedDefenseRating(std::uint32_t charLevel) const
+{
+    // Combine all equipped defense ratings
+    EnumItemLocation location_id = EnumItemLocation::STORED;
+    std::uint64_t eDef = 0;
+    std::uint64_t defenseRating = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    for (auto& item : Inventory)
+    {
+        location_id = item.getLocation();
+        if (location_id == EnumItemLocation::EQUIPPED)
+        {
+            defenseRating += item.getDefenseRating();
+            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            {
+                for (auto& attrib : magicalAttributes)
+                {
+                    switch (attrib.Id)
+                    {
+                    case 16:
+                    case 215:
+                        eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 31:
+                    case 214:
+                        defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    defenseRating += (defenseRating * eDef) / 100;
+    return std::uint16_t(defenseRating);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel) const
+{
+    ItemDamage itemDamage;
+    damage.clear();
+
+    EnumItemLocation location_id = EnumItemLocation::STORED;
+    std::uint64_t eDmg = 0;
+    std::uint64_t eDmgMax = 0;
+    std::uint64_t dmgMin = 0;
+    std::uint64_t dmgMax = 0;
+    std::uint64_t dmgMin2 = 0;
+    std::uint64_t dmgMax2 = 0;
+    std::uint64_t dmgMinThrow = 0;
+    std::uint64_t dmgMaxThrow = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    for (auto& item : Inventory)
+    {
+        location_id = item.getLocation();
+        if (location_id == EnumItemLocation::EQUIPPED)
+        {
+            if (item.getDamage(itemDamage))
+            {
+                if (item.isEthereal())
+                {
+                    itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
+                    itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+                }
+                damage.add(itemDamage.OneHanded);
+            }
+
+            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            {
+                for (auto& attrib : magicalAttributes)
+                {
+                    switch (attrib.Id)
+                    {
+                    case 17:
+                        eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 21:
+                        dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 22:
+                        dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 23:
+                        dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                        break;
+
+                    case 24:
+                        dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                        break;
+
+                    case 219:
+                        eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                        break;
+
+                    case 159:
+                        dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                        break;
+
+                    case 160:
+                        dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                        break;
+                    }
+                }
+
+                if (dmgMin == 0)
+                {
+                    dmgMin = std::max(dmgMinThrow, dmgMin2);
+                }
+
+                if (dmgMax == 0)
+                {
+                    dmgMax = std::max(dmgMaxThrow, dmgMax2);
+                }
+
+                if (dmgMin != 0)
+                {
+                    damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
+                }
+
+                if (dmgMax != 0)
+                {
+                    damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+                }
+
+                if (damage.Min > damage.Max)
+                {
+                    damage.Max = damage.Min + 1;
+                }
+            }
+        }
+    }
+
+    return damage.Max != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+std::int64_t d2ce::Items::getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx)
+{
+    const auto& stat = itemStats[attrib.Id];
+    return d2ce::getMagicalAttributeValue(attrib, charLevel, idx, stat);
 }
 //---------------------------------------------------------------------------
