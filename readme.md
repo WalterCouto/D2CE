@@ -74,6 +74,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 - Updated:  Fix up handling of reading pre 1.09 file items<br>
 - Updated: Application Title will show "Diablo II: Resurrected Character Editor" unless an older Diablo II version file is loaded<br>
 - Updated: Added current changes to user guide<br>
+<br>
 
 - Added: Mercenary class to encapsulate Mercenary information and items<br>
 - Added: Mercenary Dialog to allow editing of Mercenary Info<br>
