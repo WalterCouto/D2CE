@@ -443,61 +443,67 @@ namespace D2EditorTests
             std::filesystem::remove_all(GetTempPathName());
         }
 
-		TEST_METHOD(TestOpen1)
+		TEST_METHOD(TestOpen01)
 		{
 			d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Merlina.d2s", character, true));
 		}
 
-        TEST_METHOD(TestOpen2)
+        TEST_METHOD(TestOpen02)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Walter.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen3)
+        TEST_METHOD(TestOpen03)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen4)
+        TEST_METHOD(TestOpen04)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen5)
+        TEST_METHOD(TestOpen05)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen6)
+        TEST_METHOD(TestOpen06)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen7)
+        TEST_METHOD(TestOpen07)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen8)
+        TEST_METHOD(TestOpen08)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
         }
 
-        TEST_METHOD(TestOpen9)
+        TEST_METHOD(TestOpen09)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
         }
 
-        TEST_METHOD(TestJsonExport1)
+        TEST_METHOD(TestOpen10)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("test.d2s", character, true));
+        }
+
+        TEST_METHOD(TestJsonExport01)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Merlina.d2s", character, true));
@@ -505,7 +511,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport2)
+        TEST_METHOD(TestJsonExport02)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("Walter.d2s", character, true));
@@ -513,7 +519,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport3)
+        TEST_METHOD(TestJsonExport03)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
@@ -521,7 +527,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport4)
+        TEST_METHOD(TestJsonExport04)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
@@ -529,7 +535,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport5)
+        TEST_METHOD(TestJsonExport05)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
@@ -537,7 +543,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar87ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport6)
+        TEST_METHOD(TestJsonExport06)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
@@ -545,7 +551,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar89ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport7)
+        TEST_METHOD(TestJsonExport07)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
@@ -553,7 +559,7 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport8)
+        TEST_METHOD(TestJsonExport08)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
@@ -561,10 +567,18 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
         }
 
-        TEST_METHOD(TestJsonExport9)
+        TEST_METHOD(TestJsonExport09)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
+            auto json = character.asJson();
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonExport10)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("test.d2s", character, true));
             auto json = character.asJson();
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
         }

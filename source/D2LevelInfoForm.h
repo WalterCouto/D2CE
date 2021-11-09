@@ -21,6 +21,7 @@
 #pragma once
 
 #include "d2ce\CharacterConstants.h"
+#include "resource.h"
 
 //---------------------------------------------------------------------------
 class CD2LevelInfoForm : public CDialogEx
@@ -32,9 +33,8 @@ public:
     virtual ~CD2LevelInfoForm();
 
     // Dialog Data
-#ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_D2LEVELINFO_DIALOG };
-#endif
+
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

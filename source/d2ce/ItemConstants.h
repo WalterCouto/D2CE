@@ -30,7 +30,7 @@ namespace d2ce
         v107, // v1.07 item
         v108, // v1.08/1.09 normal or expansion
         v110, // v1.10 normal or expansion
-        v115, // v1.15 Diable II Resurrected
+        v115, // v1.15 Diable II: Resurrected
     };
 
     enum class EnumItemType : std::uint8_t

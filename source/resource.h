@@ -23,6 +23,7 @@
 #define IDB_STATS_LEFT_BITMAP           152
 #define IDD_MERC_DIALOG                 153
 #define IDR_RESOURCE_HEADER             154
+#define IDD_ITEMS_DIALOG                155
 #define IDB_INVQLT                      157
 #define IDB_INVLEA                      158
 #define IDB_INVHLA                      159
@@ -533,30 +534,36 @@
 #define IDC_INV_CORPSE_HAND_LEFT        1114
 #define IDC_INV_HAND_LEFT               1115
 #define IDC_INV_MERC_HAND_LEFT          1116
-#define IDC_INV_ALT_HAND_LEFT           1117
-#define IDC_INV_CORPSE_ALT_HAND_LEFT    1118
-#define IDC_INV_TORSO                   1119
-#define IDC_INV_CORPSE_TORSO            1120
-#define IDC_INV_MERC_TORSO              1121
-#define IDC_INV_HAND_RIGHT              1122
-#define IDC_INV_CORPSE_HAND_RIGHT       1123
-#define IDC_INV_MERC_HAND_RIGHT         1124
-#define IDC_INV_ALT_HAND_RIGHT          1125
-#define IDC_INV_CORPSE_ALT_HAND_RIGHT   1126
-#define IDC_INV_NECK                    1127
-#define IDC_INV_CORPSE_NECK             1128
-#define IDC_INV_BELT                    1129
-#define IDC_INV_CORPSE_BELT             1130
-#define IDC_INV_BOOTS                   1131
-#define IDC_INV_CORPSE_BOOTS            1132
-#define IDC_INV_RING_RIGHT              1133
-#define IDC_INV_CORPSE_RING_RIGHT       1134
-#define IDC_INV_RING_LEFT               1135
-#define IDC_INV_CORPSE_RING_LEFT        1136
-#define IDC_INV_GOLEM                   1137
-#define IDC_INV_GRID                    1138
-#define IDC_INV_CUBE_GRID               1139
-#define IDC_INV_BELT_GRID               1140
+#define IDC_INV_TORSO                   1117
+#define IDC_INV_CORPSE_TORSO            1118
+#define IDC_INV_MERC_TORSO              1119
+#define IDC_INV_HAND_RIGHT              1120
+#define IDC_INV_CORPSE_HAND_RIGHT       1121
+#define IDC_INV_MERC_HAND_RIGHT         1122
+#define IDC_INV_NECK                    1123
+#define IDC_INV_CORPSE_NECK             1124
+#define IDC_INV_BELT                    1125
+#define IDC_INV_CORPSE_BELT             1126
+#define IDC_INV_BOOTS                   1127
+#define IDC_INV_CORPSE_BOOTS            1128
+#define IDC_INV_RING_RIGHT              1129
+#define IDC_INV_CORPSE_RING_RIGHT       1130
+#define IDC_INV_RING_LEFT               1131
+#define IDC_INV_CORPSE_RING_LEFT        1132
+#define IDC_INV_GLOVE                   1133
+#define IDC_INV_CORPSE_GLOVE            1134
+#define IDC_INV_GOLEM                   1135
+#define IDC_INV_GRID                    1136
+#define IDC_INV_STASH_GRID              1137
+#define IDC_INV_CUBE_GRID               1138
+#define IDC_INV_BELT_GRID               1139
+#define IDC_CORPSE_GROUP                1140
+#define IDC_MERC_GROUP                  1141
+#define IDC_GOLEM_GROUP                 1142
+#define IDC_INV_WEAPON_I                1143
+#define IDC_INV_WEAPON_II               1144
+#define IDC_INV_CUBE_GROUP              1145
+#define IDC_INV_BELT_GROUP              1146
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -583,6 +590,7 @@
 #define ID_ITEM_CONTEXT_LOAD            32795
 #define ID_ITEM_CONTEXT_FIX             32796
 #define ID_ITEM_CONTEXT_MAXDURABILITY   32797
+#define ID_VIEW_ITEMS                   32798
 
 // Next default values for new objects
 // 
@@ -590,7 +598,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        493
 #define _APS_NEXT_COMMAND_VALUE         32798
-#define _APS_NEXT_CONTROL_VALUE         1141
+#define _APS_NEXT_CONTROL_VALUE         1147
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

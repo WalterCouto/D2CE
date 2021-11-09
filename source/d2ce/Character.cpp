@@ -222,7 +222,10 @@ void d2ce::Character::calculateChecksum()
 
     if ((checksum_location == 0) || (Bs.Version < EnumCharVersion::v109))
     {
-        // checksum not supported
+        // checksum not supported, calculate the file size only for possible later use
+        std::fseek(charfile, 0, SEEK_END);
+        FileSize = std::ftell(charfile);
+        std::rewind(charfile);
         return;
     }
 
@@ -932,12 +935,17 @@ std::error_code d2ce::Character::getLastError() const
     return error_code;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getFileSize() const
+{
+    return FileSize;
+}
+//---------------------------------------------------------------------------
 d2ce::Mercenary& d2ce::Character::getMercenaryInfo()
 {
     return Merc;
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Character::getMercItems() const
+const std::list<d2ce::Item>& d2ce::Character::getMercItems() const
 {
     return items.getMercItems();
 }
@@ -962,7 +970,7 @@ bool d2ce::Character::getCombinedMercDamage(BaseDamage& damage) const
     return items.getCombinedMercDamage(damage, Merc.getLevel());
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Character::getCorpseItems() const
+const std::list<d2ce::Item>& d2ce::Character::getCorpseItems() const
 {
     return items.getCorpseItems();
 }
@@ -1208,6 +1216,11 @@ d2ce::EnumAct d2ce::Character::getStartingAct() const
     return Bs.StartingAct;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getWeaponSet() const
+{
+    return WeaponSet;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Character::isExpansionCharacter() const
 {
     return Bs.isExpansionCharacter();
@@ -1440,7 +1453,7 @@ void d2ce::Character::clearSkillChoices()
 }
 //---------------------------------------------------------------------------
 /*
-   Returns the number of items in character's inventory.
+   Returns the number of items belonging to the character
    Value returned excludes socketed gems/jewels/runes.
 */
 size_t d2ce::Character::getNumberOfItems() const
@@ -1448,9 +1461,85 @@ size_t d2ce::Character::getNumberOfItems() const
     return items.getNumberOfItems();
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Character::getInventoryItems() const
+/*
+   Returns the number of items equipped on the character
+   Value returned excludes socketed gems/jewels/runes.
+*/
+size_t d2ce::Character::getNumberOfEquippedItems() const
 {
-    return items.getInventoryItems();
+    return items.getNumberOfEquippedItems();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getEquippedItems() const
+{
+    return items.getEquippedItems();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getHasBeltEquipped() const
+{
+    return items.getHasBeltEquipped();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::getMaxNumberOfItemsInBelt() const
+{
+    return items.getMaxNumberOfItemsInBelt();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::getNumberOfItemsInBelt() const
+{
+    return items.getNumberOfItemsInBelt();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItemsInBelt() const
+{
+    return items.getItemsInBelt();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::getNumberOfItemsInInventory() const
+{
+    return items.getNumberOfItemsInInventory();
+}
+//---------------------------------------------------------------------------
+/*
+   Returns the number of items in character's inventory
+   Value returned excludes socketed gems/jewels/runes.
+*/
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItemsInInventory() const
+{
+    return items.getItemsInInventory();
+}
+//---------------------------------------------------------------------------
+/*
+   Returns the number of items in character's private stash
+   Value returned excludes socketed gems/jewels/runes.
+*/
+size_t d2ce::Character::getNumberOfItemsInStash() const
+{
+    return items.getNumberOfItemsInStash();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItemsInStash() const
+{
+    return items.getItemsInStash();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getHasHoradricCube() const
+{
+    return items.getHasHoradricCube();
+}
+//---------------------------------------------------------------------------
+/*
+   Returns the number of items in character's Horadric Cube
+   Value returned excludes socketed gems/jewels/runes.
+*/
+size_t d2ce::Character::getNumberOfItemsInHoradricCube() const
+{
+    return items.getNumberOfItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItemsInHoradricCube() const
+{
+    return items.getItemsInHoradricCube();
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfArmor() const

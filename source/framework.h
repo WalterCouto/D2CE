@@ -38,6 +38,7 @@ using std::min;
 #include <string>
 #include <memory>
 #include <vector>
+#include <list>
 #include <set>
 #include <map>
 #include <bitset>

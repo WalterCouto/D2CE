@@ -95,7 +95,7 @@ namespace d2ce
 
         // Items
         size_t getNumberOfItems() const;
-        const std::vector<Item>& getItems() const;
+        const std::list<Item>& getItems() const;
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;

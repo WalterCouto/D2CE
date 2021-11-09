@@ -35,9 +35,7 @@ public:
     virtual ~CD2WaypointsForm();
 
     // Dialog Data
-#ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_WAYPOINTS_DIALOG };
-#endif
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

@@ -22,6 +22,7 @@
 
 #include "d2ce\Character.h"
 #include "MainFormConstants.h"
+#include "resource.h"
 #include <memory>
 #include <set>
 
@@ -85,9 +86,7 @@ public:
     CD2MainForm(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
-#ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_D2EDITOR_DIALOG };
-#endif
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
@@ -220,6 +219,8 @@ protected:
     afx_msg void OnUpdateFileExportAsJson(CCmdUI* pCmdUI);
     afx_msg void OnViewMercenary();
     afx_msg void OnUpdateViewMercenary(CCmdUI* pCmdUI);
+    afx_msg void OnViewItems();
+    afx_msg void OnUpdateViewItems(CCmdUI* pCmdUI);
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -311,6 +312,7 @@ private:
     void SetupBasicStats();
     void StatsChanged();
     bool CheckIsHardcoreDead(bool& bStatChanged);
+    bool CheckFileSize();
 
     void CheckStatsLeft();
     std::string ToStdString(const CWnd* Sender) const;
@@ -333,6 +335,8 @@ public:
     d2ce::EnumDifficulty getDifficultyLastPlayed() const;
     std::uint32_t getCharacterLevel() const;
 
+    std::uint32_t getWeaponSet() const;
+
     bool isExpansionCharacter() const;
 
     uint32_t getSkillPointsEarned() const;
@@ -340,6 +344,14 @@ public:
 
     // Mercenary
     d2ce::Mercenary& getMercenaryInfo();
+    const std::list<d2ce::Item>& getMercItems() const;
+
+    // Corpse Items
+    const std::list<d2ce::Item>& getCorpseItems() const;
+
+    // Golem Info
+    bool hasGolem() const;
+    const d2ce::Item& getGolemItem() const;
 
     // Quests
     const d2ce::ActsInfo& getQuests();
@@ -359,9 +371,27 @@ public:
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
     size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
-    bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap);
+    bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
     bool repairItem(d2ce::Item& item);
     bool setItemMaxQuantity(d2ce::Item& item);
     bool setItemMaxDurability(d2ce::Item& item);
+
+    size_t getNumberOfEquippedItems() const;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;
+
+    bool getHasBeltEquipped() const;
+    size_t getMaxNumberOfItemsInBelt() const;
+    size_t getNumberOfItemsInBelt() const;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInBelt() const;
+
+    size_t getNumberOfItemsInInventory() const;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInInventory() const;
+
+    size_t getNumberOfItemsInStash() const;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInStash() const;
+
+    bool getHasHoradricCube() const;
+    size_t getNumberOfItemsInHoradricCube() const;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInHoradricCube() const;
 };
 //---------------------------------------------------------------------------

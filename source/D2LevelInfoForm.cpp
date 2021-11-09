@@ -80,7 +80,7 @@ IMPLEMENT_DYNAMIC(CD2LevelInfoForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2LevelInfoForm::CD2LevelInfoForm(CWnd* pParent /*=nullptr*/)
-    : CDialogEx(IDD_D2LEVELINFO_DIALOG, pParent)
+    : CDialogEx(CD2LevelInfoForm::IDD, pParent)
 {
     Modal = FALSE;
     Version = d2ce::APP_CHAR_VERSION;
@@ -194,7 +194,7 @@ BOOL CD2LevelInfoForm::Show(CWnd* pParent)
     if (!::IsWindow(GetSafeHwnd()))
     {
         Modal = FALSE;
-        BOOL bCreated = __super::Create(IDD_D2LEVELINFO_DIALOG, pParent);
+        BOOL bCreated = __super::Create(CD2LevelInfoForm::IDD, pParent);
         if (!bCreated)
         {
             return FALSE;

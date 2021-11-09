@@ -36,7 +36,7 @@ IMPLEMENT_DYNAMIC(CD2SkillTreeForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
-    : CDialogEx(IDD_SKILLS_DIALOG, (CWnd*)&form), MainForm(form)
+    : CDialogEx(CD2SkillTreeForm::IDD, (CWnd*)&form), MainForm(form)
 {
     Class = MainForm.getCharacterClass();
     SkillsUsed = MainForm.getSkillPointsUsed();

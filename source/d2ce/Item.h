@@ -23,7 +23,7 @@
 #include "CharacterConstants.h"
 #include "ItemConstants.h"
 #include "DataTypes.h"
-#include "sstream"
+#include <sstream>
 
 namespace d2ce
 {
@@ -134,6 +134,7 @@ namespace d2ce
         bool getRequirements(ItemRequirements& req) const;
         bool getCategories(std::vector<std::string>& categories) const;
         bool getDimensions(ItemDimensions& dimensions) const;
+        std::uint32_t getTotalItemSlots() const; // non-zero for belts and Horadric Cube only
         std::string getInvFile() const;
 
         // Extended information
@@ -158,6 +159,8 @@ namespace d2ce
         bool isStackable() const;
         bool isRune() const;
         bool isCharm() const;
+        bool isBelt() const;
+        bool isHoradricCube() const;
         std::uint8_t totalNumberOfSockets() const;
         std::uint16_t getQuantity() const;
         bool setQuantity(std::uint16_t quantity);
@@ -182,7 +185,7 @@ namespace d2ce
         bool getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
 
     public:
-        std::vector<Item> SocketedItems; // socketed items
+        std::list<Item> SocketedItems; // socketed items
 
     protected:
         std::vector<MagicalAttribute> socketedMagicalAttributes;
@@ -198,24 +201,33 @@ namespace d2ce
 
         std::uint32_t items_location = 0,
             corpse_location = 0,
+            corpse_item_location = 0,
             merc_location = 0,   // Expansion character only
             golem_location = 0;  // Expansion character only
 
         std::uint16_t NumOfItems = 0;      // # of items (according to file) in inventory excluding 
                                            // gems in socketed items
-        std::vector<Item> Inventory;       // items in inventory
+        std::list<Item> Inventory;       // items in inventory
 
         std::vector<std::reference_wrapper<Item>> GPSs;       // inventory of all Gems, Potions or Skulls
         std::vector<std::reference_wrapper<Item>> Stackables; // inventory of all Stackable (includes some weapons)
         std::vector<std::reference_wrapper<Item>> Armor;      // inventory of all Armor
         std::vector<std::reference_wrapper<Item>> Weapons;    // inventory of all Weapons (includes stackable weapons)
 
-        std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non zero if you are currently dead
-        std::vector<Item> CorpseItems;      // items on our Corpse
+        mutable std::map<d2ce::EnumItemLocation, std::vector<std::reference_wrapper<Item>>> ItemLocationReference;       // Iventory of items equipped or stored in the belt
+        mutable std::map<d2ce::EnumAltItemLocation, std::vector<std::reference_wrapper<Item>>> ItemAltLocationReference; // Iventory of items not equipped or stored in the belt
+
+        bool HasHoradricCube = false;
+        bool HasBeltEquipped = false;
+        size_t EquippedBeltSlots = 0;
+
+        CorpseHeader CorpseInfo;
+        std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non-zero if you are currently dead
+        std::list<Item> CorpseItems;      // items on our Corpse
 
         // Expansion Character data
         std::uint16_t NumOfMercItems = 0;  // # of Mercenary items (according to file)
-        std::vector<Item> MercItems;       // items mercenary is currently wearing.
+        std::list<Item> MercItems;         // items mercenary is currently wearing.
 
         std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
         Item GolemItem;                    // Item for the Golem
@@ -226,8 +238,8 @@ namespace d2ce
     private:
         void findItems();
 
-        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::vector<Item>& Items);
-        bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::vector<Item>& items);
+        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& Items);
+        bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<Item>& items);
 
         bool readCorpseItems(std::FILE* charfile);
         void readMercItems(std::FILE* charfile);
@@ -264,10 +276,35 @@ namespace d2ce
         bool anyUpgradablePotions() const;
         bool anyUpgradableRejuvenations() const;
 
-        // returns the number of items in character's inventory.
+        // returns the number of items belonging to the character.
         // Value returned excludes socketed gems/jewels/runes.
         size_t getNumberOfItems() const;
-        const std::vector<d2ce::Item>& getInventoryItems() const;
+
+        // returns the number of items equipped on the character.
+        // Value returned excludes socketed gems/jewels/runes.
+        size_t getNumberOfEquippedItems() const;
+        const std::vector<std::reference_wrapper<Item>>& getEquippedItems() const;
+
+        bool getHasBeltEquipped() const;
+        size_t getMaxNumberOfItemsInBelt() const;
+        size_t getNumberOfItemsInBelt() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInBelt() const;
+
+        // returns the number of items in character's inventory.
+        // Value returned excludes socketed gems/jewels/runes.
+        size_t getNumberOfItemsInInventory() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInInventory() const;
+
+        // returns the number of items in character's private stash.
+        // Value returned excludes socketed gems/jewels/runes.
+        size_t getNumberOfItemsInStash() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInStash() const;
+
+        // returns the number of items in character's Horadric Cube
+        // Value returned excludes socketed gems/jewels/runes.
+        bool getHasHoradricCube() const;
+        size_t getNumberOfItemsInHoradricCube() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const;
 
         size_t getByteSize() const; // number of bytes to store all item sections
 
@@ -298,14 +335,15 @@ namespace d2ce
         bool getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel) const;
 
         // Mercenary
-        const std::vector<Item>& getMercItems() const;
+        const std::list<Item>& getMercItems() const;
         bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         std::uint16_t getCombinedMercDefenseRating(std::uint32_t charLevel) const;
         bool getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLevel) const;
 
         // Corpse
-        const std::vector<Item>& getCorpseItems() const;
+        bool hasCorpse() const;
+        const std::list<Item>& getCorpseItems() const;
 
         // Golem Info
         bool hasGolem() const;

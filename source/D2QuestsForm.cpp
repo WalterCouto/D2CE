@@ -36,7 +36,7 @@ IMPLEMENT_DYNAMIC(CD2QuestsForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
-    : CDialogEx(IDD_QUESTS_DIALOG, (CWnd*)&form), MainForm(form), Acts(form.getQuests()), OrigActs(form.getQuests())
+    : CDialogEx(CD2QuestsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests()), OrigActs(form.getQuests())
 {
     // Initialize Quests
     isExpansionCharacter = MainForm.isExpansionCharacter();
@@ -100,12 +100,9 @@ BOOL CD2QuestsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
     static CString strTipText;
     UINT_PTR nID = pNMHDR->idFrom;
 
-    CRect rect;
     if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
         pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
     {
-        ::GetWindowRect((HWND)nID, &rect);
-        ScreenToClient(&rect);
         nID = ((UINT_PTR)(WORD)::GetDlgCtrlID((HWND)nID));
     }
 

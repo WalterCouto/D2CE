@@ -23,6 +23,14 @@
 #include "D2MainForm.h"
 
 //---------------------------------------------------------------------------
+class CD2ItemToolTipCtrlCallback
+{
+public:
+    virtual ~CD2ItemToolTipCtrlCallback() = default;
+    virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const = 0;
+};
+
+//---------------------------------------------------------------------------
 class CD2ItemToolTipCtrl : public CMFCToolTipCtrl
 {
     DECLARE_DYNCREATE(CD2ItemToolTipCtrl)
@@ -30,6 +38,8 @@ class CD2ItemToolTipCtrl : public CMFCToolTipCtrl
 // Construction
 public:
 	CD2ItemToolTipCtrl(d2ce::Character& charInfo, CMFCToolTipInfo * pParams = NULL);
+
+    void SetCallback(const CD2ItemToolTipCtrlCallback* callback = nullptr);
 
 // Overrides
 public:
@@ -42,13 +52,14 @@ public:
 
 protected:
 	afx_msg void OnShow(NMHDR* pNMHDR, LRESULT* pResult);
-
+    afx_msg void OnPop(NMHDR* pNMHDR, LRESULT* pResult);
+    LRESULT OnRelayEvent(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 protected:
     d2ce::Character& CharInfo;
     bool IsMerc = false;
-    int	CurrID = 0;
     const d2ce::Item* CurrItem = nullptr;
+    const CD2ItemToolTipCtrlCallback* Callback = nullptr;
 };
 //---------------------------------------------------------------------------

@@ -18,6 +18,12 @@
 
 Revision History
 ================
+Version 2.05 (Nov 14, 2021)
+   - Updated: Fix up handling of reading files with a corpse
+
+   - Added: Items Dialog to allow viewing of all items in inventory
+   - Added: Added unit tests to cover file with corpse data
+
 Version 2.04 (Nov 5, 2021)
    - Updated: Fix up handling of reading pre 1.09 file items
    - Updated: Application Title will show "Diablo II: Resurrected Character Editor"

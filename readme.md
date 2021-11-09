@@ -70,8 +70,15 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.05 (Nov 13, 2021)**<br>
+- Updated: Updated: Fix up handling of reading files with a corpse<br>
+<br>
+
+- Added: Items Dialog to allow viewing of all items in inventory<br>
+- Added: Added unit tests to cover file with corpse data<br>
+
 **Version 2.04 (Nov 5, 2021)**<br>
-- Updated:  Fix up handling of reading pre 1.09 file items<br>
+- Updated: Fix up handling of reading pre 1.09 file items<br>
 - Updated: Application Title will show "Diablo II: Resurrected Character Editor" unless an older Diablo II version file is loaded<br>
 - Updated: Added current changes to user guide<br>
 <br>

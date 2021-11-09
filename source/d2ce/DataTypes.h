@@ -650,11 +650,15 @@ namespace d2ce
     {
         std::uint16_t Width = 0;
         std::uint16_t Height = 0;
+        std::uint16_t InvWidth = 0;  // non-zero for belts and cube
+        std::uint16_t InvHeight = 0; // non-zero for belts and cube
 
         void clear()
         {
             Width = 0;
             Height = 0;
+            InvWidth = 0;
+            InvHeight = 0;
         }
     };
 
@@ -765,6 +769,45 @@ namespace d2ce
                 ss << ",\n" << parentIndent << jsonIndentStr << "\"maxmisdam\": " << std::dec << Missile.Max;
             }
             ss << "\n" << parentIndent << "}";
+        }
+    };
+
+    struct CorpseHeader
+    {
+        std::uint16_t IsDead = 0;     // non-0 if you are currently dead
+        std::uint32_t Unk_b0_4 = 0;   // unknown
+        std::uint32_t X = 0;          // X Locaton of corpse
+        std::uint32_t Y = 0;          // Y Locaton of corpse
+
+        void clear()
+        {
+            IsDead = 0;
+            Unk_b0_4 = 0;
+            X = 0;
+            Y = 0;
+        }
+
+        CorpseHeader& operator=(const CorpseHeader& other)
+        {
+            IsDead = other.IsDead;
+            Unk_b0_4 = other.Unk_b0_4;
+            X = other.X;
+            Y = other.Y;
+            return *this;
+        }
+
+        void swap(CorpseHeader& other) noexcept
+        {
+            IsDead = std::exchange(other.IsDead, std::uint16_t(0));
+            Unk_b0_4 = std::exchange(other.Unk_b0_4, std::uint32_t(0));
+            X = std::exchange(other.X, std::uint32_t(0));
+            Y = std::exchange(other.Y, std::uint32_t(0));
+        }
+
+        CorpseHeader& operator=(CorpseHeader&& other) noexcept
+        {
+            swap(other);
+            return *this;
         }
     };
 }

@@ -28,7 +28,7 @@
 #include "CharacterStats.h"
 #include "Mercenary.h"
 #include "Item.h"
-#include "sstream"
+#include <sstream>
 
 namespace d2ce
 {
@@ -131,10 +131,11 @@ namespace d2ce
 
         bool is_open() const;
         std::error_code getLastError() const;
+        std::uint32_t getFileSize() const;
 
         // Mercenary Info
         Mercenary& getMercenaryInfo();
-        const std::vector<d2ce::Item>& getMercItems() const;
+        const std::list<d2ce::Item>& getMercItems() const;
 
         bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
@@ -142,7 +143,7 @@ namespace d2ce
         bool getCombinedMercDamage(BaseDamage& damage) const;
 
         // Corpse Items
-        const std::vector<d2ce::Item>& getCorpseItems() const;
+        const std::list<d2ce::Item>& getCorpseItems() const;
 
         // Golem Info
         bool hasGolem() const;
@@ -165,6 +166,7 @@ namespace d2ce
         std::string getClassName() const;
         EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
+        std::uint32_t getWeaponSet() const;
 
         bool isExpansionCharacter() const;
         void setIsExpansionCharacter(bool flag);
@@ -224,7 +226,24 @@ namespace d2ce
 
         // Items
         size_t getNumberOfItems() const;
-        const std::vector<d2ce::Item>& getInventoryItems() const;
+
+        size_t getNumberOfEquippedItems() const;
+        const std::vector<std::reference_wrapper<Item>>& getEquippedItems() const;
+
+        bool getHasBeltEquipped() const;
+        size_t getMaxNumberOfItemsInBelt() const;
+        size_t getNumberOfItemsInBelt() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInBelt() const;
+
+        size_t getNumberOfItemsInInventory() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInInventory() const;
+
+        size_t getNumberOfItemsInStash() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInStash() const;
+
+        bool getHasHoradricCube() const;
+        size_t getNumberOfItemsInHoradricCube() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const;
 
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;

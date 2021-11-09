@@ -28,6 +28,7 @@
 #include "D2QuestsForm.h"
 #include "D2GemsForm.h"
 #include "D2MercenaryForm.h"
+#include "D2ItemsForm.h"
 #include "d2ce\ExperienceConstants.h"
 #include "d2ce\Constants.h"
 #include "afxdialogex.h"
@@ -199,12 +200,10 @@ namespace
 class CAboutDlg : public CDialogEx
 {
 public:
-    CAboutDlg();
+    CAboutDlg(d2ce::EnumCharVersion version);
 
     // Dialog Data
-#ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_ABOUTBOX };
-#endif
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -254,12 +253,16 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 protected:
-    CString ProductNameAndVersion = _T("Diablo II Character Editor, Version 2.0.1");
+    CString ProductName = _T("Diablo II: Resurrected Character Editor");
+    CString ProductNameAndVersion = _T("Diablo II: Resurrected Character Editor, Version 2.0.1");
     CString LegalCopyright = _T("Copyright (c) 2021 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
+    d2ce::EnumCharVersion FileVersion = d2ce::APP_CHAR_VERSION;
+public:
+    virtual BOOL OnInitDialog();
 };
 
 //---------------------------------------------------------------------------
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+CAboutDlg::CAboutDlg(d2ce::EnumCharVersion version) : CDialogEx(CAboutDlg::IDD), FileVersion(version)
 {
     TCHAR appName[MAX_PATH];
     ::GetModuleFileName(NULL, appName, MAX_PATH);
@@ -299,9 +302,14 @@ CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
             languageString += _T("\\");
         }
 
-        CString sProductName = GetModuleVersionInfoString(_T("ProductName"), pbData, languageString);;
+        UINT uID = FileVersion <= d2ce::EnumCharVersion::v110 ? IDS_OLD_APP_TITLE : AFX_IDS_APP_TITLE;
+        if (ProductName.LoadString(uID) == 0)
+        {
+            ProductName = GetModuleVersionInfoString(_T("ProductName"), pbData, languageString);
+        }
+
         CString sProductVersion = GetModuleVersionInfoString(_T("ProductVersion"), pbData, languageString);
-        ProductNameAndVersion.Format(_T("%s, Version %s"), (LPCTSTR)sProductName, (LPCTSTR)sProductVersion);
+        ProductNameAndVersion.Format(_T("%s, Version %s"), (LPCTSTR)ProductName, (LPCTSTR)sProductVersion);
         LegalCopyright = GetModuleVersionInfoString(_T("LegalCopyright"), pbData, languageString);
     }
 }
@@ -311,6 +319,21 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
     __super::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_ABOUT_VERSION, ProductNameAndVersion);
     DDX_Text(pDX, IDC_APP_COPYRIGHT, LegalCopyright);
+}
+//---------------------------------------------------------------------------
+BOOL CAboutDlg::OnInitDialog()
+{
+    __super::OnInitDialog();
+
+    if (!ProductName.IsEmpty())
+    {
+        CString appTitle("About ");
+        appTitle += ProductName;
+        SetWindowText(appTitle);
+    }
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+                  // EXCEPTION: OCX Property Pages should return FALSE
 }
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
@@ -527,11 +550,11 @@ CD2MainForm::CD2MainForm(WORD fontSize, CWnd* pParent /*=nullptr*/)
 
     BackupChar = AfxGetApp()->GetProfileInt(SettingsSection, BackupCharacterOption, 1) != 0 ? true : false;
 
-    UINT nIDTemplate = IDD_D2EDITOR_DIALOG;
+    UINT nIDTemplate = CD2MainForm::IDD;
     m_pParentWnd = pParent;
     m_nIDHelp = nIDTemplate;
 
-    LPCTSTR lpszTemplateName = MAKEINTRESOURCE(IDD_D2EDITOR_DIALOG);
+    LPCTSTR lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
     HINSTANCE hInst = AfxFindResourceHandle(lpszTemplateName, RT_DIALOG);
     HRSRC hResource = ::FindResource(hInst, lpszTemplateName, RT_DIALOG);
     if (hResource == NULL)
@@ -657,7 +680,7 @@ CD2MainForm::CD2MainForm(WORD fontSize, CWnd* pParent /*=nullptr*/)
 }
 
 CD2MainForm::CD2MainForm(CWnd* pParent /*=nullptr*/)
-    : CDialogEx(IDD_D2EDITOR_DIALOG, pParent)
+    : CDialogEx(CD2MainForm::IDD, pParent)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -864,7 +887,9 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
     ON_COMMAND(ID_VIEW_MERCENARY, &CD2MainForm::OnViewMercenary)
     ON_UPDATE_COMMAND_UI(ID_VIEW_MERCENARY, &CD2MainForm::OnUpdateViewMercenary)
-    END_MESSAGE_MAP()
+    ON_COMMAND(ID_VIEW_ITEMS, &CD2MainForm::OnViewItems)
+    ON_UPDATE_COMMAND_UI(ID_VIEW_ITEMS, &CD2MainForm::OnUpdateViewItems)
+END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
 // CD2MainForm message handlers
@@ -990,7 +1015,7 @@ void CD2MainForm::OnSysCommand(UINT nID, LPARAM lParam)
 {
     if ((nID & 0xFFF0) == IDM_ABOUTBOX)
     {
-        CAboutDlg dlgAbout;
+        CAboutDlg dlgAbout(CharInfo.getVersion());
         dlgAbout.DoModal();
         return;
     }
@@ -1660,7 +1685,7 @@ void CD2MainForm::OnOptionsCheckChar()
     std::uint32_t earnedPoints = CharInfo.getSkillPointsEarned();
     if (totalPoints < earnedPoints)
     {
-        bFoundIssue = true; 
+        bFoundIssue = true;
         if (AfxMessageBox(_T("Insufficient \"Total Skill Points\" based on current level and quests completed.\n")
             _T("Would you like the amount changed to match your character's level and quests completed?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
@@ -1710,6 +1735,25 @@ void CD2MainForm::OnOptionsCheckChar()
         }
     }
 
+    // Check Mercenary level
+    if (CharInfo.getMercenaryInfo().isHired())
+    {
+        std::uint32_t mercLevel = CharInfo.getMercenaryInfo().getLevel();
+        if (mercLevel > cs.Level)
+        {
+            bFoundIssue = true;
+            if (AfxMessageBox(_T("Your character's level is too low for the value of your Mercenary's level.\n")
+                _T("Would you like the amount changed to match your Mercenary's level?"),
+                MB_ICONQUESTION | MB_YESNO) == IDYES)
+            {
+                cs.Level = mercLevel;
+                CharInfo.updateCharacterStats(cs);
+                UpdateCharInfo();
+                statChanged = true;
+            }
+        }
+    }
+
     // Check Hardcore character
     bool deadStatChanged = false;
     if (CheckIsHardcoreDead(deadStatChanged))
@@ -1719,6 +1763,12 @@ void CD2MainForm::OnOptionsCheckChar()
         {
             statChanged = true;
         }
+    }
+
+    // Check file size
+    if (CheckFileSize())
+    {
+        bFoundIssue = true;
     }
 
     if (bFoundIssue)
@@ -1763,6 +1813,25 @@ bool CD2MainForm::CheckIsHardcoreDead(bool& bStatChanged)
             bStatChanged = true;
             StatusChanged = true;
         }
+    }
+
+    return bFoundIssue;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::CheckFileSize()
+{
+    bool bFoundIssue = false;
+    if (!CharInfo.is_open())
+    {
+        return bFoundIssue;
+    }
+
+    if (CharInfo.getFileSize() > d2ce::MAX_FILE_SIZE)
+    {
+        bFoundIssue = true;
+        AfxMessageBox(_T("Your character's save file size is too large!\n")
+            _T("You will need to remove/modify your characater's items to reduce the size of the file before using it in the game."),
+            MB_OK | MB_ICONWARNING);
     }
 
     return bFoundIssue;
@@ -2477,6 +2546,8 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         }
     }
 
+    CheckFileSize();
+
     curPathName = filename;
     EnableCharInfoBox(TRUE);
 
@@ -2566,6 +2637,8 @@ void CD2MainForm::OnFileSave()
 
         AfxMessageBox(errorMsg, MB_OK | MB_ICONWARNING);
     }
+
+    CheckFileSize();
 
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
@@ -3914,7 +3987,18 @@ void CD2MainForm::OnViewMercenary()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnUpdateViewMercenary(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable((CharInfo.is_open() && CharInfo.getVersion() >= d2ce::EnumCharVersion::v109)? TRUE : FALSE);
+    pCmdUI->Enable((CharInfo.is_open() && CharInfo.getVersion() >= d2ce::EnumCharVersion::v109) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnViewItems()
+{
+    CD2ItemsForm dlg(*this);
+    dlg.DoModal();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnUpdateViewItems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
 d2ce::Character& CD2MainForm::getCharacterInfo()
@@ -4018,6 +4102,11 @@ std::uint32_t CD2MainForm::getCharacterLevel() const
     return CharInfo.getLevel();
 }
 //---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getWeaponSet() const
+{
+    return CharInfo.getWeaponSet();
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::isExpansionCharacter() const
 {
     return CharInfo.isExpansionCharacter();
@@ -4038,6 +4127,26 @@ std::uint32_t CD2MainForm::getStatPointsEarned() const
 d2ce::Mercenary& CD2MainForm::getMercenaryInfo()
 {
     return CharInfo.getMercenaryInfo();
+}
+//---------------------------------------------------------------------------
+const std::list<d2ce::Item>& CD2MainForm::getMercItems() const
+{
+    return CharInfo.getMercItems();
+}
+//---------------------------------------------------------------------------
+const std::list<d2ce::Item>& CD2MainForm::getCorpseItems() const
+{
+    return CharInfo.getCorpseItems();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::hasGolem() const
+{
+    return CharInfo.hasGolem();
+}
+//---------------------------------------------------------------------------
+const d2ce::Item& CD2MainForm::getGolemItem() const
+{
+    return CharInfo.getGolemItem();
 }
 //---------------------------------------------------------------------------
 const d2ce::ActsInfo& CD2MainForm::getQuests()
@@ -4122,7 +4231,7 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
     return numConverted;
 }
 //---------------------------------------------------------------------------
-bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap)
+bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
     CStringA invFile(item.getInvFile().c_str());
     if (invFile.IsEmpty())
@@ -4175,7 +4284,7 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap)
     std::regex regexDefine(ss.str(), std::regex::ECMAScript | std::regex::icase);
     std::cmatch m;
     auto pStr = resourceHeader.c_str();
-    if(std::regex_search(pStr, m, regexDefine))
+    if (std::regex_search(pStr, m, regexDefine))
     {
         bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
         return bitmap.GetSafeHandle() == NULL ? false : true;
@@ -4187,7 +4296,7 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap)
 bool CD2MainForm::repairItem(d2ce::Item& item)
 {
     bool ret = item.fixDurability();
-    if(ret)
+    if (ret)
     {
         ItemsChanged = true;
         StatsChanged();
@@ -4220,3 +4329,69 @@ bool CD2MainForm::setItemMaxDurability(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+size_t CD2MainForm::getNumberOfEquippedItems() const
+{
+    return CharInfo.getNumberOfEquippedItems();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getEquippedItems() const
+{
+    return CharInfo.getEquippedItems();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getHasBeltEquipped() const
+{
+    return CharInfo.getHasBeltEquipped();
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::getMaxNumberOfItemsInBelt() const
+{
+    return CharInfo.getMaxNumberOfItemsInBelt();
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::getNumberOfItemsInBelt() const
+{
+    return CharInfo.getNumberOfItemsInBelt();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInBelt() const
+{
+    return CharInfo.getItemsInBelt();
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::getNumberOfItemsInInventory() const
+{
+    return CharInfo.getNumberOfItemsInInventory();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInInventory() const
+{
+    return CharInfo.getItemsInInventory();
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::getNumberOfItemsInStash() const
+{
+    return CharInfo.getNumberOfItemsInStash();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInStash() const
+{
+    return CharInfo.getItemsInStash();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getHasHoradricCube() const
+{
+    return CharInfo.getHasHoradricCube();
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::getNumberOfItemsInHoradricCube() const
+{
+    return CharInfo.getNumberOfItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInHoradricCube() const
+{
+    return CharInfo.getItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+

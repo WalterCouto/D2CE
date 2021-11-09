@@ -1162,7 +1162,7 @@ size_t d2ce::Mercenary::getNumberOfItems() const
     return CharInfo.getMercItems().size();
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Mercenary::getItems() const
+const std::list<d2ce::Item>& d2ce::Mercenary::getItems() const
 {
     return CharInfo.getMercItems();
 }

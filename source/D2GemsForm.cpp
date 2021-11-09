@@ -610,7 +610,7 @@ IMPLEMENT_DYNAMIC(CD2GemsForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2GemsForm::CD2GemsForm(CD2MainForm& form)
-    : CDialogEx(IDD_GPS_CONVERTER_DIALOG, (CWnd*)&form), MainForm(form)
+    : CDialogEx(CD2GemsForm::IDD, (CWnd*)&form), MainForm(form)
 {
 
 }

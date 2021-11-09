@@ -29,6 +29,8 @@ namespace d2ce
 {
     const static std::string jsonIndentStr("    ");
 
+    constexpr std::uint32_t MAX_FILE_SIZE = 8192;
+
     constexpr std::uint32_t MIN_START_POS = 48;
 
     constexpr std::uint32_t HEADER_LENGTH = 4;
@@ -37,7 +39,7 @@ namespace d2ce
     // character version
     enum class EnumCharVersion : std::uint32_t { v100 = 0x47, v107 = 0x57, v108 = 0x59, v109 = 0x5C, v110 = 0x60, v115 = 0x61 };
 
-    constexpr EnumCharVersion APP_CHAR_VERSION = EnumCharVersion::v110; // default version used by application
+    constexpr EnumCharVersion APP_CHAR_VERSION = EnumCharVersion::v115; // default version used by application
 
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };

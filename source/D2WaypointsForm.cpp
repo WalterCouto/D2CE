@@ -34,7 +34,7 @@ IMPLEMENT_DYNAMIC(CD2WaypointsForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
-    : CDialogEx(IDD_WAYPOINTS_DIALOG, (CWnd*)&form), MainForm(form), Acts(form.getQuests())
+    : CDialogEx(CD2WaypointsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests())
 {
     // Initialize Waypoints
     ItemIndex = 0;

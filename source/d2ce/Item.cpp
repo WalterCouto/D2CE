@@ -657,6 +657,11 @@ namespace d2ce
             return std::find(categories.begin(), categories.end(), "Charm") != categories.end() ? true : false;
         }
 
+        bool isBelt() const
+        {
+            return std::find(categories.begin(), categories.end(), "Belt") != categories.end() ? true : false;
+        }
+
         EnumItemType getEnumItemType() const
         {
             if (isWeapon())
@@ -1608,11 +1613,11 @@ namespace d2ce
             {"mbt", {"Chain Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 2}, false, "invmbt", 8, {"Boots", "Any Armor"}}},
             {"tbt", {"Light Plate Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0}, {2, 2}, false, "invtbt", 8, {"Boots", "Any Armor"}}},
             {"hbt", {"Greaves", {{ 0, 0 }, false, false, { 0, 0 }}, {70, 0}, {2, 2}, false, "invhbt", 8, {"Boots", "Any Armor"}}},
-            {"lbl", {"Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 1}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
-            {"vbl", {"Light Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 1}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
-            {"mbl", {"Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 1}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
-            {"tbl", {"Heavy Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {45, 0}, {2, 1}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
-            {"hbl", {"Plated Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 1}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
+            {"lbl", {"Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 1, 4, 2}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
+            {"vbl", {"Light Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 1, 4, 2}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
+            {"mbl", {"Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
+            {"tbl", {"Heavy Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {45, 0}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
+            {"hbl", {"Plated Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
             {"bhm", {"Bone Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
             {"xap", {"War Hat", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 22}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}}},
             {"xkp", {"Sallet", {{ 0, 0 }, false, false, { 0, 0 }}, {43, 0, 25}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}}},
@@ -1646,11 +1651,11 @@ namespace d2ce
             {"xmb", {"Mesh Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invmbt", 8, {"Boots", "Any Armor"}}},
             {"xtb", {"Battle Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 25}, {2, 2}, false, "invtbt", 8, {"Boots", "Any Armor"}}},
             {"xhb", {"War Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {125, 0, 25}, {2, 2}, false, "invhbt", 8, {"Boots", "Any Armor"}}},
-            {"zlb", {"Demonhide Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 24}, {2, 1}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
-            {"zvb", {"Sharkskin Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 25}, {2, 1}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
-            {"zmb", {"Mesh Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 1}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
-            {"ztb", {"Battle Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {88, 0, 25}, {2, 1}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
-            {"zhb", {"War Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 1}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
+            {"zlb", {"Demonhide Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 24}, {2, 1, 4, 3}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
+            {"zvb", {"Sharkskin Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 25}, {2, 1, 4, 3}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
+            {"zmb", {"Mesh Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
+            {"ztb", {"Battle Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {88, 0, 25}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
+            {"zhb", {"War Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
             {"xh9", {"Grim Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
             {"dr1", {"Wolf Head", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
             {"dr2", {"Hawk Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 6}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
@@ -1698,11 +1703,11 @@ namespace d2ce
             {"umb", {"Boneweave Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 54}, {2, 2}, false, "invmbt", 8, {"Boots", "Any Armor"}}},
             {"utb", {"Mirrored Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {163, 0, 60}, {2, 2}, false, "invtbt", 8, {"Boots", "Any Armor"}}},
             {"uhb", {"Myrmidon Greaves", {{ 0, 0 }, false, false, { 0, 0 }}, {208, 0, 65}, {2, 2}, false, "invhbt", 8, {"Boots", "Any Armor"}}},
-            {"ulc", {"Spiderweb Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 46}, {2, 1}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
-            {"uvc", {"Vampirefang Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 51}, {2, 1}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
-            {"umc", {"Mithril Coil", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 56}, {2, 1}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
-            {"utc", {"Troll Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 62}, {2, 1}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
-            {"uhc", {"Colossus Girdle", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 67}, {2, 1}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
+            {"ulc", {"Spiderweb Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 46}, {2, 1, 4, 3}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
+            {"uvc", {"Vampirefang Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 51}, {2, 1, 4, 3}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
+            {"umc", {"Mithril Coil", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 56}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
+            {"utc", {"Troll Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 62}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
+            {"uhc", {"Colossus Girdle", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 67}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
             {"uh9", {"Bone Visage", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 63}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
             {"dr6", {"Alpha Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0, 26}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
             {"dr7", {"Griffon Headress", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 30}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
@@ -2146,7 +2151,7 @@ namespace d2ce
             {"dhn", {"Diablo's Horn", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invfang", 0, {"Quest"}}},
             {"g34", {"Gold Bird", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invgbi", 0, {"Quest"}}},
             {"hrb", {"Herb", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhrb", 0, {"Herb", "Miscellaneous"}}},
-            {"box", {"Horadric Cube", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invbox", 0, {"Quest"}}},
+            {"box", {"Horadric Cube", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2, 3, 4}, false, "invbox", 0, {"Quest"}}},
             {"pk3", {"Key of Destruction", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invmph", 0, {"Quest"}}},
             {"pk2", {"Key of Hate", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invmph", 0, {"Quest"}}},
             {"pk1", {"Key of Terror", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invmph", 0, {"Quest"}}},
@@ -5823,7 +5828,7 @@ d2ce::EnumItemVersion d2ce::Item::Version() const
     }
 
     // TODO: do we do anything with the raw version value?
-    return EnumItemVersion::v115;                 // v1.15 Diable II Resurrected
+    return EnumItemVersion::v115;                 // v1.15 Diable II: Resurrected
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getRawVersion() const
@@ -5963,7 +5968,7 @@ std::uint8_t d2ce::Item::getPositionX() const
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
     case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II Resurrected
+    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
         return (std::uint8_t)read_uint32_bits(position_offset, 4);
     }
 
@@ -5988,7 +5993,7 @@ std::uint8_t d2ce::Item::getPositionY() const
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
     case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II Resurrected
+    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
         return (std::uint8_t)read_uint32_bits(position_offset + 4, 4);
     }
 
@@ -6008,7 +6013,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
     case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II Resurrected
+    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
         loc = (std::uint8_t)read_uint32_bits(alt_position_id_offset, 3);
         break;
     }
@@ -8173,7 +8178,7 @@ bool d2ce::Item::getItemCode(std::uint8_t(&strcode)[4]) const
         strcode[3] = std::uint8_t(read_uint32_bits(type_code_offset + 24, 8));
         return true;
 
-    case EnumItemVersion::v115: // v1.15 Diable II Resurrected
+    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
         getItemCodev115(data, type_code_offset, strcode);
         return true;
     }
@@ -8672,6 +8677,17 @@ bool d2ce::Item::getDimensions(ItemDimensions& dimensions) const
     return false;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Item::getTotalItemSlots() const
+{
+    ItemDimensions dimensions;
+    if (!getDimensions(dimensions))
+    {
+        return 0;
+    }
+
+    return dimensions.InvHeight * dimensions.InvWidth;
+}
+//---------------------------------------------------------------------------
 std::string d2ce::Item::getInvFile() const
 {
     if (isEar())
@@ -9148,6 +9164,32 @@ bool d2ce::Item::isCharm() const
     {
         const auto& result = getItemTypeHelper(strcode);
         return result.isCharm();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isBelt() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isBelt();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isHoradricCube() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        if (strcode[0] == 'b' && strcode[1] == '0' && strcode[2] == 'x')
+        {
+            return true;
+        }
     }
 
     return false;
@@ -10122,6 +10164,8 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 
             // up to 15 7 bit characters
             for (std::uint8_t idx = 0; !feof(charfile) && idx < 15 && readBits(charfile, current_bit_offset, 7) != 0; ++idx);
+            item_end_bit_offset = current_bit_offset;
+            return true;
         }
         else
         {
@@ -10457,7 +10501,6 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     auto numSocketed = socketedItemCount();
     if (numSocketed > 0)
     {
-        SocketedItems.reserve(numSocketed);
         for (std::uint8_t i = 0; !feof(charfile) && i < numSocketed; ++i)
         {
             SocketedItems.resize(SocketedItems.size() + 1);
@@ -10483,6 +10526,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     item_end_bit_offset = current_bit_offset;
     return true;
 }
+//---------------------------------------------------------------------------
 bool d2ce::Item::writeItem(std::FILE* charfile)
 {
     if (data.empty())
@@ -11470,7 +11514,14 @@ void d2ce::Items::findItems()
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
+    ItemLocationReference.clear();
+    ItemAltLocationReference.clear();
+    HasBeltEquipped = false;
+    HasHoradricCube = false;
+    EquippedBeltSlots = 0;
 
+    d2ce::EnumItemLocation itemLocation = d2ce::EnumItemLocation::BUFFER;
+    d2ce::EnumAltItemLocation itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
     std::uint8_t strcode[4] = { 0 };
     for (auto& item : Inventory)
     {
@@ -11484,26 +11535,63 @@ void d2ce::Items::findItems()
             {
                 Weapons.push_back(item);
             }
-            continue;
         }
         else if (itemType.isWeapon())
         {
             Weapons.push_back(item);
-            continue;
         }
         else if (itemType.isArmor())
         {
             Armor.push_back(item);
-            continue;
         }
         else if (itemType.isPotion() || itemType.isSocketFiller())
         {
             GPSs.push_back(item);
         }
+
+        itemLocation = item.getLocation();
+        switch (item.getLocation())
+        {
+        case d2ce::EnumItemLocation::BELT:
+            HasBeltEquipped = true;
+            ItemLocationReference[itemLocation].push_back(const_cast<d2ce::Item&>(item));
+            break;
+
+        case d2ce::EnumItemLocation::EQUIPPED:
+            ItemLocationReference[itemLocation].push_back(const_cast<d2ce::Item&>(item));
+            if (!HasBeltEquipped)
+            {
+                if (item.isBelt())
+                {
+                    HasBeltEquipped = true;
+                    EquippedBeltSlots = item.getTotalItemSlots();
+                }
+            }
+            break;
+
+        case d2ce::EnumItemLocation::STORED:
+            itemAltLocation = item.getAltPositionId();
+            switch (itemAltLocation)
+            {
+            case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+                HasHoradricCube = true;
+                ItemAltLocationReference[itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
+                break;
+
+            case d2ce::EnumAltItemLocation::INVENTORY:
+            case d2ce::EnumAltItemLocation::STASH:
+                ItemAltLocationReference[itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
+                if (!HasHoradricCube)
+                {
+                    HasHoradricCube = item.isHoradricCube();
+                }
+                break;
+            }
+        }
     } // end for
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::vector<d2ce::Item>& items)
+bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<d2ce::Item>& items)
 {
     numItems = 0;
     items.clear();
@@ -11557,7 +11645,6 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::u
 
     if (numItems > 0)
     {
-        items.reserve(numItems);
         if (!fillItemsArray(charfile, location, numItems, items))
         {
             // Corrupt file
@@ -11572,7 +11659,7 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::u
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::vector<d2ce::Item>& items)
+bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<d2ce::Item>& items)
 {
     std::fseek(charfile, location, SEEK_SET);
     while (items.size() < numItems)
@@ -11597,7 +11684,86 @@ bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, st
 //---------------------------------------------------------------------------
 bool d2ce::Items::readCorpseItems(std::FILE* charfile)
 {
-    return readItems(charfile, corpse_location, NumOfCorpseItems, CorpseItems);
+    CorpseInfo.clear();
+    if (update_locations)
+    {
+        // find items location
+        corpse_location = 0;
+        corpse_item_location = 0;
+        std::uint8_t value = 0;
+        auto cur_pos = std::ftell(charfile);
+        if (cur_pos < (long)MIN_START_STATS_POS)
+        {
+            cur_pos = MIN_START_STATS_POS;
+            std::fseek(charfile, cur_pos, SEEK_SET);
+        }
+
+        while (!feof(charfile))
+        {
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[0])
+            {
+                continue;
+            }
+
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[1])
+            {
+                continue;
+            }
+
+            // found item marker
+            std::fread(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+            if (CorpseInfo.IsDead > 1)
+            {
+                return false;
+            }
+
+            corpse_location = std::ftell(charfile);
+            break;
+        }
+
+        if (corpse_location == 0)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (corpse_location == 0)
+        {
+            return false;
+        }
+
+        std::fseek(charfile, corpse_location - sizeof(CorpseInfo.IsDead), SEEK_SET);
+        std::fread(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+        if (CorpseInfo.IsDead > 1)
+        {
+            return false;
+        }
+    }
+
+    if (CorpseInfo.IsDead > 0)
+    {
+        std::fread(&CorpseInfo.Unk_b0_4, sizeof(CorpseInfo.Unk_b0_4), 1, charfile);
+        std::fread(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
+        std::fread(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
+        if (!readItems(charfile, corpse_item_location, NumOfCorpseItems, CorpseItems))
+        {
+            if (update_locations)
+            {
+                corpse_location = 0;
+            }
+
+            return false;
+        }
+    }
+    else
+    {
+        corpse_item_location = 0;
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(std::FILE* charfile)
@@ -11718,14 +11884,33 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
 bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 {
     std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
-    NumOfCorpseItems = (std::uint16_t)CorpseItems.size();
-    std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
-    corpse_location = std::ftell(charfile);
-    for (auto& item : CorpseItems)
+    if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
     {
-        if (!item.writeItem(charfile))
+        CorpseInfo.clear();
+        NumOfCorpseItems = 0;
+        CorpseItems.clear();
+        corpse_item_location = 0;
+    }
+
+    std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+    corpse_location = std::ftell(charfile);
+
+    if (CorpseInfo.IsDead > 0)
+    {
+        std::fwrite(&CorpseInfo.Unk_b0_4, sizeof(CorpseInfo.Unk_b0_4), 1, charfile);
+        std::fwrite(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
+        std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
+
+        std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
+        NumOfCorpseItems = (std::uint16_t)CorpseItems.size();
+        std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
+        corpse_item_location = std::ftell(charfile);
+        for (auto& item : CorpseItems)
         {
-            return false;
+            if (!item.writeItem(charfile))
+            {
+                return false;
+            }
         }
     }
 
@@ -12012,12 +12197,14 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
 
     items_location = other.items_location;
     corpse_location = other.corpse_location;
+    corpse_item_location = other.corpse_item_location;
     merc_location = other.merc_location;
     golem_location = other.golem_location;
 
     NumOfItems = other.NumOfItems;
     Inventory = other.Inventory;
 
+    CorpseInfo = other.CorpseInfo;
     NumOfCorpseItems = other.NumOfCorpseItems;
     CorpseItems = other.CorpseItems;
 
@@ -12050,6 +12237,7 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
 
     items_location = std::exchange(other.items_location, 0);
     corpse_location = std::exchange(other.corpse_location, 0);
+    corpse_item_location = std::exchange(other.corpse_item_location, 0);
     merc_location = std::exchange(other.merc_location, 0);
     golem_location = std::exchange(other.golem_location, 0);
 
@@ -12067,6 +12255,7 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
     Inventory.swap(other.Inventory);
     other.Inventory.clear();
 
+    CorpseInfo.swap(other.CorpseInfo);
     NumOfCorpseItems = std::exchange(other.NumOfCorpseItems, std::uint16_t(0));
     CorpseItems.swap(other.CorpseItems);
     other.CorpseItems.clear();
@@ -12179,9 +12368,79 @@ size_t d2ce::Items::getNumberOfItems() const
     return Inventory.size();
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Items::getInventoryItems() const
+size_t d2ce::Items::getNumberOfEquippedItems() const
 {
-    return Inventory;
+    return getEquippedItems().size();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getEquippedItems() const
+{
+    return ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED];
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::getHasBeltEquipped() const
+{
+    return HasBeltEquipped;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::getMaxNumberOfItemsInBelt() const
+{
+    if (!getHasBeltEquipped())
+    {
+        return 4;
+    }
+
+    return EquippedBeltSlots;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::getNumberOfItemsInBelt() const
+{
+    return getItemsInBelt().size();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInBelt() const
+{
+    return ItemLocationReference[d2ce::EnumItemLocation::BELT];
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::getNumberOfItemsInInventory() const
+{
+    return getItemsInInventory().size();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInInventory() const
+{
+    return ItemAltLocationReference[d2ce::EnumAltItemLocation::INVENTORY];
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::getNumberOfItemsInStash() const
+{
+    return getItemsInStash().size();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInStash() const
+{
+    return ItemAltLocationReference[d2ce::EnumAltItemLocation::STASH];
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::getHasHoradricCube() const
+{
+    return HasHoradricCube;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::getNumberOfItemsInHoradricCube() const
+{
+    if (!getHasHoradricCube())
+    {
+        return 0;
+    }
+
+    return getItemsInHoradricCube().size();
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInHoradricCube() const
+{
+    return ItemAltLocationReference[d2ce::EnumAltItemLocation::HORADRIC_CUBE];
 }
 //---------------------------------------------------------------------------
 // number of bytes to store all item sections
@@ -12250,7 +12509,7 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getWeapons()
     return Weapons;
 }
 //---------------------------------------------------------------------------
-const std::vector<d2ce::Item>& d2ce::Items::getMercItems() const
+const std::list<d2ce::Item>& d2ce::Items::getMercItems() const
 {
     return MercItems;
 }
@@ -12433,7 +12692,12 @@ bool d2ce::Items::getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLe
     return damage.Max != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
-const std::vector< d2ce::Item>& d2ce::Items::getCorpseItems() const
+bool d2ce::Items::hasCorpse() const
+{
+    return CorpseInfo.IsDead == 1 ? true : false;
+}
+//---------------------------------------------------------------------------
+const std::list<d2ce::Item>& d2ce::Items::getCorpseItems() const
 {
     return CorpseItems;
 }

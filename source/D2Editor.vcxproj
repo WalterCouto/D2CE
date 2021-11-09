@@ -218,6 +218,7 @@
     <ClInclude Include="d2ce\MercenaryConstants.h" />
     <ClInclude Include="D2Editor.h" />
     <ClInclude Include="D2GemsForm.h" />
+    <ClInclude Include="D2ItemsForm.h" />
     <ClInclude Include="D2ItemToolTipCtrl.h" />
     <ClInclude Include="D2LevelInfoForm.h" />
     <ClInclude Include="D2MainForm.h" />
@@ -244,6 +245,7 @@
     <ClCompile Include="d2ce\Mercenary.cpp" />
     <ClCompile Include="D2Editor.cpp" />
     <ClCompile Include="D2GemsForm.cpp" />
+    <ClCompile Include="D2ItemsForm.cpp" />
     <ClCompile Include="D2ItemToolTipCtrl.cpp" />
     <ClCompile Include="D2LevelInfoForm.cpp" />
     <ClCompile Include="D2MainForm.cpp" />

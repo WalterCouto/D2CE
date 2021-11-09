@@ -26,6 +26,8 @@ namespace d2ce
 {
     enum class EnumMercenaryClass : std::uint8_t { None = 0, RogueScout, DesertMercenary, IronWolf, Barbarian};
 
+    const std::string MercClassNames[5] = { "", "Rogue Scout", "Desert Mercenary", "Iron Wolf", "Barbarian" };
+
     const std::string RogueMercNames[41] = { "Aliza", "Amplisa", "Annor", "Abhaya", "Elly", "Paige", "Basanti", "Blaise", "Kyoko", "Klaudia", "Kundri",
         "Kyle", "Visala", "Elexa", "Floria", "Fiona", "Gwinni", "Gaile", "Hannah", "Heather", "Iantha", "Diane",
         "Isolde", "Divo", "Ithera", "Itonya", "Liene", "Maeko", "Mahala", "Liaza", "Meghan", "Olena", "Oriana",

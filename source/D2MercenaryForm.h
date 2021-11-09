@@ -21,35 +21,32 @@
 #pragma once
 
 //---------------------------------------------------------------------------
-#include "D2MainForm.h"
+#include "D2ItemsForm.h"
 
 //---------------------------------------------------------------------------
-class CD2MercenaryForm : public CDialogEx
+class CD2MercenaryForm : public CDialogEx, CD2ItemToolTipCtrlCallback
 {
-	DECLARE_DYNAMIC(CD2MercenaryForm)
+    DECLARE_DYNAMIC(CD2MercenaryForm)
 
 public:
     CD2MercenaryForm(CD2MainForm& form);
-	virtual ~CD2MercenaryForm();
+    virtual ~CD2MercenaryForm();
 
     bool MercChanged() const;
 
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 
 // Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_MERC_DIALOG };
-#endif
+    enum { IDD = IDD_MERC_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual BOOL PreTranslateMessage(MSG* pMsg);
 
     // Implementation
 protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
-    afx_msg void OnPaint();
     afx_msg void OnEnChangeMercLevel();
     afx_msg void OnEnKillfocusMercLevel();
     afx_msg void OnEnChangeMercExperience();
@@ -67,7 +64,7 @@ protected:
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextLoad();
     afx_msg void OnItemContextMaxdurability();
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 private:
@@ -93,14 +90,10 @@ private:
     CEdit ResistCold;
     CEdit ResistLightning;
     CEdit ResistPoison;
-    CStatic InvHeadBox;
-    CBitmap InvHeadImage;
-    CStatic InvHandRightBox;
-    CBitmap InvHandRightImage;
-    CStatic InvTorsoBox;
-    CBitmap InvTorsoImage;
-    CStatic InvHandLeftBox;
-    CBitmap InvHandLeftImage;
+    CD2EquippedItemStatic InvMercHeadBox;
+    CD2EquippedItemStatic InvMercHandRightBox;
+    CD2EquippedItemStatic InvMercTorsoBox;
+    CD2EquippedItemStatic InvMercHandLeftBox;
 
     std::set<UINT> ctrlEditted;
 
@@ -127,5 +120,8 @@ private:
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
     void CheckToolTipCtrl();
+
+    // Inherited via CD2ItemToolTipCtrlCallback
+    virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 };
 //---------------------------------------------------------------------------

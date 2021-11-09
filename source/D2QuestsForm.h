@@ -34,9 +34,7 @@ public:
     virtual ~CD2QuestsForm();
 
     // Dialog Data
-#ifdef AFX_DESIGN_TIME
     enum { IDD = IDD_QUESTS_DIALOG };
-#endif
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

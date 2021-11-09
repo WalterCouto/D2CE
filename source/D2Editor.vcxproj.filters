@@ -108,6 +108,9 @@
     <ClInclude Include="D2ItemToolTipCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D2ItemsForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -153,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D2ItemToolTipCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D2ItemsForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
