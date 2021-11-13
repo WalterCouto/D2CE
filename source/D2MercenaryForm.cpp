@@ -820,45 +820,27 @@ void CD2MercenaryForm::CheckToolTipCtrl()
     }
 }
 //---------------------------------------------------------------------------
-const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint /*point*/, TOOLINFO* /*pTI*/) const
+const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI) const
 {
-    const d2ce::Item* currItem = nullptr;
-    d2ce::EnumEquippedId equippedId = d2ce::EnumEquippedId::NONE;
+    ScreenToClient(&point);
+
     switch (id)
     {
     case IDC_INV_MERC_HEAD:
-        equippedId = d2ce::EnumEquippedId::HEAD;
-        break;
+        return InvMercHeadBox.InvHitTest(point, pTI);
 
     case IDC_INV_MERC_HAND_RIGHT:
-        equippedId = d2ce::EnumEquippedId::HAND_RIGHT;
-        break;
+        return InvMercHandRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_MERC_TORSO:
-        equippedId = d2ce::EnumEquippedId::TORSO;
-        break;
+        return InvMercTorsoBox.InvHitTest(point, pTI);
 
     case IDC_INV_MERC_HAND_LEFT:
-        equippedId = d2ce::EnumEquippedId::HAND_LEFT;
+        return InvMercHandLeftBox.InvHitTest(point, pTI);
         break;
     }
 
-    if (equippedId != d2ce::EnumEquippedId::NONE)
-    {
-        for (const auto& item : MainForm.getMercItems())
-        {
-            if ((item.getLocation() != d2ce::EnumItemLocation::EQUIPPED) ||
-                (item.getEquippedId() != equippedId))
-            {
-                continue;
-            }
-
-            currItem = &item;
-            break;
-        }
-    }
-
-    return currItem;
+    return nullptr;
 }
 //---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::OnInitDialog()
@@ -1128,27 +1110,26 @@ void CD2MercenaryForm::OnClickedResurrectedCheck()
     UpdateModified();
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2MercenaryForm::InvHitTest(CPoint point, TOOLINFO* pTI) const
+{
+    INT_PTR nHit = __super::OnToolHitTest(point, pTI);
+    if (nHit == -1)
+    {
+        return nullptr;
+    }
+
+    // Make sure we have hit an item
+    ClientToScreen(&point);
+    return InvHitTest((UINT)nHit, point, pTI);
+}
+//---------------------------------------------------------------------------
 INT_PTR CD2MercenaryForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
 {
-    // check child windows first by calling CMFCBaseToolBar
-    INT_PTR nHit = __super::OnToolHitTest(point, pTI);
-    if (nHit != -1)
-    {
-        return nHit;
-    }
-
     TOOLINFO ti = { 0 };
-    auto pToolTip = AfxGetModuleThreadState()->m_pToolTip;
-    if (pToolTip != NULL && (pToolTip->GetOwner() == this))
-    {
-        TOOLINFO* pTi = pTI = nullptr ? &ti : pTI;
-        if (pToolTip->HitTest((CWnd*)this, point, pTi))
-        {
-            return pTi->uId;
-        }
-    }
+    ti.cbSize = sizeof(TOOLINFO);
 
-    return nHit;
+    TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
+    return InvHitTest(point, pTI) == nullptr ? (INT_PTR)-1 : pTi->uId;
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)

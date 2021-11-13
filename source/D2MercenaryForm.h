@@ -34,6 +34,7 @@ public:
 
     bool MercChanged() const;
 
+    const d2ce::Item* InvHitTest(CPoint point, TOOLINFO* pTI = nullptr) const; // get item at point
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 
 // Dialog Data

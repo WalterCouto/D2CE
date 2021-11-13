@@ -50,7 +50,6 @@ protected:
     //}}AFX_MSG
 
     DECLARE_MESSAGE_MAP()
-    BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
 protected:
     virtual void PreSubclassWindow();
@@ -100,7 +99,6 @@ protected:
     //{{AFX_MSG(CCharNameEdit)
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     //}}AFX_MSG
-    BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
     DECLARE_MESSAGE_MAP()
 

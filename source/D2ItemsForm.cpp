@@ -266,8 +266,6 @@ void CD2EquippedItemStatic::SetUseAltImage(BOOL flag)
 BEGIN_MESSAGE_MAP(CD2EquippedItemStatic, CStatic)
     //{{AFX_MSG_MAP(CD2EquippedItemStatic)
     ON_WM_ERASEBKGND()
-    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CD2EquippedItemStatic::OnToolTipText)
-    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CD2EquippedItemStatic::OnToolTipText)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -469,33 +467,6 @@ BOOL CD2EquippedItemStatic::OnEraseBkgnd(CDC* pDC)
     return TRUE;
 }
 //---------------------------------------------------------------------------
-BOOL CD2EquippedItemStatic::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
-{
-    ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
-
-    TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
-    TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
-    CString strTipText;
-    UINT_PTR nID = pNMHDR->idFrom;
-
-    CRect rect;
-    if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
-        pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
-    {
-        ::GetWindowRect((HWND)nID, &rect);
-        ScreenToClient(&rect);
-        nID = ((UINT_PTR)(DWORD)::GetDlgCtrlID((HWND)nID));
-    }
-
-    *pResult = 0;
-    if (nID != (UINT_PTR)GetDlgCtrlID())
-    {
-        return FALSE;
-    }
-
-    return FALSE;
-}
-//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 // CD2ItemsGridStatic
@@ -563,8 +534,6 @@ INT_PTR CD2ItemsGridStatic::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
 BEGIN_MESSAGE_MAP(CD2ItemsGridStatic, CStatic)
     //{{AFX_MSG_MAP(CD2ItemsGridStatic)
     ON_WM_ERASEBKGND()
-    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, &CD2ItemsGridStatic::OnToolTipText)
-    ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, &CD2ItemsGridStatic::OnToolTipText)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -852,33 +821,6 @@ BOOL CD2ItemsGridStatic::OnEraseBkgnd(CDC* pDC)
     pDC->BitBlt(rect.left, rect.top, bmp.bmWidth, bmp.bmHeight, &dcMem, 0, 0, SRCCOPY);
     dcMem.SelectObject(pBmpOld);
     return TRUE;
-}
-//---------------------------------------------------------------------------
-BOOL CD2ItemsGridStatic::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
-{
-    ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
-
-    TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
-    TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
-    CString strTipText;
-    UINT_PTR nID = pNMHDR->idFrom;
-
-    CRect rect;
-    if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
-        pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
-    {
-        ::GetWindowRect((HWND)nID, &rect);
-        ScreenToClient(&rect);
-        nID = ((UINT_PTR)(DWORD)::GetDlgCtrlID((HWND)nID));
-    }
-
-    *pResult = 0;
-    if (nID != (UINT_PTR)GetDlgCtrlID())
-    {
-        return FALSE;
-    }
-
-    return FALSE;
 }
 //---------------------------------------------------------------------------
 
@@ -1720,17 +1662,19 @@ void CD2ItemsForm::OnBnClickedOk()
 const d2ce::Item* CD2ItemsForm::InvHitTest(CPoint point, TOOLINFO* pTI) const
 {
     INT_PTR nHit = __super::OnToolHitTest(point, pTI);
-    if (nHit != -1)
+    if (nHit == -1)
     {
-        switch (nHit)
-        {
-        case IDC_CORPSE_GROUP:
-        case IDC_MERC_GROUP:
-        case IDC_GOLEM_GROUP:
-        case IDC_INV_CUBE_GROUP:
-        case IDC_INV_BELT_GROUP:
-            return nullptr;
-        }
+        return nullptr;
+    }
+
+    switch (nHit)
+    {
+    case IDC_CORPSE_GROUP:
+    case IDC_MERC_GROUP:
+    case IDC_GOLEM_GROUP:
+    case IDC_INV_CUBE_GROUP:
+    case IDC_INV_BELT_GROUP:
+        return nullptr;
     }
 
     // Make sure we have hit an item
