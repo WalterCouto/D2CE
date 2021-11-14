@@ -213,6 +213,11 @@ CD2EquippedItemStatic::~CD2EquippedItemStatic()
 {
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2EquippedItemStatic::GetInvItem() const
+{
+    return UseAltImage ? InvAltItemPtr : InvItemPtr;
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2EquippedItemStatic::InvHitTest(CPoint point, TOOLINFO* pTI) const
 {
     auto& invImage = UseAltImage ? InvAltImage : InvImage;
@@ -229,18 +234,13 @@ const d2ce::Item* CD2EquippedItemStatic::InvHitTest(CPoint point, TOOLINFO* pTI)
         return nullptr;
     }
 
-    auto& pItem = UseAltImage ? InvAltItemPtr : InvItemPtr;
+    auto pItem = GetInvItem();
     if (pItem != nullptr && pTI != nullptr)
     {
         pTI->hwnd = GetParent()->GetSafeHwnd();
-        pTI->uId = (INT_PTR)GetDlgCtrlID();
+        pTI->uId = (UINT_PTR)GetSafeHwnd();
         pTI->lpszText = LPSTR_TEXTCALLBACK;
-        pTI->uFlags &= ~TTF_IDISHWND;
-        //pTI->uFlags = TTF_NOTBUTTON | TTF_ALWAYSTIP | TTF_IDISHWND;
-        //pTI->rect.left = invBox.left;
-        //pTI->rect.right = invBox.right;
-        //pTI->rect.top = invBox.top;
-        //pTI->rect.bottom = invBox.bottom;
+        pTI->uFlags |= TTF_IDISHWND;
     }
 
     return pItem;
@@ -248,7 +248,22 @@ const d2ce::Item* CD2EquippedItemStatic::InvHitTest(CPoint point, TOOLINFO* pTI)
 //---------------------------------------------------------------------------
 INT_PTR CD2EquippedItemStatic::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
 {
-    return InvHitTest(point, pTI) == nullptr ? (INT_PTR)-1 : (INT_PTR)GetDlgCtrlID();
+    TOOLINFO ti = { 0 };
+    ti.cbSize = sizeof(TOOLINFO);
+
+    TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
+    if (InvHitTest(point, pTi) == nullptr)
+    {
+        return (INT_PTR)-1;
+    }
+
+    UINT_PTR nHit = pTi->uId;
+    if (pTi->uFlags & TTF_IDISHWND)
+    {
+        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+    }
+
+    return (INT_PTR)nHit;
 }
 //---------------------------------------------------------------------------
 void CD2EquippedItemStatic::SetUseAltImage(BOOL flag)
@@ -480,6 +495,16 @@ CD2ItemsGridStatic::~CD2ItemsGridStatic()
 {
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemsGridStatic::GetInvItem(UINT offset) const
+{
+    if ((InvImage.GetSafeHandle() == 0) || (offset >= UINT(GridBoxSize.cx * GridBoxSize.cy)))
+    {
+        return nullptr;
+    }
+
+    return InvGridItemIndex[offset];
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsGridStatic::InvHitTest(CPoint point, TOOLINFO* pTI) const
 {
     if (InvImage.GetSafeHandle() == 0)
@@ -507,20 +532,14 @@ const d2ce::Item* CD2ItemsGridStatic::InvHitTest(CPoint point, TOOLINFO* pTI) co
         return nullptr;
     }
 
-    const auto* pItem = InvGridItemIndex[(size_t)point.x * (size_t)GridBoxSize.cy + (size_t)point.y];
+    UINT offset = (UINT)point.y * (UINT)GridBoxSize.cx + (UINT)point.x;
+    auto pItem = GetInvItem(offset);
     if (pItem != nullptr && pTI != nullptr)
     {
         pTI->hwnd = GetParent()->GetSafeHwnd();
-        pTI->uId = (INT_PTR)GetDlgCtrlID();
+        pTI->uId = (UINT_PTR)GetSafeHwnd();
         pTI->lpszText = LPSTR_TEXTCALLBACK;
-        pTI->uFlags &= ~TTF_IDISHWND;
-        //pTI->uFlags = TTF_NOTBUTTON | TTF_ALWAYSTIP | TTF_IDISHWND;
-        //
-        //CRect rect = GetInvRect(*pItem);
-        //pTI->rect.left = invBox.left + rect.left;
-        //pTI->rect.right = pTI->rect.left + rect.Width();
-        //pTI->rect.top = invBox.top + rect.top;
-        //pTI->rect.bottom = pTI->rect.top + rect.Height();
+        pTI->uFlags |= TTF_IDISHWND;
     }
 
     return pItem;
@@ -528,7 +547,22 @@ const d2ce::Item* CD2ItemsGridStatic::InvHitTest(CPoint point, TOOLINFO* pTI) co
 //---------------------------------------------------------------------------
 INT_PTR CD2ItemsGridStatic::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
 {
-    return InvHitTest(point, pTI) == nullptr ? (INT_PTR)-1 : (INT_PTR)GetDlgCtrlID();
+    TOOLINFO ti = { 0 };
+    ti.cbSize = sizeof(TOOLINFO);
+
+    TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
+    if (InvHitTest(point, pTi) == nullptr)
+    {
+        return (INT_PTR)-1;
+    }
+
+    UINT_PTR nHit = pTi->uId;
+    if (pTi->uFlags & TTF_IDISHWND)
+    {
+        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+    }
+
+    return (INT_PTR)nHit;
 }
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2ItemsGridStatic, CStatic)
@@ -663,7 +697,7 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
         }
     }
 
-    InvGridItemIndex.resize(GridBoxSize.cx * GridBoxSize.cy);
+    InvGridItemIndex.resize(size_t(GridBoxSize.cx) * size_t(GridBoxSize.cy));
 
     auto pDC = GetParent()->GetDC();
 
@@ -713,11 +747,13 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
         rect.right /= SlotSize.cx;
 
         auto pItem = &item.get();
-        for (size_t x = rect.left; x < rect.right; ++x)
+        size_t row = 0;
+        for (size_t y = rect.top; y < rect.bottom; ++y)
         {
-            for (size_t y = rect.top; y < rect.bottom; ++y)
+            row = y * (size_t)GridBoxSize.cx;
+            for (size_t x = rect.left; x < rect.right; ++x)
             {
-                InvGridItemIndex[x * (size_t)GridBoxSize.cy  + y] = pItem;
+                InvGridItemIndex[row + x] = pItem;
             }
         }
     }
@@ -882,8 +918,10 @@ void CD2ItemsForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_INV_WEAPON_II, InvWeaponIIButton);
 
     DDX_Control(pDX, IDC_INV_GRID, InvGrid);
+    DDX_Control(pDX, IDC_INV_BELT_GROUP, BeltGroupBox);
     DDX_Control(pDX, IDC_INV_BELT_GRID, InvBeltGrid);
     DDX_Control(pDX, IDC_INV_STASH_GRID, InvStashGrid);
+    DDX_Control(pDX, IDC_INV_CUBE_GROUP, CubeGroupBox);
     DDX_Control(pDX, IDC_INV_CUBE_GRID, InvCubeGrid);
 }
 
@@ -1273,26 +1311,18 @@ void CD2ItemsForm::LoadGolemItemImages()
 void CD2ItemsForm::LoadGridItemImages()
 {
     InvGrid.LoadItemImages();
-
-    if (getHasBeltEquipped())
-    {
-        InvBeltGrid.LoadItemImages();
-        InvBeltGrid.ShowWindow(SW_SHOW);
-    }
-    else
-    {
-        InvBeltGrid.ShowWindow(SW_HIDE);
-    }
-
+    InvBeltGrid.LoadItemImages();
     InvStashGrid.LoadItemImages();
 
     if (getHasHoradricCube())
     {
+        CubeGroupBox.SetWindowText(_T("Cube"));
         InvCubeGrid.LoadItemImages();
         InvCubeGrid.ShowWindow(SW_SHOW);
     }
     else
     {
+        CubeGroupBox.SetWindowText(_T("No Cube"));
         InvCubeGrid.ShowWindow(SW_HIDE);
     }
 }
@@ -1385,6 +1415,102 @@ size_t CD2ItemsForm::getNumberOfItemsInHoradricCube() const
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsForm::getItemsInHoradricCube() const
 {
     return MainForm.getItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
+{
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_HEAD:
+        return InvHeadBox.GetInvItem();
+
+    case IDC_INV_CORPSE_HEAD:
+        return InvCorpseHeadBox.GetInvItem();
+
+    case IDC_INV_MERC_HEAD:
+        return InvMercHeadBox.GetInvItem();
+
+    case IDC_INV_NECK:
+        return InvNeckBox.GetInvItem();
+
+    case IDC_INV_CORPSE_NECK:
+        return InvCorpseNeckBox.GetInvItem();
+
+    case IDC_INV_HAND_RIGHT:
+        return InvHandRightBox.GetInvItem();
+
+    case IDC_INV_CORPSE_HAND_RIGHT:
+        return InvCorpseHandRightBox.GetInvItem();
+
+    case IDC_INV_MERC_HAND_RIGHT:
+        return InvMercHandRightBox.GetInvItem();
+
+    case IDC_INV_TORSO:
+        return InvTorsoBox.GetInvItem();
+
+    case IDC_INV_CORPSE_TORSO:
+        return InvCorpseTorsoBox.GetInvItem();
+
+    case IDC_INV_MERC_TORSO:
+        return InvMercTorsoBox.GetInvItem();
+
+    case IDC_INV_HAND_LEFT:
+        return InvHandLeftBox.GetInvItem();
+
+    case IDC_INV_CORPSE_HAND_LEFT:
+        return InvCorpseHandLeftBox.GetInvItem();
+
+    case IDC_INV_MERC_HAND_LEFT:
+        return InvMercHandLeftBox.GetInvItem();
+
+    case IDC_INV_GLOVE:
+        return InvGloveBox.GetInvItem();
+
+    case IDC_INV_CORPSE_GLOVE:
+        return InvCorpseGloveBox.GetInvItem();
+
+    case IDC_INV_RING_RIGHT:
+        return InvRingRightBox.GetInvItem();
+
+    case IDC_INV_CORPSE_RING_RIGHT:
+        return InvCorpseRingRightBox.GetInvItem();
+
+    case IDC_INV_BELT:
+        return InvBeltBox.GetInvItem();
+
+    case IDC_INV_CORPSE_BELT:
+        return InvCorpseBeltBox.GetInvItem();
+
+    case IDC_INV_RING_LEFT:
+        return InvRingLeftBox.GetInvItem();
+
+    case IDC_INV_CORPSE_RING_LEFT:
+        return InvCorpseRingLeftBox.GetInvItem();
+
+    case IDC_INV_BOOTS:
+        return InvBootsBox.GetInvItem();
+
+    case IDC_INV_CORPSE_BOOTS:
+        return InvCorpseBootsBox.GetInvItem();
+
+    case IDC_INV_GOLEM:
+        return InvGolemBox.GetInvItem();
+
+    case IDC_INV_GRID:
+        return InvGrid.GetInvItem(offset);
+
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.GetInvItem(offset);
+
+    case IDC_INV_CUBE_GRID:
+        return InvCubeGrid.GetInvItem(offset);
+
+    case IDC_INV_BELT_GRID:
+        return InvBeltGrid.GetInvItem(offset);
+    }
+
+    return nullptr;
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI) const
@@ -1688,7 +1814,18 @@ INT_PTR CD2ItemsForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
     ti.cbSize = sizeof(TOOLINFO);
 
     TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
-    return InvHitTest(point, pTI) == nullptr ? (INT_PTR)-1 : pTi->uId;
+    if (InvHitTest(point, pTi) == nullptr)
+    {
+        return (INT_PTR)-1;
+    }
+
+    UINT_PTR nHit = pTi->uId;
+    if (pTi->uFlags & TTF_IDISHWND)
+    {
+        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+    }
+
+    return (INT_PTR)nHit;
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
@@ -1701,18 +1838,31 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    CMenu menu;
-    VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+    bool isArmor = CurrItem->isArmor();
+    bool isWeapon = CurrItem->isWeapon();
+    bool isStackable = CurrItem->isStackable();
 
-    CMenu* pPopup = menu.GetSubMenu(0);
-    ENSURE(pPopup != NULL);
-
-    if (!CurrItem->isStackable())
+    if (isArmor || isWeapon || isStackable)
     {
-        pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
-    }
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
-    pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+        CMenu* pPopup = menu.GetSubMenu(0);
+        ENSURE(pPopup != NULL);
+
+        if (!isStackable)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
+        }
+
+        if (!isArmor && !isWeapon)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+        }
+
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextFix()

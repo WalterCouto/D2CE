@@ -123,6 +123,7 @@ private:
     void CheckToolTipCtrl();
 
     // Inherited via CD2ItemToolTipCtrlCallback
+    const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;
     virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 };
 //---------------------------------------------------------------------------

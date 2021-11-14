@@ -28,6 +28,8 @@ class CD2ItemToolTipCtrlCallback
 public:
     virtual ~CD2ItemToolTipCtrlCallback() = default;
     virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const = 0;
+    virtual const d2ce::Item* GetInvItem(UINT id, UINT offset) const = 0;
+    
 };
 
 //---------------------------------------------------------------------------
@@ -52,7 +54,6 @@ public:
 
 protected:
 	afx_msg void OnShow(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnPop(NMHDR* pNMHDR, LRESULT* pResult);
     LRESULT OnRelayEvent(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

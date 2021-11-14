@@ -20,6 +20,7 @@ Revision History
 ================
 Version 2.05 (Nov 14, 2021)
    - Updated: Fix up handling of reading files with a corpse
+   - Updated: Fix up setting/clearing the is potion bit
 
    - Added: Items Dialog to allow viewing of all items in inventory
    - Added: Added unit tests to cover file with corpse data

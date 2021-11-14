@@ -222,8 +222,7 @@ CD2ItemToolTipCtrl::~CD2ItemToolTipCtrl()
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2ItemToolTipCtrl, CMFCToolTipCtrl)
     ON_NOTIFY_REFLECT(TTN_SHOW, &CD2ItemToolTipCtrl::OnShow)
-    //ON_NOTIFY_REFLECT(TTN_POP, &CD2ItemToolTipCtrl::OnPop)
-    //ON_MESSAGE(TTM_RELAYEVENT, &CD2ItemToolTipCtrl::OnRelayEvent)
+    ON_MESSAGE(TTM_RELAYEVENT, &CD2ItemToolTipCtrl::OnRelayEvent)
 END_MESSAGE_MAP()
 
 // CD2ItemToolTipCtrl message handlers
@@ -235,7 +234,7 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
         //AfxGetModuleThreadState()->m_nLastHit = static_cast<INT_PTR>(-1);
     }
 
-    bool bCanDismiss = false;
+    bool isInvItem = false;
     auto currID = (UINT)pNMHDR->idFrom;
     switch (currID)
     {
@@ -243,8 +242,8 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     case IDC_INV_MERC_HAND_RIGHT:
     case IDC_INV_MERC_TORSO:
     case IDC_INV_MERC_HAND_LEFT:
-        bCanDismiss = true;
         IsMerc = true;
+        isInvItem = true;
         break;
 
     case IDC_INV_HEAD:
@@ -268,27 +267,22 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     case IDC_INV_BOOTS:
     case IDC_INV_CORPSE_BOOTS:
     case IDC_INV_GOLEM:
-        bCanDismiss = true;
-        IsMerc = false;
-        break;
-        break;
-
     case IDC_INV_GRID:
     case IDC_INV_STASH_GRID:
     case IDC_INV_CUBE_GRID:
     case IDC_INV_BELT_GRID:
-        bCanDismiss = true;
         IsMerc = false;
+        isInvItem = true;
         break;
 
     default:
-        bCanDismiss = false;
         IsMerc = false;
+        isInvItem = false;
         break;
     }
 
     CurrItem = nullptr;
-    if (bCanDismiss && Callback != nullptr)
+    if (isInvItem && Callback != nullptr)
     {
         CPoint point;
         ::GetCursorPos(&point);
@@ -296,10 +290,6 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     }
 
     __super::OnShow(pNMHDR, pResult);
-    if (bCanDismiss && CurrItem == nullptr)
-    {
-        Pop();
-    }
 }
 //---------------------------------------------------------------------------
 LRESULT CD2ItemToolTipCtrl::OnRelayEvent(WPARAM wParam, LPARAM lParam)
@@ -330,12 +320,5 @@ LRESULT CD2ItemToolTipCtrl::OnRelayEvent(WPARAM wParam, LPARAM lParam)
         break;
     }
     return DefWindowProc(TTM_RELAYEVENT, wParam, lParam);
-}
-//---------------------------------------------------------------------------
-void CD2ItemToolTipCtrl::OnPop(NMHDR* pNMHDR, LRESULT* pResult)
-{
-    CurrItem = nullptr;
-    AfxGetModuleThreadState()->m_nLastHit = static_cast<INT_PTR>(-1);
-    __super::OnPop(pNMHDR, pResult);
 }
 //---------------------------------------------------------------------------

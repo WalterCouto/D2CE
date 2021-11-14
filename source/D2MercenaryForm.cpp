@@ -820,6 +820,27 @@ void CD2MercenaryForm::CheckToolTipCtrl()
     }
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2MercenaryForm::GetInvItem(UINT id, UINT /*offset*/) const
+{
+    switch (id)
+    {
+    case IDC_INV_MERC_HEAD:
+        return InvMercHeadBox.GetInvItem();
+
+    case IDC_INV_MERC_HAND_RIGHT:
+        return InvMercHandRightBox.GetInvItem();
+
+    case IDC_INV_MERC_TORSO:
+        return InvMercTorsoBox.GetInvItem();
+
+    case IDC_INV_MERC_HAND_LEFT:
+        return InvMercHandLeftBox.GetInvItem();
+        break;
+    }
+
+    return nullptr;
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI) const
 {
     ScreenToClient(&point);
@@ -1129,23 +1150,25 @@ INT_PTR CD2MercenaryForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
     ti.cbSize = sizeof(TOOLINFO);
 
     TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
-    return InvHitTest(point, pTI) == nullptr ? (INT_PTR)-1 : pTi->uId;
+    if (InvHitTest(point, pTi) == nullptr)
+    {
+        return (INT_PTR)-1;
+    }
+
+    UINT_PTR nHit = pTi->uId;
+    if (pTi->uFlags & TTF_IDISHWND)
+    {
+        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+    }
+
+    return (INT_PTR)nHit;
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-    CurrItem = nullptr;
-
     CPoint hitTestPoint = point;
     ScreenToClient(&hitTestPoint);
-    TOOLINFO ti = { 0 };
-    auto nHit = OnToolHitTest(hitTestPoint, &ti);
-    if (nHit == -1)
-    {
-        return;
-    }
-
-    CurrItem = const_cast<d2ce::Item*>(InvHitTest((UINT)nHit, point));
+    CurrItem = const_cast<d2ce::Item*>(InvHitTest(hitTestPoint));
     if (CurrItem == nullptr)
     {
         return;

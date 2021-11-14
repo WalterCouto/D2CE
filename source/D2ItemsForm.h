@@ -38,6 +38,7 @@ public:
 public:
     virtual ~CD2EquippedItemStatic();
 
+    const d2ce::Item* GetInvItem() const; // get equipped item
     const d2ce::Item* InvHitTest(CPoint point, TOOLINFO* pTI = nullptr) const; // get item at point
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;  // get tool at point
 
@@ -91,6 +92,7 @@ public:
 public:
     virtual ~CD2ItemsGridStatic();
 
+    const d2ce::Item* GetInvItem(UINT offset) const; // get item at grid offset
     const d2ce::Item* InvHitTest(CPoint point, TOOLINFO* pTI = nullptr) const; // get item at point
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;  // get tool at point
 
@@ -195,8 +197,10 @@ protected:
     CButton InvWeaponIIButton;
 
     CD2ItemsGridStatic InvGrid;
+    CStatic BeltGroupBox;
     CD2ItemsGridStatic InvBeltGrid;
     CD2ItemsGridStatic InvStashGrid;
+    CStatic CubeGroupBox;
     CD2ItemsGridStatic InvCubeGrid;
 
     CD2MainForm& MainForm;
@@ -233,6 +237,7 @@ protected:
     const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInHoradricCube() const;
 
     // Inherited via CD2ItemToolTipCtrlCallback
+    const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;
     const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 
     // Inherited via CD2ItemsGridCallback

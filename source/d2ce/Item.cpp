@@ -51,10 +51,10 @@ namespace d2ce
     ((*((std::uint64_t*) &data[(start) / 8]) >> ((start) & 7))& (((std::uint64_t)1 << (size)) - 1))
 
 #define set_bit(start) \
-    ((data[(start) / 8]) |= (std::uint8_t)(1ul << ((start) % 7)))
+    ((data[(start) / 8]) |= (std::uint8_t)(1ul << ((start) & 7)))
 
 #define clear_bit(start) \
-    ((data[(start) / 8]) &= ~(std::uint8_t)(1ul << ((start) % 7)))
+    ((data[(start) / 8]) &= ~(std::uint8_t)(1ul << ((start) & 7)))
 
     struct OpAttributes
     {
@@ -1944,16 +1944,16 @@ namespace d2ce
             {"7lw", {"Feral Claws", {{ 22, 53 }, false, false, { 0, 0 }}, {113, 113, 58}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
             {"7tw", {"Runic Talons", {{ 24, 44 }, false, false, { 0, 0 }}, {115, 115, 60}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
             {"7qr", {"Scissors Suwayh", {{ 40, 51 }, false, false, { 0, 0 }}, {118, 188, 64}, {1, 3}, false, "invskr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7ha", {"Tomahawk", {{ 33, 58 }, false, false, { 0, 0 }}, {125, 67, 40}, {1, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ax", {"Small Crescent", {{ 38, 60 }, false, false, { 0, 0 }}, {115, 83, 45}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"72a", {"Ettin Axe", {{ 33, 66 }, false, false, { 0, 0 }}, {145, 45, 52}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7mp", {"War Spike", {{ 30, 48 }, false, false, { 0, 0 }}, {133, 54, 59}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7wa", {"Berserker Axe", {{ 24, 71 }, false, false, { 0, 0 }}, {138, 59, 64}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7la", {"Feral Axe", {{ 0, 0 }, false, true, { 25, 123 }}, {196, 0, 42}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ba", {"Silver Edged Ax", {{ 0, 0 }, false, true, { 62, 110 }}, {166, 65, 48}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7bt", {"Decapitator", {{ 0, 0 }, false, true, { 49, 137 }}, {189, 33, 54}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ga", {"Champion Axe", {{ 0, 0 }, false, true, { 59, 94 }}, {167, 59, 61}, {2, 4}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7gi", {"Glorious Axe", {{ 0, 0 }, false, true, { 60, 124 }}, {164, 55, 66}, {2, 3}, false, "", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7ha", {"Tomahawk", {{ 33, 58 }, false, false, { 0, 0 }}, {125, 67, 40}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7ax", {"Small Crescent", {{ 38, 60 }, false, false, { 0, 0 }}, {115, 83, 45}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"72a", {"Ettin Axe", {{ 33, 66 }, false, false, { 0, 0 }}, {145, 45, 52}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7mp", {"War Spike", {{ 30, 48 }, false, false, { 0, 0 }}, {133, 54, 59}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7wa", {"Berserker Axe", {{ 24, 71 }, false, false, { 0, 0 }}, {138, 59, 64}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7la", {"Feral Axe", {{ 0, 0 }, false, true, { 25, 123 }}, {196, 0, 42}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7ba", {"Silver Edged Ax", {{ 0, 0 }, false, true, { 62, 110 }}, {166, 65, 48}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7bt", {"Decapitator", {{ 0, 0 }, false, true, { 49, 137 }}, {189, 33, 54}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7ga", {"Champion Axe", {{ 0, 0 }, false, true, { 59, 94 }}, {167, 59, 61}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"7gi", {"Glorious Axe", {{ 0, 0 }, false, true, { 60, 124 }}, {164, 55, 66}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"7wn", {"Polished Wand", {{ 18, 33 }, false, false, { 0, 0 }}, {25, 0, 41}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
             {"7yw", {"Ghost Wand", {{ 20, 40 }, false, false, { 0, 0 }}, {25, 0, 48}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
             {"7bw", {"Lich Wand", {{ 10, 31 }, false, false, { 0, 0 }}, {25, 0, 56}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
@@ -5853,6 +5853,11 @@ bool d2ce::Item::isPotion() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isSocketed() const
 {
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
     return read_uint32_bits(start_bit_offset + 11, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
@@ -9186,7 +9191,7 @@ bool d2ce::Item::isHoradricCube() const
     std::uint8_t strcode[4] = { 0 };
     if (getItemCode(strcode))
     {
-        if (strcode[0] == 'b' && strcode[1] == '0' && strcode[2] == 'x')
+        if (strcode[0] == 'b' && strcode[1] == 'o' && strcode[2] == 'x')
         {
             return true;
         }
@@ -9199,7 +9204,7 @@ std::uint8_t d2ce::Item::totalNumberOfSockets() const
 {
     if (isSimpleItem() || (socket_count_bit_offset == 0))
     {
-        return false;
+        return 0;
     }
 
     return (std::uint8_t)read_uint32_bits(socket_count_bit_offset, 4);
@@ -9834,6 +9839,28 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         ss << "Defense: " << std::dec << defenseRating;
+    }
+
+    if (itemType.isBelt())
+    {
+        ItemDimensions dimensions;
+        if (getDimensions(dimensions))
+        {
+            std::uint16_t numSlots = dimensions.InvWidth * dimensions.InvHeight - 4;
+            if (numSlots > 0)
+            {
+                if (bFirst)
+                {
+                    bFirst = false;
+                }
+                else
+                {
+                    ss << "\n";
+                }
+
+                ss << "Belt Size: +" << std::dec << numSlots << " Slots";
+            }
+        }
     }
 
     if (itemType.isWeapon())
