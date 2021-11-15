@@ -132,6 +132,7 @@ protected:
 class CD2ItemsForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, public CD2ItemsGridCallback
 {
     friend class CD2ItemsGrid;
+    friend class CD2GemsForm;
     DECLARE_DYNAMIC(CD2ItemsForm)
 
 public:
@@ -156,6 +157,10 @@ protected:
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextLoad();
     afx_msg void OnItemContextMaxdurability();
+    afx_msg void OnItemContextUpgradeGem();
+    afx_msg void OnItemContextUpgradePotion();
+    afx_msg void OnItemContextUpgradeRejuvenation();
+    afx_msg void OnItemContextGpsConvertor();
     afx_msg void OnClickedInvWeaponRadio();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
@@ -196,12 +201,12 @@ protected:
     CButton InvWeaponIButton;
     CButton InvWeaponIIButton;
 
-    CD2ItemsGridStatic InvGrid;
+    mutable CD2ItemsGridStatic InvGrid;
     CStatic BeltGroupBox;
-    CD2ItemsGridStatic InvBeltGrid;
-    CD2ItemsGridStatic InvStashGrid;
+    mutable CD2ItemsGridStatic InvBeltGrid;
+    mutable CD2ItemsGridStatic InvStashGrid;
     CStatic CubeGroupBox;
-    CD2ItemsGridStatic InvCubeGrid;
+    mutable CD2ItemsGridStatic InvCubeGrid;
 
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;
@@ -217,6 +222,12 @@ protected:
     void LoadGridItemImages();
 
     void CheckToolTipCtrl();
+
+    bool updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4]);
+    bool upgradeGem(d2ce::Item& item);
+    bool upgradePotion(d2ce::Item& item);
+    bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
+    void refreshGrid(const d2ce::Item& item) const;
 
     // Helpers
     d2ce::EnumCharVersion getCharacterVersion() const;

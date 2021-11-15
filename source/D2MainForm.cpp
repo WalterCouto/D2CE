@@ -4231,6 +4231,91 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
     return numConverted;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4])
+{
+    if (!item.updateGem(newgem))
+    {
+        return false;
+    }
+
+    hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+    if (!hasUpgradableRejuvenations)
+    {
+        // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+        hasUpgradablePotions = false;
+    }
+    else
+    {
+        hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+    }
+
+    hasUpgradableGems = CharInfo.anyUpgradableGems();
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::upgradeGem(d2ce::Item& item)
+{
+    if (!item.upgradeGem())
+    {
+        return false;
+    }
+
+    hasUpgradableGems = CharInfo.anyUpgradableGems();
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::upgradePotion(d2ce::Item& item)
+{
+    if (!item.upgradePotion())
+    {
+        return false;
+    }
+
+    hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+    if (!hasUpgradableRejuvenations)
+    {
+        // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+        hasUpgradablePotions = false;
+    }
+    else
+    {
+        hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+    }
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
+{
+    if (!item.upgradeToFullRejuvenationPotion())
+    {
+        return false;
+    }
+
+    hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+    if (!hasUpgradableRejuvenations)
+    {
+        // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+        hasUpgradablePotions = false;
+    }
+    else
+    {
+        hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+    }
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
     CStringA invFile(item.getInvFile().c_str());

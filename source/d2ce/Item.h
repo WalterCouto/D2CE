@@ -110,7 +110,6 @@ namespace d2ce
         // Simple information
         EnumItemVersion Version() const;
         bool isIdentified() const;
-        bool isPotion() const;
         bool isSocketed() const;
         bool isNew() const;
         bool isEar() const;
@@ -128,6 +127,9 @@ namespace d2ce
         EnumItemType getItemType() const;
         std::string getItemTypeName() const;
         bool updateGem(const std::uint8_t(&newgem)[4]);
+        bool upgradeGem();
+        bool upgradePotion();
+        bool upgradeToFullRejuvenationPotion();
         std::uint8_t getQuestDifficulty() const;
         std::uint8_t socketedItemCount() const;
         bool getEarAttributes(EarAttributes& attrib) const;
@@ -157,6 +159,11 @@ namespace d2ce
         bool isWeapon() const;
         bool isTome() const;
         bool isStackable() const;
+        bool isPotion() const;
+        bool isGem() const;
+        bool isUpgradableGem() const;
+        bool isUpgradablePotion() const;
+        bool isUpgradableToFullRejuvenationPotion() const;
         bool isRune() const;
         bool isCharm() const;
         bool isBelt() const;

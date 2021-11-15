@@ -70,6 +70,9 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.06 (Nov 14, 2021)**<br>
+- Added: Context menu for Gem, Potion or Skull items in Items Form<br>
+
 **Version 2.05 (Nov 14, 2021)**<br>
 - Updated: Updated: Fix up handling of reading files with a corpse<br>
 - Updated: Fix up setting/clearing the is potion bit<br>

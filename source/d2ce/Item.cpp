@@ -581,6 +581,16 @@ namespace d2ce
             return std::find(categories.begin(), categories.end(), "Potion") != categories.end() ? true : false;
         }
 
+        bool isJewel() const
+        {
+            return std::find(categories.begin(), categories.end(), "Jewel") != categories.end() ? true : false;
+        }
+
+        bool isGem() const
+        {
+            return std::find(categories.begin(), categories.end(), "Gem") != categories.end() ? true : false;
+        }
+
         bool isQuestItem() const
         {
             return std::find(categories.begin(), categories.end(), "Quest") != categories.end() ? true : false;
@@ -5841,16 +5851,6 @@ bool d2ce::Item::isIdentified() const
     return read_uint32_bits(start_bit_offset + 4, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::isPotion() const
-{
-    if (is_potion_bit_offset == 0)
-    {
-        is_potion_bit_offset = start_bit_offset + 10;
-    }
-
-    return read_uint32_bits(is_potion_bit_offset, 1) != 0 ? true : false;
-}
-//---------------------------------------------------------------------------
 bool d2ce::Item::isSocketed() const
 {
     if (isSimpleItem())
@@ -8588,6 +8588,150 @@ bool d2ce::Item::updateGem(const std::uint8_t(&newgem)[4])
     return false;
 }
 //---------------------------------------------------------------------------
+/*
+   Converts the gem to its perfect state
+   Returns true if the gem was converted
+*/
+bool d2ce::Item::upgradeGem()
+{
+    std::uint8_t strcode[4] = { 0 };
+    std::uint8_t& gem = strcode[0];
+    std::uint8_t& gemcondition = strcode[1];
+    std::uint8_t& gemcolour = strcode[2];
+    strcode[3] = 0x20;
+    getItemCode(strcode);
+    switch (gem)
+    {
+    case 'g':
+        switch (gemcondition)
+        {
+        case 'c': // chipped
+        case 'f': // flawed
+        case 's': // regular
+        case 'l': // flawless
+            switch (gemcolour)
+            {
+            case 'v': // amethyst
+                if (gemcondition != 'l')
+                {
+                    gemcondition = 'p'; // perfect
+                    return updateGem(strcode);
+                }
+                break;
+
+            case 'w': // diamond
+            case 'g': // emerald
+            case 'r': // ruby
+            case 'b': // sapphire
+            case 'y': // topaz
+                gemcondition = 'p'; // perfect
+                return updateGem(strcode);
+            }
+            break;
+
+        case 'z': // flawless amethyst
+            if (gemcolour == 'v')
+            {
+                gemcondition = 'p'; // perfect
+                return updateGem(strcode);
+            }
+            break;
+        }
+        break;
+
+    case 's': // skulls
+        if (gemcondition == 'k')
+        {
+            switch (gemcolour)
+            {
+            case 'c': // chipped
+            case 'f': // flawed
+            case 'u': // regular
+            case 'l': // flawless
+                gemcolour = 'z'; // perfect
+                return updateGem(strcode);
+            }
+        }
+        break;
+    }  // end switch
+
+    return false;
+}
+//---------------------------------------------------------------------------
+/*
+   Converts the potion to its highest quality.
+   Returns true if the the potion was converted.
+*/
+bool d2ce::Item::upgradePotion()
+{
+    std::uint8_t strcode[4] = { 0 };
+    std::uint8_t& gem = strcode[0];
+    std::uint8_t& gemcondition = strcode[1];
+    std::uint8_t& gemcolour = strcode[2];
+    strcode[3] = 0x20;
+    getItemCode(strcode);
+    switch (gem)
+    {
+    case 'r': // rejuvenation potions
+        if (gemcondition == 'v' && gemcolour == 's')
+        {
+            gemcolour = 'l';
+            return updateGem(strcode);
+        }
+        break;
+
+    case 'h': // healing potions
+    case 'm': // mana potions
+        if (gemcondition == 'p' &&
+            gemcolour >= '1' && gemcolour <= '4')
+        {
+            gemcolour = '5';
+            return updateGem(strcode);
+        }
+        break;
+    }  // end switch
+
+    return false;
+}
+//---------------------------------------------------------------------------
+/*
+   Convert the potion to  a Full Rejuvenation potion.
+   Returns true if the the potion was converted.
+*/
+bool d2ce::Item::upgradeToFullRejuvenationPotion()
+{
+    std::uint8_t strcode[4] = { 0 };
+    std::uint8_t& gem = strcode[0];
+    std::uint8_t& gemcondition = strcode[1];
+    std::uint8_t& gemcolour = strcode[2];
+    strcode[3] = 0x20;
+    getItemCode(strcode);
+    switch (gem)
+    {
+    case 'r': // rejuvenation potions
+        if (gemcondition == 'v' && gemcolour == 's')
+        {
+            gemcolour = 'l';
+            return updateGem(strcode);
+        }
+        break;
+
+    case 'h': // healing potions
+    case 'm': // mana potions
+        if (gemcondition == 'p' &&
+            gemcolour >= '1' && gemcolour <= '5')
+        {
+            gem = 'r';
+            gemcondition = 'v';
+            gemcolour = 'l';
+            return updateGem(strcode);
+        }
+        break;
+    }  // end switch
+
+    return false;
+}
+//---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getQuestDifficulty() const
 {
     if (quest_difficulty_offset == 0)
@@ -9148,6 +9292,71 @@ bool d2ce::Item::isStackable() const
     }
 
     return (base & 1) != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isPotion() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isPotion();
+    }
+
+    if (is_potion_bit_offset == 0)
+    {
+        is_potion_bit_offset = start_bit_offset + 10;
+    }
+
+    return read_uint32_bits(is_potion_bit_offset, 1) != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isGem() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isGem();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isUpgradableGem() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isUpgradableGem();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isUpgradablePotion() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isUpgradablePotion();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isUpgradableToFullRejuvenationPotion() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isUpgradableRejuvenationPotion() || (result.isPotion() && !result.isRejuvenationPotion());
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRune() const
@@ -11547,8 +11756,8 @@ void d2ce::Items::findItems()
     HasHoradricCube = false;
     EquippedBeltSlots = 0;
 
-    d2ce::EnumItemLocation itemLocation = d2ce::EnumItemLocation::BUFFER;
-    d2ce::EnumAltItemLocation itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
+    auto itemLocation = d2ce::EnumItemLocation::BUFFER;
+    auto itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
     std::uint8_t strcode[4] = { 0 };
     for (auto& item : Inventory)
     {
@@ -11571,13 +11780,13 @@ void d2ce::Items::findItems()
         {
             Armor.push_back(item);
         }
-        else if (itemType.isPotion() || itemType.isSocketFiller())
+        else if (itemType.isPotion() || itemType.isGem())
         {
             GPSs.push_back(item);
         }
 
         itemLocation = item.getLocation();
-        switch (item.getLocation())
+        switch (itemLocation)
         {
         case d2ce::EnumItemLocation::BELT:
             HasBeltEquipped = true;
@@ -12321,12 +12530,9 @@ bool d2ce::Items::anyUpgradableGems() const
         return 0;
     }
 
-    std::uint8_t strcode[4] = { 0 };
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        const auto& itemType = getItemTypeHelper(strcode);
-        if (itemType.isUpgradableGem())
+        if (item.get().isUpgradableGem())
         {
             return true;
         }
@@ -12347,12 +12553,9 @@ bool d2ce::Items::anyUpgradablePotions() const
         return false;
     }
 
-    std::uint8_t strcode[4] = { 0 };
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        const auto& itemType = getItemTypeHelper(strcode);
-        if (itemType.isUpgradablePotion())
+        if (item.get().isUpgradablePotion())
         {
             return true;
         }
@@ -12372,12 +12575,9 @@ bool d2ce::Items::anyUpgradableRejuvenations() const
         return false;
     }
 
-    std::uint8_t strcode[4] = { 0 };
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        const auto& itemType = getItemTypeHelper(strcode);
-        if (itemType.isUpgradableRejuvenationPotion() || (itemType.isPotion() && !itemType.isRejuvenationPotion()))
+        if (item.get().isUpgradableToFullRejuvenationPotion())
         {
             return true;
         }
@@ -12751,89 +12951,20 @@ size_t d2ce::Items::upgradeGems()
     }
 
     size_t gemsconverted = 0;
-    std::uint8_t strcode[4] = { 0 };
-    std::uint8_t& gem = strcode[0];
-    std::uint8_t& gemcondition = strcode[1];
-    std::uint8_t& gemcolour = strcode[2];
-    strcode[3] = 0x20;
+
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        switch (gem)
+        if (item.get().upgradeGem())
         {
-        case 'g':
-            switch (gemcondition)
-            {
-            case 'c': // chipped
-            case 'f': // flawed
-            case 's': // regular
-            case 'l': // flawless
-                switch (gemcolour)
-                {
-                case 'v': // amethyst
-                    if (gemcondition != 'l')
-                    {
-                        gemcondition = 'p'; // perfect
-                        if (item.get().updateGem(strcode))
-                        {
-                            ++gemsconverted;
-                        }
-                    }
-                    break;
-
-                case 'w': // diamond
-                case 'g': // emerald
-                case 'r': // ruby
-                case 'b': // sapphire
-                case 'y': // topaz
-                    gemcondition = 'p'; // perfect
-                    if (item.get().updateGem(strcode))
-                    {
-                        ++gemsconverted;
-                    }
-                    break;
-                }
-                break;
-
-            case 'z': // flawless amethyst
-                if (gemcolour == 'v')
-                {
-                    gemcondition = 'p'; // perfect
-                    if (item.get().updateGem(strcode))
-                    {
-                        ++gemsconverted;
-                    }
-                }
-                break;
-            }
-            break;
-
-        case 's': // skulls
-            if (gemcondition == 'k')
-            {
-                switch (gemcolour)
-                {
-                case 'c': // chipped
-                case 'f': // flawed
-                case 'u': // regular
-                case 'l': // flawless
-                    gemcolour = 'z'; // perfect
-                    if (item.get().updateGem(strcode))
-                    {
-                        ++gemsconverted;
-                    }
-                    break;
-                }
-            }
-            break;
-        }  // end switch
+            ++gemsconverted;
+        }
     }  // end for
 
     return gemsconverted;
 }
 //---------------------------------------------------------------------------
 /*
-   Converts the all potions to their highest quiality.
+   Converts the all potions to their highest quality.
    Returns the number of potions converted.
 */
 size_t d2ce::Items::upgradePotions()
@@ -12843,41 +12974,13 @@ size_t d2ce::Items::upgradePotions()
         return 0;
     }
 
-    std::uint8_t strcode[4] = { 0 };
-    std::uint8_t& gem = strcode[0];
-    std::uint8_t& gemcondition = strcode[1];
-    std::uint8_t& gemcolour = strcode[2];
-    strcode[3] = 0x20;
     size_t gemsconverted = 0;
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        switch (gem)
+        if (item.get().upgradePotion())
         {
-        case 'r': // rejuvenation potions
-            if (gemcondition == 'v' && gemcolour == 's')
-            {
-                gemcolour = 'l';
-                if (item.get().updateGem(strcode))
-                {
-                    ++gemsconverted;
-                }
-            }
-            break;
-
-        case 'h': // healing potions
-        case 'm': // mana potions
-            if (gemcondition == 'p' &&
-                gemcolour >= '1' && gemcolour <= '4')
-            {
-                gemcolour = '5';
-                if (item.get().updateGem(strcode))
-                {
-                    ++gemsconverted;
-                }
-            }
-            break;
-        }  // end switch
+            ++gemsconverted;
+        }
     }  // end for
 
     return gemsconverted;
@@ -12894,43 +12997,13 @@ size_t d2ce::Items::upgradeRejuvenationPotions()
         return 0;
     }
 
-    std::uint8_t strcode[4] = { 0 };
-    std::uint8_t& gem = strcode[0];
-    std::uint8_t& gemcondition = strcode[1];
-    std::uint8_t& gemcolour = strcode[2];
-    strcode[3] = 0x20;
     size_t gemsconverted = 0;
     for (auto& item : GPSs)
     {
-        item.get().getItemCode(strcode);
-        switch (gem)
+        if (item.get().upgradeToFullRejuvenationPotion())
         {
-        case 'r': // rejuvenation potions
-            if (gemcondition == 'v' && gemcolour == 's')
-            {
-                gemcolour = 'l';
-                if (item.get().updateGem(strcode))
-                {
-                    ++gemsconverted;
-                }
-            }
-            break;
-
-        case 'h': // healing potions
-        case 'm': // mana potions
-            if (gemcondition == 'p' &&
-                gemcolour >= '1' && gemcolour <= '5')
-            {
-                gem = 'r';
-                gemcondition = 'v';
-                gemcolour = 'l';
-                if (item.get().updateGem(strcode))
-                {
-                    ++gemsconverted;
-                }
-            }
-            break;
-        }  // end switch
+            ++gemsconverted;
+        }
     }  // end for
 
     return gemsconverted;

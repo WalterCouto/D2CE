@@ -22,6 +22,7 @@
 
 //---------------------------------------------------------------------------
 #include "D2MainForm.h"
+#include "D2ItemsForm.h"
 
 //---------------------------------------------------------------------------
 class CD2GemsForm : public CDialogEx
@@ -30,6 +31,7 @@ class CD2GemsForm : public CDialogEx
 
 public:
 	CD2GemsForm(CD2MainForm& form);
+    CD2GemsForm(CD2ItemsForm& form, d2ce::Item* itemPtr = nullptr);
 	virtual ~CD2GemsForm();
 
 // Dialog Data
@@ -45,6 +47,8 @@ private:
     CD2MainForm& MainForm;
     std::map<size_t, std::uint64_t> GemIdxMap;
     std::map<std::uint64_t, size_t> NumGemMap;
+    CD2ItemsForm* ItemsFormPtr = nullptr;
+    d2ce::Item * ItemPtr = nullptr;
 
 public:
     virtual BOOL OnInitDialog();

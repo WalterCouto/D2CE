@@ -22,6 +22,7 @@
 #include "D2ItemsForm.h"
 #include "afxdialogex.h"
 #include "D2MainForm.h"
+#include "D2GemsForm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -758,6 +759,7 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
         }
     }
 
+    Invalidate();
     return TRUE;
 }
 //---------------------------------------------------------------------------
@@ -934,6 +936,10 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2ItemsForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2ItemsForm::OnItemContextLoad)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2ItemsForm::OnItemContextMaxdurability)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, &CD2ItemsForm::OnItemContextUpgradeRejuvenation)
+    ON_COMMAND(ID_ITEM_CONTEXT_GPS_CONVERTOR, &CD2ItemsForm::OnItemContextGpsConvertor)
     ON_BN_CLICKED(IDC_INV_WEAPON_I, &CD2ItemsForm::OnClickedInvWeaponRadio)
     ON_BN_CLICKED(IDC_INV_WEAPON_II, &CD2ItemsForm::OnClickedInvWeaponRadio)
 END_MESSAGE_MAP()
@@ -1353,6 +1359,79 @@ void CD2ItemsForm::CheckToolTipCtrl()
             pToolTip->SetDelayTime(TTDT_AUTOPOP, 0x7FFF);
             pToolTip->SendMessage(TTM_ACTIVATE, FALSE);
             AfxGetModuleThreadState()->m_pToolTip = pToolTip;
+        }
+    }
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4])
+{
+    if (!MainForm.updateGem(item, newgem))
+    {
+        return false;
+    }
+
+    refreshGrid(item);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::upgradeGem(d2ce::Item& item)
+{
+    if (!MainForm.upgradeGem(item))
+    {
+        return false;
+    }
+
+    refreshGrid(item);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::upgradePotion(d2ce::Item& item)
+{
+    if (!MainForm.upgradePotion(item))
+    {
+        return false;
+    }
+
+    refreshGrid(item);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
+{
+    if (!MainForm.upgradeToFullRejuvenationPotion(item))
+    {
+        return false;
+    }
+
+    refreshGrid(item);
+    return true;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::refreshGrid(const d2ce::Item& item) const
+{
+    auto itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
+    auto itemLocation = item.getLocation();
+    switch (itemLocation)
+    {
+    case d2ce::EnumItemLocation::BELT:
+        InvBeltGrid.LoadItemImages();
+        break;
+
+    case d2ce::EnumItemLocation::STORED:
+        itemAltLocation = item.getAltPositionId();
+        switch (itemAltLocation)
+        {
+        case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            InvCubeGrid.LoadItemImages();
+            break;
+
+        case d2ce::EnumAltItemLocation::INVENTORY:
+            InvGrid.LoadItemImages();
+            break;
+
+        case d2ce::EnumAltItemLocation::STASH:
+            InvStashGrid.LoadItemImages();
+            break;
         }
     }
 }
@@ -1838,10 +1917,11 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    bool isArmor = CurrItem->isArmor();
-    bool isWeapon = CurrItem->isWeapon();
     bool isStackable = CurrItem->isStackable();
-
+    bool isArmor = !isStackable && CurrItem->isArmor();
+    bool isWeapon = !isArmor && CurrItem->isWeapon();
+    bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
+    bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1859,6 +1939,57 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+        }
+
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+    else if (isGem | isPotion)
+    {
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+
+        CMenu* pPopup = menu.GetSubMenu(1);
+        ENSURE(pPopup != NULL);
+
+        if (isGem)
+        {
+            if (!CurrItem->isUpgradableGem())
+            {
+                // remove popup
+                pPopup->DeleteMenu(0, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(0);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
+            }
+        }
+        else
+        {
+            if (!CurrItem->isUpgradablePotion())
+            {
+                if (!CurrItem->isUpgradableToFullRejuvenationPotion())
+                {
+                    // remove popup
+                    pPopup->DeleteMenu(0, MF_BYPOSITION);
+                }
+                else
+                {
+                    CMenu* pSubPopup = pPopup->GetSubMenu(0);
+                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
+                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+                }
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(0);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
+                if (!CurrItem->isUpgradableToFullRejuvenationPotion())
+                {
+                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
+                }
+            }
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -1895,6 +2026,51 @@ void CD2ItemsForm::OnItemContextMaxdurability()
     }
 
     MainForm.setItemMaxDurability(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradeGem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    upgradeGem(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradePotion()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    upgradePotion(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradeRejuvenation()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    upgradeToFullRejuvenationPotion(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextGpsConvertor()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    CD2GemsForm dlg(*this, CurrItem);
+    dlg.DoModal();
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

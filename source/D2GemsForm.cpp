@@ -615,6 +615,11 @@ CD2GemsForm::CD2GemsForm(CD2MainForm& form)
 
 }
 //---------------------------------------------------------------------------
+CD2GemsForm::CD2GemsForm(CD2ItemsForm& form, d2ce::Item* itemPtr)
+    : CDialogEx(CD2GemsForm::IDD, (CWnd*)&form), MainForm(form.MainForm), ItemsFormPtr(&form), ItemPtr(itemPtr)
+{
+}
+//---------------------------------------------------------------------------
 CD2GemsForm::~CD2GemsForm()
 {
 }
@@ -634,6 +639,8 @@ BOOL CD2GemsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
+    bool potionsOnly = false;
+
     // Fill in to from combo
     CComboBox* pFromCombo = (CComboBox*)GetDlgItem(IDC_FROM_COMBO);
     auto it = NumGemMap.end();
@@ -641,25 +648,44 @@ BOOL CD2GemsForm::OnInitDialog()
     {
         std::uint64_t itemData = 0;
         std::uint8_t(&gemCode)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemData);
-        auto& gems = MainForm.getGPSs();
-
-        for (auto& item : gems)
+        if (ItemPtr == nullptr)
         {
-            std::memset(gemCode, 0, sizeof(gemCode));
-            if (!item.get().getItemCode(gemCode))
+            auto& gems = MainForm.getGPSs();
+            for (auto& item : gems)
             {
-                continue;
-            }
+                std::memset(gemCode, 0, sizeof(gemCode));
+                if (!item.get().getItemCode(gemCode))
+                {
+                    continue;
+                }
 
-            it = NumGemMap.find(itemData);
-            if (it == NumGemMap.end())
+                it = NumGemMap.find(itemData);
+                if (it == NumGemMap.end())
+                {
+                    GemIdxMap.emplace(GetGPSSortIndex(gemCode), itemData);
+                    NumGemMap.emplace(itemData, 1);
+                }
+                else
+                {
+                    it->second = it->second + 1;
+                }
+            }
+        }
+        else
+        {
+            // Only add selected item
+            std::memset(gemCode, 0, sizeof(gemCode));
+            if (ItemPtr->getItemCode(gemCode))
             {
                 GemIdxMap.emplace(GetGPSSortIndex(gemCode), itemData);
                 NumGemMap.emplace(itemData, 1);
             }
-            else
+
+            switch (ItemPtr->getLocation())
             {
-                it->second = it->second + 1;
+            case d2ce::EnumItemLocation::BELT:
+                potionsOnly = true;
+                break;
             }
         }
 
@@ -691,6 +717,11 @@ BOOL CD2GemsForm::OnInitDialog()
             gemCode[3] = 0x20;
             if (gemIdx < 35)
             {
+                if (potionsOnly)
+                {
+                    continue;
+                }
+
                 gem = 'g'; // gem
                 switch (gemIdx % 7)
                 {
@@ -822,6 +853,11 @@ BOOL CD2GemsForm::OnInitDialog()
             }
             else // Runes
             {
+                if (potionsOnly)
+                {
+                    continue;
+                }
+
                 runeIdx = gemIdx - 49; // first rune starts at 01 not 00
                 gem = 'r';
                 gemCondition = '0' + uint8_t(runeIdx / 10);
@@ -859,7 +895,22 @@ void CD2GemsForm::OnBnClickedConvert()
             std::uint64_t itemDataTo = pToCombo->GetItemData(toIdx);
             std::uint8_t(&gemCodeTo)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemDataTo);
 
-            numConverted = MainForm.convertGPSs(gemCodeFrom, gemCodeTo);
+            if (ItemPtr == nullptr)
+            {
+                numConverted = MainForm.convertGPSs(gemCodeFrom, gemCodeTo);
+            }
+            else
+            {
+                if (ItemsFormPtr == nullptr)
+                {
+                    numConverted = MainForm.updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
+                }
+                else
+                {
+                    numConverted = ItemsFormPtr->updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
+                }
+            }
+
             if (numConverted > 0)
             {
                 // Update entries in from combo box
@@ -901,8 +952,16 @@ void CD2GemsForm::OnBnClickedConvert()
     }
 
     CString msg;
-    msg.Format(_T("%zd item(s) converted"), numConverted);
-    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+    if (ItemPtr == nullptr)
+    {
+        msg.Format(_T("%zd item(s) converted"), numConverted);
+        AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+    }
+    else if (numConverted == 0)
+    {
+        msg = _T("Item conversion failed!");
+        AfxMessageBox(msg, MB_ICONEXCLAMATION | MB_OK);
+    } 
 }
 //---------------------------------------------------------------------------
 

@@ -371,6 +371,10 @@ public:
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
     size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
+    bool updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4]);
+    bool upgradeGem(d2ce::Item& item);
+    bool upgradePotion(d2ce::Item& item);
+    bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
     bool repairItem(d2ce::Item& item);
     bool setItemMaxQuantity(d2ce::Item& item);
