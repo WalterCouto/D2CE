@@ -774,15 +774,15 @@ namespace d2ce
 
     struct CorpseHeader
     {
-        std::uint16_t IsDead = 0;     // non-0 if you are currently dead
-        std::uint32_t Unk_b0_4 = 0;   // unknown
-        std::uint32_t X = 0;          // X Locaton of corpse
-        std::uint32_t Y = 0;          // Y Locaton of corpse
+        std::uint16_t IsDead = 0;  // non-0 if you are currently dead
+        std::uint32_t Unknown = 0; // unknown
+        std::uint32_t X = 0;       // X Locaton of corpse
+        std::uint32_t Y = 0;       // Y Locaton of corpse
 
         void clear()
         {
             IsDead = 0;
-            Unk_b0_4 = 0;
+            Unknown = 0;
             X = 0;
             Y = 0;
         }
@@ -790,7 +790,7 @@ namespace d2ce
         CorpseHeader& operator=(const CorpseHeader& other)
         {
             IsDead = other.IsDead;
-            Unk_b0_4 = other.Unk_b0_4;
+            Unknown = other.Unknown;
             X = other.X;
             Y = other.Y;
             return *this;
@@ -799,7 +799,7 @@ namespace d2ce
         void swap(CorpseHeader& other) noexcept
         {
             IsDead = std::exchange(other.IsDead, std::uint16_t(0));
-            Unk_b0_4 = std::exchange(other.Unk_b0_4, std::uint32_t(0));
+            Unknown = std::exchange(other.Unknown, std::uint32_t(0));
             X = std::exchange(other.X, std::uint32_t(0));
             Y = std::exchange(other.Y, std::uint32_t(0));
         }
@@ -808,6 +808,19 @@ namespace d2ce
         {
             swap(other);
             return *this;
+        }
+
+        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        {
+            ss << "\n" << parentIndent << "\"is_dead\": " << std::dec << (IsDead ? 1 : 0);
+            if (IsDead)
+            {
+                ss << ",\n" << parentIndent << "\"corpse_location\": {";
+                ss << "\n" << parentIndent << jsonIndentStr << "\"unknown\": " << std::dec << Unknown;
+                ss << ",\n" << parentIndent << jsonIndentStr << "\"position_x\": " << std::dec << X;
+                ss << ",\n" << parentIndent << jsonIndentStr << "\"position_y\": " << std::dec << Y;
+                ss << "\n" << parentIndent << "}";
+            }
         }
     };
 }

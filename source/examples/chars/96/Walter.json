@@ -6134,7 +6134,8 @@
                         3
                     ],
                     "name": "secondary_mindamage",
-                    "description": "+3 to Minimum Damage"
+                    "description": "+3 to Minimum Damage",
+                    "visible": false
                 },
                 {
                     "id": 9,
@@ -6150,7 +6151,8 @@
                         3
                     ],
                     "name": "item_throw_mindamage",
-                    "description": "+3 to Minimum Throw Damage"
+                    "description": "+3 to Minimum Throw Damage",
+                    "visible": false
                 }
             ],
             "displayed_runeword_attributes": [],
@@ -6203,7 +6205,8 @@
                         3
                     ],
                     "name": "secondary_mindamage",
-                    "description": "+3 to Minimum Damage"
+                    "description": "+3 to Minimum Damage",
+                    "visible": false
                 },
                 {
                     "id": 9,
@@ -6219,7 +6222,8 @@
                         3
                     ],
                     "name": "item_throw_mindamage",
-                    "description": "+3 to Minimum Throw Damage"
+                    "description": "+3 to Minimum Throw Damage",
+                    "visible": false
                 }
             ]
         },
@@ -7637,7 +7641,8 @@
                         1
                     ],
                     "name": "secondary_maxdamage",
-                    "description": "+1 to Maximum Damage"
+                    "description": "+1 to Maximum Damage",
+                    "visible": false
                 },
                 {
                     "id": 74,
@@ -7669,7 +7674,8 @@
                         1
                     ],
                     "name": "item_throw_maxdamage",
-                    "description": "+1 to Maximum Throw Damage"
+                    "description": "+1 to Maximum Throw Damage",
+                    "visible": false
                 }
             ],
             "displayed_runeword_attributes": [],
@@ -7754,7 +7760,8 @@
                         1
                     ],
                     "name": "secondary_maxdamage",
-                    "description": "+1 to Maximum Damage"
+                    "description": "+1 to Maximum Damage",
+                    "visible": false
                 },
                 {
                     "id": 74,
@@ -7786,7 +7793,8 @@
                         1
                     ],
                     "name": "item_throw_maxdamage",
-                    "description": "+1 to Maximum Throw Damage"
+                    "description": "+1 to Maximum Throw Damage",
+                    "visible": false
                 }
             ]
         },

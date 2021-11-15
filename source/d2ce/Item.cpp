@@ -12072,7 +12072,7 @@ bool d2ce::Items::readCorpseItems(std::FILE* charfile)
 
     if (CorpseInfo.IsDead > 0)
     {
-        std::fread(&CorpseInfo.Unk_b0_4, sizeof(CorpseInfo.Unk_b0_4), 1, charfile);
+        std::fread(&CorpseInfo.Unknown, sizeof(CorpseInfo.Unknown), 1, charfile);
         std::fread(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
         std::fread(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
         if (!readItems(charfile, corpse_item_location, NumOfCorpseItems, CorpseItems))
@@ -12224,7 +12224,7 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 
     if (CorpseInfo.IsDead > 0)
     {
-        std::fwrite(&CorpseInfo.Unk_b0_4, sizeof(CorpseInfo.Unk_b0_4), 1, charfile);
+        std::fwrite(&CorpseInfo.Unknown, sizeof(CorpseInfo.Unknown), 1, charfile);
         std::fwrite(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
         std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
 
@@ -12472,8 +12472,8 @@ void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent,
     itemsAsJson(ss, parentIndent, charLevel);
     ss << ",";
     corpseItemsAsJson(ss, parentIndent, charLevel);
-    ss << ",\n" << parentIndent << "\"is_dead\": " << std::dec << CorpseItems.size();
-
+    ss << ",";
+    CorpseInfo.asJson(ss, parentIndent);
     {
         std::stringstream ss2;
         if (mercItemsAsJson(ss2, parentIndent, charLevel))

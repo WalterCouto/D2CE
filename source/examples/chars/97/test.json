@@ -1862,6 +1862,11 @@
         }
     ],
     "is_dead": 1,
+    "corpse_location": {
+        "unknown": 1493640696,
+        "position_x": 0,
+        "position_y": 0
+    },
     "merc_items": [],
     "item_bonuses": []
 }
