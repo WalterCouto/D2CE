@@ -12387,6 +12387,8 @@ void d2ce::Items::corpseItemsAsJson(std::stringstream& ss, const std::string& pa
         }
         ss << "\n" << parentIndent << "]";
     }
+    ss << ",";
+    CorpseInfo.asJson(ss, parentIndent);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
@@ -12472,8 +12474,6 @@ void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent,
     itemsAsJson(ss, parentIndent, charLevel);
     ss << ",";
     corpseItemsAsJson(ss, parentIndent, charLevel);
-    ss << ",";
-    CorpseInfo.asJson(ss, parentIndent);
     {
         std::stringstream ss2;
         if (mercItemsAsJson(ss2, parentIndent, charLevel))
