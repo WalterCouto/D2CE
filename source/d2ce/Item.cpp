@@ -5150,9 +5150,9 @@ namespace d2ce
     {
         // check for the "all" cases
         std::map<std::uint16_t, std::reference_wrapper<MagicalAttribute>> relatedPropIdMap;
-        std::int64_t numRelatedProps[2] = { 0, 0 };
-        std::int64_t relatedPropValues[2] = { 0, 0 };
-        bool validProps[2] = { true, true };
+        std::int64_t numRelatedProps[4] = { 0, 0, 0, 0 };
+        std::int64_t relatedPropValues[4] = { 0, 0, 0, 9 };
+        bool validProps[4] = { true, true, true, true };
         for (auto& attrib : attribs)
         {
             if (!validProps[0] && !validProps[1])
@@ -5210,7 +5210,7 @@ namespace d2ce
                         {
                             // non matching case
                             validProps[1] = false;
-                            numRelatedProps[0] = 0;
+                            numRelatedProps[1] = 0;
                         }
                     }
                     else
@@ -5218,6 +5218,64 @@ namespace d2ce
                         // more than one poperty of the same type
                         validProps[1] = false;
                         numRelatedProps[1] = 0;
+                    }
+                }
+                break;
+
+            case 21:  // mindamage
+            case 23:  // secondary_mindamage
+            case 159: // item_throw_mindamage
+                if (validProps[2])
+                {
+                    if (relatedPropIdMap.find(attrib.Id) == relatedPropIdMap.end())
+                    {
+                        relatedPropIdMap.emplace(attrib.Id, std::ref(attrib));
+                        if ((numRelatedProps[2] == 0) || (attrib.Values[0] == relatedPropValues[2]))
+                        {
+                            ++numRelatedProps[2];
+                            relatedPropValues[2] = attrib.Values[0];
+                        }
+                        else
+                        {
+                            // non matching case
+                            validProps[2] = false;
+                            numRelatedProps[2] = 0;
+                        }
+                    }
+                    else
+                    {
+                        // more than one poperty of the same type
+                        validProps[2] = false;
+                        numRelatedProps[2] = 0;
+                    }
+                }
+                break;
+
+            case 22:  // maxdamage
+            case 24:  // secondary_maxdamage
+            case 160: // item_throw_maxdamage
+                if (validProps[3])
+                {
+                    if (relatedPropIdMap.find(attrib.Id) == relatedPropIdMap.end())
+                    {
+                        relatedPropIdMap.emplace(attrib.Id, std::ref(attrib));
+                        if ((numRelatedProps[3] == 0) || (attrib.Values[0] == relatedPropValues[3]))
+                        {
+                            ++numRelatedProps[3];
+                            relatedPropValues[3] = attrib.Values[0];
+                        }
+                        else
+                        {
+                            // non matching case
+                            validProps[3] = false;
+                            numRelatedProps[3] = 0;
+                        }
+                    }
+                    else
+                    {
+                        // more than one poperty of the same type
+                        validProps[3] = false;
+                        numRelatedProps[3] = 0;
                     }
                 }
                 break;
@@ -5232,11 +5290,21 @@ namespace d2ce
             }
         }
 
-        if (!validProps[0] && !validProps[1])
+        for (size_t i = 2; i < 4; ++i)
+        {
+            if (validProps[i] && (numRelatedProps[i] == 1))
+            {
+                validProps[i] = false;
+            }
+        }
+
+        if (!validProps[0] && !validProps[1] && !validProps[2] && !validProps[3])
         {
             return;
         }
 
+        bool minDamageVisible = true;
+        bool maxDamageVisible = true;
         for (auto& prop : relatedPropIdMap)
         {
             auto& attrib = prop.second.get();
@@ -5273,6 +5341,32 @@ namespace d2ce
                 if (validProps[1])
                 {
                     attrib.Desc = "All Resistances +{0}";
+                }
+                break;
+
+            case 21:  // mindamage
+            case 23:  // secondary_mindamage
+            case 159: // item_throw_mindamage
+                if (validProps[2])
+                {
+                    if (!minDamageVisible)
+                    {
+                        attrib.Visible = false;
+                    }
+                    minDamageVisible = false;
+                }
+                break;
+
+            case 22:  // maxdamage
+            case 24:  // secondary_maxdamage
+            case 160: // item_throw_maxdamage
+                if (validProps[2])
+                {
+                    if (!maxDamageVisible)
+                    {
+                        attrib.Visible = false;
+                    }
+                    maxDamageVisible = false;
                 }
                 break;
             }
@@ -11795,13 +11889,10 @@ void d2ce::Items::findItems()
 
         case d2ce::EnumItemLocation::EQUIPPED:
             ItemLocationReference[itemLocation].push_back(const_cast<d2ce::Item&>(item));
-            if (!HasBeltEquipped)
+            if ((!HasBeltEquipped || (EquippedBeltSlots == 0)) && item.isBelt())
             {
-                if (item.isBelt())
-                {
-                    HasBeltEquipped = true;
-                    EquippedBeltSlots = item.getTotalItemSlots();
-                }
+                HasBeltEquipped = true;
+                EquippedBeltSlots = item.getTotalItemSlots();
             }
             break;
 
