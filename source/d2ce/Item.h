@@ -54,6 +54,7 @@ namespace d2ce
         size_t quality_attrib_bit_offset = 0;
         size_t runeword_id_bit_offset = 0;
         size_t personalized_bit_offset = 0;
+        size_t tome_bit_offset = 0;
         size_t realm_bit_offset = 0;
         size_t defense_rating_bit_offset = 0;
         size_t durability_bit_offset = 0;
@@ -81,8 +82,8 @@ namespace d2ce
         bool readItem(EnumCharVersion version, std::FILE* charfile);
         bool writeItem(std::FILE* charfile);
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem = true) const;
-        void unknownAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem = true, bool bSerializedFormat = false) const;
+        void unknownAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
         void byteRangeAsJson(std::stringstream& ss, const std::string& parentIndent, size_t startByte, size_t numBytes) const;
 
         std::uint16_t getRawVersion() const;
@@ -138,6 +139,7 @@ namespace d2ce
         bool getDimensions(ItemDimensions& dimensions) const;
         std::uint32_t getTotalItemSlots() const; // non-zero for belts and Horadric Cube only
         std::string getInvFile() const;
+        std::string getTransformColor() const;
 
         // Extended information
         std::uint32_t getId() const;
@@ -146,6 +148,7 @@ namespace d2ce
         bool getMagicalAffixes(MagicalAffixes& affixes) const;
         bool getRunewordAttributes(RunewordAttributes& attrib) const;
         std::string getPersonalizedName() const;
+        std::uint8_t getTomeValue() const; // used in serialization
         bool getSetAttributes(SetAttributes& attrib) const;
         bool getRareOrCraftedAttributes(RareAttributes& attrib) const;
         bool getUniqueAttributes(UniqueAttributes& attrib) const;
@@ -154,7 +157,10 @@ namespace d2ce
         bool hasMultipleGraphics() const;
         std::uint8_t getPictureId() const;
         bool isAutoAffix() const;
-        std::uint8_t getInferiorQualityId() const;
+        std::uint16_t getAutoAffixId() const;
+        std::uint8_t getInferiorQualityId() const; // used in serialization
+        std::uint16_t getFileIndex() const; // used in serialization
+        std::uint16_t getSetItemMask() const; // used in serialization
         bool isArmor() const;
         bool isWeapon() const;
         bool isTome() const;
@@ -165,6 +171,7 @@ namespace d2ce
         bool isUpgradablePotion() const;
         bool isUpgradableToFullRejuvenationPotion() const;
         bool isRune() const;
+        bool isJewel() const;
         bool isCharm() const;
         bool isBelt() const;
         bool isHoradricCube() const;
@@ -260,12 +267,12 @@ namespace d2ce
         bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
         bool writeItems(std::FILE* charfile, bool isExpansion = false);
 
-        void itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
-        void corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
-        bool mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
-        bool golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
-        bool itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent) const;
-        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const;
+        void itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        void corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
 
     public:
         Items();

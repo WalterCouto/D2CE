@@ -25,7 +25,10 @@
 
 namespace d2ce
 {
-    constexpr std::uint8_t START_SKILL_ID = 6;
+    constexpr std::uint16_t START_SKILL_ID = 6;
+    constexpr std::uint16_t END_SKILL_ID = 155;
+    constexpr std::uint16_t EXPANSION_START_SKILL_ID = 221;
+    constexpr std::uint16_t EXPANSION_END_SKILL_ID = 280;
     constexpr std::uint32_t NUM_OF_SKILLS = 30;
     constexpr std::uint8_t MAX_SKILL_VALUE = 20;
 
@@ -33,7 +36,7 @@ namespace d2ce
         {0, "Attack"}, {1, "Kick"}, {2, "Throw"}, {3, "Unsummon"}, {4, "Left Hand Throw"}, {5, "Left Hand Swing"},
         {217, "Scroll of Identify"}, {218, "Tome of Identify"}, {219, "Scroll of Town Portal"}, {220, "Tome of Town Portal"}
     };
-    
+
     // skill names in original array position as found in character file
     const std::string SkillsNames[NUM_OF_CLASSES][NUM_OF_SKILLS] =
              {{"Magic Arrow", "Fire Arrow", "Inner Sight", "Critical Strike", "Jab",

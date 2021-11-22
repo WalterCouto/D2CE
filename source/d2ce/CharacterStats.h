@@ -118,10 +118,10 @@ namespace d2ce
 
         void updateClass(EnumCharClass charClass);
 
-        std::string getAttributeJsonName(std::uint16_t stat) const;
-        void attributesAsJson(std::stringstream& ss, const std::string& parentIndent) const;
-        void skillsAsJson(std::stringstream& ss, const std::string& parentIndent) const;
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const;
+        std::string getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat = false) const;
+        void attributesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void skillsAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
 
     public:
         CharacterStats();

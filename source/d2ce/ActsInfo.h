@@ -48,7 +48,7 @@ namespace d2ce
 
             // Not part of Act V quests
             std::uint8_t ResetStats = 0;
-            std::uint8_t Completed = 0;             // Difficulty has been complated
+            std::uint8_t Completed = 0;             // Difficulty has been completed
             std::uint16_t Padding2[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
         };
 
@@ -101,18 +101,22 @@ namespace d2ce
         bool readActs(EnumCharVersion version, std::FILE* charfile);
         bool writeActs(std::FILE* charfile);
 
-        void questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
-        std::string getQuestsJsonName(EnumDifficulty diff) const;
-        std::string getDifficultyJsonName(EnumDifficulty diff) const;
-        std::string getActJsonName(EnumAct act) const;
-        std::string getQuestJsonName(EnumAct act, std::uint8_t quest) const;
-        std::string getQuestBitJsonName(std::uint8_t bit, bool& isOptional) const;
+        void questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        std::string getQuestsJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
+        std::string getDifficultyJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
+        std::string getActJsonName(EnumAct act, bool bSerializedFormat = false) const;
+        std::string getQuestJsonName(EnumAct act, std::uint8_t quest, bool bSerializedFormat = false) const;
+        std::string getQuestBitJsonName(std::uint8_t bit, bool& isOptional, bool bSerializedFormat = false) const;
 
-        void waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
-        std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint) const;
+        void waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint, bool bSerializedFormat = false) const;
 
-        void npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const;
-        std::string getNpcJsonName(std::uint8_t npc, bool isExpansion) const;
+        void npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        std::string getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat = false) const;
+
+        std::uint16_t getActIntroducedData(EnumDifficulty diff, EnumAct act) const;
+        std::uint16_t getActCompletedData(EnumDifficulty diff, EnumAct act) const;
+        std::uint16_t getActVResetStatCompletedData(EnumDifficulty diff) const;
 
     public:
         ActsInfo();

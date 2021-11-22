@@ -70,8 +70,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.06 (Nov 14, 2021)**<br>
+**Version 2.06 (Nov 22, 2021)**<br>
 - Added: Context menu for Gem, Potion or Skull items in Items Form<br>
+- Added: Reading/Writing and Json export of the menu appearance section<br>
+- Added: New Serialized Json Export compatable with D2SLib format. This format contains only the information available in the d2s file without the detailed interpretation given by the existing Json export logic. The previous JSON export is now called "Detailed" while the new JSON export is called "Serialized" in the menu.<br>
 
 **Version 2.05 (Nov 14, 2021)**<br>
 - Updated: Updated: Fix up handling of reading files with a corpse<br>

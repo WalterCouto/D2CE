@@ -100,7 +100,7 @@ namespace d2ce
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
     };
 }
 //---------------------------------------------------------------------------

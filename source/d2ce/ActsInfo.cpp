@@ -466,44 +466,44 @@ bool d2ce::ActsInfo::writeActs(std::FILE* charfile)
     return writeNPC(charfile);
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const
+void d2ce::ActsInfo::questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat) const
 {
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
-    for (auto diff : all_diff)
+    static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
+    if (bSerializedFormat)
     {
-        if (diff != EnumDifficulty::Normal)
+        ss << "\n" << parentIndent << "\"Quests\": {";
+
+        std::string questParentIndent = parentIndent + jsonIndentStr;
+        std::string questActParentIndent = questParentIndent + jsonIndentStr;
+        ss << "\n" << questParentIndent << "\"Magic\": " << ((Version < EnumCharVersion::v115) ? "1" : "0");
+        ss << ",\n" << questParentIndent << "\"Header\": " << std::dec << (std::uint32_t) * ((std::uint32_t*)QUESTS_MARKER);
+        ss << ",\n" << questParentIndent << "\"Version\": " << std::dec << (std::uint32_t) * ((std::uint32_t*)quests_version);
+        ss << ",\n" << questParentIndent << "\"Length\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)QUESTS_SIZE_MARKER);
+        for (auto diff : all_diff)
         {
-            ss << ",";
-        }
-
-        ss << "\n" << parentIndent << "\"" << getQuestsJsonName(diff) << "\": {";
-
-        static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
-        for (auto act : all_acts)
-        {
-            if (act == EnumAct::V && !isExpansion)
+            ss << ",\n" << questParentIndent << "\"" << getQuestsJsonName(diff, bSerializedFormat) << "\": {";
+            for (auto act : all_acts)
             {
-                continue;
-            }
+                if (act == EnumAct::V && !isExpansion)
+                {
+                    continue;
+                }
 
-            if (act != EnumAct::I)
-            {
-                ss << ",";
-            }
+                if (act != EnumAct::I)
+                {
+                    ss << ",";
+                }
 
-            std::bitset<16> questValue;
-            ss << "\n" << parentIndent << jsonIndentStr << "\"" << getActJsonName(act) << "\": {";
-            ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"introduced\": " << (getActIntroduced(diff, act) ? "true" : "false");
-            for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
-            {
-                ss << ",\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"" << getQuestJsonName(act, quest) << "\": {";
                 bool isOptional = false;
                 bool bFirstItem = true;
                 std::string bitName;
-                questValue = getQuestData(diff, act, quest);
+                ss << "\n" << questActParentIndent << "\"" << getActJsonName(act, bSerializedFormat) << "\": {";
+                ss << "\n" << questActParentIndent << jsonIndentStr << "\"Introduction\": {";
+                std::bitset<16> questValue = getActIntroducedData(diff, act);
                 for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
                 {
-                    bitName = getQuestBitJsonName(bit, isOptional);
+                    bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
                     if (!questValue[bit] && isOptional)
                     {
                         // optional
@@ -519,76 +519,320 @@ void d2ce::ActsInfo::questsAsJson(std::stringstream& ss, bool isExpansion, const
                         ss << ",";
                     }
 
-                    ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                    ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
                 }
-                ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "}";
+                ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+
+                if (act == EnumAct::V)
+                {
+                    auto& actInfo = Acts[static_cast<std::underlying_type_t<EnumDifficulty>>(diff)].ActV;
+                    for (size_t idx = 1; idx <= 2; ++idx)
+                    {
+                        bFirstItem = true;
+                        ss << ",\n" << questActParentIndent << jsonIndentStr << "\"Extra" << std::dec << idx << "\": {";
+                        questValue = actInfo.Padding1[idx - 1];
+                        for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                        {
+                            bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                            if (!questValue[bit] && isOptional)
+                            {
+                                // optional
+                                continue;
+                            }
+
+                            if (bFirstItem)
+                            {
+                                bFirstItem = false;
+                            }
+                            else
+                            {
+                                ss << ",";
+                            }
+
+                            ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                        }
+                        ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+                    }
+                }
+
+                for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+                {
+                    ss << ",\n" << questActParentIndent << jsonIndentStr << "\"" << getQuestJsonName(act, quest, bSerializedFormat) << "\": {";
+                    isOptional = false;
+                    bFirstItem = true;
+                    questValue = getQuestData(diff, act, quest);
+                    for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                    {
+                        bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                        if (!questValue[bit] && isOptional)
+                        {
+                            // optional
+                            continue;
+                        }
+
+                        if (bFirstItem)
+                        {
+                            bFirstItem = false;
+                        }
+                        else
+                        {
+                            ss << ",";
+                        }
+
+                        ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                    }
+                    ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+                }
+
+                ss << ",\n" << questActParentIndent << jsonIndentStr << "\"Completion\": {";
+
+                bFirstItem = true;
+                questValue = act == EnumAct::V ? getActVResetStatCompletedData(diff) : getActCompletedData(diff, act);
+                for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                {
+                    bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                    if (!questValue[bit] && isOptional)
+                    {
+                        // optional
+                        continue;
+                    }
+
+                    if (bFirstItem)
+                    {
+                        bFirstItem = false;
+                    }
+                    else
+                    {
+                        ss << ",";
+                    }
+
+                    ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                }
+                ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+
+                if (act == EnumAct::IV)
+                {
+                    auto& actInfo = Acts[static_cast<std::underlying_type_t<EnumDifficulty>>(diff)].Act[3];
+                    for (size_t idx = 1; idx <= 3; ++idx)
+                    {
+                        bFirstItem = true;
+                        ss << ",\n" << questActParentIndent << jsonIndentStr << "\"Extra" << std::dec << idx << "\": {";
+                        questValue = idx == 3 ? actInfo.Completed : actInfo.Quests[3 + idx];
+                        for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                        {
+                            bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                            if (!questValue[bit] && isOptional)
+                            {
+                                // optional
+                                continue;
+                            }
+
+                            if (bFirstItem)
+                            {
+                                bFirstItem = false;
+                            }
+                            else
+                            {
+                                ss << ",";
+                            }
+
+                            ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                        }
+                        ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+                    }
+                }
+                else if (act == EnumAct::V)
+                {
+                    auto& actInfo = Acts[static_cast<std::underlying_type_t<EnumDifficulty>>(diff)].ActV;
+                    for (size_t idx = 3; idx <= 8; ++idx)
+                    {
+                        bFirstItem = true;
+                        ss << ",\n" << questActParentIndent << jsonIndentStr << "\"Extra" << std::dec << idx << "\": {";
+                        questValue = actInfo.Padding2[idx - 3];
+                        for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                        {
+                            bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                            if (!questValue[bit] && isOptional)
+                            {
+                                // optional
+                                continue;
+                            }
+
+                            if (bFirstItem)
+                            {
+                                bFirstItem = false;
+                            }
+                            else
+                            {
+                                ss << ",";
+                            }
+
+                            ss << "\n" << questActParentIndent << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                        }
+                        ss << "\n" << questActParentIndent << jsonIndentStr << "}";
+                    }
+                }
+                ss << "\n" << questActParentIndent << "}";
             }
-            ss << ",\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"completed\": " << (getActCompleted(diff, act) ? "true" : "false");
-            ss << "\n" << parentIndent << jsonIndentStr << "}";
+            ss << "\n" << questParentIndent << "}";
         }
         ss << "\n" << parentIndent << "}";
     }
+    else
+    {
+        for (auto diff : all_diff)
+        {
+            if (diff != EnumDifficulty::Normal)
+            {
+                ss << ",";
+            }
+
+            ss << "\n" << parentIndent << "\"" << getQuestsJsonName(diff, bSerializedFormat) << "\": {";
+            for (auto act : all_acts)
+            {
+                if (act == EnumAct::V && !isExpansion)
+                {
+                    continue;
+                }
+
+                if (act != EnumAct::I)
+                {
+                    ss << ",";
+                }
+
+                std::bitset<16> questValue;
+                ss << "\n" << parentIndent << jsonIndentStr << "\"" << getActJsonName(act, bSerializedFormat) << "\": {";
+                ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"introduced\": " << (getActIntroduced(diff, act) ? "true" : "false");
+                for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+                {
+                    ss << ",\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"" << getQuestJsonName(act, quest) << "\": {";
+                    bool isOptional = false;
+                    bool bFirstItem = true;
+                    std::string bitName;
+                    questValue = getQuestData(diff, act, quest);
+                    for (std::uint8_t bit = 0; bit < questValue.size(); ++bit)
+                    {
+                        bitName = getQuestBitJsonName(bit, isOptional, bSerializedFormat);
+                        if (!questValue[bit] && isOptional)
+                        {
+                            // optional
+                            continue;
+                        }
+
+                        if (bFirstItem)
+                        {
+                            bFirstItem = false;
+                        }
+                        else
+                        {
+                            ss << ",";
+                        }
+
+                        ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << jsonIndentStr << "\"" << bitName << "\": " << (questValue[bit] ? "true" : "false");
+                    }
+                    ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "}";
+                }
+                ss << ",\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"completed\": " << (getActCompleted(diff, act) ? "true" : "false");
+                ss << "\n" << parentIndent << jsonIndentStr << "}";
+            }
+            ss << "\n" << parentIndent << "}";
+        }
+    }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getQuestsJsonName(EnumDifficulty diff) const
+std::string d2ce::ActsInfo::getQuestsJsonName(EnumDifficulty diff, bool bSerializedFormat) const
 {
+    if (bSerializedFormat)
+    {
+        return getDifficultyJsonName(diff, bSerializedFormat);
+    }
+
     std::stringstream ss;
-    ss << "quests_" << getDifficultyJsonName(diff);
+    ss << "quests_" << getDifficultyJsonName(diff, bSerializedFormat);
     return ss.str();
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getDifficultyJsonName(EnumDifficulty diff) const
+std::string d2ce::ActsInfo::getDifficultyJsonName(EnumDifficulty diff, bool bSerializedFormat) const
 {
     std::stringstream ss;
     switch (diff)
     {
     case EnumDifficulty::Normal:
-        ss << "normal";
+        ss << (bSerializedFormat ? "Normal" : "normal");
         break;
 
     case EnumDifficulty::Nightmare:
-        ss << "nm";
+        ss << (bSerializedFormat ? "Nightmare" : "nm");
         break;
 
     case EnumDifficulty::Hell:
-        ss << "hell";
+        ss << (bSerializedFormat ? "Hell" : "hell");
         break;
     }
 
     return ss.str();
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getActJsonName(EnumAct act) const
+std::string d2ce::ActsInfo::getActJsonName(EnumAct act, bool bSerializedFormat) const
 {
     std::stringstream ss;
-    ss << "act_";
-    switch (act)
+    if (bSerializedFormat)
     {
-    case EnumAct::I:
-        ss << "i";
-        break;
+        ss << "Act";
+        switch (act)
+        {
+        case EnumAct::I:
+            ss << "I";
+            break;
 
-    case EnumAct::II:
-        ss << "ii";
-        break;
+        case EnumAct::II:
+            ss << "II";
+            break;
 
-    case EnumAct::III:
-        ss << "iii";
-        break;
+        case EnumAct::III:
+            ss << "III";
+            break;
 
-    case EnumAct::IV:
-        ss << "iv";
-        break;
+        case EnumAct::IV:
+            ss << "IV";
+            break;
 
-    case EnumAct::V:
-        ss << "v";
-        break;
+        case EnumAct::V:
+            ss << "V";
+            break;
+        }
+    }
+    else
+    {
+        ss << "act_";
+        switch (act)
+        {
+        case EnumAct::I:
+            ss << "i";
+            break;
+
+        case EnumAct::II:
+            ss << "ii";
+            break;
+
+        case EnumAct::III:
+            ss << "iii";
+            break;
+
+        case EnumAct::IV:
+            ss << "iv";
+            break;
+
+        case EnumAct::V:
+            ss << "v";
+            break;
+        }
     }
 
     return ss.str();
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) const
+std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest, bool bSerializedFormat) const
 {
     switch (act)
     {
@@ -596,22 +840,22 @@ std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) co
         switch (quest)
         {
         case 0:
-            return "den_of_evil";
+            return bSerializedFormat ? "DenOfEvil" : "den_of_evil";
 
         case 1:
-            return "sisters_burial_grounds";
+            return bSerializedFormat ? "SistersBurialGrounds" : "sisters_burial_grounds";
 
         case 2:
-            return "tools_of_the_trade";
+            return bSerializedFormat ? "ToolsOfTheTrade" : "tools_of_the_trade";
 
         case 3:
-            return "the_search_for_cain";
+            return bSerializedFormat ? "TheSearchForCain" : "the_search_for_cain";
 
         case 4:
-            return "the_forgotten_tower";
+            return bSerializedFormat ? "TheForgottenTower" : "the_forgotten_tower";
 
         case 5:
-            return "sisters_to_the_slaughter";
+            return bSerializedFormat ? "SistersToTheSlaughter" : "sisters_to_the_slaughter";
         }
         break;
 
@@ -619,22 +863,22 @@ std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) co
         switch (quest)
         {
         case 0:
-            return "radaments_lair";
+            return bSerializedFormat ? "RadamentsLair" : "radaments_lair";
 
         case 1:
-            return "the_horadric_staff";
+            return bSerializedFormat ? "TheHoradricStaff" : "the_horadric_staff";
 
         case 2:
-            return "tainted_sun";
+            return bSerializedFormat ? "TaintedSun" : "tainted_sun";
 
         case 3:
-            return "arcane_sanctuary";
+            return bSerializedFormat ? "ArcaneSanctuary" : "arcane_sanctuary";
 
         case 4:
-            return "the_summoner";
+            return bSerializedFormat ? "TheSummoner" : "the_summoner";
 
         case 5:
-            return "the_seven_tombs";
+            return bSerializedFormat ? "TheSevenTombs" : "the_seven_tombs";
         }
         break;
 
@@ -642,22 +886,22 @@ std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) co
         switch (quest)
         {
         case 0:
-            return "lam_esens_tome";
+            return bSerializedFormat ? "LamEsensTome" : "lam_esens_tome";
 
         case 1:
-            return "khalims_will";
+            return bSerializedFormat ? "KhalimsWill" : "khalims_will";
 
         case 2:
-            return "blade_of_the_old_religion";
+            return bSerializedFormat ? "BladeOfTheOldReligion" : "blade_of_the_old_religion";
 
         case 3:
-            return "the_golden_bird";
+            return bSerializedFormat ? "TheGoldenBird" : "the_golden_bird";
 
         case 4:
-            return "the_blackened_temple";
+            return bSerializedFormat ? "TheBlackenedTemple" : "the_blackened_temple";
 
         case 5:
-            return "the_guardian";
+            return bSerializedFormat ? "TheGuardian" : "the_guardian";
         }
         break;
 
@@ -665,13 +909,13 @@ std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) co
         switch (quest)
         {
         case 0:
-            return "the_fallen_angel";
+            return bSerializedFormat ? "TheFallenAngel" : "the_fallen_angel";
 
         case 1:
-            return "terrors_end";
+            return bSerializedFormat ? "TerrorsEnd" : "terrors_end";
 
         case 2:
-            return "hellforge";
+            return bSerializedFormat ? "Hellforge" : "hellforge";
         }
         break;
 
@@ -679,29 +923,29 @@ std::string d2ce::ActsInfo::getQuestJsonName(EnumAct act, std::uint8_t quest) co
         switch (quest)
         {
         case 0:
-            return "siege_on_harrogath";
+            return bSerializedFormat ? "SiegeOnHarrogath" : "siege_on_harrogath";
 
         case 1:
-            return "rescue_on_mount_arreat";
+            return bSerializedFormat ? "RescueOnMountArreat" : "rescue_on_mount_arreat";
 
         case 2:
-            return "prison_of_ice";
+            return bSerializedFormat ? "PrisonOfIce" : "prison_of_ice";
 
         case 3:
-            return "betrayal_of_harrogath";
+            return bSerializedFormat ? "BetrayalOfHarrogath" : "betrayal_of_harrogath";
 
         case 4:
-            return "rite_of_passage";
+            return bSerializedFormat ? "RiteOfPassage" : "rite_of_passage";
 
         case 5:
-            return "eve_of_destruction";
+            return bSerializedFormat ? "EveOfDestruction" : "eve_of_destruction";
         }
     }
 
     return "";
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getQuestBitJsonName(std::uint8_t bit, bool& isOptional) const
+std::string d2ce::ActsInfo::getQuestBitJsonName(std::uint8_t bit, bool& isOptional, bool bSerializedFormat) const
 {
     isOptional = false;
     if (bit > 15)
@@ -713,23 +957,93 @@ std::string d2ce::ActsInfo::getQuestBitJsonName(std::uint8_t bit, bool& isOption
     switch (bit)
     {
     case 0:
-        return "is_completed";
+        return bSerializedFormat ? "RewardGranted" : "is_completed";
 
     case 1:
-        return "is_requirement_completed";
+        return bSerializedFormat ? "RewardPending" : "is_requirement_completed";
 
     case 2:
-        return "is_received";
+        return bSerializedFormat ? "Started" : "is_received";
+
+    case 3:
+        if (bSerializedFormat)
+        {
+            return "LeftTown";
+        }
+        break;
+
+    case 4:
+        if (bSerializedFormat)
+        {
+            return "EnterArea";
+        }
+        break;
+
+    case 5:
+        if (bSerializedFormat)
+        {
+            return "Custom1";
+        }
+        break;
+
+    case 6:
+        if (bSerializedFormat)
+        {
+            return "Custom2";
+        }
+        break;
 
     case 7:
-        isOptional = true;
-        return "consumed_scroll";
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Custom3" : "consumed_scroll";
+
+    case 8:
+        if (bSerializedFormat)
+        {
+            return "Custom4";
+        }
+        break;
+
+    case 9:
+        if (bSerializedFormat)
+        {
+            return "Custom5";
+        }
+        break;
+
+    case 10:
+        if (bSerializedFormat)
+        {
+            return "Custom6";
+        }
+        break;
+
+    case 11:
+        if (bSerializedFormat)
+        {
+            return "Custom7";
+        }
+        break;
 
     case 12:
-        return "closed";
+        return bSerializedFormat ? "QuestLog" : "closed";
 
     case 13:
-        return "done_recently";
+        return bSerializedFormat ? "PrimaryGoalAchieved" : "done_recently";
+
+    case 14:
+        if (bSerializedFormat)
+        {
+            return "CompletedNow";
+        }
+        break;
+
+    case 15:
+        if (bSerializedFormat)
+        {
+            return "CompletedBefore";
+        }
+        break;
     }
 
     isOptional = true;
@@ -738,52 +1052,93 @@ std::string d2ce::ActsInfo::getQuestBitJsonName(std::uint8_t bit, bool& isOption
     return ss.str();
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const
+void d2ce::ActsInfo::waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat) const
 {
-    ss << "\n" << parentIndent << "\"waypoints\": {";
-
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
-    for (auto diff : all_diff)
+    static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
+    if (bSerializedFormat)
     {
-        if (diff != EnumDifficulty::Normal)
-        {
-            ss << ",";
-        }
+        std::string waypointsParentIndent = parentIndent + jsonIndentStr;
+        std::string waypointActParentIndent = waypointsParentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"Waypoints\": {";
+        ss << "\n" << waypointsParentIndent << "\"Header\": " << std::dec << (std::uint32_t) * ((std::uint32_t*)WAYPOINTS_MARKER);
+        ss << ",\n" << waypointsParentIndent << "\"Version\": " << std::dec << (std::uint32_t) * ((std::uint32_t*)waypoints_version);
+        ss << ",\n" << waypointsParentIndent << "\"Length\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)WAYPOINTS_SIZE_MARKER);
 
-        ss << "\n" << parentIndent << jsonIndentStr << "\"" << getDifficultyJsonName(diff) << "\": {";
-
-        static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
-        for (auto act : all_acts)
+        for (auto diff : all_diff)
         {
-            if (act == EnumAct::V && !isExpansion)
+            ss << ",\n" << waypointsParentIndent << "\"" << getDifficultyJsonName(diff, bSerializedFormat) << "\": {";
+            ss << "\n" << waypointActParentIndent << "\"Header\": " << std::dec << Waypoints_unknown[static_cast<std::underlying_type_t<EnumDifficulty>>(diff)];
+
+            for (auto act : all_acts)
             {
-                continue;
-            }
+                if (act == EnumAct::V && !isExpansion)
+                {
+                    continue;
+                }
 
-            if (act != EnumAct::I)
+                ss << ",\n" << waypointActParentIndent << "\"" << getActJsonName(act, bSerializedFormat) << "\": {";
+                for (std::uint8_t waypoint = 0; waypoint < (act == EnumAct::IV ? NUM_WAYPOINTS_ACT_IV : MAX_WAYPOINTS_PER_ACT); ++waypoint)
+                {
+                    if (waypoint != 0)
+                    {
+                        ss << ",";
+                    }
+
+                    ss << "\n" << waypointActParentIndent << jsonIndentStr << "\"" << getWaypointJsonName(act, waypoint, bSerializedFormat) << "\": " << (getWaypointActivated(diff, act, waypoint) ? "true" : "false");
+                }
+                ss << "\n" << waypointActParentIndent << "}";
+            }
+            ss << "\n" << waypointsParentIndent << "}";
+        }
+        ss << "\n" << parentIndent << "}";
+    }
+    else
+    {
+        ss << "\n" << parentIndent << "\"waypoints\": {";
+
+        for (auto diff : all_diff)
+        {
+            if (diff != EnumDifficulty::Normal)
             {
                 ss << ",";
             }
 
-            ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"" << getActJsonName(act) << "\": {";
-            for (std::uint8_t waypoint = 0; waypoint < (act == EnumAct::IV ? NUM_WAYPOINTS_ACT_IV : MAX_WAYPOINTS_PER_ACT); ++waypoint)
+            ss << "\n" << parentIndent << jsonIndentStr << "\"" << getDifficultyJsonName(diff, bSerializedFormat) << "\": {";
+
+            
+            for (auto act : all_acts)
             {
-                if (waypoint != 0)
+                if (act == EnumAct::V && !isExpansion)
+                {
+                    continue;
+                }
+
+                if (act != EnumAct::I)
                 {
                     ss << ",";
                 }
 
-                ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << jsonIndentStr << "\"" << getWaypointJsonName(act, waypoint) << "\": " << (getWaypointActivated(diff, act, waypoint) ? "true" : "false");
-            }
-            ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "}";
-        }
-        ss << "\n" << parentIndent << jsonIndentStr << "}";
-    }
+                ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "\"" << getActJsonName(act, bSerializedFormat) << "\": {";
+                for (std::uint8_t waypoint = 0; waypoint < (act == EnumAct::IV ? NUM_WAYPOINTS_ACT_IV : MAX_WAYPOINTS_PER_ACT); ++waypoint)
+                {
+                    if (waypoint != 0)
+                    {
+                        ss << ",";
+                    }
 
-    ss << "\n" << parentIndent << "}";
+                    ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << jsonIndentStr << "\"" << getWaypointJsonName(act, waypoint, bSerializedFormat) << "\": " << (getWaypointActivated(diff, act, waypoint) ? "true" : "false");
+                }
+                ss << "\n" << parentIndent << jsonIndentStr << jsonIndentStr << "}";
+            }
+            ss << "\n" << parentIndent << jsonIndentStr << "}";
+        }
+
+        ss << "\n" << parentIndent << "}";
+    }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoint) const
+std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoint, bool bSerializedFormat) const
 {
     switch (act)
     {
@@ -791,31 +1146,31 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
         switch (waypoint)
         {
         case 0:
-            return "rogue_encampement";
+            return bSerializedFormat ? "RogueEncampement" : "rogue_encampement";
 
         case 1:
-            return "cold_plains";
+            return bSerializedFormat ? "ColdPlains" : "cold_plains";
 
         case 2:
-            return "stony_field";
+            return bSerializedFormat ? "StonyField" : "stony_field";
 
         case 3:
-            return "dark_woods";
+            return bSerializedFormat ? "DarkWoods" : "dark_woods";
 
         case 4:
-            return "black_marsh";
+            return bSerializedFormat ? "BlackMarsh" : "black_marsh";
 
         case 5:
-            return "outer_cloister";
+            return bSerializedFormat ? "OuterCloister" : "outer_cloister";
 
         case 6:
-            return "jail_lvl_1";
+            return bSerializedFormat ? "JailLvl1" : "jail_lvl_1";
 
         case 7:
-            return "inner_cloiste";
+            return bSerializedFormat ? "InnerCloister" : "inner_cloiste";
 
         case 8:
-            return "catacombs_lvl_2";
+            return bSerializedFormat ? "CatacombsLvl2" : "catacombs_lvl_2";
         }
         break;
 
@@ -823,31 +1178,31 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
         switch (waypoint)
         {
         case 0:
-            return "lut_gholein";
+            return bSerializedFormat ? "LutGholein" : "lut_gholein";
 
         case 1:
-            return "sewers_lvl_2";
+            return bSerializedFormat ? "SewersLvl2" : "sewers_lvl_2";
 
         case 2:
-            return "dry_hills";
+            return bSerializedFormat ? "DryHills" : "dry_hills";
 
         case 3:
-            return "halls_of_the_dead_lvl_2";
+            return bSerializedFormat ? "HallsOfTheDeadLvl2" : "halls_of_the_dead_lvl_2";
 
         case 4:
-            return "far_oasis";
+            return bSerializedFormat ? "FarOasis" : "far_oasis";
 
         case 5:
-            return "lost_city";
+            return bSerializedFormat ? "LostCity" : "lost_city";
 
         case 6:
-            return "palace_cellar_lvl_1";
+            return bSerializedFormat ? "PalaceCellarLvl1" : "palace_cellar_lvl_1";
 
         case 7:
-            return "arcane_sanctuary";
+            return bSerializedFormat ? "ArcaneSanctuary" : "arcane_sanctuary";
 
         case 8:
-            return "canyon_of_the_magi";
+            return bSerializedFormat ? "CanyonOfTheMagi" : "canyon_of_the_magi";
         }
         break;
 
@@ -855,31 +1210,31 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
         switch (waypoint)
         {
         case 0:
-            return "kurast_docks";
+            return bSerializedFormat ? "KurastDocks" : "kurast_docks";
 
         case 1:
-            return "spider_forest";
+            return bSerializedFormat ? "SpiderForest" : "spider_forest";
 
         case 2:
-            return "great_marsh";
+            return bSerializedFormat ? "GreatMarsh" : "great_marsh";
 
         case 3:
-            return "flayer_jungle";
+            return bSerializedFormat ? "FlayerJungle" : "flayer_jungle";
 
         case 4:
-            return "lower_kurast";
+            return bSerializedFormat ? "LowerKurast" : "lower_kurast";
 
         case 5:
-            return "kurast_bazaar";
+            return bSerializedFormat ? "KurastBazaar" : "kurast_bazaar";
 
         case 6:
-            return "upper_kurast";
+            return bSerializedFormat ? "UpperKurast" : "upper_kurast";
 
         case 7:
-            return "travincal";
+            return bSerializedFormat ? "Travincal" : "travincal";
 
         case 8:
-            return "durance_of_hate_lvl_2";
+            return bSerializedFormat ? "DuranceOfHateLvl2" : "durance_of_hate_lvl_2";
         }
         break;
 
@@ -887,13 +1242,13 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
         switch (waypoint)
         {
         case 0:
-            return "the_pandemonium_fortress";
+            return bSerializedFormat ? "ThePandemoniumFortress" : "the_pandemonium_fortress";
 
         case 1:
-            return "city_of_the_damned";
+            return bSerializedFormat ? "CityOfTheDamned" : "city_of_the_damned";
 
         case 2:
-            return "river_of_flame";
+            return bSerializedFormat ? "RiverOfFlame" : "river_of_flame";
         }
         break;
 
@@ -901,166 +1256,316 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
         switch (waypoint)
         {
         case 0:
-            return "harrogath";
+            return bSerializedFormat ? "Harrogath" : "harrogath";
 
         case 1:
-            return "frigid_highlands";
+            return bSerializedFormat ? "FrigidHighlands" : "frigid_highlands";
 
         case 2:
-            return "arreat_plateau";
+            return bSerializedFormat ? "ArreatPlateau" : "arreat_plateau";
 
         case 3:
-            return "crystalline_passage";
+            return bSerializedFormat ? "CrystallinePassage" : "crystalline_passage";
 
         case 4:
-            return "halls_of_pain";
+            return bSerializedFormat ? "HallsOfPain" : "halls_of_pain";
 
         case 5:
-            return "glacial_trail";
+            return bSerializedFormat ? "GlacialTrail" : "glacial_trail";
 
         case 6:
-            return "frozen_tundra";
+            return bSerializedFormat ? "FrozenTundra" : "frozen_tundra";
 
         case 7:
-            return "the_ancients_way";
+            return bSerializedFormat ? "TheAncientsWay" : "the_ancients_way";
 
         case 8:
-            return "worldstone_keep_lvl_2";
+            return bSerializedFormat ? "WorldstoneKeepLvl2" : "worldstone_keep_lvl_2";
         }
     }
 
     return "";
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent) const
+void d2ce::ActsInfo::npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat) const
 {
-    std::string attribParentIndent = parentIndent + jsonIndentStr;
-    ss << "\n" << parentIndent << "\"npcs\": {";
-
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
-    for (auto diff : all_diff)
+
+    std::string attribParentIndent = parentIndent + jsonIndentStr;
+    if (bSerializedFormat)
     {
-        if (diff != EnumDifficulty::Normal)
+        std::string npcActParentIndent = attribParentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"NPCDialog\": {";
+        ss << "\n" << attribParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)NPC_MARKER);
+        ss << ",\n" << attribParentIndent << "\"Length\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)NPC_SIZE_MARKER);
+        for (auto diff : all_diff)
         {
-            ss << ",";
+            ss << ",\n" << attribParentIndent << "\"" << getDifficultyJsonName(diff, bSerializedFormat) << "\": {";
+
+            std::bitset<64> intro = getNpcIntroductions(diff);
+            std::bitset<64> congrats = getNpcCongrats(diff);
+
+            std::string npcName;
+            bool bFirstItem = true;
+            for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
+            {
+                npcName = getNpcJsonName(npc, isExpansion, bSerializedFormat);
+                if (npcName.empty())
+                {
+                    continue;
+                }
+
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+
+                ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << npcName << "\": {";
+                ss << "\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"Introduction\": " << (intro[npc] == 0 ? "false" : "true");
+                ss << ",\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"Congratulations\": " << (congrats[npc] == 0 ? "false" : "true");
+                ss << "\n" << attribParentIndent << jsonIndentStr << "}";
+            }
+            ss << "\n" << attribParentIndent << "}";
         }
 
-        ss << "\n" << attribParentIndent << "\"" << getDifficultyJsonName(diff) << "\": {";
-
-        std::bitset<64> intro = getNpcIntroductions(diff);
-        std::bitset<64> congrats = getNpcCongrats(diff);
-
-        std::string npcName;
-        bool bFirstItem = true;
-        for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
+        ss << "\n" << parentIndent << "}";
+    }
+    else
+    {
+        ss << "\n" << parentIndent << "\"npcs\": {";
+        for (auto diff : all_diff)
         {
-            npcName = getNpcJsonName(npc, isExpansion);
-            if (npcName.empty())
-            {
-                continue;
-            }
-
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
+            if (diff != EnumDifficulty::Normal)
             {
                 ss << ",";
             }
 
-            ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << npcName << "\": {";
-            ss << "\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"intro\": " << (intro[npc] == 0 ? "false" : "true");
-            ss << ",\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"congrats\": " << (congrats[npc] == 0 ? "false" : "true");
-            ss << "\n" << attribParentIndent << jsonIndentStr << "}";
-        }
-        ss << "\n" << attribParentIndent << "}";
-    }
+            ss << "\n" << attribParentIndent << "\"" << getDifficultyJsonName(diff, bSerializedFormat) << "\": {";
 
-    ss << "\n" << parentIndent << "}";
+            std::bitset<64> intro = getNpcIntroductions(diff);
+            std::bitset<64> congrats = getNpcCongrats(diff);
+
+            std::string npcName;
+            bool bFirstItem = true;
+            for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
+            {
+                npcName = getNpcJsonName(npc, isExpansion, bSerializedFormat);
+                if (npcName.empty())
+                {
+                    continue;
+                }
+
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+
+                ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << npcName << "\": {";
+                ss << "\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"intro\": " << (intro[npc] == 0 ? "false" : "true");
+                ss << ",\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"congrats\": " << (congrats[npc] == 0 ? "false" : "true");
+                ss << "\n" << attribParentIndent << jsonIndentStr << "}";
+            }
+            ss << "\n" << attribParentIndent << "}";
+        }
+
+        ss << "\n" << parentIndent << "}";
+    }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion) const
+std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat) const
 {
     switch (npc)
     {
     case 0:
-        return "warriv_act_ii";
+        return bSerializedFormat ? "WarrivActII" : "warriv_act_ii";
+
+    case 1:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0001";
+        }
+        break;
 
     case 2:
-        return "charsi";
+        return bSerializedFormat ? "Charsi" : "charsi";
 
     case 3:
-        return "warriv_act_i";
+        return bSerializedFormat ? "WarrivActI" : "warriv_act_i";
 
     case 4:
-        return "kashya";
+        return bSerializedFormat ? "Kashya" : "kashya";
 
     case 5:
-        return "akara";
+        return bSerializedFormat ? "Akara" : "akara";
 
     case 6:
-        return "gheed";
+        return bSerializedFormat ? "Gheed" : "gheed";
+
+    case 7:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0007";
+        }
+        break;
 
     case 8:
-        return "greiz";
+        return bSerializedFormat ? "Greiz" : "greiz";
 
     case 9:
-        return "jerhyn";
+        return bSerializedFormat ? "Jerhyn" : "jerhyn";
 
     case 10:
-        return "meshif_act_ii";
+        return bSerializedFormat ? "MeshifActII" : "meshif_act_ii";
 
     case 11:
-        return "geglash";
+        return bSerializedFormat ? "Geglash" : "geglash";
 
     case 12:
-        return "lysnader";
+        return bSerializedFormat ? "Lysander" : "lysnader";
 
     case 13:
-        return "fara";
+        return bSerializedFormat ? "Fara" : "fara";
 
     case 14:
-        return "drogan";
+        return bSerializedFormat ? "Drogan" : "drogan";
+
+    case 15:
+        if (bSerializedFormat)
+        {
+            return "Unk0x000F";
+        }
+        break;
 
     case 16:
-        return "alkor";
+        return bSerializedFormat ? "Alkor" : "alkor";
 
     case 17:
-        return "hratli";
+        return bSerializedFormat ? "Hratli" : "hratli";
 
     case 18:
-        return "ashera";
+        return bSerializedFormat ? "Ashera" : "ashera";
+
+    case 19:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0013";
+        }
+        break;
+
+    case 20:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0014";
+        }
+        break;
 
     case 21:
-        return "cain_act_iii";
+        return bSerializedFormat ? "CainActIII" : "cain_act_iii";
+
+    case 22:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0016";
+        }
+        break;
 
     case 23:
-        return "elzix";
+        return bSerializedFormat ? "Elzix" : "elzix";
 
     case 24:
-        return isExpansion ? "malah" : "";
+        return isExpansion ? (bSerializedFormat ? "Malah" : "malah") : "";
 
     case 25:
-        return isExpansion ? "anya" : "";
+        return isExpansion ? (bSerializedFormat ? "Anya" : "anya") : "";
+
+    case 26:
+        if (bSerializedFormat)
+        {
+            return "Unk0x001A";
+        }
+        break;
 
     case 27:
-        return "natalya";
+        return bSerializedFormat ? "Natalya" : "natalya";
 
     case 28:
-        return "meshif_act_iii";
+        return bSerializedFormat ? "MeshifActIII" : "meshif_act_iii";
+
+    case 29:
+        if (bSerializedFormat)
+        {
+            return "Unk0x001D";
+        }
+        break;
+
+    case 30:
+        if (bSerializedFormat)
+        {
+            return "Unk0x001F";
+        }
+        break;
 
     case 31:
-        return "ormus";
+        return bSerializedFormat ? "Ormus" : "ormus";
+
+    case 32:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0021";
+        }
+        break;
+
+    case 33:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0022";
+        }
+        break;
+
+    case 34:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0023";
+        }
+        break;
+
+    case 35:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0024";
+        }
+        break;
+
+    case 36:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0025";
+        }
+        break;
 
     case 37:
-        return isExpansion ? "cain_act_v" : "";
+        return isExpansion ? (bSerializedFormat ? "CainActV" : "cain_act_v") : "";
 
     case 38:
-        return isExpansion ? "qualkehk" : "";
+        return isExpansion ? (bSerializedFormat ? "Qualkehk" : "qualkehk") : "";
 
     case 39:
-        return isExpansion ? "nihlathak" : "";
+        return isExpansion ? (bSerializedFormat ? "Nihlathak" : "nihlathak") : "";
+
+    case 40:
+        if (bSerializedFormat)
+        {
+            return "Unk0x0029";
+        }
+        break;
     }
 
     return "";
@@ -1139,7 +1644,7 @@ void d2ce::ActsInfo::clear()
     *this = ActsInfo();
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::getActIntroduced(EnumDifficulty diff, EnumAct act) const
+std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct act) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
@@ -1148,30 +1653,42 @@ bool d2ce::ActsInfo::getActIntroduced(EnumDifficulty diff, EnumAct act) const
         return Acts[diffNum].Act[actNum].Intro;
     }
 
-    if (actNum == 4)
-    {
-        return Acts[diffNum].ActV.Intro;
-    }
-
-    return false;
+    return Acts[diffNum].ActV.Intro;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
+bool d2ce::ActsInfo::getActIntroduced(EnumDifficulty diff, EnumAct act) const
+{
+    return getActIntroducedData(diff, act) != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ActsInfo::getActCompletedData(EnumDifficulty diff, EnumAct act) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
     if (actNum < 3)
     {
-        return Acts[diffNum].Act[actNum].Completed != 0 ? true : false;
+        return Acts[diffNum].Act[actNum].Completed;
     }
 
     if (actNum == 3)
     {
         // "Completed" flag is at index 3 of the quests
-        return Acts[diffNum].Act[actNum].Quests[3] != 0 ? true : false;
+        return Acts[diffNum].Act[actNum].Quests[3];
     }
 
-    return Acts[diffNum].ActV.Completed != 0 ? true : false;
+    return Acts[diffNum].ActV.Completed;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ActsInfo::getActVResetStatCompletedData(EnumDifficulty diff) const
+{
+    auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
+    std::uint16_t resetStats = Acts[diffNum].ActV.ResetStats;
+    return (resetStats << 8) | Acts[diffNum].ActV.Completed;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
+{
+    return getActCompletedData(diff, act) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ActsInfo::getQuestName(EnumAct act, std::uint8_t quest) const
@@ -1801,19 +2318,19 @@ void d2ce::ActsInfo::resetQuest(EnumDifficulty diff, EnumAct act, std::uint8_t q
 bool d2ce::ActsInfo::getStatsReset(EnumDifficulty diff) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
-    return Acts[diffNum].ActV.ResetStats;
+    return Acts[diffNum].ActV.ResetStats != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::setStatsReset(EnumDifficulty diff)
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
-    Acts[diffNum].ActV.ResetStats = true;
+    Acts[diffNum].ActV.ResetStats = 1;
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::clearStatsReset(EnumDifficulty diff)
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
-    Acts[diffNum].ActV.ResetStats = false;
+    Acts[diffNum].ActV.ResetStats = 0;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getMooMooFarmComplete(EnumDifficulty diff) const

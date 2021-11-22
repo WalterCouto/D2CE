@@ -60,6 +60,8 @@ protected:
     BOOL LoadBackgroundImage(BOOL isAltImage = FALSE);
     BOOL LoadItemImage(const d2ce::Item& item, CBitmap& bitmap, BOOL isAltImage = FALSE);
 
+    bool GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
+
 protected:
     CBitmap InvImage;
     CBitmap InvAltImage;

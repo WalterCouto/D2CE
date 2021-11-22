@@ -855,7 +855,9 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_COMMAND(ID_FILE_OPEN, &CD2MainForm::OnFileOpen)
     ON_MESSAGE(WM_OPEN_DLG_FILE, &CD2MainForm::OnMRUFileOpen)
     ON_COMMAND(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnFileExportAsJson)
+    ON_COMMAND(ID_FILE_EXPORT_AS_JSON_SERIALIZED, &CD2MainForm::OnFileExportAsSerializedJson)
     ON_UPDATE_COMMAND_UI(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnUpdateFileExportAsJson)
+    ON_UPDATE_COMMAND_UI(ID_FILE_EXPORT_AS_JSON_SERIALIZED, &CD2MainForm::OnUpdateFileExportAsJson)
     ON_COMMAND(ID_VIEW_REFRESH, &CD2MainForm::OnViewRefresh)
     ON_UPDATE_COMMAND_UI(ID_VIEW_REFRESH, &CD2MainForm::OnUpdateViewRefresh)
     ON_CBN_SELCHANGE(IDC_DIFFICULTY, &CD2MainForm::OnCbnSelchangeDifficultyCmb)
@@ -2656,7 +2658,7 @@ void CD2MainForm::OnUpdateFileSave(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && Editted) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::OnFileExportAsJson()
+void CD2MainForm::ExportAsJson(bool bSerializedFormat)
 {
     if (!CharInfo.is_open())
     {
@@ -2680,7 +2682,7 @@ void CD2MainForm::OnFileExportAsJson()
     fopen_s(&jsonFile, jsonFileName.GetString(), "wb");
     std::rewind(jsonFile);
 
-    auto output = CharInfo.asJson();
+    auto output = CharInfo.asJson(bSerializedFormat);
     if (!output.empty())
     {
         std::fwrite(output.c_str(), output.size(), 1, jsonFile);
@@ -2691,6 +2693,16 @@ void CD2MainForm::OnFileExportAsJson()
     CString msg(_T("Character stats exported to JSON"));
     StatusBar.SetWindowText(msg);
     AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+
+void CD2MainForm::OnFileExportAsJson()
+{
+    ExportAsJson(false);
+}
+
+void CD2MainForm::OnFileExportAsSerializedJson()
+{
+    ExportAsJson(true);
 }
 
 void CD2MainForm::OnUpdateFileExportAsJson(CCmdUI* pCmdUI)
@@ -4324,6 +4336,21 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
         return false;
     }
 
+    CStringA baseInvFile;
+    if (item.hasMultipleGraphics())
+    {
+        auto pictureID = item.getPictureId();
+        if (pictureID > 0)
+        {
+            baseInvFile = invFile;
+            std::stringstream ss;
+            ss << invFile.GetString();
+            ss << "_";
+            ss << pictureID;
+            invFile = ss.str().c_str();
+        }
+    }
+
     static std::string resourceHeader;
     if (resourceHeader.empty())
     {
@@ -4362,17 +4389,34 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
         }
     }
 
-    std::stringstream ss;
-    ss << "^[\\s]*#define\\s+IDB_";
-    ss << invFile.MakeUpper().GetString();
-    ss << "\\s+([0-9]+)\\s*$";
-    std::regex regexDefine(ss.str(), std::regex::ECMAScript | std::regex::icase);
+    std::string regexStr;
+    {
+        std::stringstream ss;
+        ss << "^[\\s]*#define\\s+IDB_";
+        ss << invFile.MakeUpper().GetString();
+        ss << "\\s+([0-9]+)\\s*$";
+        regexStr = ss.str();
+    }
+    std::regex regexDefine(regexStr, std::regex::ECMAScript | std::regex::icase);
     std::cmatch m;
     auto pStr = resourceHeader.c_str();
     if (std::regex_search(pStr, m, regexDefine))
     {
         bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
         return bitmap.GetSafeHandle() == NULL ? false : true;
+    }
+    else if (!baseInvFile.IsEmpty())
+    {
+        std::stringstream ss;
+        ss << "^[\\s]*#define\\s+IDB_";
+        ss << baseInvFile.MakeUpper().GetString();
+        ss << "\\s+([0-9]+)\\s*$";
+        std::regex regexDefineBase(ss.str(), std::regex::ECMAScript | std::regex::icase);
+        if (std::regex_search(pStr, m, regexDefineBase))
+        {
+            bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+            return bitmap.GetSafeHandle() == NULL ? false : true;
+        }
     }
 
     return false;

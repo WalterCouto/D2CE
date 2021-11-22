@@ -297,6 +297,7 @@
     <Image Include="res\CharStats.bmp" />
     <Image Include="res\D2Editor.ico" />
     <Image Include="res\exit.bmp" />
+    <Image Include="res\gemsocket.png" />
     <Image Include="res\Gloves\01 Leather Gloves.bmp" />
     <Image Include="res\Gloves\02 Heavy Gloves.bmp" />
     <Image Include="res\Gloves\03 Chain Gloves.bmp" />

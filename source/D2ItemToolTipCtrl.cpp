@@ -175,26 +175,24 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     {
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
-        strText = _T("Ethereal");
+        strText = _T("Ethereal (Cannot be Repaired)");
+        if (CurrItem->isSocketed())
+        {
+            // Socketed text
+            CString temp;
+            temp.Format(_T(", Socketed (%d)"), (int)CurrItem->totalNumberOfSockets());
+            strText += temp;
+        }
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
-
-    // Socketed text
-    if (CurrItem->isSocketed())
+    else if (CurrItem->isSocketed())
     {
+        // Socketed text
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
-        int socketedCount = CurrItem->socketedItemCount();
-        if (socketedCount == 0)
-        {
-            strText.Format(_T("Sockets(%d)"), (int)CurrItem->totalNumberOfSockets());
-        }
-        else
-        {
-            strText.Format(_T("Sockets(%d/%d)"), socketedCount, (int)CurrItem->totalNumberOfSockets());
-        }
+        strText.Format(_T("Socketed (%d)"), (int)CurrItem->totalNumberOfSockets());
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);

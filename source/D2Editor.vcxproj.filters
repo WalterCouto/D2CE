@@ -1277,5 +1277,8 @@
     <Image Include="res\inv_weapons.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\gemsocket.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

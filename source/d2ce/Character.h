@@ -60,9 +60,10 @@ namespace d2ce
         std::uint32_t RightSkill = 0;        // pos 124 (1.09+, otherwise pos 87)
         std::uint32_t LeftSwapSkill = 0;     // pos 128 (1.09+ only)
         std::uint32_t RightSwapSkill = 0;    // pos 132 (1.09+ only)
-        std::uint8_t StartingAct[NUM_OF_DIFFICULTY]; // pos 168 (normal, nightmare, hell; used in 1.09+ only)
-                                                     // four MSBs value always 8 (hex, i.e. 0x80)
-                                                     // four least significant bits = which act is character saved at
+        std::uint8_t Appearances[APPEARANCES_LENGTH]; // pos 136 (1.09+ only) Character menu appearance
+        std::uint8_t StartingAct[NUM_OF_DIFFICULTY];  // pos 168 (normal, nightmare, hell; used in 1.09+ only)
+                                                      // four MSBs value always 8 (hex, i.e. 0x80)
+                                                      // four least significant bits = which act is character saved at
         std::uint32_t MapID = 0;             // pos 171 (1.09+, otherwise 126)
 
         Mercenary Merc;                      // Dead:       pos 177 (1.09+ only)
@@ -94,6 +95,7 @@ namespace d2ce
             level_location = 0,
             starting_location = 0,
             assigned_skilled_location = 0,
+            appearances_location = 0,
             difficulty_location = 0,
             mapid_location = 0,
             stats_header_location = 0;
@@ -115,7 +117,7 @@ namespace d2ce
         bool writeItems();
         void writeTempFile();
 
-        void headerAsJson(std::stringstream& ss, const std::string& parentIndent) const;
+        void headerAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
 
     public:
         Character();
@@ -127,7 +129,7 @@ namespace d2ce
         bool save();
         void close();
         const char *getPathName() const;
-        std::string asJson() const;
+        std::string asJson(bool bSerializedFormat = false) const;
 
         bool is_open() const;
         std::error_code getLastError() const;

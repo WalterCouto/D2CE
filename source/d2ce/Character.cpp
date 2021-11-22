@@ -118,6 +118,7 @@ void d2ce::Character::initialize()
     RightSkill = 0;
     LeftSwapSkill = 0;
     RightSwapSkill = 0;
+    std::memset(Appearances, 0, sizeof(Appearances));
 
     Bs.DifficultyLastPlayed = EnumDifficulty::Normal;
     std::memset(StartingAct, 0, sizeof(StartingAct));
@@ -138,6 +139,7 @@ void d2ce::Character::initialize()
     level_location = 0;
     starting_location = 0;
     assigned_skilled_location = 0;
+    appearances_location = 0;
     difficulty_location = 0;
     mapid_location = 0;
     stats_header_location = 0;
@@ -438,7 +440,7 @@ void d2ce::Character::readBasicInfo()
         std::memset(StartingAct, 0, sizeof(StartingAct));
         StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
 
-        mapid_location = 126;
+        mapid_location = std::ftell(charfile);
         std::fread(&MapID, sizeof(MapID), 1, charfile);
     }
     else
@@ -456,8 +458,10 @@ void d2ce::Character::readBasicInfo()
         std::fread(&LeftSwapSkill, sizeof(LeftSkill), 1, charfile);
         std::fread(&RightSwapSkill, sizeof(RightSkill), 1, charfile);
 
-        difficulty_location = 168;
-        std::fseek(charfile, difficulty_location, SEEK_SET);
+        appearances_location = std::ftell(charfile);
+        std::fread(&Appearances, sizeof(Appearances), 1, charfile);
+
+        difficulty_location = std::ftell(charfile);
         std::fread(StartingAct, sizeof(StartingAct), 1, charfile);
         if (StartingAct[0] != 0)
         {
@@ -475,8 +479,7 @@ void d2ce::Character::readBasicInfo()
             Bs.StartingAct = static_cast<EnumAct>(StartingAct[2] & ~0x80);
         }
 
-        mapid_location = 171;
-        std::fseek(charfile, mapid_location, SEEK_SET);
+        mapid_location = std::ftell(charfile);
         std::fread(&MapID, sizeof(MapID), 1, charfile);
 
         Merc.readInfo(Bs.Version, charfile);
@@ -745,8 +748,7 @@ void d2ce::Character::writeBasicInfo()
         std::fwrite(&RightSkill, sizeof(RightSkill), 1, charfile);
         std::fwrite(&LeftSwapSkill, sizeof(LeftSkill), 1, charfile);
         std::fwrite(&RightSwapSkill, sizeof(RightSkill), 1, charfile);
-
-        std::fseek(charfile, difficulty_location, SEEK_SET);
+        std::fwrite(&Appearances, sizeof(Appearances), 1, charfile);
         std::fwrite(StartingAct, sizeof(StartingAct), 1, charfile);
         std::fwrite(&MapID, sizeof(MapID), 1, charfile);
 
@@ -802,99 +804,235 @@ void d2ce::Character::writeTempFile()
     std::fclose(tempfile);
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::headerAsJson(std::stringstream& ss, const std::string& parentIndent) const
+void d2ce::Character::headerAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
 {
     std::string attribParentIndent = parentIndent + jsonIndentStr;
-    ss << "\n" << parentIndent << "\"header\": {";
-    ss << "\n" << attribParentIndent << "\"identifier\": \"" << std::hex << (std::uint32_t)*((std::uint32_t*)Header) << "\"";
-    ss << ",\n" << attribParentIndent << "\"version\": " << std::dec << Version;
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (bSerializedFormat)
     {
-        ss << ",\n" << attribParentIndent << "\"filesize\": " << std::dec << FileSize;
-        ss << ",\n" << attribParentIndent << "\"checksum\": \"" << std::hex << Checksum << "\"";
-    }
-
-    ss << ",\n" << attribParentIndent << "\"name\": \"" << Bs.Name << "\"";
-
-    // status
-    ss << ",\n" << attribParentIndent << "\"status\": {";
-    ss << "\n" << attribParentIndent << jsonIndentStr << "\"hardcore\": " << (isHardcoreCharacter() ? "true" : "false");
-    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"died\": " << (isResurrectedCharacter() ? "true" : "false");
-    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"expansion\": " << (isExpansionCharacter() ? "true" : "false");
-    if (isLadderCharacter())
-    {
-        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"ladder\": true";
-    }
-
-    if (isDeadCharacter())
-    {
-        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"dead\": true";
-    }
-    ss << "\n" << attribParentIndent << "}";
-
-    ss << ",\n" << attribParentIndent << "\"progression\": " << std::dec << std::uint16_t(getTitle().bits());
-    ss << ",\n" << attribParentIndent << "\"active_arms\": " << std::dec << WeaponSet;
-    ss << ",\n" << attribParentIndent << "\"class\": \"" << getClassName() << "\"";
-    ss << ",\n" << attribParentIndent << "\"level\": " << std::dec << std::uint16_t(DisplayLevel);
-    if (Bs.Version >= EnumCharVersion::v109)
-    {
-        ss << ",\n" << attribParentIndent << "\"created\": " << std::dec << Created;
-        ss << ",\n" << attribParentIndent << "\"last_played\": " << std::dec << LastPlayed;
-    }
-
-    // assigned_skills
-    ss << ",\n" << attribParentIndent << "\"assigned_skills\": [";
-    bool bHasItems = false;
-    for (auto& skillId : AssignedSkills)
-    {
-        if (skillId == 0xFFFF)
+        ss << "\n" << parentIndent << "\"Header\": {";
+        ss << "\n" << attribParentIndent << "\"Magic\": " << std::dec << (std::uint32_t) * ((std::uint32_t*)Header);
+        ss << ",\n" << attribParentIndent << "\"Version\": " << std::dec << Version;
+        if (Bs.Version >= EnumCharVersion::v109)
         {
-            continue;
+            ss << ",\n" << attribParentIndent << "\"Filesize\": " << std::dec << FileSize;
+            ss << ",\n" << attribParentIndent << "\"Checksum\": " << std::dec << Checksum;
+        }
+        ss << "\n" << parentIndent << "}";
+        ss << ",\n" << parentIndent << "\"ActiveWeapon\": " << std::dec << WeaponSet;
+        ss << ",\n" << parentIndent << "\"Name\": \"" << Bs.Name << "\"";
+
+        // status
+        ss << ",\n" << parentIndent << "\"Status\": {";
+        ss << "\n" << attribParentIndent <<  "\"IsHardcore\": " << (isHardcoreCharacter() ? "true" : "false");
+        ss << ",\n" << attribParentIndent << "\"IsDead\": " << (isResurrectedCharacter() ? "true" : "false");
+        ss << ",\n" << attribParentIndent <<  "\"IsExpansion\": " << (isExpansionCharacter() ? "true" : "false");
+        if (isLadderCharacter())
+        {
+            ss << ",\n" << attribParentIndent  << "\"IsLadder\": true";
+        }
+        ss << "\n" << parentIndent << "}";
+        ss << ",\n" << parentIndent << "\"ClassId\": " << std::dec << (std::uint16_t)getClass();
+        ss << ",\n" << parentIndent << "\"Level\": " << std::dec << std::uint16_t(DisplayLevel);
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",\n" << parentIndent << "\"Created\": " << std::dec << Created;
+            ss << ",\n" << parentIndent << "\"LastPlayed\": " << std::dec << LastPlayed;
+        }
+
+        // assigned_skills
+        ss << ",\n" << parentIndent << "\"AssignedSkills\": [";
+        bool bHasItems = false;
+        for (auto& skillId : AssignedSkills)
+        {
+            if (bHasItems)
+            {
+                ss << ",";
+            }
+
+            ss << "\n" << attribParentIndent << "{";
+            ss << "\n" << attribParentIndent << jsonIndentStr << "\"Id\": " << std::dec << skillId;
+            ss << "\n" << attribParentIndent << "}";
+            bHasItems = true;
+        }
+        ss << "\n" << parentIndent << "]";
+        ss << ",\n" << parentIndent << "\"LeftSkill\": {";
+        ss << "\n" << attribParentIndent << "\"Id\": " << std::dec << LeftSkill;
+        ss << "\n" << parentIndent << "}";
+        ss << ",\n" << parentIndent << "\"RightSkill\": {";
+        ss << "\n" << attribParentIndent << "\"Id\": " << std::dec << RightSkill;
+        ss << "\n" << parentIndent << "}";
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",\n" << parentIndent << "\"LeftSwapSkill\": {";
+            ss << "\n" << attribParentIndent << "\"Id\": " << std::dec << LeftSwapSkill;
+            ss << "\n" << parentIndent << "}";
+            ss << ",\n" << parentIndent << "\"RightSwapSkill\": {";
+            ss << "\n" << attribParentIndent << "\"Id\": " << std::dec << RightSwapSkill;
+            ss << "\n" << parentIndent << "}";
+
+            // Appearances
+            static std::initializer_list<std::string> all_appearnce_props = { "Head", "Torso", "Legs", "RightArm", "LeftArm", "RightHand", "LeftHand", "Shield",
+                "Special1", "Special2",  "Special3", "Special4", "Special5", "Special6", "Special7", "Special8" };
+
+            ss << ",\n" << parentIndent << "\"Appearances\": {";
+            size_t idx = 0;
+            for (const auto& prop : all_appearnce_props)
+            {
+                if (idx != 0)
+                {
+                    ss << ",";
+                }
+                ss << "\n" << attribParentIndent << "\"" << prop << "\": {";
+                ss << "\n" << attribParentIndent << jsonIndentStr << "\"Graphic\": " << std::dec << std::uint16_t(Appearances[idx++]);
+                ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Tint\": " << std::dec << std::uint16_t(Appearances[idx + 15]);
+                ss << "\n" << attribParentIndent << "}";
+            }
+            ss << "\n" << parentIndent << "}";
+        }
+
+        // Location
+        auto diffLastPlayed = getDifficultyLastPlayed();
+        auto startingAct = (std::uint16_t)getStartingAct() + 1;
+        ss << ",\n" << parentIndent << "\"Location\": {";
+        ss << "\n" << attribParentIndent << "\"Normal\": {";
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"Active\": " << ((diffLastPlayed == EnumDifficulty::Normal) ? "true" : "false");
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Act\": " << std::dec << ((diffLastPlayed == EnumDifficulty::Normal) ? startingAct : 1);
+        ss << "\n" << attribParentIndent << "}";
+        ss << ",\n" << attribParentIndent << "\"Nightmare\": {";
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"Active\": " << ((diffLastPlayed == EnumDifficulty::Nightmare) ? "true" : "false");
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Act\": " << std::dec << ((diffLastPlayed == EnumDifficulty::Nightmare) ? startingAct : 1);
+        ss << "\n" << attribParentIndent << "}";
+        ss << ",\n" << attribParentIndent << "\"Hell\": {";
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"Active\": " << ((diffLastPlayed == EnumDifficulty::Hell) ? "true" : "false");
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Act\": " << std::dec << ((diffLastPlayed == EnumDifficulty::Hell) ? startingAct : 1);
+        ss << "\n" << attribParentIndent << "}";
+        ss << "\n" << parentIndent << "}";
+        ss << ",\n" << parentIndent << "\"MapId\": " << std::dec << MapID;
+
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",";
+            Merc.asJson(ss, parentIndent, bSerializedFormat);
+        }
+        ss << ",";
+        Acts.questsAsJson(ss, isExpansionCharacter(), parentIndent, bSerializedFormat);
+        ss << ",";
+        Acts.waypointsAsJson(ss, isExpansionCharacter(), parentIndent, bSerializedFormat);
+        ss << ",";
+        Acts.npcAsJson(ss, isExpansionCharacter(), parentIndent, bSerializedFormat);
+    }
+    else
+    {
+        ss << "\n" << parentIndent << "\"header\": {";
+        ss << "\n" << attribParentIndent << "\"identifier\": \"" << std::hex << (std::uint32_t) * ((std::uint32_t*)Header) << "\"";
+        ss << ",\n" << attribParentIndent << "\"version\": " << std::dec << Version;
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",\n" << attribParentIndent << "\"filesize\": " << std::dec << FileSize;
+            ss << ",\n" << attribParentIndent << "\"checksum\": \"" << std::hex << Checksum << "\"";
+        }
+
+        ss << ",\n" << attribParentIndent << "\"name\": \"" << Bs.Name << "\"";
+
+        // status
+        ss << ",\n" << attribParentIndent << "\"status\": {";
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"hardcore\": " << (isHardcoreCharacter() ? "true" : "false");
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"died\": " << (isResurrectedCharacter() ? "true" : "false");
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"expansion\": " << (isExpansionCharacter() ? "true" : "false");
+        if (isLadderCharacter())
+        {
+            ss << ",\n" << attribParentIndent << jsonIndentStr << "\"ladder\": true";
+        }
+
+        if (isDeadCharacter())
+        {
+            ss << ",\n" << attribParentIndent << jsonIndentStr << "\"dead\": true";
+        }
+        ss << "\n" << attribParentIndent << "}";
+
+        ss << ",\n" << attribParentIndent << "\"progression\": " << std::dec << std::uint16_t(getTitle().bits());
+        ss << ",\n" << attribParentIndent << "\"active_arms\": " << std::dec << WeaponSet;
+        ss << ",\n" << attribParentIndent << "\"class\": \"" << getClassName() << "\"";
+        ss << ",\n" << attribParentIndent << "\"level\": " << std::dec << std::uint16_t(DisplayLevel);
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",\n" << attribParentIndent << "\"created\": " << std::dec << Created;
+            ss << ",\n" << attribParentIndent << "\"last_played\": " << std::dec << LastPlayed;
+        }
+
+        // assigned_skills
+        ss << ",\n" << attribParentIndent << "\"assigned_skills\": [";
+        bool bHasItems = false;
+        for (auto& skillId : AssignedSkills)
+        {
+            if (skillId == 0xFFFF)
+            {
+                continue;
+            }
+
+            if (bHasItems)
+            {
+                ss << ",";
+            }
+
+            ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << Cs.getSkillNameById(skillId) << "\"";
+            bHasItems = true;
         }
 
         if (bHasItems)
         {
-            ss << ",";
+            ss << "\n" << attribParentIndent;
+        }
+        ss << "]";
+
+        ss << ",\n" << attribParentIndent << "\"left_skill\": \"" << Cs.getSkillNameById(LeftSkill) << "\"";
+        ss << ",\n" << attribParentIndent << "\"right_skill\": \"" << Cs.getSkillNameById(RightSkill) << "\"";
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",\n" << attribParentIndent << "\"left_swap_skill\": \"" << Cs.getSkillNameById(LeftSwapSkill) << "\"";
+            ss << ",\n" << attribParentIndent << "\"right_swap_skill\": \"" << Cs.getSkillNameById(RightSwapSkill) << "\"";
+
+            // Appearances
+            static std::initializer_list<std::string> all_appearnce_props = { "head", "torso", "legs", "right_arm", "left_arm", "right_hand", "left_hand", "shield",
+                "special1", "special2",  "special3", "special4", "special5", "special6", "special7", "special8" };
+
+            ss << ",\n" << attribParentIndent << "\"menu_appearance\": {";
+            size_t idx = 0;
+            for (const auto& prop : all_appearnce_props)
+            {
+                if (idx != 0)
+                {
+                    ss << ",";
+                }
+                ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << prop << "\": {";
+                ss << "\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"graphic\": " << std::dec << std::uint16_t(Appearances[idx++]);
+                ss << ",\n" << attribParentIndent << jsonIndentStr << jsonIndentStr << "\"tint\": " << std::dec << std::uint16_t(Appearances[idx + 15]);
+                ss << "\n" << attribParentIndent << jsonIndentStr << "}";
+            }
+            ss << "\n" << attribParentIndent << "}";
         }
 
-        ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << Cs.getSkillNameById(skillId) << "\"";
-        bHasItems = true;
-    }
+        // StartingAct
+        ss << ",\n" << attribParentIndent << "\"difficulty\": {";
+        ss << "\n" << attribParentIndent << jsonIndentStr << "\"Normal\": " << std::dec << std::uint16_t(StartingAct[0]);
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Nightmare\": " << std::dec << std::uint16_t(StartingAct[1]);
+        ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Hell\": " << std::dec << std::uint16_t(StartingAct[2]);
+        ss << "\n" << attribParentIndent << "}";
+        ss << ",\n" << attribParentIndent << "\"map_id\": " << std::dec << MapID;
 
-    if (bHasItems)
-    {
-        ss << "\n" << parentIndent;
-    }
-    ss << "]";
-
-    ss << ",\n" << attribParentIndent << "\"left_skill\": \"" << Cs.getSkillNameById(LeftSkill) << "\"";
-    ss << ",\n" << attribParentIndent << "\"right_skill\": \"" << Cs.getSkillNameById(RightSkill) << "\"";
-    if (Bs.Version >= EnumCharVersion::v109)
-    {
-        ss << ",\n" << attribParentIndent << "\"left_swap_skill\": \"" << Cs.getSkillNameById(LeftSwapSkill) << "\"";
-        ss << ",\n" << attribParentIndent << "\"right_swap_skill\": \"" << Cs.getSkillNameById(RightSwapSkill) << "\"";
-    }
-
-    // StartingAct
-    ss << ",\n" << attribParentIndent << "\"difficulty\": {";
-    ss << "\n" << attribParentIndent << jsonIndentStr << "\"Normal\": " << std::dec << std::uint16_t(StartingAct[0]);
-    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Nightmare\": " << std::dec << std::uint16_t(StartingAct[1]);
-    ss << ",\n" << attribParentIndent << jsonIndentStr << "\"Hell\": " << std::dec << std::uint16_t(StartingAct[2]);
-    ss << "\n" << attribParentIndent << "}";
-    ss << ",\n" << attribParentIndent << "\"map_id\": " << std::dec << MapID;
-
-    if (Bs.Version >= EnumCharVersion::v109)
-    {
+        if (Bs.Version >= EnumCharVersion::v109)
+        {
+            ss << ",";
+            Merc.asJson(ss, attribParentIndent, bSerializedFormat);
+        }
         ss << ",";
-        Merc.asJson(ss, attribParentIndent);
+        Acts.questsAsJson(ss, isExpansionCharacter(), attribParentIndent, bSerializedFormat);
+        ss << ",";
+        Acts.waypointsAsJson(ss, isExpansionCharacter(), attribParentIndent, bSerializedFormat);
+        ss << ",";
+        Acts.npcAsJson(ss, isExpansionCharacter(), attribParentIndent, bSerializedFormat);
+        ss << "\n" << parentIndent << "}";
     }
-    ss << ",";
-    Acts.questsAsJson(ss, isExpansionCharacter(), attribParentIndent);
-    ss << ",";
-    Acts.waypointsAsJson(ss, isExpansionCharacter(), attribParentIndent);
-    ss << ",";
-    Acts.npcAsJson(ss, isExpansionCharacter(), attribParentIndent);
-    ss << "\n" << parentIndent << "}";
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::close()
@@ -912,15 +1050,15 @@ const char* d2ce::Character::getPathName() const
     return filename.c_str();
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Character::asJson() const
+std::string d2ce::Character::asJson(bool bSerializedFormat) const
 {
     std::stringstream ss;
     ss << "{";
-    headerAsJson(ss, jsonIndentStr);
+    headerAsJson(ss, jsonIndentStr, bSerializedFormat);
     ss << ",";
-    Cs.asJson(ss, jsonIndentStr);
+    Cs.asJson(ss, jsonIndentStr, bSerializedFormat);
     ss << ",";
-    items.asJson(ss, jsonIndentStr, getLevel());
+    items.asJson(ss, jsonIndentStr, getLevel(), bSerializedFormat);
     ss << "\n}";
     return ss.str();
 }

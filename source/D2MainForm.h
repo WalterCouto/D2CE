@@ -216,6 +216,7 @@ protected:
     afx_msg void OnOptionsResetStats();
     afx_msg void OnUpdateOptionsResetStats(CCmdUI* pCmdUI);
     afx_msg void OnFileExportAsJson();
+    afx_msg void OnFileExportAsSerializedJson();
     afx_msg void OnUpdateFileExportAsJson(CCmdUI* pCmdUI);
     afx_msg void OnViewMercenary();
     afx_msg void OnUpdateViewMercenary(CCmdUI* pCmdUI);
@@ -297,6 +298,7 @@ private:	// User declarations
 
 private:
     void OpenFile(LPCTSTR filename);
+    void ExportAsJson(bool bSerializedFormat = false);
     void ClearAllBoolVars();
     void DisplayCharInfo();
     void UpdateCharInfo();

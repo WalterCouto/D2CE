@@ -284,15 +284,15 @@ namespace d2ce
         {202, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused202"},
         {203, 0,  0,   0,  0,  0,  0,                                                                     "",                       "unused203"},
         {204, 3, 16,   0, 16,  0,  0,                                      "Level {0} {1} ({2}/{3} Charges)",              "item_charged_skill"},
-        {205, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused204"},
-        {206, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused205"},
-        {207, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused206"},
-        {208, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused207"},
-        {209, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused208"},
-        {210, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused209"},
-        {211, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused210"},
-        {212, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused211"},
-        {213, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused212"},
+        {205, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused205"},
+        {206, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused206"},
+        {207, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused207"},
+        {208, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused208"},
+        {209, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused209"},
+        {210, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused210"},
+        {211, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused211"},
+        {212, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused212"},
+        {213, 3,  0,   0,  0,  0,  0,                                                                     "",                       "unused213"},
         {214, 0,  6,   0,  0,  0,  0,                           "+{0} to Defense (Based on Character Level)",             "item_armor_perlevel", {4, 3, "level", {"armorclass"}}},
         {215, 0,  6,   0,  0,  0,  0,                     "{0}% Enhanced Defense (Based on Character Level)",      "item_armorpercent_perlevel", {5, 3, "level", {"item_armorpercent"}}},
         {216, 0,  6,   0,  0,  0,  0,                              "+{0} to Life (Based on Character Level)",                "item_hp_perlevel", {2, 3, "level", {"maxhp"}}},
@@ -718,16 +718,21 @@ namespace d2ce
             return result;
         }
 
-        bool getSocketedMagicalAttributes(std::vector<MagicalAttribute>& attribs, EnumItemType parentItemType) const
+        bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, EnumItemType parentItemType) const
         {
             attribs.clear();
             if (isSocketFiller())
             {
+                if (isJewel())
+                {
+                    return item.getMagicalAttributes(attribs);
+                }
+
                 std::vector<std::uint16_t> ids;
                 std::vector<std::uint16_t> ids2;
                 std::vector<std::int64_t> values;
                 std::vector<std::int64_t> values2;
-                if (std::find(categories.begin(), categories.end(), "Gem") != categories.end())
+                if (isGem())
                 {
                     if (std::find(categories.begin(), categories.end(), "Amethyst") != categories.end())
                     {
@@ -928,26 +933,31 @@ namespace d2ce
                             {
                                 values.push_back(1);
                                 values.push_back(3);
+                                values.push_back(25); // TODO: duration seconds * 25?
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawed Gem") != categories.end())
                             {
                                 values.push_back(3);
                                 values.push_back(5);
+                                values.push_back(35); // TODO: duration seconds * 25?
                             }
                             else if (std::find(categories.begin(), categories.end(), "Standard Gem") != categories.end())
                             {
                                 values.push_back(4);
                                 values.push_back(7);
+                                values.push_back(50); // TODO: duration seconds * 25?
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawless Gem") != categories.end())
                             {
                                 values.push_back(6);
                                 values.push_back(10);
+                                values.push_back(60); // TODO: duration seconds * 25?
                             }
                             else if (std::find(categories.begin(), categories.end(), "Perfect Gem") != categories.end())
                             {
                                 values.push_back(10);
                                 values.push_back(14);
+                                values.push_back(75); // TODO: duration seconds * 25?
                             }
                             else
                             {
@@ -1023,33 +1033,33 @@ namespace d2ce
                             ids.push_back(57);
                             if (std::find(categories.begin(), categories.end(), "Chipped Gem") != categories.end())
                             {
-                                values.push_back(10);
-                                values.push_back(10);
-                                values.push_back(3);
+                                values.push_back(35);
+                                values.push_back(35);
+                                values.push_back(75);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawed Gem") != categories.end())
                             {
-                                values.push_back(20);
-                                values.push_back(20);
-                                values.push_back(4);
+                                values.push_back(52);
+                                values.push_back(52);
+                                values.push_back(100);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Standard Gem") != categories.end())
                             {
-                                values.push_back(40);
-                                values.push_back(40);
-                                values.push_back(5);
+                                values.push_back(82);
+                                values.push_back(82);
+                                values.push_back(125);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawless Gem") != categories.end())
                             {
-                                values.push_back(60);
-                                values.push_back(60);
-                                values.push_back(6);
+                                values.push_back(36);
+                                values.push_back(36);
+                                values.push_back(150);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Perfect Gem") != categories.end())
                             {
-                                values.push_back(100);
-                                values.push_back(100);
-                                values.push_back(7);
+                                values.push_back(147);
+                                values.push_back(147);
+                                values.push_back(175);
                             }
                             else
                             {
@@ -1314,8 +1324,8 @@ namespace d2ce
                         switch (parentItemType)
                         {
                         case EnumItemType::Weapon:
-                            ids.push_back(62);
-                            ids2.push_back(60);
+                            ids.push_back(60);
+                            ids2.push_back(62);
                             if (std::find(categories.begin(), categories.end(), "Chipped Gem") != categories.end())
                             {
                                 values.push_back(2);
@@ -1376,32 +1386,32 @@ namespace d2ce
                             break;
 
                         case EnumItemType::Armor:
-                            ids.push_back(74);
-                            ids2.push_back(27);
+                            ids.push_back(27);
+                            ids2.push_back(74);
                             if (std::find(categories.begin(), categories.end(), "Chipped Gem") != categories.end())
                             {
-                                values.push_back(2);
-                                values2.push_back(8);
+                                values.push_back(8);
+                                values2.push_back(2);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawed Gem") != categories.end())
                             {
-                                values.push_back(3);
-                                values2.push_back(8);
+                                values.push_back(8);
+                                values2.push_back(3);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Standard Gem") != categories.end())
                             {
-                                values.push_back(3);
-                                values2.push_back(12);
+                                values.push_back(12);
+                                values2.push_back(3);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Flawless Gem") != categories.end())
                             {
-                                values.push_back(4);
-                                values2.push_back(12);
+                                values.push_back(12);
+                                values2.push_back(4);
                             }
                             else if (std::find(categories.begin(), categories.end(), "Perfect Gem") != categories.end())
                             {
-                                values.push_back(5);
-                                values2.push_back(19);
+                                values.push_back(19);
+                                values2.push_back(5);
                             }
                             else
                             {
@@ -1413,32 +1423,531 @@ namespace d2ce
                             return false;
                         }
                     }
-
-                    MagicalAttribute attrib;
-                    for (auto id : ids)
-                    {
-                        attrib.Id = id;
-                        attrib.Values = values;
-
-                        const auto& stat = itemStats[attrib.Id];
-                        attrib.Name = stat.name;
-                        attrib.Desc = stat.desc;
-                        attribs.push_back(attrib);
-                    }
-
-                    for (auto id : ids2)
-                    {
-                        attrib.Id = id;
-                        attrib.Values = values2;
-
-                        const auto& stat = itemStats[attrib.Id];
-                        attrib.Name = stat.name;
-                        attrib.Desc = stat.desc;
-                        attribs.push_back(attrib);
-                    }
-
-                    return true;
                 }
+                else if (isRune())
+                {
+                    if (name.find("El ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(19);
+                            ids2.push_back(89);
+                            values.push_back(50);
+                            values2.push_back(1);
+                            break;
+
+                        default:
+                            ids.push_back(31);
+                            ids2.push_back(89);
+                            values.push_back(15);
+                            values2.push_back(1);
+                            break;
+                        }
+                    }
+                    else if (name.find("Eld ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(122);
+                            ids2.push_back(124);
+                            values.push_back(75);
+                            values2.push_back(50);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(20);
+                            values.push_back(7);
+                            break;
+
+                        default:
+                            ids.push_back(154);
+                            values.push_back(15);
+                            break;
+                        }
+                    }
+                    else if (name.find("Tir ") == 0)
+                    {
+                        ids.push_back(138);
+                        values.push_back(2);
+                    }
+                    else if (name.find("Nef ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(81);
+                            values.push_back(1); // TODO: is this correct?
+                            break;
+
+                        default:
+                            ids.push_back(32);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Eth ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(116);
+                            values.push_back(25);
+                            break;
+
+                        default:
+                            ids.push_back(27);
+                            values.push_back(15);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ith ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(22);
+                            values.push_back(9);
+                            break;
+
+                        default:
+                            ids.push_back(114);
+                            values.push_back(15);
+                            break;
+                        }
+                    }
+                    else if (name.find("Tal ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(57);
+                            values.push_back(154);
+                            values.push_back(154);
+                            values.push_back(125);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(45);
+                            values.push_back(35);
+                            break;
+
+                        default:
+                            ids.push_back(45);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ral ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(48);
+                            values.push_back(5);
+                            values.push_back(30);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(39);
+                            values.push_back(35);
+                            break;
+
+                        default:
+                            ids.push_back(39);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ort ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(50);
+                            values.push_back(1);
+                            values.push_back(50);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(41);
+                            values.push_back(35);
+                            break;
+
+                        default:
+                            ids.push_back(41);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Thul ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(54);
+                            values.push_back(3);
+                            values.push_back(14);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(43);
+                            values.push_back(35);
+                            break;
+
+                        default:
+                            ids.push_back(43);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Amn ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(60);
+                            values.push_back(7);
+                            break;
+
+                        default:
+                            ids.push_back(78);
+                            values.push_back(14);
+                            break;
+                        }
+                    }
+                    else if (name.find("Sol ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(21);
+                            values.push_back(9);
+                            break;
+
+                        default:
+                            ids.push_back(34);
+                            values.push_back(7);
+                            break;
+                        }
+                    }
+                    else if (name.find("Shael ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(93);
+                            values.push_back(20);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(102);
+                            values.push_back(20);
+                            break;
+
+                        default:
+                            ids.push_back(99);
+                            values.push_back(20);
+                            break;
+                        }
+                    }
+                    else if (name.find("Dol ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(112);
+                            values.push_back(32); // percent * 1.28
+                            break;
+
+                        default:
+                            ids.push_back(74);
+                            values.push_back(7);
+                            break;
+                        }
+                    }
+                    else if (name.find("Hel ") == 0)
+                    {
+                        ids.push_back(91);
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            values.push_back(-20);
+                            break;
+
+                        default:
+                            values.push_back(-15);
+                            break;
+                        }
+                    }
+                    else if (name.find("Io ") == 0)
+                    {
+                        ids.push_back(3);
+                        values.push_back(10);
+                    }
+                    else if (name.find("Lum ") == 0)
+                    {
+                        ids.push_back(1);
+                        values.push_back(10);
+                    }
+                    else if (name.find("Ko ") == 0)
+                    {
+                        ids.push_back(2);
+                        values.push_back(10);
+                    }
+                    else if (name.find("Fal ") == 0)
+                    {
+                        ids.push_back(0);
+                        values.push_back(10);
+                    }
+                    else if (name.find("Lem ") == 0)
+                    {
+                        ids.push_back(79);
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            values.push_back(75);
+                            break;
+
+                        default:
+                            values.push_back(50);
+                            break;
+                        }
+                    }
+                    else if (name.find("Pul ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(121);
+                            ids2.push_back(123);
+                            values.push_back(75);
+                            values2.push_back(100);
+                            break;
+
+                        default:
+                            ids.push_back(16);
+                            values.push_back(30);
+                            break;
+                        }
+                    }
+                    else if (name.find("Um ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(135);
+                            values.push_back(25);
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(39);
+                            ids.push_back(41);
+                            ids.push_back(43);
+                            ids.push_back(45);
+                            values.push_back(22);
+                            break;
+
+                        default:
+                            ids.push_back(39);
+                            ids.push_back(41);
+                            ids.push_back(43);
+                            ids.push_back(45);
+                            values.push_back(15);
+                            break;
+                        }
+                    }
+                    else if (name.find("Mal ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(117);
+                            values.push_back(1); // TODO: is this correct?
+                            break;
+
+                        default:
+                            ids.push_back(35);
+                            values.push_back(7);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ist ") == 0)
+                    {
+                        ids.push_back(80);
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            values.push_back(30);
+                            break;
+
+                        default:
+                            values.push_back(25);
+                            break;
+                        }
+                    }
+                    else if (name.find("Gul ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(119);
+                            values.push_back(20);
+                            break;
+
+                        default:
+                            ids.push_back(46);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Vex ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(62);
+                            values.push_back(7);
+                            break;
+
+                        default:
+                            ids.push_back(40);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ohm ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(17);
+                            values.push_back(50);
+                            break;
+
+                        default:
+                            ids.push_back(44);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Lo ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(141);
+                            values.push_back(20);
+                            break;
+
+                        default:
+                            ids.push_back(42);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Sur ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(113);
+                            values.push_back(1); // TODO: is this correct?
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(9);
+                            values.push_back(50);
+                            break;
+
+                        default:
+                            ids.push_back(77);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Ber ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(136);
+                            values.push_back(20);
+                            break;
+
+                        default:
+                            ids.push_back(34);
+                            values.push_back(8);
+                            break;
+                        }
+                    }
+                    else if (name.find("Jah ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(115);
+                            values.push_back(1); // TODO: is this correct?
+                            break;
+
+                        case EnumItemType::Shield:
+                            ids.push_back(7);
+                            values.push_back(50);
+                            break;
+
+                        default:
+                            ids.push_back(76);
+                            values.push_back(5);
+                            break;
+                        }
+                    }
+                    else if (name.find("Cham ") == 0)
+                    {
+                        switch (parentItemType)
+                        {
+                        case EnumItemType::Weapon:
+                            ids.push_back(134);
+                            values.push_back(3);
+                            break;
+
+                        default:
+                            ids.push_back(153);
+                            values.push_back(1);  // TODO: is this correct?
+                            break;
+                        }
+                    }
+                    else if (name.find("Zod ") == 0)
+                    {
+                        ids.push_back(152);
+                        values.push_back(1);  // TODO: is this correct?
+                    }
+                }
+
+                MagicalAttribute attrib;
+                for (auto id : ids)
+                {
+                    attrib.Id = id;
+                    attrib.Values = values;
+
+                    const auto& stat = itemStats[attrib.Id];
+                    attrib.Name = stat.name;
+                    attrib.Desc = stat.desc;
+                    attribs.push_back(attrib);
+                }
+
+                for (auto id : ids2)
+                {
+                    attrib.Id = id;
+                    attrib.Values = values2;
+
+                    const auto& stat = itemStats[attrib.Id];
+                    attrib.Name = stat.name;
+                    attrib.Desc = stat.desc;
+                    attribs.push_back(attrib);
+                }
+
+                return true;
             }
 
             return false;
@@ -2580,6 +3089,159 @@ namespace d2ce
         case 124: return "Sander's Riprap";
         case 125: return "Sander's Taboo";
         case 126: return "Sander's Superstition";
+        }
+
+        return "";
+    }
+
+    std::string getSetTCFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case 0:
+        case 1:
+        case 2:
+        case 41:
+        case 42:
+        case 43:
+            return "lyel";
+
+        case 3:
+        case 4:
+        case 5:
+        case 44:
+        case 45:
+        case 46:
+            return "dred";
+
+        case 6:
+        case 7:
+        case 8:
+        case 47:
+        case 48:
+        case 49:
+            return "lred";
+
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 50:
+        case 51:
+        case 52:
+        case 53:
+        case 70:
+        case 71:
+        case 72:
+        case 73:
+        case 74:
+        case 75:
+        case 104:
+        case 105:
+        case 106:
+        case 107:
+            return "lgry";
+
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+            return "lgld";
+
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 58:
+        case 59:
+        case 60:
+        case 61:
+            return "blac";
+
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 112:
+        case 113:
+        case 114:
+            return "dblu";
+
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+        case 115:
+        case 116:
+            return "dgrn";
+
+        case 30:
+        case 31:
+        case 32:
+        case 33:
+        case 34:
+        case 81:
+        case 82:
+        case 83:
+        case 84:
+            return "dgld";
+
+        case 35:
+        case 36:
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+        case 90:
+        case 91:
+        case 92:
+        case 93:
+        case 94:
+            return "whit";
+
+        case 62:
+        case 63:
+        case 64:
+        case 65:
+            return "dgry";
+
+        case 66:
+        case 67:
+        case 68:
+        case 69:
+            return "oran";
+
+        case 76:
+        case 77:
+        case 78:
+        case 79:
+        case 80:
+            return "dpur";
+
+        case 85:
+        case 86:
+        case 87:
+        case 88:
+        case 89:
+            return "dyel";
+
+        case 95:
+        case 96:
+        case 97:
+        case 98:
+        case 99:
+            return "lblu";
+
+        case 123:
+        case 124:
+        case 125:
+        case 126:
+            return "lpur";
         }
 
         return "";
@@ -3942,6 +4604,411 @@ namespace d2ce
         return "";
     }
 
+    std::string getMagicalPrefixTCFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case 6:
+        case 7:
+        case 17:
+        case 18:
+        case 19:
+        case 39:
+        case 40:
+        case 41:
+        case 148:
+        case 149:
+        case 150:
+        case 190:
+        case 191:
+        case 192:
+        case 261:
+        case 262:
+        case 263:
+        case 264:
+        case 265:
+        case 427:
+        case 428:
+        case 483:
+        case 668:
+            return "dgld";
+
+        case 8:
+        case 9:
+        case 151:
+        case 153:
+        case 154:
+            return "dblu";
+
+        case 13:
+        case 168:
+        case 169:
+        case 170:
+        case 171:
+        case 172:
+        case 173:
+        case 174:
+        case 175:
+        case 176:
+        case 177:
+        case 178:
+        case 179:
+        case 180:
+        case 181:
+        case 182:
+        case 186:
+        case 193:
+        case 194:
+        case 608:
+        case 609:
+        case 610:
+        case 611:
+        case 612:
+        case 613:
+        case 669:
+            return "blac";
+
+        case 20:
+        case 58:
+        case 59:
+        case 60:
+        case 61:
+        case 199:
+        case 308:
+        case 309:
+        case 310:
+        case 311:
+        case 312:
+        case 313:
+        case 314:
+        case 315:
+        case 316:
+        case 540:
+            return "cblu";
+
+        case 32:
+        case 33:
+        case 34:
+        case 242:
+        case 243:
+        case 244:
+        case 245:
+        case 246:
+        case 434:
+        case 437:
+        case 438:
+        case 440:
+        case 441:
+        case 446:
+        case 447:
+        case 449:
+        case 450:
+        case 452:
+        case 453:
+        case 458:
+        case 459:
+        case 461:
+        case 462:
+        case 464:
+        case 465:
+        case 470:
+        case 471:
+        case 473:
+        case 474:
+        case 476:
+        case 477:
+        case 482:
+        case 485:
+        case 486:
+        case 488:
+        case 489:
+        case 494:
+        case 495:
+        case 497:
+        case 498:
+        case 500:
+        case 501:
+        case 506:
+        case 507:
+        case 509:
+        case 510:
+        case 512:
+        case 513:
+        case 596:
+        case 597:
+        case 598:
+        case 599:
+            return "lgld";
+
+        case 42:
+        case 269:
+        case 272:
+        case 270:
+        case 271:
+        case 273:
+        case 274:
+        case 531:
+            return "oran";
+
+        case 50:
+        case 87:
+        case 88:
+        case 90:
+        case 267:
+        case 379:
+        case 380:
+        case 383:
+        case 384:
+        case 387:
+        case 388:
+        case 392:
+        case 393:
+        case 394:
+        case 395:
+        case 396:
+        case 550:
+        case 551:
+        case 552:
+        case 553:
+        case 554:
+        case 638:
+        case 639:
+        case 640:
+        case 641:
+        case 642:
+        case 643:
+        case 644:
+        case 645:
+        case 646:
+        case 647:
+        case 648:
+        case 649:
+            return "lyel";
+
+        case 64:
+        case 65:
+        case 317:
+        case 318:
+        case 319:
+        case 320:
+        case 321:
+        case 322:
+        case 323:
+        case 324:
+        case 325:
+        case 326:
+        case 327:
+        case 328:
+        case 329:
+        case 330:
+        case 331:
+        case 332:
+        case 333:
+        case 334:
+        case 335:
+        case 336:
+        case 337:
+            return "lpur";
+
+        case 69:
+        case 70:
+        case 72:
+        case 340:
+        case 341:
+        case 344:
+        case 345:
+        case 348:
+        case 349:
+        case 353:
+        case 354:
+        case 355:
+        case 356:
+        case 357:
+        case 541:
+        case 542:
+        case 543:
+        case 544:
+        case 614:
+        case 615:
+        case 616:
+        case 617:
+        case 618:
+        case 619:
+        case 620:
+        case 621:
+        case 622:
+        case 623:
+        case 624:
+        case 625:
+            return "lblu";
+
+        case 75:
+        case 155:
+        case 156:
+        case 157:
+        case 158:
+        case 159:
+        case 160:
+        case 161:
+        case 162:
+        case 163:
+        case 164:
+        case 165:
+        case 166:
+        case 167:
+        case 183:
+        case 184:
+        case 185:
+        case 195:
+        case 196:
+        case 197:
+        case 358:
+        case 362:
+        case 366:
+        case 545:
+        case 546:
+        case 547:
+        case 548:
+        case 549:
+        case 601:
+        case 602:
+        case 603:
+        case 604:
+        case 605:
+        case 606:
+        case 607:
+        case 626:
+        case 627:
+        case 628:
+        case 629:
+        case 630:
+        case 631:
+        case 632:
+        case 633:
+        case 634:
+        case 635:
+        case 636:
+        case 637:
+        case 665:
+            return "dred";
+
+        case 78:
+        case 79:
+        case 81:
+        case 198:
+        case 359:
+        case 360:
+        case 361:
+        case 363:
+        case 364:
+        case 365:
+        case 367:
+        case 368:
+        case 369:
+        case 370:
+        case 371:
+        case 372:
+        case 373:
+        case 374:
+        case 375:
+        case 376:
+            return "lred";
+
+        case 93:
+        case 94:
+        case 95:
+        case 102:
+        case 103:
+        case 105:
+        case 106:
+        case 108:
+        case 109:
+        case 111:
+        case 112:
+        case 114:
+        case 115:
+        case 397:
+        case 399:
+        case 401:
+        case 403:
+        case 405:
+        case 407:
+        case 409:
+        case 412:
+        case 413:
+        case 415:
+        case 416:
+        case 435:
+        case 561:
+        case 563:
+        case 565:
+        case 567:
+        case 569:
+        case 571:
+        case 573:
+        case 575:
+        case 577:
+        case 579:
+        case 581:
+        case 583:
+        case 585:
+        case 587:
+        case 589:
+        case 591:
+        case 667:
+            return "cgrn";
+
+        case 99:
+        case 283:
+        case 400:
+        case 404:
+        case 408:
+        case 414:
+            return "lgrn";
+
+        case 139:
+        case 140:
+        case 141:
+        case 142:
+        case 522:
+        case 523:
+        case 524:
+        case 525:
+        case 528:
+        case 529:
+        case 532:
+        case 533:
+        case 534:
+        case 535:
+        case 536:
+        case 537:
+        case 538:
+        case 539:
+            return "whit";
+
+        case 555:
+        case 556:
+        case 557:
+        case 558:
+        case 559:
+        case 650:
+        case 651:
+        case 652:
+        case 653:
+        case 654:
+        case 655:
+        case 656:
+        case 657:
+        case 658:
+        case 659:
+        case 660:
+        case 661:
+            return "dgrn";
+        }
+
+        return "";
+    }
+
     std::string getMagicalSuffixFromId(std::uint16_t id)
     {
         switch (id)
@@ -3970,7 +5037,7 @@ namespace d2ce
         case 24: return "of Frost";
         case 25: return "of the Glacier";
         case 26: return "of Frost";
-        case 27: return "of Warmth";
+        case 27: return "of Thawing";
         case 28: return "of Flame";
         case 29: return "of Fire";
         case 30: return "of Burning";
@@ -4034,7 +5101,7 @@ namespace d2ce
         case 90: return "of the Tiger";
         case 91: return "of the Mammoth";
         case 92: return "of the Mammoth";
-        case 93: return "of the Colosuss";
+        case 93: return "of the Colossus";
         case 94: return "of the Leech";
         case 95: return "of the Locust";
         case 96: return "of the Bat";
@@ -4062,7 +5129,7 @@ namespace d2ce
         case 120: return "of Protection";
         case 121: return "of Absorption";
         case 122: return "of Life";
-        case 123: return "of Anima";
+        case 123: return "of Amicae";
         case 124: return "of Warding";
         case 125: return "of the Sentinel";
         case 126: return "of Guarding";
@@ -4121,7 +5188,7 @@ namespace d2ce
         case 179: return "of Winter";
         case 180: return "of Frost";
         case 181: return "of Frigidity";
-        case 182: return "of Warmth";
+        case 182: return "of Thawing";
         case 183: return "of Flame";
         case 184: return "of Fire";
         case 185: return "of Burning";
@@ -4257,7 +5324,7 @@ namespace d2ce
         case 315: return "of the Wolf";
         case 316: return "of the Tiger";
         case 317: return "of the Mammoth";
-        case 318: return "of the Colosuss";
+        case 318: return "of the Colossus";
         case 319: return "of the Squid";
         case 320: return "of the Whale";
         case 321: return "of the Jackal";
@@ -4265,7 +5332,7 @@ namespace d2ce
         case 323: return "of the Wolf";
         case 324: return "of the Tiger";
         case 325: return "of the Mammoth";
-        case 326: return "of the Colosuss";
+        case 326: return "of the Colossus";
         case 327: return "of the Jackal";
         case 328: return "of the Fox";
         case 329: return "of the Wolf";
@@ -4274,20 +5341,20 @@ namespace d2ce
         case 332: return "of Life";
         case 333: return "of Life";
         case 334: return "of Life";
-        case 335: return "of Substinence";
-        case 336: return "of Substinence";
-        case 337: return "of Substinence";
+        case 335: return "of Sustenance";
+        case 336: return "of Sustenance";
+        case 337: return "of Sustenance";
         case 338: return "of Vita";
         case 339: return "of Vita";
         case 340: return "of Vita";
         case 341: return "of Life";
         case 342: return "of Life";
-        case 343: return "of Substinence";
-        case 344: return "of Substinence";
+        case 343: return "of Sustenance";
+        case 344: return "of Sustenance";
         case 345: return "of Vita";
         case 346: return "of Vita";
         case 347: return "of Life";
-        case 348: return "of Substinence";
+        case 348: return "of Sustenance";
         case 349: return "of Vita";
         case 350: return "of Spirit";
         case 351: return "of Hope";
@@ -4316,7 +5383,7 @@ namespace d2ce
         case 374: return "of the Ox";
         case 375: return "of the Giant";
         case 376: return "of the Titan";
-        case 377: return "of Atlus";
+        case 377: return "of Atlas";
         case 378: return "of Strength";
         case 379: return "of Might";
         case 380: return "of the Ox";
@@ -4342,11 +5409,11 @@ namespace d2ce
         case 400: return "of Inertia";
         case 401: return "of Inertia";
         case 402: return "of Self-Repair";
-        case 403: return "of Fast Repair";
+        case 403: return "of Restoration";
         case 404: return "of Ages";
         case 405: return "of Replenishing";
         case 406: return "of Propogation";
-        case 407: return "of the Kraken";
+        case 407: return "of the Centaur";
         case 408: return "of Memory";
         case 409: return "of the Elephant";
         case 410: return "of Power";
@@ -4691,6 +5758,191 @@ namespace d2ce
 
         return "";
     }
+    
+    std::string getMagicalSuffixTCFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case 4:
+        case 85:
+        case 118:
+        case 122:
+        case 179:
+        case 181:
+        case 332:
+        case 333:
+        case 334:
+        case 341:
+        case 342:
+        case 347:
+        case 697:
+        case 701:
+        case 705:
+            return "dblu";
+
+        case 15:
+        case 162:
+        case 163:
+        case 164:
+            return "oran";
+
+        case 19:
+        case 34:
+        case 62:
+        case 169:
+        case 191:
+        case 192:
+        case 194:
+        case 264:
+        case 416:
+        case 450:
+        case 668:
+        case 720:
+        case 721:
+        case 724:
+        case 725:
+        case 728:
+        case 729:
+            return "dyel";
+
+        case 30:
+        case 98:
+        case 185:
+        case 186:
+        case 188:
+        case 366:
+        case 666:
+        case 708:
+        case 709:
+        case 712:
+        case 713:
+        case 716:
+        case 717:
+            return "dred";
+
+        case 41:
+        case 42:
+        case 47:
+        case 200:
+        case 201:
+        case 202:
+        case 203:
+        case 221:
+        case 222:
+        case 226:
+        case 227:
+        case 231:
+            return "blac";
+
+        case 51:
+        case 236:
+        case 237:
+        case 239:
+        case 684:
+        case 685:
+        case 688:
+        case 689:
+        case 692:
+        case 693:
+            return "dgrn";
+
+        case 60:
+        case 79:
+        case 80:
+        case 109:
+        case 110:
+        case 111:
+        case 244:
+        case 245:
+        case 250:
+        case 296:
+        case 297:
+        case 298:
+        case 302:
+        case 303:
+        case 307:
+        case 375:
+        case 376:
+        case 377:
+        case 381:
+        case 382:
+        case 386:
+        case 410:
+        case 411:
+        case 412:
+        case 417:
+            return "dgld";
+
+        case 67:
+        case 68:
+        case 91:
+        case 92:
+        case 93:
+        case 95:
+        case 272:
+        case 273:
+        case 274:
+        case 317:
+        case 318:
+        case 319:
+        case 320:
+        case 325:
+        case 326:
+        case 331:
+        case 353:
+        case 354:
+        case 356:
+        case 357:
+        case 360:
+        case 363:
+        case 407:
+        case 408:
+        case 409:
+        case 414:
+        case 454:
+        case 743:
+        case 744:
+        case 746:
+            return "cred";
+
+        case 72:
+        case 74:
+        case 278:
+        case 287:
+        case 288:
+        case 289:
+        case 290:
+            return "lgld";
+
+        case 97:
+        case 361:
+        case 364:
+        case 415:
+        case 432:
+        case 433:
+        case 434:
+        case 435:
+        case 436:
+        case 747:
+            return "cblu";
+
+        case 232:
+        case 233:
+        case 445:
+        case 446:
+        case 447:
+            return "whit";
+
+        case 413:
+        case 424:
+        case 428:
+        case 504:
+        case 505:
+            return "lblu";
+        }
+
+        return "";
+    }
 
     std::string getUniqueNameFromId(std::uint16_t id)
     {
@@ -4788,7 +6040,7 @@ namespace d2ce
         case 89: return "Rockfleece";
         case 90: return "Rattlecage";
         case 91: return "Goldskin";
-        case 92: return "Victors Silk";
+        case 92: return "Victor's Silk";
         case 93: return "Heavenly Garb";
         case 94: return "Pelta Lunata";
         case 95: return "Umbral Disk";
@@ -4828,7 +6080,7 @@ namespace d2ce
         case 129: return "Coldkill";
         case 130: return "Butcher's Pupil";
         case 131: return "Islestrike";
-        case 132: return "Pompe's Wrath";
+        case 132: return "Pompeii's Wrath";
         case 133: return "Guardian Naga";
         case 134: return "Warlord's Trust";
         case 135: return "Spellsteel";
@@ -5097,6 +6349,265 @@ namespace d2ce
         case 398: return "Rainbow Facet";
         case 399: return "Rainbow Facet";
         case 400: return "Hellfire Torch";
+        }
+
+        return "";
+    }
+
+    std::string getUniqueTCFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case 2:
+        case 39:
+        case 47:
+        case 79:
+        case 105:
+        case 176:
+        case 195:
+        case 218:
+        case 227:
+        case 249:
+        case 250:
+        case 262:
+        case 379:
+            return "lgry";
+
+        case 4:
+        case 40:
+        case 76:
+        case 89:
+        case 110:
+        case 164:
+        case 212:
+        case 274:
+        case 325:
+        case 348:
+        case 351:
+        case 360:
+            return "dgry";
+
+        case 5:
+        case 53:
+        case 144:
+        case 190:
+            return "lpur";
+
+        case 6:
+        case 43:
+        case 90:
+        case 268:
+        case 277:
+        case 290:
+        case 306:
+            return "dpur";
+
+        case 9:
+        case 19:
+        case 25:
+        case 48:
+        case 77:
+        case 113:
+        case 142:
+        case 178:
+        case 187:
+        case 199:
+        case 204:
+        case 207:
+        case 222:
+        case 255:
+        case 258:
+        case 297:
+        case 309:
+        case 315:
+        case 321:
+        case 329:
+        case 357:
+        case 358:
+        case 373:
+        case 376:
+        case 380:
+            return "blac";
+
+        case 11:
+        case 21:
+        case 42:
+        case 52:
+        case 108:
+        case 150:
+        case 210:
+        case 264:
+        case 311:
+        case 338:
+        case 356:
+        case 386:
+            return "dblu";
+
+        case 13:
+        case 51:
+        case 78:
+        case 115:
+        case 161:
+        case 184:
+        case 192:
+        case 257:
+        case 271:
+        case 313:
+            return "lblu";
+
+        case 15:
+        case 57:
+        case 61:
+        case 80:
+        case 106:
+        case 177:
+        case 254:
+        case 260:
+        case 295:
+        case 304:
+        case 312:
+        case 331:
+        case 341:
+        case 345:
+        case 364:
+            return "dred";
+
+        case 16:
+        case 87:
+        case 180:
+        case 270:
+            return "lgld";
+
+        case 17:
+        case 81:
+        case 107:
+        case 132:
+        case 154:
+        case 157:
+        case 182:
+        case 189:
+        case 289:
+        case 330:
+        case 339:
+        case 340:
+        case 353:
+        case 355:
+            return "cred";
+
+        case 22:
+        case 37:
+        case 59:
+        case 93:
+        case 102:
+        case 129:
+        case 130:
+        case 140:
+        case 171:
+        case 186:
+        case 226:
+        case 263:
+        case 275:
+        case 333:
+        case 337:
+        case 343:
+        case 352:
+        case 365:
+        case 371:
+            return "cblu";
+
+        case 24:
+        case 49:
+        case 55:
+        case 84:
+        case 112:
+        case 197:
+        case 208:
+        case 248:
+        case 273:
+        case 308:
+        case 317:
+        case 320:
+        case 366:
+            return "cgrn";
+
+        case 32:
+        case 45:
+        case 134:
+        case 135:
+        case 219:
+        case 324:
+            return "whit";
+
+        case 34:
+        case 64:
+        case 83:
+        case 111:
+        case 296:
+        case 300:
+        case 323:
+        case 347:
+            return "dgrn";
+
+        case 46:
+        case 60:
+        case 104:
+        case 136:
+        case 172:
+        case 211:
+        case 251:
+        case 256:
+        case 349:
+            return "lred";
+
+        case 54:
+        case 82:
+        case 109:
+        case 228:
+        case 293:
+            return "lgrn";
+
+        case 58:
+        case 86:
+        case 116:
+        case 266:
+        case 363:
+            return "dyel";
+
+        case 66:
+        case 85:
+        case 114:
+        case 174:
+        case 261:
+            return "lyel";
+
+        case 72:
+        case 103:
+        case 216:
+        case 269:
+        case 272:
+            return "oran";
+
+        case 88:
+        case 143:
+        case 206:
+        case 230:
+        case 265:
+        case 322:
+        case 332:
+        case 344:
+        case 350:
+            return "dgld";
+
+        case 159:
+        case 167:
+        case 276:
+        case 292:
+        case 299:
+        case 302:
+        case 310:
+        case 319:
+        case 387:
+            return "bwht";
         }
 
         return "";
@@ -5398,12 +6909,12 @@ namespace d2ce
             }
             break;
 
-            // value at index 0 with range 0 to 128 must be converted to a percentage
+            // value at index 0 with range 1 to 128 must be converted to a percentage
         case 112:
             switch (idx)
             {
             case 0:
-                return  (value * 100) / 128;
+                return  (value * 100 + 64) / 128;
             }
             break;
 
@@ -5476,6 +6987,7 @@ namespace d2ce
 
             // skill name is index 0
         case 97:
+        case 151:
             switch (idx)
             {
             case 0:
@@ -5487,10 +6999,22 @@ namespace d2ce
                 }
                 else
                 {
-                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    size_t classIdx = NUM_OF_CLASSES;
+                    size_t skillIdx = NUM_OF_SKILLS;
+                    if (value <= END_SKILL_ID)
+                    {
+                        classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+                    else if (value >= EXPANSION_START_SKILL_ID && value <= EXPANSION_END_SKILL_ID)
+                    {
+                        classIdx = 5 + (value - EXPANSION_START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - EXPANSION_START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+
                     if (classIdx < NUM_OF_CLASSES)
                     {
-                        ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
+                        ssValue << SkillsNames[std::uint8_t(classIdx)][skillIdx];
                     }
                     else
                     {
@@ -5519,7 +7043,19 @@ namespace d2ce
                 }
                 else
                 {
-                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    size_t classIdx = NUM_OF_CLASSES;
+                    size_t skillIdx = NUM_OF_SKILLS;
+                    if (value <= END_SKILL_ID)
+                    {
+                        classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+                    else if (value >= EXPANSION_START_SKILL_ID && value <= EXPANSION_END_SKILL_ID)
+                    {
+                        classIdx = 5 + (value - EXPANSION_START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - EXPANSION_START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+
                     if (classIdx < NUM_OF_CLASSES)
                     {
                         ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS] << " (" << ClassNames[classIdx] << " Only)";
@@ -5539,7 +7075,6 @@ namespace d2ce
             break;
 
             // Skill name is index 0 and class name is index 1
-        case 151:
         case 188:
             switch (idx)
             {
@@ -5590,10 +7125,22 @@ namespace d2ce
                 }
                 else
                 {
-                    size_t classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                    size_t classIdx = NUM_OF_CLASSES;
+                    size_t skillIdx = NUM_OF_SKILLS;
+                    if (value <= END_SKILL_ID)
+                    {
+                        classIdx = (value - START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+                    else if (value >= EXPANSION_START_SKILL_ID && value <= EXPANSION_END_SKILL_ID)
+                    {
+                        classIdx = 5 + (value - EXPANSION_START_SKILL_ID) / NUM_OF_SKILLS;
+                        skillIdx = (value - EXPANSION_START_SKILL_ID) % NUM_OF_SKILLS;
+                    }
+
                     if (classIdx < NUM_OF_CLASSES)
                     {
-                        ssValue << SkillsNames[std::uint8_t(classIdx)][(value - START_SKILL_ID) % NUM_OF_SKILLS];
+                        ssValue << SkillsNames[classIdx][skillIdx];
                     }
                     else
                     {
@@ -5670,6 +7217,10 @@ namespace d2ce
 
     void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs)
     {
+        size_t numPoisonAttribs = 0;
+        size_t numPoisonTimeSum = 0;
+        size_t numColdAttribs = 0;
+        size_t numColdTimeSum = 0;
         for (const auto& attrib : newAttribs)
         {
             auto iter = itemIndexMap.lower_bound(attrib.Id);
@@ -5678,6 +7229,18 @@ namespace d2ce
             {
                 itemIndexMap.insert(std::make_pair(attrib.Id, attribs.size()));
                 attribs.push_back(attrib);
+                switch (attrib.Id)
+                {
+                case 52:
+                    numColdAttribs = 1;
+                    numColdTimeSum = attrib.Values[2];
+                    break;
+
+                case 57:
+                    numPoisonAttribs = 1;
+                    numPoisonTimeSum = attrib.Values[2];
+                    break;
+                }
             }
             else
             {
@@ -5693,13 +7256,30 @@ namespace d2ce
                     // Check to see if we are a match to merge
                     switch (attrib.Id)
                     {
+                    case 17:
                     case 48:
                     case 50:
                     case 52:
-                    case 54:
-                    case 57:
                         existing.Values[0] += attrib.Values[0];
                         existing.Values[1] += attrib.Values[1];
+                        notMatched = false;
+                        break;
+
+                    case 54:
+                        ++numColdAttribs;
+                        numColdTimeSum += existing.Values[2];
+                        existing.Values[0] += attrib.Values[0];
+                        existing.Values[1] += attrib.Values[1];
+                        existing.Values[2] = numColdTimeSum / numColdAttribs; // average
+                        notMatched = false;
+                        break;
+
+                    case 57:
+                        ++numPoisonAttribs;
+                        numPoisonTimeSum += existing.Values[2];
+                        existing.Values[0] += attrib.Values[0];
+                        existing.Values[1] += attrib.Values[1];
+                        existing.Values[2] = numPoisonTimeSum / numPoisonAttribs; // average
                         notMatched = false;
                         break;
 
@@ -5790,6 +7370,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     quality_attrib_bit_offset = other.quality_attrib_bit_offset;
     runeword_id_bit_offset = other.runeword_id_bit_offset;
     personalized_bit_offset = other.personalized_bit_offset;
+    tome_bit_offset = other.tome_bit_offset;
     realm_bit_offset = other.realm_bit_offset;
     defense_rating_bit_offset = other.defense_rating_bit_offset;
     durability_bit_offset = other.durability_bit_offset;
@@ -5835,6 +7416,7 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     quality_attrib_bit_offset = std::exchange(other.quality_attrib_bit_offset, 0);
     runeword_id_bit_offset = std::exchange(other.runeword_id_bit_offset, 0);
     personalized_bit_offset = std::exchange(other.personalized_bit_offset, 0);
+    tome_bit_offset = std::exchange(other.tome_bit_offset, 0);
     realm_bit_offset = std::exchange(other.realm_bit_offset, 0);
     defense_rating_bit_offset = std::exchange(other.defense_rating_bit_offset, 0);
     durability_bit_offset = std::exchange(other.durability_bit_offset, 0);
@@ -8948,6 +10530,82 @@ std::string d2ce::Item::getInvFile() const
     return "";
 }
 //---------------------------------------------------------------------------
+std::string d2ce::Item::getTransformColor() const
+{
+    std::string result;
+    std::string tc;
+    d2ce::MagicalAffixes magicalAffixes;
+    if (getMagicalAffixes(magicalAffixes))
+    {
+        bool hasPrefixOrSuffix = false;
+        if (magicalAffixes.PrefixId != 0)
+        {
+            hasPrefixOrSuffix = true;
+            tc = getMagicalPrefixTCFromId(magicalAffixes.PrefixId);
+            if (!tc.empty())
+            {
+                result = tc;
+            }
+        }
+
+        if (magicalAffixes.SuffixId != 0)
+        {
+            hasPrefixOrSuffix = true;
+            tc = getMagicalSuffixTCFromId(magicalAffixes.SuffixId);
+            if (!tc.empty())
+            {
+                result = tc;
+            }
+        }
+
+        if (hasPrefixOrSuffix)
+        {
+            return result;
+        }
+    }
+
+    d2ce::UniqueAttributes uniqueAttrib;
+    if (getUniqueAttributes(uniqueAttrib))
+    {
+        return getUniqueTCFromId(uniqueAttrib.Id);
+    }
+    
+    d2ce::RareAttributes rareAttrib;
+    if (getRareOrCraftedAttributes(rareAttrib))
+    {
+        for (auto affix : rareAttrib.Affixes)
+        {
+            if (magicalAffixes.PrefixId != 0)
+            {
+                tc = getMagicalPrefixTCFromId(magicalAffixes.PrefixId);
+                if (!tc.empty())
+                {
+                    result = tc;
+                }
+            }
+
+            if (magicalAffixes.SuffixId != 0)
+            {
+                tc = getMagicalSuffixTCFromId(magicalAffixes.SuffixId);
+                if (!tc.empty())
+                {
+                    result = tc;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    d2ce::SetAttributes setAttrib;
+    if (getSetAttributes(setAttrib))
+    {
+        return getSetTCFromId(setAttrib.Id);
+    }
+
+    return result;
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getId() const
 {
     if (isSimpleItem())
@@ -9073,6 +10731,16 @@ std::string d2ce::Item::getPersonalizedName() const
     return name;
 }
 //---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getTomeValue() const
+{
+    if (!isTome() || (tome_bit_offset == 0))
+    {
+        return 0;
+    }
+
+    return std::uint8_t(read_uint32_bits(tome_bit_offset, 5));
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
 {
     attrib.clear();
@@ -9140,7 +10808,7 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
         return false;
     }
 
-    size_t current_bit_offset = quality_attrib_bit_offset; // must copy value as readPropertyList will modify value
+    size_t current_bit_offset = quality_attrib_bit_offset;
     attrib.Id = (std::uint16_t)read_uint32_bits(current_bit_offset, 8);
     current_bit_offset += 8;
     attrib.Name = getRareNameFromId(attrib.Id);
@@ -9197,9 +10865,7 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
         return false;
     }
 
-    size_t current_bit_offset = quality_attrib_bit_offset; // must copy value as readPropertyList will modify value
-    attrib.Id = (std::uint16_t)read_uint32_bits(current_bit_offset, 12);
-    current_bit_offset += 12;
+    attrib.Id = (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, 12);
     attrib.Name = getUniqueNameFromId(attrib.Id);
     return true;
 }
@@ -9301,6 +10967,16 @@ bool d2ce::Item::isAutoAffix() const
     return read_uint32_bits(autoAffix_bit_offset, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getAutoAffixId() const
+{
+    if (!isAutoAffix())
+    {
+        return 0;
+    }
+
+    return (std::uint16_t)read_uint32_bits(autoAffix_bit_offset + 1, 11);
+}
+//---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getInferiorQualityId() const
 {
     if (quality_attrib_bit_offset == 0)
@@ -9318,6 +10994,52 @@ std::uint8_t d2ce::Item::getInferiorQualityId() const
     }
 
     return (std::uint8_t)read_uint32_bits(quality_attrib_bit_offset, 3);
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getFileIndex() const
+{
+    if (quality_attrib_bit_offset == 0)
+    {
+        EarAttributes earAttrib;
+        if (getEarAttributes(earAttrib))
+        {
+            return (std::uint16_t)earAttrib.getClass();
+        }
+
+        return 0;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::INFERIOR:
+    case EnumItemQuality::SUPERIOR:
+        return (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, 3);
+
+    case EnumItemQuality::SET:
+    case EnumItemQuality::UNIQUE:
+        return (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, 12);
+    }
+
+    return 0;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getSetItemMask() const
+{
+    if (bonus_bits_bit_offset == 0)
+    {
+        return 0;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::SET:
+        break;
+
+    default:
+        return 0;
+    }
+
+    return (std::uint16_t)read_uint32_bits(bonus_bits_bit_offset, 5);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isArmor() const
@@ -9460,6 +11182,18 @@ bool d2ce::Item::isRune() const
     {
         const auto& result = getItemTypeHelper(strcode);
         return result.isRune();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isJewel() const
+{
+    std::uint8_t strcode[4] = { 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.isJewel();
     }
 
     return false;
@@ -9632,7 +11366,7 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
     {
         return false;
     }
-    
+
     if (attrib.Current == oldAttrib.Current &&
         attrib.Max == oldAttrib.Max)
     {
@@ -10116,6 +11850,128 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
 
     bool bFirst = true;
     std::stringstream ss;
+    if (itemType.isSocketFiller())
+    {
+        if (bFirst)
+        {
+            bFirst = false;
+        }
+        else
+        {
+            ss << "\n";
+        }
+        ss << "Can be Inserted into Socketed Items";
+
+        if (!itemType.isJewel())
+        {
+            std::string attribSep = (itemType.isRune() ? ",\n" : ", ");
+            ss << "\n";
+            std::vector<MagicalAttribute> attribs;
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Weapon))
+            {
+                // check for the "all" cases
+                checkForRelatedMagicalAttributes(attribs);
+
+                bool bFirstAttrib = true;
+                ss << "\nWeapons: ";
+                for (auto& attrib : attribs)
+                {
+                    if (!attrib.Visible)
+                    {
+                        continue;
+                    }
+
+                    if (!formatDisplayedMagicalAttribute(attrib, d2ce::NUM_OF_LEVELS))
+                    {
+                        continue;
+                    }
+
+                    if (bFirstAttrib)
+                    {
+                        bFirstAttrib = false;
+                    }
+                    else
+                    {
+                        ss << attribSep;
+                    }
+
+                    ss << attrib.Desc;
+                }
+            }
+
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Armor))
+            {
+                // check for the "all" cases
+                checkForRelatedMagicalAttributes(attribs);
+
+                bool bFirstAttrib = true;
+                ss << "\nArmor: ";
+                std::stringstream ss2;
+                for (auto& attrib : attribs)
+                {
+                    if (!attrib.Visible)
+                    {
+                        continue;
+                    }
+
+                    if (!formatDisplayedMagicalAttribute(attrib, d2ce::NUM_OF_LEVELS))
+                    {
+                        continue;
+                    }
+
+                    if (bFirstAttrib)
+                    {
+                        bFirstAttrib = false;
+                    }
+                    else
+                    {
+                        ss2 << attribSep;
+                    }
+
+                    ss2 << attrib.Desc;
+                }
+                auto commonText = ss2.str();
+                ss << commonText;
+                ss << "\nHelms: ";
+                ss << commonText;
+            }
+
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Shield))
+            {
+                // check for the "all" cases
+                checkForRelatedMagicalAttributes(attribs);
+
+                bool bFirstAttrib = true;
+                ss << "\nShields: ";
+
+                for (auto& attrib : attribs)
+                {
+                    if (!attrib.Visible)
+                    {
+                        continue;
+                    }
+
+                    if (!formatDisplayedMagicalAttribute(attrib, d2ce::NUM_OF_LEVELS))
+                    {
+                        continue;
+                    }
+
+                    if (bFirstAttrib)
+                    {
+                        bFirstAttrib = false;
+                    }
+                    else
+                    {
+                        ss << attribSep;
+                    }
+
+                    ss << attrib.Desc;
+                }
+            }
+            ss << "\n";
+        }
+    }
+
     if (itemType.isStackable())
     {
         if (bFirst)
@@ -10709,6 +12565,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         // If the item is a tome, it will contain 5 extra bits, we're not
         // interested in these bits, the value is usually 1, but not sure
         // what it is.
+        tome_bit_offset = current_bit_offset;
         if (!skipBits(charfile, current_bit_offset, 5))
         {
             return false;
@@ -10848,8 +12705,9 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 
             // resolve magical properties of socketed gem
             childItem.getItemCode(strcode);
+            const auto& childItemType = getItemTypeHelper(strcode);
             std::vector<MagicalAttribute> attribs;
-            itemType.getSocketedMagicalAttributes(childItem.socketedMagicalAttributes, getItemType());
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getItemType());
         }
     }
 
@@ -10884,7 +12742,7 @@ bool d2ce::Item::writeItem(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem /*= true*/) const
+void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem, bool bSerializedFormat) const
 {
     std::vector<MagicalAttribute> magicalAttributes;
     d2ce::RunewordAttributes runewordAttrib;
@@ -10897,46 +12755,141 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
         ss << "\n" << braceIndent << "{";
     }
 
-    unknownAsJson(ss, itemPropIndent);
-    ss << ",\n" << itemPropIndent << "\"identified\": " << std::dec << (isIdentified() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"socketed\": " << std::dec << (isSocketed() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"new\": " << std::dec << (isNew() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"is_ear\": " << std::dec << (isEar() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"starter_item\": " << std::dec << (isStarterItem() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"simple_item\": " << std::dec << (isSimpleItem() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"ethereal\": " << std::dec << (isEthereal() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"personalized\": " << std::dec << (isPersonalized() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"given_runeword\": " << std::dec << (isRuneword() ? 1 : 0);
-    ss << ",\n" << itemPropIndent << "\"version\": " << getRawVersion();
-    ss << ",\n" << itemPropIndent << "\"location_id\": " << std::dec << std::uint16_t(getLocation());
-    ss << ",\n" << itemPropIndent << "\"equipped_id\": " << std::dec << std::uint16_t(getEquippedId());
-    ss << ",\n" << itemPropIndent << "\"position_x\": " << std::dec << std::uint16_t(getPositionX());
-    ss << ",\n" << itemPropIndent << "\"position_y\": " << std::dec << std::uint16_t(getPositionY());
-    ss << ",\n" << itemPropIndent << "\"alt_position_id\": " << std::dec << std::uint16_t(getAltPositionId());
-
-    if (isEar())
+    if (bSerializedFormat)
     {
+        if (FileVersion < EnumCharVersion::v115)
+        {
+            ss << "\n" << itemPropIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
+            ss << ",\n" << itemPropIndent << "\"Version\": \"" << std::dec << getRawVersion() << "\"";
+        }
+        else
+        {
+            std::string versionBits("101");
+            switch (getRawVersion())
+            {
+            case 0:
+                versionBits = "0";
+                break;
+
+            case 1:
+                versionBits = "1";
+                break;
+
+            case 2:
+                versionBits = "10";
+                break;
+
+            case 3:
+                versionBits = "11";
+                break;
+
+            case 4:
+                versionBits = "100";
+                break;
+
+            case 5:
+                versionBits = "101";
+                break;
+
+            case 6:
+                versionBits = "110";
+                break;
+
+            case 7:
+                versionBits = "111";
+                break;
+            }
+            ss << "\n" << itemPropIndent << "\"Version\": \"" << versionBits << "\""; \
+        }
+
+        ss << ",\n" << itemPropIndent << "\"Mode\": " << std::dec << std::uint16_t(getLocation());
+        ss << ",\n" << itemPropIndent << "\"Location\": " << std::dec << std::uint16_t(getEquippedId());
+        ss << ",\n" << itemPropIndent << "\"X\": " << std::dec << std::uint16_t(getPositionX());
+        ss << ",\n" << itemPropIndent << "\"Y\": " << std::dec << std::uint16_t(getPositionY());
+        ss << ",\n" << itemPropIndent << "\"Page\": " << std::dec << std::uint16_t(getAltPositionId());
+
+        bool bIsEar = isEar();
         EarAttributes earAttrib;
         getEarAttributes(earAttrib);
-        ss << ",";
-        earAttrib.asJson(ss, itemPropIndent);
-        return;
-    }
+        if (bIsEar)
+        {
+            ss << ",\n" << itemPropIndent << "\"EarLevel \": " << std::dec << earAttrib.getLevel();
+            ss << ",\n" << itemPropIndent << "\"Code\": \"\"";
+        }
+        else
+        {
+            ss << ",\n" << itemPropIndent << "\"EarLevel \": 0";
+            std::uint8_t strcode[4] = { 0 };
+            getItemCode(strcode);
+            std::string sCode((char*)strcode, 4);
+            ss << ",\n" << itemPropIndent << "\"Code\": \"" << sCode << "\"";
+        }
 
-    std::uint8_t strcode[4] = { 0 };
-    getItemCode(strcode);
-    const auto& itemType = getItemTypeHelper(strcode);
-    strcode[3] = 0;
-    ss << ",\n" << itemPropIndent << "\"type\": \"" << strcode << "\"";
-    ss << ",\n" << itemPropIndent << "\"categories\": [";
-    if (itemType.categories.empty())
-    {
-        ss << "]";
-    }
-    else
-    {
+        ss << ",\n" << itemPropIndent << "\"NumberOfSocketedItems\": " << std::dec << std::uint16_t(socketedItemCount());
+        ss << ",\n" << itemPropIndent << "\"TotalNumberOfSockets\": " << std::dec << std::uint16_t(totalNumberOfSockets());
+
+        // Socketed items
+        ss << ",\n" << itemPropIndent << "\"SocketedItems \": [";
+        if (SocketedItems.empty())
+        {
+            ss << "]";
+        }
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& item : SocketedItems)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, itemPropIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << itemPropIndent << "]";
+        }
+
+        ss << ",\n" << itemPropIndent << "\"Id \": " << std::dec << getId();
+        ss << ",\n" << itemPropIndent << "\"ItemLevel \": " << std::dec << std::uint16_t(getLevel()); 
+        
+        auto quality = getQuality();
+        ss << ",\n" << itemPropIndent << "\"Quality\": " << std::dec << std::uint16_t(quality);
+        ss << ",\n" << itemPropIndent << "\"HasMultipleGraphics\": " << std::dec << (hasMultipleGraphics() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"GraphicId\": " << std::dec << std::uint16_t(getPictureId());
+        ss << ",\n" << itemPropIndent << "\"IsAutoAffix\": " << std::dec << (isAutoAffix() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"AutoAffixId\": " << std::dec << getAutoAffixId();
+        ss << ",\n" << itemPropIndent << "\"FileIndex \": " << std::dec << getFileIndex();
+
+        d2ce::RareAttributes rareAttrib;
+        std::vector<MagicalAffixes> affixes;
+        affixes.resize(3);
+        switch (quality)
+        {
+        case EnumItemQuality::MAGIC:
+            getMagicalAffixes(affixes[0]);
+            break;
+
+        case EnumItemQuality::RARE:
+        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::TEMPERED:
+            if (getRareOrCraftedAttributes(rareAttrib))
+            {
+                affixes = rareAttrib.Affixes;
+            }
+            break;
+        }
+
+        if (isTome())
+        {
+            affixes[0].SuffixId = getTomeValue();
+        }
+
+        ss << ",\n" << itemPropIndent << "\"MagicPrefixIds\": [";
         bool bFirstItem = true;
-        for (auto& category : itemType.categories)
+        for (auto& affix : affixes)
         {
             if (bFirstItem)
             {
@@ -10946,22 +12899,283 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
             {
                 ss << ",";
             }
-            ss << "\n" << itemPropIndent << jsonIndentStr << "\"" << category << "\"";
+            ss << "\n" << itemPropIndent << jsonIndentStr << std::dec << affix.PrefixId;
         }
         ss << "\n" << itemPropIndent << "]";
-    }
-    ss << ",\n" << itemPropIndent << "\"type_id\": " << std::dec << std::uint16_t(itemType.getEnumItemType());
-    if (itemType.isQuestItem())
-    {
-        ss << ",\n" << itemPropIndent << "\"quest_difficulty\": " << std::dec << std::uint16_t(getQuestDifficulty());
-    }
-    ss << ",\n" << itemPropIndent << "\"nr_of_items_in_sockets\": " << std::dec << std::uint16_t(socketedItemCount());
 
-    if (isSimpleItem())
-    {
-        getMagicalAttributes(magicalAttributes);
-        if (!magicalAttributes.empty())
+        ss << ",\n" << itemPropIndent << "\"MagicSuffixIds\": [";
+
+        bFirstItem = true;
+        for (auto& affix : affixes)
         {
+            if (bFirstItem)
+            {
+                bFirstItem = false;
+            }
+            else
+            {
+                ss << ",";
+            }
+            ss << "\n" << itemPropIndent << jsonIndentStr << std::dec << affix.SuffixId;
+        }
+        ss << "\n" << itemPropIndent << "]";
+
+        ss << ",\n" << itemPropIndent << "\"RarePrefixId \": " << std::dec << rareAttrib.Id;
+        ss << ",\n" << itemPropIndent << "\"RareSuffixId \": " << std::dec << rareAttrib.Id2;
+
+        getRunewordAttributes(runewordAttrib);
+        ss << ",\n" << itemPropIndent << "\"RunewordId \": " << std::dec << runewordAttrib.Id;
+        ss << ",\n" << itemPropIndent << "\"Armor \": " << std::dec << getDefenseRating();
+
+        ItemDurability durability;
+        getDurability(durability);
+        ss << ",\n" << itemPropIndent << "\"MaxDurability \": " << std::dec << durability.Max;
+        ss << ",\n" << itemPropIndent << "\"Durability \": " << std::dec << durability.Current;
+        ss << ",\n" << itemPropIndent << "\"Quantity\": " << std::dec << getQuantity();
+        ss << ",\n" << itemPropIndent << "\"SetItemMask\": " << std::dec << getSetItemMask();
+
+        ss << ",\n" << itemPropIndent << "\"StatLists\": [";
+        if (isSimpleItem())
+        {
+            ss << "]";
+        }
+        else
+        {
+            std::string attribParentIndent = itemPropIndent + jsonIndentStr;
+            std::string attribIndent = attribParentIndent + jsonIndentStr;
+            getMagicalAttributes(magicalAttributes);
+            ss << "\n" << attribParentIndent << "{";
+            MagicalAttribute::attributesAsJsonArray(ss, attribIndent, magicalAttributes, bSerializedFormat);
+            ss << "\n" << attribParentIndent << "}";
+
+            if (isRuneword())
+            {
+                ss << ",\n" << attribParentIndent << "{";
+                MagicalAttribute::attributesAsJsonArray(ss, attribIndent, runewordAttrib.MagicalAttributes, bSerializedFormat);
+                ss << "\n" << attribParentIndent << "}";
+            }
+
+            switch (quality)
+            {
+            case EnumItemQuality::SET:
+            {
+                d2ce::SetAttributes setAttrib;
+                getSetAttributes(setAttrib);
+                if (!setAttrib.SetAttributes.empty())
+                {
+                    ss << ",";
+                    setAttrib.setAttributesAsJsonArray(ss, attribParentIndent, bSerializedFormat);
+                }
+                break;
+            }
+            }
+
+            ss << "\n" << itemPropIndent << "]";
+        }
+
+        ss << ",\n" << itemPropIndent << "\"IsIdentified\": " << std::dec << (isIdentified() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsSocketed\": " << std::dec << (isSocketed() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsNew\": " << std::dec << (isNew() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsEar\": " << std::dec << (isEar() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsStarterItem\": " << std::dec << (isStarterItem() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsCompact\": " << std::dec << (isSimpleItem() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsEthereal\": " << std::dec << (isEthereal() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsPersonalized\": " << std::dec << (isPersonalized() ? "true" : "false");
+        ss << ",\n" << itemPropIndent << "\"IsRuneword\": " << std::dec << (isRuneword() ? "true" : "false");
+    }
+    else
+    {
+        unknownAsJson(ss, itemPropIndent);
+        ss << ",\n" << itemPropIndent << "\"identified\": " << std::dec << (isIdentified() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"socketed\": " << std::dec << (isSocketed() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"new\": " << std::dec << (isNew() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"is_ear\": " << std::dec << (isEar() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"starter_item\": " << std::dec << (isStarterItem() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"simple_item\": " << std::dec << (isSimpleItem() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"ethereal\": " << std::dec << (isEthereal() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"personalized\": " << std::dec << (isPersonalized() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"given_runeword\": " << std::dec << (isRuneword() ? 1 : 0);
+        ss << ",\n" << itemPropIndent << "\"version\": " << getRawVersion();
+        ss << ",\n" << itemPropIndent << "\"location_id\": " << std::dec << std::uint16_t(getLocation());
+        ss << ",\n" << itemPropIndent << "\"equipped_id\": " << std::dec << std::uint16_t(getEquippedId());
+        ss << ",\n" << itemPropIndent << "\"position_x\": " << std::dec << std::uint16_t(getPositionX());
+        ss << ",\n" << itemPropIndent << "\"position_y\": " << std::dec << std::uint16_t(getPositionY());
+        ss << ",\n" << itemPropIndent << "\"alt_position_id\": " << std::dec << std::uint16_t(getAltPositionId());
+
+        if (isEar())
+        {
+            EarAttributes earAttrib;
+            getEarAttributes(earAttrib);
+            ss << ",";
+            earAttrib.asJson(ss, itemPropIndent);
+            return;
+        }
+
+        std::uint8_t strcode[4] = { 0 };
+        getItemCode(strcode);
+        const auto& itemType = getItemTypeHelper(strcode);
+        strcode[3] = 0;
+        ss << ",\n" << itemPropIndent << "\"type\": \"" << strcode << "\"";
+        ss << ",\n" << itemPropIndent << "\"categories\": [";
+        if (itemType.categories.empty())
+        {
+            ss << "]";
+        }
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& category : itemType.categories)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                ss << "\n" << itemPropIndent << jsonIndentStr << "\"" << category << "\"";
+            }
+            ss << "\n" << itemPropIndent << "]";
+        }
+        ss << ",\n" << itemPropIndent << "\"type_id\": " << std::dec << std::uint16_t(itemType.getEnumItemType());
+        if (itemType.isQuestItem())
+        {
+            ss << ",\n" << itemPropIndent << "\"quest_difficulty\": " << std::dec << std::uint16_t(getQuestDifficulty());
+        }
+        ss << ",\n" << itemPropIndent << "\"nr_of_items_in_sockets\": " << std::dec << std::uint16_t(socketedItemCount());
+
+        if (isSimpleItem())
+        {
+            getMagicalAttributes(magicalAttributes);
+            if (!magicalAttributes.empty())
+            {
+                ss << ",\n" << itemPropIndent << "\"magic_attributes\": [";
+                if (magicalAttributes.empty())
+                {
+                    ss << "]";
+                }
+                else
+                {
+                    bool bFirstItem = true;
+                    for (auto& attrib : magicalAttributes)
+                    {
+                        if (bFirstItem)
+                        {
+                            bFirstItem = false;
+                        }
+                        else
+                        {
+                            ss << ",";
+                        }
+                        attrib.asJson(ss, itemPropIndent, bSerializedFormat);
+                    }
+                    ss << "\n" << itemPropIndent << "]";
+                }
+            }
+        }
+        else
+        {
+            ss << ",\n" << itemPropIndent << "\"id\": " << std::dec << getId();
+            ss << ",\n" << itemPropIndent << "\"level\": " << std::dec << std::uint16_t(getLevel());
+
+            auto quality = getQuality();
+            ss << ",\n" << itemPropIndent << "\"quality\": " << std::dec << std::uint16_t(quality);
+            ss << ",\n" << itemPropIndent << "\"multiple_pictures\": " << std::dec << (hasMultipleGraphics() ? 1 : 0);
+            if (hasMultipleGraphics())
+            {
+                ss << ",\n" << itemPropIndent << "\"picture_id\": " << std::dec << std::uint16_t(getPictureId());
+            }
+            ss << ",\n" << itemPropIndent << "\"class_specific\": " << std::dec << (isAutoAffix() ? 1 : 0);
+            if (isAutoAffix())
+            {
+                ss << ",\n" << itemPropIndent << "\"auto_affix_id\": " << std::dec << getAutoAffixId();
+            }
+            if (quality == EnumItemQuality::INFERIOR)
+            {
+                ss << ",\n" << itemPropIndent << "\"low_quality_id\": " << std::dec << std::uint16_t(getInferiorQualityId());
+            }
+            else if (quality == EnumItemQuality::SUPERIOR)
+            {
+                ss << ",\n" << itemPropIndent << "\"file_index\": " << std::dec << std::uint16_t(getFileIndex());
+            }
+            else if (quality == EnumItemQuality::MAGIC)
+            {
+                d2ce::MagicalAffixes magicalAffixes;
+                getMagicalAffixes(magicalAffixes);
+                ss << ",";
+                magicalAffixes.asJson(ss, itemPropIndent);
+            }
+
+            if (isRuneword())
+            {
+                getRunewordAttributes(runewordAttrib);
+                ss << ",";
+                runewordAttrib.asJson(ss, itemPropIndent);
+            }
+
+            switch (quality)
+            {
+            case EnumItemQuality::SET:
+            {
+                d2ce::SetAttributes setAttrib;
+                getSetAttributes(setAttrib);
+                ss << ",";
+                setAttrib.asJson(ss, itemPropIndent);
+                break;
+            }
+
+            case EnumItemQuality::RARE:
+            case EnumItemQuality::CRAFT:
+            case EnumItemQuality::TEMPERED:
+            {
+                d2ce::RareAttributes rareAttrib;
+                getRareOrCraftedAttributes(rareAttrib);
+                ss << ",";
+                rareAttrib.asJson(ss, itemPropIndent);
+                break;
+            }
+
+            case EnumItemQuality::UNIQUE:
+            {
+                d2ce::UniqueAttributes uniqueAttrib;
+                getUniqueAttributes(uniqueAttrib);
+                ss << ",";
+                uniqueAttrib.asJson(ss, itemPropIndent);
+                break;
+            }
+            }
+
+            if (isPersonalized())
+            {
+                ss << ",\n" << itemPropIndent << "\"personalized_name\": \"" << getPersonalizedName() << "\"";
+            }
+
+            ss << ",\n" << itemPropIndent << "\"timestamp\": " << std::dec << (getRealmDataFlag() ? 1 : 0);
+            if (isStackable())
+            {
+                ss << ",\n" << itemPropIndent << "\"quantity\": " << std::dec << getQuantity();
+            }
+
+            auto defenseRating = getDefenseRating();
+            if (defenseRating > 0)
+            {
+                ss << ",\n" << itemPropIndent << "\"defense_rating\": " << std::dec << defenseRating;
+            }
+
+            ItemDurability durability;
+            if (getDurability(durability))
+            {
+                ss << ",\n" << itemPropIndent << "\"max_durability\": " << std::dec << durability.Max;
+                ss << ",\n" << itemPropIndent << "\"current_durability\": " << std::dec << durability.Current;
+            }
+
+            if (isSocketed())
+            {
+                ss << ",\n" << itemPropIndent << "\"total_nr_of_sockets\": " << std::dec << std::uint16_t(totalNumberOfSockets());
+            }
+
+            getMagicalAttributes(magicalAttributes);
             ss << ",\n" << itemPropIndent << "\"magic_attributes\": [";
             if (magicalAttributes.empty())
             {
@@ -10980,149 +13194,99 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
                     {
                         ss << ",";
                     }
-                    attrib.asJson(ss, itemPropIndent);
+                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
                 }
                 ss << "\n" << itemPropIndent << "]";
             }
-        }
-    }
-    else
-    {
-        ss << ",\n" << itemPropIndent << "\"id\": " << std::dec << getId();
-        ss << ",\n" << itemPropIndent << "\"level\": " << std::dec << std::uint16_t(getLevel());
 
-        auto quality = getQuality();
-        ss << ",\n" << itemPropIndent << "\"quality\": " << std::dec << std::uint16_t(quality);
-        ss << ",\n" << itemPropIndent << "\"multiple_pictures\": " << std::dec << (hasMultipleGraphics() ? 1 : 0);
-        if (hasMultipleGraphics())
-        {
-            ss << ",\n" << itemPropIndent << "\"picture_id\": " << std::dec << std::uint16_t(getPictureId());
-        }
-        ss << ",\n" << itemPropIndent << "\"class_specific\": " << std::dec << (isAutoAffix() ? 1 : 0);
-        if (quality == EnumItemQuality::INFERIOR)
-        {
-            ss << ",\n" << itemPropIndent << "\"low_quality_id\": " << std::dec << std::uint16_t(getInferiorQualityId());
-        }
-
-        if (quality == EnumItemQuality::MAGIC)
-        {
-            d2ce::MagicalAffixes magicalAffixes;
-            getMagicalAffixes(magicalAffixes);
-            ss << ",";
-            magicalAffixes.asJson(ss, itemPropIndent);
-        }
-
-        if (isRuneword())
-        {
-            getRunewordAttributes(runewordAttrib);
-            ss << ",";
-            runewordAttrib.asJson(ss, itemPropIndent);
-        }
-
-        switch (quality)
-        {
-        case EnumItemQuality::SET:
-        {
-            d2ce::SetAttributes setAttrib;
-            getSetAttributes(setAttrib);
-            ss << ",";
-            setAttrib.asJson(ss, itemPropIndent);
-            break;
-        }
-
-        case EnumItemQuality::RARE:
-        case EnumItemQuality::CRAFT:
-        case EnumItemQuality::TEMPERED:
-        {
-            d2ce::RareAttributes rareAttrib;
-            getRareOrCraftedAttributes(rareAttrib);
-            ss << ",";
-            rareAttrib.asJson(ss, itemPropIndent);
-            break;
-        }
-
-        case EnumItemQuality::UNIQUE:
-        {
-            d2ce::UniqueAttributes uniqueAttrib;
-            getUniqueAttributes(uniqueAttrib);
-            ss << ",";
-            uniqueAttrib.asJson(ss, itemPropIndent);
-            break;
-        }
-        }
-
-        if (isPersonalized())
-        {
-            ss << ",\n" << itemPropIndent << "\"personalized_name\": \"" << getPersonalizedName() << "\"";
-        }
-
-        ss << ",\n" << itemPropIndent << "\"timestamp\": " << std::dec << (getRealmDataFlag() ? 1 : 0);
-        if (isStackable())
-        {
-            ss << ",\n" << itemPropIndent << "\"quantity\": " << std::dec << getQuantity();
-        }
-
-        auto defenseRating = getDefenseRating();
-        if (defenseRating > 0)
-        {
-            ss << ",\n" << itemPropIndent << "\"defense_rating\": " << std::dec << defenseRating;
-        }
-
-        ItemDurability durability;
-        if (getDurability(durability))
-        {
-            ss << ",\n" << itemPropIndent << "\"max_durability\": " << std::dec << durability.Max;
-            ss << ",\n" << itemPropIndent << "\"current_durability\": " << std::dec << durability.Current;
-        }
-
-        if (isSocketed())
-        {
-            ss << ",\n" << itemPropIndent << "\"total_nr_of_sockets\": " << std::dec << std::uint16_t(totalNumberOfSockets());
-        }
-
-        getMagicalAttributes(magicalAttributes);
-        ss << ",\n" << itemPropIndent << "\"magic_attributes\": [";
-        if (magicalAttributes.empty())
-        {
-            ss << "]";
-        }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& attrib : magicalAttributes)
+            if (itemType.isWeapon())
             {
-                if (bFirstItem)
+                ss << ",";
+                itemType.dam.asJson(ss, itemPropIndent);
+            }
+
+            if (isSocketed())
+            {
+                // Socketed items
+                ss << ",\n" << itemPropIndent << "\"socketed_items\": [";
+                if (SocketedItems.empty())
                 {
-                    bFirstItem = false;
+                    ss << "]";
                 }
                 else
                 {
-                    ss << ",";
+                    bool bFirstItem = true;
+                    std::string socketedIndent = itemPropIndent + jsonIndentStr;
+                    for (auto& item : SocketedItems)
+                    {
+                        if (bFirstItem)
+                        {
+                            bFirstItem = false;
+                        }
+                        else
+                        {
+                            ss << ",";
+                        }
+                        item.asJson(ss, socketedIndent, charLevel, true, bSerializedFormat);
+                    }
+                    ss << "\n" << itemPropIndent << "]";
                 }
-                attrib.asJson(ss, itemPropIndent);
             }
-            ss << "\n" << itemPropIndent << "]";
         }
 
-        if (itemType.isWeapon())
+        ss << ",\n" << itemPropIndent << "\"type_name\": \"" << itemType.name << "\"";
+        if (itemType.req.Strength != 0)
         {
-            ss << ",";
-            itemType.dam.asJson(ss, itemPropIndent);
+            ss << ",\n" << itemPropIndent << "\"reqstr\": " << std::dec << itemType.req.Strength;
         }
 
-        if (isSocketed())
+        if (itemType.req.Dexterity != 0)
         {
-            // Socketed items
-            ss << ",\n" << itemPropIndent << "\"socketed_items\": [";
-            if (SocketedItems.empty())
+            ss << ",\n" << itemPropIndent << "\"reqdex\": " << std::dec << itemType.req.Dexterity;
+        }
+
+        if (itemType.req.Level != 0)
+        {
+            ss << ",\n" << itemPropIndent << "\"levelreq\": " << std::dec << itemType.req.Level;
+        }
+
+        ss << ",\n" << itemPropIndent << "\"inv_file\": \"" << itemType.inv_file << "\"";
+        ss << ",\n" << itemPropIndent << "\"inv_height\": " << std::dec << itemType.dimensions.Height;
+        ss << ",\n" << itemPropIndent << "\"inv_width\": " << std::dec << itemType.dimensions.Width;
+
+        if (itemType.inv_transform != 0)
+        {
+            ss << ",\n" << itemPropIndent << "\"inv_transform\": " << std::dec << itemType.inv_transform;
+        }
+
+        auto tc = getTransformColor();
+        if (!tc.empty())
+        {
+            ss << ",\n" << itemPropIndent << "\"transform_color\": \"" << tc << "\"";
+        }
+
+        if (!isSimpleItem() || !magicalAttributes.empty())
+        {
+            // For efficiency reasons we do the formatting using the existing list 
+            // instead of building it again
+            checkForRelatedMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                formatDisplayedMagicalAttribute(attrib, charLevel);
+            }
+
+            // Sort display items in proper order
+            std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
+
+            ss << ",\n" << itemPropIndent << "\"displayed_magic_attributes\": [";
+            if (magicalAttributes.empty())
             {
                 ss << "]";
             }
             else
             {
                 bool bFirstItem = true;
-                std::string socketedIndent = parentIndent + jsonIndentStr + jsonIndentStr;
-                for (auto& item : SocketedItems)
+                for (auto& attrib : magicalAttributes)
                 {
                     if (bFirstItem)
                     {
@@ -11132,170 +13296,112 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
                     {
                         ss << ",";
                     }
-                    item.asJson(ss, socketedIndent, charLevel);
+                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
+                }
+                ss << "\n" << itemPropIndent << "]";
+            }
+
+            ss << ",\n" << itemPropIndent << "\"displayed_runeword_attributes\": [";
+            if (runewordAttrib.MagicalAttributes.empty())
+            {
+                ss << "]";
+            }
+            else
+            {
+                checkForRelatedMagicalAttributes(runewordAttrib.MagicalAttributes);
+                for (auto& attrib : runewordAttrib.MagicalAttributes)
+                {
+                    formatDisplayedMagicalAttribute(attrib, charLevel);
+                }
+
+                // Sort display items in proper order
+                std::sort(runewordAttrib.MagicalAttributes.begin(), runewordAttrib.MagicalAttributes.end(), magicalAttributeSorter);
+
+                bool bFirstItem = true;
+                for (auto& attrib : runewordAttrib.MagicalAttributes)
+                {
+                    if (bFirstItem)
+                    {
+                        bFirstItem = false;
+                    }
+                    else
+                    {
+                        ss << ",";
+                    }
+                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
+                }
+                ss << "\n" << itemPropIndent << "]";
+            }
+
+            getCombinedMagicalAttributes(magicalAttributes);
+            ss << ",\n" << itemPropIndent << "\"combined_magic_attributes\": [";
+            if (magicalAttributes.empty())
+            {
+                ss << "]";
+            }
+            else
+            {
+                bool bFirstItem = true;
+                for (auto& attrib : magicalAttributes)
+                {
+                    if (bFirstItem)
+                    {
+                        bFirstItem = false;
+                    }
+                    else
+                    {
+                        ss << ",";
+                    }
+                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
+                }
+                ss << "\n" << itemPropIndent << "]";
+            }
+
+            // For efficiency reasons we do the formatting using the existing list 
+            // instead of building it again
+            checkForRelatedMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                formatDisplayedMagicalAttribute(attrib, charLevel);
+            }
+
+            // Sort display items in proper order
+            std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
+
+            ss << ",\n" << itemPropIndent << "\"displayed_combined_magic_attributes\": [";
+            if (magicalAttributes.empty())
+            {
+                ss << "]";
+            }
+            else
+            {
+                bool bFirstItem = true;
+                for (auto& attrib : magicalAttributes)
+                {
+                    if (bFirstItem)
+                    {
+                        bFirstItem = false;
+                    }
+                    else
+                    {
+                        ss << ",";
+                    }
+                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
                 }
                 ss << "\n" << itemPropIndent << "]";
             }
         }
     }
 
-    ss << ",\n" << itemPropIndent << "\"type_name\": \"" << itemType.name << "\"";
-    if (itemType.req.Strength != 0)
+    if (isListItem)
     {
-        ss << ",\n" << itemPropIndent << "\"reqstr\": " << std::dec << itemType.req.Strength;
+        ss << "\n" << braceIndent << "}";
     }
-
-    if (itemType.req.Dexterity != 0)
-    {
-        ss << ",\n" << itemPropIndent << "\"reqdex\": " << std::dec << itemType.req.Dexterity;
-    }
-
-    if (itemType.req.Level != 0)
-    {
-        ss << ",\n" << itemPropIndent << "\"levelreq\": " << std::dec << itemType.req.Level;
-    }
-
-    ss << ",\n" << itemPropIndent << "\"inv_file\": \"" << itemType.inv_file << "\"";
-    ss << ",\n" << itemPropIndent << "\"inv_height\": " << std::dec << itemType.dimensions.Height;
-    ss << ",\n" << itemPropIndent << "\"inv_width\": " << std::dec << itemType.dimensions.Width;
-
-    if (itemType.inv_transform != 0)
-    {
-        ss << ",\n" << itemPropIndent << "\"inv_transform\": " << std::dec << itemType.inv_transform;
-    }
-
-    if (!isSimpleItem() || !magicalAttributes.empty())
-    {
-        // For efficiency reasons we do the formatting using the existing list 
-        // instead of building it again
-        checkForRelatedMagicalAttributes(magicalAttributes);
-        for (auto& attrib : magicalAttributes)
-        {
-            formatDisplayedMagicalAttribute(attrib, charLevel);
-        }
-
-        // Sort display items in proper order
-        std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
-
-        ss << ",\n" << itemPropIndent << "\"displayed_magic_attributes\": [";
-        if (magicalAttributes.empty())
-        {
-            ss << "]";
-        }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& attrib : magicalAttributes)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                attrib.asJson(ss, itemPropIndent);
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
-
-        ss << ",\n" << itemPropIndent << "\"displayed_runeword_attributes\": [";
-        if (runewordAttrib.MagicalAttributes.empty())
-        {
-            ss << "]";
-        }
-        else
-        {
-            checkForRelatedMagicalAttributes(runewordAttrib.MagicalAttributes);
-            for (auto& attrib : runewordAttrib.MagicalAttributes)
-            {
-                formatDisplayedMagicalAttribute(attrib, charLevel);
-            }
-
-            // Sort display items in proper order
-            std::sort(runewordAttrib.MagicalAttributes.begin(), runewordAttrib.MagicalAttributes.end(), magicalAttributeSorter);
-
-            bool bFirstItem = true;
-            for (auto& attrib : runewordAttrib.MagicalAttributes)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                attrib.asJson(ss, itemPropIndent);
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
-
-        getCombinedMagicalAttributes(magicalAttributes);
-        ss << ",\n" << itemPropIndent << "\"combined_magic_attributes\": [";
-        if (magicalAttributes.empty())
-        {
-            ss << "]";
-        }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& attrib : magicalAttributes)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                attrib.asJson(ss, itemPropIndent);
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
-
-        // For efficiency reasons we do the formatting using the existing list 
-        // instead of building it again
-        checkForRelatedMagicalAttributes(magicalAttributes);
-        for (auto& attrib : magicalAttributes)
-        {
-            formatDisplayedMagicalAttribute(attrib, charLevel);
-        }
-
-        // Sort display items in proper order
-        std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
-
-        ss << ",\n" << itemPropIndent << "\"displayed_combined_magic_attributes\": [";
-        if (magicalAttributes.empty())
-        {
-            ss << "]";
-        }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& attrib : magicalAttributes)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                attrib.asJson(ss, itemPropIndent);
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
-    }
-
-    ss << "\n" << braceIndent << "}";
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::unknownAsJson(std::stringstream& ss, const std::string& parentIndent) const
+void d2ce::Item::unknownAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
 {
+    bSerializedFormat;
     struct byteRange
     {
         size_t startIdx = 0;
@@ -11782,6 +13888,11 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, std::uint8_t numBitsSet)
         if (personalized_bit_offset != 0)
         {
             personalized_bit_offset += diff;
+        }
+
+        if (tome_bit_offset != 0)
+        {
+            tome_bit_offset += diff;
         }
 
         if (realm_bit_offset != 0)
@@ -12337,107 +14448,239 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
+void d2ce::Items::itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    ss << "\n" << parentIndent << "\"items\": [";
-    if (Inventory.empty())
+    if (bSerializedFormat)
     {
-        ss << "]";
+        std::string itemsParentIndent = parentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"PlayerItemList\": {";
+        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
+        ss << ",\n" << itemsParentIndent << "\"Count\": " << std::dec << Inventory.size();
+        ss << ",\n" << itemsParentIndent << "\"Items\": [";
+        if (Inventory.empty())
+        {
+            ss << "]";
+        }
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& item : Inventory)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, itemsParentIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << itemsParentIndent << "]";
+        }
+        ss << "\n" << parentIndent << "}";
     }
     else
     {
-        bool bFirstItem = true;
-        for (auto& item : Inventory)
+        ss << "\n" << parentIndent << "\"items\": [";
+        if (Inventory.empty())
         {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            item.asJson(ss, parentIndent, charLevel);
+            ss << "]";
         }
-        ss << "\n" << parentIndent << "]";
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& item : Inventory)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << parentIndent << "]";
+        }
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
+void d2ce::Items::corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    ss << "\n" << parentIndent << "\"corpse_items\": [";
-    if (CorpseItems.empty())
+    if (bSerializedFormat)
     {
-        ss << "]";
+        std::string itemsParentIndent = parentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"PlayerCorpses\": {";
+        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
+        ss << ",\n" << itemsParentIndent << "\"Count\": " << std::dec << (CorpseInfo.IsDead ? 1 : 0);
+        ss << ",\n" << itemsParentIndent << "\"Corpses\": [";
+        if (CorpseItems.empty())
+        {
+            ss << "]";
+        }
+        else
+        {
+            std::string itemListParentIndent = itemsParentIndent + jsonIndentStr;
+            std::string itemListIndent = itemListParentIndent + jsonIndentStr;
+            ss << "\n" << itemListParentIndent << "{";
+            ss << "\n" << itemListIndent << "\"Unk0x0\": " << std::dec << CorpseInfo.Unknown;
+            ss << ",\n" << itemListIndent << "\"X\": " << std::dec << CorpseInfo.X;
+            ss << ",\n" << itemListIndent << "\"Y\": " << std::dec << CorpseInfo.Y;
+            ss << ",\n" << itemListIndent << "\"ItemList\": [";
+            bool bFirstItem = true;
+            for (auto& item : CorpseItems)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, itemListIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << itemListIndent << "]";
+            ss << "\n" << itemListParentIndent << "}";
+            ss << "\n" << itemsParentIndent << "]";
+        }
+        ss << "\n" << parentIndent << "}";
     }
     else
     {
-        bool bFirstItem = true;
-        for (auto& item : CorpseItems)
+        ss << "\n" << parentIndent << "\"corpse_items\": [";
+        if (CorpseItems.empty())
         {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            item.asJson(ss, parentIndent, charLevel);
+            ss << "]";
         }
-        ss << "\n" << parentIndent << "]";
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& item : CorpseItems)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << parentIndent << "]";
+        }
+        ss << ",";
+        CorpseInfo.asJson(ss, parentIndent);
     }
-    ss << ",";
-    CorpseInfo.asJson(ss, parentIndent);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
+bool d2ce::Items::mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     if (!isFileExpansionCharacter)
     {
         return false;
     }
 
-    ss << "\n" << parentIndent << "\"merc_items\": [";
-    if (MercItems.empty())
+    if (bSerializedFormat)
     {
-        ss << "]";
+        std::string itemsParentIndent = parentIndent + jsonIndentStr;
+        std::string itemsListParentIndent = itemsParentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"MercenaryItemList\": {";
+        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)MERC_ITEM_MARKER);
+        if (!MercItems.empty())
+        {
+            ss << ",\n" << itemsParentIndent << "\"ItemList\": {";
+            ss << "\n" << itemsListParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
+            ss << ",\n" << itemsListParentIndent << "\"Count\": " << std::dec << MercItems.size();
+            ss << ",\n" << itemsListParentIndent << "\"Items\": [";
+            bool bFirstItem = true;
+            for (auto& item : MercItems)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, itemsListParentIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << itemsListParentIndent << "]";
+            ss << "\n" << itemsParentIndent << "}";
+        }
+        ss << "\n" << parentIndent << "}";
     }
     else
     {
-        bool bFirstItem = true;
-        for (auto& item : MercItems)
+        ss << "\n" << parentIndent << "\"merc_items\": [";
+        if (MercItems.empty())
         {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            item.asJson(ss, parentIndent, charLevel);
+            ss << "]";
         }
-        ss << "\n" << parentIndent << "]";
+        else
+        {
+            bool bFirstItem = true;
+            for (auto& item : MercItems)
+            {
+                if (bFirstItem)
+                {
+                    bFirstItem = false;
+                }
+                else
+                {
+                    ss << ",";
+                }
+                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
+            }
+            ss << "\n" << parentIndent << "]";
+        }
     }
 
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
+bool d2ce::Items::golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    if (!HasGolem)
+    if (bSerializedFormat)
+    {
+        std::string itemsParentIndent = parentIndent + jsonIndentStr;
+        std::string itemsListParentIndent = itemsParentIndent + jsonIndentStr;
+        ss << "\n" << parentIndent << "\"Golem\": {";
+        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)GOLEM_ITEM_MARKER);
+        ss << ",\n" << itemsParentIndent << "\"Exists\": " << (HasGolem ? "true" : "false");
+        if (HasGolem)
+        {
+            ss << ",\n" << itemsParentIndent << "\"Item\": {";
+            GolemItem.asJson(ss, parentIndent, charLevel, false, bSerializedFormat);
+            ss << "\n" << itemsParentIndent << "}";
+        }
+        ss << "\n" << parentIndent << "}";
+    }
+    else
+    {
+        if (!HasGolem)
+        {
+            return false;
+        }
+
+        ss << "\n" << parentIndent << "\"golem_item\": {";
+        GolemItem.asJson(ss, parentIndent, charLevel, false, bSerializedFormat);
+        ss << "\n" << parentIndent << "}";
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+{
+    if (bSerializedFormat)
     {
         return false;
     }
 
-    ss << "\n" << parentIndent << "\"golem_item\": {";
-    GolemItem.asJson(ss, parentIndent, charLevel, false);
-    return true;
-}
-//---------------------------------------------------------------------------
-bool d2ce::Items::itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent) const
-{
     std::vector<MagicalAttribute> attribs;
     if (!getItemBonuses(attribs))
     {
@@ -12462,21 +14705,21 @@ bool d2ce::Items::itemBonusesAsJson(std::stringstream& ss, const std::string& pa
             {
                 ss << ",";
             }
-            attrib.asJson(ss, parentIndent);
+            attrib.asJson(ss, parentIndent, bSerializedFormat);
         }
         ss << "\n" << parentIndent << "]";
     }
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel) const
+void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    itemsAsJson(ss, parentIndent, charLevel);
+    itemsAsJson(ss, parentIndent, charLevel, bSerializedFormat);
     ss << ",";
-    corpseItemsAsJson(ss, parentIndent, charLevel);
+    corpseItemsAsJson(ss, parentIndent, charLevel, bSerializedFormat);
     {
         std::stringstream ss2;
-        if (mercItemsAsJson(ss2, parentIndent, charLevel))
+        if (mercItemsAsJson(ss2, parentIndent, charLevel, bSerializedFormat))
         {
             ss << "," << ss2.str();
         }
@@ -12484,7 +14727,7 @@ void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent,
 
     {
         std::stringstream ss2;
-        if (golemItemAsJson(ss2, parentIndent, charLevel))
+        if (golemItemAsJson(ss2, parentIndent, charLevel, bSerializedFormat))
         {
             ss << "," << ss2.str();
         }
@@ -12492,7 +14735,7 @@ void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent,
 
     {
         std::stringstream ss2;
-        if (itemBonusesAsJson(ss2, parentIndent))
+        if (itemBonusesAsJson(ss2, parentIndent, bSerializedFormat))
         {
             ss << "," << ss2.str();
         }
@@ -12996,7 +15239,7 @@ bool d2ce::Items::getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLe
 
                 if (dmgMax != 0)
                 {
-                    damage.Max += std::uint16_t( ((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+                    damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
                 }
 
                 if (damage.Min > damage.Max)

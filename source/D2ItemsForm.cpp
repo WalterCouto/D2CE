@@ -23,6 +23,7 @@
 #include "afxdialogex.h"
 #include "D2MainForm.h"
 #include "D2GemsForm.h"
+#include <deque>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,7 +60,7 @@ namespace
         image.Attach(image2.Detach());
     }
 
-    void MergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay, const CRect& rect, bool center = false)
+    void MergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay, CRect rect, bool center = false)
     {
         BITMAP bmp;
         image.GetBitmap(&bmp);
@@ -106,7 +107,127 @@ namespace
         image.Attach(image2.Detach());
     }
 
-    bool CalcItemRect(const d2ce::Item& item, CStatic& invBox, CRect& rect, UINT id)
+    bool CalcSocketRects(const d2ce::Item& item, CBitmap& itemImage, std::deque<CRect>& slotRectMap)
+    {
+        slotRectMap.clear();
+        if (!item.isSocketed())
+        {
+            return false;
+        }
+
+        d2ce::ItemDimensions dimension;
+        CSize invSlotSize;
+        if (!item.getDimensions(dimension))
+        {
+            return false;
+        }
+
+        // must be at least 2x2
+        if (dimension.Width <= 1 || dimension.Height <= 1)
+        {
+            return false;
+        }
+
+        BITMAP itemBmp;
+        itemImage.GetBitmap(&itemBmp);
+
+        CSize slotSize(itemBmp.bmWidth / dimension.Width, itemBmp.bmHeight / dimension.Height);
+        auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(item.socketedItemCount()));
+        if (numSlots == 0)
+        {
+            return false;
+        }
+
+        if (numSlots <= 3)
+        {
+            if (dimension.Height >= numSlots)
+            {
+                CSize slotGridSize(dimension.Width * slotSize.cx, (dimension.Height * slotSize.cy) / numSlots);
+                CSize slotGridOffset((slotGridSize.cx - slotSize.cx) / 2, (slotGridSize.cy - slotSize.cy) / 2);
+                CRect slotRect;
+                slotRect.left = slotGridOffset.cx;
+                slotRect.right = slotRect.left + slotSize.cx;
+                for (size_t i = 0; i < numSlots; ++i)
+                {
+                    slotRect.top = LONG(slotGridSize.cy * i + slotGridOffset.cy);
+                    slotRect.bottom = slotRect.top + slotSize.cy;
+                    slotRectMap.push_back(slotRect);
+                }
+            }
+            else // 3 slots with item being 2 slots high
+            {
+                CSize slotGridSize((dimension.Width * slotSize.cx)/2, (dimension.Height * slotSize.cy) / 2);
+                CSize slotGridOffset((slotGridSize.cx - slotSize.cx) / 2, (slotGridSize.cy - slotSize.cy) / 2);
+                CRect slotRect;
+                slotRect.top = slotGridOffset.cy;
+                slotRect.bottom = slotRect.top + slotSize.cy;
+                for (size_t i = 0; i < 1; ++i)
+                {
+                    slotRect.left = LONG(slotGridSize.cx * i + slotGridOffset.cx);
+                    slotRect.right = slotRect.left + slotSize.cx;
+                    slotRectMap.push_back(slotRect);
+                }
+
+                slotRect.top = slotGridSize.cy + slotGridOffset.cy;
+                slotRect.bottom = slotRect.top + slotSize.cy;
+                slotRect.left = ((dimension.Width - 1) * slotSize.cx) / 2;
+                slotRect.right = slotRect.left + slotSize.cx;
+                slotRectMap.push_back(slotRect);
+            }
+        }
+        else if (numSlots <= 6 && dimension.Height >= (numSlots + 1) / 2)
+        {
+            std::uint16_t div = std::uint16_t((numSlots + 1) / 2);
+            CSize slotGridSize((dimension.Width * slotSize.cx) / 2, (dimension.Height * slotSize.cy) / div);
+            CSize slotGridOffset((slotGridSize.cx - slotSize.cx) / 2, (slotGridSize.cy - slotSize.cy) / 2);
+            CRect slotRect;
+            size_t idx = 0;
+            size_t idy = 0;
+            for (size_t i = 0; i < numSlots; ++i)
+            {
+                idx = i % 2;
+                idy = i / 2;
+                if (numSlots == 5 && i >= 2)
+                {
+                    idx = (i + 1) % 2;
+                    idy = (i + 1) / 2;
+                    if (i == 2)
+                    {
+                        slotRect.top = LONG(slotGridSize.cy * idy + slotGridOffset.cy);
+                        slotRect.bottom = slotRect.top + slotSize.cy;
+                        slotRect.left = ((dimension.Width - 1) * slotSize.cx) / 2;
+                        slotRect.right = slotRect.left + slotSize.cx;
+                        slotRectMap.push_back(slotRect);
+                        continue;
+                    }
+
+                }
+
+                slotRect.top = LONG(slotGridSize.cy * idy + slotGridOffset.cy);
+                slotRect.bottom = slotRect.top + slotSize.cy;
+                slotRect.left = LONG(slotGridSize.cx * idx + slotGridOffset.cx);
+                slotRect.right = slotRect.left + slotSize.cx;
+                slotRectMap.push_back(slotRect);
+            }
+        }
+        else
+        {
+            // An illegal socket count, every slot has a socket
+            CRect slotRect;
+            for (size_t i = 0; i < numSlots; ++i)
+            {
+                slotRect.top = LONG(slotSize.cy * (i / dimension.Width));
+                slotRect.bottom = slotRect.top + slotSize.cy;
+                slotRect.left = LONG(slotSize.cx * (i % dimension.Width));
+                slotRect.right = slotRect.left + slotSize.cx;
+                slotRectMap.push_back(slotRect);
+            }
+        }
+
+        return slotRectMap.empty() ? false : true;
+    }
+   
+    bool CalcItemRect(const d2ce::Item& item, CStatic& invBox, CRect& rect, CSize& slotSize, UINT id)
     {
         CSize slots;
         switch (id)
@@ -150,31 +271,17 @@ namespace
         }
 
         d2ce::ItemDimensions dimension;
-        CSize invSlotSize;
         if (!item.getDimensions(dimension))
         {
             return false;
         }
 
         invBox.GetClientRect(&rect);
-        invSlotSize.cx = rect.Width() / slots.cx;
-        invSlotSize.cy = rect.Height() / slots.cy;
-        rect.top = rect.bottom - dimension.Height * invSlotSize.cy;
-        rect.right = rect.left + dimension.Width * invSlotSize.cx;
+        slotSize.cx = rect.Width() / slots.cx;
+        slotSize.cy = rect.Height() / slots.cy;
+        rect.top = rect.bottom - dimension.Height * slotSize.cy;
+        rect.right = rect.left + dimension.Width * slotSize.cx;
         return true;
-    }
-
-    void DrawItem(CPaintDC& dc, CBitmap& bmp, CStatic& box, CWnd& parent)
-    {
-        CRect rect;
-        box.GetWindowRect(&rect);
-        parent.ScreenToClient(&rect);
-
-        CDC memDC;
-        memDC.CreateCompatibleDC(&dc);
-        CBitmap* pOld = memDC.SelectObject(&bmp);
-        dc.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &memDC, 0, 0, SRCCOPY);
-        memDC.SelectObject(pOld);
     }
 
     BOOL AddChildToolInfoEnum(HWND hwnd, LPARAM lParam)
@@ -434,7 +541,8 @@ BOOL CD2EquippedItemStatic::LoadItemImage(const d2ce::Item& item, CBitmap& bitma
     }
 
     CRect rect;
-    if (!CalcItemRect(item, *this, rect, GetDlgCtrlID()))
+    CSize slotSize;
+    if (!CalcItemRect(item, *this, rect, slotSize, GetDlgCtrlID()))
     {
         return FALSE;
     }
@@ -442,8 +550,57 @@ BOOL CD2EquippedItemStatic::LoadItemImage(const d2ce::Item& item, CBitmap& bitma
     invItemPtr = &item;
     auto pDC = GetParent()->GetDC();
     ScaleImage(pDC, bitmap, rect);
+
+    std::deque<CRect> socketRects;
+    CalcSocketRects(item, bitmap, socketRects);
+    if (!socketRects.empty())
+    {
+        // Fill in any use socket slots
+        CRect socketRect;
+        for (const auto& socketItem : item.SocketedItems)
+        {
+            socketRect = socketRects.front();
+            socketRects.pop_front();
+
+            CBitmap socketBitmap;
+            if (!GetItemBitmap(socketItem, socketBitmap))
+            {
+                continue;
+            }
+
+            ScaleImage(pDC, socketBitmap, socketRect);
+            MergeImage(pDC, bitmap, socketBitmap, socketRect);
+        }
+
+        if (!socketRects.empty())
+        {
+            // Fill in any empty socket slots
+            CBitmap socketBitmap;
+            socketBitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_EMPTY_SOCKET)));
+            ScaleImage(pDC, socketBitmap, socketRects.front());
+
+            while (!socketRects.empty())
+            {
+                socketRect = socketRects.front();
+                socketRects.pop_front();
+                MergeImage(pDC, bitmap, socketBitmap, socketRect, true);
+            }
+        }
+    }
+
     MergeImage(pDC, invImage, bitmap, rect, true);
     return TRUE;
+}
+//---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
+{
+    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    if (pCallback == nullptr)
+    {
+        return false;
+    }
+
+    return pCallback->getItemBitmap(item, bitmap);
 }
 //---------------------------------------------------------------------------
 BOOL CD2EquippedItemStatic::OnEraseBkgnd(CDC* pDC)
@@ -739,6 +896,10 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
         }
 
         ScaleImage(pDC, bitmap, rect);
+
+        std::deque<CRect> socketRects;
+        CalcSocketRects(item, bitmap, socketRects);
+
         MergeImage(pDC, InvImage, bitmap, rect);
 
         // Convert to a grid position rect
@@ -1242,6 +1403,15 @@ void CD2ItemsForm::LoadMercItemImages()
     {
         groupStr = _T("Mercenary Not Hired");
     }
+    else
+    {
+        CString attribName(Merc.getAttributeName().c_str());
+        if (!attribName.IsEmpty())
+        {
+            groupStr += _T(" - ") + attribName;
+        }
+    }
+
     MercGroupBox.SetWindowText(groupStr);
 
     for (const auto& item : Merc.getItems())
@@ -1712,9 +1882,9 @@ CSize CD2ItemsForm::getInvGridSize(UINT id) const
         // STASH is at most a 10 x 10 grid
         if (getCharacterVersion() < d2ce::EnumCharVersion::v115)
         {
-            // STASH is a 8 x 6 grid
-            rectBoxWidth = 8;
-            rectBoxHeight = 6;
+            // STASH is a 6 x 8 grid
+            rectBoxWidth = 6;
+            rectBoxHeight = 8;
         }
         else
         {
@@ -1922,6 +2092,7 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isWeapon = !isArmor && CurrItem->isWeapon();
     bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
     bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
+    bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1943,7 +2114,7 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
-    else if (isGem | isPotion)
+    else if (isGem | isPotion | isRune)
     {
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
@@ -1951,7 +2122,12 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu* pPopup = menu.GetSubMenu(1);
         ENSURE(pPopup != NULL);
 
-        if (isGem)
+        if (isRune)
+        {
+            // remove popup
+            pPopup->DeleteMenu(0, MF_BYPOSITION);
+        }
+        else if (isGem)
         {
             if (!CurrItem->isUpgradableGem())
             {

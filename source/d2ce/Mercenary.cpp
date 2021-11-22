@@ -1177,12 +1177,25 @@ bool d2ce::Mercenary::getDisplayedItemBonuses(std::vector<MagicalAttribute>& att
     return CharInfo.getDisplayedMercItemBonuses(attribs);
 }
 //---------------------------------------------------------------------------
-void d2ce::Mercenary::asJson(std::stringstream& ss, const std::string& parentIndent) const
+void d2ce::Mercenary::asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
 {
-    ss << "\n" << parentIndent << "\"dead_merc\": " << std::dec << Merc.Dead;
-    ss << ",\n" << parentIndent << "\"merc_id\": \"" << std::hex << Merc.Id << "\"";
-    ss << ",\n" << parentIndent << "\"merc_name_id\": " << std::dec << Merc.NameId;
-    ss << ",\n" << parentIndent << "\"merc_type\": " << std::dec << Merc.Type;
-    ss << ",\n" << parentIndent << "\"merc_experience\": " << std::dec << Merc.Experience;
+    if (bSerializedFormat)
+    {
+        ss << "\n" << parentIndent << "\"Mercenary\": {";
+        ss << "\n" << parentIndent << jsonIndentStr << "\"IsDead\": " << std::dec << Merc.Dead;
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"Id\": " << std::dec << Merc.Id;
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"NameId\": " << std::dec << Merc.NameId;
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"TypeId\": " << std::dec << Merc.Type;
+        ss << ",\n" << parentIndent << jsonIndentStr << "\"Experience\": " << std::dec << Merc.Experience;
+        ss << "\n" << parentIndent << "}";
+    }
+    else
+    {
+        ss << "\n" << parentIndent << "\"dead_merc\": " << std::dec << Merc.Dead;
+        ss << ",\n" << parentIndent << "\"merc_id\": \"" << std::hex << Merc.Id << "\"";
+        ss << ",\n" << parentIndent << "\"merc_name_id\": " << std::dec << Merc.NameId;
+        ss << ",\n" << parentIndent << "\"merc_type\": " << std::dec << Merc.Type;
+        ss << ",\n" << parentIndent << "\"merc_experience\": " << std::dec << Merc.Experience;
+    }
 }
 //---------------------------------------------------------------------------

@@ -324,115 +324,386 @@ namespace d2ce
             Visible = true;
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
         {
-            std::string attribParentIndent = parentIndent + jsonIndentStr + jsonIndentStr;
-            ss << "\n" << parentIndent << jsonIndentStr << "{";
-            ss << "\n" << attribParentIndent << "\"id\": " << std::dec << Id;
-            ss << ",\n" << attribParentIndent << "\"values\": [";
-            if (Values.empty())
+            std::string attribParentIndent = parentIndent + jsonIndentStr;
+            std::string attribIndent = attribParentIndent + jsonIndentStr;
+            if (bSerializedFormat)
+            {
+                std::string tempName;
+                ss << "\n" << attribParentIndent << "{";
+                ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id;
+                ss << ",\n" << attribIndent << "\"Stat\": \"" << Name << "\"";
+                switch (Id)
+                {
+                case 17:
+                case 48:
+                case 50:
+                case 52:
+                    if (!Values.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    ss << "\n" << attribParentIndent << "}";
+                    ss << ",\n" << attribParentIndent << "{";
+                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 1;
+                    switch (Id  +1)
+                    {
+                    case 18:
+                        tempName = "item_mindamage_percent";
+                        break;
+
+                    case 49:
+                        tempName = "firemaxdam";
+                        break;
+
+                    case 51:
+                        tempName = "lightmaxdam";
+                        break;
+
+                    case 53:
+                        tempName = "magicmaxdam";
+                        break;
+                    }
+                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+
+                case 54:
+                case 57:
+                    if (!Values.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    ss << "\n" << attribParentIndent << "}";
+                    ss << ",\n" << attribParentIndent << "{";
+                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 1;
+                    switch (Id + 1)
+                    {
+                    case 55:
+                        tempName = "coldmaxdam";
+                        break;
+
+                    case 58:
+                        tempName = "poisonmaxdam";
+                        break;
+                    }
+                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+
+                    ss << "\n" << attribParentIndent << "}";
+                    ss << ",\n" << attribParentIndent << "{";
+                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 2;
+                    switch (Id + 2)
+                    {
+                    case 56:
+                        tempName = "coldlength";
+                        break;
+
+                    case 59:
+                        tempName = "poisonlength";
+                        break;
+                    }
+                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+
+                case 188:
+                    if (!Values.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillTab \": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillTab \": 0";
+                    }
+
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel \": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel \": 0";
+                    }
+
+                    if (Values.size() > 2)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[2];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+
+                case 195:
+                case 196:
+                case 197:
+                case 198:
+                case 199:
+                case 201:
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillId  \": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillId  \": 0";
+                    }
+
+                    if (!Values.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel  \": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel  \": 0";
+                    }
+
+                    if (Values.size() > 2)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[2];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+
+                case 204:
+                    if (Values.size() > 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillId  \": " << std::dec << Values[1];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillId  \": 0";
+                    }
+
+                    if (!Values.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel  \": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"SkillLevel  \": 0";
+                    }
+
+                    if (Values.size() > 2)
+                    {
+                        ss << ",\n" << attribIndent << "\"MaxCharges \": " << std::dec << Values[2];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"MaxCharges \": 0";
+                    }
+
+                    if (Values.size() > 3)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[3];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+
+                default:
+                    if (Values.size() >= 2)
+                    {
+                        ss << ",\n" << attribIndent << "\"Param\": " << std::dec << Values[0];
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                    }
+                    else if (Values.size() == 1)
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                    }
+                    else
+                    {
+                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                    }
+                    break;
+                }
+                ss << "\n" << attribParentIndent << "}";
+            }
+            else
+            {
+                ss << "\n" << attribParentIndent << "{";
+                ss << "\n" << attribIndent << "\"id\": " << std::dec << Id;
+                ss << ",\n" << attribIndent << "\"values\": [";
+                if (Values.empty())
+                {
+                    ss << "]";
+                }
+                else
+                {
+                    size_t idx = 0;
+                    for (const auto& val : Values)
+                    {
+                        if (idx != 0)
+                        {
+                            ss << ",";
+                        }
+
+                        if (val == 0)
+                        {
+                            // Check if zero is a valid value
+                            switch (idx)
+                            {
+                            case 0:
+                                switch (Id)
+                                {
+                                case 83:
+                                case 97:
+                                case 107:
+                                case 151:
+                                case 188:
+                                    ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
+                                    break;
+
+                                default:
+                                    ss << "\n" << attribIndent << jsonIndentStr << "null";
+                                    break;
+                                }
+                                break;
+
+                            case 1:
+                                switch (Id)
+                                {
+                                case 151:
+                                case 188:
+                                case 195:
+                                case 196:
+                                case 197:
+                                case 198:
+                                case 199:
+                                case 201:
+                                case 204:
+                                    ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
+                                    break;
+
+                                default:
+                                    ss << "\n" << attribIndent << jsonIndentStr << "null";
+                                    break;
+                                }
+                                break;
+
+                            default:
+                                ss << "\n" << attribIndent << jsonIndentStr << "null";
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
+                        }
+                        ++idx;
+                    }
+                    ss << "\n" << attribIndent << "]";
+                    ss << ",\n" << attribIndent << "\"name\": \"" << Name << "\"";
+                    if (!OpStats.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"op_stats\": [";
+                        bool bFirstItem = true;
+                        for (const auto& val : OpStats)
+                        {
+                            if (bFirstItem)
+                            {
+                                bFirstItem = false;
+                            }
+                            else
+                            {
+                                ss << ",";
+                            }
+
+                            ss << "\n" << attribIndent << jsonIndentStr << "\"" << val << "\"";
+                        }
+                        ss << "\n" << attribIndent << "]";
+                        ss << ",\n" << attribIndent << "\"op_value\": " << std::dec << OpValue;
+                    }
+
+                    if (!Desc.empty())
+                    {
+                        ss << ",\n" << attribIndent << "\"description\": \"" << Desc << "\"";
+                    }
+
+                    if (!Visible)
+                    {
+                        ss << ",\n" << attribIndent << "\"visible\": false";
+                    }
+                }
+
+                ss << "\n" << attribParentIndent << "}";
+            }
+        }
+
+        static void attributesAsJsonArray(std::stringstream& ss, const std::string& parentIndent, const std::vector<MagicalAttribute>& attribs, bool bSerializedFormat = false)
+        {
+            std::string attribParentIndent = parentIndent;
+            if (bSerializedFormat)
+            {
+                attribParentIndent += jsonIndentStr;
+            }
+
+            ss << "\n" << parentIndent;
+            if (bSerializedFormat)
+            {
+                ss << "\"Stats\": ";
+            }
+            ss << "[";
+
+            if (attribs.empty())
             {
                 ss << "]";
             }
             else
             {
-                size_t idx = 0;
-                for (const auto& val : Values)
+                bool bFirstItem = true;
+                for (const auto& attrib : attribs)
                 {
-                    if(idx != 0)
+                    if (bFirstItem)
+                    {
+                        bFirstItem = false;
+                    }
+                    else
                     {
                         ss << ",";
                     }
 
-                    if (val == 0)
-                    {
-                        // Check if zero is a valid value
-                        switch (idx)
-                        {
-                        case 0:
-                            switch (Id)
-                            {
-                            case 83:
-                            case 97:
-                            case 107:
-                            case 151:
-                            case 188:
-                                ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
-                                break;
-
-                            default:
-                                ss << "\n" << attribParentIndent << jsonIndentStr << "null";
-                                break;
-                            }
-                            break;
-
-                        case 1:
-                            switch (Id)
-                            {
-                            case 151:
-                            case 188:
-                            case 195:
-                            case 196:
-                            case 197:
-                            case 198:
-                            case 199:
-                            case 201:
-                            case 204:
-                                ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
-                                break;
-
-                            default:
-                                ss << "\n" << attribParentIndent << jsonIndentStr << "null";
-                                break;
-                            }
-                            break;
-
-                        default:
-                            ss << "\n" << attribParentIndent << jsonIndentStr << "null";
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        ss << "\n" << attribParentIndent << jsonIndentStr << std::dec << val;
-                    }
-                    ++idx;
+                    attrib.asJson(ss, parentIndent, bSerializedFormat);
                 }
-                ss << "\n" << attribParentIndent << "]";
-                ss << ",\n" << attribParentIndent << "\"name\": \"" << Name << "\"";
-                if (!OpStats.empty())
-                {
-                    ss << ",\n" << attribParentIndent << "\"op_stats\": [";
-                    bool bFirstItem = true;
-                    for (const auto& val : OpStats)
-                    {
-                        if (bFirstItem)
-                        {
-                            bFirstItem = false;
-                        }
-                        else
-                        {
-                            ss << ",";
-                        }
-
-                        ss << "\n" << attribParentIndent << jsonIndentStr << "\"" << val << "\"";
-                    }
-                    ss << "\n" << attribParentIndent << "]";
-                    ss << ",\n" << attribParentIndent << "\"op_value\": " << std::dec << OpValue;
-                }
-
-                if (!Desc.empty())
-                {
-                    ss << ",\n" << attribParentIndent << "\"description\": \"" << Desc << "\"";
-                }
-
-                if (!Visible)
-                {
-                    ss << ",\n" << attribParentIndent << "\"visible\": false";
-                }
+                ss << "\n" << parentIndent << "]";
             }
-
-            ss << "\n" << parentIndent << jsonIndentStr << "}";
         }
     };
 
@@ -449,11 +720,12 @@ namespace d2ce
             MagicalAttributes.clear();
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
         {
             ss << "\n" << parentIndent << "\"runeword_id\": " << std::dec << Id;
             ss << ",\n" << parentIndent << "\"runeword_name\": \"" << Name << "\"";
-            ss << ",\n" << parentIndent << "\"runeword_attributes\": [";
+            ss << ",\n" << parentIndent << "\"runeword_attributes\": ";
+            MagicalAttribute::attributesAsJsonArray(ss, parentIndent, MagicalAttributes, bSerializedFormat);
             if (MagicalAttributes.empty())
             {
                 ss << "]";
@@ -491,11 +763,26 @@ namespace d2ce
             SetAttributes.clear();
         }
 
-        void setAttributesJsonArray(std::stringstream& ss, const std::string& parentIndent) const
+        void setAttributesAsJsonArray(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
         {
-            if (SetAttributes.empty())
+            std::string attribParentIndent = parentIndent + jsonIndentStr;
+            if (bSerializedFormat)
             {
-                return;
+                if (SetAttributes.empty())
+                {
+                    return;
+                }
+
+                ss << "\n" << attribParentIndent << "{";
+            }
+            else
+            {
+                ss << ",\n" << parentIndent << "\"set_attributes\": [";
+                if (SetAttributes.empty())
+                {
+                    ss << "\n" << parentIndent << "]";
+                    return;
+                }
             }
 
             bool bFirstItem = true;
@@ -510,14 +797,15 @@ namespace d2ce
                     ss << ",";
                 }
 
-                ss << "\n" << parentIndent << "[";
-                if (!attribs.empty())
-                {
-                    for (const auto& attrib : attribs)
-                    {
-                        attrib.asJson(ss, parentIndent);
-                    }
-                }
+                MagicalAttribute::attributesAsJsonArray(ss, attribParentIndent, attribs, bSerializedFormat);
+            }
+
+            if (bSerializedFormat)
+            {
+                ss << "\n" << attribParentIndent << "}";
+            }
+            else
+            {
                 ss << "\n" << parentIndent << "]";
             }
         }
@@ -527,10 +815,7 @@ namespace d2ce
             ss << "\n" << parentIndent <<  "\"set_id\": " << std::dec << Id;
             ss << ",\n" << parentIndent << "\"set_name\": \"" << Name << "\"";
             ss << ",\n" << parentIndent << "\"set_list_count\": " << std::dec << SetAttributes.size();
-            ss << ",\n" << parentIndent << "\"set_attributes\": [";
-            std::string attribParentIndent = parentIndent + jsonIndentStr;
-            setAttributesJsonArray(ss, attribParentIndent);
-            ss << "\n" << parentIndent << "]";
+            setAttributesAsJsonArray(ss, parentIndent);
         }
     };
 
