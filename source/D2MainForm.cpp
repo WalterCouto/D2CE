@@ -910,6 +910,14 @@ BOOL CD2MainForm::OnInitDialog()
 
     CheckToolTipCtrl();
 
+    if (IsThemeActive())
+    {
+        ::SetWindowTheme(CharTitle.GetSafeHwnd(), _T(""), _T(""));
+        ::SetWindowTheme(CharClass.GetSafeHwnd(), _T(""), _T(""));
+        ::SetWindowTheme(Difficulty.GetSafeHwnd(), _T(""), _T(""));
+        ::SetWindowTheme(StartingAct.GetSafeHwnd(), _T(""), _T(""));
+    }
+
     CString appTitle;
     if (appTitle.LoadString(AFX_IDS_APP_TITLE) != 0)
     {
@@ -952,6 +960,7 @@ BOOL CD2MainForm::OnInitDialog()
     }
     OnSetMessageString(AFX_IDS_IDLEMESSAGE);
 
+    SetBackgroundColor(RGB(0, 0, 0));
 
     CDC* pDC = GetDC();
     CRect rect;
@@ -1080,7 +1089,7 @@ HCURSOR CD2MainForm::OnQueryDragIcon()
 //---------------------------------------------------------------------------
 HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
-    if (CTLCOLOR_EDIT == nCtlColor || CTLCOLOR_LISTBOX == nCtlColor ||
+    if (CTLCOLOR_EDIT == nCtlColor || CTLCOLOR_LISTBOX == nCtlColor || CTLCOLOR_MSGBOX == nCtlColor ||
         (pWnd->IsKindOf(RUNTIME_CLASS(CEdit)) || pWnd->IsKindOf(RUNTIME_CLASS(CComboBox))))
     {
         pDC->SetTextColor(RGB(255, 255, 255));
@@ -1129,7 +1138,7 @@ HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         return hbr;
     }
 
-    return __super::OnCtlColor(pDC, pWnd, nCtlColor);;
+    return __super::OnCtlColor(pDC, pWnd, nCtlColor);
 
 }
 //---------------------------------------------------------------------------
