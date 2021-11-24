@@ -21,6 +21,7 @@
 #include "Mercenary.h"
 #include "MercenaryConstants.h"
 #include "Character.h"
+#include <sstream>
 
 //---------------------------------------------------------------------------
 namespace d2ce
@@ -292,6 +293,58 @@ bool d2ce::Mercenary::readInfo(EnumCharVersion version, std::FILE* charfile)
     std::fread(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
     std::fread(&Merc.Type, sizeof(Merc.Type), 1, charfile);
     std::fread(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Mercenary::readInfo(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile)
+{
+    Version = version;
+    if (Version < EnumCharVersion::v109)
+    {
+        clear();
+        return false;
+    }
+
+    mercInfo_location = std::ftell(charfile);
+    Json::Value mercRoot = root[bSerializedFormat ? "Mercenary" : "header"];
+    if (!mercRoot.isNull())
+    {
+        Json::Value jsonValue = mercRoot[bSerializedFormat ? "IsDead" : "dead_merc"];
+        if (!jsonValue.isNull())
+        {
+            Merc.Dead = std::uint16_t(jsonValue.asInt64());
+        }
+        
+        jsonValue = mercRoot[bSerializedFormat ? "Id" : "merc_id"];
+        if (!jsonValue.isNull())
+        {
+            Merc.Id = bSerializedFormat ? std::uint32_t(jsonValue.asInt64()) : std::uint32_t(std::stoul(jsonValue.asString(), nullptr, 16));
+        }
+
+        jsonValue = mercRoot[bSerializedFormat ? "NameId" : "merc_name_id"];
+        if (!jsonValue.isNull())
+        {
+            Merc.NameId = std::uint16_t(jsonValue.asInt64());
+        }
+
+        jsonValue = mercRoot[bSerializedFormat ? "TypeId" : "merc_type"];
+        if (!jsonValue.isNull())
+        {
+            Merc.Type = std::uint16_t(jsonValue.asInt64());
+        }
+
+        jsonValue = mercRoot[bSerializedFormat ? "Experience" : "merc_experience"];
+        if (!jsonValue.isNull())
+        {
+            Merc.Experience = std::uint32_t(jsonValue.asInt64());
+        }
+    }
+
+    std::fwrite(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
+    std::fwrite(&Merc.Id, sizeof(Merc.Id), 1, charfile);
+    std::fwrite(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
+    std::fwrite(&Merc.Type, sizeof(Merc.Type), 1, charfile);
+    std::fwrite(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1177,25 +1230,29 @@ bool d2ce::Mercenary::getDisplayedItemBonuses(std::vector<MagicalAttribute>& att
     return CharInfo.getDisplayedMercItemBonuses(attribs);
 }
 //---------------------------------------------------------------------------
-void d2ce::Mercenary::asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+void d2ce::Mercenary::asJson(Json::Value& parent, bool bSerializedFormat) const
 {
     if (bSerializedFormat)
     {
-        ss << "\n" << parentIndent << "\"Mercenary\": {";
-        ss << "\n" << parentIndent << jsonIndentStr << "\"IsDead\": " << std::dec << Merc.Dead;
-        ss << ",\n" << parentIndent << jsonIndentStr << "\"Id\": " << std::dec << Merc.Id;
-        ss << ",\n" << parentIndent << jsonIndentStr << "\"NameId\": " << std::dec << Merc.NameId;
-        ss << ",\n" << parentIndent << jsonIndentStr << "\"TypeId\": " << std::dec << Merc.Type;
-        ss << ",\n" << parentIndent << jsonIndentStr << "\"Experience\": " << std::dec << Merc.Experience;
-        ss << "\n" << parentIndent << "}";
+        Json::Value mercenary;
+        mercenary["IsDead"] = Merc.Dead;
+        mercenary["Id"] = Merc.Id;
+        mercenary["NameId"] = Merc.NameId;
+        mercenary["TypeId"] = Merc.Type;
+        mercenary["Experience"] = Merc.Experience;
+        parent["Mercenary"] = mercenary;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"dead_merc\": " << std::dec << Merc.Dead;
-        ss << ",\n" << parentIndent << "\"merc_id\": \"" << std::hex << Merc.Id << "\"";
-        ss << ",\n" << parentIndent << "\"merc_name_id\": " << std::dec << Merc.NameId;
-        ss << ",\n" << parentIndent << "\"merc_type\": " << std::dec << Merc.Type;
-        ss << ",\n" << parentIndent << "\"merc_experience\": " << std::dec << Merc.Experience;
+        parent["dead_merc"] = Merc.Dead;
+        {
+            std::stringstream ss;
+            ss << std::hex << Merc.Id;
+            parent["merc_id"] = ss.str();
+        }
+        parent["merc_name_id"] = Merc.NameId;
+        parent["merc_type"] = Merc.Type;
+        parent["merc_experience"] = Merc.Experience;
     }
 }
 //---------------------------------------------------------------------------

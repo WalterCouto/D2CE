@@ -22,6 +22,7 @@
 
 #include "Constants.h"
 #include <string>
+#include <array>
 
 namespace d2ce
 {
@@ -38,8 +39,8 @@ namespace d2ce
     };
 
     // skill names in original array position as found in character file
-    const std::string SkillsNames[NUM_OF_CLASSES][NUM_OF_SKILLS] =
-             {{"Magic Arrow", "Fire Arrow", "Inner Sight", "Critical Strike", "Jab",
+    const std::array<std::array<std::string, NUM_OF_SKILLS>, NUM_OF_CLASSES> SkillsNames =
+             {{{"Magic Arrow", "Fire Arrow", "Inner Sight", "Critical Strike", "Jab",
                "Cold Arrow", "Multiple Shot", "Dodge", "Power Strike",
                "Poison Javelin", "Exploding Arrow", "Slow Missiles", "Avoid",
                "Impale", "Lightning Bolt", "Ice Arrow", "Guided Arrow", "Penetrate",
@@ -89,21 +90,21 @@ namespace d2ce
                "Claws of Thunder", "Dragon Tail", "Lightning Sentry",
                "Wake of Inferno", "Mind Blast", "Blades of Ice", "Dragon Flight",
                "Death Sentry", "Blade Shield", "Venom", "Shadow Master",
-               "Phoenix Strike"}};
+               "Phoenix Strike"}}};
     // skill tab names sorted by ascending tab number
-    const std::string TabNames[NUM_OF_CLASSES][3] =
-             {{"Javelin and Spear Skills", "Passive and Magic Skills",
+    const std::array<std::array<std::string, 3>, NUM_OF_CLASSES> TabNames =
+             {{{"Javelin and Spear Skills", "Passive and Magic Skills",
                "Bow and Crossbow Skills"},
               {"Cold Spells", "Lightning Spells", "Fire Spells"},
               {"Summon Spells", "Poison and Bone Spells", "Curses"},
               {"Defensive Auras", "Offensive Auras", "Combat Skills"},
               {"Warcries", "Combat Masteries", "Combat Skills"},
               {"Elemental", "Shape Shifting", "Summoning"},
-              {"Martial Arts", "Shadow Disciplines", "Traps"}};
+              {"Martial Arts", "Shadow Disciplines", "Traps"}}};
     // position skill is found in the Skill array found in the D2MainForm.h file
     // sorted by ascending tab number as shown in the game
-    constexpr std::uint8_t TabSkillPos[NUM_OF_CLASSES][NUM_OF_SKILLS] =
-                                             {{4, 8, 9, 13, 14, 18, 19, 24, 28, 29,
+    constexpr std::array<std::array<std::uint8_t, NUM_OF_SKILLS>, NUM_OF_CLASSES> TabSkillPos =
+                                             {{{4, 8, 9, 13, 14, 18, 19, 24, 28, 29,
                                                2, 3, 7, 11, 12, 17, 22, 23, 26, 27,
                                                0, 1, 5, 6, 10, 15, 16, 20, 21, 25},
                                               {3, 4, 8, 9, 14, 19, 23, 24, 28, 29,
@@ -123,6 +124,6 @@ namespace d2ce
                                                0, 1, 5, 6, 10, 15, 16, 20, 25, 26},
                                               {3, 4, 8, 9, 14, 18, 19, 23, 24, 29,
                                                1, 2, 7, 12, 13, 16, 17, 22, 27, 28,
-                                               0, 5, 6, 10, 11, 15, 20, 21, 25, 26}};
+                                               0, 5, 6, 10, 11, 15, 20, 21, 25, 26}}};
 }
 //---------------------------------------------------------------------------

@@ -59,7 +59,7 @@ private:
     d2ce::ActsInfo Acts;
     std::bitset<d2ce::NUM_OF_WAYPOINTS> NormalWP, NightmareWP, HellWP;
     int ItemIndex = 0;
-    bool isExpansionCharacter = false;
+    bool IsExpansionCharacter = false;
     bool Changed[d2ce::NUM_OF_DIFFICULTY] = { false, false, false };
     CD2MainForm& MainForm;
 };

@@ -13,17 +13,90 @@
     "class": "Barbarian",
     "level": 1,
     "assigned_skills": [
+      null,
+      null,
       "Attack",
+      null,
       "Attack",
+      null,
       "Attack",
+      null,
       "Attack",
+      null,
       "Attack",
+      null,
       "Attack",
-      "Attack",
+      null,
       "Attack"
     ],
     "left_skill": "Attack",
     "right_skill": "Attack",
+    "menu_appearance": {
+      "head": {
+        "graphic": 0,
+        "tint": 255
+      },
+      "torso": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "legs": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "right_arm": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "left_arm": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "right_hand": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "left_hand": {
+        "graphic": 4,
+        "tint": 255
+      },
+      "shield": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special1": {
+        "graphic": 79,
+        "tint": 255
+      },
+      "special2": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special3": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special4": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special5": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special6": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special7": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special8": {
+        "graphic": 255,
+        "tint": 255
+      }
+    },
     "difficulty": {
       "Normal": 128,
       "Nightmare": 0,

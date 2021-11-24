@@ -18,6 +18,18 @@
 
 Revision History
 ================
+Version 2.07 (Dec 6, 2021)
+   - Updated: json export to use jsoncpp for easier export/import logic
+   - Updated: fix bug where Hardcore characters would be detected as dead
+   - Updated: get proper level requirement information for Set and Unique
+              items
+
+   - Added: tests for the serialized Json export/import functionality
+   - Added: ability to directly load and edit Json files via the File
+            Open and File Save commands.
+   - Added: ability to convert a JSON character file to a D2S character
+            file.
+    
 Version 2.06 (Nov 22, 2021)
    - Added: Context menu for Gem, Potion or Skull items in Items Form
    - Added: Reading/Writing and Json export of the menu appearance section

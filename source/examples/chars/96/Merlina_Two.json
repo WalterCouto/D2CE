@@ -8,8 +8,7 @@
     "status": {
       "hardcore": false,
       "died": true,
-      "expansion": true,
-      "dead": true
+      "expansion": true
     },
     "progression": 0,
     "active_arms": 0,
@@ -316,7 +315,7 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_nm": {
@@ -3385,6 +3384,7 @@
       ],
       "type_name": "Quilted Armor",
       "reqstr": 12,
+      "levelreq": 17,
       "inv_file": "invqlt",
       "inv_height": 3,
       "inv_width": 2,
@@ -4519,6 +4519,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 1,
       "timestamp": 0,
       "quantity": 20,
       "magic_attributes": [],
@@ -5395,6 +5396,7 @@
       ],
       "type_name": "Small Shield",
       "reqstr": 22,
+      "levelreq": 4,
       "inv_file": "invsml",
       "inv_height": 2,
       "inv_width": 2,
@@ -7585,6 +7587,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 0,
       "timestamp": 0,
       "quantity": 20,
       "magic_attributes": [],

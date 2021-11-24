@@ -35,9 +35,9 @@ namespace d2ce
     constexpr std::uint16_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
     constexpr std::uint16_t MAX_DURABILITY = 0xFF;      // max durability of an item (0 is Indestructible)
 
-    constexpr std::uint8_t ITEM_MARKER[] = { 0x4A, 0x4D };        // alternatively "JM"
-    constexpr std::uint8_t MERC_ITEM_MARKER[] = { 0x6A, 0x66 };   // alternatively "jf"
-    constexpr std::uint8_t GOLEM_ITEM_MARKER[] = { 0x6B, 0x66 };  // alternatively "jk"
+    constexpr std::array<std::uint8_t, 2> ITEM_MARKER = { 0x4A, 0x4D };        // alternatively "JM"
+    constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };   // alternatively "jf"
+    constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "jk"
 
     constexpr std::uint32_t MIN_START_STATS_POS = 641;
 
@@ -453,6 +453,2197 @@ namespace d2ce
         {  "0101000",  'y'}, { "00011011", 'z'},
     };
 
+    std::uint16_t getTypeCodeV100(const std::array<std::uint8_t, 4>& strcode)
+    {
+        static const std::map<std::string, int> itemCodes = {
+            {"hax", 0x000}, {"axe", 0x001}, {"2ax", 0x002}, {"mpi", 0x003}, {"wax", 0x004}, {"lax", 0x005}, {"bax", 0x006}, {"btx", 0x007},
+            {"gax", 0x008}, {"gix", 0x009}, {"wnd", 0x00A}, {"ywn", 0x00B}, {"bwn", 0x00C}, {"gwn", 0x00D}, {"clb", 0x00E}, {"scp", 0x00F},
+            {"gsc", 0x010}, {"wsp", 0x011}, {"spc", 0x012}, {"mac", 0x013}, {"mst", 0x014}, {"fla", 0x015}, {"whm", 0x016}, {"mau", 0x017},
+            {"gma", 0x018}, {"ssd", 0x019}, {"scm", 0x01A}, {"sbr", 0x01B}, {"flc", 0x01C}, {"crs", 0x01D}, {"bsd", 0x01E}, {"lsd", 0x01F},
+            {"wsd", 0x020}, {"2hs", 0x021}, {"clm", 0x022}, {"gis", 0x023}, {"bsw", 0x024}, {"flb", 0x025}, {"gsd", 0x026}, {"dgr", 0x027},
+            {"dir", 0x028}, {"kri", 0x029}, {"bld", 0x02A}, {"tkf", 0x02B}, {"tax", 0x02C}, {"bkf", 0x02D}, {"bal", 0x02E}, {"jav", 0x02F},
+            {"pil", 0x030}, {"ssp", 0x031}, {"glv", 0x032}, {"tsp", 0x033}, {"spr", 0x034}, {"tri", 0x035}, {"brn", 0x036}, {"spt", 0x037},
+            {"pik", 0x038}, {"bar", 0x039}, {"vou", 0x03A}, {"scy", 0x03B}, {"pax", 0x03C}, {"hal", 0x03D}, {"wsc", 0x03E}, {"sst", 0x03F},
+            {"lst", 0x040}, {"cst", 0x041}, {"bst", 0x042}, {"wst", 0x043}, {"sbw", 0x044}, {"hbw", 0x045}, {"lbw", 0x046}, {"cbw", 0x047},
+            {"sbb", 0x048}, {"lbb", 0x049}, {"swb", 0x04A}, {"lwb", 0x04B}, {"lxb", 0x04C}, {"mxb", 0x04D}, {"hxb", 0x04E}, {"rxb", 0x04F},
+            {"gps", 0x050}, {"ops", 0x051}, {"gpm", 0x052}, {"opm", 0x053}, {"gpl", 0x054}, {"opl", 0x055}, {"d33", 0x056}, {"g33", 0x057},
+            {"leg", 0x058}, {"hdm", 0x059}, {"hfh", 0x05A}, {"hst", 0x05B}, {"msf", 0x05C}, {"9ha", 0x05D}, {"9ax", 0x05E}, {"92a", 0x05F},
+            {"9mp", 0x060}, {"9wa", 0x061}, {"9la", 0x062}, {"9ba", 0x063}, {"9bt", 0x064}, {"9ga", 0x065}, {"9gi", 0x066}, {"9wn", 0x067},
+            {"9yw", 0x068}, {"9bw", 0x069}, {"9gw", 0x06A}, {"9cl", 0x06B}, {"9sc", 0x06C}, {"9qs", 0x06D}, {"9ws", 0x06E}, {"9sp", 0x06F},
+            {"9ma", 0x070}, {"9mt", 0x071}, {"9fl", 0x072}, {"9wh", 0x073}, {"9m9", 0x074}, {"9gm", 0x075}, {"9ss", 0x076}, {"9sm", 0x077},
+            {"9sb", 0x078}, {"9fc", 0x079}, {"9cr", 0x07A}, {"9bs", 0x07B}, {"9ls", 0x07C}, {"9wd", 0x07D}, {"92h", 0x07E}, {"9cm", 0x07F},
+            {"9gs", 0x080}, {"9b9", 0x081}, {"9fb", 0x082}, {"9gd", 0x083}, {"9dg", 0x084}, {"9di", 0x085}, {"9kr", 0x086}, {"9bl", 0x087},
+            {"9tk", 0x088}, {"9ta", 0x089}, {"9bk", 0x08A}, {"9b8", 0x08B}, {"9ja", 0x08C}, {"9pi", 0x08D}, {"9s9", 0x08E}, {"9gl", 0x08F},
+            {"9ts", 0x090}, {"9sr", 0x091}, {"9tr", 0x092}, {"9br", 0x093}, {"9st", 0x094}, {"9p9", 0x095}, {"9b7", 0x096}, {"9vo", 0x097},
+            {"9s8", 0x098}, {"9pa", 0x099}, {"9h9", 0x09A}, {"9wc", 0x09B}, {"8ss", 0x09C}, {"8ls", 0x09D}, {"8cs", 0x09E}, {"8bs", 0x09F},
+            {"8ws", 0x0A0}, {"8sb", 0x0A1}, {"8hb", 0x0A2}, {"8lb", 0x0A3}, {"8cb", 0x0A4}, {"8s8", 0x0A5}, {"8l8", 0x0A6}, {"8sw", 0x0A7},
+            {"8lw", 0x0A8}, {"8lx", 0x0A9}, {"8mx", 0x0AA}, {"8hx", 0x0AB}, {"8rx", 0x0AC}, {"qf1", 0x0AD}, {"qf2", 0x0AE}, {"cap", 0x0AF},
+            {"skp", 0x0B0}, {"hlm", 0x0B1}, {"fhl", 0x0B2}, {"ghm", 0x0B3}, {"crn", 0x0B4}, {"msk", 0x0B5}, {"qui", 0x0B6}, {"lea", 0x0B7},
+            {"hla", 0x0B8}, {"stu", 0x0B9}, {"rng", 0x0BA}, {"scl", 0x0BB}, {"chn", 0x0BC}, {"brs", 0x0BD}, {"spl", 0x0BE}, {"plt", 0x0BF},
+            {"fld", 0x0C0}, {"gth", 0x0C1}, {"ful", 0x0C2}, {"aar", 0x0C3}, {"ltp", 0x0C4}, {"buc", 0x0C5}, {"sml", 0x0C6}, {"lrg", 0x0C7},
+            {"kit", 0x0C8}, {"tow", 0x0C9}, {"gts", 0x0CA}, {"lgl", 0x0CB}, {"vgl", 0x0CC}, {"mgl", 0x0CD}, {"tgl", 0x0CE}, {"hgl", 0x0CF},
+            {"lbt", 0x0D0}, {"vbt", 0x0D1}, {"mbt", 0x0D2}, {"tbt", 0x0D3}, {"hbt", 0x0D4}, {"lbl", 0x0D5}, {"vbl", 0x0D6}, {"mbl", 0x0D7},
+            {"tbl", 0x0D8}, {"hbl", 0x0D9}, {"bhm", 0x0DA}, {"bsh", 0x0DB}, {"spk", 0x0DC}, {"xap", 0x0DD}, {"xkp", 0x0DE}, {"xlm", 0x0DF},
+            {"xhl", 0x0E0}, {"xhm", 0x0E1}, {"xrn", 0x0E2}, {"xsk", 0x0E3}, {"xui", 0x0E4}, {"xea", 0x0E5}, {"xla", 0x0E6}, {"xtu", 0x0E7},
+            {"xng", 0x0E8}, {"xcl", 0x0E9}, {"xhn", 0x0EA}, {"xrs", 0x0EB}, {"xpl", 0x0EC}, {"xlt", 0x0ED}, {"xld", 0x0EE}, {"xth", 0x0EF},
+            {"xul", 0x0F0}, {"xar", 0x0F1}, {"xtp", 0x0F2}, {"xuc", 0x0F3}, {"xml", 0x0F4}, {"xrg", 0x0F5}, {"xit", 0x0F6}, {"xow", 0x0F7},
+            {"xts", 0x0F8}, {"xlg", 0x0F9}, {"xvg", 0x0FA}, {"xmg", 0x0FB}, {"xtg", 0x0FC}, {"xhg", 0x0FD}, {"xlb", 0x0FE}, {"xvb", 0x0FF},
+            {"xmb", 0x100}, {"xtb", 0x101}, {"xhb", 0x102}, {"zlb", 0x103}, {"zvb", 0x104}, {"zmb", 0x105}, {"ztb", 0x106}, {"zhb", 0x107},
+            {"xh9", 0x108}, {"xsh", 0x109}, {"xpk", 0x10A}, {"elx", 0x10B},
+            {"vps", 0x110}, {"yps", 0x111}, {"rvs", 0x112}, {"rvl", 0x113}, {"wms", 0x114}, {"tbk", 0x115}, {"ibk", 0x116}, {"amu", 0x117},
+            {"vip", 0x118}, {"rin", 0x119},                 {"bks", 0x11B}, {"bkd", 0x11C}, {"aqv", 0x11D}, {"tch", 0x11E}, {"cqv", 0x11F},
+            {"tsc", 0x120}, {"isc", 0x121},
+                                                                                                            {"key", 0x12E},
+            {"xyz", 0x130}, {"j34", 0x131}, {"g34", 0x132}, {"bbb", 0x133}, {"box", 0x134}, {"trl", 0x135}, {"mss", 0x136}, {"ass", 0x137},
+            {"qey", 0x138}, {"qhr", 0x139}, {"qbr", 0x13A}, {"ear", 0x13B}, {"gcv", 0x13C}, {"gfv", 0x13D}, {"gsv", 0x13E}, {"gzv", 0x13F},
+            {"gpv", 0x140}, {"gcy", 0x141}, {"gfy", 0x142}, {"gsy", 0x143}, {"gly", 0x144}, {"gpy", 0x145}, {"gcb", 0x146}, {"gfb", 0x147},
+            {"gsb", 0x148}, {"glb", 0x149}, {"gpb", 0x14A}, {"gcg", 0x14B}, {"gfg", 0x14C}, {"gsg", 0x14D}, {"glg", 0x14E}, {"gpg", 0x14F},
+            {"gcr", 0x150}, {"gfr", 0x151}, {"gsr", 0x152}, {"glr", 0x153}, {"gpr", 0x154}, {"gcw", 0x155}, {"gfw", 0x156}, {"gsw", 0x157},
+            {"glw", 0x158}, {"gpw", 0x159}, {"hp1", 0x15A}, {"hp2", 0x15B}, {"hp3", 0x15C}, {"hp4", 0x15D}, {"hp5", 0x15E}, {"mp1", 0x15F},
+            {"mp2", 0x160}, {"mp3", 0x161}, {"mp4", 0x162}, {"mp5", 0x163}, {"skc", 0x164}, {"skf", 0x165}, {"sku", 0x166}, {"skl", 0x167},
+            {"skz", 0x168}
+        };
+
+        std::string testStr("   ");
+        testStr[0] = (char)strcode[0];
+        testStr[1] = (char)strcode[1];
+        testStr[2] = (char)strcode[2];
+        auto iter = itemCodes.find(testStr);
+        if (iter != itemCodes.end())
+        {
+            return std::uint16_t(iter->second);
+        }
+
+        return std::uint16_t(0xFFFF);
+    }
+
+    bool getItemCodev100(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode)
+    {
+        std::uint64_t code = std::uint64_t(read_uint32_bits(startOffset, 10));
+        switch (code)
+        {
+            // Weapon Axe
+        case 0x000: // Hand Axe
+            strcode[0] = 'h';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x001: // Axe
+            strcode[0] = 'a';
+            strcode[1] = 'x';
+            strcode[2] = 'e';
+            strcode[3] = 0x20;
+            return true;
+        case 0x002: // Double Axe
+            strcode[0] = '2';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x003: // Military Pick
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x004: // War Axe
+            strcode[0] = 'w';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x005: // Large Axe
+            strcode[0] = 'l';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x006: // Broad Axe
+            strcode[0] = 'b';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x007: // Battle Axe
+            strcode[0] = 'b';
+            strcode[1] = 't';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x008: // Great Axe
+            strcode[0] = 'g';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x009: // Giant Axe
+            strcode[0] = 'g';
+            strcode[1] = 'i';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05D: // Hatchet
+            strcode[0] = '9';
+            strcode[1] = 'h';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05E: // Cleaver
+            strcode[0] = '9';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05F: // Twin Axe
+            strcode[0] = '9';
+            strcode[1] = '2';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x060: // Crowbill
+            strcode[0] = '9';
+            strcode[1] = 'm';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x061: // Naga
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x062: // Military Axe
+            strcode[0] = '9';
+            strcode[1] = 'l';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x063: // Bearded Axe
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x064: // Tabar
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x065: // Gothic Axe
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x066: // Ancient Axe
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Wand
+        case 0x00A: // Wand
+            strcode[0] = 'w';
+            strcode[1] = 'n';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x00B: // Yew Wand
+            strcode[0] = 'y';
+            strcode[1] = 'w';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x00C: // Bone Wand
+            strcode[0] = 'b';
+            strcode[1] = 'w';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x00D: // Grim Wand
+            strcode[0] = 'g';
+            strcode[1] = 'w';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x067: // Burnt Wand
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x068: // Petrified Wand
+            strcode[0] = '9';
+            strcode[1] = 'y';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x069: // Tomb Wand
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06A: // Grave Wand
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Scepter
+        case 0x00F: // Scepter
+            strcode[0] = 's';
+            strcode[1] = 'c';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x010: // Grand Scepter
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x011: // War Scepter
+            strcode[0] = 'w';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06C: // Rune Scepter
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06D: // Holy Water Sprinkler
+            strcode[0] = '9';
+            strcode[1] = 'q';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06E: // Divine Scepter
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Mace
+        case 0x00E: // Club
+            strcode[0] = 'c';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x012: // Spiked Club
+            strcode[0] = 's';
+            strcode[1] = 'p';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x013: // Mace
+            strcode[0] = 'm';
+            strcode[1] = 'a';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x014: // Morning Star
+            strcode[0] = 'm';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x015: // Flail
+            strcode[0] = 'f';
+            strcode[1] = 'l';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x016: // War Hammer
+            strcode[0] = 'w';
+            strcode[1] = 'h';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x017: // Maul
+            strcode[0] = 'm';
+            strcode[1] = 'a';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x018: // Great Maul
+            strcode[0] = 'g';
+            strcode[1] = 'm';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06B: // Cudgel
+            strcode[0] = '9';
+            strcode[1] = 'c';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x06F: // Barbed Club
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x070: // Flanged Mace
+            strcode[0] = '9';
+            strcode[1] = 'm';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x071: // Jagged Star
+            strcode[0] = '9';
+            strcode[1] = 'm';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x072: // Knout
+            strcode[0] = '9';
+            strcode[1] = 'f';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x073: // Battle Hammer
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x074: // War Club
+            strcode[0] = '9';
+            strcode[1] = 'm';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+        case 0x075: // Martel De Fer
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Sword
+        case 0x019: // Short Sword
+            strcode[0] = 's';
+            strcode[1] = 's';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01A: // Scimitar
+            strcode[0] = 's';
+            strcode[1] = 'c';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01B: // Sabre
+            strcode[0] = 's';
+            strcode[1] = 'b';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01C: // Falchion
+            strcode[0] = 'f';
+            strcode[1] = 'l';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01D: // Crystal Sword
+            strcode[0] = 'c';
+            strcode[1] = 'r';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01E: // Broad Sword
+            strcode[0] = 'b';
+            strcode[1] = 's';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x01F: // Long Sword
+            strcode[0] = 'l';
+            strcode[1] = 's';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x020: // War Sword
+            strcode[0] = 'w';
+            strcode[1] = 's';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x021: // Two Handed Sword
+            strcode[0] = '2';
+            strcode[1] = 'h';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x022: // Claymore
+            strcode[0] = 'c';
+            strcode[1] = 'l';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x023: // Giant Sword
+            strcode[0] = 'g';
+            strcode[1] = 'i';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x024: // Bastard Sword
+            strcode[0] = 'b';
+            strcode[1] = 's';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x025: // Flamberge
+            strcode[0] = 'f';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x026: // Great Sword
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x076: // Gladius
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x077: // Cutlass
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x078: // Shamshir
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x079: // Tulwar
+            strcode[0] = '9';
+            strcode[1] = 'f';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07A: // Dimensional Blade
+            strcode[0] = '9';
+            strcode[1] = 'c';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07B: // Battle Sword
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07C: // Rune Sword
+            strcode[0] = '9';
+            strcode[1] = 'l';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07D: // Ancient Sword
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07E: // Espandon
+            strcode[0] = '9';
+            strcode[1] = '2';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x07F: // Dacian Falx
+            strcode[0] = '9';
+            strcode[1] = 'c';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x080: // Tusk Sword
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x081: // Gothic Sword
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+        case 0x082: // Zweihander
+            strcode[0] = '9';
+            strcode[1] = 'f';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x083: // Executioner Sword
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Dagger
+        case 0x027: // Dagger
+            strcode[0] = 'd';
+            strcode[1] = 'g';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x028: // Dirk
+            strcode[0] = 'd';
+            strcode[1] = 'i';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x029: // Kris
+            strcode[0] = 'k';
+            strcode[1] = 'r';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x02A: // Blade
+            strcode[0] = 'b';
+            strcode[1] = 'l';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x084: // Poignard
+            strcode[0] = '9';
+            strcode[1] = 'd';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x085: // Rondel
+            strcode[0] = '9';
+            strcode[1] = 'd';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x086: // Ciquedeas
+            strcode[0] = '9';
+            strcode[1] = 'k';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x087: // Stiletto
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Throwing
+        case 0x02B: // Throwing Knife
+            strcode[0] = 't';
+            strcode[1] = 'k';
+            strcode[2] = 'f';
+            strcode[3] = 0x20;
+            return true;
+        case 0x02C: // Throwing Axe
+            strcode[0] = 't';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x02D: // Balanced Knife
+            strcode[0] = 'b';
+            strcode[1] = 'k';
+            strcode[2] = 'f';
+            strcode[3] = 0x20;
+            return true;
+        case 0x02E: // Balanced Axe
+            strcode[0] = 'b';
+            strcode[1] = 'a';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x088: // Battle Dart
+            strcode[0] = '9';
+            strcode[1] = 't';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x089: // Francisca
+            strcode[0] = '9';
+            strcode[1] = 't';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08A: // War Dart
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08B: // Hurlbat
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = '8';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Javelin
+        case 0x02F: // Javelin
+            strcode[0] = 'j';
+            strcode[1] = 'a';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x030: // Pilum
+            strcode[0] = 'p';
+            strcode[1] = 'i';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x031: // Short Spear
+            strcode[0] = 's';
+            strcode[1] = 's';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x032: // Glaive
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x033: // Throwing Spear
+            strcode[0] = 't';
+            strcode[1] = 's';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x034: // Spear
+            strcode[0] = 's';
+            strcode[1] = 'p';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x035: // Trident
+            strcode[0] = 't';
+            strcode[1] = 'r';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x036: // Brandistock
+            strcode[0] = 'b';
+            strcode[1] = 'r';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x037: // Spetum
+            strcode[0] = 's';
+            strcode[1] = 'p';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x038: // Pike
+            strcode[0] = 'p';
+            strcode[1] = 'i';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08C: // War Javelin
+            strcode[0] = '9';
+            strcode[1] = 'j';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08D: // Great Pilum
+            strcode[0] = '9';
+            strcode[1] = 'p';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08E: // Simbilan
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+        case 0x08F: // Spiculum
+            strcode[0] = '9';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x090: // Harpoon
+            strcode[0] = '9';
+            strcode[1] = 't';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x091: // War Spear
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x092: // Fuscina
+            strcode[0] = '9';
+            strcode[1] = 't';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x093: // War Fork
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x094: // Yari
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x095: // Lance
+            strcode[0] = '9';
+            strcode[1] = 'p';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Polearm
+        case 0x039: // Bardiche
+            strcode[0] = 'b';
+            strcode[1] = 'a';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x03A: // Voulge
+            strcode[0] = 'v';
+            strcode[1] = 'o';
+            strcode[2] = 'u';
+            strcode[3] = 0x20;
+            return true;
+        case 0x03B: // Scythe
+            strcode[0] = 's';
+            strcode[1] = 'c';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x03C: // Pole Axe
+            strcode[0] = 'p';
+            strcode[1] = 'a';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x03D: // Halberd
+            strcode[0] = 'h';
+            strcode[1] = 'a';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x03E: // War Scythe
+            strcode[0] = 'w';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x096: // Lochaber Axe
+            strcode[0] = '9';
+            strcode[1] = 'b';
+            strcode[2] = '7';
+            strcode[3] = 0x20;
+            return true;
+        case 0x097: // Bill
+            strcode[0] = '9';
+            strcode[1] = 'v';
+            strcode[2] = 'o';
+            strcode[3] = 0x20;
+            return true;
+        case 0x098: // Battle Scythe
+            strcode[0] = '9';
+            strcode[1] = 's';
+            strcode[2] = '8';
+            strcode[3] = 0x20;
+            return true;
+        case 0x099: // Partizan
+            strcode[0] = '9';
+            strcode[1] = 'p';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09A: // Bec-De-Corbin
+            strcode[0] = '9';
+            strcode[1] = 'h';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09B: // Grim Scythe
+            strcode[0] = '9';
+            strcode[1] = 'w';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Staff
+        case 0x03F: // Short Staff
+            strcode[0] = 's';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x040: // Long Staff
+            strcode[0] = 'l';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x041: // Gnarled Staff
+            strcode[0] = 'c';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x042: // Battle Staff
+            strcode[0] = 'b';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x043: // War Staff
+            strcode[0] = 'w';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09C: // Jo Staff
+            strcode[0] = '8';
+            strcode[1] = 's';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09D: // Quarterstaff
+            strcode[0] = '8';
+            strcode[1] = 'l';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09E: // Cedar Staff
+            strcode[0] = '8';
+            strcode[1] = 'c';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x09F: // Gothic Staff
+            strcode[0] = '8';
+            strcode[1] = 'b';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A0: // Rune Staff
+            strcode[0] = '8';
+            strcode[1] = 'w';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Bow
+        case 0x044: // Short Bow
+            strcode[0] = 's';
+            strcode[1] = 'b';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x045: // Hunter's Bow
+            strcode[0] = 'h';
+            strcode[1] = 'b';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x046: // Long Bow
+            strcode[0] = 'l';
+            strcode[1] = 'b';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x047: // Composite Bow
+            strcode[0] = 'c';
+            strcode[1] = 'b';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x048: // Short Battle Bow
+            strcode[0] = 's';
+            strcode[1] = 'b';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x049: // Long Battle Bow
+            strcode[0] = 'l';
+            strcode[1] = 'b';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x04A: // Short War Bow
+            strcode[0] = 's';
+            strcode[1] = 'w';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x04B: // Long War Bow
+            strcode[0] = 'l';
+            strcode[1] = 'w';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A1: // Edge Bow
+            strcode[0] = '8';
+            strcode[1] = 's';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A2: // Razor Bow
+            strcode[0] = '8';
+            strcode[1] = 'h';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A3: // Cedar Bow
+            strcode[0] = '8';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A4: // Double Bow
+            strcode[0] = '8';
+            strcode[1] = 'c';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A5: // Short Siege Bow
+            strcode[0] = '8';
+            strcode[1] = 's';
+            strcode[2] = '8';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A6: // Long Siege Bow
+            strcode[0] = '8';
+            strcode[1] = 'l';
+            strcode[2] = '8';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A7: // Rune Bow
+            strcode[0] = '8';
+            strcode[1] = 's';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A8: // Gothic Bow
+            strcode[0] = '8';
+            strcode[1] = 'l';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+
+            // Weapon Crossbow
+        case 0x04C: // Light Crossbow
+            strcode[0] = 'l';
+            strcode[1] = 'x';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x04D: // Crossbow
+            strcode[0] = 'm';
+            strcode[1] = 'x';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x04E: // Heavy Crossbow
+            strcode[0] = 'h';
+            strcode[1] = 'x';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x04F: // Repeating Crossbow
+            strcode[0] = 'r';
+            strcode[1] = 'x';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0A9: // Arbalest
+            strcode[0] = '8';
+            strcode[1] = 'l';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0AA: // Siege Crossbow
+            strcode[0] = '8';
+            strcode[1] = 'm';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0AB: // Ballista
+            strcode[0] = '8';
+            strcode[1] = 'h';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0AC: // Chu-Ko-Nu
+            strcode[0] = '8';
+            strcode[1] = 'r';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+
+            // Potion Throwing
+        case 0x050: // Rancid Gas Potion
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x051: // Oil Potion
+            strcode[0] = 'o';
+            strcode[1] = 'p';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x052: // Choking Gas Potion
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x053: // Exploding Potion
+            strcode[0] = 'o';
+            strcode[1] = 'p';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x054: // Strangling Gas Potion
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x055: // Fulminating Potion
+            strcode[0] = 'o';
+            strcode[1] = 'p';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+
+            // Special Weapon
+        case 0x056: // Decoy Gidbinn
+            strcode[0] = 'd';
+            strcode[1] = '3';
+            strcode[2] = '3';
+            strcode[3] = 0x20;
+            return true;
+        case 0x057: // The Gidbinn
+            strcode[0] = 'g';
+            strcode[1] = '3';
+            strcode[2] = '3';
+            strcode[3] = 0x20;
+            return true;
+        case 0x058: // Wirt's Leg
+            strcode[0] = 'l';
+            strcode[1] = 'e';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x059: // Horadric Malus
+            strcode[0] = 'h';
+            strcode[1] = 'd';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05A: // Hellforge Hammer
+            strcode[0] = 'h';
+            strcode[1] = 'f';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05B: // Horadric Staff
+            strcode[0] = 'h';
+            strcode[1] = 's';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x05C: // Shaft of the Horadric Staff
+            strcode[0] = 'm';
+            strcode[1] = 's';
+            strcode[2] = 'f';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0AD: // Khalim's Flail
+            strcode[0] = 'q';
+            strcode[1] = 'f';
+            strcode[2] = '1';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0AE: // Khalim's Will
+            strcode[0] = 'q';
+            strcode[1] = 'f';
+            strcode[2] = '2';
+            strcode[3] = 0x20;
+            return true;
+
+            // Helm
+        case 0x0AF: // Cap
+            strcode[0] = 'c';
+            strcode[1] = 'a';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B0: // Skull Cap
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B1: // Helm
+            strcode[0] = 'h';
+            strcode[1] = 'l';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B2: // Full Helm
+            strcode[0] = 'f';
+            strcode[1] = 'h';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B3: // Great Helm
+            strcode[0] = 'g';
+            strcode[1] = 'h';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B4: // Crown
+            strcode[0] = 'c';
+            strcode[1] = 'r';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B5: // Mask
+            strcode[0] = 'm';
+            strcode[1] = 's';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DA: // Bone Helm
+            strcode[0] = 'b';
+            strcode[1] = 'h';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DD: // War Hat
+            strcode[0] = 'x';
+            strcode[1] = 'a';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DE: // Sallet
+            strcode[0] = 'x';
+            strcode[1] = 'k';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DF: // Casque
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E0: // Basinet
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E1: // Winged Helm
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = 'm';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E2: // Grand Crown
+            strcode[0] = 'x';
+            strcode[1] = 'r';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E3: // Death Mask
+            strcode[0] = 'x';
+            strcode[1] = 's';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x108: // Grim Helm
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = '9';
+            strcode[3] = 0x20;
+            return true;
+
+            // Armor
+        case 0x0B6: // Quilted Armor
+            strcode[0] = 'q';
+            strcode[1] = 'u';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B7: // Leather Armor
+            strcode[0] = 'l';
+            strcode[1] = 'e';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B8: // Hard Leather Armor
+            strcode[0] = 'h';
+            strcode[1] = 'l';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0B9: // Studded Leather
+            strcode[0] = 's';
+            strcode[1] = 't';
+            strcode[2] = 'u';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BA: // Ring Mail
+            strcode[0] = 'r';
+            strcode[1] = 'n';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BB: // Scale Mail
+            strcode[0] = 's';
+            strcode[1] = 'c';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BC: // Chain Mail
+            strcode[0] = 'c';
+            strcode[1] = 'h';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BD: // Breast Plate
+            strcode[0] = 'b';
+            strcode[1] = 'r';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BE: // Splint Mail
+            strcode[0] = 's';
+            strcode[1] = 'p';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0BF: // Plate Mail
+            strcode[0] = 'p';
+            strcode[1] = 'l';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C0: // Field Plate
+            strcode[0] = 'f';
+            strcode[1] = 'l';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C1: // Gothic Plate
+            strcode[0] = 'g';
+            strcode[1] = 't';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C2: // Full Plate
+            strcode[0] = 'f';
+            strcode[1] = 'u';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C3: // Ancient Armor
+            strcode[0] = 'a';
+            strcode[1] = 'a';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C4: // Light Plate
+            strcode[0] = 'l';
+            strcode[1] = 't';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E4: // Ghost Armor
+            strcode[0] = 'x';
+            strcode[1] = 'u';
+            strcode[2] = 'i';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E5: // Serpent Skin Armor
+            strcode[0] = 'x';
+            strcode[1] = 'e';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E6: // Demonhide Armor
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 'a';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E7: // Trellised Armor
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 'u';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E8: // Linked Mail
+            strcode[0] = 'x';
+            strcode[1] = 'n';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0E9: // Tigulated Mail
+            strcode[0] = 'x';
+            strcode[1] = 'c';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0EA: // Mesh Armor
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0EB: // Cuirass
+            strcode[0] = 'x';
+            strcode[1] = 'r';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0EC: // Russet Armor
+            strcode[0] = 'x';
+            strcode[1] = 'p';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0ED: // Templar Coat
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0EE: // Sharktooth Armor
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0EF: // Embossed Plate
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F0: // Chaos Armor
+            strcode[0] = 'x';
+            strcode[1] = 'u';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F1: // Ornate Plate
+            strcode[0] = 'x';
+            strcode[1] = 'a';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F2: // Mage Plate
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+
+            // Shield
+        case 0x0C5: // Buckler
+            strcode[0] = 'b';
+            strcode[1] = 'u';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C6: // Small Shield
+            strcode[0] = 's';
+            strcode[1] = 'm';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C7: // Large Shield
+            strcode[0] = 'l';
+            strcode[1] = 'r';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C8: // Kite Shield
+            strcode[0] = 'k';
+            strcode[1] = 'i';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0C9: // Tower Shield
+            strcode[0] = 't';
+            strcode[1] = 'o';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0CA: // Gothic Shield
+            strcode[0] = 'g';
+            strcode[1] = 't';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DB: // Bone Shield
+            strcode[0] = 'b';
+            strcode[1] = 's';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0DC: // Spiked Shield
+            strcode[0] = 's';
+            strcode[1] = 'p';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F3: // Defender
+            strcode[0] = 'x';
+            strcode[1] = 'u';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F4: // Round Shield
+            strcode[0] = 'x';
+            strcode[1] = 'm';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F5: // Scutum
+            strcode[0] = 'x';
+            strcode[1] = 'r';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F6: // Dragon Shield
+            strcode[0] = 'x';
+            strcode[1] = 'i';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F7: // Pavise
+            strcode[0] = 'x';
+            strcode[1] = 'o';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F8: // Ancient Shield
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x109: // Grim Shield
+            strcode[0] = 'x';
+            strcode[1] = 's';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x10A: // Barbed Shield
+            strcode[0] = 'x';
+            strcode[1] = 'p';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+
+            // Gloves
+        case 0x0CB: // Leather Gloves
+            strcode[0] = 'l';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0CC: // Heavy Gloves
+            strcode[0] = 'v';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0CD: // Chain Glove
+            strcode[0] = 'm';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0CE: // Light Gauntlet
+            strcode[0] = 't';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0CF: // Gauntlets
+            strcode[0] = 'h';
+            strcode[1] = 'g';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0F9: // Demonhide Gloves
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FA: // Sharkskin Gloves
+            strcode[0] = 'x';
+            strcode[1] = 'v';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FB: // Heavy Bracers
+            strcode[0] = 'x';
+            strcode[1] = 'm';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FC: // Battle Gauntlets
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FD: // War Gauntlet
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+
+            // Boots
+        case 0x0D0: // Boots
+            strcode[0] = 'l';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D1: // Heavy Boots
+            strcode[0] = 'v';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D2: // Chain Boots
+            strcode[0] = 'm';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D3: // Light Plate
+            strcode[0] = 't';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D4: // Greaves
+            strcode[0] = 'h';
+            strcode[1] = 'b';
+            strcode[2] = 't';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FE: // Demonhide Boots
+            strcode[0] = 'x';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0FF: // Sharkskin Boots
+            strcode[0] = 'x';
+            strcode[1] = 'v';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x100: // Mesh Boots
+            strcode[0] = 'x';
+            strcode[1] = 'm';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x101: // Battle Boots
+            strcode[0] = 'x';
+            strcode[1] = 't';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x102: // War Boots
+            strcode[0] = 'x';
+            strcode[1] = 'h';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+
+            // Belt
+        case 0x0D5: // Sash
+            strcode[0] = 'l';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D6: // Light Belt
+            strcode[0] = 'v';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D7: // Belt
+            strcode[0] = 'm';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D8: // Heavy Belt
+            strcode[0] = 't';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x0D9: // Plated Belt
+            strcode[0] = 'h';
+            strcode[1] = 'b';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+        case 0x103: // Demonhide Sash
+            strcode[0] = 'z';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x104: // Sharkskin Belt
+            strcode[0] = 'z';
+            strcode[1] = 'v';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x105: // Mesh Belt
+            strcode[0] = 'z';
+            strcode[1] = 'm';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x106: // Battle Belt
+            strcode[0] = 'z';
+            strcode[1] = 't';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x107: // War Belt
+            strcode[0] = 'z';
+            strcode[1] = 'h';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x10B: // Elixer of Vitality
+            strcode[0] = 'e';
+            strcode[1] = 'l';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x110: // Stamina Potion
+            strcode[0] = 'v';
+            strcode[1] = 'p';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x111: // Antidote Potion
+            strcode[0] = 'y';
+            strcode[1] = 'p';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x112: // regular rejuvenation potion
+            strcode[0] = 'r';
+            strcode[1] = 'v';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x113: // full rejuvenation potion
+            strcode[0] = 'r';
+            strcode[1] = 'v';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x114: // thawing potion
+            strcode[0] = 'w';
+            strcode[1] = 'm';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x115: // Tome of Town Portal
+            strcode[0] = 't';
+            strcode[1] = 'b';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+        case 0x116: // Tome of Identify
+            strcode[0] = 't';
+            strcode[1] = 'b';
+            strcode[2] = 'k';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x117: // Amulet
+            strcode[0] = 'a';
+            strcode[1] = 'm';
+            strcode[2] = 'u';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x118: // Viper Amulet
+            strcode[0] = 'v';
+            strcode[1] = 'i';
+            strcode[2] = 'p';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x119: // Ring
+            strcode[0] = 'r';
+            strcode[1] = 'i';
+            strcode[2] = 'n';
+            strcode[3] = 0x20;
+
+        case 0x11B: // Scroll of Inifuss
+            strcode[0] = 'b';
+            strcode[1] = 'k';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x11C: // Key to the Cairn Stones
+            strcode[0] = 'b';
+            strcode[1] = 'k';
+            strcode[2] = 'd';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x11D: // Arrows
+            strcode[0] = 'a';
+            strcode[1] = 'q';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x11E: // Torch
+            strcode[0] = 't';
+            strcode[1] = 'c';
+            strcode[2] = 'h';
+            strcode[3] = 0x20;
+            return true;
+        case 0x11F: // Bolts
+            strcode[0] = 'c';
+            strcode[1] = 'q';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x120: // Scroll of Town Portal
+            strcode[0] = 't';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+        case 0x121: // Scroll of Identify
+            strcode[0] = 'i';
+            strcode[1] = 's';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x12E: // Key
+            strcode[0] = 'k';
+            strcode[1] = 'e';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x130: // Potion of Life
+            strcode[0] = 'x';
+            strcode[1] = 'y';
+            strcode[2] = 'z';
+            strcode[3] = 0x20;
+            return true;
+        case 0x131: // Jade Figurine
+            strcode[0] = 'j';
+            strcode[1] = '3';
+            strcode[2] = '4';
+            strcode[3] = 0x20;
+            return true;
+        case 0x132: // The Golden Bird
+            strcode[0] = 'g';
+            strcode[1] = '3';
+            strcode[2] = '4';
+            strcode[3] = 0x20;
+            return true;
+        case 0x133: // Lam Esen's Tome
+            strcode[0] = 'b';
+            strcode[1] = 'b';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x134: // Horadric Cube
+            strcode[0] = 'b';
+            strcode[1] = 'o';
+            strcode[2] = 'x';
+            strcode[3] = 0x20;
+            return true;
+        case 0x135: // Horadric Scroll
+            strcode[0] = 't';
+            strcode[1] = 'r';
+            strcode[2] = '1';
+            strcode[3] = 0x20;
+            return true;
+        case 0x136: // Mephisto's Soulstone
+            strcode[0] = 'm';
+            strcode[1] = 's';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x137: // Book of Skill
+            strcode[0] = 'a';
+            strcode[1] = 's';
+            strcode[2] = 's';
+            strcode[3] = 0x20;
+            return true;
+        case 0x138: // Khalim's Eye
+            strcode[0] = 'q';
+            strcode[1] = 'e';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x139: // Khalim's Heart
+            strcode[0] = 'q';
+            strcode[1] = 'h';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x13A: // Khalim's Brain
+            strcode[0] = 'q';
+            strcode[1] = 'b';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x13B: // Ear
+            strcode[0] = 'e';
+            strcode[1] = 'a';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x13C: // chipped amethyst
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x13D: // flawed amethyst
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x13E: // regular amethyst
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+        case 0x13F: // flawless amethyst
+            strcode[0] = 'g';
+            strcode[1] = 'z';
+            strcode[2] = 'v';
+            return true;
+        case 0x140: // perfect amethyst
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'v';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x141: // chipped topaz
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x142: // flawed topaz
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x143: // regular topaz
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x144: // flawless topaz
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+        case 0x145: // perfect topaz
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'y';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x146: // chipped sapphire
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x147: // flawed sapphire
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x148: // regular sapphire
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+        case 0x149: // flawless sapphire
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            break;
+        case 0x14A: // perfect sapphire
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'b';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x14B: // chipped emerald
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            break;
+        case 0x14C: // flawed emerald
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x14D: // regular emerald
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x14E: // flawless emerald
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+        case 0x14F: // perfect emerald
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'g';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x150: // chipped ruby
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x151: // flawed ruby
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x152: // regular ruby
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x153: // flawless ruby
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+        case 0x154: // perfect ruby
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'r';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x155: // chipped diamond
+            strcode[0] = 'g';
+            strcode[1] = 'c';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x156: // flawed diamond
+            strcode[0] = 'g';
+            strcode[1] = 'f';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x157: // regular diamond
+            strcode[0] = 'g';
+            strcode[1] = 's';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x158: // flawless diamond
+            strcode[0] = 'g';
+            strcode[1] = 'l';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+        case 0x159: // perfect diamond
+            strcode[0] = 'g';
+            strcode[1] = 'p';
+            strcode[2] = 'w';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x15A: // minor healing potion
+            strcode[0] = 'h';
+            strcode[1] = 'p';
+            strcode[2] = '1';
+            strcode[3] = 0x20;
+            return true;
+        case 0x15B: // light healing potion
+            strcode[0] = 'h';
+            strcode[1] = 'p';
+            strcode[2] = '2';
+            strcode[3] = 0x20;
+            break;
+        case 0x15C: // regular healing potion
+            strcode[0] = 'h';
+            strcode[1] = 'p';
+            strcode[2] = '3';
+            strcode[3] = 0x20;
+            return true;
+        case 0x15D: // Greater healing potion
+            strcode[0] = 'h';
+            strcode[1] = 'p';
+            strcode[2] = '4';
+            strcode[3] = 0x20;
+            return true;
+        case 0x15E: // Super healing potion
+            strcode[0] = 'h';
+            strcode[1] = 'p';
+            strcode[2] = '5';
+            return true;
+
+        case 0x15F: // minor mana potion
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = '1';
+            strcode[3] = 0x20;
+            break;
+        case 0x160: // light mana potion
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = '2';
+            strcode[3] = 0x20;
+            return true;
+        case 0x161: // regular mana potion
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = '3';
+            strcode[3] = 0x20;
+            return true;
+        case 0x162: // Greater mana potion
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = '4';
+            strcode[3] = 0x20;
+            return true;
+        case 0x163: // Super mana potion
+            strcode[0] = 'm';
+            strcode[1] = 'p';
+            strcode[2] = '5';
+            strcode[3] = 0x20;
+            return true;
+
+        case 0x164: // chipped skull
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'c';
+            strcode[3] = 0x20;
+            return true;
+        case 0x165: // flawed skull
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'f';
+            strcode[3] = 0x20;
+            return true;
+        case 0x166: // regular skull
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'u';
+            strcode[3] = 0x20;
+            return true;
+        case 0x167: // flawless skull
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'l';
+            strcode[3] = 0x20;
+            break;
+        case 0x168: // perfect skull
+            strcode[0] = 's';
+            strcode[1] = 'k';
+            strcode[2] = 'z';
+            strcode[3] = 0x20;
+            return true;
+        }  // end switch
+        return false;
+    }
+
     // Retrieves the huffman encoded chracter
     std::uint8_t getEncodedChar(const std::vector<std::uint8_t>& data, std::uint64_t& startOffset)
     {
@@ -477,7 +2668,7 @@ namespace d2ce
         return std::uint8_t(0xFF);
     }
 
-    std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::uint8_t(&strcode)[4])
+    std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode)
     {
         size_t offset = startOffset;
         for (size_t i = 0; i < 4; ++i)
@@ -489,7 +2680,7 @@ namespace d2ce
     }
 
     // Retrieves encoded ItemCode (return number of bits set)
-    void encodeItemCodev115(const std::uint8_t(&strcode)[4], std::uint64_t& encodedVal, std::uint8_t& numBitsSet)
+    void encodeItemCodev115(const std::array<std::uint8_t, 4> &strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet)
     {
         encodedVal = 0;
         numBitsSet = 0;
@@ -2025,7 +4216,7 @@ namespace d2ce
     };
 
     ItemType s_invalidItemType;
-    const ItemType& getShieldItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getShieldItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> shieldBases = {
             {"buc", {"Buckler", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
@@ -2097,7 +4288,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getArmorItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getArmorItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> armorBases = {
             {"cap", {"Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}}},
@@ -2264,7 +4455,7 @@ namespace d2ce
         return getShieldItemType(strcode);
     }
 
-    const ItemType& getWeaponItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getWeaponItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> weaponBases = {
             {"hax", {"Hand Axe", {{ 3, 6 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
@@ -2365,7 +4556,7 @@ namespace d2ce
             {"92a", {"Twin Axe", {{ 13, 38 }, false, false, { 0, 0 }}, {85, 0, 25}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"9mp", {"Crowbill", {{ 14, 34 }, false, false, { 0, 0 }}, {94, 70, 25}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"9wa", {"Naga", {{ 16, 45 }, false, false, { 0, 0 }}, {121, 0, 25}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9la", {"Military Axe", {{ 0, 0 }, false, true, { 14, 34 }}, {73, 0, 25}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
+            {"9la", {"Military Axe", {{ 0, 0 }, false, true, { 14, 34 }}, {73, 0, 22}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"9ba", {"Bearded Axe", {{ 0, 0 }, false, true, { 21, 49 }}, {92, 0, 25}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"9bt", {"Tabar", {{ 0, 0 }, false, true, { 24, 77 }}, {101, 0, 25}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
             {"9ga", {"Gothic Axe", {{ 0, 0 }, false, true, { 18, 70 }}, {115, 79, 25}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
@@ -2588,7 +4779,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getTomeItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getTomeItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> tomeBases = {
             {"tbk", {"Tome of Town Portal", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, true, "invbbk", 0, {"Book", "Miscellaneous"}}},
@@ -2608,7 +4799,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getStackableItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getStackableItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> stackableBases = {
             {"gld", {"gold", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, true, "invgld", 0, {"Gold", "Miscellaneous"}}},
@@ -2652,7 +4843,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getMiscItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getMiscItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> essenceBases = {
             {"ice", {"Potion of Thawing", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invxyz", 0, {"Quest"}}},
@@ -2709,7 +4900,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getGPSItemType(const std::uint8_t(&strcode)[4])
+    const ItemType& getGPSItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> essenceBases = {
             {"elx", {"Elixer of Vitality", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invpot", 0, {"Elixir", "Miscellaneous"}}},
@@ -2816,7 +5007,7 @@ namespace d2ce
         return s_invalidItemType;
     }
 
-    const ItemType& getItemTypeHelper(std::uint8_t(&strcode)[4])
+    const ItemType& getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode)
     {
         // could be stackable
         {
@@ -2859,13 +5050,13 @@ namespace d2ce
         return getMiscItemType(strcode);
     }
 
-    std::uint8_t getItemBase(std::uint8_t(&strcode)[4])
+    std::uint8_t getItemBase(const std::array<std::uint8_t, 4>& strcode)
     {
         const auto& item = getItemTypeHelper(strcode);
         return item.getBaseType();
     }
 
-    EnumItemType getEnumItemTypeFromCode(std::uint8_t(&strcode)[4])
+    EnumItemType getEnumItemTypeFromCode(std::array<std::uint8_t, 4>& strcode)
     {
         const auto& item = getItemTypeHelper(strcode);
         return item.getEnumItemType();
@@ -3247,109 +5438,333 @@ namespace d2ce
         return "";
     }
 
+    std::uint16_t getSetLevelReqFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case 0:
+        case 1:
+        case 2: 
+            return 9;
+
+        case 3:
+        case 4:
+        case 5: 
+            return 3;
+
+        case 6:
+        case 7:
+        case 8: 
+            return 4;
+
+        case 9:
+        case 10:
+        case 11:
+        case 12: 
+            return 15;
+
+        case 13:
+        case 14:
+        case 15:
+        case 16: 
+            return 8;
+
+        case 17:
+        case 18:
+        case 19:
+        case 20: 
+            return 14;
+
+        case 21:
+        case 22:
+        case 23:
+        case 24: 
+            return 17;
+
+        case 25:
+        case 26:
+        case 27:
+        case 28:
+        case 29: 
+            return 11;
+
+        case 30:
+        case 31:
+        case 32:
+        case 33:
+        case 34:
+            return 20;
+
+        case 35:
+        case 36:
+        case 37:
+        case 38:
+        case 39:
+        case 40: 
+            return 6;
+
+        case 41:
+        case 42:
+        case 43: 
+            return 5;
+
+        case 44:
+        case 45:
+        case 46: 
+            return 3;
+
+        case 47:
+        case 48:
+        case 49: 
+            return 6;
+
+        case 50:
+        case 51:
+        case 52:
+        case 53: 
+            return 12;
+
+        case 54:
+        case 55:
+        case 56:
+        case 57: 
+            return 2;
+
+        case 58:
+        case 59:
+        case 60:
+        case 61: 
+            return 15;
+
+        case 62:
+        case 63:
+        case 64:
+        case 65: 
+            return 59;
+
+        case 66: return 36;
+        case 67: return 76;
+        case 68: return 42;
+        case 69: return 45;
+
+        case 70: return 47;
+        case 71: return 76;
+        case 72: return 29;
+        case 73: return 30;
+        case 74: return 31;
+        case 75: return 76;
+
+        case 76: return 53;
+        case 77: return 67;
+        case 78: return 65;
+        case 79: return 71;
+        case 80: return 66;
+
+        case 81: return 69;
+        case 82: return 45;
+        case 83: return 66;
+        case 84: return 68;
+
+        case 85: return 65;
+        case 86: return 49;
+        case 87: return 54;
+        case 88: return 45;
+        case 89: return 62;
+
+        case 90: return 64;
+        case 91: return 70;
+        case 92: return 32;
+        case 93: return 45;
+        case 94: return 70;
+            
+        case 95: return 30;
+        case 96: return 63;
+        case 97: return 29;
+        case 98: return 49;
+        case 99: return 65;
+
+        case 100: return 68;
+        case 101: return 81;
+        case 102: return 44;
+        case 103: return 69;
+
+        case 104: return 34;
+        case 105: return 42;
+        case 106: return 37;
+        case 107: return 29;
+
+        case 108: return 45;
+        case 109: return 30;
+        case 110: return 35;
+        case 111: return 28;
+
+        case 112: return 73;
+        case 113: return 67;
+        case 114: return 43;
+
+        case 115: return 63;
+        case 116: return 66;
+
+        case 117: return 25;
+        case 118: return 18;
+        case 119: return 13;
+
+        case 120: return 78;
+        case 121: return 71;
+        case 122: return 28;
+
+        case 123: return 25;
+        case 124: return 20;
+        case 125: return 28;
+        case 126: return 25;
+        }
+
+        return 0;
+    }
+
+    std::uint16_t getIdFromRareName(const std::string& rareName)
+    {
+        static const std::map<std::string, int> rareNames = {
+                {"Bite", 0x001}, {"Scratch", 0x002}, {"Scalpel", 0x003}, {"Fang", 0x004}, {"Gutter", 0x005}, {"Thirst", 0x006}, {"Razor", 0x007},
+                {"Scythe", 0x008}, {"Edge", 0x009}, {"Saw", 0x00A}, {"Splitter", 0x00B}, {"Cleaver", 0x00C}, {"Sever", 0x00D}, {"Sunder", 0x00E}, {"Rend", 0x00F},
+                {"Mangler", 0x010}, {"Slayer", 0x011}, {"Reaver", 0x012}, {"Spawn", 0x013}, {"Gnash", 0x014}, {"Star", 0x015}, {"Blow", 0x016}, {"Smasher", 0x017},
+                {"Bane", 0x018}, {"Crusher", 0x019}, {"Breaker", 0x01A}, {"Grinder", 0x01B}, {"Crack", 0x01C}, {"Mallet", 0x01D}, {"Knell", 0x01E}, {"Lance", 0x01F},
+                {"Spike", 0x020}, {"Impaler", 0x021}, {"Skewer", 0x022}, {"Prod", 0x023}, {"Scourge", 0x024}, {"Wand", 0x025}, {"Wrack", 0x026}, {"Barb", 0x027},
+                {"Needle", 0x028}, {"Dart", 0x029}, {"Bolt", 0x02A}, {"Quarrel", 0x02B}, {"Fletch", 0x02C}, {"Flight", 0x02D}, {"Nock", 0x02E}, {"Horn", 0x02F},
+                {"Stinger", 0x030}, {"Quill", 0x031}, {"Goad", 0x032}, {"Branch", 0x033}, {"Spire", 0x034}, {"Song", 0x035}, {"Call", 0x036}, {"Cry", 0x037},
+                {"Spell", 0x038}, {"Chant", 0x039}, {"Weaver", 0x03A}, {"Gnarl", 0x03B}, {"Visage", 0x03C}, {"Crest", 0x03D}, {"Circlet", 0x03E}, {"Veil", 0x03F},
+                {"Hood", 0x040}, {"Mask", 0x041}, {"Brow", 0x042}, {"Casque", 0x043}, {"Visor", 0x044}, {"Cowl", 0x045}, {"Hide", 0x046}, {"Pelt", 0x047},
+                {"Carapace", 0x048}, {"Coat", 0x049}, {"Wrap", 0x04A}, {"Suit", 0x04B}, {"Cloak", 0x04C}, {"Shroud", 0x04D}, {"Jack", 0x04E}, {"Mantle", 0x04F},
+                {"Guard", 0x050}, {"Badge", 0x051}, {"Rock", 0x052}, {"Aegis", 0x053}, {"Ward", 0x054}, {"Tower", 0x055}, {"Shield", 0x056}, {"Wing", 0x057},
+                {"Mark", 0x058}, {"Emblem", 0x059}, {"Hand", 0x05A}, {"Fist", 0x05B}, {"Claw", 0x05C}, {"Clutches", 0x05D}, {"Grip", 0x05E}, {"Grasp", 0x05F},
+                {"Hold", 0x060}, {"Torch", 0x061}, {"Finger", 0x062}, {"Knuckle", 0x063}, {"Shank", 0x064}, {"Spur", 0x065}, {"Tread", 0x066}, {"Stalker", 0x067},
+                {"Greave", 0x068}, {"Blazer", 0x069}, {"Nails", 0x06A}, {"Trample", 0x06B}, {"Brogues", 0x06C}, {"Track", 0x06D}, {"Slippers", 0x06E}, {"Clasp", 0x06F},
+                {"Buckle", 0x070}, {"Harness", 0x071}, {"Lock", 0x072}, {"Fringe", 0x073}, {"Winding", 0x074}, {"Chain", 0x075}, {"Strap", 0x076}, {"Lash", 0x077},
+                {"Cord", 0x078}, {"Knot", 0x079}, {"Circle", 0x07A}, {"Loop", 0x07B}, {"Eye", 0x07C}, {"Turn", 0x07D}, {"Spiral", 0x07E}, {"Coil", 0x07F},
+                {"Gyre", 0x080}, {"Band", 0x081}, {"Whorl", 0x082}, {"Talisman", 0x083}, {"Heart", 0x084}, {"Noose", 0x085}, {"Necklace", 0x086}, {"Collar", 0x087},
+                {"Beads", 0x088}, {"Torc", 0x089}, {"Gorget", 0x08A}, {"Scarab", 0x08B}, {"Wood", 0x08C}, {"Brand", 0x08D}, {"Bludgeon", 0x08E}, {"Cudgel", 0x08F},
+                {"Loom", 0x090}, {"Harp", 0x091}, {"Master", 0x092}, {"Barl", 0x093}, {"Hew", 0x094}, {"Crook", 0x095}, {"Mar", 0x096}, {"Shell", 0x097},
+                {"Stake", 0x098}, {"Picket", 0x099}, {"Pale", 0x09A}, {"Flange", 0x09B}, {"Beast", 0x09C}, {"Eagle", 0x09D}, {"Raven", 0x09E}, {"Viper", 0x09F},
+                {"Ghoul", 0x0A0}, {"Skull", 0x0A1}, {"Blood", 0x0A2}, {"Dread", 0x0A3}, {"Doom", 0x0A4}, {"Grim", 0x0A5}, {"Bone", 0x0A6}, {"Death", 0x0A7},
+                {"Shadow", 0x0A8}, {"Storm", 0x0A9}, {"Rune", 0x0AA}, {"Plague", 0x0AB}, {"Stone", 0x0AC}, {"Wraith", 0x0AD}, {"Spirit", 0x0AE}, {"Storm", 0x0AF},
+                {"Demon", 0x0B0}, {"Cruel", 0x0B1}, {"Empyrion", 0x0B2}, {"Bramble", 0x0B3}, {"Pain", 0x0B4}, {"Loath", 0x0B5}, {"Glyph", 0x0B6}, {"Imp", 0x0B7},
+                {"Fiendra", 0x0B8}, {"Hailstone", 0x0B9}, {"Gale", 0x0BA}, {"Dire", 0x0BB}, {"Soul", 0x0BC}, {"Brimstone", 0x0BD}, {"Corpse", 0x0BE}, {"Carrion", 0x0BF},
+                {"Armageddon", 0x0C0}, {"Havoc", 0x0C1}, {"Bitter", 0x0C2}, {"Entropy", 0x0C3}, {"Chaos", 0x0C4}, {"Order", 0x0C5}, {"Rule", 0x0C6}, {"Warp", 0x0C7},
+                {"Rift", 0x0C8}, {"Corruption", 0x0C9}
+        };
+
+        auto iter = rareNames.find(rareName);
+        if (iter != rareNames.end())
+        {
+            return std::uint16_t(iter->second);
+        }
+
+        return std::uint16_t(0);
+    }
+
     std::string getRareNameFromId(std::uint16_t id)
     {
         switch (id)
         {
-        case 1: return "Bite";
-        case 2: return "Scratch";
-        case 3: return "Scalpel";
-        case 4: return "Fang";
-        case 5: return "Gutter";
-        case 6: return "Thirst";
-        case 7: return "Razor";
-        case 8: return "Scythe";
-        case 9: return "Edge";
-        case 10: return "Saw";
-        case 11: return "Splitter";
-        case 12: return "Cleaver";
-        case 13: return "Sever";
-        case 14: return "Sunder";
-        case 15: return "Rend";
-        case 16: return "Mangler";
-        case 17: return "Slayer";
-        case 18: return "Reaver";
-        case 19: return "Spawn";
-        case 20: return "Gnash";
-        case 21: return "Star";
-        case 22: return "Blow";
-        case 23: return "Smasher";
-        case 24: return "Bane";
-        case 25: return "Crusher";
-        case 26: return "Breaker";
-        case 27: return "Grinder";
-        case 28: return "Crack";
-        case 29: return "Mallet";
-        case 30: return "Knell";
-        case 31: return "Lance";
-        case 32: return "Spike";
-        case 33: return "Impaler";
-        case 34: return "Skewer";
-        case 35: return "Prod";
-        case 36: return "Scourge";
-        case 37: return "Wand";
-        case 38: return "Wrack";
-        case 39: return "Barb";
-        case 40: return "Needle";
-        case 41: return "Dart";
-        case 42: return "Bolt";
-        case 43: return "Quarrel";
-        case 44: return "Fletch";
-        case 45: return "Flight";
-        case 46: return "Nock";
-        case 47: return "Horn";
-        case 48: return "Stinger";
-        case 49: return "Quill";
-        case 50: return "Goad";
-        case 51: return "Branch";
-        case 52: return "Spire";
-        case 53: return "Song";
-        case 54: return "Call";
-        case 55: return "Cry";
-        case 56: return "Spell";
-        case 57: return "Chant";
-        case 58: return "Weaver";
-        case 59: return "Gnarl";
-        case 60: return "Visage";
-        case 61: return "Crest";
-        case 62: return "Circlet";
-        case 63: return "Veil";
-        case 64: return "Hood";
-        case 65: return "Mask";
-        case 66: return "Brow";
-        case 67: return "Casque";
-        case 68: return "Visor";
-        case 69: return "Cowl";
-        case 70: return "Hide";
-        case 71: return "Pelt";
-        case 72: return "Carapace";
-        case 73: return "Coat";
-        case 74: return "Wrap";
-        case 75: return "Suit";
-        case 76: return "Cloak";
-        case 77: return "Shroud";
-        case 78: return "Jack";
-        case 79: return "Mantle";
-        case 80: return "Guard";
-        case 81: return "Badge";
-        case 82: return "Rock";
-        case 83: return "Aegis";
-        case 84: return "Ward";
-        case 85: return "Tower";
-        case 86: return "Shield";
-        case 87: return "Wing";
-        case 88: return "Mark";
-        case 89: return "Emblem";
-        case 90: return "Hand";
-        case 91: return "Fist";
-        case 92: return "Claw";
-        case 93: return "Clutches";
-        case 94: return "Grip";
-        case 95: return "Grasp";
-        case 96: return "Hold";
-        case 97: return "Torch";
-        case 98: return "Finger";
-        case 99: return "Knuckle";
+        case   1: return "Bite";
+        case   2: return "Scratch";
+        case   3: return "Scalpel";
+        case   4: return "Fang";
+        case   5: return "Gutter";
+        case   6: return "Thirst";
+        case   7: return "Razor";
+        case   8: return "Scythe";
+        case   9: return "Edge";
+        case  10: return "Saw";
+        case  11: return "Splitter";
+        case  12: return "Cleaver";
+        case  13: return "Sever";
+        case  14: return "Sunder";
+        case  15: return "Rend";
+        case  16: return "Mangler";
+        case  17: return "Slayer";
+        case  18: return "Reaver";
+        case  19: return "Spawn";
+        case  20: return "Gnash";
+        case  21: return "Star";
+        case  22: return "Blow";
+        case  23: return "Smasher";
+        case  24: return "Bane";
+        case  25: return "Crusher";
+        case  26: return "Breaker";
+        case  27: return "Grinder";
+        case  28: return "Crack";
+        case  29: return "Mallet";
+        case  30: return "Knell";
+        case  31: return "Lance";
+        case  32: return "Spike";
+        case  33: return "Impaler";
+        case  34: return "Skewer";
+        case  35: return "Prod";
+        case  36: return "Scourge";
+        case  37: return "Wand";
+        case  38: return "Wrack";
+        case  39: return "Barb";
+        case  40: return "Needle";
+        case  41: return "Dart";
+        case  42: return "Bolt";
+        case  43: return "Quarrel";
+        case  44: return "Fletch";
+        case  45: return "Flight";
+        case  46: return "Nock";
+        case  47: return "Horn";
+        case  48: return "Stinger";
+        case  49: return "Quill";
+        case  50: return "Goad";
+        case  51: return "Branch";
+        case  52: return "Spire";
+        case  53: return "Song";
+        case  54: return "Call";
+        case  55: return "Cry";
+        case  56: return "Spell";
+        case  57: return "Chant";
+        case  58: return "Weaver";
+        case  59: return "Gnarl";
+        case  60: return "Visage";
+        case  61: return "Crest";
+        case  62: return "Circlet";
+        case  63: return "Veil";
+        case  64: return "Hood";
+        case  65: return "Mask";
+        case  66: return "Brow";
+        case  67: return "Casque";
+        case  68: return "Visor";
+        case  69: return "Cowl";
+        case  70: return "Hide";
+        case  71: return "Pelt";
+        case  72: return "Carapace";
+        case  73: return "Coat";
+        case  74: return "Wrap";
+        case  75: return "Suit";
+        case  76: return "Cloak";
+        case  77: return "Shroud";
+        case  78: return "Jack";
+        case  79: return "Mantle";
+        case  80: return "Guard";
+        case  81: return "Badge";
+        case  82: return "Rock";
+        case  83: return "Aegis";
+        case  84: return "Ward";
+        case  85: return "Tower";
+        case  86: return "Shield";
+        case  87: return "Wing";
+        case  88: return "Mark";
+        case  89: return "Emblem";
+        case  90: return "Hand";
+        case  91: return "Fist";
+        case  92: return "Claw";
+        case  93: return "Clutches";
+        case  94: return "Grip";
+        case  95: return "Grasp";
+        case  96: return "Hold";
+        case  97: return "Torch";
+        case  98: return "Finger";
+        case  99: return "Knuckle";
         case 100: return "Shank";
         case 101: return "Spur";
         case 102: return "Tread";
@@ -5955,7 +8370,7 @@ namespace d2ce
         case 4: return "Rakescar";
         case 5: return "Axe of Fechmar";
         case 6: return "Goreshovel";
-        case 7: return "The Chiefthan";
+        case 7: return "The Chieftain";
         case 8: return "Brainhew";
         case 9: return "Humongous";
         case 10: return "Torch of Iros";
@@ -5969,7 +8384,7 @@ namespace d2ce
         case 18: return "Stoutnail";
         case 19: return "Crushflange";
         case 20: return "Bloodrise";
-        case 21: return "The Generals Tan Do Li Ga";
+        case 21: return "The General's Tan Do Li Ga";
         case 22: return "Ironstone";
         case 23: return "Bonesnap";
         case 24: return "Steeldriver";
@@ -5980,10 +8395,10 @@ namespace d2ce
         case 29: return "Azurewrath";
         case 30: return "Griswold's Edge";
         case 31: return "Hellplague";
-        case 32: return "Culwens Point";
+        case 32: return "Culwen's Point";
         case 33: return "Shadowfang";
         case 34: return "Soulflay";
-        case 35: return "Kinemils Awl";
+        case 35: return "Kinemil's Awl";
         case 36: return "Blacktongue";
         case 37: return "Ripsaw";
         case 38: return "The Patriarch";
@@ -5996,7 +8411,7 @@ namespace d2ce
         case 45: return "Bloodthief";
         case 46: return "Lance of Yaggai";
         case 47: return "The Tannr Gorerod";
-        case 48: return "Dimoaks Hew";
+        case 48: return "Dimoak's Hew";
         case 49: return "Steelgoad";
         case 50: return "Soul Harvest";
         case 51: return "The Battlebranch";
@@ -6040,7 +8455,7 @@ namespace d2ce
         case 89: return "Rockfleece";
         case 90: return "Rattlecage";
         case 91: return "Goldskin";
-        case 92: return "Victor's Silk";
+        case 92: return "Silks of the Victor";
         case 93: return "Heavenly Garb";
         case 94: return "Pelta Lunata";
         case 95: return "Umbral Disk";
@@ -6076,7 +8491,7 @@ namespace d2ce
         case 125: return "Horadric Staff";
         case 126: return "Hell Forge Hammer";
         case 127: return "Khalim's Flail";
-        case 128: return "Super Khalim's Flail";
+        case 128: return "Khalim's Will";
         case 129: return "Coldkill";
         case 130: return "Butcher's Pupil";
         case 131: return "Islestrike";
@@ -6086,7 +8501,7 @@ namespace d2ce
         case 135: return "Spellsteel";
         case 136: return "Stormrider";
         case 137: return "Boneslayer Blade";
-        case 138: return "The Minataur";
+        case 138: return "The Minotaur";
         case 139: return "Suicide Branch";
         case 140: return "Carin Shard";
         case 141: return "Arm of King Leoric";
@@ -6109,7 +8524,7 @@ namespace d2ce
         case 158: return "Ginther's Rift";
         case 159: return "Headstriker";
         case 160: return "Plague Bearer";
-        case 161: return "The Atlantian";
+        case 161: return "The Atlantean";
         case 162: return "Crainte Vomir";
         case 163: return "Bing Sz Wang";
         case 164: return "The Vile Husk";
@@ -6135,33 +8550,33 @@ namespace d2ce
         case 184: return "Ribcracker";
         case 185: return "Chromatic Ire";
         case 186: return "Warpspear";
-        case 187: return "Skullcollector";
+        case 187: return "Skull Collector";
         case 188: return "Skystrike";
         case 189: return "Riphook";
         case 190: return "Kuko Shakaku";
         case 191: return "Endlesshail";
-        case 192: return "Whichwild String";
+        case 192: return "Witchwild String";
         case 193: return "Cliffkiller";
         case 194: return "Magewrath";
-        case 195: return "Godstrike Arch";
+        case 195: return "Goldstrike Arch";
         case 196: return "Langer Briser";
-        case 197: return "Pus Spiter";
+        case 197: return "Pus Spitter";
         case 198: return "Buriza-Do Kyanon";
         case 199: return "Demon Machine";
         case 200: return "Armor (Unknown)";
-        case 201: return "Peasent Crown";
+        case 201: return "Peasant Crownn";
         case 202: return "Rockstopper";
         case 203: return "Stealskull";
         case 204: return "Darksight Helm";
         case 205: return "Valkyrie Wing";
         case 206: return "Crown of Thieves";
-        case 207: return "Blckhorn's Face";
+        case 207: return "Blackhorn's Face";
         case 208: return "Vampire Gaze";
         case 209: return "The Spirit Shroud";
         case 210: return "Skin of the Vipermagi";
         case 211: return "Skin of the Flayed One";
-        case 212: return "Ironpelt";
-        case 213: return "Spiritforge";
+        case 212: return "Iron Pelt";
+        case 213: return "Spirit Forge";
         case 214: return "Crow Caw";
         case 215: return "Shaftstop";
         case 216: return "Duriel's Shell";
@@ -6173,26 +8588,26 @@ namespace d2ce
         case 222: return "Corpsemourn";
         case 223: return "Que-Hegan's Wisdom";
         case 224: return "Visceratuant";
-        case 225: return "Mosers Blessed Circle";
+        case 225: return "Moser's Blessed Circle";
         case 226: return "Stormchaser";
         case 227: return "Tiamat's Rebuke";
         case 228: return "Gerke's Sanctuary";
-        case 229: return "Radimant's Sphere";
+        case 229: return "Radament's Sphere";
         case 230: return "Lidless Wall";
         case 231: return "Lance Guard";
         case 232: return "Venom Grip";
         case 233: return "Gravepalm";
         case 234: return "Ghoulhide";
-        case 235: return "Lavagout";
+        case 235: return "Lava Gout";
         case 236: return "Hellmouth";
         case 237: return "Infernostride";
         case 238: return "Waterwalk";
         case 239: return "Silkweave";
-        case 240: return "Wartraveler";
-        case 241: return "Gorerider";
+        case 240: return "War Traveler";
+        case 241: return "Gore Rider";
         case 242: return "String of Ears";
         case 243: return "Razortail";
-        case 244: return "Gloomstrap";
+        case 244: return "Gloom's Trap";
         case 245: return "Snowclash";
         case 246: return "Thundergod's Vigor";
         case 247: return "Elite unique";
@@ -6216,7 +8631,7 @@ namespace d2ce
         case 265: return "Eaglehorn";
         case 266: return "Windforce";
         case 267: return "Ring";
-        case 268: return "Bul Katho's Wedding Band";
+        case 268: return "Bul-Kathos' Wedding Band";
         case 269: return "The Cat's Eye";
         case 270: return "The Rising Sun";
         case 271: return "Crescent Moon";
@@ -6238,11 +8653,11 @@ namespace d2ce
         case 287: return "Jalal's Mane";
         case 288: return "The Scalper";
         case 289: return "Bloodmoon";
-        case 290: return "Djinnslayer";
+        case 290: return "Djinn Slayer";
         case 291: return "Deathbit";
         case 292: return "Warshrike";
-        case 293: return "Gutsiphon";
-        case 294: return "Razoredge";
+        case 293: return "Gut Siphon";
+        case 294: return "Razor's Edge";
         case 295: return "Gore Ripper";
         case 296: return "Demon Limb";
         case 297: return "Steel Shade";
@@ -6352,6 +8767,396 @@ namespace d2ce
         }
 
         return "";
+    }
+
+    std::uint16_t getUniqueLevelReqFromId(std::uint16_t id)
+    {
+        switch (id)
+        {
+        case   0: return  5;
+        case   1: return  9;
+        case   2: return 15;
+        case   3: return 21;
+        case   4: return 27;
+        case   5: return  8;
+        case   6: return 14;
+        case   7: return 19;
+        case   8: return 25;
+        case   9: return 29;
+        case  10: return  5;
+        case  11: return 14;
+        case  12: return 20;
+        case  13: return 28;
+        case  14: return  3;
+        case  15: return  5;
+        case  16: return 18;
+        case  17: return 30;
+        case  18: return  5;
+        case  19: return  9;
+        case  20: return 15;
+        case  21: return 21;
+        case  22: return 27;
+        case  23: return 24;
+        case  24: return 29;
+        case  25: return  2;
+        case  26: return  7;
+        case  27: return 10;
+        case  28: return 13;
+        case  29: return 85;
+        case  30: return 17;
+        case  31: return 22;
+        case  32: return 29;
+        case  33: return 12;
+        case  34: return 19;
+        case  35: return 23;
+        case  36: return 26;
+        case  37: return 26;
+        case  38: return 29;
+        case  39: return  4;
+        case  40: return 11;
+        case  41: return 19;
+        case  42: return 25;
+        case  43: return  8;
+        case  44: return 12;
+        case  45: return 17;
+        case  46: return 22;
+        case  47: return 27;
+        case  48: return  8;
+        case  49: return 14;
+        case  50: return 19;
+        case  51: return 25;
+        case  52: return 28;
+        case  53: return 29;
+        case  54: return  5;
+        case  55: return  9;
+        case  56: return 18;
+        case  57: return 21;
+        case  58: return 28;
+        case  59: return  7;
+        case  60: return 13;
+        case  61: return 15;
+        case  62: return 20;
+        case  63: return 25;
+        case  64: return 26;
+        case  65: return 27;
+        case  66: return 28;
+        case  67: return  9;
+        case  68: return 18;
+        case  69: return 27;
+        case  70: return 28;
+        case  71: return  3;
+        case  72: return 15;
+        case  73: return 14;
+        case  74: return 17;
+        case  75: return 21;
+        case  76: return 25;
+        case  77: return 29;
+        case  78: return 20;
+        case  79: return  7;
+        case  80: return 12;
+        case  81: return 14;
+        case  82: return 16;
+        case  83: return 14;
+        case  84: return 15;
+        case  85: return 17;
+        case  86: return 20;
+        case  87: return 22;
+        case  88: return 26;
+        case  89: return 28;
+        case  90: return 29;
+        case  91: return 28;
+        case  92: return 28;
+        case  93: return 29;
+        case  94: return  2;
+        case  95: return  9;
+        case  96: return 13;
+        case  97: return 20;
+        case  98: return 15;
+        case  99: return 17;
+        case 100: return 19;
+        case 101: return 26;
+        case 102: return  5;
+        case 103: return  9;
+        case 104: return 15;
+        case 105: return 23;
+        case 106: return 29;
+        case 107: return  5;
+        case 108: return  9;
+        case 109: return 15;
+        case 110: return 22;
+        case 111: return 29;
+        case 112: return  7;
+        case 113: return 12;
+        case 114: return 20;
+        case 115: return 27;
+        case 116: return 29;
+        case 117: return 10;
+        case 118: return 15;
+        case 119: return 25;
+        case 120: return  7;
+        case 121: return 15;
+        case 122: return 29;
+        case 129: return 36;
+        case 130: return 39;
+        case 131: return 43;
+        case 132: return 45;
+        case 133: return 48;
+        case 134: return 35;
+        case 135: return 39;
+        case 136: return 41;
+        case 137: return 42;
+        case 138: return 45;
+        case 139: return 33;
+        case 140: return 35;
+        case 141: return 36;
+        case 142: return 41;
+        case 143: return 34;
+        case 144: return 37;
+        case 145: return 38;
+        case 146: return 42;
+        case 147: return 38;
+        case 148: return 39;
+        case 149: return 42;
+        case 150: return 45;
+        case 151: return 43;
+        case 152: return 48;
+        case 153: return 45;
+        case 154: return 30;
+        case 155: return 31;
+        case 156: return 33;
+        case 157: return 35;
+        case 158: return 37;
+        case 159: return 39;
+        case 160: return 41;
+        case 161: return 42;
+        case 162: return 42;
+        case 163: return 43;
+        case 164: return 44;
+        case 165: return 45;
+        case 166: return 46;
+        case 167: return 48;
+        case 168: return 32;
+        case 169: return 36;
+        case 170: return 38;
+        case 171: return 41;
+        case 172: return 31;
+        case 173: return 33;
+        case 174: return 35;
+        case 175: return 37;
+        case 176: return 39;
+        case 177: return 41;
+        case 178: return 42;
+        case 179: return 42;
+        case 180: return 43;
+        case 181: return 44;
+        case 182: return 45;
+        case 183: return 28;
+        case 184: return 31;
+        case 185: return 35;
+        case 186: return 39;
+        case 187: return 41;
+        case 188: return 28;
+        case 189: return 31;
+        case 190: return 33;
+        case 191: return 36;
+        case 192: return 39;
+        case 193: return 41;
+        case 194: return 43;
+        case 195: return 46;
+        case 196: return 32;
+        case 197: return 36;
+        case 198: return 41;
+        case 199: return 49;
+        case 201: return 28;
+        case 202: return 31;
+        case 203: return 35;
+        case 204: return 38;
+        case 205: return 44;
+        case 206: return 49;
+        case 207: return 41;
+        case 208: return 41;
+        case 209: return 28;
+        case 210: return 29;
+        case 211: return 31;
+        case 212: return 33;
+        case 213: return 35;
+        case 214: return 37;
+        case 215: return 38;
+        case 216: return 41;
+        case 217: return 42;
+        case 218: return 45;
+        case 219: return 48;
+        case 220: return 51;
+        case 221: return 53;
+        case 222: return 55;
+        case 223: return 51;
+        case 224: return 28;
+        case 225: return 31;
+        case 226: return 35;
+        case 227: return 38;
+        case 228: return 44;
+        case 229: return 50;
+        case 230: return 41;
+        case 231: return 35;
+        case 232: return 29;
+        case 233: return 32;
+        case 234: return 36;
+        case 235: return 42;
+        case 236: return 47;
+        case 237: return 29;
+        case 238: return 32;
+        case 239: return 36;
+        case 240: return 42;
+        case 241: return 47;
+        case 242: return 29;
+        case 243: return 32;
+        case 244: return 36;
+        case 245: return 42;
+        case 246: return 47;
+        case 248: return 62;
+        case 249: return 73;
+        case 250: return 85;
+        case 251: return 85;
+        case 252: return 61;
+        case 253: return 73;
+        case 254: return 66;
+        case 255: return 70;
+        case 256: return 65;
+        case 257: return 79;
+        case 258: return 87;
+        case 259: return 58;
+        case 260: return 69;
+        case 261: return 81;
+        case 262: return 61;
+        case 263: return 95;
+        case 264: return 70;
+        case 265: return 69;
+        case 266: return 73;
+        case 268: return 58;
+        case 269: return 50;
+        case 270: return 65;
+        case 271: return 50;
+        case 272: return 67;
+        case 273: return 60;
+        case 274: return 45;
+        case 275: return 45;
+        case 276: return 65;
+        case 277: return 47;
+        case 279: return 42;
+        case 280: return 42;
+        case 281: return 42;
+        case 282: return 42;
+        case 283: return 42;
+        case 284: return 42;
+        case 285: return 42;
+        case 286: return 42;
+        case 287: return 42;
+        case 288: return 57;
+        case 289: return 61;
+        case 290: return 65;
+        case 291: return 44;
+        case 292: return 75;
+        case 293: return 71;
+        case 294: return 67;
+        case 296: return 63;
+        case 297: return 62;
+        case 298: return 84;
+        case 299: return 66;
+        case 300: return 69;
+        case 301: return 85;
+        case 302: return 65;
+        case 304: return 68;
+        case 306: return 64;
+        case 307: return 68;
+        case 308: return 66;
+        case 309: return 71;
+        case 310: return 63;
+        case 311: return 84;
+        case 312: return 74;
+        case 313: return 72;
+        case 314: return 70;
+        case 315: return 75;
+        case 316: return 64;
+        case 317: return 65;
+        case 319: return 76;
+        case 320: return 70;
+        case 321: return 68;
+        case 322: return 82;
+        case 323: return 71;
+        case 324: return 74;
+        case 325: return 61;
+        case 326: return 75;
+        case 327: return 67;
+        case 328: return 76;
+        case 329: return 77;
+        case 330: return 64;
+        case 331: return 65;
+        case 332: return 71;
+        case 333: return 62;
+        case 334: return 78;
+        case 335: return 70;
+        case 336: return 76;
+        case 337: return 68;
+        case 338: return 69;
+        case 340: return 68;
+        case 341: return 72;
+        case 342: return 69;
+        case 343: return 67;
+        case 344: return 82;
+        case 345: return 83;
+        case 347: return 80;
+        case 348: return 66;
+        case 349: return 76;
+        case 350: return 74;
+        case 351: return 79;
+        case 353: return 71;
+        case 354: return 73;
+        case 355: return 79;
+        case 356: return 68;
+        case 357: return 77;
+        case 358: return 75;
+        case 359: return 62;
+        case 360: return 82;
+        case 361: return 77;
+        case 363: return 70;
+        case 364: return 76;
+        case 365: return 70;
+        case 366: return 74;
+        case 367: return 72;
+        case 368: return 67;
+        case 369: return 64;
+        case 370: return 66;
+        case 371: return 61;
+        case 373: return 80;
+        case 374: return 51;
+        case 375: return 81;
+        case 376: return 63;
+        case 378: return 60;
+        case 379: return 65;
+        case 380: return 60;
+        case 381: return 70;
+        case 382: return 81;
+        case 383: return 63;
+        case 384: return 68;
+        case 385: return 69;
+        case 386: return 76;
+        case 387: return 64;
+        case 388: return 66;
+        case 389: return 72;
+        case 390: return 75;
+        case 391: return 70;
+        case 392: return 49;
+        case 393: return 49;
+        case 394: return 49;
+        case 395: return 49;
+        case 396: return 49;
+        case 397: return 49;
+        case 398: return 49;
+        case 399: return 49;
+        case 400: return 75;
+        }
+
+        return 0;
     }
 
     std::string getUniqueTCFromId(std::uint16_t id)
@@ -7318,6 +10123,71 @@ namespace d2ce
             }
         }
     }
+
+    void SetFlagBit(const Json::Value& node, size_t bitNum, std::bitset<32>& flags)
+    {
+        if (bitNum >= flags.size())
+        {
+            return;
+        }
+
+        if (!node.isNull())
+        {
+            if (node.isBool())
+            {
+                flags[bitNum] = (node.asBool() ? 1 : 0);
+            }
+            else
+            {
+                flags[bitNum] = (std::uint16_t(node.asInt64()) != 0 ? 1 : 0);
+            }
+        }
+    }
+
+    bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH> &name)
+    {
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        {
+            // Check Name
+            // Remove any invalid characters from the number
+            std::string curName(node.asString());
+            std::string strNewText;
+            for (size_t iPos = 0, numberOfUnderscores = 0, nLen = curName.size(); iPos < nLen; ++iPos)
+            {
+                char c = curName[iPos];
+                if (std::isalpha(c))
+                {
+                    strNewText += c;
+                }
+                else if ((c == '_' || c == '-') && strNewText.size() != 0 && numberOfUnderscores < 1)
+                {
+                    strNewText += c;
+                    ++numberOfUnderscores;
+                }
+            }
+
+            // trim bad characters
+            if (strNewText.size() > 15)
+            {
+                strNewText.resize(15);
+            }
+
+            strNewText.erase(strNewText.find_last_not_of("_-") + 1);
+            if (strNewText.size() < 2)
+            {
+                return false;
+            }
+
+            name.fill(0);
+            strcpy_s(name.data(), strNewText.length() + 1, strNewText.c_str());
+            name[15] = 0; // must be zero
+            return true;
+        }
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -7707,2141 +10577,18 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
     return static_cast<EnumAltItemLocation>(loc);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::getItemCode(std::uint8_t(&strcode)[4]) const
+bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
 {
-    std::memset(strcode, 0, sizeof(strcode));
+    strcode.fill(0);
     if (isEar())
     {
         return false;
     }
 
-    std::uint64_t code = 0;
     switch (Version())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03
-        code = std::uint64_t(read_uint32_bits(type_code_offset, 10));
-        switch (code)
-        {
-            // Weapon Axe
-        case 0x000: // Hand Axe
-            strcode[0] = 'h';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x001: // Axe
-            strcode[0] = 'a';
-            strcode[1] = 'x';
-            strcode[2] = 'e';
-            strcode[3] = 0x20;
-            return true;
-        case 0x002: // Double Axe
-            strcode[0] = '2';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x003: // Military Pick
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x004: // War Axe
-            strcode[0] = 'w';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x005: // Large Axe
-            strcode[0] = 'l';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x006: // Broad Axe
-            strcode[0] = 'b';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x007: // Battle Axe
-            strcode[0] = 'b';
-            strcode[1] = 't';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x008: // Great Axe
-            strcode[0] = 'g';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x009: // Giant Axe
-            strcode[0] = 'g';
-            strcode[1] = 'i';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05D: // Hatchet
-            strcode[0] = '9';
-            strcode[1] = 'h';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05E: // Cleaver
-            strcode[0] = '9';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05F: // Twin Axe
-            strcode[0] = '9';
-            strcode[1] = '2';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x060: // Crowbill
-            strcode[0] = '9';
-            strcode[1] = 'm';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x061: // Naga
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x062: // Military Axe
-            strcode[0] = '9';
-            strcode[1] = 'l';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x063: // Bearded Axe
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x064: // Tabar
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x065: // Gothic Axe
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x066: // Ancient Axe
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Wand
-        case 0x00A: // Wand
-            strcode[0] = 'w';
-            strcode[1] = 'n';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x00B: // Yew Wand
-            strcode[0] = 'y';
-            strcode[1] = 'w';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x00C: // Bone Wand
-            strcode[0] = 'b';
-            strcode[1] = 'w';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x00D: // Grim Wand
-            strcode[0] = 'g';
-            strcode[1] = 'w';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x067: // Burnt Wand
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x068: // Petrified Wand
-            strcode[0] = '9';
-            strcode[1] = 'y';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x069: // Tomb Wand
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06A: // Grave Wand
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Scepter
-        case 0x00F: // Scepter
-            strcode[0] = 's';
-            strcode[1] = 'c';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x010: // Grand Scepter
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x011: // War Scepter
-            strcode[0] = 'w';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06C: // Rune Scepter
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06D: // Holy Water Sprinkler
-            strcode[0] = '9';
-            strcode[1] = 'q';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06E: // Divine Scepter
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Mace
-        case 0x00E: // Club
-            strcode[0] = 'c';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x012: // Spiked Club
-            strcode[0] = 's';
-            strcode[1] = 'p';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x013: // Mace
-            strcode[0] = 'm';
-            strcode[1] = 'a';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x014: // Morning Star
-            strcode[0] = 'm';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x015: // Flail
-            strcode[0] = 'f';
-            strcode[1] = 'l';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x016: // War Hammer
-            strcode[0] = 'w';
-            strcode[1] = 'h';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x017: // Maul
-            strcode[0] = 'm';
-            strcode[1] = 'a';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x018: // Great Maul
-            strcode[0] = 'g';
-            strcode[1] = 'm';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06B: // Cudgel
-            strcode[0] = '9';
-            strcode[1] = 'c';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x06F: // Barbed Club
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x070: // Flanged Mace
-            strcode[0] = '9';
-            strcode[1] = 'm';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x071: // Jagged Star
-            strcode[0] = '9';
-            strcode[1] = 'm';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x072: // Knout
-            strcode[0] = '9';
-            strcode[1] = 'f';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x073: // Battle Hammer
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x074: // War Club
-            strcode[0] = '9';
-            strcode[1] = 'm';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-        case 0x075: // Martel De Fer
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Sword
-        case 0x019: // Short Sword
-            strcode[0] = 's';
-            strcode[1] = 's';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01A: // Scimitar
-            strcode[0] = 's';
-            strcode[1] = 'c';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01B: // Sabre
-            strcode[0] = 's';
-            strcode[1] = 'b';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01C: // Falchion
-            strcode[0] = 'f';
-            strcode[1] = 'l';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01D: // Crystal Sword
-            strcode[0] = 'c';
-            strcode[1] = 'r';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01E: // Broad Sword
-            strcode[0] = 'b';
-            strcode[1] = 's';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x01F: // Long Sword
-            strcode[0] = 'l';
-            strcode[1] = 's';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x020: // War Sword
-            strcode[0] = 'w';
-            strcode[1] = 's';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x021: // Two Handed Sword
-            strcode[0] = '2';
-            strcode[1] = 'h';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x022: // Claymore
-            strcode[0] = 'c';
-            strcode[1] = 'l';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x023: // Giant Sword
-            strcode[0] = 'g';
-            strcode[1] = 'i';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x024: // Bastard Sword
-            strcode[0] = 'b';
-            strcode[1] = 's';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x025: // Flamberge
-            strcode[0] = 'f';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x026: // Great Sword
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x076: // Gladius
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x077: // Cutlass
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x078: // Shamshir
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x079: // Tulwar
-            strcode[0] = '9';
-            strcode[1] = 'f';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07A: // Dimensional Blade
-            strcode[0] = '9';
-            strcode[1] = 'c';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07B: // Battle Sword
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07C: // Rune Sword
-            strcode[0] = '9';
-            strcode[1] = 'l';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07D: // Ancient Sword
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07E: // Espandon
-            strcode[0] = '9';
-            strcode[1] = '2';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x07F: // Dacian Falx
-            strcode[0] = '9';
-            strcode[1] = 'c';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x080: // Tusk Sword
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x081: // Gothic Sword
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-        case 0x082: // Zweihander
-            strcode[0] = '9';
-            strcode[1] = 'f';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x083: // Executioner Sword
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Dagger
-        case 0x027: // Dagger
-            strcode[0] = 'd';
-            strcode[1] = 'g';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x028: // Dirk
-            strcode[0] = 'd';
-            strcode[1] = 'i';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x029: // Kris
-            strcode[0] = 'k';
-            strcode[1] = 'r';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x02A: // Blade
-            strcode[0] = 'b';
-            strcode[1] = 'l';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x084: // Poignard
-            strcode[0] = '9';
-            strcode[1] = 'd';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x085: // Rondel
-            strcode[0] = '9';
-            strcode[1] = 'd';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x086: // Ciquedeas
-            strcode[0] = '9';
-            strcode[1] = 'k';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x087: // Stiletto
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Throwing
-        case 0x02B: // Throwing Knife
-            strcode[0] = 't';
-            strcode[1] = 'k';
-            strcode[2] = 'f';
-            strcode[3] = 0x20;
-            return true;
-        case 0x02C: // Throwing Axe
-            strcode[0] = 't';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x02D: // Balanced Knife
-            strcode[0] = 'b';
-            strcode[1] = 'k';
-            strcode[2] = 'f';
-            strcode[3] = 0x20;
-            return true;
-        case 0x02E: // Balanced Axe
-            strcode[0] = 'b';
-            strcode[1] = 'a';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x088: // Battle Dart
-            strcode[0] = '9';
-            strcode[1] = 't';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x089: // Francisca
-            strcode[0] = '9';
-            strcode[1] = 't';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08A: // War Dart
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08B: // Hurlbat
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = '8';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Javelin
-        case 0x02F: // Javelin
-            strcode[0] = 'j';
-            strcode[1] = 'a';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x030: // Pilum
-            strcode[0] = 'p';
-            strcode[1] = 'i';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x031: // Short Spear
-            strcode[0] = 's';
-            strcode[1] = 's';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x032: // Glaive
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x033: // Throwing Spear
-            strcode[0] = 't';
-            strcode[1] = 's';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x034: // Spear
-            strcode[0] = 's';
-            strcode[1] = 'p';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x035: // Trident
-            strcode[0] = 't';
-            strcode[1] = 'r';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x036: // Brandistock
-            strcode[0] = 'b';
-            strcode[1] = 'r';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x037: // Spetum
-            strcode[0] = 's';
-            strcode[1] = 'p';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x038: // Pike
-            strcode[0] = 'p';
-            strcode[1] = 'i';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08C: // War Javelin
-            strcode[0] = '9';
-            strcode[1] = 'j';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08D: // Great Pilum
-            strcode[0] = '9';
-            strcode[1] = 'p';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08E: // Simbilan
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-        case 0x08F: // Spiculum
-            strcode[0] = '9';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x090: // Harpoon
-            strcode[0] = '9';
-            strcode[1] = 't';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x091: // War Spear
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x092: // Fuscina
-            strcode[0] = '9';
-            strcode[1] = 't';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x093: // War Fork
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x094: // Yari
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x095: // Lance
-            strcode[0] = '9';
-            strcode[1] = 'p';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Polearm
-        case 0x039: // Bardiche
-            strcode[0] = 'b';
-            strcode[1] = 'a';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x03A: // Voulge
-            strcode[0] = 'v';
-            strcode[1] = 'o';
-            strcode[2] = 'u';
-            strcode[3] = 0x20;
-            return true;
-        case 0x03B: // Scythe
-            strcode[0] = 's';
-            strcode[1] = 'c';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x03C: // Pole Axe
-            strcode[0] = 'p';
-            strcode[1] = 'a';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x03D: // Halberd
-            strcode[0] = 'h';
-            strcode[1] = 'a';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x03E: // War Scythe
-            strcode[0] = 'w';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x096: // Lochaber Axe
-            strcode[0] = '9';
-            strcode[1] = 'b';
-            strcode[2] = '7';
-            strcode[3] = 0x20;
-            return true;
-        case 0x097: // Bill
-            strcode[0] = '9';
-            strcode[1] = 'v';
-            strcode[2] = 'o';
-            strcode[3] = 0x20;
-            return true;
-        case 0x098: // Battle Scythe
-            strcode[0] = '9';
-            strcode[1] = 's';
-            strcode[2] = '8';
-            strcode[3] = 0x20;
-            return true;
-        case 0x099: // Partizan
-            strcode[0] = '9';
-            strcode[1] = 'p';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09A: // Bec-De-Corbin
-            strcode[0] = '9';
-            strcode[1] = 'h';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09B: // Grim Scythe
-            strcode[0] = '9';
-            strcode[1] = 'w';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Staff
-        case 0x03F: // Short Staff
-            strcode[0] = 's';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x040: // Long Staff
-            strcode[0] = 'l';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x041: // Gnarled Staff
-            strcode[0] = 'c';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x042: // Battle Staff
-            strcode[0] = 'b';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x043: // War Staff
-            strcode[0] = 'w';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09C: // Jo Staff
-            strcode[0] = '8';
-            strcode[1] = 's';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09D: // Quarterstaff
-            strcode[0] = '8';
-            strcode[1] = 'l';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09E: // Cedar Staff
-            strcode[0] = '8';
-            strcode[1] = 'c';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x09F: // Gothic Staff
-            strcode[0] = '8';
-            strcode[1] = 'b';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A0: // Rune Staff
-            strcode[0] = '8';
-            strcode[1] = 'w';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Bow
-        case 0x044: // Short Bow
-            strcode[0] = 's';
-            strcode[1] = 'b';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x045: // Hunter's Bow
-            strcode[0] = 'h';
-            strcode[1] = 'b';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x046: // Long Bow
-            strcode[0] = 'l';
-            strcode[1] = 'b';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x047: // Composite Bow
-            strcode[0] = 'c';
-            strcode[1] = 'b';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x048: // Short Battle Bow
-            strcode[0] = 's';
-            strcode[1] = 'b';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x049: // Long Battle Bow
-            strcode[0] = 'l';
-            strcode[1] = 'b';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x04A: // Short War Bow
-            strcode[0] = 's';
-            strcode[1] = 'w';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x04B: // Long War Bow
-            strcode[0] = 'l';
-            strcode[1] = 'w';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A1: // Edge Bow
-            strcode[0] = '8';
-            strcode[1] = 's';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A2: // Razor Bow
-            strcode[0] = '8';
-            strcode[1] = 'h';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A3: // Cedar Bow
-            strcode[0] = '8';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A4: // Double Bow
-            strcode[0] = '8';
-            strcode[1] = 'c';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A5: // Short Siege Bow
-            strcode[0] = '8';
-            strcode[1] = 's';
-            strcode[2] = '8';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A6: // Long Siege Bow
-            strcode[0] = '8';
-            strcode[1] = 'l';
-            strcode[2] = '8';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A7: // Rune Bow
-            strcode[0] = '8';
-            strcode[1] = 's';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A8: // Gothic Bow
-            strcode[0] = '8';
-            strcode[1] = 'l';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-
-            // Weapon Crossbow
-        case 0x04C: // Light Crossbow
-            strcode[0] = 'l';
-            strcode[1] = 'x';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x04D: // Crossbow
-            strcode[0] = 'm';
-            strcode[1] = 'x';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x04E: // Heavy Crossbow
-            strcode[0] = 'h';
-            strcode[1] = 'x';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x04F: // Repeating Crossbow
-            strcode[0] = 'r';
-            strcode[1] = 'x';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0A9: // Arbalest
-            strcode[0] = '8';
-            strcode[1] = 'l';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0AA: // Siege Crossbow
-            strcode[0] = '8';
-            strcode[1] = 'm';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0AB: // Ballista
-            strcode[0] = '8';
-            strcode[1] = 'h';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0AC: // Chu-Ko-Nu
-            strcode[0] = '8';
-            strcode[1] = 'r';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-
-            // Potion Throwing
-        case 0x050: // Rancid Gas Potion
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x051: // Oil Potion
-            strcode[0] = 'o';
-            strcode[1] = 'p';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x052: // Choking Gas Potion
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x053: // Exploding Potion
-            strcode[0] = 'o';
-            strcode[1] = 'p';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x054: // Strangling Gas Potion
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x055: // Fulminating Potion
-            strcode[0] = 'o';
-            strcode[1] = 'p';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-
-            // Special Weapon
-        case 0x056: // Decoy Gidbinn
-            strcode[0] = 'd';
-            strcode[1] = '3';
-            strcode[2] = '3';
-            strcode[3] = 0x20;
-            return true;
-        case 0x057: // The Gidbinn
-            strcode[0] = 'g';
-            strcode[1] = '3';
-            strcode[2] = '3';
-            strcode[3] = 0x20;
-            return true;
-        case 0x058: // Wirt's Leg
-            strcode[0] = 'l';
-            strcode[1] = 'e';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x059: // Horadric Malus
-            strcode[0] = 'h';
-            strcode[1] = 'd';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05A: // Hellforge Hammer
-            strcode[0] = 'h';
-            strcode[1] = 'f';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05B: // Horadric Staff
-            strcode[0] = 'h';
-            strcode[1] = 's';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x05C: // Shaft of the Horadric Staff
-            strcode[0] = 'm';
-            strcode[1] = 's';
-            strcode[2] = 'f';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0AD: // Khalim's Flail
-            strcode[0] = 'q';
-            strcode[1] = 'f';
-            strcode[2] = '1';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0AE: // Khalim's Will
-            strcode[0] = 'q';
-            strcode[1] = 'f';
-            strcode[2] = '2';
-            strcode[3] = 0x20;
-            return true;
-
-            // Helm
-        case 0x0AF: // Cap
-            strcode[0] = 'c';
-            strcode[1] = 'a';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B0: // Skull Cap
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B1: // Helm
-            strcode[0] = 'h';
-            strcode[1] = 'l';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B2: // Full Helm
-            strcode[0] = 'f';
-            strcode[1] = 'h';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B3: // Great Helm
-            strcode[0] = 'g';
-            strcode[1] = 'h';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B4: // Crown
-            strcode[0] = 'c';
-            strcode[1] = 'r';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B5: // Mask
-            strcode[0] = 'm';
-            strcode[1] = 's';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DA: // Bone Helm
-            strcode[0] = 'b';
-            strcode[1] = 'h';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DD: // War Hat
-            strcode[0] = 'x';
-            strcode[1] = 'a';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DE: // Sallet
-            strcode[0] = 'x';
-            strcode[1] = 'k';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DF: // Casque
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E0: // Basinet
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E1: // Winged Helm
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = 'm';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E2: // Grand Crown
-            strcode[0] = 'x';
-            strcode[1] = 'r';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E3: // Death Mask
-            strcode[0] = 'x';
-            strcode[1] = 's';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x108: // Grim Helm
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = '9';
-            strcode[3] = 0x20;
-            return true;
-
-            // Armor
-        case 0x0B6: // Quilted Armor
-            strcode[0] = 'q';
-            strcode[1] = 'u';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B7: // Leather Armor
-            strcode[0] = 'l';
-            strcode[1] = 'e';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B8: // Hard Leather Armor
-            strcode[0] = 'h';
-            strcode[1] = 'l';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0B9: // Studded Leather
-            strcode[0] = 's';
-            strcode[1] = 't';
-            strcode[2] = 'u';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BA: // Ring Mail
-            strcode[0] = 'r';
-            strcode[1] = 'n';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BB: // Scale Mail
-            strcode[0] = 's';
-            strcode[1] = 'c';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BC: // Chain Mail
-            strcode[0] = 'c';
-            strcode[1] = 'h';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BD: // Breast Plate
-            strcode[0] = 'b';
-            strcode[1] = 'r';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BE: // Splint Mail
-            strcode[0] = 's';
-            strcode[1] = 'p';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0BF: // Plate Mail
-            strcode[0] = 'p';
-            strcode[1] = 'l';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C0: // Field Plate
-            strcode[0] = 'f';
-            strcode[1] = 'l';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C1: // Gothic Plate
-            strcode[0] = 'g';
-            strcode[1] = 't';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C2: // Full Plate
-            strcode[0] = 'f';
-            strcode[1] = 'u';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C3: // Ancient Armor
-            strcode[0] = 'a';
-            strcode[1] = 'a';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C4: // Light Plate
-            strcode[0] = 'l';
-            strcode[1] = 't';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E4: // Ghost Armor
-            strcode[0] = 'x';
-            strcode[1] = 'u';
-            strcode[2] = 'i';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E5: // Serpent Skin Armor
-            strcode[0] = 'x';
-            strcode[1] = 'e';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E6: // Demonhide Armor
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 'a';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E7: // Trellised Armor
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 'u';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E8: // Linked Mail
-            strcode[0] = 'x';
-            strcode[1] = 'n';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0E9: // Tigulated Mail
-            strcode[0] = 'x';
-            strcode[1] = 'c';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0EA: // Mesh Armor
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0EB: // Cuirass
-            strcode[0] = 'x';
-            strcode[1] = 'r';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0EC: // Russet Armor
-            strcode[0] = 'x';
-            strcode[1] = 'p';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0ED: // Templar Coat
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0EE: // Sharktooth Armor
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0EF: // Embossed Plate
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F0: // Chaos Armor
-            strcode[0] = 'x';
-            strcode[1] = 'u';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F1: // Ornate Plate
-            strcode[0] = 'x';
-            strcode[1] = 'a';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F2: // Mage Plate
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-
-            // Shield
-        case 0x0C5: // Buckler
-            strcode[0] = 'b';
-            strcode[1] = 'u';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C6: // Small Shield
-            strcode[0] = 's';
-            strcode[1] = 'm';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C7: // Large Shield
-            strcode[0] = 'l';
-            strcode[1] = 'r';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C8: // Kite Shield
-            strcode[0] = 'k';
-            strcode[1] = 'i';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0C9: // Tower Shield
-            strcode[0] = 't';
-            strcode[1] = 'o';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0CA: // Gothic Shield
-            strcode[0] = 'g';
-            strcode[1] = 't';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DB: // Bone Shield
-            strcode[0] = 'b';
-            strcode[1] = 's';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0DC: // Spiked Shield
-            strcode[0] = 's';
-            strcode[1] = 'p';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F3: // Defender
-            strcode[0] = 'x';
-            strcode[1] = 'u';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F4: // Round Shield
-            strcode[0] = 'x';
-            strcode[1] = 'm';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F5: // Scutum
-            strcode[0] = 'x';
-            strcode[1] = 'r';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F6: // Dragon Shield
-            strcode[0] = 'x';
-            strcode[1] = 'i';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F7: // Pavise
-            strcode[0] = 'x';
-            strcode[1] = 'o';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F8: // Ancient Shield
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x109: // Grim Shield
-            strcode[0] = 'x';
-            strcode[1] = 's';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x10A: // Barbed Shield
-            strcode[0] = 'x';
-            strcode[1] = 'p';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-
-            // Gloves
-        case 0x0CB: // Leather Gloves
-            strcode[0] = 'l';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0CC: // Heavy Gloves
-            strcode[0] = 'v';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0CD: // Chain Glove
-            strcode[0] = 'm';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0CE: // Light Gauntlet
-            strcode[0] = 't';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0CF: // Gauntlets
-            strcode[0] = 'h';
-            strcode[1] = 'g';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0F9: // Demonhide Gloves
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FA: // Sharkskin Gloves
-            strcode[0] = 'x';
-            strcode[1] = 'v';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FB: // Heavy Bracers
-            strcode[0] = 'x';
-            strcode[1] = 'm';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FC: // Battle Gauntlets
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FD: // War Gauntlet
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-
-            // Boots
-        case 0x0D0: // Boots
-            strcode[0] = 'l';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D1: // Heavy Boots
-            strcode[0] = 'v';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D2: // Chain Boots
-            strcode[0] = 'm';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D3: // Light Plate
-            strcode[0] = 't';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D4: // Greaves
-            strcode[0] = 'h';
-            strcode[1] = 'b';
-            strcode[2] = 't';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FE: // Demonhide Boots
-            strcode[0] = 'x';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0FF: // Sharkskin Boots
-            strcode[0] = 'x';
-            strcode[1] = 'v';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x100: // Mesh Boots
-            strcode[0] = 'x';
-            strcode[1] = 'm';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x101: // Battle Boots
-            strcode[0] = 'x';
-            strcode[1] = 't';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x102: // War Boots
-            strcode[0] = 'x';
-            strcode[1] = 'h';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-
-            // Belt
-        case 0x0D5: // Sash
-            strcode[0] = 'l';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D6: // Light Belt
-            strcode[0] = 'v';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D7: // Belt
-            strcode[0] = 'm';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D8: // Heavy Belt
-            strcode[0] = 't';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x0D9: // Plated Belt
-            strcode[0] = 'h';
-            strcode[1] = 'b';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-        case 0x103: // Demonhide Sash
-            strcode[0] = 'z';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x104: // Sharkskin Belt
-            strcode[0] = 'z';
-            strcode[1] = 'v';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x105: // Mesh Belt
-            strcode[0] = 'z';
-            strcode[1] = 'm';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x106: // Battle Belt
-            strcode[0] = 'z';
-            strcode[1] = 't';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x107: // War Belt
-            strcode[0] = 'z';
-            strcode[1] = 'h';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x10B: // Elixer of Vitality
-            strcode[0] = 'e';
-            strcode[1] = 'l';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x110: // Stamina Potion
-            strcode[0] = 'v';
-            strcode[1] = 'p';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x111: // Antidote Potion
-            strcode[0] = 'y';
-            strcode[1] = 'p';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x112: // regular rejuvenation potion
-            strcode[0] = 'r';
-            strcode[1] = 'v';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x113: // full rejuvenation potion
-            strcode[0] = 'r';
-            strcode[1] = 'v';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x114: // thawing potion
-            strcode[0] = 'w';
-            strcode[1] = 'm';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x115: // Tome of Town Portal
-            strcode[0] = 't';
-            strcode[1] = 'b';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-        case 0x116: // Tome of Identify
-            strcode[0] = 't';
-            strcode[1] = 'b';
-            strcode[2] = 'k';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x117: // Amulet
-            strcode[0] = 'a';
-            strcode[1] = 'm';
-            strcode[2] = 'u';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x118: // Viper Amulet
-            strcode[0] = 'v';
-            strcode[1] = 'i';
-            strcode[2] = 'p';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x119: // Ring
-            strcode[0] = 'r';
-            strcode[1] = 'i';
-            strcode[2] = 'n';
-            strcode[3] = 0x20;
-
-        case 0x11B: // Scroll of Inifuss
-            strcode[0] = 'b';
-            strcode[1] = 'k';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x11C: // Key to the Cairn Stones
-            strcode[0] = 'b';
-            strcode[1] = 'k';
-            strcode[2] = 'd';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x11D: // Arrows
-            strcode[0] = 'a';
-            strcode[1] = 'q';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x11E: // Torch
-            strcode[0] = 't';
-            strcode[1] = 'c';
-            strcode[2] = 'h';
-            strcode[3] = 0x20;
-            return true;
-        case 0x11F: // Bolts
-            strcode[0] = 'c';
-            strcode[1] = 'q';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x120: // Scroll of Town Portal
-            strcode[0] = 't';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-        case 0x121: // Scroll of Identify
-            strcode[0] = 'i';
-            strcode[1] = 's';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x12E: // Key
-            strcode[0] = 'k';
-            strcode[1] = 'e';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x130: // Potion of Life
-            strcode[0] = 'x';
-            strcode[1] = 'y';
-            strcode[2] = 'z';
-            strcode[3] = 0x20;
-            return true;
-        case 0x131: // Jade Figurine
-            strcode[0] = 'j';
-            strcode[1] = '3';
-            strcode[2] = '4';
-            strcode[3] = 0x20;
-            return true;
-        case 0x132: // The Golden Bird
-            strcode[0] = 'g';
-            strcode[1] = '3';
-            strcode[2] = '4';
-            strcode[3] = 0x20;
-            return true;
-        case 0x133: // Lam Esen's Tome
-            strcode[0] = 'b';
-            strcode[1] = 'b';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x134: // Horadric Cube
-            strcode[0] = 'b';
-            strcode[1] = '0';
-            strcode[2] = 'x';
-            strcode[3] = 0x20;
-            return true;
-        case 0x135: // Horadric Scroll
-            strcode[0] = 't';
-            strcode[1] = 'r';
-            strcode[2] = '1';
-            strcode[3] = 0x20;
-            return true;
-        case 0x136: // Mephisto's Soulstone
-            strcode[0] = 'm';
-            strcode[1] = 's';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x137: // Book of Skill
-            strcode[0] = 'a';
-            strcode[1] = 's';
-            strcode[2] = 's';
-            strcode[3] = 0x20;
-            return true;
-        case 0x138: // Khalim's Eye
-            strcode[0] = 'q';
-            strcode[1] = 'e';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x139: // Khalim's Heart
-            strcode[0] = 'q';
-            strcode[1] = 'h';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x13A: // Khalim's Brain
-            strcode[0] = 'q';
-            strcode[1] = 'b';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x13B: // Ear
-            strcode[0] = 'e';
-            strcode[1] = 'a';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x13C: // chipped amethyst
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x13D: // flawed amethyst
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x113E: // regular amethyst
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-        case 0x113F: // flawless amethyst
-            strcode[0] = 'g';
-            strcode[1] = 'z';
-            strcode[2] = 'v';
-            return true;
-        case 0x140: // perfect amethyst
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'v';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x141: // chipped topaz
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x142: // flawed topaz
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x143: // regular topaz
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x144: // flawless topaz
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-        case 0x145: // perfect topaz
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'y';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x146: // chipped sapphire
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x147: // flawed sapphire
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x148: // regular sapphire
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-        case 0x149: // flawless sapphire
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            break;
-        case 0x114A: // perfect sapphire
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'b';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x114B: // chipped emerald
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            break;
-        case 0x114C: // flawed emerald
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x114D: // regular emerald
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x114E: // flawless emerald
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-        case 0x114F: // perfect emerald
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'g';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x150: // chipped ruby
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x151: // flawed ruby
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x152: // regular ruby
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x153: // flawless ruby
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-        case 0x154: // perfect ruby
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'r';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x155: // chipped diamond
-            strcode[0] = 'g';
-            strcode[1] = 'c';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x156: // flawed diamond
-            strcode[0] = 'g';
-            strcode[1] = 'f';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x157: // regular diamond
-            strcode[0] = 'g';
-            strcode[1] = 's';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x158: // flawless diamond
-            strcode[0] = 'g';
-            strcode[1] = 'l';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-        case 0x159: // perfect diamond
-            strcode[0] = 'g';
-            strcode[1] = 'p';
-            strcode[2] = 'w';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x115A: // minor healing potion
-            strcode[0] = 'h';
-            strcode[1] = 'p';
-            strcode[2] = '1';
-            strcode[3] = 0x20;
-            return true;
-        case 0x115B: // light healing potion
-            strcode[0] = 'h';
-            strcode[1] = 'p';
-            strcode[2] = '2';
-            strcode[3] = 0x20;
-            break;
-        case 0x115C: // regular healing potion
-            strcode[0] = 'h';
-            strcode[1] = 'p';
-            strcode[2] = '3';
-            strcode[3] = 0x20;
-            return true;
-        case 0x115D: // Greater healing potion
-            strcode[0] = 'h';
-            strcode[1] = 'p';
-            strcode[2] = '4';
-            strcode[3] = 0x20;
-            return true;
-        case 0x115E: // Super healing potion
-            strcode[0] = 'h';
-            strcode[1] = 'p';
-            strcode[2] = '5';
-            return true;
-
-        case 0x115F: // minor mana potion
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = '1';
-            strcode[3] = 0x20;
-            break;
-        case 0x160: // light mana potion
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = '2';
-            strcode[3] = 0x20;
-            return true;
-        case 0x161: // regular mana potion
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = '3';
-            strcode[3] = 0x20;
-            return true;
-        case 0x162: // Greater mana potion
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = '4';
-            strcode[3] = 0x20;
-            return true;
-        case 0x163: // Super mana potion
-            strcode[0] = 'm';
-            strcode[1] = 'p';
-            strcode[2] = '5';
-            strcode[3] = 0x20;
-            return true;
-
-        case 0x164: // chipped skull
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'c';
-            strcode[3] = 0x20;
-            return true;
-        case 0x165: // flawed skull
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'f';
-            strcode[3] = 0x20;
-            return true;
-        case 0x166: // regular skull
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'u';
-            strcode[3] = 0x20;
-            return true;
-        case 0x167: // flawless skull
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'l';
-            strcode[3] = 0x20;
-            break;
-        case 0x168: // perfect skull
-            strcode[0] = 's';
-            strcode[1] = 'k';
-            strcode[2] = 'z';
-            strcode[3] = 0x20;
-            return true;
-        }  // end switch
-        return false;
+        return getItemCodev100(data, type_code_offset, strcode);
 
     case EnumItemVersion::v104: // v1.04 - v1.06
         strcode[0] = std::uint8_t(read_uint32_bits(type_code_offset, 8));
@@ -9869,7 +10616,7 @@ bool d2ce::Item::getItemCode(std::uint8_t(&strcode)[4]) const
 //---------------------------------------------------------------------------
 d2ce::EnumItemType d2ce::Item::getItemType() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         return getEnumItemTypeFromCode(strcode);
@@ -9881,7 +10628,7 @@ d2ce::EnumItemType d2ce::Item::getItemType() const
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getItemTypeName() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -9891,7 +10638,7 @@ std::string d2ce::Item::getItemTypeName() const
     return "";
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::updateGem(const std::uint8_t(&newgem)[4])
+bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
 {
     if (isEar())
     {
@@ -10228,14 +10975,14 @@ bool d2ce::Item::updateGem(const std::uint8_t(&newgem)[4])
         return false;
 
     case EnumItemVersion::v104: // v1.04 - v1.06
-        code = *((std::uint32_t*)newgem);
+        code = *((std::uint32_t*)newgem.data());
         updateBits64(type_code_offset, 30, code);
         return true;
 
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
     case EnumItemVersion::v110: // v1.10 normal or expansion
-        code = *((std::uint32_t*)newgem);
+        code = *((std::uint32_t*)newgem.data());
         updateBits64(type_code_offset, 32, code);
         if (isPotion)
         {
@@ -10270,7 +11017,7 @@ bool d2ce::Item::updateGem(const std::uint8_t(&newgem)[4])
 */
 bool d2ce::Item::upgradeGem()
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     std::uint8_t& gem = strcode[0];
     std::uint8_t& gemcondition = strcode[1];
     std::uint8_t& gemcolour = strcode[2];
@@ -10340,7 +11087,7 @@ bool d2ce::Item::upgradeGem()
 */
 bool d2ce::Item::upgradePotion()
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     std::uint8_t& gem = strcode[0];
     std::uint8_t& gemcondition = strcode[1];
     std::uint8_t& gemcolour = strcode[2];
@@ -10376,7 +11123,7 @@ bool d2ce::Item::upgradePotion()
 */
 bool d2ce::Item::upgradeToFullRejuvenationPotion()
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     std::uint8_t& gem = strcode[0];
     std::uint8_t& gemcondition = strcode[1];
     std::uint8_t& gemcolour = strcode[2];
@@ -10444,7 +11191,7 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     currentOffset += 7;
 
     // up to 15 7 bit characters
-    std::memset(attrib.Name, 0, sizeof(attrib.Name));
+    attrib.Name.fill(0);
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
@@ -10463,11 +11210,32 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
 bool d2ce::Item::getRequirements(ItemRequirements& req) const
 {
     req.clear();
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
         req = result.req;
+
+        d2ce::SetAttributes setAttrib;
+        d2ce::UniqueAttributes uniqueAttrib;
+        switch (getQuality())
+        {
+        case EnumItemQuality::SET:
+            getSetAttributes(setAttrib);
+            if (setAttrib.ReqLevel != 0)
+            {
+                req.Level = setAttrib.ReqLevel;
+            }
+            break;
+
+        case EnumItemQuality::UNIQUE:
+            getUniqueAttributes(uniqueAttrib);
+            if (uniqueAttrib.ReqLevel != 0)
+            {
+                req.Level = uniqueAttrib.ReqLevel;
+            }
+            break;
+        }
         return true;
     }
 
@@ -10477,7 +11245,7 @@ bool d2ce::Item::getRequirements(ItemRequirements& req) const
 bool d2ce::Item::getCategories(std::vector<std::string>& categories) const
 {
     categories.clear();
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -10491,7 +11259,7 @@ bool d2ce::Item::getCategories(std::vector<std::string>& categories) const
 bool d2ce::Item::getDimensions(ItemDimensions& dimensions) const
 {
     dimensions.clear();
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -10520,7 +11288,7 @@ std::string d2ce::Item::getInvFile() const
         return "invear";
     }
 
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -10714,8 +11482,8 @@ std::string d2ce::Item::getPersonalizedName() const
 
     // up to 15 7 bit characters
     size_t currentOffset = personalized_bit_offset;
-    char name[NAME_LENGTH];
-    std::memset(name, 0, sizeof(name));
+    std::array<char, NAME_LENGTH> name;
+    name.fill(0);
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
@@ -10728,7 +11496,7 @@ std::string d2ce::Item::getPersonalizedName() const
         currentOffset += 7;
     }
 
-    return name;
+    return name.data();
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getTomeValue() const
@@ -10760,6 +11528,7 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
 
     attrib.Id = (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, 5);
     attrib.Name = getSetNameFromId(attrib.Id);
+    attrib.ReqLevel = getSetLevelReqFromId(attrib.Id);
     if (bonus_bits_bit_offset == 0)
     {
         return false;
@@ -10867,6 +11636,7 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
 
     attrib.Id = (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, 12);
     attrib.Name = getUniqueNameFromId(attrib.Id);
+    attrib.ReqLevel = getUniqueLevelReqFromId(attrib.Id);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -11050,7 +11820,7 @@ bool d2ce::Item::isArmor() const
     }
 
     std::uint8_t base = 0;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         base = getItemBase(strcode);
@@ -11067,7 +11837,7 @@ bool d2ce::Item::isWeapon() const
     }
 
     std::uint8_t base = 0;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         base = getItemBase(strcode);
@@ -11084,7 +11854,7 @@ bool d2ce::Item::isTome() const
     }
 
     std::uint8_t base = 0;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         base = getItemBase(strcode);
@@ -11101,7 +11871,7 @@ bool d2ce::Item::isStackable() const
     }
 
     std::uint8_t base = 0;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         base = getItemBase(strcode);
@@ -11112,7 +11882,7 @@ bool d2ce::Item::isStackable() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isPotion() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11129,7 +11899,7 @@ bool d2ce::Item::isPotion() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isGem() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11141,7 +11911,7 @@ bool d2ce::Item::isGem() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradableGem() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11153,7 +11923,7 @@ bool d2ce::Item::isUpgradableGem() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradablePotion() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11165,7 +11935,7 @@ bool d2ce::Item::isUpgradablePotion() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradableToFullRejuvenationPotion() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11177,7 +11947,7 @@ bool d2ce::Item::isUpgradableToFullRejuvenationPotion() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRune() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11189,7 +11959,7 @@ bool d2ce::Item::isRune() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isJewel() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11201,7 +11971,7 @@ bool d2ce::Item::isJewel() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isCharm() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11213,7 +11983,7 @@ bool d2ce::Item::isCharm() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isBelt() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11225,7 +11995,7 @@ bool d2ce::Item::isBelt() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isHoradricCube() const
 {
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         if (strcode[0] == 'b' && strcode[1] == 'o' && strcode[2] == 'x')
@@ -11256,7 +12026,7 @@ std::uint16_t d2ce::Item::getQuantity() const
 
     if (gld_stackable_bit_offset != 0)
     {
-        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 11);
+        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 12);
     }
 
     return (std::uint8_t)read_uint32_bits(stackable_bit_offset, 9);
@@ -11269,7 +12039,7 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
         return false;
     }
 
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     std::uint8_t& gem = strcode[0];
     std::uint8_t& gemcondition = strcode[1];
     std::uint8_t& gemcolour = strcode[2];
@@ -11415,7 +12185,7 @@ bool d2ce::Item::getDamage(ItemDamage& damage) const
 {
     damage.clear();
 
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     if (getItemCode(strcode))
     {
         const auto& result = getItemTypeHelper(strcode);
@@ -11447,7 +12217,7 @@ std::string d2ce::Item::getDisplayedItemName() const
     EarAttributes earAttrib;
     if (getEarAttributes(earAttrib))
     {
-        ss << earAttrib.getName() << "'s Ear\n" << earAttrib.getClassName() << "\nLevel " << std::dec << earAttrib.getLevel();
+        ss << earAttrib.getName().data() << "'s Ear\n" << earAttrib.getClassName() << "\nLevel " << std::dec << earAttrib.getLevel();
         return ss.str();
     }
 
@@ -11824,7 +12594,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         return "";
     }
 
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     getItemCode(strcode);
     const auto& itemType = getItemTypeHelper(strcode);
     if (itemType.isPotion())
@@ -12084,20 +12854,13 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         ss << "Durability: " << std::dec << durability.Current << " of " << std::dec << durability.Max;
     }
 
-    if (itemType.req.Dexterity > 0)
+    ItemRequirements req;
+    if (!getRequirements(req))
     {
-        if (bFirst)
-        {
-            bFirst = false;
-        }
-        else
-        {
-            ss << "\n";
-        }
-        ss << "Required Dexterity: " << std::dec << itemType.req.Dexterity;
+        req = itemType.req;
     }
 
-    if (itemType.req.Strength > 0)
+    if (req.Dexterity > 0)
     {
         if (bFirst)
         {
@@ -12107,10 +12870,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Required Strength: " << std::dec << itemType.req.Strength;
+        ss << "Required Dexterity: " << std::dec << req.Dexterity;
     }
 
-    if (itemType.req.Level > 0)
+    if (req.Strength > 0)
     {
         if (bFirst)
         {
@@ -12120,7 +12883,20 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Required Level: " << std::dec << itemType.req.Level;
+        ss << "Required Strength: " << std::dec << req.Strength;
+    }
+
+    if (req.Level > 0)
+    {
+        if (bFirst)
+        {
+            bFirst = false;
+        }
+        else
+        {
+            ss << "\n";
+        }
+        ss << "Required Level: " << std::dec << req.Level;
     }
 
     return ss.str();
@@ -12231,6 +13007,44 @@ bool d2ce::Item::skipBits(std::FILE* charfile, size_t& current_bit_offset, size_
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::setBits(size_t& current_bit_offset, size_t bits, std::uint32_t value)
+{
+    size_t readOffset = current_bit_offset;
+    if (bits > 32)
+    {
+        return false;
+    }
+
+    size_t bytesRequired = (current_bit_offset + bits + 7) / 8;
+    std::uint8_t byte = 0;
+    while (data.size() < bytesRequired)
+    {
+        data.push_back(byte);
+    }
+
+    current_bit_offset += bits;
+    return updateBits(readOffset, bits, value);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setBits64(size_t& current_bit_offset, size_t bits, std::uint64_t value)
+{
+    size_t readOffset = current_bit_offset;
+    if (bits > 64)
+    {
+        return false;
+    }
+
+    size_t bytesRequired = (current_bit_offset + bits + 7) / 8;
+    std::uint8_t byte = 0;
+    while (data.size() < bytesRequired)
+    {
+        data.push_back(byte);
+    }
+
+    current_bit_offset += bits;
+    return updateBits64(readOffset, bits, value);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 {
     FileVersion = version;
@@ -12333,7 +13147,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             return false;
         }
 
-        // position x/y
+        // alt position
         alt_position_id_offset = current_bit_offset;
         if (!skipBits(charfile, current_bit_offset, 3))
         {
@@ -12353,27 +13167,25 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             item_end_bit_offset = current_bit_offset;
             return true;
         }
-        else
-        {
-            for (size_t i = 0; i < 4; ++i)
-            {
-                if (getEncodedChar(charfile, current_bit_offset) == 0xFF)
-                {
-                    return false;
-                }
-            }
 
-            extended_data_offset = current_bit_offset;
-            if (!skipBits(charfile, current_bit_offset, isSimpleItem() ? 1 : 3))
+        for (size_t i = 0; i < 4; ++i)
+        {
+            if (getEncodedChar(charfile, current_bit_offset) == 0xFF)
             {
                 return false;
             }
+        }
+
+        extended_data_offset = current_bit_offset;
+        if (!skipBits(charfile, current_bit_offset, isSimpleItem() ? 1 : 3))
+        {
+            return false;
         }
     }
 
     quest_difficulty_offset = 0;
     gld_stackable_bit_offset = 0;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     getItemCode(strcode);
     const auto& itemType = getItemTypeHelper(strcode);
     if (isSimpleItem())
@@ -12715,6 +13527,1580 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumCharVersion version)
+{
+    if (itemRoot.isNull())
+    {
+        return false;
+    }
+
+    FileVersion = version;
+    data.clear();
+    SocketedItems.clear();
+
+    // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80
+    data.reserve(80);
+
+    Json::Value node;
+    std::uint16_t rawVersion = 0;
+    EnumItemVersion calcVersion = EnumItemVersion::v115;
+    std::uint32_t value = 0;
+    std::uint64_t value64 = 0;
+    start_bit_offset = 0;
+    size_t current_bit_offset = start_bit_offset;
+    size_t max_bit_offset = current_bit_offset;
+
+    bool bIsCompact = false;
+    node = itemRoot[bSerializedFormat ? "IsCompact" : "simple_item"];
+    if (!node.isNull())
+    {
+        if (node.isBool())
+        {
+            bIsCompact = node.asBool();
+        }
+        else
+        {
+            bIsCompact = (std::uint16_t(node.asInt64()) != 0 ? true : false);
+        }
+    }
+
+    bool bIsSocketed = false;
+    node = itemRoot[bSerializedFormat ? "IsSocketed" : "socketed"];
+    if (!node.isNull())
+    {
+        if (node.isBool())
+        {
+            bIsSocketed = node.asBool();
+        }
+        else
+        {
+            bIsSocketed = (std::uint16_t(node.asInt64()) != 0 ? true : false);
+        }
+    }
+
+    if (FileVersion < EnumCharVersion::v115)
+    {
+        value = *((std::uint16_t*)ITEM_MARKER.data());
+        setBits(current_bit_offset, ITEM_MARKER.size()*8, value);
+        start_bit_offset = current_bit_offset;
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        node = itemRoot[bSerializedFormat ? "Version" : "version"];
+        if (node.isNull())
+        {
+            if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
+            {
+                rawVersion = 0;
+            }
+            else if (FileVersion == EnumCharVersion::v107) // pre-1.07 character file
+            {
+                rawVersion = 0;
+                calcVersion = EnumItemVersion::v107;         // v1.07 item
+            }
+            else if (FileVersion < EnumCharVersion::v110) // pre-1.10 character file
+            {
+                rawVersion = 100;
+                calcVersion = EnumItemVersion::v108; // v1.08/1.09 normal or expansion
+            }
+            else
+            {
+                rawVersion = 2;
+                calcVersion = EnumItemVersion::v110; // v1.10 normal or expansion
+            }
+        }
+        else
+        {
+            rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 10)) : std::uint16_t(node.asInt64());
+            switch (rawVersion)
+            {
+            case 0:
+                if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
+                {
+                    if (bIsCompact)
+                    {
+                        calcVersion = EnumItemVersion::v100; // v1.00 - v1.03
+                    }
+                    else
+                    {
+                        calcVersion = EnumItemVersion::v104;     // v1.04 - v1.06 item
+                    }
+                }
+                else
+                {
+                    calcVersion = EnumItemVersion::v107;         // v1.07 item
+                }
+                break;
+
+            case 1:
+            case 100:
+                calcVersion = EnumItemVersion::v108;         // v1.08/1.09 normal or expansion
+                break;
+
+            case 2:
+            case 101:
+                calcVersion = EnumItemVersion::v110;         // v1.10 normal or expansion
+                break;
+
+            default:
+                return false;
+            }
+        }
+    }
+    else
+    {
+        rawVersion = 5;
+        node = itemRoot[bSerializedFormat ? "Version" : "version"];
+        if (!node.isNull())
+        {
+            rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 2)) : std::uint16_t(node.asInt64());
+        }
+        calcVersion = EnumItemVersion::v115;  // v1.15 Diable II: Resurrected
+    }
+
+    // flags
+    std::bitset<32> flags = 0;
+    node = itemRoot[bSerializedFormat ? "IsIdentified" : "identified"];
+    SetFlagBit(node, 4, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsSocketed" : "socketed"];
+    SetFlagBit(node, 11, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsNew" : "new"];
+    SetFlagBit(node, 13, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsEar" : "is_ear"];
+    SetFlagBit(node, 16, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsStarterItem" : "starter_item"];
+    SetFlagBit(node, 17, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsCompact" : "simple_item"];
+    SetFlagBit(node, 21, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsEthereal" : "ethereal"];
+    SetFlagBit(node, 22, flags);
+
+    flags[23] = 1; // unknown but always one as far as I have noticed
+
+    node = itemRoot[bSerializedFormat ? "IsPersonalized" : "personalized"];
+    SetFlagBit(node, 24, flags);
+
+    node = itemRoot[bSerializedFormat ? "IsRuneword" : "given_runeword"];
+    SetFlagBit(node, 26, flags);
+
+    is_potion_bit_offset = start_bit_offset + 10;
+    if (!bSerializedFormat)
+    {
+        Json::Value unknowns = itemRoot["_unknown_data"];
+        if (!unknowns.isNull())
+        {
+            struct byteRange
+            {
+                size_t startIdx = 0;
+                size_t endIdx = 0;
+            };
+            static std::vector<byteRange> unknowns_range = { {0,3},{5,10},{12,12},{14,15},{18,20},{23,23},{25,25},{27,31} };
+
+            size_t bitNum = 0;
+            Json::Value unknownData;
+            for (const auto& byteInfo : unknowns_range)
+            {
+                std::stringstream ss;
+                ss << "b" << std::dec << byteInfo.startIdx;
+                if (byteInfo.endIdx > byteInfo.startIdx)
+                {
+                    ss << "_" << std::dec << byteInfo.endIdx;;
+                }
+
+                node = itemRoot[ss.str()];
+                if (node.isNull())
+                {
+                    continue;
+                }
+
+                bitNum = byteInfo.startIdx;
+                auto iter_end = node.end();
+                for (auto iter = node.begin(); iter != iter_end; ++iter)
+                {
+                    if (iter->isNull())
+                    {
+                        continue;
+                    }
+
+                    bitNum += size_t(std::stoi(iter.name()));
+                    SetFlagBit(node, bitNum, flags);
+
+                }
+            }
+        }
+    }
+
+    value = flags.to_ulong();
+    if (!setBits(current_bit_offset, flags.size(), value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    value = rawVersion;
+    size_t bitSize = (FileVersion < EnumCharVersion::v115 ? 10 : 3);
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    bitSize = 3;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        location_bit_offset = start_bit_offset + 62;
+        bitSize = 2;
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        location_bit_offset = start_bit_offset + 50;
+        bitSize = 8;
+        break;
+
+    default: // v1.07+
+        location_bit_offset = current_bit_offset;
+        bitSize = 3;
+        break;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    current_bit_offset = location_bit_offset;
+    value = std::uint16_t(node.asInt64());
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    bitSize = 4;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        equipped_id_offset = start_bit_offset + 32;
+        break;
+
+    default: // v1.04+
+        equipped_id_offset = current_bit_offset;
+        break;
+    }
+
+    // if not equipped, equipped_id could be missing
+    current_bit_offset = equipped_id_offset;
+    value = 0;
+    node = itemRoot[bSerializedFormat ? "Location" : "equipped_id"];
+    if (!node.isNull())
+    {
+        value = std::uint16_t(node.asInt64());
+    }
+
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    // position x/y
+    bitSize = 4;
+    bool isBeltLocation = false;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        position_offset = start_bit_offset + 113;
+        if (static_cast<EnumItemLocation>((std::uint8_t)read_uint32_bits(location_bit_offset, 2)) == EnumItemLocation::BELT)
+        {
+            isBeltLocation = true;
+            bitSize = 2;
+        }
+        else
+        {
+            bitSize = 5;
+        }
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        bitSize = 5;
+        position_offset = start_bit_offset + 121;
+        break;
+
+    default: // v1.07+
+        position_offset = current_bit_offset;
+        bitSize = 4;
+        break;
+    }
+
+    node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    current_bit_offset = position_offset;
+    value = std::uint16_t(node.asInt64());
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        bitSize = 2;
+        break;
+
+    default: // v1.07+
+        bitSize = 4;
+        break;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint16_t(node.asInt64());
+    if ((calcVersion == EnumItemVersion::v100) && isBeltLocation)
+    {
+        value += 3;
+    }
+
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    // alt position x/y
+    bitSize = 3;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        alt_position_id_offset = start_bit_offset + 14;
+        bitSize = 4;
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        alt_position_id_offset = start_bit_offset + 74;
+        bitSize = 4;
+        break;
+
+    default: // v1.07+
+        alt_position_id_offset = current_bit_offset;
+        bitSize = 3;
+        break;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    current_bit_offset = alt_position_id_offset;
+    value = std::uint16_t(node.asInt64());
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    // type code
+    bitSize = 3;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        type_code_offset = start_bit_offset + 52;
+        bitSize = 10;
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        type_code_offset = start_bit_offset + 66;
+        bitSize = 30;
+        break;
+
+    default: // v1.07+
+        type_code_offset = current_bit_offset;
+        bitSize = 32;
+        break;
+    }
+
+    if (isEar())
+    {
+        Json::Value earRoot = bSerializedFormat ? itemRoot : itemRoot["ear_attributes"];
+        if (earRoot.isNull())
+        {
+            return false;
+        }
+
+        EarAttributes earAttrib;
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        if (bSerializedFormat)
+        {
+            value = std::uint32_t(node.asInt64());
+            if (value > std::uint8_t(NUM_OF_CLASSES))
+            {
+                return false;
+            }
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+        else
+        {
+            bool bFound = false;
+            std::string className = node.asString();
+            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES); ++idx)
+            {
+                if (ClassNames[idx].compare(className) == 0)
+                {
+                    bFound = true;
+                    value = idx;
+                    break;
+                }
+            }
+
+            if (!bFound)
+            {
+                return false;
+            }
+
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+
+        node = earRoot[bSerializedFormat ? "EarLevel" : "level"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        earAttrib.Level = std::uint32_t(node.asInt64());
+
+        node = earRoot[bSerializedFormat ? "PlayerName" : "name"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // Check Name
+        // Remove any invalid characters from the number
+        if (!ProcessNameNode(node, earAttrib.Name))
+        {
+            return false;
+        }
+
+        current_bit_offset = type_code_offset;
+        if (!setBits(current_bit_offset, 3, std::uint32_t(earAttrib.Class)))
+        {
+            return false;
+        }
+
+        if (!setBits(current_bit_offset, 7, earAttrib.Level))
+        {
+            return false;
+        }
+
+        // up to 15 7 bit characters
+        for (size_t idx = 0; idx < 15; ++idx)
+        {
+            if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
+            {
+                return false;
+            }
+
+            if (earAttrib.Name[idx] == 0)
+            {
+                break;
+            }
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        item_end_bit_offset = max_bit_offset;
+        return true;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Code" : "type"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    std::string sValue = node.asString();
+    if (sValue.size() < 3)
+    {
+        return false;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    std::memcpy(strcode.data(), sValue.c_str(), 3);
+    std::uint8_t numBitsSet = 0;
+
+    current_bit_offset = type_code_offset;
+    switch (calcVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+        value = getTypeCodeV100(strcode);
+        if (value >= 0xFFFF)
+        {
+            return false;
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.0.6
+    case EnumItemVersion::v107: // v1.07
+    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
+    case EnumItemVersion::v110: // v1.10
+        value = *((std::uint32_t*)strcode.data());
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    default: // v1.15+
+        encodeItemCodev115(strcode, value64, numBitsSet);
+        bitSize = numBitsSet;
+        if (!setBits64(current_bit_offset, bitSize, value64))
+        {
+            return false;
+        }
+        break;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    extended_data_offset = max_bit_offset;
+
+    current_bit_offset = extended_data_offset;
+    value = 0;
+    bitSize = bIsCompact ? 1 : 3;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    quest_difficulty_offset = 0;
+    gld_stackable_bit_offset = 0;
+    const auto& itemType = getItemTypeHelper(strcode);
+    if (bIsCompact)
+    {
+        if (itemType.isGoldItem())
+        {
+            // Is this correct for gld items? It's not currently used, so is it even needed?
+            gld_stackable_bit_offset = extended_data_offset + 1;
+
+            node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+            if (node.isNull())
+            {
+                return false;
+            }
+            // can hold up to 4095 gold pieces
+            value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
+            bitSize = 12;
+            current_bit_offset = gld_stackable_bit_offset;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            nr_of_items_in_sockets_offset = current_bit_offset;
+            nr_of_items_in_sockets_bits = 1;
+        }
+        else
+        {
+            nr_of_items_in_sockets_offset = extended_data_offset;
+            nr_of_items_in_sockets_bits = 1;
+            if (itemType.isQuestItem())
+            {
+                quest_difficulty_offset = extended_data_offset;
+                nr_of_items_in_sockets_offset = quest_difficulty_offset + 2;
+                nr_of_items_in_sockets_bits = 1;
+
+                value = 0;
+                bitSize = 2;
+                node = itemRoot[bSerializedFormat ? "QuestDifficulty" : "quest_difficulty"];
+                if (!node.isNull())
+                {
+                    // can hold up to 4095 gold pieces
+                    value = std::uint32_t(node.asInt64());
+                }
+
+                current_bit_offset = quest_difficulty_offset;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+        }
+
+        item_end_bit_offset = current_bit_offset;
+        return true;
+    }
+    else if (itemType.isQuestItem())
+    {
+        quest_difficulty_offset = extended_data_offset;
+        nr_of_items_in_sockets_offset = quest_difficulty_offset + 2;
+        nr_of_items_in_sockets_bits = 1;
+
+        value = 0;
+        bitSize = 2;
+        node = itemRoot[bSerializedFormat ? "QuestDifficulty" : "quest_difficulty"];
+        if (!node.isNull())
+        {
+            value = std::uint32_t(node.asInt64());
+        }
+
+        current_bit_offset = quest_difficulty_offset;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+    else
+    {
+        nr_of_items_in_sockets_offset = extended_data_offset;
+        nr_of_items_in_sockets_bits = 3;
+    }
+
+    value = 0;
+    bitSize = nr_of_items_in_sockets_bits;
+    node = itemRoot[bSerializedFormat ? "NumberOfSocketedItems" : "nr_of_items_in_sockets"];
+    if (!node.isNull())
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+    std::uint8_t numSocketed = std::uint8_t(value);
+
+    current_bit_offset = nr_of_items_in_sockets_offset;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    item_id_bit_offset = current_bit_offset;
+    node = itemRoot[bSerializedFormat ? "Id" : "id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint32_t(node.asInt64());
+    bitSize = 32;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    item_level_bit_offset = current_bit_offset;
+    node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint32_t(node.asInt64());
+    bitSize = 7;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    quality_bit_offset = current_bit_offset;
+    node = itemRoot[bSerializedFormat ? "Quality" : "quality"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint32_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
+    {
+        return false;
+    }
+
+    auto quality = static_cast<EnumItemQuality>(value);
+    bitSize = 4;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    // If this is TRUE, it means the item has more than one picture associated with it.
+    multi_graphic_bit_offset = current_bit_offset;
+    value = 0;
+    bitSize = 1;
+    node = itemRoot[bSerializedFormat ? "HasMultipleGraphics" : "multiple_pictures"];
+    if (!node.isNull())
+    {
+        if (node.isBool())
+        {
+            value = (node.asBool() ? 1 : 0);
+        }
+        else
+        {
+            value = (std::uint16_t(node.asInt64()) != 0 ? 1 : 0);
+        }
+    }
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    if (value != 0)
+    {
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "GraphicId" : "picture_id"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // If this is TRUE, it means the item is class specific.
+    autoAffix_bit_offset = current_bit_offset;
+    value = 0;
+    bitSize = 1;
+    node = itemRoot[bSerializedFormat ? "IsAutoAffix" : "class_specific"];
+    if (!node.isNull())
+    {
+        if (node.isBool())
+        {
+            value = (node.asBool() ? 1 : 0);
+        }
+        else
+        {
+            value = (std::uint16_t(node.asInt64()) != 0 ? 1 : 0);
+        }
+    }
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    if (value != 0)
+    {
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "AutoAffixId" : "auto_affix_id"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        bitSize = 11;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    quality_attrib_bit_offset = 0;
+    switch (quality)
+    {
+    case EnumItemQuality::INFERIOR:
+        quality_attrib_bit_offset = current_bit_offset;
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "low_quality_id"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+
+    case EnumItemQuality::SUPERIOR:
+        quality_attrib_bit_offset = current_bit_offset;
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "file_index"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+
+    case EnumItemQuality::MAGIC:
+        quality_attrib_bit_offset = current_bit_offset;
+        if (bSerializedFormat)
+        {
+            value = 0;
+            node = itemRoot["MagicPrefixIds"];
+            if (node.isArray() && !node.empty())
+            {
+                value = std::uint16_t(node[0].asInt64());
+            }
+
+            bitSize = 11;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            
+            value = 0;
+            node = itemRoot["MagicSuffixIds"];
+            if (node.isArray() && !node.empty())
+            {
+                value = std::uint16_t(node[0].asInt64());
+            }
+
+            bitSize = 11;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+        else
+        {
+            value = 0;
+            node = itemRoot["magic_prefix"];
+            if (!node.isNull())
+            {
+                value = std::uint16_t(node.asInt64());
+            }
+
+            bitSize = 11;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+            value = 0;
+            node = itemRoot["magic_suffix"];
+            if (!node.isNull())
+            {
+                value = std::uint16_t(node.asInt64());
+            }
+
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::TEMPERED:
+        quality_attrib_bit_offset = current_bit_offset;
+        node = itemRoot[bSerializedFormat ? "RarePrefixId" : "rare_name_id"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+        else
+        {
+            if (bSerializedFormat)
+            {
+                return false;
+            }
+            else
+            {
+                node = itemRoot["rare_name"];
+                if (node.isNull())
+                {
+                    return false;
+                }
+
+                value = getIdFromRareName(node.asString());
+                if (value == 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        bitSize = 8;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        node = itemRoot[bSerializedFormat ? "RareSuffixId" : "rare_name_id2"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+        else
+        {
+            if (bSerializedFormat)
+            {
+                return false;
+            }
+            else
+            {
+                node = itemRoot["rare_name2"];
+                if (node.isNull())
+                {
+                    return false;
+                }
+
+                value = getIdFromRareName(node.asString());
+                if (value == 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        bitSize = 8;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        // Following the name IDs, we got 6 possible magical affixes, the pattern
+        // is 1 bit id, 11 bit value... But the value will only exist if the prefix
+        // is 1. 
+        if (bSerializedFormat)
+        {
+            Json::Value prefixIdsNode = itemRoot["MagicPrefixIds"];
+            if (prefixIdsNode.isNull() || !prefixIdsNode.isArray())
+            {
+                return false;
+            }
+
+            Json::Value suffixIdsNode = itemRoot["MagicSuffixIds"];
+            if (suffixIdsNode.isNull() || !suffixIdsNode.isArray())
+            {
+                return false;
+            }
+
+            for (unsigned int i = 0; i < 3; ++i)
+            {
+                value = 0;
+                if (prefixIdsNode.size() > i)
+                {
+                    value = std::uint16_t(prefixIdsNode[i].asInt64());
+                }
+
+                if (value > 0)
+                {
+                    if (!setBits(current_bit_offset, 1, 1))
+                    {
+                        return false;
+                    }
+
+                    if (!setBits(current_bit_offset, 11, value))
+                    {
+                        return false;
+                    }
+                }
+                else if (!setBits(current_bit_offset, 1, 0))
+                {
+                    return false;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+                value = 0;
+                if (suffixIdsNode.size() > i)
+                {
+                    value = std::uint16_t(suffixIdsNode[i].asInt64());
+                }
+
+                if (value > 0)
+                {
+                    if (!setBits(current_bit_offset, 1, 1))
+                    {
+                        return false;
+                    }
+
+                    if (!setBits(current_bit_offset, 11, value))
+                    {
+                        return false;
+                    }
+                }
+                else if (!setBits(current_bit_offset, 1, 0))
+                {
+                    return false;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+        }
+        else
+        {
+            value = 0;
+            node = itemRoot["magical_name_ids"];
+            if (node.isNull() || !node.isArray())
+            {
+                return false;
+            }
+
+            for (unsigned int i = 0; i < 3; ++i)
+            {
+                value = 0;
+                if (node.size() > (i * 2))
+                {
+                    value = std::uint16_t(node[i * 2].asInt64());
+                }
+
+                if (value > 0)
+                {
+                    if (!setBits(current_bit_offset, 1, 1))
+                    {
+                        return false;
+                    }
+
+                    if (!setBits(current_bit_offset, 11, value))
+                    {
+                        return false;
+                    }
+                }
+                else if (!setBits(current_bit_offset, 1, 0))
+                {
+                    return false;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+                value = 0;
+                if (node.size() > (i * 2 + 1))
+                {
+                    value = std::uint16_t(node[i * 2 + 1].asInt64());
+                }
+
+                if (value > 0)
+                {
+                    if (!setBits(current_bit_offset, 1, 1))
+                    {
+                        return false;
+                    }
+
+                    if (!setBits(current_bit_offset, 11, value))
+                    {
+                        return false;
+                    }
+                }
+                else if (!setBits(current_bit_offset, 1, 0))
+                {
+                    return false;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+        }
+        break;
+
+    case EnumItemQuality::SET:
+        quality_attrib_bit_offset = current_bit_offset;
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "set_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+
+        bitSize = 12;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+
+    case EnumItemQuality::UNIQUE:
+        quality_attrib_bit_offset = current_bit_offset;
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "unique_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+
+        bitSize = 12;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+    }
+
+    if (isRuneword())
+    {
+        runeword_id_bit_offset = current_bit_offset;
+        node = itemRoot[bSerializedFormat ? "RunewordId" : "runeword_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+
+        bitSize = 12;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        value = 5;
+        bitSize = 4;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    if (isPersonalized())
+    {
+        personalized_bit_offset = current_bit_offset;
+        node = itemRoot[bSerializedFormat ? "PlayerName" : "personalized_name"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // Check Name
+        // Remove any invalid characters from the number
+        std::array<char, NAME_LENGTH> playerName;
+        if (!ProcessNameNode(node, playerName))
+        {
+            return false;
+        }
+
+        // up to 15 7 bit characters
+        for (size_t idx = 0; idx < 15; ++idx)
+        {
+            if (!setBits(current_bit_offset, 7, std::uint32_t(playerName[idx])))
+            {
+                return false;
+            }
+
+            if (playerName[idx] == 0)
+            {
+                break;
+            }
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    std::uint8_t base = itemType.getBaseType();
+    bool isArmor = (base & 4) != 0 ? true : false;
+    bool isWeapon = (base & 2) != 0 ? true : false;
+    bool isTome = (base & 8) != 0 ? true : false;
+    bool isStackable = (base & 1) != 0 ? true : false;
+
+    if (isTome)
+    {
+        // If the item is a tome, it will contain 5 extra bits, we're not
+        // interested in these bits, the value is usually 1, but not sure
+        // what it is.
+        tome_bit_offset = current_bit_offset;
+        value = strcode[0] == 'i' ? 1 : 0;
+        if (bSerializedFormat)
+        {
+            node = itemRoot["MagicSuffixIds"];
+            if (node.isArray() && !node.empty())
+            {
+                value = std::uint16_t(node[0].asInt64());
+            }
+        }
+        else
+        {
+            node = itemRoot["magic_suffix"];
+            if (!node.isNull())
+            {
+                value = std::uint16_t(node.asInt64());
+            }
+        }
+
+        bitSize = 5;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // Realm Data Flag
+    // TODO: should we add information to the json export (always 0 it seems)
+    realm_bit_offset = current_bit_offset;
+    value = 0;
+    bitSize = 1;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    if (isArmor || isWeapon)
+    {
+        if (isArmor)
+        {
+            // Defense rating
+            static const auto& stat = itemStats[31];
+            defense_rating_bit_offset = current_bit_offset;
+            value = stat.saveAdd;
+            bitSize = (FileVersion >= EnumCharVersion::v110) ? 11 : 10;
+            node = itemRoot[bSerializedFormat ? "Armor" : "defense_rating"];
+            if (!node.isNull())
+            {
+                value += std::uint16_t(node.asInt64());
+            }
+
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        }
+
+        // Some armor/weapons like phase blades don't have durability
+        durability_bit_offset = current_bit_offset;
+        value = 0;
+        bitSize = 8;
+        node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        if(value > 0)
+        {
+            // current durability value (8 bits + unknown single bit)
+            bitSize = (FileVersion >= EnumCharVersion::v110) ? 9 : 8;
+            value = 0;
+            node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
+            if (!node.isNull())
+            {
+                value = std::uint16_t(node.asInt64());
+            }
+
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+    }
+
+    if (isStackable)
+    {
+        // If the item is a stacked item, e.g. a javelin or something, these 9
+        // bits will contain the quantity.
+        stackable_bit_offset = current_bit_offset;
+        value = 0;
+        bitSize = 9;
+        node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    if (bIsSocketed)
+    {
+        // If the item is socketed, it will contain 4 bits of data which are the
+        // number of total sockets the item have, regardless of how many are occupied
+        // by an item.
+        socket_count_bit_offset = current_bit_offset;
+        value = 0;
+        bitSize = 4;
+        node = itemRoot[bSerializedFormat ? "TotalNumberOfSockets" : "total_nr_of_sockets"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        value = std::uint16_t(node.asInt64());
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // If the item is part of a set, these bit will tell us how many lists
+    // of magical properties follow the one regular magical property list.
+    std::uint8_t setBonusBits = 0;
+    if (quality == EnumItemQuality::SET)
+    {
+        bonus_bits_bit_offset = current_bit_offset;
+        if (bSerializedFormat)
+        {
+            node = itemRoot["StatLists"];
+            if (node.isNull() || !node.isArray())
+            {
+                return false;
+            }
+
+            size_t numStats = node.size();
+            if (numStats == 0) // should not happen
+            {
+                return false;
+            }
+
+            --numStats; // normal magical properties
+            if (isRuneword())
+            {
+                if (numStats == 0) // should not happen
+                {
+                    return false;
+                }
+
+                --numStats; // rune word magical properties
+            }
+
+            if (numStats > 0)
+            {
+                std::bitset<5> bonusBits;
+                numStats = std::min(numStats, bonusBits.size());
+                for (size_t idx = 0; idx < numStats; ++idx)
+                {
+                    bonusBits[idx] = 1;
+                }
+
+                setBonusBits = std::uint8_t(bonusBits.to_ulong());
+            }
+        }
+        else
+        {
+            node = itemRoot["set_attributes"];
+            if (node.isNull() || !node.isArray())
+            {
+                return false;
+            }
+
+            if (!node.empty())
+            {
+                std::bitset<5> bonusBits;
+                size_t numStats = std::min(size_t(node.size()), bonusBits.size());
+                for (size_t idx = 0; idx < numStats; ++idx)
+                {
+                    bonusBits[idx] = 1;
+                }
+
+                setBonusBits = std::uint8_t(bonusBits.to_ulong());
+            }
+        }
+
+        bitSize = 5;
+        value = setBonusBits;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // magical properties
+    magical_props_bit_offset = current_bit_offset;
+    if (bSerializedFormat)
+    {
+        node = itemRoot["StatLists"];
+        if (node.isNull() || !node.isArray())
+        {
+            return false;
+        }
+
+        if (node.empty())
+        {
+            node.clear();
+        }
+        else
+        {
+            node = node[0];
+            if (!node.isNull())
+            {
+                node = node["Stats"];
+            }
+        }
+    }
+    else
+    {
+        node = itemRoot["magic_attributes"];
+    }
+
+    if (!parsePropertyList(node, bSerializedFormat, current_bit_offset))
+    {
+        return false;
+    }
+
+    if (setBonusBits > 0)
+    {
+        // Item has more magical property lists due to being a set item
+        set_bonus_props_bit_offset = current_bit_offset;
+        Json::Value setAttribs = itemRoot[bSerializedFormat ? "StatLists" : "set_attributes"];
+        if (setAttribs.isNull() || !setAttribs.isArray())
+        {
+            return false;
+        }
+
+        auto iter_end = setAttribs.end();
+        auto iter = setAttribs.begin();
+        if (bSerializedFormat)
+        {
+            ++iter;
+            if(iter == iter_end)
+            {
+                return false;
+            }
+            
+            if (isRuneword())
+            {
+                ++iter;
+                if (iter == iter_end)
+                {
+                    return false;
+                }
+            }
+        }
+
+        size_t i = 0;
+        for (; i < 5 && iter != iter_end; ++iter, ++i)
+        {
+            node.clear();
+            if (!iter->isNull())
+            {
+                node = bSerializedFormat ? iter->operator[]("Stats") : *iter;
+            }
+
+            if (!parsePropertyList(node, bSerializedFormat, current_bit_offset))
+            {
+                return false;
+            }
+        }
+    }
+
+    if (isRuneword())
+    {
+        // runewords have their own list of magical properties
+        runeword_props_bit_offset = current_bit_offset;
+        if (bSerializedFormat)
+        {
+            node = itemRoot["StatLists"];
+            if (node.isNull() || !node.isArray())
+            {
+                return false;
+            }
+
+            if (node.size() < 2)
+            {
+                node.clear();
+            }
+            else
+            {
+                node = node[1];
+                if (!node.isNull())
+                {
+                    node = node["Stats"];
+                }
+            }
+        }
+        else
+        {
+            node = itemRoot["runeword_attributes"];
+        }
+
+        if (node.isNull() || !node.isArray())
+        {
+            return false;
+        }
+
+        if (!parsePropertyList(node, bSerializedFormat, current_bit_offset))
+        {
+            return false;
+        }
+    }
+
+    if (numSocketed > 0)
+    {
+        node = itemRoot[bSerializedFormat ? "SocketedItems" : "socketed_items"];
+        if (node.isNull() || !node.isArray() || node.size() != numSocketed)
+        {
+            return false;
+        }
+
+        auto iter_end = node.end();
+        for (auto iter = node.begin(); iter != iter_end; ++iter)
+        {
+            SocketedItems.resize(SocketedItems.size() + 1);
+            auto& childItem = SocketedItems.back();
+            if (!childItem.readItem(*iter, bSerializedFormat, FileVersion))
+            {
+                return false;
+            }
+
+            if (childItem.getLocation() != EnumItemLocation::SOCKET)
+            {
+                // corrupt file
+                return false;
+            }
+
+            // resolve magical properties of socketed gem
+            childItem.getItemCode(strcode);
+            const auto& childItemType = getItemTypeHelper(strcode);
+            std::vector<MagicalAttribute> attribs;
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getItemType());
+        }
+    }
+
+    item_end_bit_offset = max_bit_offset;
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::writeItem(std::FILE* charfile)
 {
     if (data.empty())
@@ -12742,126 +15128,121 @@ bool d2ce::Item::writeItem(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem, bool bSerializedFormat) const
+void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     std::vector<MagicalAttribute> magicalAttributes;
     d2ce::RunewordAttributes runewordAttrib;
-    std::string braceIndent = parentIndent;
-    std::string itemPropIndent = parentIndent + jsonIndentStr;
-    if (isListItem)
-    {
-        itemPropIndent += jsonIndentStr;
-        braceIndent += jsonIndentStr;
-        ss << "\n" << braceIndent << "{";
-    }
-
+    Json::Value item;
     if (bSerializedFormat)
     {
         if (FileVersion < EnumCharVersion::v115)
         {
-            ss << "\n" << itemPropIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
-            ss << ",\n" << itemPropIndent << "\"Version\": \"" << std::dec << getRawVersion() << "\"";
+            item["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+
+            std::stringstream ss;
+            ss << std::dec << getRawVersion();
+            item["Version"] = ss.str();
         }
         else
         {
-            std::string versionBits("101");
             switch (getRawVersion())
             {
             case 0:
-                versionBits = "0";
+                item["Version"] = "0";
                 break;
 
             case 1:
-                versionBits = "1";
+                item["Version"] = "1";
                 break;
 
             case 2:
-                versionBits = "10";
+                item["Version"] = "10";
                 break;
 
             case 3:
-                versionBits = "11";
+                item["Version"] = "11";
                 break;
 
             case 4:
-                versionBits = "100";
+                item["Version"] = "100";
                 break;
 
             case 5:
-                versionBits = "101";
+                item["Version"] = "101";
                 break;
 
             case 6:
-                versionBits = "110";
+                item["Version"] = "110";
                 break;
 
             case 7:
-                versionBits = "111";
+                item["Version"] = "111";
                 break;
+
+            default:
+                item["Version"] = "101";
+                break;
+
             }
-            ss << "\n" << itemPropIndent << "\"Version\": \"" << versionBits << "\""; \
         }
 
-        ss << ",\n" << itemPropIndent << "\"Mode\": " << std::dec << std::uint16_t(getLocation());
-        ss << ",\n" << itemPropIndent << "\"Location\": " << std::dec << std::uint16_t(getEquippedId());
-        ss << ",\n" << itemPropIndent << "\"X\": " << std::dec << std::uint16_t(getPositionX());
-        ss << ",\n" << itemPropIndent << "\"Y\": " << std::dec << std::uint16_t(getPositionY());
-        ss << ",\n" << itemPropIndent << "\"Page\": " << std::dec << std::uint16_t(getAltPositionId());
+        item["Mode"] = std::uint16_t(getLocation());
+        item["Location"] = std::uint16_t(getEquippedId());
+        item["X"] = std::uint16_t(getPositionX());
+        item["Y"] = std::uint16_t(getPositionY());
+        item["Page"] = std::uint16_t(getAltPositionId());
+
+        std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+        getItemCode(strcode);
 
         bool bIsEar = isEar();
         EarAttributes earAttrib;
         getEarAttributes(earAttrib);
         if (bIsEar)
         {
-            ss << ",\n" << itemPropIndent << "\"EarLevel \": " << std::dec << earAttrib.getLevel();
-            ss << ",\n" << itemPropIndent << "\"Code\": \"\"";
+            item["EarLevel"] = earAttrib.getLevel();
+            item["PlayerName"] = earAttrib.getName().data();
+            item["Code"] = "";
         }
         else
         {
-            ss << ",\n" << itemPropIndent << "\"EarLevel \": 0";
-            std::uint8_t strcode[4] = { 0 };
-            getItemCode(strcode);
-            std::string sCode((char*)strcode, 4);
-            ss << ",\n" << itemPropIndent << "\"Code\": \"" << sCode << "\"";
+            item["EarLevel"] = 0;
+            if (isPersonalized())
+            {
+                item["PlayerName"] = getPersonalizedName();
+            }
+
+            std::string sCode((char*)strcode.data(), 4);
+            item["Code"] = sCode;
         }
 
-        ss << ",\n" << itemPropIndent << "\"NumberOfSocketedItems\": " << std::dec << std::uint16_t(socketedItemCount());
-        ss << ",\n" << itemPropIndent << "\"TotalNumberOfSockets\": " << std::dec << std::uint16_t(totalNumberOfSockets());
+        const auto& itemType = getItemTypeHelper(strcode);
+        if (itemType.isQuestItem())
+        {
+            item["QuestDifficulty"] = std::uint16_t(getQuestDifficulty());
+        }
+
+        item["NumberOfSocketedItems"] = std::uint16_t(socketedItemCount());
+        item["TotalNumberOfSockets"] = std::uint16_t(totalNumberOfSockets());
 
         // Socketed items
-        ss << ",\n" << itemPropIndent << "\"SocketedItems \": [";
-        if (SocketedItems.empty())
+        Json::Value socketedItems(Json::arrayValue);
+        for (auto& socketedItem : SocketedItems)
         {
-            ss << "]";
+            socketedItem.asJson(socketedItems, charLevel, bSerializedFormat);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& item : SocketedItems)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, itemPropIndent, charLevel, true, bSerializedFormat);
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
+        item["SocketedItems"] = socketedItems;
 
-        ss << ",\n" << itemPropIndent << "\"Id \": " << std::dec << getId();
-        ss << ",\n" << itemPropIndent << "\"ItemLevel \": " << std::dec << std::uint16_t(getLevel()); 
+        item["Id"] = getId();
+        item["ItemLevel"] = std::uint16_t(getLevel());
         
         auto quality = getQuality();
-        ss << ",\n" << itemPropIndent << "\"Quality\": " << std::dec << std::uint16_t(quality);
-        ss << ",\n" << itemPropIndent << "\"HasMultipleGraphics\": " << std::dec << (hasMultipleGraphics() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"GraphicId\": " << std::dec << std::uint16_t(getPictureId());
-        ss << ",\n" << itemPropIndent << "\"IsAutoAffix\": " << std::dec << (isAutoAffix() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"AutoAffixId\": " << std::dec << getAutoAffixId();
-        ss << ",\n" << itemPropIndent << "\"FileIndex \": " << std::dec << getFileIndex();
+        item["Quality"] = std::uint16_t(quality);
+        item["HasMultipleGraphics"] = hasMultipleGraphics();
+        item["GraphicId"] = std::uint16_t(getPictureId());
+        item["IsAutoAffix"] = isAutoAffix();
+        item["AutoAffixId"] = getAutoAffixId();
+        item["FileIndex"] = getFileIndex();
 
         d2ce::RareAttributes rareAttrib;
         std::vector<MagicalAffixes> affixes;
@@ -12887,382 +15268,294 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
             affixes[0].SuffixId = getTomeValue();
         }
 
-        ss << ",\n" << itemPropIndent << "\"MagicPrefixIds\": [";
-        bool bFirstItem = true;
+        Json::Value magicPrefixIds(Json::arrayValue);
         for (auto& affix : affixes)
         {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            ss << "\n" << itemPropIndent << jsonIndentStr << std::dec << affix.PrefixId;
+            magicPrefixIds.append(affix.PrefixId);
         }
-        ss << "\n" << itemPropIndent << "]";
+        item["MagicPrefixIds"] = magicPrefixIds;
 
-        ss << ",\n" << itemPropIndent << "\"MagicSuffixIds\": [";
-
-        bFirstItem = true;
+        Json::Value magicSuffixIds(Json::arrayValue);
         for (auto& affix : affixes)
         {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            ss << "\n" << itemPropIndent << jsonIndentStr << std::dec << affix.SuffixId;
+            magicSuffixIds.append(affix.SuffixId);
         }
-        ss << "\n" << itemPropIndent << "]";
+        item["MagicSuffixIds"] = magicSuffixIds;
 
-        ss << ",\n" << itemPropIndent << "\"RarePrefixId \": " << std::dec << rareAttrib.Id;
-        ss << ",\n" << itemPropIndent << "\"RareSuffixId \": " << std::dec << rareAttrib.Id2;
+        item["RarePrefixId"] = rareAttrib.Id;
+        item["RareSuffixId"] = rareAttrib.Id2;
 
         getRunewordAttributes(runewordAttrib);
-        ss << ",\n" << itemPropIndent << "\"RunewordId \": " << std::dec << runewordAttrib.Id;
-        ss << ",\n" << itemPropIndent << "\"Armor \": " << std::dec << getDefenseRating();
+        item["RunewordId"] = runewordAttrib.Id;
+        item["Armor"] = getDefenseRating();
 
         ItemDurability durability;
         getDurability(durability);
-        ss << ",\n" << itemPropIndent << "\"MaxDurability \": " << std::dec << durability.Max;
-        ss << ",\n" << itemPropIndent << "\"Durability \": " << std::dec << durability.Current;
-        ss << ",\n" << itemPropIndent << "\"Quantity\": " << std::dec << getQuantity();
-        ss << ",\n" << itemPropIndent << "\"SetItemMask\": " << std::dec << getSetItemMask();
+        item["MaxDurability"] = durability.Max;
+        item["Durability"] = durability.Current;
+        item["Quantity"] = getQuantity();
+        item["SetItemMask"] = getSetItemMask();
 
-        ss << ",\n" << itemPropIndent << "\"StatLists\": [";
-        if (isSimpleItem())
+        Json::Value statLists(Json::arrayValue);
+        if (!isSimpleItem())
         {
-            ss << "]";
-        }
-        else
-        {
-            std::string attribParentIndent = itemPropIndent + jsonIndentStr;
-            std::string attribIndent = attribParentIndent + jsonIndentStr;
             getMagicalAttributes(magicalAttributes);
-            ss << "\n" << attribParentIndent << "{";
-            MagicalAttribute::attributesAsJsonArray(ss, attribIndent, magicalAttributes, bSerializedFormat);
-            ss << "\n" << attribParentIndent << "}";
+            MagicalAttribute::attributesAsJsonArray(statLists, magicalAttributes, bSerializedFormat);
 
             if (isRuneword())
             {
-                ss << ",\n" << attribParentIndent << "{";
-                MagicalAttribute::attributesAsJsonArray(ss, attribIndent, runewordAttrib.MagicalAttributes, bSerializedFormat);
-                ss << "\n" << attribParentIndent << "}";
+                MagicalAttribute::attributesAsJsonArray(statLists, runewordAttrib.MagicalAttributes, bSerializedFormat);
             }
 
+            d2ce::SetAttributes setAttrib;
             switch (quality)
             {
             case EnumItemQuality::SET:
-            {
-                d2ce::SetAttributes setAttrib;
                 getSetAttributes(setAttrib);
                 if (!setAttrib.SetAttributes.empty())
                 {
-                    ss << ",";
-                    setAttrib.setAttributesAsJsonArray(ss, attribParentIndent, bSerializedFormat);
+                    setAttrib.setAttributesAsJsonArray(statLists, bSerializedFormat);
                 }
                 break;
             }
-            }
-
-            ss << "\n" << itemPropIndent << "]";
         }
+        item["StatLists"] = statLists;
 
-        ss << ",\n" << itemPropIndent << "\"IsIdentified\": " << std::dec << (isIdentified() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsSocketed\": " << std::dec << (isSocketed() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsNew\": " << std::dec << (isNew() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsEar\": " << std::dec << (isEar() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsStarterItem\": " << std::dec << (isStarterItem() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsCompact\": " << std::dec << (isSimpleItem() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsEthereal\": " << std::dec << (isEthereal() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsPersonalized\": " << std::dec << (isPersonalized() ? "true" : "false");
-        ss << ",\n" << itemPropIndent << "\"IsRuneword\": " << std::dec << (isRuneword() ? "true" : "false");
+        item["IsIdentified"] = isIdentified();
+        item["IsSocketed"] = isSocketed();
+        item["IsNew"] = isNew();
+        item["IsEar"] = isEar();
+        item["IsStarterItem"] = isStarterItem();
+        item["IsCompact"] = isSimpleItem();
+        item["IsEthereal"] = isEthereal();
+        item["IsPersonalized"] = isPersonalized();
+        item["IsRuneword"] = isRuneword();
+
+        if (parent.isArray())
+        {
+            parent.append(item);
+        }
+        else
+        {
+            parent.swap(item);
+        }
     }
     else
     {
-        unknownAsJson(ss, itemPropIndent);
-        ss << ",\n" << itemPropIndent << "\"identified\": " << std::dec << (isIdentified() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"socketed\": " << std::dec << (isSocketed() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"new\": " << std::dec << (isNew() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"is_ear\": " << std::dec << (isEar() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"starter_item\": " << std::dec << (isStarterItem() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"simple_item\": " << std::dec << (isSimpleItem() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"ethereal\": " << std::dec << (isEthereal() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"personalized\": " << std::dec << (isPersonalized() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"given_runeword\": " << std::dec << (isRuneword() ? 1 : 0);
-        ss << ",\n" << itemPropIndent << "\"version\": " << getRawVersion();
-        ss << ",\n" << itemPropIndent << "\"location_id\": " << std::dec << std::uint16_t(getLocation());
-        ss << ",\n" << itemPropIndent << "\"equipped_id\": " << std::dec << std::uint16_t(getEquippedId());
-        ss << ",\n" << itemPropIndent << "\"position_x\": " << std::dec << std::uint16_t(getPositionX());
-        ss << ",\n" << itemPropIndent << "\"position_y\": " << std::dec << std::uint16_t(getPositionY());
-        ss << ",\n" << itemPropIndent << "\"alt_position_id\": " << std::dec << std::uint16_t(getAltPositionId());
+        unknownAsJson(item);
+        item["identified"] = (isIdentified() ? 1 : 0);
+        item["socketed"] = (isSocketed() ? 1 : 0);
+        item["new"] = (isNew() ? 1 : 0);
+        item["is_ear"] = (isEar() ? 1 : 0);
+        item["starter_item"] = (isStarterItem() ? 1 : 0);
+        item["simple_item"] = (isSimpleItem() ? 1 : 0);
+        item["ethereal"] = (isEthereal() ? 1 : 0);
+        item["personalized"] = (isPersonalized() ? 1 : 0);
+        item["given_runeword"] = (isRuneword() ? 1 : 0);
+        item["version"] = getRawVersion();
+        item["location_id"] = std::uint16_t(getLocation());
+        item["equipped_id"] = std::uint16_t(getEquippedId());
+        item["position_x"] = std::uint16_t(getPositionX());
+        item["position_y"] = std::uint16_t(getPositionY());
+        item["alt_position_id"] = std::uint16_t(getAltPositionId());
 
         if (isEar())
         {
             EarAttributes earAttrib;
             getEarAttributes(earAttrib);
-            ss << ",";
-            earAttrib.asJson(ss, itemPropIndent);
+            earAttrib.asJson(item);
             return;
         }
 
-        std::uint8_t strcode[4] = { 0 };
+        std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
         getItemCode(strcode);
         const auto& itemType = getItemTypeHelper(strcode);
-        strcode[3] = 0;
-        ss << ",\n" << itemPropIndent << "\"type\": \"" << strcode << "\"";
-        ss << ",\n" << itemPropIndent << "\"categories\": [";
-        if (itemType.categories.empty())
+        std::string sCode((char*)strcode.data(), 3);
+        item["type"] = sCode;
+
+        Json::Value categories(Json::arrayValue);
+        for (auto& category : itemType.categories)
         {
-            ss << "]";
+            categories.append(category);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& category : itemType.categories)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                ss << "\n" << itemPropIndent << jsonIndentStr << "\"" << category << "\"";
-            }
-            ss << "\n" << itemPropIndent << "]";
-        }
-        ss << ",\n" << itemPropIndent << "\"type_id\": " << std::dec << std::uint16_t(itemType.getEnumItemType());
+        item["categories"] = categories;
+
+        item["type_id"] = std::uint16_t(itemType.getEnumItemType());
         if (itemType.isQuestItem())
         {
-            ss << ",\n" << itemPropIndent << "\"quest_difficulty\": " << std::dec << std::uint16_t(getQuestDifficulty());
+            item["quest_difficulty"] = std::uint16_t(getQuestDifficulty());
         }
-        ss << ",\n" << itemPropIndent << "\"nr_of_items_in_sockets\": " << std::dec << std::uint16_t(socketedItemCount());
+        item["nr_of_items_in_sockets"] = std::uint16_t(socketedItemCount());
 
         if (isSimpleItem())
         {
             getMagicalAttributes(magicalAttributes);
             if (!magicalAttributes.empty())
             {
-                ss << ",\n" << itemPropIndent << "\"magic_attributes\": [";
-                if (magicalAttributes.empty())
+                Json::Value magicalAttribs(Json::arrayValue);
+                for (auto& attrib : magicalAttributes)
                 {
-                    ss << "]";
+                    attrib.asJson(magicalAttribs, bSerializedFormat);
                 }
-                else
-                {
-                    bool bFirstItem = true;
-                    for (auto& attrib : magicalAttributes)
-                    {
-                        if (bFirstItem)
-                        {
-                            bFirstItem = false;
-                        }
-                        else
-                        {
-                            ss << ",";
-                        }
-                        attrib.asJson(ss, itemPropIndent, bSerializedFormat);
-                    }
-                    ss << "\n" << itemPropIndent << "]";
-                }
+                item["magic_attributes"] = magicalAttribs;
             }
         }
         else
         {
-            ss << ",\n" << itemPropIndent << "\"id\": " << std::dec << getId();
-            ss << ",\n" << itemPropIndent << "\"level\": " << std::dec << std::uint16_t(getLevel());
+            item["id"] = getId();
+            item["level"] = std::uint16_t(getLevel());
 
             auto quality = getQuality();
-            ss << ",\n" << itemPropIndent << "\"quality\": " << std::dec << std::uint16_t(quality);
-            ss << ",\n" << itemPropIndent << "\"multiple_pictures\": " << std::dec << (hasMultipleGraphics() ? 1 : 0);
+            item["quality"] = std::uint16_t(quality);
+            item["multiple_pictures"] = (hasMultipleGraphics() ? 1 : 0);
             if (hasMultipleGraphics())
             {
-                ss << ",\n" << itemPropIndent << "\"picture_id\": " << std::dec << std::uint16_t(getPictureId());
+                item["picture_id"] = std::uint16_t(getPictureId());
             }
-            ss << ",\n" << itemPropIndent << "\"class_specific\": " << std::dec << (isAutoAffix() ? 1 : 0);
+            item["class_specific"] = (isAutoAffix() ? 1 : 0);
             if (isAutoAffix())
             {
-                ss << ",\n" << itemPropIndent << "\"auto_affix_id\": " << std::dec << getAutoAffixId();
+                item["auto_affix_id"] = getAutoAffixId();
             }
             if (quality == EnumItemQuality::INFERIOR)
             {
-                ss << ",\n" << itemPropIndent << "\"low_quality_id\": " << std::dec << std::uint16_t(getInferiorQualityId());
+                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
             }
             else if (quality == EnumItemQuality::SUPERIOR)
             {
-                ss << ",\n" << itemPropIndent << "\"file_index\": " << std::dec << std::uint16_t(getFileIndex());
+                item["file_index"] = std::uint16_t(getFileIndex());
             }
             else if (quality == EnumItemQuality::MAGIC)
             {
                 d2ce::MagicalAffixes magicalAffixes;
                 getMagicalAffixes(magicalAffixes);
-                ss << ",";
-                magicalAffixes.asJson(ss, itemPropIndent);
+                magicalAffixes.asJson(item);
             }
 
             if (isRuneword())
             {
                 getRunewordAttributes(runewordAttrib);
-                ss << ",";
-                runewordAttrib.asJson(ss, itemPropIndent);
+                runewordAttrib.asJson(item);
             }
 
+            d2ce::SetAttributes setAttrib;
+            d2ce::RareAttributes rareAttrib;
+            d2ce::UniqueAttributes uniqueAttrib;
             switch (quality)
             {
             case EnumItemQuality::SET:
-            {
-                d2ce::SetAttributes setAttrib;
                 getSetAttributes(setAttrib);
-                ss << ",";
-                setAttrib.asJson(ss, itemPropIndent);
+                setAttrib.asJson(item);
                 break;
-            }
 
             case EnumItemQuality::RARE:
             case EnumItemQuality::CRAFT:
             case EnumItemQuality::TEMPERED:
-            {
-                d2ce::RareAttributes rareAttrib;
                 getRareOrCraftedAttributes(rareAttrib);
-                ss << ",";
-                rareAttrib.asJson(ss, itemPropIndent);
+                rareAttrib.asJson(item);
                 break;
-            }
 
             case EnumItemQuality::UNIQUE:
-            {
-                d2ce::UniqueAttributes uniqueAttrib;
                 getUniqueAttributes(uniqueAttrib);
-                ss << ",";
-                uniqueAttrib.asJson(ss, itemPropIndent);
+                uniqueAttrib.asJson(item);
                 break;
-            }
             }
 
             if (isPersonalized())
             {
-                ss << ",\n" << itemPropIndent << "\"personalized_name\": \"" << getPersonalizedName() << "\"";
+                item["personalized_name"] = getPersonalizedName();
             }
 
-            ss << ",\n" << itemPropIndent << "\"timestamp\": " << std::dec << (getRealmDataFlag() ? 1 : 0);
+            if (isTome())
+            {
+                item["magic_suffix"] = getTomeValue();
+            }
+
+            item["timestamp"] = (getRealmDataFlag() ? 1 : 0);
             if (isStackable())
             {
-                ss << ",\n" << itemPropIndent << "\"quantity\": " << std::dec << getQuantity();
+                item["quantity"] = getQuantity();
             }
 
             auto defenseRating = getDefenseRating();
             if (defenseRating > 0)
             {
-                ss << ",\n" << itemPropIndent << "\"defense_rating\": " << std::dec << defenseRating;
+                item["defense_rating"] = defenseRating;
             }
 
             ItemDurability durability;
             if (getDurability(durability))
             {
-                ss << ",\n" << itemPropIndent << "\"max_durability\": " << std::dec << durability.Max;
-                ss << ",\n" << itemPropIndent << "\"current_durability\": " << std::dec << durability.Current;
+                item["max_durability"] = durability.Max;
+                item["current_durability"] = durability.Current;
             }
 
             if (isSocketed())
             {
-                ss << ",\n" << itemPropIndent << "\"total_nr_of_sockets\": " << std::dec << std::uint16_t(totalNumberOfSockets());
+                item["total_nr_of_sockets"] = std::uint16_t(totalNumberOfSockets());
             }
 
+            Json::Value magicalAttribs(Json::arrayValue);
             getMagicalAttributes(magicalAttributes);
-            ss << ",\n" << itemPropIndent << "\"magic_attributes\": [";
-            if (magicalAttributes.empty())
+            for (auto& attrib : magicalAttributes)
             {
-                ss << "]";
+                attrib.asJson(magicalAttribs, bSerializedFormat);
             }
-            else
-            {
-                bool bFirstItem = true;
-                for (auto& attrib : magicalAttributes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
-                }
-                ss << "\n" << itemPropIndent << "]";
-            }
+            item["magic_attributes"] = magicalAttribs;
 
             if (itemType.isWeapon())
             {
-                ss << ",";
-                itemType.dam.asJson(ss, itemPropIndent);
+                itemType.dam.asJson(item);
             }
 
             if (isSocketed())
             {
                 // Socketed items
-                ss << ",\n" << itemPropIndent << "\"socketed_items\": [";
-                if (SocketedItems.empty())
+                Json::Value socketedItems(Json::arrayValue);
+                for (auto& socketedItem : SocketedItems)
                 {
-                    ss << "]";
+                    socketedItem.asJson(socketedItems, charLevel, bSerializedFormat);
                 }
-                else
-                {
-                    bool bFirstItem = true;
-                    std::string socketedIndent = itemPropIndent + jsonIndentStr;
-                    for (auto& item : SocketedItems)
-                    {
-                        if (bFirstItem)
-                        {
-                            bFirstItem = false;
-                        }
-                        else
-                        {
-                            ss << ",";
-                        }
-                        item.asJson(ss, socketedIndent, charLevel, true, bSerializedFormat);
-                    }
-                    ss << "\n" << itemPropIndent << "]";
-                }
+                item["socketed_items"] = socketedItems;
             }
         }
 
-        ss << ",\n" << itemPropIndent << "\"type_name\": \"" << itemType.name << "\"";
-        if (itemType.req.Strength != 0)
+        item["type_name"] = itemType.name;
+
+        ItemRequirements req;
+        if (!getRequirements(req))
         {
-            ss << ",\n" << itemPropIndent << "\"reqstr\": " << std::dec << itemType.req.Strength;
+            req = itemType.req;
         }
 
-        if (itemType.req.Dexterity != 0)
+        if (req.Strength != 0)
         {
-            ss << ",\n" << itemPropIndent << "\"reqdex\": " << std::dec << itemType.req.Dexterity;
+            item["reqstr"] = req.Strength;
         }
 
-        if (itemType.req.Level != 0)
+        if (req.Dexterity != 0)
         {
-            ss << ",\n" << itemPropIndent << "\"levelreq\": " << std::dec << itemType.req.Level;
+            item["reqdex"] = req.Dexterity;
         }
 
-        ss << ",\n" << itemPropIndent << "\"inv_file\": \"" << itemType.inv_file << "\"";
-        ss << ",\n" << itemPropIndent << "\"inv_height\": " << std::dec << itemType.dimensions.Height;
-        ss << ",\n" << itemPropIndent << "\"inv_width\": " << std::dec << itemType.dimensions.Width;
+        if (req.Level != 0)
+        {
+            item["levelreq"] = req.Level;
+        }
+
+        item["inv_file"] = itemType.inv_file;
+        item["inv_height"] = itemType.dimensions.Height;
+        item["inv_width"] = itemType.dimensions.Width;
 
         if (itemType.inv_transform != 0)
         {
-            ss << ",\n" << itemPropIndent << "\"inv_transform\": " << std::dec << itemType.inv_transform;
+            item["inv_transform"] = itemType.inv_transform;
         }
 
         auto tc = getTransformColor();
         if (!tc.empty())
         {
-            ss << ",\n" << itemPropIndent << "\"transform_color\": \"" << tc << "\"";
+            item["transform_color"] = tc;
         }
 
         if (!isSimpleItem() || !magicalAttributes.empty())
@@ -13278,35 +15571,15 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
             // Sort display items in proper order
             std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
 
-            ss << ",\n" << itemPropIndent << "\"displayed_magic_attributes\": [";
-            if (magicalAttributes.empty())
+            Json::Value displayedMagicAttributes(Json::arrayValue);
+            for (auto& attrib : magicalAttributes)
             {
-                ss << "]";
+                attrib.asJson(displayedMagicAttributes, bSerializedFormat);
             }
-            else
-            {
-                bool bFirstItem = true;
-                for (auto& attrib : magicalAttributes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
-                }
-                ss << "\n" << itemPropIndent << "]";
-            }
+            item["displayed_magic_attributes"] = displayedMagicAttributes;
 
-            ss << ",\n" << itemPropIndent << "\"displayed_runeword_attributes\": [";
-            if (runewordAttrib.MagicalAttributes.empty())
-            {
-                ss << "]";
-            }
-            else
+            Json::Value displayedRunewordAttributes(Json::arrayValue);
+            if (!runewordAttrib.MagicalAttributes.empty())
             {
                 checkForRelatedMagicalAttributes(runewordAttrib.MagicalAttributes);
                 for (auto& attrib : runewordAttrib.MagicalAttributes)
@@ -13317,45 +15590,20 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
                 // Sort display items in proper order
                 std::sort(runewordAttrib.MagicalAttributes.begin(), runewordAttrib.MagicalAttributes.end(), magicalAttributeSorter);
 
-                bool bFirstItem = true;
                 for (auto& attrib : runewordAttrib.MagicalAttributes)
                 {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
+                    attrib.asJson(displayedRunewordAttributes, bSerializedFormat);
                 }
-                ss << "\n" << itemPropIndent << "]";
             }
+            item["displayed_runeword_attributes"] = displayedRunewordAttributes;
 
+            Json::Value combinedMagicAttributes(Json::arrayValue);
             getCombinedMagicalAttributes(magicalAttributes);
-            ss << ",\n" << itemPropIndent << "\"combined_magic_attributes\": [";
-            if (magicalAttributes.empty())
+            for (auto& attrib : magicalAttributes)
             {
-                ss << "]";
+                attrib.asJson(combinedMagicAttributes, bSerializedFormat);
             }
-            else
-            {
-                bool bFirstItem = true;
-                for (auto& attrib : magicalAttributes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
-                }
-                ss << "\n" << itemPropIndent << "]";
-            }
+            item["combined_magic_attributes"] = combinedMagicAttributes;
 
             // For efficiency reasons we do the formatting using the existing list 
             // instead of building it again
@@ -13368,40 +15616,27 @@ void d2ce::Item::asJson(std::stringstream& ss, const std::string& parentIndent, 
             // Sort display items in proper order
             std::sort(magicalAttributes.begin(), magicalAttributes.end(), magicalAttributeSorter);
 
-            ss << ",\n" << itemPropIndent << "\"displayed_combined_magic_attributes\": [";
-            if (magicalAttributes.empty())
+            Json::Value displayedCombinedMagicAttributes(Json::arrayValue);
+            for (auto& attrib : magicalAttributes)
             {
-                ss << "]";
+                attrib.asJson(displayedCombinedMagicAttributes, bSerializedFormat);
             }
-            else
-            {
-                bool bFirstItem = true;
-                for (auto& attrib : magicalAttributes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, itemPropIndent, bSerializedFormat);
-                }
-                ss << "\n" << itemPropIndent << "]";
-            }
+            item["displayed_combined_magic_attributes"] = displayedCombinedMagicAttributes;
         }
-    }
 
-    if (isListItem)
-    {
-        ss << "\n" << braceIndent << "}";
+        if (parent.isArray())
+        {
+            parent.append(item);
+        }
+        else
+        {
+            parent.swap(item);
+        }
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::unknownAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+void d2ce::Item::unknownAsJson(Json::Value& parent, bool /*bSerializedFormat*/) const
 {
-    bSerializedFormat;
     struct byteRange
     {
         size_t startIdx = 0;
@@ -13409,57 +15644,43 @@ void d2ce::Item::unknownAsJson(std::stringstream& ss, const std::string& parentI
     };
     static std::vector<byteRange> unknowns = { {0,3},{5,10},{12,12},{14,15},{18,20},{23,23},{25,25},{27,31} };
 
-    ss << "\n" << parentIndent << "\"_unknown_data\": {";
-    std::string bytesParentIndent = parentIndent + jsonIndentStr;
-    bool bFirstItem = true;
+    Json::Value unknownData;
     for (const auto& byteInfo : unknowns)
     {
-        if (bFirstItem)
-        {
-            bFirstItem = false;
-        }
-        else
-        {
-            ss << ",";
-        }
-
-        byteRangeAsJson(ss, bytesParentIndent, byteInfo.startIdx, byteInfo.endIdx);
+        byteRangeAsJson(unknownData, byteInfo.startIdx, byteInfo.endIdx);
     }
-    ss << "\n" << parentIndent << "}";
+    parent["_unknown_data"] = unknownData;
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::byteRangeAsJson(std::stringstream& ss, const std::string& parentIndent, size_t startByte, size_t endByte) const
+void d2ce::Item::byteRangeAsJson(Json::Value& parent, size_t startByte, size_t endByte) const
 {
     if (endByte < startByte)
     {
         return;
     }
 
-    ss << "\n" << parentIndent << "\"b" << std::dec << startByte;
-    if (endByte > startByte)
+    std::string propName;
     {
-        ss << "_" << std::dec << endByte;
-    }
-    ss << "\": {";
+        std::stringstream ss;
+        ss << "b" << std::dec << startByte;
+        if (endByte > startByte)
+        {
+            ss << "_" << std::dec << endByte;
+        }
 
+        propName = ss.str();
+    }
+
+    Json::Value unknownData;
     startByte += start_bit_offset;
     endByte += start_bit_offset;
-
-    bool bFirstItem = true;
     for (size_t idx = startByte; idx <= endByte; ++idx)
     {
-        if (bFirstItem)
-        {
-            bFirstItem = false;
-        }
-        else
-        {
-            ss << ",";
-        }
-
-        ss << "\n" << parentIndent << jsonIndentStr << "\"" << std::dec << (idx - startByte) << "\": " << std::dec << read_uint32_bits(idx, 1);
+        std::stringstream ss;
+        ss << std::dec << (idx - startByte);
+        unknownData[ss.str()] = read_uint32_bits(idx, 1);
     }
-    ss << "\n" << parentIndent << "}";
+    parent[propName] = unknownData;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offset)
@@ -13583,6 +15804,514 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
         id = (std::uint16_t)readBits(charfile, current_bit_offset, 9);
     }
 
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerializedFormat, size_t& current_bit_offset)
+{
+    std::uint16_t id = 0x1FF;
+    std::uint16_t nextId = 0x1FF;
+    std::int64_t value = 0;
+    std::vector<std::int64_t> values;
+    size_t valueIdx = 0;
+    if (propListRoot.isNull() || !propListRoot.isArray() || propListRoot.empty())
+    {
+        id = 0x1FF;
+        return setBits(current_bit_offset, 9, id);
+    }
+
+    Json::Value node;
+    auto iter_end = propListRoot.end();
+    for (auto iter = propListRoot.begin(); iter != iter_end; ++iter)
+    {
+        values.clear();
+        valueIdx = 0;
+        if (iter->isNull())
+        {
+            continue;
+        }
+
+        node = iter->operator[](bSerializedFormat ? "Id" : "id");
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        id = std::uint16_t(node.asInt64());
+        if (id >= itemStats.size())
+        {
+            return false;
+        }
+
+        if (!setBits(current_bit_offset, 9, id))
+        {
+            return false;
+        }
+
+        const ItemStat* stat = &itemStats[id];
+
+        // saveBits being zero or >= 64 is unrecoverably bad, and
+        // encode type 4 is only used by stats that were never implemented (time-based stats)
+        if (stat->saveBits == 0 || stat->saveBits >= 64)
+        {
+            // corrupt file
+            return false;
+        }
+
+        if (bSerializedFormat)
+        {
+            switch (id)
+            {
+            case 17:
+            case 48:
+            case 50:
+            case 52:
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                ++iter;
+                if (iter == iter_end)
+                {
+                    return false;
+                }
+
+                node = iter->operator[](bSerializedFormat ? "Id" : "id");
+                if (node.isNull())
+                {
+                    return false;
+                }
+
+                nextId = id + 1;
+                id = std::uint16_t(node.asInt64());
+                if (id >= itemStats.size() || id != nextId)
+                {
+                    return false;
+                }
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+
+            case 54:
+            case 57:
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                ++iter;
+                if (iter == iter_end)
+                {
+                    return false;
+                }
+
+                node = iter->operator[]("Id");
+                if (node.isNull())
+                {
+                    return false;
+                }
+
+                nextId = id + 1;
+                id = std::uint16_t(node.asInt64());
+                if (id >= itemStats.size() || id != nextId)
+                {
+                    return false;
+                }
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                ++iter;
+                if (iter == iter_end)
+                {
+                    return false;
+                }
+
+                node = iter->operator[]("Id");
+                if (node.isNull())
+                {
+                    return false;
+                }
+                
+                nextId = id + 1;
+                id = std::uint16_t(node.asInt64());
+                if (id >= itemStats.size() || id != nextId)
+                {
+                    return false;
+                }
+
+                node = iter->operator[]("Values");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+
+            case 188:
+                node = iter->operator[]("SkillTab");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("SkillLevel");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+
+            case 195:
+            case 196:
+            case 197:
+            case 198:
+            case 199:
+            case 201:
+                node = iter->operator[]("SkillLevel");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("SkillId");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+
+            case 204:
+                node = iter->operator[]("SkillLevel");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("SkillId");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("MaxCharges");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+
+            default:
+                if (stat->saveParamBits > 0)
+                {
+                    node = iter->operator[]("Param");
+                    if (node.isNull())
+                    {
+                        values.push_back(0);
+                    }
+
+                    values.push_back(node.asInt64());
+                }
+
+                node = iter->operator[]("Value");
+                if (node.isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(node.asInt64());
+                break;
+            }
+        }
+        else
+        {
+            node = iter->operator[]("values");
+            if (node.isNull() || !node.isArray())
+            {
+                return false;
+            }
+
+            auto iter2_end = node.end();
+            for (auto iter2 = node.begin(); iter2 != iter2_end; ++iter2)
+            {
+                if (iter2->isNull())
+                {
+                    values.push_back(0);
+                }
+
+                values.push_back(iter2->asInt64());
+            }
+        }
+
+        if (stat->encode == 2)
+        {
+            if (stat->saveBits != 7 || stat->saveParamBits != 16)
+            {
+                // corrupt file
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 6, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 10, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            {
+                return false;
+            }
+        }
+        else if (stat->encode == 3)
+        {
+            if (stat->saveBits != 16 || stat->saveParamBits != 16)
+            {
+                // corrupt file
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 6, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 10, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 8, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 8, value))
+            {
+                return false;
+            }
+        }
+        else if (stat->encode == 4)
+        {
+            if (stat->saveBits != 3 || stat->saveParamBits != 16)
+            {
+                // time-based stats were never implemented, so it's a corrupt file
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 3, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, 13, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            {
+                return false;
+            }
+        }
+        else if (stat->saveParamBits > 0)
+        {
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveParamBits, value))
+            {
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            {
+                return false;
+            }
+        }
+
+        while (stat->nextInChain && valueIdx < 4)
+        {
+            if (stat->nextInChain >= itemStats.size())
+            {
+                // corrupt file
+                return false;
+            }
+
+            stat = &itemStats[stat->nextInChain];
+            if (stat->saveParamBits != 0)
+            {
+                // corrupt file
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            value = values[valueIdx] + stat->saveAdd;
+            ++valueIdx;
+            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            {
+                return false;
+            }
+        }
+    }
+
+    id = 0x1FF;
+    if (!setBits(current_bit_offset, 9, id))
+    {
+        return false;
+    }
     return true;
 }
 //---------------------------------------------------------------------------
@@ -13738,10 +16467,10 @@ std::uint8_t d2ce::Item::getEncodedChar(std::FILE* charfile, size_t& current_bit
     return 0xFF;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::updateBits(size_t start, std::uint8_t size, std::uint32_t value)
+bool d2ce::Item::updateBits(size_t start, size_t size, std::uint32_t value)
 {
     size_t startIdx = start / 8;
-    size_t endIdx = (start + size) / 8;
+    size_t endIdx = (start + size - 1) / 8;
     if (endIdx >= data.size())
     {
         // not enough space
@@ -13764,10 +16493,10 @@ bool d2ce::Item::updateBits(size_t start, std::uint8_t size, std::uint32_t value
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::updateBits64(size_t start, std::uint8_t size, std::uint64_t value)
+bool d2ce::Item::updateBits64(size_t start, size_t size, std::uint64_t value)
 {
     size_t startIdx = start / 8;
-    size_t endIdx = (start + size) / 8;
+    size_t endIdx = (start + size - 1) / 8;
     if (endIdx >= data.size())
     {
         // not enough space
@@ -13790,7 +16519,7 @@ bool d2ce::Item::updateBits64(size_t start, std::uint8_t size, std::uint64_t val
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::updateItemCodev115(std::uint64_t code, std::uint8_t numBitsSet)
+bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
 {
     auto oldNumBitsSet = std::uint8_t(std::int64_t(extended_data_offset) - std::int64_t(type_code_offset));
     if (oldNumBitsSet == numBitsSet)
@@ -13963,7 +16692,7 @@ void d2ce::Items::findItems()
 
     auto itemLocation = d2ce::EnumItemLocation::BUFFER;
     auto itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
-    std::uint8_t strcode[4] = { 0 };
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     for (auto& item : Inventory)
     {
         item.getItemCode(strcode);
@@ -14120,6 +16849,113 @@ bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, st
     return numItems == items.size() ? true : false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Items::readItemsList(const Json::Value& itemListroot, bool bSerializedFormat, std::list<Item>& items)
+{
+    if (!itemListroot.isNull())
+    {
+        if (!fillItemsArray(itemListroot, bSerializedFormat, items))
+        {
+            // Corrupt file
+            return false;
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items)
+{
+    numItems = 0;
+    bool checkItemCount = false;
+    std::uint16_t expectedNumOfItems = 0;
+    Json::Value playerItemsRoot;
+    if (!root.isNull())
+    {
+        playerItemsRoot = root[bSerializedFormat ? "PlayerItemList" : "items"];
+        if (!playerItemsRoot.isNull() && bSerializedFormat)
+        {
+            // If "Header" value is present, it needs to be valid
+            Json::Value value = playerItemsRoot["Header"];
+            if (!value.isNull())
+            {
+                if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
+                {
+                    // bad header
+                    location = 0;
+                    return false;
+                }
+            }
+
+            // If "Count" value is present, it needs to be validated to be true
+            value = playerItemsRoot["Count"];
+            if (!value.isNull())
+            {
+                checkItemCount = true;
+                expectedNumOfItems = std::uint16_t(value.asInt64());
+            }
+
+            playerItemsRoot = playerItemsRoot["Items"];
+        }
+    }
+
+    if (!readItemsList(playerItemsRoot, bSerializedFormat, items))
+    {
+        // Corrupt file
+        location = 0;
+        return false;
+    }
+
+    numItems = std::uint16_t(items.size());
+    if (checkItemCount && (numItems != expectedNumOfItems))
+    {
+        // Corrupt file
+        location = 0;
+        return false;
+    }
+
+    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+    std::fwrite(&numItems, sizeof(numItems), 1, charfile);
+    location = std::ftell(charfile);
+    for (auto& item : items)
+    {
+        if (!item.writeItem(charfile))
+        {
+            // Corrupt file
+            location = 0;
+            return false;
+        }
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::fillItemsArray(const Json::Value& itemsRoot, bool bSerializedFormat, std::list<Item>& items)
+{
+    if (itemsRoot.isNull())
+    {
+        return true;
+    }
+
+    auto iter_end = itemsRoot.end();
+    for (auto iter = itemsRoot.begin(); iter != iter_end; ++iter)
+    {
+        if (iter->isNull())
+        {
+            continue;
+        }
+
+        items.resize(items.size() + 1);
+        auto& item = items.back();
+        if (!item.readItem(*iter, bSerializedFormat, Version))
+        {
+            // corrupt file
+            items.pop_back();
+            return false;
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Items::readCorpseItems(std::FILE* charfile)
 {
     CorpseInfo.clear();
@@ -14204,6 +17040,155 @@ bool d2ce::Items::readCorpseItems(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+{
+    CorpseInfo.clear();
+
+    bool checkItemCount = false;
+    std::uint16_t expectedNumOfItems = 0;
+    Json::Value corpseItemsRoot;
+    Json::Value corpseLocationRoot;
+    if (!root.isNull())
+    {
+        if (!bSerializedFormat)
+        {
+            Json::Value value = root["is_dead"];
+            if (!value.isNull())
+            {
+                CorpseInfo.IsDead = std::uint16_t(value.asInt64());
+                if (CorpseInfo.IsDead)
+                {
+                    corpseLocationRoot = root["corpse_location"];
+                }
+            }
+        }
+
+        corpseItemsRoot = root[bSerializedFormat ? "PlayerCorpses" : "corpse_items"];
+        if (!corpseItemsRoot.isNull() && bSerializedFormat)
+        {
+            // If "Header" value is present, it needs to be valid
+            Json::Value value = corpseItemsRoot["Header"];
+            if (!value.isNull())
+            {
+                if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
+                {
+                    // bad header
+                    return false;
+                }
+
+                // If "Count" value is present, it needs to be validated to be true
+                value = corpseItemsRoot["Count"];
+                if (!value.isNull())
+                {
+                    CorpseInfo.IsDead = std::uint16_t(value.asInt64());
+                }
+            }
+
+            corpseLocationRoot = corpseItemsRoot["Corpses"];
+            if (!corpseLocationRoot.isNull() && corpseLocationRoot.isArray() && !corpseLocationRoot.empty())
+            {
+                corpseItemsRoot.clear();
+                corpseLocationRoot = corpseLocationRoot[0];
+                if(!corpseLocationRoot.isNull())
+                {
+                    value = corpseLocationRoot["Header"];
+                    if (!value.isNull())
+                    {
+                        if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
+                        {
+                            // bad header
+                            corpse_location = 0;
+                            return false;
+                        }
+                    }
+
+                    // If "Count" value is present, it needs to be validated to be true
+                    value = corpseLocationRoot["Count"];
+                    if (!value.isNull())
+                    {
+                        checkItemCount = true;
+                        expectedNumOfItems = std::uint16_t(value.asInt64());
+                    }
+
+                    corpseItemsRoot = corpseLocationRoot["ItemList"];
+                }
+            }
+        }
+    }
+
+    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+    if (CorpseInfo.IsDead != 1)
+    {
+        CorpseInfo.clear();
+        NumOfCorpseItems = 0;
+        CorpseItems.clear();
+        corpse_item_location = 0;
+    }
+    else if (!corpseLocationRoot.isNull())
+    {
+        Json::Value value = corpseLocationRoot[bSerializedFormat ? "Unk0x0" : "unknown"];
+        if (!value.isNull())
+        {
+            CorpseInfo.Unknown = std::uint32_t(value.asInt64());
+        }
+
+        value = corpseLocationRoot[bSerializedFormat ? "X" : "position_x"];
+        if (!value.isNull())
+        {
+            CorpseInfo.X = std::uint32_t(value.asInt64());
+        }
+
+        value = corpseLocationRoot[bSerializedFormat ? "Y" : "position_y"];
+        if (!value.isNull())
+        {
+            CorpseInfo.Y = std::uint32_t(value.asInt64());
+        }
+    }
+
+    std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+    corpse_location = std::ftell(charfile);
+
+    if (CorpseInfo.IsDead > 0)
+    {
+        std::fwrite(&CorpseInfo.Unknown, sizeof(CorpseInfo.Unknown), 1, charfile);
+        std::fwrite(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
+        std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
+
+        if (!corpseItemsRoot.isNull())
+        {
+            if (!readItemsList(corpseItemsRoot, bSerializedFormat, CorpseItems))
+            {
+                // Corrupt file
+                corpse_location = 0;
+                return false;
+            }
+
+            NumOfCorpseItems = std::uint16_t(CorpseItems.size());
+            std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+            std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
+            corpse_item_location = std::ftell(charfile);
+            for (auto& item : CorpseItems)
+            {
+                if (!item.writeItem(charfile))
+                {
+                    // Corrupt file
+                    corpse_item_location = 0;
+                    return false;
+                }
+            }
+        }
+    }
+
+    if (checkItemCount && (NumOfCorpseItems != expectedNumOfItems))
+    {
+        // Corrupt file
+        corpse_location = 0;
+        return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(std::FILE* charfile)
 {
     if (update_locations)
@@ -14242,13 +17227,121 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         }
     }
 
-    readItems(charfile, merc_location, NumOfMercItems, MercItems);
-    if (merc_location == 0)
+    // lock ahead for no merc case
+    bool bHasMercId = true;
+    if (!feof(charfile))
     {
-        return;
+        auto startLoc = std::ftell(charfile);
+        std::uint8_t value = 0;
+        std::fread(&value, sizeof(value), 1, charfile);
+        if (value != ITEM_MARKER[0])
+        {
+            bHasMercId = false;
+        }
+
+        std::fseek(charfile, startLoc, SEEK_SET);
+    }
+
+    if (bHasMercId)
+    {
+        readItems(charfile, merc_location, NumOfMercItems, MercItems);
+        if (merc_location == 0)
+        {
+            return;
+        }
     }
 
     readGolemItem(charfile);
+}
+//---------------------------------------------------------------------------
+void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+{
+    bool checkItemCount = false;
+    std::uint16_t expectedNumOfItems = 0;
+    Json::Value mercItemsRoot;
+    std::uint32_t mercId = 0;
+    if (!root.isNull())
+    {
+        Json::Value mercInfoRoot = root[bSerializedFormat ? "Mercenary" : "header"];
+        if (!mercInfoRoot.isNull())
+        {
+            Json::Value value = mercInfoRoot[bSerializedFormat ? "Id" : "merc_id"];
+            if (!value.isNull())
+            {
+                mercId = bSerializedFormat ? std::uint32_t(value.asInt64()) : std::uint32_t(std::stoul(value.asString(), nullptr, 16));
+            }
+        }
+
+        mercItemsRoot = root[bSerializedFormat ? "MercenaryItemList" : "merc_items"];
+        if (!mercItemsRoot.isNull() && bSerializedFormat)
+        {
+            // If "Header" value is present, it needs to be valid
+            Json::Value value = mercItemsRoot["Header"];
+            if (!value.isNull())
+            {
+                if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)MERC_ITEM_MARKER.data()))
+                {
+                    mercItemsRoot.clear();
+                }
+            }
+
+            if (!mercItemsRoot.isNull())
+            {
+                mercItemsRoot = mercItemsRoot["ItemList"];
+                if (!mercItemsRoot.isNull())
+                {
+                    value = mercItemsRoot["Header"];
+                    if (!value.isNull())
+                    {
+                        if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
+                        {
+                            mercItemsRoot.clear();
+                        }
+                    }
+
+                    if (!mercItemsRoot.isNull())
+                    {
+                        // If "Count" value is present, it needs to be validated to be true
+                        value = mercItemsRoot["Count"];
+                        if (!value.isNull())
+                        {
+                            checkItemCount = true;
+                            expectedNumOfItems = std::uint16_t(value.asInt64());
+                        }
+
+                        mercItemsRoot = mercItemsRoot["Items"];
+                    }
+                }
+            }
+        }
+    }
+
+    std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
+    if (!readItemsList(mercItemsRoot, bSerializedFormat, MercItems))
+    {
+        // Corrupt file
+        merc_location = 0;
+        return;
+    }
+
+    NumOfMercItems = std::uint16_t(MercItems.size());
+    if (mercId != 0 || (NumOfMercItems > 0))
+    {
+        std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+        std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
+        merc_location = std::ftell(charfile);
+        for (auto& item : MercItems)
+        {
+            if (!item.writeItem(charfile))
+            {
+                // Corrupt file
+                merc_location = 0;
+                return;
+            }
+        }
+    }
+
+    readGolemItem(root, bSerializedFormat, charfile);
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::readGolemItem(std::FILE* charfile)
@@ -14319,9 +17412,73 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
     }
 }
 //---------------------------------------------------------------------------
+void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+{
+    golem_location = 0;
+    HasGolem = 0;
+    GolemItem.clear();
+
+    Json::Value golemItemRoot;
+    if (root.isNull())
+    {
+        golemItemRoot = root[bSerializedFormat ? "Golem" : "golem_item"];
+        if (!golemItemRoot.isNull() && bSerializedFormat)
+        {
+            // If "Header" value is present, it needs to be valid
+            Json::Value value = golemItemRoot["Header"];
+            if (!value.isNull())
+            {
+                if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)GOLEM_ITEM_MARKER.data()))
+                {
+                    golemItemRoot.clear();
+                }
+            }
+
+            if (!golemItemRoot.isNull())
+            {
+                value = golemItemRoot["Exists"];
+                if (!value.isNull())
+                {
+                    HasGolem = value.asBool() ? 1 : 0;
+                    if (HasGolem)
+                    {
+                        golemItemRoot = golemItemRoot["Item"];
+                    }
+                    else
+                    {
+                        golemItemRoot.clear();
+                    }
+                }
+                else
+                {
+                    golemItemRoot = golemItemRoot["Item"];
+                }
+            }
+        }
+    }
+
+    if (!GolemItem.readItem(golemItemRoot, bSerializedFormat, Version))
+    {
+        // Corrupt file
+        golem_location = 0;
+        GolemItem.clear();
+        HasGolem = false;
+    }
+
+    std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
+    HasGolem = GolemItem.size() > 0 ? 1 : 0;
+    std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
+    golem_location = std::ftell(charfile);
+    if (!GolemItem.writeItem(charfile))
+    {
+        golem_location = 0;
+        return;
+    }
+}
+//---------------------------------------------------------------------------
 bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 {
-    std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
+    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
     if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
     {
         CorpseInfo.clear();
@@ -14339,7 +17496,7 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
         std::fwrite(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
         std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
 
-        std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
+        std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
         NumOfCorpseItems = (std::uint16_t)CorpseItems.size();
         std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
         corpse_item_location = std::ftell(charfile);
@@ -14357,16 +17514,19 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::Items::writeMercItems(std::FILE* charfile)
 {
-    std::fwrite(MERC_ITEM_MARKER, sizeof(MERC_ITEM_MARKER), 1, charfile);
-    std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
+    std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
     NumOfMercItems = (std::uint16_t)MercItems.size();
-    std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
-    merc_location = std::ftell(charfile);
-    for (auto& item : MercItems)
+    if (merc_location != 0)
     {
-        if (!item.writeItem(charfile))
+        std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+        std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
+        merc_location = std::ftell(charfile);
+        for (auto& item : MercItems)
         {
-            return false;
+            if (!item.writeItem(charfile))
+            {
+                return false;
+            }
         }
     }
 
@@ -14375,7 +17535,7 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::Items::writeGolemItem(std::FILE* charfile)
 {
-    std::fwrite(GOLEM_ITEM_MARKER, sizeof(GOLEM_ITEM_MARKER), 1, charfile);
+    std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
     HasGolem = GolemItem.size() > 0 ? 1 : 0;
     std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
     golem_location = std::ftell(charfile);
@@ -14416,11 +17576,37 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion)
+{
+    clear();
+    Version = version;
+    update_locations = true;
+    isFileExpansionCharacter = isExpansion;
+    if (!readItems(root, bSerializedFormat, charfile, items_location, NumOfItems, Inventory) || items_location == 0)
+    {
+        return false;
+    }
+
+    if (!readCorpseItems(root, bSerializedFormat, charfile) || corpse_location == 0)
+    {
+        return false;
+    }
+
+    if (isExpansion)
+    {
+        readMercItems(root, bSerializedFormat, charfile);
+    }
+
+    update_locations = false;
+    findItems();
+    return true;
+}
+//---------------------------------------------------------------------------
 // write items in place at offset saved from reasding
 bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
 {
     // Write Items
-    std::fwrite(ITEM_MARKER, sizeof(ITEM_MARKER), 1, charfile);
+    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
     NumOfItems = (std::uint16_t)Inventory.size();
     std::fwrite(&NumOfItems, sizeof(NumOfItems), 1, charfile);
     for (auto& item : Inventory)
@@ -14448,136 +17634,76 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
+void d2ce::Items::itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     if (bSerializedFormat)
     {
-        std::string itemsParentIndent = parentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"PlayerItemList\": {";
-        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
-        ss << ",\n" << itemsParentIndent << "\"Count\": " << std::dec << Inventory.size();
-        ss << ",\n" << itemsParentIndent << "\"Items\": [";
-        if (Inventory.empty())
+        Json::Value playerItemList;
+        playerItemList["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+        playerItemList["Count"] = Inventory.size();
+
+        Json::Value items(Json::arrayValue);
+        for (auto& item : Inventory)
         {
-            ss << "]";
+            item.asJson(items, charLevel, bSerializedFormat);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& item : Inventory)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, itemsParentIndent, charLevel, true, bSerializedFormat);
-            }
-            ss << "\n" << itemsParentIndent << "]";
-        }
-        ss << "\n" << parentIndent << "}";
+        playerItemList["Items"] = items;
+        parent["PlayerItemList"] = playerItemList;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"items\": [";
-        if (Inventory.empty())
+        Json::Value items(Json::arrayValue);
+        for (auto& item : Inventory)
         {
-            ss << "]";
+            item.asJson(items, charLevel, bSerializedFormat);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& item : Inventory)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
-            }
-            ss << "\n" << parentIndent << "]";
-        }
+        parent["items"] = items;
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
+void d2ce::Items::corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     if (bSerializedFormat)
     {
-        std::string itemsParentIndent = parentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"PlayerCorpses\": {";
-        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
-        ss << ",\n" << itemsParentIndent << "\"Count\": " << std::dec << (CorpseInfo.IsDead ? 1 : 0);
-        ss << ",\n" << itemsParentIndent << "\"Corpses\": [";
-        if (CorpseItems.empty())
+        Json::Value playerCorpses;
+        playerCorpses["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+        playerCorpses["Count"] = (CorpseInfo.IsDead ? 1 : 0);
+
+        Json::Value corpses(Json::arrayValue);
+        if (!CorpseItems.empty())
         {
-            ss << "]";
-        }
-        else
-        {
-            std::string itemListParentIndent = itemsParentIndent + jsonIndentStr;
-            std::string itemListIndent = itemListParentIndent + jsonIndentStr;
-            ss << "\n" << itemListParentIndent << "{";
-            ss << "\n" << itemListIndent << "\"Unk0x0\": " << std::dec << CorpseInfo.Unknown;
-            ss << ",\n" << itemListIndent << "\"X\": " << std::dec << CorpseInfo.X;
-            ss << ",\n" << itemListIndent << "\"Y\": " << std::dec << CorpseInfo.Y;
-            ss << ",\n" << itemListIndent << "\"ItemList\": [";
-            bool bFirstItem = true;
+            Json::Value corpse;
+            corpse["Unk0x0"] = CorpseInfo.Unknown;
+            corpse["X"] = CorpseInfo.X;
+            corpse["Y"] = CorpseInfo.Y;
+            corpse["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+            corpse["Count"] = CorpseItems.size();
+
+            Json::Value items(Json::arrayValue);
             for (auto& item : CorpseItems)
             {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, itemListIndent, charLevel, true, bSerializedFormat);
+                item.asJson(items, charLevel, bSerializedFormat);
             }
-            ss << "\n" << itemListIndent << "]";
-            ss << "\n" << itemListParentIndent << "}";
-            ss << "\n" << itemsParentIndent << "]";
+            corpse["ItemList"] = items;
+            corpses.append(corpse);
         }
-        ss << "\n" << parentIndent << "}";
+        playerCorpses["Corpses"] = corpses;
+        parent["PlayerCorpses"] = playerCorpses;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"corpse_items\": [";
-        if (CorpseItems.empty())
+        Json::Value corpses(Json::arrayValue);
+        for (auto& item : CorpseItems)
         {
-            ss << "]";
+            item.asJson(corpses, charLevel, bSerializedFormat);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& item : CorpseItems)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
-            }
-            ss << "\n" << parentIndent << "]";
-        }
-        ss << ",";
-        CorpseInfo.asJson(ss, parentIndent);
+        parent["corpse_items"] = corpses;
+
+        CorpseInfo.asJson(parent);
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
+bool d2ce::Items::mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     if (!isFileExpansionCharacter)
     {
@@ -14586,79 +17712,56 @@ bool d2ce::Items::mercItemsAsJson(std::stringstream& ss, const std::string& pare
 
     if (bSerializedFormat)
     {
-        std::string itemsParentIndent = parentIndent + jsonIndentStr;
-        std::string itemsListParentIndent = itemsParentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"MercenaryItemList\": {";
-        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)MERC_ITEM_MARKER);
+        Json::Value mercenaryItemList;
+        mercenaryItemList["Header"] = *((std::uint16_t*)MERC_ITEM_MARKER.data());
         if (!MercItems.empty())
         {
-            ss << ",\n" << itemsParentIndent << "\"ItemList\": {";
-            ss << "\n" << itemsListParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)ITEM_MARKER);
-            ss << ",\n" << itemsListParentIndent << "\"Count\": " << std::dec << MercItems.size();
-            ss << ",\n" << itemsListParentIndent << "\"Items\": [";
-            bool bFirstItem = true;
+            Json::Value itemList;
+            itemList["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+            itemList["Count"] = MercItems.size();
+
+            Json::Value items(Json::arrayValue);
             for (auto& item : MercItems)
             {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, itemsListParentIndent, charLevel, true, bSerializedFormat);
+                item.asJson(items, charLevel, bSerializedFormat);
             }
-            ss << "\n" << itemsListParentIndent << "]";
-            ss << "\n" << itemsParentIndent << "}";
+            itemList["Items"] = items;
+            mercenaryItemList["ItemList"] = itemList;
         }
-        ss << "\n" << parentIndent << "}";
+        parent["MercenaryItemList"] = mercenaryItemList;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"merc_items\": [";
-        if (MercItems.empty())
+        Json::Value items(Json::arrayValue);
+        for (auto& item : MercItems)
         {
-            ss << "]";
+            item.asJson(items, charLevel, bSerializedFormat);
         }
-        else
-        {
-            bool bFirstItem = true;
-            for (auto& item : MercItems)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                item.asJson(ss, parentIndent, charLevel, true, bSerializedFormat);
-            }
-            ss << "\n" << parentIndent << "]";
-        }
+        parent["merc_items"] = items;
     }
 
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
+bool d2ce::Items::golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
+    if (!isFileExpansionCharacter)
+    {
+        return false;
+    }
+
     if (bSerializedFormat)
     {
-        std::string itemsParentIndent = parentIndent + jsonIndentStr;
-        std::string itemsListParentIndent = itemsParentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"Golem\": {";
-        ss << "\n" << itemsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)GOLEM_ITEM_MARKER);
-        ss << ",\n" << itemsParentIndent << "\"Exists\": " << (HasGolem ? "true" : "false");
-        if (HasGolem)
+        Json::Value golem;
+        golem["Header"] = *((std::uint16_t*)GOLEM_ITEM_MARKER.data());
+        golem["Exists"] = (HasGolem ? true : false);
+        if (HasGolem != 0)
         {
-            ss << ",\n" << itemsParentIndent << "\"Item\": {";
-            GolemItem.asJson(ss, parentIndent, charLevel, false, bSerializedFormat);
-            ss << "\n" << itemsParentIndent << "}";
+            Json::Value item;
+            GolemItem.asJson(item, charLevel, bSerializedFormat);
+            golem["Item"] = item;
         }
-        ss << "\n" << parentIndent << "}";
+        parent["Golem"] = golem;
     }
     else
     {
@@ -14667,14 +17770,14 @@ bool d2ce::Items::golemItemAsJson(std::stringstream& ss, const std::string& pare
             return false;
         }
 
-        ss << "\n" << parentIndent << "\"golem_item\": {";
-        GolemItem.asJson(ss, parentIndent, charLevel, false, bSerializedFormat);
-        ss << "\n" << parentIndent << "}";
+        Json::Value item;
+        GolemItem.asJson(item, charLevel, bSerializedFormat);
+        parent["golem_item"] = item;
     }
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+bool d2ce::Items::itemBonusesAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
     if (bSerializedFormat)
     {
@@ -14687,59 +17790,22 @@ bool d2ce::Items::itemBonusesAsJson(std::stringstream& ss, const std::string& pa
         return false;
     }
 
-    ss << "\n" << parentIndent << "\"item_bonuses\": [";
-    if (attribs.empty())
+    Json::Value itemBonuses(Json::arrayValue);
+    for (auto& attrib : attribs)
     {
-        ss << "]";
+        attrib.asJson(itemBonuses, bSerializedFormat);
     }
-    else
-    {
-        bool bFirstItem = true;
-        for (auto& attrib : attribs)
-        {
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-            attrib.asJson(ss, parentIndent, bSerializedFormat);
-        }
-        ss << "\n" << parentIndent << "]";
-    }
+    parent["item_bonuses"] = itemBonuses;
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat) const
+void d2ce::Items::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    itemsAsJson(ss, parentIndent, charLevel, bSerializedFormat);
-    ss << ",";
-    corpseItemsAsJson(ss, parentIndent, charLevel, bSerializedFormat);
-    {
-        std::stringstream ss2;
-        if (mercItemsAsJson(ss2, parentIndent, charLevel, bSerializedFormat))
-        {
-            ss << "," << ss2.str();
-        }
-    }
-
-    {
-        std::stringstream ss2;
-        if (golemItemAsJson(ss2, parentIndent, charLevel, bSerializedFormat))
-        {
-            ss << "," << ss2.str();
-        }
-    }
-
-    {
-        std::stringstream ss2;
-        if (itemBonusesAsJson(ss2, parentIndent, bSerializedFormat))
-        {
-            ss << "," << ss2.str();
-        }
-    }
+    itemsAsJson(parent, charLevel, bSerializedFormat);
+    corpseItemsAsJson(parent, charLevel, bSerializedFormat);
+    mercItemsAsJson(parent, charLevel, bSerializedFormat);
+    golemItemAsJson(parent, charLevel, bSerializedFormat);
+    itemBonusesAsJson(parent, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
 d2ce::Items::Items()
@@ -15348,7 +18414,7 @@ size_t d2ce::Items::upgradeRejuvenationPotions()
    final gem, potion or skull.
    Returns the number of gems converted.
 */
-size_t d2ce::Items::convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4])
+size_t d2ce::Items::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
 {
     if (GPSs.empty())
     {
@@ -15359,7 +18425,7 @@ size_t d2ce::Items::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
     const std::uint8_t& oldgemcondition = existingGem[1];
     const std::uint8_t& oldgemcolour = existingGem[2];
 
-    std::uint8_t temp[4] = { 0 };
+    std::array<std::uint8_t, 4> temp = { 0, 0, 0, 0 };
     std::uint8_t& currentgem = temp[0];
     std::uint8_t& currentgemcondition = temp[1];
     std::uint8_t& currentgemcolour = temp[2];

@@ -29,7 +29,7 @@
 
 namespace
 {
-    CString GetGPSNameFromCode(const std::uint8_t(&gemCode)[4])
+    CString GetGPSNameFromCode(const std::array<std::uint8_t, 4>& gemCode)
     {
         const std::uint8_t& gem = gemCode[0];
         const std::uint8_t& gemCondition = gemCode[1];
@@ -348,7 +348,7 @@ namespace
         return _T(""); // unknown
     }
 
-    size_t GetGPSSortIndex(const std::uint8_t(&gemCode)[4])
+    size_t GetGPSSortIndex(const std::array<std::uint8_t, 4>& gemCode)
     {
         size_t idx = 0;
         const std::uint8_t& gem = gemCode[0];
@@ -647,13 +647,14 @@ BOOL CD2GemsForm::OnInitDialog()
     if (pFromCombo != nullptr)
     {
         std::uint64_t itemData = 0;
-        std::uint8_t(&gemCode)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemData);
+        std::array<std::uint8_t, 4> gemCode;
+        *reinterpret_cast<std::uint32_t*>(gemCode.data()) = std::uint32_t(itemData);
         if (ItemPtr == nullptr)
         {
             auto& gems = MainForm.getGPSs();
             for (auto& item : gems)
             {
-                std::memset(gemCode, 0, sizeof(gemCode));
+                gemCode.fill(0);
                 if (!item.get().getItemCode(gemCode))
                 {
                     continue;
@@ -674,7 +675,7 @@ BOOL CD2GemsForm::OnInitDialog()
         else
         {
             // Only add selected item
-            std::memset(gemCode, 0, sizeof(gemCode));
+            gemCode.fill(0);
             if (ItemPtr->getItemCode(gemCode))
             {
                 GemIdxMap.emplace(GetGPSSortIndex(gemCode), itemData);
@@ -703,7 +704,8 @@ BOOL CD2GemsForm::OnInitDialog()
     if (pToCombo != nullptr)
     {
         std::uint64_t itemData = 0;
-        std::uint8_t(&gemCode)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemData);
+        std::array< std::uint8_t, 4> gemCode;
+        *reinterpret_cast<std::uint32_t*>(gemCode.data()) = std::uint32_t(itemData);
         std::uint8_t& gem = gemCode[0];
         std::uint8_t& gemCondition = gemCode[1];
         std::uint8_t& gemColour = gemCode[2];
@@ -890,10 +892,12 @@ void CD2GemsForm::OnBnClickedConvert()
         if (fromIdx >= 0 && toIdx >= 0 && pFromCombo->GetItemData(fromIdx) != pToCombo->GetItemData(toIdx))
         {
             std::uint64_t itemDataFrom = pFromCombo->GetItemData(fromIdx);
-            std::uint8_t(&gemCodeFrom)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemDataFrom);
+            std::array<std::uint8_t, 4> gemCodeFrom;
+            *reinterpret_cast<std::uint32_t*>(gemCodeFrom.data()) = std::uint32_t(itemDataFrom);
 
             std::uint64_t itemDataTo = pToCombo->GetItemData(toIdx);
-            std::uint8_t(&gemCodeTo)[4] = *reinterpret_cast<std::uint8_t(*)[4]>((std::uint8_t*)&itemDataTo);
+            std::array<std::uint8_t, 4> gemCodeTo;
+            *reinterpret_cast<std::uint32_t*>(gemCodeTo.data()) = std::uint32_t(itemDataTo);
 
             if (ItemPtr == nullptr)
             {

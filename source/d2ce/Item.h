@@ -23,7 +23,7 @@
 #include "CharacterConstants.h"
 #include "ItemConstants.h"
 #include "DataTypes.h"
-#include <sstream>
+#include <json/json.h>
 
 namespace d2ce
 {
@@ -70,21 +70,25 @@ namespace d2ce
     private:
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
         bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
+        bool setBits(size_t& current_bit_offset, size_t bits, std::uint32_t value);
+        bool setBits64(size_t& current_bit_offset, size_t bits, std::uint64_t value);
         bool parsePropertyList(std::FILE* charfile, size_t& current_bit_offset);
+        bool parsePropertyList(const Json::Value& propListRoot, bool bSerializedFormat, size_t& current_bit_offset);
         bool readPropertyList(size_t& current_bit_offset, std::vector<MagicalAttribute>& attrib) const;
         std::uint8_t getEncodedChar(std::FILE* charfile, size_t& current_bit_offset);
 
-        bool updateBits(size_t start, std::uint8_t size, std::uint32_t value);
-        bool updateBits64(size_t start, std::uint8_t size, std::uint64_t value);
-        bool updateItemCodev115(std::uint64_t code, std::uint8_t numBitsSet);
+        bool updateBits(size_t start, size_t size, std::uint32_t value);
+        bool updateBits64(size_t start, size_t size, std::uint64_t value);
+        bool updateItemCodev115(std::uint64_t code, size_t numBitsSet);
 
     protected:
         bool readItem(EnumCharVersion version, std::FILE* charfile);
+        bool readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumCharVersion version);
         bool writeItem(std::FILE* charfile);
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool isListItem = true, bool bSerializedFormat = false) const;
-        void unknownAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
-        void byteRangeAsJson(std::stringstream& ss, const std::string& parentIndent, size_t startByte, size_t numBytes) const;
+        void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        void unknownAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        void byteRangeAsJson(Json::Value& parent, size_t startByte, size_t numBytes) const;
 
         std::uint16_t getRawVersion() const;
 
@@ -124,10 +128,10 @@ namespace d2ce
         std::uint8_t getPositionX() const;
         std::uint8_t getPositionY() const;
         EnumAltItemLocation getAltPositionId() const;
-        bool getItemCode(std::uint8_t(&strcode)[4]) const;
+        bool getItemCode(std::array<std::uint8_t, 4>& strcode) const;
         EnumItemType getItemType() const;
         std::string getItemTypeName() const;
-        bool updateGem(const std::uint8_t(&newgem)[4]);
+        bool updateGem(const std::array<std::uint8_t, 4>& newgem);
         bool upgradeGem();
         bool upgradePotion();
         bool upgradeToFullRejuvenationPotion();
@@ -221,7 +225,7 @@ namespace d2ce
 
         std::uint16_t NumOfItems = 0;      // # of items (according to file) in inventory excluding 
                                            // gems in socketed items
-        std::list<Item> Inventory;       // items in inventory
+        std::list<Item> Inventory;         // items in inventory
 
         std::vector<std::reference_wrapper<Item>> GPSs;       // inventory of all Gems, Potions or Skulls
         std::vector<std::reference_wrapper<Item>> Stackables; // inventory of all Stackable (includes some weapons)
@@ -252,12 +256,18 @@ namespace d2ce
     private:
         void findItems();
 
-        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& Items);
+        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
         bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<Item>& items);
+        bool readItemsList(const Json::Value& itemListroot, bool bSerializedFormat, std::list<Item>& items);
+        bool readItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
+        bool fillItemsArray(const Json::Value& itemsRoot, bool bSerializedFormat, std::list<Item>& items);
 
         bool readCorpseItems(std::FILE* charfile);
+        bool readCorpseItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
         void readMercItems(std::FILE* charfile);
+        void readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
         void readGolemItem(std::FILE* charfile);
+        void readGolemItem(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
 
         bool writeCorpseItems(std::FILE* charfile);
         bool writeMercItems(std::FILE* charfile);
@@ -265,14 +275,15 @@ namespace d2ce
 
     protected:
         bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
+        bool readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
         bool writeItems(std::FILE* charfile, bool isExpansion = false);
 
-        void itemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
-        void corpseItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
-        bool mercItemsAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
-        bool golemItemAsJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
-        bool itemBonusesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
-        void asJson(std::stringstream& ss, const std::string& parentIndent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        void corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+        bool itemBonusesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
 
     public:
         Items();
@@ -337,7 +348,7 @@ namespace d2ce
         size_t upgradeGems();
         size_t upgradePotions();
         size_t upgradeRejuvenationPotions();
-        size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
+        size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
         size_t fillAllStackables();
         size_t fixAllItems();
         size_t maxDurabilityAllItems();

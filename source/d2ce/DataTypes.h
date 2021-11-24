@@ -23,14 +23,14 @@
 #include "CharacterConstants.h"
 #include "CharacterStatsConstants.h"
 #include "Constants.h"
-#include <sstream>
+#include <json/json.h>
 
 namespace d2ce
 {
     struct BasicStats
     {
         EnumCharVersion Version;                                            // Version for Character file
-        char Name[NAME_LENGTH];                                             // pos 20 (1.09+, otherwise pos 8),
+        std::array<char, d2ce::NAME_LENGTH> Name = { 0 };                   // pos 20 (1.09+, otherwise pos 8),
                                                                             // name includes terminating NULL
         bitmask::bitmask<EnumCharStatus> Status = EnumCharStatus::NoDeaths; // pos 36 (1.09+, otherwise, pos 24), determines character status
         bitmask::bitmask<EnumCharTitle> Title = EnumCharTitle::None;        // pos 37 (1.09+, otherwise pos 25), character's title
@@ -40,12 +40,12 @@ namespace d2ce
 
         BasicStats()
         {
-            std::memset(Name, 0, sizeof(Name));
+            Name.fill(0);
         }
 
         bool isExpansionCharacter() const
         {
-            return (Status & EnumCharStatus::Expansion) != 0 ? true : false;
+            return (Status & EnumCharStatus::Expansion) == EnumCharStatus::Expansion ? true : false;
         }
 
         void setIsExpansionCharacter(bool flag)
@@ -62,7 +62,7 @@ namespace d2ce
 
         bool isLadderCharacter() const
         {
-            return (Status & EnumCharStatus::Ladder) != 0 ? true : false;
+            return (Status & EnumCharStatus::Ladder) == EnumCharStatus::Ladder ? true : false;
         }
 
         void setIsLadderCharacter(bool flag)
@@ -85,7 +85,7 @@ namespace d2ce
 
         bool isHardcoreCharacter() const
         {
-            return (Status & EnumCharStatus::Hardcore) != 0 ? true : false;
+            return (Status & EnumCharStatus::Hardcore) == EnumCharStatus::Hardcore ? true : false;
         }
 
         void setIsHardcoreCharacter(bool flag)
@@ -93,7 +93,7 @@ namespace d2ce
             if (flag)
             {
                 Status |= EnumCharStatus::Hardcore;
-                Status &= EnumCharStatus::Resurrected; // can't be resurrected
+                Status &= EnumCharStatus::Died; // can't be resurrected
             }
             else
             {
@@ -103,7 +103,7 @@ namespace d2ce
 
         bool isResurrectedCharacter() const
         {
-            return (Status & EnumCharStatus::Resurrected) != 0 ? true : false;
+            return (Status & EnumCharStatus::Died) == EnumCharStatus::Died ? true : false;
         }
 
         void setIsResurrectedCharacter(bool flag)
@@ -115,17 +115,17 @@ namespace d2ce
 
             if (flag)
             {
-                Status |= EnumCharStatus::Resurrected;
+                Status |= EnumCharStatus::Died;
             }
             else
             {
-                Status &= ~EnumCharStatus::Resurrected;
+                Status &= ~EnumCharStatus::Died;
             }
         }
 
         bool isDeadCharacter() const
         {
-            return (Status & EnumCharStatus::Dead) != 0 ? true : false;
+            return (Status & EnumCharStatus::Dead) == EnumCharStatus::Dead ? true : false;
         }
 
         void setIsDeadCharacter(bool flag)
@@ -253,18 +253,18 @@ namespace d2ce
     {
         EnumCharClass Class = EnumCharClass::Amazon;
         std::uint32_t Level = 1;
-        char Name[NAME_LENGTH];
+        std::array<char, NAME_LENGTH> Name;
 
         EarAttributes()
         {
-            std::memset(Name, 0, sizeof(Name));
+            Name.fill(0);
         }
 
         void clear()
         {
             Class = EnumCharClass::Amazon;
             Level = 1;
-            std::memset(Name, 0, sizeof(Name));
+            Name.fill(0);
         }
 
         d2ce::EnumCharClass getClass() const
@@ -288,21 +288,21 @@ namespace d2ce
             return "";
         }
 
-        const char(&getName() const)[NAME_LENGTH]
+        const std::array<char, NAME_LENGTH>& getName() const
         {
             return Name;
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"ear_attributes\": {";
-            ss << "\n" << parentIndent << jsonIndentStr << "\"class\": \"" << getClassName() << "\"";
-            ss << ",\n" << parentIndent << jsonIndentStr << "\"level\": " << std::dec << getLevel();
-            ss << ",\n" << parentIndent << jsonIndentStr << "\"name\": \"" << getName() << "\"";
-            ss << "\n" << parentIndent << "}";
+            Json::Value ear_attributes;
+            ear_attributes["class"] = getClassName();
+            ear_attributes["level"] = getLevel();
+            ear_attributes["name"] = getName().data();
+            parent["ear_attributes"] = ear_attributes;
         }
     };
-    
+
     struct MagicalAttribute
     {
         std::uint16_t Id = 0;
@@ -324,16 +324,18 @@ namespace d2ce
             Visible = true;
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
+        void asJson(Json::Value& parent, bool bSerializedFormat = false) const
         {
-            std::string attribParentIndent = parentIndent + jsonIndentStr;
-            std::string attribIndent = attribParentIndent + jsonIndentStr;
+            if (!parent.isArray())
+            {
+                return;
+            }
+
+            Json::Value attrib;
             if (bSerializedFormat)
             {
-                std::string tempName;
-                ss << "\n" << attribParentIndent << "{";
-                ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id;
-                ss << ",\n" << attribIndent << "\"Stat\": \"" << Name << "\"";
+                attrib["Id"] = Id;
+                attrib["Stat"] = Name;
                 switch (Id)
                 {
                 case 17:
@@ -342,41 +344,41 @@ namespace d2ce
                 case 52:
                     if (!Values.empty())
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                        attrib["Value"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
-                    ss << "\n" << attribParentIndent << "}";
-                    ss << ",\n" << attribParentIndent << "{";
-                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 1;
-                    switch (Id  +1)
+                    parent.append(attrib);
+                    attrib.clear();
+                    attrib["Id"] = Id + 1;
+                    switch (Id + 1)
                     {
                     case 18:
-                        tempName = "item_mindamage_percent";
+                        attrib["Stat"] = "item_mindamage_percent";
                         break;
 
                     case 49:
-                        tempName = "firemaxdam";
+                        attrib["Stat"] = "firemaxdam";
                         break;
 
                     case 51:
-                        tempName = "lightmaxdam";
+                        attrib["Stat"] = "lightmaxdam";
                         break;
 
                     case 53:
-                        tempName = "magicmaxdam";
+                        attrib["Stat"] = "magicmaxdam";
                         break;
                     }
-                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
+
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                        attrib["Value"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
 
@@ -384,85 +386,82 @@ namespace d2ce
                 case 57:
                     if (!Values.empty())
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                        attrib["Value"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
-                    ss << "\n" << attribParentIndent << "}";
-                    ss << ",\n" << attribParentIndent << "{";
-                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 1;
+                    parent.append(attrib);
+                    attrib.clear();
+                    attrib["Id"] = Id + 1;
                     switch (Id + 1)
                     {
                     case 55:
-                        tempName = "coldmaxdam";
+                        attrib["Stat"] = "coldmaxdam";
                         break;
 
                     case 58:
-                        tempName = "poisonmaxdam";
+                        attrib["Stat"] = "poisonmaxdam";
                         break;
                     }
-                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                        attrib["Value"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
-
-                    ss << "\n" << attribParentIndent << "}";
-                    ss << ",\n" << attribParentIndent << "{";
-                    ss << "\n" << attribIndent << "\"Id\": " << std::dec << Id + 2;
+                    parent.append(attrib);
+                    attrib.clear();
+                    attrib["Id"] = Id + 2;
                     switch (Id + 2)
                     {
                     case 56:
-                        tempName = "coldlength";
+                        attrib["Stat"] = "coldlength";
                         break;
 
                     case 59:
-                        tempName = "poisonlength";
+                        attrib["Stat"] = "poisonlength";
                         break;
                     }
-                    ss << ",\n" << attribIndent << "\"Stat\": \"" << tempName << "\"";
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                        attrib["Value"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
 
                 case 188:
                     if (!Values.empty())
                     {
-                        ss << ",\n" << attribIndent << "\"SkillTab \": " << std::dec << Values[0];
+                        attrib["SkillTab"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillTab \": 0";
+                        attrib["SkillTab"] = 0;
                     }
 
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel \": " << std::dec << Values[1];
+                        attrib["SkillLevel"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel \": 0";
+                        attrib["SkillLevel"] = 0;
                     }
 
                     if (Values.size() > 2)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[2];
+                        attrib["Value"] = Values[2];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
 
@@ -474,235 +473,200 @@ namespace d2ce
                 case 201:
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"SkillId  \": " << std::dec << Values[1];
+                        attrib["SkillId"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillId  \": 0";
+                        attrib["SkillId"] = 0;
                     }
 
                     if (!Values.empty())
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel  \": " << std::dec << Values[0];
+                        attrib["SkillLevel"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel  \": 0";
+                        attrib["SkillLevel"] = 0;
                     }
 
                     if (Values.size() > 2)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[2];
+                        attrib["Value"] = Values[2];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
 
                 case 204:
                     if (Values.size() > 1)
                     {
-                        ss << ",\n" << attribIndent << "\"SkillId  \": " << std::dec << Values[1];
+                        attrib["SkillId"] = Values[1];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillId  \": 0";
+                        attrib["SkillId"] = 0;
                     }
 
                     if (!Values.empty())
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel  \": " << std::dec << Values[0];
+                        attrib["SkillLevel"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"SkillLevel  \": 0";
+                        attrib["SkillLevel"] = 0;
                     }
 
                     if (Values.size() > 2)
                     {
-                        ss << ",\n" << attribIndent << "\"MaxCharges \": " << std::dec << Values[2];
+                        attrib["MaxCharges"] = Values[2];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"MaxCharges \": 0";
+                        attrib["MaxCharges"] = 0;
                     }
 
                     if (Values.size() > 3)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[3];
+                        attrib["Value"] = Values[3];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
 
                 default:
                     if (Values.size() >= 2)
                     {
-                        ss << ",\n" << attribIndent << "\"Param\": " << std::dec << Values[0];
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[1];
+                        attrib["Param"] = Values[0];
+                        attrib["Value"] = Values[1];
                     }
                     else if (Values.size() == 1)
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": " << std::dec << Values[0];
+                        attrib["Value"] = Values[0];
                     }
                     else
                     {
-                        ss << ",\n" << attribIndent << "\"Value\": 0";
+                        attrib["Value"] = 0;
                     }
                     break;
                 }
-                ss << "\n" << attribParentIndent << "}";
+                parent.append(attrib);
             }
             else
             {
-                ss << "\n" << attribParentIndent << "{";
-                ss << "\n" << attribIndent << "\"id\": " << std::dec << Id;
-                ss << ",\n" << attribIndent << "\"values\": [";
-                if (Values.empty())
+                size_t idx = 0;
+                attrib["id"] = Id;
+                Json::Value null_value;
+                Json::Value values(Json::arrayValue);
+                for (auto val : Values)
                 {
-                    ss << "]";
-                }
-                else
-                {
-                    size_t idx = 0;
-                    for (const auto& val : Values)
+                    if (val == 0)
                     {
-                        if (idx != 0)
+                        // Check if zero is a valid value
+                        switch (idx)
                         {
-                            ss << ",";
-                        }
-
-                        if (val == 0)
-                        {
-                            // Check if zero is a valid value
-                            switch (idx)
+                        case 0:
+                            switch (Id)
                             {
-                            case 0:
-                                switch (Id)
-                                {
-                                case 83:
-                                case 97:
-                                case 107:
-                                case 151:
-                                case 188:
-                                    ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
-                                    break;
-
-                                default:
-                                    ss << "\n" << attribIndent << jsonIndentStr << "null";
-                                    break;
-                                }
-                                break;
-
-                            case 1:
-                                switch (Id)
-                                {
-                                case 151:
-                                case 188:
-                                case 195:
-                                case 196:
-                                case 197:
-                                case 198:
-                                case 199:
-                                case 201:
-                                case 204:
-                                    ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
-                                    break;
-
-                                default:
-                                    ss << "\n" << attribIndent << jsonIndentStr << "null";
-                                    break;
-                                }
+                            case 83:
+                            case 97:
+                            case 107:
+                            case 151:
+                            case 188:
+                                values.append(val);
                                 break;
 
                             default:
-                                ss << "\n" << attribIndent << jsonIndentStr << "null";
+                                values.append(null_value);
                                 break;
                             }
-                        }
-                        else
-                        {
-                            ss << "\n" << attribIndent << jsonIndentStr << std::dec << val;
-                        }
-                        ++idx;
-                    }
-                    ss << "\n" << attribIndent << "]";
-                    ss << ",\n" << attribIndent << "\"name\": \"" << Name << "\"";
-                    if (!OpStats.empty())
-                    {
-                        ss << ",\n" << attribIndent << "\"op_stats\": [";
-                        bool bFirstItem = true;
-                        for (const auto& val : OpStats)
-                        {
-                            if (bFirstItem)
+                            break;
+
+                        case 1:
+                            switch (Id)
                             {
-                                bFirstItem = false;
-                            }
-                            else
-                            {
-                                ss << ",";
-                            }
+                            case 151:
+                            case 188:
+                            case 195:
+                            case 196:
+                            case 197:
+                            case 198:
+                            case 199:
+                            case 201:
+                            case 204:
+                                values.append(val);
+                                break;
 
-                            ss << "\n" << attribIndent << jsonIndentStr << "\"" << val << "\"";
+                            default:
+                                ++idx;
+                                values.append(null_value);
+                                break;
+                            }
+                            break;
+
+                        default:
+                            values.append(null_value);
+                            break;
                         }
-                        ss << "\n" << attribIndent << "]";
-                        ss << ",\n" << attribIndent << "\"op_value\": " << std::dec << OpValue;
-                    }
-
-                    if (!Desc.empty())
-                    {
-                        ss << ",\n" << attribIndent << "\"description\": \"" << Desc << "\"";
-                    }
-
-                    if (!Visible)
-                    {
-                        ss << ",\n" << attribIndent << "\"visible\": false";
-                    }
-                }
-
-                ss << "\n" << attribParentIndent << "}";
-            }
-        }
-
-        static void attributesAsJsonArray(std::stringstream& ss, const std::string& parentIndent, const std::vector<MagicalAttribute>& attribs, bool bSerializedFormat = false)
-        {
-            std::string attribParentIndent = parentIndent;
-            if (bSerializedFormat)
-            {
-                attribParentIndent += jsonIndentStr;
-            }
-
-            ss << "\n" << parentIndent;
-            if (bSerializedFormat)
-            {
-                ss << "\"Stats\": ";
-            }
-            ss << "[";
-
-            if (attribs.empty())
-            {
-                ss << "]";
-            }
-            else
-            {
-                bool bFirstItem = true;
-                for (const auto& attrib : attribs)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
                     }
                     else
                     {
-                        ss << ",";
+                        values.append(val);
                     }
-
-                    attrib.asJson(ss, parentIndent, bSerializedFormat);
+                    ++idx;
                 }
-                ss << "\n" << parentIndent << "]";
+                attrib["values"] = values;
+                attrib["name"] = Name;
+                if (!OpStats.empty())
+                {
+                    Json::Value opStats(Json::arrayValue);
+                    for (const auto& val : OpStats)
+                    {
+                        opStats.append(val);
+                    }
+                    attrib["op_stats"] = opStats;
+                    attrib["op_value"] = OpValue;
+                }
+                if (!Desc.empty())
+                {
+                    attrib["description"] = Desc;
+                }
+
+                if (!Visible)
+                {
+                    attrib["visible"] = false;
+                }
+                parent.append(attrib);
+            }
+        }
+
+        static void attributesAsJsonArray(Json::Value& parent, const std::vector<MagicalAttribute>& attribs, bool bSerializedFormat = false)
+        {
+            if (!parent.isArray())
+            {
+                return;
+            }
+
+            if (bSerializedFormat)
+            {
+                Json::Value attribElement;
+                Json::Value stats(Json::arrayValue);
+                for (const auto& attrib : attribs)
+                {
+                    attrib.asJson(stats, bSerializedFormat);
+                }
+                attribElement["Stats"] = stats;
+                parent.append(attribElement);
+            }
+            else
+            {
+                for (const auto& attrib : attribs)
+                {
+                    attrib.asJson(parent, bSerializedFormat);
+                }
             }
         }
     };
@@ -720,33 +684,13 @@ namespace d2ce
             MagicalAttributes.clear();
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
+        void asJson(Json::Value& parent, bool bSerializedFormat = false) const
         {
-            ss << "\n" << parentIndent << "\"runeword_id\": " << std::dec << Id;
-            ss << ",\n" << parentIndent << "\"runeword_name\": \"" << Name << "\"";
-            ss << ",\n" << parentIndent << "\"runeword_attributes\": ";
-            MagicalAttribute::attributesAsJsonArray(ss, parentIndent, MagicalAttributes, bSerializedFormat);
-            if (MagicalAttributes.empty())
-            {
-                ss << "]";
-            }
-            else
-            {
-                bool bFirstItem = true;
-                for (auto& attrib : MagicalAttributes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    attrib.asJson(ss, parentIndent);
-                }
-                ss << "\n" << parentIndent << "]";
-            }
+            parent["runeword_id"] = Id;
+            parent["runeword_name"] = Name;
+            Json::Value runewordAttributes(Json::arrayValue);
+            MagicalAttribute::attributesAsJsonArray(runewordAttributes, MagicalAttributes, bSerializedFormat);
+            parent["runeword_attributes"] = runewordAttributes;
         }
     };
 
@@ -754,68 +698,62 @@ namespace d2ce
     {
         std::uint16_t Id = 0;
         std::string Name;
+        std::uint16_t ReqLevel = 0;
         std::vector<std::vector<MagicalAttribute>> SetAttributes;
 
         void clear()
         {
             Id = 0;
             Name.clear();
+            ReqLevel = 0;
             SetAttributes.clear();
         }
 
-        void setAttributesAsJsonArray(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const
+        std::uint8_t getBonusBits()
         {
-            std::string attribParentIndent = parentIndent + jsonIndentStr;
-            if (bSerializedFormat)
+            std::bitset<5> bonusBits;
+            for (size_t idx = 0; idx < std::min(SetAttributes.size(), bonusBits.size()); ++idx)
             {
-                if (SetAttributes.empty())
-                {
-                    return;
-                }
-
-                ss << "\n" << attribParentIndent << "{";
-            }
-            else
-            {
-                ss << ",\n" << parentIndent << "\"set_attributes\": [";
-                if (SetAttributes.empty())
-                {
-                    ss << "\n" << parentIndent << "]";
-                    return;
-                }
+                bonusBits[idx] = 1;
             }
 
-            bool bFirstItem = true;
-            for (const auto& attribs : SetAttributes)
-            {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
+            return std::uint8_t(bonusBits.to_ulong());
+        }
 
-                MagicalAttribute::attributesAsJsonArray(ss, attribParentIndent, attribs, bSerializedFormat);
+        void setAttributesAsJsonArray(Json::Value& parent, bool bSerializedFormat = false) const
+        {
+            if (!parent.isArray() || SetAttributes.empty())
+            {
+                return;
             }
 
             if (bSerializedFormat)
             {
-                ss << "\n" << attribParentIndent << "}";
+                for (const auto& attribs : SetAttributes)
+                {
+                    MagicalAttribute::attributesAsJsonArray(parent, attribs, bSerializedFormat);
+                }
             }
             else
             {
-                ss << "\n" << parentIndent << "]";
+                for (const auto& attribs : SetAttributes)
+                {
+                    Json::Value setAttribs(Json::arrayValue);
+                    MagicalAttribute::attributesAsJsonArray(setAttribs, attribs, bSerializedFormat);
+                    parent.append(setAttribs);
+                }
+
             }
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent <<  "\"set_id\": " << std::dec << Id;
-            ss << ",\n" << parentIndent << "\"set_name\": \"" << Name << "\"";
-            ss << ",\n" << parentIndent << "\"set_list_count\": " << std::dec << SetAttributes.size();
-            setAttributesAsJsonArray(ss, parentIndent);
+            parent["set_id"] = Id;
+            parent["set_name"] = Name;
+            parent["set_list_count"] = SetAttributes.size();
+            Json::Value setAttributes(Json::arrayValue);
+            setAttributesAsJsonArray(setAttributes);
+            parent["set_attributes"] = setAttributes;
         }
     };
 
@@ -834,18 +772,18 @@ namespace d2ce
             SuffixName.clear();
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"magic_prefix\": " << std::dec << PrefixId;
+            parent["magic_prefix"] = PrefixId;
             if (PrefixId != 0)
             {
-                ss << ",\n" << parentIndent << "\"magic_prefix_name\": \"" << PrefixName << "\"";
+                parent["magic_prefix_name"] = PrefixName;
             }
 
-            ss << ",\n" << parentIndent << "\"magic_suffix\": " << std::dec << SuffixId;
+            parent["magic_suffix"] = SuffixId;
             if (SuffixId != 0)
             {
-                ss << ",\n" << parentIndent << "\"magic_suffix_name\": \"" << SuffixName << "\"";
+                parent["magic_suffix_name"] = SuffixName;
             }
         }
     };
@@ -867,35 +805,20 @@ namespace d2ce
             Affixes.clear();
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"rare_name_id\": " << std::dec << Id;
-            ss << ",\n" << parentIndent << "\"rare_name\": \"" << Name << "\"";
-            ss << ",\n" << parentIndent << "\"rare_name_id2\": " << std::dec << Id2;
-            ss << ",\n" << parentIndent << "\"rare_name2\": \"" << Name2 << "\"";
-            ss << ",\n" << parentIndent << "\"magical_name_ids\": [";
-            if (Affixes.empty())
+            parent["rare_name_id"] = Id;
+            parent["rare_name"] = Name;
+            parent["rare_name_id2"] = Id2;
+            parent["rare_name2"] = Name2;
+
+            Json::Value magicalNameIds(Json::arrayValue);
+            for (const auto& val : Affixes)
             {
-                ss << "]";
+                magicalNameIds.append(val.PrefixId);
+                magicalNameIds.append(val.SuffixId);
             }
-            else
-            {
-                bool bFirstItem = true;
-                for (const auto& val : Affixes)
-                {
-                    if (bFirstItem)
-                    {
-                        bFirstItem = false;
-                    }
-                    else
-                    {
-                        ss << ",";
-                    }
-                    ss << "\n" << parentIndent << jsonIndentStr << std::dec << val.PrefixId;
-                    ss << ",\n" << parentIndent << jsonIndentStr << std::dec << val.SuffixId;
-                }
-                ss << "\n" << parentIndent << "]";
-            }
+            parent["magical_name_ids"] = magicalNameIds;
         }
     };
 
@@ -903,20 +826,22 @@ namespace d2ce
     {
         std::uint16_t Id = 0;
         std::string Name;
+        std::uint16_t ReqLevel = 0;
 
         void clear()
         {
             Id = 0;
             Name.clear();
+            ReqLevel = 0;
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"unique_id\": " << std::dec << Id;
-            ss << ",\n" << parentIndent << "\"unique_name\": \"" << Name << "\"";
+            parent["unique_id"] = Id;
+            parent["unique_name"] = Name;
         }
-    }; 
-    
+    };
+
     struct ItemRequirements
     {
         std::uint16_t Strength = 0;
@@ -978,8 +903,8 @@ namespace d2ce
     struct BaseDamage
     {
         std::uint16_t Min = 0;
-        std::uint16_t Max = 0; 
-        
+        std::uint16_t Max = 0;
+
         void clear()
         {
             Min = 0;
@@ -1008,52 +933,27 @@ namespace d2ce
             Missile.clear();
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"base_damage\": {";
-            bool bFirstItem = true;
+            Json::Value baseDamage;
             if (OneHanded.Max != 0)
             {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"mindam\": " << std::dec << OneHanded.Min;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxdam\": " << std::dec << OneHanded.Max;
+                baseDamage["mindam"] = OneHanded.Min;
+                baseDamage["maxdam"] = OneHanded.Max;
             }
 
             if (bTwoHanded)
             {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"twohandmindam\": " << std::dec << TwoHanded.Min;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"twohandmaxdam\": " << std::dec << TwoHanded.Max;
+                baseDamage["twohandmindam"] = TwoHanded.Min;
+                baseDamage["twohandmaxdam"] = TwoHanded.Max;
             }
 
             if (Missile.Max != 0)
             {
-                if (bFirstItem)
-                {
-                    bFirstItem = false;
-                }
-                else
-                {
-                    ss << ",";
-                }
-                ss << "\n" << parentIndent << jsonIndentStr << "\"minmisdam\": " << std::dec << Missile.Min;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"maxmisdam\": " << std::dec << Missile.Max;
+                baseDamage["minmisdam"] = Missile.Min;
+                baseDamage["maxmisdam"] = Missile.Max;
             }
-            ss << "\n" << parentIndent << "}";
+            parent["base_damage"] = baseDamage;
         }
     };
 
@@ -1095,16 +995,16 @@ namespace d2ce
             return *this;
         }
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent) const
+        void asJson(Json::Value& parent) const
         {
-            ss << "\n" << parentIndent << "\"is_dead\": " << std::dec << (IsDead ? 1 : 0);
+            parent["is_dead"] = (IsDead ? 1 : 0);
             if (IsDead)
             {
-                ss << ",\n" << parentIndent << "\"corpse_location\": {";
-                ss << "\n" << parentIndent << jsonIndentStr << "\"unknown\": " << std::dec << Unknown;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"position_x\": " << std::dec << X;
-                ss << ",\n" << parentIndent << jsonIndentStr << "\"position_y\": " << std::dec << Y;
-                ss << "\n" << parentIndent << "}";
+                Json::Value corpseLocation;
+                corpseLocation["unknown"] = Unknown;
+                corpseLocation["position_x"] = X;
+                corpseLocation["position_y"] = Y;
+                parent["corpse_location"] = corpseLocation;
             }
         }
     };

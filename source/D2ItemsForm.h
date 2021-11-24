@@ -225,7 +225,7 @@ protected:
 
     void CheckToolTipCtrl();
 
-    bool updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4]);
+    bool updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem);
     bool upgradeGem(d2ce::Item& item);
     bool upgradePotion(d2ce::Item& item);
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);

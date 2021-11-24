@@ -96,9 +96,9 @@ private:
     CD2EquippedItemStatic InvMercTorsoBox;
     CD2EquippedItemStatic InvMercHandLeftBox;
 
-    std::set<UINT> ctrlEditted;
+    std::set<UINT> CtrlEditted;
 
-    CFont m_boldFont;
+    CFont BoldFont;
 
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;

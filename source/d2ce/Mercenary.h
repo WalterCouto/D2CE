@@ -23,6 +23,7 @@
 #include "DataTypes.h"
 #include "Constants.h"
 #include "MercenaryConstants.h"
+#include <json/json.h>
 
 namespace d2ce
 {
@@ -53,6 +54,7 @@ namespace d2ce
 
     protected:
         bool readInfo(EnumCharVersion version, std::FILE* charfile);
+        bool readInfo(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile);
         bool writeInfo(std::FILE* charfile);
 
     public:
@@ -100,7 +102,7 @@ namespace d2ce
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
 
-        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void asJson(Json::Value& parent, bool bSerializedFormat = false) const;
     };
 }
 //---------------------------------------------------------------------------

@@ -58,7 +58,7 @@ private:
 
 private:
     int ItemIndex = 0;
-    bool isExpansionCharacter = false;
+    bool IsExpansionCharacter = false;
     bool Changed = false;
     CD2MainForm& MainForm;
     d2ce::ActsInfo Acts;

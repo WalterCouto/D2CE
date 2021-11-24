@@ -21,7 +21,7 @@
 
 #include "Constants.h"
 #include "DataTypes.h"
-#include "sstream"
+#include <json/json.h>
 
 namespace d2ce
 {
@@ -35,45 +35,45 @@ namespace d2ce
         // works for Act IV but only indexes 0, 1 and 2 are valid for quest data and the "Completed" flag is at index 3, the rest is padding
         struct ActInfo
         {
-            std::uint16_t Intro = 0;                     // has player read/heard intro
-            std::uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
+            std::uint16_t Intro = 0;                                                // has player read/heard intro
+            std::array<std::uint16_t, NUM_OF_QUESTS> Quests = { 0, 0, 0, 0, 0, 0 }; // actual quests
             std::uint16_t Completed = 0;
         };
 
         struct ActVInfo // works for Act V
         {
-            std::uint16_t Intro = 0;             // has player read/heard intro
-            std::uint16_t Padding1[2];
-            std::uint16_t Quests[NUM_OF_QUESTS] = { 0 }; // actual quests
+            std::uint16_t Intro = 0;                                                // has player read/heard intro
+            std::array<std::uint16_t, 2> Padding1 = { 0, 0 };
+            std::array<std::uint16_t, NUM_OF_QUESTS> Quests = { 0, 0, 0, 0, 0, 0 }; // actual quests
 
             // Not part of Act V quests
             std::uint8_t ResetStats = 0;
-            std::uint8_t Completed = 0;             // Difficulty has been completed
-            std::uint16_t Padding2[6] = { 0 };      // 32 byte boundary (2 16 byte runs)
+            std::uint8_t Completed = 0;                                   // Difficulty has been completed
+            std::array<std::uint16_t, 6> Padding2 = { 0, 0, 0, 0, 0, 0 }; // 32 byte boundary (2 16 byte runs)
         };
 
         struct ActsInfoData // Each difficulty level contain this structure
         {
-            ActInfo Act[NUM_OF_ACTS - 1]; // Act I-IV are 16 bytes each
-            ActVInfo ActV;                // Act V is 32 bytes in size
+            std::array<ActInfo, NUM_OF_ACTS - 1> Act; // Act I-IV are 16 bytes each
+            ActVInfo ActV;                            // Act V is 32 bytes in size
         };
 
 
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
         // hell act info starts at pos 537 (1.09+ only)
-        mutable ActsInfoData Acts[NUM_OF_DIFFICULTY];
+        mutable std::array <ActsInfoData, NUM_OF_DIFFICULTY> Acts;
 
         // pos 438 (pre-1.09, otherwise pos 643), waypoints for normal level
         // pos 462 (pre-1.09, otherwise pos 667), waypoints for nightmare level
         // pos 486 (pre-1.09, otherwise pos 691), waypoints for hell level
-        std::uint16_t Waypoints_unknown[NUM_OF_DIFFICULTY] = { 0x0102, 0x0102, 0x0102 };
-        std::uint64_t Waypoints[NUM_OF_DIFFICULTY] = { 0 };
-        std::uint8_t Waypoints_extraBits[NUM_OF_DIFFICULTY][14] = { 0 };
+        std::array<std::uint16_t, NUM_OF_DIFFICULTY> Waypoints_unknown = { 0x0102, 0x0102, 0x0102 };
+        std::array<std::uint64_t, NUM_OF_DIFFICULTY> Waypoints = { 0, 0, 0 };
+        std::array<std::array<std::uint8_t, 14>, NUM_OF_DIFFICULTY> Waypoints_extraBits = { {{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }} };
 
         // NPC
-        std::uint64_t NPCIntroductions[NUM_OF_DIFFICULTY] = { 0 };
-        std::uint64_t NPCCongrats[NUM_OF_DIFFICULTY] = { 0 };
+        std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCIntroductions = { 0, 0, 0 };
+        std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCCongrats = { 0, 0, 0 };
 
         EnumCharVersion Version = APP_CHAR_VERSION; // Version for Character file
 
@@ -84,38 +84,55 @@ namespace d2ce
             npc_start_location = 0,
             npc_location = 0;
         bool update_locations = true;
-        std::uint8_t quests_version[4] = { 0x06, 0x00, 0x00, 0x00 };
-        std::uint8_t waypoints_version[4] = { 0x01, 0x00, 0x00, 0x00 };
+        std::array<std::uint8_t, 4> quests_version = { 0x06, 0x00, 0x00, 0x00 };
+        std::array<std::uint8_t, 4> waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
 
     private:
         std::uint16_t& getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
 
         bool readQuests(std::FILE* charfile);
+        void applyJsonQuest(const Json::Value& questRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act, std::uint8_t quest);
+        void applyJsonActIntro(const Json::Value& actIntroRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
+        void applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
+        void applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
+        void applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
+        void applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion);
+        bool readQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
         bool readWaypoints(std::FILE* charfile);
+        void applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
+        void applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
+        void applyJsonWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, bool isExpansion);
+        bool readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
         bool readNPC(std::FILE* charfile);
+        void applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
+        void applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion);
+        bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
         bool writeQuests(std::FILE* charfile);
         bool writeWaypoints(std::FILE* charfile);
         bool writeNPC(std::FILE* charfile);
 
     protected:
         bool readActs(EnumCharVersion version, std::FILE* charfile);
+        bool readActs(const Json::Value& root, bool bSerializedFormat, bool isExpansion, EnumCharVersion version, std::FILE* charfile);
         bool writeActs(std::FILE* charfile);
 
-        void questsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void questsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
         std::string getQuestsJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
         std::string getDifficultyJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
         std::string getActJsonName(EnumAct act, bool bSerializedFormat = false) const;
         std::string getQuestJsonName(EnumAct act, std::uint8_t quest, bool bSerializedFormat = false) const;
         std::string getQuestBitJsonName(std::uint8_t bit, bool& isOptional, bool bSerializedFormat = false) const;
 
-        void waypointsAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void waypointsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
         std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint, bool bSerializedFormat = false) const;
 
-        void npcAsJson(std::stringstream& ss, bool isExpansion, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void npcAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
         std::string getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat = false) const;
 
         std::uint16_t getActIntroducedData(EnumDifficulty diff, EnumAct act) const;
+        void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
         std::uint16_t getActCompletedData(EnumDifficulty diff, EnumAct act) const;
+        void setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
         std::uint16_t getActVResetStatCompletedData(EnumDifficulty diff) const;
 
     public:

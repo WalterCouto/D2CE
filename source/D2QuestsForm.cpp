@@ -39,7 +39,7 @@ CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
     : CDialogEx(CD2QuestsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests()), OrigActs(form.getQuests())
 {
     // Initialize Quests
-    isExpansionCharacter = MainForm.isExpansionCharacter();
+    IsExpansionCharacter = MainForm.isExpansionCharacter();
     ItemIndex = static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
 }
 //---------------------------------------------------------------------------
@@ -168,7 +168,7 @@ BOOL CD2QuestsForm::OnInitDialog()
 
     EnableToolTips(TRUE);
 
-    if (!isExpansionCharacter)
+    if (!IsExpansionCharacter)
     {
         // Hide all of Act V and Mo Mo Farm
         CWnd* pWnd = GetDlgItem(IDC_STATIC_ACTV);
@@ -255,7 +255,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             }
         }
 
-        if (isExpansionCharacter)
+        if (IsExpansionCharacter)
         {
             // update Expansion Quests
             actNumber = 4;
@@ -362,7 +362,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             DDX_Check(&dx, nIDC, value);
         }
 
-        if (isExpansionCharacter)
+        if (IsExpansionCharacter)
         {
             // update Expansion Quests
             actNumber = 4;
@@ -445,7 +445,7 @@ void CD2QuestsForm::OnBnClickedCompleteAll()
 {
     Changed = true;
     HWND hWndCtrl;
-    std::uint32_t lastQuestIDC = isExpansionCharacter ? IDC_CHECK_ACTV_QUEST_6 : IDC_CHECK_ACTIV_QUEST_3;
+    std::uint32_t lastQuestIDC = IsExpansionCharacter ? IDC_CHECK_ACTV_QUEST_6 : IDC_CHECK_ACTIV_QUEST_3;
     for (std::uint32_t nIDC = IDC_CHECK_ACTI_QUEST_1; nIDC <= lastQuestIDC; ++nIDC)
     {
         GetDlgItem(nIDC, &hWndCtrl);

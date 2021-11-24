@@ -24,6 +24,7 @@
 #include "ExperienceConstants.h"
 #include "bitmask.hpp"
 #include <system_error>
+#include <array>
 
 namespace d2ce
 {
@@ -45,10 +46,10 @@ namespace d2ce
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };
 
-    const std::string ClassNames[NUM_OF_CLASSES] = { "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"};
+    const std::array<std::string, NUM_OF_CLASSES> ClassNames = { "Amazon", "Sorceress", "Necromancer", "Paladin", "Barbarian", "Druid", "Assassin"};
 
     // character status
-    enum class EnumCharStatus : std::uint8_t { NoDeaths, Hardcore = 0x04, Resurrected = 0x08, Expansion = 0x20, Ladder = 0x40, Dead = 0x0C };
+    enum class EnumCharStatus : std::uint8_t { NoDeaths, Hardcore = 0x04, Died = 0x08, Expansion = 0x20, Ladder = 0x40, Dead = 0x0C };
     BITMASK_DEFINE_VALUE_MASK(EnumCharStatus, 0xFF);
 
     // character title

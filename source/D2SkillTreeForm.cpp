@@ -41,7 +41,7 @@ CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
     Class = MainForm.getCharacterClass();
     SkillsUsed = MainForm.getSkillPointsUsed();
     SkillChoices = MainForm.getSkillChoices();
-    std::memcpy(Skills, MainForm.getSkills(), sizeof(Skills));
+    Skills = MainForm.getSkills();
 
     // Fix up Skill Choices
     EarnedSkillPoints = MainForm.getSkillPointsEarned();
@@ -182,7 +182,7 @@ END_MESSAGE_MAP()
 BOOL CD2SkillTreeForm::OnInitDialog()
 {
     __super::OnInitDialog();
-    GetWindowText(origCaption);
+    GetWindowText(OrigCaption);
     UpdateCaption();
 
     // Fill out tab names.
@@ -274,10 +274,10 @@ void CD2SkillTreeForm::SaveSkills()
 //---------------------------------------------------------------------------
 void CD2SkillTreeForm::UpdateCaption()
 {
-    if (!origCaption.IsEmpty())
+    if (!OrigCaption.IsEmpty())
     {
         std::wstringstream ss;
-        ss << origCaption.GetString();
+        ss << OrigCaption.GetString();
         if (SkillChoices > 0)
         {
             ss << _T(" (Skill Choices Remaining: ");
@@ -313,7 +313,7 @@ void CD2SkillTreeForm::OnBnClickedSetAll()
 
     // Save Values
     SkillsChanged = true;
-    std::memset(Skills, skillValue, d2ce::NUM_OF_SKILLS);
+    Skills.fill(skillValue);
     for (std::uint32_t nEditIDC = IDC_EDIT_TREE_1_SKILL_1; nEditIDC <= IDC_EDIT_TREE_3_SKILL_10; ++nEditIDC)
     {
         SetInt(nEditIDC, skillValue);

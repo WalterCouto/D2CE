@@ -95,7 +95,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +120,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,7 +182,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -216,6 +216,18 @@
     <ClInclude Include="d2ce\Constants.h" />
     <ClInclude Include="d2ce\Mercenary.h" />
     <ClInclude Include="d2ce\MercenaryConstants.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\allocator.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\assertions.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\config.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\forwards.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\historic_map.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\json.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\json_features.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\reader.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\value.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\version.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\writer.h" />
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_tool.h" />
     <ClInclude Include="D2Editor.h" />
     <ClInclude Include="D2GemsForm.h" />
     <ClInclude Include="D2ItemsForm.h" />
@@ -243,6 +255,24 @@
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
     <ClCompile Include="d2ce\Mercenary.cpp" />
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_value.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_writer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="D2Editor.cpp" />
     <ClCompile Include="D2GemsForm.cpp" />
     <ClCompile Include="D2ItemsForm.cpp" />
@@ -265,6 +295,7 @@
     <ResourceCompile Include="D2Editor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl" />
     <None Include="res\D2Editor.rc2" />
   </ItemGroup>
   <ItemGroup>

@@ -58,13 +58,13 @@ private:
     void UpdateCaption();
 
 private:
-    std::uint8_t Skills[d2ce::NUM_OF_SKILLS];
+    std::array<std::uint8_t, d2ce::NUM_OF_SKILLS> Skills;
     bool SkillsChanged = false;
     CD2MainForm& MainForm;
     d2ce::EnumCharClass Class = d2ce::EnumCharClass::Amazon;
     std::uint32_t SkillChoices = 0;
     std::uint32_t SkillsUsed = 0;
     std::uint32_t EarnedSkillPoints = 0;
-    CString origCaption;
+    CString OrigCaption;
 };
 //---------------------------------------------------------------------------

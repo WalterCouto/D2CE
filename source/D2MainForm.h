@@ -185,6 +185,8 @@ protected:
     afx_msg void OnCbnSelchangeStartingActCmb();
     afx_msg void OnFileSave();
     afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
+    afx_msg void OnFileSaveAs();
+    afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
     afx_msg void OnFileClose();
     afx_msg void OnUpdateFileClose(CCmdUI* pCmdUI);
     afx_msg void OnFileOpen();
@@ -293,8 +295,8 @@ private:	// User declarations
     CRect LastRect;
     CStatic BackgroundBox;
 
-    std::set<UINT> ctrlEditted;
-    CString curPathName;
+    std::set<UINT> CtrlEditted;
+    CString CurPathName;
 
 private:
     void OpenFile(LPCTSTR filename);
@@ -364,16 +366,16 @@ public:
     void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
 
     // Skills
-    std::uint8_t(&getSkills())[d2ce::NUM_OF_SKILLS];
-    void updateSkills(const std::uint8_t(&updated_skills)[d2ce::NUM_OF_SKILLS]);
+    std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& getSkills();
+    void updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills);
 
     std::uint32_t getSkillPointsUsed() const;
     std::uint32_t getSkillChoices() const;
 
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
-    size_t convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4]);
-    bool updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4]);
+    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
+    bool updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem);
     bool upgradeGem(d2ce::Item& item);
     bool upgradePotion(d2ce::Item& item);
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);

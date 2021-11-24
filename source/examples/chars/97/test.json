@@ -8,8 +8,7 @@
     "status": {
       "hardcore": false,
       "died": true,
-      "expansion": true,
-      "dead": true
+      "expansion": true
     },
     "progression": 0,
     "active_arms": 0,

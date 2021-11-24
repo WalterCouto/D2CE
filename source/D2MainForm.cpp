@@ -849,7 +849,9 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_CBN_SELCHANGE(IDC_CHAR_TITLE_CMB, &CD2MainForm::OnCbnSelchangeCharTitleCmb)
     ON_CBN_SELCHANGE(IDC_STARTING_ACT_CMB, &CD2MainForm::OnCbnSelchangeStartingActCmb)
     ON_COMMAND(ID_FILE_SAVE, &CD2MainForm::OnFileSave)
+    ON_COMMAND(ID_FILE_SAVE_AS, &CD2MainForm::OnFileSaveAs)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CD2MainForm::OnUpdateFileSave)
+    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CD2MainForm::OnUpdateFileSaveAs)
     ON_COMMAND(ID_FILE_CLOSE, &CD2MainForm::OnFileClose)
     ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE, &CD2MainForm::OnUpdateFileClose)
     ON_COMMAND(ID_FILE_OPEN, &CD2MainForm::OnFileOpen)
@@ -1095,7 +1097,7 @@ HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         pDC->SetTextColor(RGB(255, 255, 255));
         pDC->SetBkColor(RGB(0, 0, 0));
         pDC->SetBkMode(TRANSPARENT);
-        if (ctrlEditted.find(pWnd->GetDlgCtrlID()) != ctrlEditted.end())
+        if (CtrlEditted.find(pWnd->GetDlgCtrlID()) != CtrlEditted.end())
         {
             pDC->SelectObject(&m_boldFont);
         }
@@ -1112,7 +1114,7 @@ HBRUSH CD2MainForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
         pDC->SetTextColor(RGB(255, 255, 255));
         pDC->SetBkColor(RGB(0, 0, 0));
         pDC->SetBkMode(TRANSPARENT);
-        if (ctrlEditted.find(pWnd->GetDlgCtrlID()) != ctrlEditted.end())
+        if (CtrlEditted.find(pWnd->GetDlgCtrlID()) != CtrlEditted.end())
         {
             pDC->SelectObject(&m_boldFont);
         }
@@ -1868,7 +1870,7 @@ void CD2MainForm::OnCbnSelchangeCharClassCmb()
     CharInfo.fillBasicStats(bs);
     if (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()) != bs.Class)
     {
-        ctrlEditted.insert(CharClass.GetDlgCtrlID());
+        CtrlEditted.insert(CharClass.GetDlgCtrlID());
         bs.Class = static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
         CharInfo.updateBasicStats(bs);
         UpdateTitleDisplay();
@@ -1948,7 +1950,7 @@ void CD2MainForm::OnCbnSelchangeCharTitleCmb()
     if (getCharacterTitle() != bs.Title)
     {
         bs.Title = getCharacterTitle();
-        ctrlEditted.insert(CharTitle.GetDlgCtrlID());
+        CtrlEditted.insert(CharTitle.GetDlgCtrlID());
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -1963,7 +1965,7 @@ void CD2MainForm::OnCbnSelchangeStartingActCmb()
     if (bs.StartingAct != startingAct)
     {
         bs.StartingAct = startingAct;
-        ctrlEditted.insert(StartingAct.GetDlgCtrlID());
+        CtrlEditted.insert(StartingAct.GetDlgCtrlID());
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -1977,7 +1979,7 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
     if (bs.DifficultyLastPlayed != getDifficultyLastPlayed())
     {
         bs.DifficultyLastPlayed = getDifficultyLastPlayed();
-        ctrlEditted.insert(Difficulty.GetDlgCtrlID());
+        CtrlEditted.insert(Difficulty.GetDlgCtrlID());
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -2039,20 +2041,20 @@ void CD2MainForm::UpdateCharInfo()
     CharInfo.fillBasicStats(bs);
 
     auto strValue = ToStdString(&CharName);
-    if (_stricmp(strValue.c_str(), CharInfo.getName()) != 0)
+    if (_stricmp(strValue.c_str(), CharInfo.getName().data()) != 0)
     {
-        SetText(&CharName, CharInfo.getName());
-        if (_stricmp(CharInfo.getName(), Bs.Name) == 0)
+        SetText(&CharName, CharInfo.getName().data());
+        if (_stricmp(CharInfo.getName().data(), Bs.Name.data()) == 0)
         {
-            auto iter = ctrlEditted.find(CharName.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharName.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharName.GetDlgCtrlID());
+            CtrlEditted.insert(CharName.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2104,15 +2106,15 @@ void CD2MainForm::UpdateCharInfo()
         CharTitle.SetCurSel((bs.Title.bits() & 0x0C) >> 2);
         if (bs.Title == Bs.Title)
         {
-            auto iter = ctrlEditted.find(CharTitle.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharTitle.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharTitle.GetDlgCtrlID());
+            CtrlEditted.insert(CharTitle.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2126,15 +2128,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CharLevel, cs.Level);
         if (value == Cs.Level)
         {
-            auto iter = ctrlEditted.find(CharLevel.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharLevel.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+            CtrlEditted.insert(CharLevel.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2145,15 +2147,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CharStrength, cs.Strength);
         if (value == Cs.Strength)
         {
-            auto iter = ctrlEditted.find(CharStrength.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharStrength.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharStrength.GetDlgCtrlID());
+            CtrlEditted.insert(CharStrength.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2164,15 +2166,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CharEnergy, cs.Energy);
         if (value == Cs.Energy)
         {
-            auto iter = ctrlEditted.find(CharEnergy.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharEnergy.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+            CtrlEditted.insert(CharEnergy.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2183,15 +2185,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CharDexterity, cs.Dexterity);
         if (value == Cs.Dexterity)
         {
-            auto iter = ctrlEditted.find(CharDexterity.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharDexterity.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
+            CtrlEditted.insert(CharDexterity.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2202,15 +2204,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CharVitality, cs.Vitality);
         if (value == Cs.Vitality)
         {
-            auto iter = ctrlEditted.find(CharVitality.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CharVitality.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CharVitality.GetDlgCtrlID());
+            CtrlEditted.insert(CharVitality.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2221,15 +2223,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&Experience, cs.Experience);
         if (value == Cs.Experience)
         {
-            auto iter = ctrlEditted.find(Experience.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(Experience.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(Experience.GetDlgCtrlID());
+            CtrlEditted.insert(Experience.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2240,15 +2242,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&GoldInBelt, cs.GoldInBelt);
         if (value == Cs.GoldInBelt)
         {
-            auto iter = ctrlEditted.find(GoldInBelt.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(GoldInBelt.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+            CtrlEditted.insert(GoldInBelt.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2259,15 +2261,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&GoldInStash, cs.GoldInStash);
         if (value == Cs.GoldInStash)
         {
-            auto iter = ctrlEditted.find(GoldInStash.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(GoldInStash.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
+            CtrlEditted.insert(GoldInStash.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2278,15 +2280,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&MaxLife, cs.MaxLife);
         if (value == Cs.MaxLife)
         {
-            auto iter = ctrlEditted.find(MaxLife.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(MaxLife.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(MaxLife.GetDlgCtrlID());
+            CtrlEditted.insert(MaxLife.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2297,15 +2299,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CurLife, cs.CurLife);
         if (value == Cs.CurLife)
         {
-            auto iter = ctrlEditted.find(CurLife.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CurLife.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CurLife.GetDlgCtrlID());
+            CtrlEditted.insert(CurLife.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2316,15 +2318,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&MaxStamina, cs.MaxStamina);
         if (value == Cs.MaxStamina)
         {
-            auto iter = ctrlEditted.find(MaxStamina.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(MaxStamina.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
+            CtrlEditted.insert(MaxStamina.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2335,15 +2337,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CurStamina, cs.CurStamina);
         if (value == Cs.CurStamina)
         {
-            auto iter = ctrlEditted.find(CurStamina.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CurStamina.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CurStamina.GetDlgCtrlID());
+            CtrlEditted.insert(CurStamina.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2354,15 +2356,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&MaxMana, cs.MaxMana);
         if (value == Cs.MaxMana)
         {
-            auto iter = ctrlEditted.find(MaxMana.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(MaxMana.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(MaxMana.GetDlgCtrlID());
+            CtrlEditted.insert(MaxMana.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2373,15 +2375,15 @@ void CD2MainForm::UpdateCharInfo()
         SetInt(&CurMana, cs.CurMana);
         if (value == Cs.CurMana)
         {
-            auto iter = ctrlEditted.find(CurMana.GetDlgCtrlID());
-            if (iter != ctrlEditted.end())
+            auto iter = CtrlEditted.find(CurMana.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
             {
-                ctrlEditted.erase(iter);
+                CtrlEditted.erase(iter);
             }
         }
         else
         {
-            ctrlEditted.insert(CurMana.GetDlgCtrlID());
+            CtrlEditted.insert(CurMana.GetDlgCtrlID());
             statsChanged = true;
         }
     }
@@ -2486,9 +2488,9 @@ void CD2MainForm::EnableCharInfoBox(BOOL bEnable)
 void CD2MainForm::OnFileOpen()
 {
     CString	defaultDirectory = InitialDir;
-    if (!curPathName.IsEmpty())
+    if (!CurPathName.IsEmpty())
     {
-        defaultDirectory = ExtractFilePath(curPathName);
+        defaultDirectory = ExtractFilePath(CurPathName);
         if (defaultDirectory.IsEmpty())
         {
             defaultDirectory = InitialDir;
@@ -2503,7 +2505,7 @@ void CD2MainForm::OnFileOpen()
 
     CFileDialog fileDialog(TRUE, _T("d2s"), NULL,
         OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
-        _T("Diablo II Character Files (*.d2s)|*.d2s|All Files (*.*)|*.*||"), this);
+        _T("Diablo II Character Files (*.d2s)|*.d2s|Diablo II JSON files (*.json)|*.json|All Files (*.*)|*.*||"), this);
 
     fileDialog.m_ofn.lpstrInitialDir = (LPCTSTR)defaultDirectory;
     if (fileDialog.DoModal() != IDOK)
@@ -2559,10 +2561,20 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
 
     CheckFileSize();
 
-    curPathName = filename;
+    CurPathName = filename;
     EnableCharInfoBox(TRUE);
 
-    if (FileExists(ChangeFileExt(curPathName, _T(".bak"))))
+    CString backupname;
+    if (CharInfo.is_json())
+    {
+        backupname = CurPathName + _T(".bak");
+    }
+    else
+    {
+        backupname = ChangeFileExt(CurPathName, _T(".bak"));
+    }
+
+    if (FileExists(backupname))
     {
         hasBackupFile = true;
     }
@@ -2570,7 +2582,7 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     DisplayCharInfo();
-    ctrlEditted.clear();
+    CtrlEditted.clear();
     StatusBar.SetWindowText(_T("Character stats have been refreshed"));
     UpdateAppTitle();
 }
@@ -2604,7 +2616,7 @@ int CD2MainForm::DoFileCloseAction()
     CharInfo.close();
     s_levelInfo.ResetVersion(d2ce::EnumCharVersion::v110);
 
-    curPathName.Empty();
+    CurPathName.Empty();
     Initialize();
 
     hasBackupFile = false;
@@ -2636,7 +2648,7 @@ void CD2MainForm::OnFileSave()
         return;
     }
 
-    curPathName = CharInfo.getPathName();
+    CurPathName = CharInfo.getPathName();
 
     if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::AuxFileRenameError)
     {
@@ -2667,6 +2679,78 @@ void CD2MainForm::OnUpdateFileSave(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && Editted) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnFileSaveAs()
+{
+    if (!CharInfo.is_json())
+    {
+        return;
+    }
+
+    CStringA jsonPathA(CurPathName);
+    if (BackupChar)
+    {
+        std::filesystem::path p = CurPathName.GetString();
+        p.replace_extension();
+        p = p.replace_filename(CharInfo.getName().data()).string() + ".d2s";
+        if (std::filesystem::exists(p))
+        {
+            CString newD2SPath(p.string().c_str());
+            CString backupname(ChangeFileExt(newD2SPath, _T(".bak")));
+            CopyFile(newD2SPath, backupname, false);
+        }
+    }
+  
+    bool bSuccess = true;
+    if (!CharInfo.saveAsD2s())
+    {
+        bSuccess = false;
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+
+        // return if open not successful
+        if (!CharInfo.open(jsonPathA, false))
+        {
+            return;
+        }
+    }
+
+    CheckFileSize();
+
+    CurPathName = CharInfo.getPathName();
+    EnableCharInfoBox(TRUE);
+
+    if (FileExists(ChangeFileExt(CurPathName, _T(".bak"))))
+    {
+        hasBackupFile = true;
+    }
+
+    CharInfo.fillBasicStats(Bs);
+    CharInfo.fillCharacterStats(Cs);
+    DisplayCharInfo();
+    CtrlEditted.clear();
+    UpdateAppTitle();
+
+    if (bSuccess)
+    {
+        CString msg(_T("Character stats saved"));
+        StatusBar.SetWindowText(msg);
+        AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+    }
+}
+
+void CD2MainForm::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && CharInfo.is_json()) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::ExportAsJson(bool bSerializedFormat)
 {
     if (!CharInfo.is_open())
@@ -2674,7 +2758,7 @@ void CD2MainForm::ExportAsJson(bool bSerializedFormat)
         return;
     }
 
-    CString filename(CharInfo.getName());
+    CString filename(CharInfo.getName().data());
     filename += ".json";
 
     CFileDialog fileDialog(FALSE, _T("json"), filename,
@@ -2727,7 +2811,7 @@ void CD2MainForm::OnAppExit()
 void CD2MainForm::Initialize()
 {
     ClearAllBoolVars();
-    ctrlEditted.clear();
+    CtrlEditted.clear();
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnViewRefresh()
@@ -2747,7 +2831,7 @@ void CD2MainForm::OnViewRefresh()
     CharInfo.fillCharacterStats(Cs);
     DisplayCharInfo();
 
-    ctrlEditted.clear();
+    CtrlEditted.clear();
 
     StatusBar.SetWindowText(_T("Character stats have been refreshed"));
 }
@@ -2889,7 +2973,7 @@ void CD2MainForm::SetupBasicStats()
 //---------------------------------------------------------------------------
 void CD2MainForm::StatsChanged()
 {
-    if (!Editted && (ItemsChanged || !ctrlEditted.empty() || StatusChanged ||
+    if (!Editted && (ItemsChanged || !CtrlEditted.empty() || StatusChanged ||
         StatsLeftChanged || SkillChoicesChanged || WaypointsChanged || QuestsChanged ||
         MercChanged))
     {
@@ -2950,7 +3034,7 @@ void CD2MainForm::CheckStatsLeft()
 void CD2MainForm::UpdateAppTitle()
 {
     UINT uID = AFX_IDS_APP_TITLE;
-    if (!curPathName.IsEmpty())
+    if (!CurPathName.IsEmpty())
     {
         if (CharInfo.getVersion() <= d2ce::EnumCharVersion::v110)
         {
@@ -2961,9 +3045,9 @@ void CD2MainForm::UpdateAppTitle()
     CString newAppTitle;
     if (newAppTitle.LoadString(uID) != 0)
     {
-        if (!curPathName.IsEmpty())
+        if (!CurPathName.IsEmpty())
         {
-            newAppTitle += _T(" - ") + ExtractFileName(curPathName);
+            newAppTitle += _T(" - ") + ExtractFileName(CurPathName);
             if (Editted)
             {
                 newAppTitle += "*";
@@ -3214,9 +3298,18 @@ void CD2MainForm::OnUpdateOptionsUpgradeRejuvenation(CCmdUI* pCmdUI)
 */
 void CD2MainForm::WriteBackupFile()
 {
-    CStringA oldPathNameA(curPathName);
-    CString backupname = ChangeFileExt(curPathName, _T(".bak"));
-    if (CopyFile(curPathName, backupname, false))
+    CStringA oldPathNameA(CurPathName);
+    CString backupname;
+    if (CharInfo.is_json())
+    {
+        backupname = CurPathName + _T(".bak");
+    }
+    else
+    {
+        backupname = ChangeFileExt(CurPathName, _T(".bak"));
+    }
+
+    if (CopyFile(CurPathName, backupname, false))
     {
         hasBackupFile = true;
     }
@@ -3277,14 +3370,14 @@ void CD2MainForm::OnEnSetfocusCharName()
 }
 void CD2MainForm::OnEnChangeCharName()
 {
-    ctrlEditted.insert(CharName.GetDlgCtrlID());
+    CtrlEditted.insert(CharName.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharName()
 {
     auto newName = ToStdString(&CharName);
     if (newName != prev_name)
     {
-        CString newFileName = ExtractFilePath(curPathName) + _T("\\") + ToText(&CharName) + _T(".d2s");
+        CString newFileName = ExtractFilePath(CurPathName) + _T("\\") + ToText(&CharName) + _T(".d2s");
         if (FileExists(newFileName) && Editted)
         {
             AfxMessageBox(_T("A file with that name already exists.  Please select another name."), MB_OK | MB_ICONEXCLAMATION);
@@ -3292,10 +3385,10 @@ void CD2MainForm::OnEnKillfocusCharName()
             return;
         }
 
-        ctrlEditted.insert(CharName.GetDlgCtrlID());
+        CtrlEditted.insert(CharName.GetDlgCtrlID());
         d2ce::BasicStats bs;
         CharInfo.fillBasicStats(bs);
-        strcpy_s(bs.Name, sizeof(bs.Name), newName.c_str());
+        strcpy_s(bs.Name.data(), sizeof(bs.Name), newName.c_str());
         bs.Name[15] = 0; // must be zero
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
@@ -3309,7 +3402,7 @@ void CD2MainForm::OnEnSetfocusCharDexterity()
 }
 void CD2MainForm::OnEnChangeCharDexterity()
 {
-    ctrlEditted.insert(CharDexterity.GetDlgCtrlID());
+    CtrlEditted.insert(CharDexterity.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharDexterity()
 {
@@ -3342,7 +3435,7 @@ void CD2MainForm::OnBnClickedDexterityPlus()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnEnChangeCharEnergy()
 {
-    ctrlEditted.insert(CharEnergy.GetDlgCtrlID());
+    CtrlEditted.insert(CharEnergy.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnSetfocusCharEnergy()
 {
@@ -3384,7 +3477,7 @@ void CD2MainForm::OnEnSetfocusCharLevel()
 }
 void CD2MainForm::OnEnChangeCharLevel()
 {
-    ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+    CtrlEditted.insert(CharLevel.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharLevel()
 {
@@ -3394,7 +3487,7 @@ void CD2MainForm::OnEnKillfocusCharLevel()
     if (level != cs.Level)
     {
         cs.Level = level;
-        ctrlEditted.insert(CharLevel.GetDlgCtrlID());
+        CtrlEditted.insert(CharLevel.GetDlgCtrlID());
         CharInfo.updateCharacterStats(cs);
         UpdateCharInfo();
     }
@@ -3406,7 +3499,7 @@ void CD2MainForm::OnEnSetfocusCharStrength()
 }
 void CD2MainForm::OnEnChangeCharStrength()
 {
-    ctrlEditted.insert(CharStrength.GetDlgCtrlID());
+    CtrlEditted.insert(CharStrength.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharStrength()
 {
@@ -3444,7 +3537,7 @@ void CD2MainForm::OnEnSetfocusCharVitality()
 }
 void CD2MainForm::OnEnChangeCharVitality()
 {
-    ctrlEditted.insert(CharVitality.GetDlgCtrlID());
+    CtrlEditted.insert(CharVitality.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharVitality()
 {
@@ -3481,7 +3574,7 @@ void CD2MainForm::OnEnSetfocusCurLife()
 }
 void CD2MainForm::OnEnChangeCurLife()
 {
-    ctrlEditted.insert(CurLife.GetDlgCtrlID());
+    CtrlEditted.insert(CurLife.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCurLife()
 {
@@ -3498,7 +3591,7 @@ void CD2MainForm::OnEnSetfocusMaxLife()
 }
 void CD2MainForm::OnEnChangeMaxLife()
 {
-    ctrlEditted.insert(MaxLife.GetDlgCtrlID());
+    CtrlEditted.insert(MaxLife.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusMaxLife()
 {
@@ -3515,7 +3608,7 @@ void CD2MainForm::OnEnSetfocusCurMana()
 }
 void CD2MainForm::OnEnChangeCurMana()
 {
-    ctrlEditted.insert(CurMana.GetDlgCtrlID());
+    CtrlEditted.insert(CurMana.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCurMana()
 {
@@ -3532,7 +3625,7 @@ void CD2MainForm::OnEnSetfocusMaxMana()
 }
 void CD2MainForm::OnEnChangeMaxMana()
 {
-    ctrlEditted.insert(MaxMana.GetDlgCtrlID());
+    CtrlEditted.insert(MaxMana.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusMaxMana()
 {
@@ -3549,7 +3642,7 @@ void CD2MainForm::OnEnSetfocusCurStamina()
 }
 void CD2MainForm::OnEnChangeCurStamina()
 {
-    ctrlEditted.insert(CurStamina.GetDlgCtrlID());
+    CtrlEditted.insert(CurStamina.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCurStamina()
 {
@@ -3566,7 +3659,7 @@ void CD2MainForm::OnEnSetfocusMaxStamina()
 }
 void CD2MainForm::OnEnChangeMaxStamina()
 {
-    ctrlEditted.insert(MaxStamina.GetDlgCtrlID());
+    CtrlEditted.insert(MaxStamina.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusMaxStamina()
 {
@@ -3583,7 +3676,7 @@ void CD2MainForm::OnEnSetfocusCharExperience()
 }
 void CD2MainForm::OnEnChangeCharExperience()
 {
-    ctrlEditted.insert(Experience.GetDlgCtrlID());
+    CtrlEditted.insert(Experience.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusCharExperience()
 {
@@ -3600,7 +3693,7 @@ void CD2MainForm::OnEnSetfocusGoldInBelt()
 }
 void CD2MainForm::OnEnChangeGoldInBelt()
 {
-    ctrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+    CtrlEditted.insert(GoldInBelt.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusGoldInBelt()
 {
@@ -3617,7 +3710,7 @@ void CD2MainForm::OnEnSetfocusGoldInStash()
 }
 void CD2MainForm::OnEnChangeGoldInStash()
 {
-    ctrlEditted.insert(GoldInStash.GetDlgCtrlID());
+    CtrlEditted.insert(GoldInStash.GetDlgCtrlID());
 }
 void CD2MainForm::OnEnKillfocusGoldInStash()
 {
@@ -3848,9 +3941,17 @@ void CD2MainForm::OnOptionsRestoreChar()
     }
 
     hasBackupFile = false;
-    CStringA origNameA(ExtractFileName(RemoveFileExtFromPath(curPathName)));
-    CStringA oldPathNameA(curPathName);
-    CStringA backupname(ChangeFileExt(curPathName, _T(".bak")));
+    CStringA origNameA(ExtractFileName(RemoveFileExtFromPath(CurPathName)));
+    CStringA oldPathNameA(CurPathName);
+    CStringA backupname;
+    if (CharInfo.is_json())
+    {
+        backupname = CurPathName + _T(".bak");
+    }
+    else
+    {
+        backupname = ChangeFileExt(CurPathName, _T(".bak"));
+    }
 
     Editted = false;
     DoFileCloseAction();
@@ -3859,7 +3960,7 @@ void CD2MainForm::OnOptionsRestoreChar()
     if (std::remove((LPCSTR)oldPathNameA))
     {
         CString msg;
-        msg.Format(_T("Failed to delete existing character file: %s"), curPathName.GetString());
+        msg.Format(_T("Failed to delete existing character file: %s"), CurPathName.GetString());
         AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 
         // just reopen it again
@@ -3893,7 +3994,7 @@ void CD2MainForm::OnOptionsRestoreChar()
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     DisplayCharInfo();
-    ctrlEditted.clear();
+    CtrlEditted.clear();
     CString msg(_T("Character stats have been restored"));
     StatusBar.SetWindowText(msg);
     UpdateAppTitle();
@@ -4037,17 +4138,17 @@ bitmask::bitmask<d2ce::EnumCharStatus> CD2MainForm::getCharacterStatus() const
     auto status = CharInfo.getStatus();
     if (CharStatusResurrected.GetCheck() == 1)
     {
-        status |= d2ce::EnumCharStatus::Resurrected;
+        status |= d2ce::EnumCharStatus::Died;
     }
     else
     {
-        status &= ~d2ce::EnumCharStatus::Resurrected;
+        status &= ~d2ce::EnumCharStatus::Died;
     }
 
     if (CharStatusHardcore.GetCheck() == 1)
     {
         status |= d2ce::EnumCharStatus::Hardcore;
-        status &= ~d2ce::EnumCharStatus::Resurrected; // can't be resurrected
+        status &= ~d2ce::EnumCharStatus::Died; // can't be resurrected
     }
     else
     {
@@ -4194,12 +4295,12 @@ void CD2MainForm::setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t ne
     StatsChanged();
 }
 //---------------------------------------------------------------------------
-std::uint8_t(&CD2MainForm::getSkills())[d2ce::NUM_OF_SKILLS]
+std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& CD2MainForm::getSkills()
 {
     return CharInfo.getSkills();
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::updateSkills(const std::uint8_t(&updated_skills)[d2ce::NUM_OF_SKILLS])
+void CD2MainForm::updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills)
 {
     CharInfo.updateSkills(updated_skills);
     SkillChoicesChanged = true;
@@ -4227,7 +4328,7 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getGPSs()
    final gem, potion or skull.
    Returns the number of gems converted.
 */
-size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::uint8_t(&desiredGem)[4])
+size_t CD2MainForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
 {
     auto numConverted = CharInfo.convertGPSs(existingGem, desiredGem);
     if (numConverted > 0)
@@ -4252,7 +4353,7 @@ size_t CD2MainForm::convertGPSs(const std::uint8_t(&existingGem)[4], const std::
     return numConverted;
 }
 //---------------------------------------------------------------------------
-bool CD2MainForm::updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4])
+bool CD2MainForm::updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem)
 {
     if (!item.updateGem(newgem))
     {

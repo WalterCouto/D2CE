@@ -23,15 +23,15 @@
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint8_t STATS_MARKER[] = { 0x67, 0x66 };              // alternatively "gf"
+    constexpr std::array<std::uint8_t, 2> STATS_MARKER = { 0x67, 0x66 };              // alternatively "gf"
     constexpr std::uint16_t STAT_MAX = 16;
     constexpr std::uint16_t STAT_END_MARKER = 0x1FF;
     constexpr size_t STAT_BITS = 9;
-    constexpr size_t V110_BITS_PER_STAT[] = { 10,10,10,10,10,8,21,21,21,21,21,21,7,32,25,25 };
+    constexpr std::array<size_t, 16> V110_BITS_PER_STAT = { 10,10,10,10,10,8,21,21,21,21,21,21,7,32,25,25 };
 
     constexpr std::uint32_t MIN_START_STATS_POS = 765;
 
-    constexpr std::uint8_t SKILLS_MARKER[] = { 0x69, 0x66 };             // alternatively "if"
+    constexpr std::array<std::uint8_t, 2> SKILLS_MARKER = { 0x69, 0x66 };             // alternatively "if"
 
     constexpr std::uint32_t BARBARIAN_VITALITY_MIN = 25;
     constexpr std::uint32_t PALADIN_VITALITY_MIN = 25;
@@ -110,7 +110,7 @@ void d2ce::CharacterStats::updateMinStats()
     case d2ce::EnumCharClass::Sorceress:
         curVitality = std::max(curVitality, d2ce::SORCERESS_VITALITY_MIN); // start stat
         curEnergy = std::max(curEnergy, d2ce::SORCERESS_ENERGY_MIN); // start stat
-        min_hit_points = 0x5400 + ((curLevel - 1) << 8) + (((curVitality - d2ce::SORCERESS_VITALITY_MIN) << 8) * 2);
+        min_hit_points = 0x2800 + ((curLevel - 1) << 8) + (((curVitality - d2ce::SORCERESS_VITALITY_MIN) << 8) * 2);
         min_stamina = 0x4A00 + ((curLevel + curVitality - d2ce::SORCERESS_VITALITY_MIN - 1) << 8);
         min_mana = 0x2300 + ((curLevel + curEnergy - d2ce::SORCERESS_ENERGY_MIN - 1) << 8) * 2;
         break;
@@ -605,6 +605,113 @@ bool d2ce::CharacterStats::readStats_109(std::FILE* charfile)
     updateMinStats();
     return true;
 }
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSerializedFormat)
+{
+    if (!statsRoot.isNull())
+    {
+        std::string key;
+        std::string name;
+        std::uint32_t* pStatValue = nullptr;
+        std::uint32_t statValue = 0;
+        auto iter_end = statsRoot.end();
+        for (auto iter = statsRoot.begin(); iter != iter_end; ++iter)
+        {
+            if (iter->isNull())
+            {
+                continue;
+            }
+
+            key = iter.name();
+            for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
+            {
+                name = getAttributeJsonName(stat, bSerializedFormat);
+                if (_stricmp(key.c_str(), name.c_str()) == 0)
+                {
+                    statValue = std::uint32_t(iter->asInt64());
+                    switch (stat)
+                    {
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                        statValue <<= 8;
+                        break;
+                    }
+
+                    pStatValue = GetStatBuffer(stat);
+                    if (pStatValue != nullptr)
+                    {
+                        *pStatValue = statValue;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    Cs.Vitality = std::min(std::max(Cs.Vitality, min_vitality), MAX_BASICSTATS);
+    Cs.Energy = std::min(std::max(Cs.Energy, min_energy), MAX_BASICSTATS);
+    Cs.Dexterity = std::min(std::max(Cs.Dexterity, min_dexterity), MAX_BASICSTATS);
+    Cs.Strength = std::min(std::max(Cs.Strength, min_strength), MAX_BASICSTATS);
+
+    updateMinStats();
+    bool updateCur = Cs.CurLife == Cs.MaxLife ? true : false;
+    Cs.MaxLife = std::max(Cs.MaxLife, min_hit_points);
+    if (updateCur)
+    {
+        Cs.CurLife = Cs.MaxLife;
+    }
+
+    updateCur = Cs.CurStamina == Cs.MaxStamina ? true : false;
+    Cs.MaxStamina = std::max(Cs.MaxStamina, min_stamina);
+    if (updateCur)
+    {
+        Cs.CurStamina = Cs.MaxStamina;
+    }
+
+    updateCur = Cs.CurMana == Cs.MaxMana ? true : false;
+    Cs.MaxMana = std::max(Cs.MaxMana, min_mana);
+    if (updateCur)
+    {
+        Cs.CurMana = Cs.MaxMana;
+    }
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharacterStats::readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile)
+{
+    updateStartStats();
+
+    std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
+    stats_location = std::ftell(charfile);
+    applyJsonStats(statsRoot, bSerializedFormat);
+
+    checkStatInfo();
+    if (Version < EnumCharVersion::v110)
+    {
+        return writeStats_109(charfile);
+    }
+
+    size_t current_bit_offset = 0;
+    data.clear();
+
+    size_t totalBitsWritten = 0;
+    for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
+    {
+        totalBitsWritten += updateStat(charfile, current_bit_offset, stat);
+    }
+    totalBitsWritten += updateStat(charfile, current_bit_offset, STAT_END_MARKER);
+
+    std::fflush(charfile);
+    if (totalBitsWritten == 0)
+    {
+        return false;
+    }
+
+    return true;
+}
 bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
 {
     if (update_locations)
@@ -653,7 +760,56 @@ bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
         std::fseek(charfile, skills_location, SEEK_SET);
     }
 
-    std::fread(Skills, sizeof(Skills), 1, charfile);
+    std::fread(Skills.data(), Skills.size(), 1, charfile);
+    return true;
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::applyJsonSkills(const Json::Value& skillsRoot, bool bSerializedFormat)
+{
+    if (skillsRoot.isNull())
+    {
+        return;
+    }
+
+    Json::Value value;
+    std::uint16_t id;
+    auto iter_end = skillsRoot.end();
+    for (auto iter = skillsRoot.begin(); iter != iter_end; ++iter)
+    {
+        if (iter->isNull())
+        {
+            continue;
+        }
+
+        value = iter->operator[](bSerializedFormat ? "Id" : "id");
+        if (value.isNull())
+        {
+            continue;
+        }
+
+        id = std::uint16_t(value.asInt64());
+        for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
+        {
+            if (id == getSkillId(skill))
+            {
+                value = iter->operator[](bSerializedFormat ? "Points" : "points");
+                if (!value.isNull())
+                {
+                    Skills[skill] = std::uint8_t(value.asInt64());
+                }
+                break;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharacterStats::readSkills(const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile)
+{
+    std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
+    skills_location = std::ftell(charfile);
+    applyJsonSkills(skillsRoot, bSerializedFormat);
+    std::fwrite(Skills.data(), Skills.size(), 1, charfile);
+    std::fflush(charfile);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -793,9 +949,9 @@ bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::writeSkills(std::FILE* charfile)
 {
-    std::fwrite(SKILLS_MARKER, sizeof(SKILLS_MARKER), 1, charfile);
+    std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
     skills_location = std::ftell(charfile);
-    std::fwrite(Skills, sizeof(Skills), 1, charfile);
+    std::fwrite(Skills.data(), Skills.size(), 1, charfile);
     std::fflush(charfile);
     return true;
 }
@@ -820,6 +976,45 @@ bool d2ce::CharacterStats::readStats(EnumCharVersion version, EnumCharClass char
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile)
+{
+    clear();
+    Json::Value childRoot;
+    if (!root.isNull())
+    {
+        childRoot = root[bSerializedFormat ? "Attributes" : "attributes"];
+        if (!childRoot.isNull() && bSerializedFormat)
+        {
+            childRoot = childRoot["Stats"];
+        }
+    }
+
+    Version = version;
+    Class = charClass;
+    update_locations = true;
+    if (!readStats(childRoot, bSerializedFormat, charfile) || stats_location == 0)
+    {
+        return false;
+    }
+
+    if (!root.isNull())
+    {
+        childRoot = root[bSerializedFormat ? "ClassSkills" : "skills"];
+        if (!childRoot.isNull() && bSerializedFormat)
+        {
+            childRoot = childRoot["Skills"];
+        }
+    }
+
+    if (!readSkills(childRoot, bSerializedFormat, charfile) || skills_location == 0)
+    {
+        return false;
+    }
+
+    update_locations = false;
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::CharacterStats::writeStats(std::FILE* charfile)
 {
     if (stats_location == 0)
@@ -829,8 +1024,8 @@ bool d2ce::CharacterStats::writeStats(std::FILE* charfile)
 
     checkStatInfo();
 
-    std::fseek(charfile, stats_location - sizeof(STATS_MARKER), SEEK_SET);
-    std::fwrite(STATS_MARKER, sizeof(STATS_MARKER), 1, charfile);
+    std::fseek(charfile, stats_location - std::uint32_t(STATS_MARKER.size()), SEEK_SET);
+    std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
     if (Version < EnumCharVersion::v110)
     {
         return writeStats_109(charfile);
@@ -882,7 +1077,7 @@ void d2ce::CharacterStats::resetStats(std::uint16_t lifePointsEarned, std::uint1
     resetSkills(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::updateSkills(const std::uint8_t(&updated_skills)[NUM_OF_SKILLS], std::uint16_t skillPointsEarned)
+void d2ce::CharacterStats::updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS>& updated_skills, std::uint16_t skillPointsEarned)
 {
     for (size_t i = 0; i < NUM_OF_SKILLS; ++i)
     {
@@ -893,7 +1088,7 @@ void d2ce::CharacterStats::updateSkills(const std::uint8_t(&updated_skills)[NUM_
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::resetSkills(std::uint16_t skillPointsEarned)
 {
-    std::memset(Skills, 0, sizeof(Skills));
+    Skills.fill(0);
     updateSkillChoices(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
@@ -991,35 +1186,24 @@ std::string d2ce::CharacterStats::getAttributeJsonName(std::uint16_t stat, bool 
     return "";
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::attributesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+void d2ce::CharacterStats::attributesAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
+    Json::Value attributes;
+    std::uint32_t* pStatValue = nullptr;
+    std::uint32_t statValue = 0;
+
     (const_cast<CharacterStats*>(this))->checkStatInfo();
     if (bSerializedFormat)
     {
-        std::string attribParentIndent = parentIndent + jsonIndentStr;
-        std::string attribStatsParentIndent = attribParentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"Attributes\": {";
-        ss << "\n" << attribParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)STATS_MARKER);
-        ss << ",\n" << attribParentIndent << "\"Stats\": {";
+        attributes["Header"] = *((std::uint16_t*)STATS_MARKER.data());
 
-        bool bFirstItem = true;
-        std::uint32_t* pStatValue = nullptr;
-        std::uint32_t statValue = 0;
+        Json::Value stats;
         for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
         {
             pStatValue = (const_cast<CharacterStats*>(this))->GetStatBuffer(stat);
             if (pStatValue == nullptr)
             {
                 continue;
-            }
-
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
             }
 
             statValue = *pStatValue;
@@ -1034,18 +1218,13 @@ void d2ce::CharacterStats::attributesAsJson(std::stringstream& ss, const std::st
                 statValue >>= 8;
                 break;
             }
-            ss << "\n" << attribStatsParentIndent << "\"" << getAttributeJsonName(stat, bSerializedFormat) << "\": " << std::dec << statValue;
+            stats[getAttributeJsonName(stat, bSerializedFormat)] = statValue;
         }
-        ss << "\n" << attribParentIndent << "}";
-        ss << "\n" << parentIndent << "}";
+        attributes["Stats"] = stats;
+        parent["Attributes"] = attributes;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"attributes\": {";
-
-        bool bFirstItem = true;
-        std::uint32_t* pStatValue = nullptr;
-        std::uint32_t statValue = 0;
         EnumCharStatInfo mask = EnumCharStatInfo::All;
         for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
         {
@@ -1056,15 +1235,6 @@ void d2ce::CharacterStats::attributesAsJson(std::stringstream& ss, const std::st
                 continue;
             }
 
-            if (bFirstItem)
-            {
-                bFirstItem = false;
-            }
-            else
-            {
-                ss << ",";
-            }
-
             statValue = *pStatValue;
             switch (stat)
             {
@@ -1077,62 +1247,50 @@ void d2ce::CharacterStats::attributesAsJson(std::stringstream& ss, const std::st
                 statValue >>= 8;
                 break;
             }
-            ss << "\n" << parentIndent << jsonIndentStr << "\"" << getAttributeJsonName(stat, bSerializedFormat) << "\": " << std::dec << statValue;
+
+            attributes[getAttributeJsonName(stat, bSerializedFormat)] = statValue;
         }
-        ss << "\n" << parentIndent << "}";
+        parent["attributes"] = attributes;
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::skillsAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+void d2ce::CharacterStats::skillsAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
-    std::string skillsParentIndent = parentIndent + jsonIndentStr;
-    std::string skillListParentIndent = skillsParentIndent + jsonIndentStr;
     if (bSerializedFormat)
     {
-        std::string skillListAttribIndent = skillListParentIndent + jsonIndentStr;
-        ss << "\n" << parentIndent << "\"ClassSkills\": {";
-        ss << "\n" << skillsParentIndent << "\"Header\": " << std::dec << (std::uint16_t) * ((std::uint16_t*)SKILLS_MARKER);
-        ss << ",\n" << skillsParentIndent << "\"Skills\": [";
+        Json::Value classSkills;
+        classSkills["Header"] = *((std::uint16_t*)SKILLS_MARKER.data());
+
+        Json::Value skills(Json::arrayValue);
         for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
         {
-            if (skill != 0)
-            {
-                ss << ",";
-            }
-
-            ss << "\n" << skillListParentIndent << "{";
-            ss << "\n" << skillListAttribIndent << "\"Id\": " << std::dec << std::uint16_t(getSkillId(skill));
-            ss << ",\n" << skillListAttribIndent << "\"Points\": " << std::dec << std::uint16_t(getSkillPoints(skill));
-            ss << "\n" << skillsParentIndent << "}";
+            Json::Value skillElement;
+            skillElement["Id"] = std::uint16_t(getSkillId(skill));
+            skillElement["Points"] = std::uint16_t(getSkillPoints(skill));
+            skills.append(skillElement);
         }
-        ss << "\n" << skillsParentIndent << "]";
-        ss << "\n" << parentIndent << "}";
+        classSkills["Skills"] = skills;
+        parent["ClassSkills"] = classSkills;
     }
     else
     {
-        ss << "\n" << parentIndent << "\"skills\": [";
+        Json::Value skills(Json::arrayValue);
         for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
         {
-            if (skill != 0)
-            {
-                ss << ",";
-            }
-
-            ss << "\n" << skillsParentIndent << "{";
-            ss << "\n" << skillListParentIndent << "\"id\": " << std::dec << std::uint16_t(getSkillId(skill));
-            ss << ",\n" << skillListParentIndent << "\"points\": " << std::dec << std::uint16_t(getSkillPoints(skill));
-            ss << ",\n" << skillListParentIndent << "\"name\": \"" << getSkillName(skill) << "\"";
-            ss << "\n" << skillsParentIndent << "}";
+            Json::Value skillElement;
+            skillElement["id"] = std::uint16_t(getSkillId(skill));
+            skillElement["points"] = std::uint16_t(getSkillPoints(skill));
+            skillElement["name"] = getSkillName(skill);
+            skills.append(skillElement);
         }
-        ss << "\n" << jsonIndentStr << "]";
+        parent["skills"] = skills;
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat) const
+void d2ce::CharacterStats::asJson(Json::Value& parent, bool bSerializedFormat) const
 {
-    attributesAsJson(ss, parentIndent, bSerializedFormat);
-    ss << ",";
-    skillsAsJson(ss, parentIndent, bSerializedFormat);
+    attributesAsJson(parent, bSerializedFormat);
+    skillsAsJson(parent, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::clear()
@@ -1156,7 +1314,7 @@ void d2ce::CharacterStats::clear()
     Cs.GoldInBelt = 0;
     Cs.GoldInStash = 0;
     data.clear();
-    std::memset(Skills, 0, sizeof(Skills));
+    Skills.fill(0);
     stats_location = 0;
     update_locations = true;
 
@@ -1380,7 +1538,7 @@ std::uint8_t d2ce::CharacterStats::getSkillId(std::uint32_t skill) const
 //---------------------------------------------------------------------------
 std::string d2ce::CharacterStats::getSkillNameById(std::uint32_t id) const
 {
-    if (id >= 0xFF)
+    if (id >= 0xFFFF)
     {
         return "";
     }
@@ -1413,6 +1571,35 @@ std::string d2ce::CharacterStats::getSkillNameById(std::uint32_t id) const
     return SkillsNames[classIdx][skillIdx];
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getSkillIdByName(const std::string& name)
+{
+    for (const auto& genericSkill : GenericSkillNames)
+    {
+        if (_stricmp(name.c_str(), genericSkill.second.c_str()) == 0)
+        {
+            return std::uint32_t(genericSkill.first);
+        }
+    }
+
+    for (std::uint32_t classIdx = 0; classIdx < NUM_OF_CLASSES; ++classIdx)
+    {
+        for (std::uint32_t skillIdx = 0; skillIdx < NUM_OF_SKILLS; ++skillIdx)
+        {
+            if (_stricmp(name.c_str(), SkillsNames[classIdx][skillIdx].c_str()) == 0)
+            {
+                if (classIdx < 5)
+                {
+                    return classIdx * NUM_OF_SKILLS + skillIdx + START_SKILL_ID;
+                }
+                
+                return (classIdx - 5) * NUM_OF_SKILLS + skillIdx + EXPANSION_START_SKILL_ID;
+            }
+        }
+    }
+
+    return 0xFFFF;
+}
+//---------------------------------------------------------------------------
 std::string d2ce::CharacterStats::getSkillName(std::uint32_t skill) const
 {
     if (skill >= NUM_OF_SKILLS)
@@ -1434,7 +1621,7 @@ std::uint8_t d2ce::CharacterStats::getSkillPoints(std::uint32_t skill) const
     return Skills[skill];
 }
 //---------------------------------------------------------------------------
-std::uint8_t(&d2ce::CharacterStats::getSkills())[NUM_OF_SKILLS]
+std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& d2ce::CharacterStats::getSkills()
 {
     return Skills;
 }
@@ -1475,6 +1662,6 @@ bool d2ce::CharacterStats::areSkillsMaxed() const
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::maxSkills()
 {
-    std::memset(Skills, MAX_SKILL_VALUE, sizeof(Skills));
+    Skills.fill(MAX_SKILL_VALUE);
 }
 //---------------------------------------------------------------------------

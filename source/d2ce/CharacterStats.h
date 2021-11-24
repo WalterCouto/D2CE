@@ -22,7 +22,7 @@
 #include "CharacterStatsConstants.h"
 #include "SkillConstants.h"
 #include "DataTypes.h"
-#include "sstream"
+#include <json/json.h>
 
 namespace d2ce
 {
@@ -89,8 +89,12 @@ namespace d2ce
         size_t readNextStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t& stat);
         size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
         bool readStats(std::FILE* charfile);
+        void applyJsonStats(const Json::Value& statsRoot, bool bSerializedFormat);
+        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool readStats_109(std::FILE* charfile);
         bool readSkills(std::FILE* charfile);
+        void applyJsonSkills(const Json::Value& skillsRoot, bool bSerializedFormat);
+        bool readSkills(const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
 
         size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
         size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
@@ -105,23 +109,24 @@ namespace d2ce
                                       // Dexterity: pos 573 (pre-1.09)
                                       // Vitality:  pos 577 (pre-1.09)
 
-        std::uint8_t Skills[NUM_OF_SKILLS] = { 0 };
+        std::array<std::uint8_t, NUM_OF_SKILLS> Skills = { 0 };
 
     protected:
         bool readStats(EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
+        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
         bool writeStats(std::FILE* charfile);
         std::uint32_t getHeaderLocation();
 
         void resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned);
-        void updateSkills(const std::uint8_t(&updated_skills)[NUM_OF_SKILLS], std::uint16_t skillPointsEarned);
+        void updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS> &updated_skills, std::uint16_t skillPointsEarned);
         void resetSkills(std::uint16_t skillPointsEarned);
 
         void updateClass(EnumCharClass charClass);
 
         std::string getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat = false) const;
-        void attributesAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
-        void skillsAsJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
-        void asJson(std::stringstream& ss, const std::string& parentIndent, bool bSerializedFormat = false) const;
+        void attributesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        void skillsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        void asJson(Json::Value& parent, bool bSerializedFormat = false) const;
 
     public:
         CharacterStats();
@@ -154,9 +159,10 @@ namespace d2ce
         // Skills
         std::uint8_t getSkillId(std::uint32_t skill) const;
         std::string getSkillNameById(std::uint32_t id) const;
+        static std::uint32_t getSkillIdByName(const std::string& name);
         std::string getSkillName(std::uint32_t skill) const;
         std::uint8_t getSkillPoints(std::uint32_t skill) const;
-        std::uint8_t(&getSkills())[NUM_OF_SKILLS];
+        std::array<std::uint8_t, NUM_OF_SKILLS>& getSkills();
 
         std::uint32_t getTotalSkillPoints() const;
         std::uint32_t getSkillPointsUsed() const;

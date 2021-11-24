@@ -204,7 +204,7 @@ CD2MercenaryForm::~CD2MercenaryForm()
 //---------------------------------------------------------------------------
 bool CD2MercenaryForm::MercChanged() const
 {
-    return ctrlEditted.empty() ? false : true;
+    return CtrlEditted.empty() ? false : true;
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::DoDataExchange(CDataExchange* pDX)
@@ -526,88 +526,88 @@ void CD2MercenaryForm::UpdateModified()
 
     if (merc.Id != OrigMerc.Id)
     {
-        ctrlEditted.insert(MercHired.GetDlgCtrlID());
+        CtrlEditted.insert(MercHired.GetDlgCtrlID());
     }
     else
     {
-        auto iter = ctrlEditted.find(MercHired.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        auto iter = CtrlEditted.find(MercHired.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
     }
 
     if (merc.Dead != OrigMerc.Dead)
     {
-        ctrlEditted.insert(MercDead.GetDlgCtrlID());
+        CtrlEditted.insert(MercDead.GetDlgCtrlID());
     }
     else
     {
-        auto iter = ctrlEditted.find(MercDead.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        auto iter = CtrlEditted.find(MercDead.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
     }
 
     if (merc.NameId != OrigMerc.NameId)
     {
-        ctrlEditted.insert(MercName.GetDlgCtrlID());
+        CtrlEditted.insert(MercName.GetDlgCtrlID());
     }
     else
     {
-        auto iter = ctrlEditted.find(MercName.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        auto iter = CtrlEditted.find(MercName.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
     }
 
     if (merc.Type != OrigMerc.Type)
     {
-        ctrlEditted.insert(MercName.GetDlgCtrlID());
-        ctrlEditted.insert(MercClass.GetDlgCtrlID());
-        ctrlEditted.insert(Difficulty.GetDlgCtrlID());
-        ctrlEditted.insert(Attribute.GetDlgCtrlID());
+        CtrlEditted.insert(MercName.GetDlgCtrlID());
+        CtrlEditted.insert(MercClass.GetDlgCtrlID());
+        CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+        CtrlEditted.insert(Attribute.GetDlgCtrlID());
     }
     else
     {
-        auto iter = ctrlEditted.find(MercClass.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        auto iter = CtrlEditted.find(MercClass.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
         
-        iter = ctrlEditted.find(Difficulty.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        iter = CtrlEditted.find(Difficulty.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
 
-        iter = ctrlEditted.find(Attribute.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        iter = CtrlEditted.find(Attribute.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
     }
 
     if (merc.Experience != OrigMerc.Experience)
     {
-        ctrlEditted.insert(Experience.GetDlgCtrlID());
-        ctrlEditted.insert(MercLevel.GetDlgCtrlID());
+        CtrlEditted.insert(Experience.GetDlgCtrlID());
+        CtrlEditted.insert(MercLevel.GetDlgCtrlID());
     }
     else
     {
-        auto iter = ctrlEditted.find(Experience.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        auto iter = CtrlEditted.find(Experience.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
 
-        iter = ctrlEditted.find(MercLevel.GetDlgCtrlID());
-        if (iter != ctrlEditted.end())
+        iter = CtrlEditted.find(MercLevel.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            ctrlEditted.erase(iter);
+            CtrlEditted.erase(iter);
         }
     }
 }
@@ -878,7 +878,7 @@ BOOL CD2MercenaryForm::OnInitDialog()
     LOGFONT lf;
     pWndFont->GetLogFont(&lf);
     lf.lfWeight = FW_BOLD;
-    m_boldFont.CreateFontIndirect(&lf);
+    BoldFont.CreateFontIndirect(&lf);
 
     // Set text limite on edit boxes
     MercLevel.SetLimitText(2);
@@ -893,7 +893,7 @@ BOOL CD2MercenaryForm::OnInitDialog()
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnEnChangeMercLevel()
 {
-    ctrlEditted.insert(MercLevel.GetDlgCtrlID());
+    CtrlEditted.insert(MercLevel.GetDlgCtrlID());
 }
 void CD2MercenaryForm::OnEnKillfocusMercLevel()
 {
@@ -908,7 +908,7 @@ void CD2MercenaryForm::OnEnKillfocusMercLevel()
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnEnChangeMercExperience()
 {
-    ctrlEditted.insert(Experience.GetDlgCtrlID());
+    CtrlEditted.insert(Experience.GetDlgCtrlID());
 }
 void CD2MercenaryForm::OnEnKillfocusMercExperience()
 {
@@ -1076,9 +1076,9 @@ HBRUSH CD2MercenaryForm::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
     if (CTLCOLOR_EDIT == nCtlColor || CTLCOLOR_LISTBOX == nCtlColor ||
         (pWnd->IsKindOf(RUNTIME_CLASS(CEdit)) || pWnd->IsKindOf(RUNTIME_CLASS(CComboBox))))
     {
-        if (ctrlEditted.find(pWnd->GetDlgCtrlID()) != ctrlEditted.end())
+        if (CtrlEditted.find(pWnd->GetDlgCtrlID()) != CtrlEditted.end())
         {
-            pDC->SelectObject(&m_boldFont);
+            pDC->SelectObject(&BoldFont);
         }
     }
 
@@ -1094,7 +1094,7 @@ void CD2MercenaryForm::OnBnClickedOk()
 void CD2MercenaryForm::OnBnClickedCancel()
 {
     Merc.updateMercInfo(OrigMerc);
-    ctrlEditted.clear();
+    CtrlEditted.clear();
     __super::OnCancel();
 }
 //---------------------------------------------------------------------------

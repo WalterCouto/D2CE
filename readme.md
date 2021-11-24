@@ -70,13 +70,25 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.07 (Dec 6, 2021)**<br>
+- Updated: json export to use jsoncpp for easier export/import logic<br>
+- Updated: fix bug where Hardcore characters would be detected as dead<br>
+- Updated: get proper level requirement information for Set and Unique items<br>
+<br>
+
+- Added: tests for the serialized Json export/import functionality<br>
+- Added: ability to directly load and edit Json files via the File Open and File Save commands.<br>
+- Added: ability to convert a JSON character file to a D2S character  file.<br>
+<br>
+
 **Version 2.06 (Nov 22, 2021)**<br>
 - Added: Context menu for Gem, Potion or Skull items in Items Form<br>
 - Added: Reading/Writing and Json export of the menu appearance section<br>
 - Added: New Serialized Json Export compatable with D2SLib format. This format contains only the information available in the d2s file without the detailed interpretation given by the existing Json export logic. The previous JSON export is now called "Detailed" while the new JSON export is called "Serialized" in the menu.<br>
+<br>
 
 **Version 2.05 (Nov 14, 2021)**<br>
-- Updated: Updated: Fix up handling of reading files with a corpse<br>
+- Updated: Fix up handling of reading files with a corpse<br>
 - Updated: Fix up setting/clearing the is potion bit<br>
 <br>
 

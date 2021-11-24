@@ -8,8 +8,7 @@
     "status": {
       "hardcore": false,
       "died": true,
-      "expansion": true,
-      "dead": true
+      "expansion": true
     },
     "progression": 5,
     "active_arms": 0,
@@ -377,7 +376,7 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_nm": {
@@ -592,7 +591,7 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_hell": {
@@ -6248,301 +6247,302 @@
         }
       ],
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 4,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "skz",
-            "categories": [
-              "Skull",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana {0}%"
-              },
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "type_name": "Perfect Skull",
-            "levelreq": 18,
-            "inv_file": "invskz",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +5"
-              },
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana 19%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana {0}%"
-              },
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +5"
-              },
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana 19%"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 4,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "skz",
-            "categories": [
-              "Skull",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana {0}%"
-              },
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "type_name": "Perfect Skull",
-            "levelreq": 18,
-            "inv_file": "invskz",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +5"
-              },
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana 19%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana {0}%"
-              },
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  5
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +5"
-              },
-              {
-                "id": 27,
-                "values": [
-                  19
-                ],
-                "name": "manarecoverybonus",
-                "description": "Regenerate Mana 19%"
-              }
-            ]
-          }
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +5"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana 19%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
+            },
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +5"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana 19%"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
+            },
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +5"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana 19%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
+            },
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                5
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +5"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana 19%"
+            }
+          ]
+        }
       ],
       "type_name": "Chain Mail",
       "reqstr": 48,
+      "levelreq": 17,
       "inv_file": "invchn",
       "inv_height": 3,
       "inv_width": 2,
@@ -9820,6 +9820,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 0,
       "timestamp": 0,
       "quantity": 20,
       "magic_attributes": [],
@@ -10958,6 +10959,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 1,
       "timestamp": 0,
       "quantity": 18,
       "magic_attributes": [],
@@ -11048,234 +11050,234 @@
       "total_nr_of_sockets": 2,
       "magic_attributes": [],
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 4,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gpg",
-            "categories": [
-              "Emerald",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +{0}%"
-              }
-            ],
-            "type_name": "Perfect Emerald",
-            "levelreq": 18,
-            "inv_file": "invgsge",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +40%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +{0}%"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +40%"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 4,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpg",
+          "categories": [
+            "Emerald",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +{0}%"
+            }
+          ],
+          "type_name": "Perfect Emerald",
+          "levelreq": 18,
+          "inv_file": "invgsge",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +40%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +{0}%"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +40%"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 4,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gpg",
-            "categories": [
-              "Emerald",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +{0}%"
-              }
-            ],
-            "type_name": "Perfect Emerald",
-            "levelreq": 18,
-            "inv_file": "invgsge",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +40%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +{0}%"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 45,
-                "values": [
-                  40
-                ],
-                "name": "poisonresist",
-                "description": "Poison Resist +40%"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 4,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpg",
+          "categories": [
+            "Emerald",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +{0}%"
+            }
+          ],
+          "type_name": "Perfect Emerald",
+          "levelreq": 18,
+          "inv_file": "invgsge",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +40%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +{0}%"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 45,
+              "values": [
+                40
+              ],
+              "name": "poisonresist",
+              "description": "Poison Resist +40%"
+            }
+          ]
+        }
       ],
       "type_name": "Kite Shield",
       "reqstr": 47,
@@ -12041,8 +12043,7 @@
       "set_id": 2,
       "set_name": "Civerb's Cudgel",
       "set_list_count": 0,
-      "set_attributes": [
-      ],
+      "set_attributes": [],
       "timestamp": 0,
       "max_durability": 255,
       "current_durability": 255,
@@ -12078,6 +12079,7 @@
       },
       "type_name": "Grand Scepter",
       "reqstr": 37,
+      "levelreq": 9,
       "inv_file": "invgsc",
       "inv_height": 3,
       "inv_width": 1,

@@ -21,6 +21,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 
 namespace d2ce
 {
@@ -33,7 +34,7 @@ namespace d2ce
     constexpr std::uint32_t NUM_OF_LEVELS = 99; // max level (game limit)
 
     // mininum experience for each character level
-    constexpr std::uint32_t MinExpRequired[NUM_OF_LEVELS] =
+    constexpr std::array<std::uint32_t, NUM_OF_LEVELS> MinExpRequired =
     { 0, 500, 1500, 3750, 7875, 14175,
      22680, 32886, 44396, 57715, 72144,
      90180, 112725, 140906, 176132, 220165,

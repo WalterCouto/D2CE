@@ -19,6 +19,12 @@
     <Filter Include="Source Files\d2ce">
       <UniqueIdentifier>{817a2518-8b00-48b6-bb76-9ea239b3c9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\jsoncpp">
+      <UniqueIdentifier>{b431c38b-1f2a-4ee4-9f3c-d7baea1c4d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jsoncpp">
+      <UniqueIdentifier>{769a1865-760b-454e-ab34-77f19cbfb1af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D2Editor.h">
@@ -111,6 +117,42 @@
     <ClInclude Include="D2ItemsForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\allocator.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\assertions.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\config.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\forwards.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\json.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\json_features.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\reader.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\value.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\version.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\writer.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_tool.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\historic_map.h">
+      <Filter>Header Files\jsoncpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -161,6 +203,15 @@
     <ClCompile Include="D2ItemsForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
+      <Filter>Source Files\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_value.cpp">
+      <Filter>Source Files\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_writer.cpp">
+      <Filter>Source Files\jsoncpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2Editor.rc">
@@ -170,6 +221,9 @@
   <ItemGroup>
     <None Include="res\D2Editor.rc2">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl">
+      <Filter>Source Files\jsoncpp</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

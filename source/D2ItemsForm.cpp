@@ -1533,7 +1533,7 @@ void CD2ItemsForm::CheckToolTipCtrl()
     }
 }
 //---------------------------------------------------------------------------
-bool CD2ItemsForm::updateGem(d2ce::Item& item, const std::uint8_t(&newgem)[4])
+bool CD2ItemsForm::updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem)
 {
     if (!MainForm.updateGem(item, newgem))
     {

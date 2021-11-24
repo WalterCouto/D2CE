@@ -8,8 +8,7 @@
     "status": {
       "hardcore": false,
       "died": true,
-      "expansion": true,
-      "dead": true
+      "expansion": true
     },
     "progression": 8,
     "active_arms": 0,
@@ -21,6 +20,7 @@
       "Strafe",
       "Magic Arrow",
       "Freezing Arrow",
+      null,
       "Valkyrie"
     ],
     "left_skill": "Freezing Arrow",
@@ -373,7 +373,7 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_nm": {
@@ -620,7 +620,7 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_hell": {
@@ -1548,6 +1548,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 0,
       "timestamp": 0,
       "quantity": 20,
       "magic_attributes": [],
@@ -1629,6 +1630,7 @@
       "quality": 2,
       "multiple_pictures": 0,
       "class_specific": 0,
+      "magic_suffix": 1,
       "timestamp": 0,
       "quantity": 20,
       "magic_attributes": [],
@@ -2254,360 +2256,360 @@
         "twohandmaxdam": 6
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gpr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Perfect Ruby",
-            "levelreq": 18,
-            "inv_file": "invgsre",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Perfect Ruby",
+          "levelreq": 18,
+          "inv_file": "invgsre",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gpr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Perfect Ruby",
-            "levelreq": 18,
-            "inv_file": "invgsre",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Perfect Ruby",
+          "levelreq": 18,
+          "inv_file": "invgsre",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gpr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Perfect Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Perfect Ruby",
-            "levelreq": 18,
-            "inv_file": "invgsre",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  15,
-                  20
-                ],
-                "name": "firemindam",
-                "description": "Adds 15-20 Fire Damage"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Perfect Ruby",
+          "levelreq": 18,
+          "inv_file": "invgsre",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                15,
+                20
+              ],
+              "name": "firemindam",
+              "description": "Adds 15-20 Fire Damage"
+            }
+          ]
+        }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
@@ -2720,360 +2722,360 @@
         "twohandmaxdam": 6
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "glr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Flawless Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Flawless Ruby",
-            "levelreq": 15,
-            "inv_file": "invgsrd",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "glr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Flawless Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Flawless Ruby",
+          "levelreq": 15,
+          "inv_file": "invgsrd",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "glr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Flawless Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Flawless Ruby",
-            "levelreq": 15,
-            "inv_file": "invgsrd",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "glr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Flawless Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Flawless Ruby",
+          "levelreq": 15,
+          "inv_file": "invgsrd",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "glr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Flawless Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Flawless Ruby",
-            "levelreq": 15,
-            "inv_file": "invgsrd",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  10,
-                  16
-                ],
-                "name": "firemindam",
-                "description": "Adds 10-16 Fire Damage"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "glr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Flawless Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Flawless Ruby",
+          "levelreq": 15,
+          "inv_file": "invgsrd",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                10,
+                16
+              ],
+              "name": "firemindam",
+              "description": "Adds 10-16 Fire Damage"
+            }
+          ]
+        }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
@@ -3186,360 +3188,360 @@
         "twohandmaxdam": 6
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gsr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Standard Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Ruby",
-            "levelreq": 12,
-            "inv_file": "invgsrc",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gsr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Standard Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Ruby",
+          "levelreq": 12,
+          "inv_file": "invgsrc",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gsr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Standard Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Ruby",
-            "levelreq": 12,
-            "inv_file": "invgsrc",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gsr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Standard Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Ruby",
+          "levelreq": 12,
+          "inv_file": "invgsrc",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 5,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "gsr",
-            "categories": [
-              "Ruby",
-              "Gem",
-              "Socket Filler",
-              "Miscellaneous",
-              "Standard Gem"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "type_name": "Ruby",
-            "levelreq": 12,
-            "inv_file": "invgsrc",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds {0}-{1} Fire Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 48,
-                "values": [
-                  8,
-                  12
-                ],
-                "name": "firemindam",
-                "description": "Adds 8-12 Fire Damage"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gsr",
+          "categories": [
+            "Ruby",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Standard Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "type_name": "Ruby",
+          "levelreq": 12,
+          "inv_file": "invgsrc",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds {0}-{1} Fire Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 48,
+              "values": [
+                8,
+                12
+              ],
+              "name": "firemindam",
+              "description": "Adds 8-12 Fire Damage"
+            }
+          ]
+        }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
@@ -5919,7 +5921,7 @@
       ],
       "type_name": "Grand Crown",
       "reqstr": 103,
-      "levelreq": 25,
+      "levelreq": 49,
       "inv_file": "invcrn",
       "inv_height": 2,
       "inv_width": 2,
@@ -6216,6 +6218,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 17,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -6419,7 +6422,7 @@
       ],
       "type_name": "Serpentskin Armor",
       "reqstr": 43,
-      "levelreq": 24,
+      "levelreq": 29,
       "inv_file": "invlea",
       "inv_height": 3,
       "inv_width": 2,
@@ -6746,6 +6749,7 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 14,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -7306,7 +7310,7 @@
       ],
       "type_name": "Sharkskin Belt",
       "reqstr": 20,
-      "levelreq": 25,
+      "levelreq": 32,
       "inv_file": "invvbl",
       "inv_height": 1,
       "inv_width": 2,
@@ -7943,6 +7947,7 @@
       ],
       "type_name": "Chain Gloves",
       "reqstr": 25,
+      "levelreq": 15,
       "inv_file": "invmgl",
       "inv_height": 2,
       "inv_width": 2,
@@ -9962,7 +9967,7 @@
       "type_name": "Ceremonial Bow",
       "reqstr": 73,
       "reqdex": 110,
-      "levelreq": 35,
+      "levelreq": 42,
       "inv_file": "invam2",
       "inv_height": 4,
       "inv_width": 2,
@@ -10432,6 +10437,7 @@
       ],
       "type_name": "Splint Mail",
       "reqstr": 51,
+      "levelreq": 22,
       "inv_file": "invspl",
       "inv_height": 3,
       "inv_width": 2,
@@ -10687,6 +10693,7 @@
       ],
       "type_name": "Bone Helm",
       "reqstr": 25,
+      "levelreq": 21,
       "inv_file": "invbhm",
       "inv_height": 2,
       "inv_width": 2,

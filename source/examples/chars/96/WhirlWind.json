@@ -3014,6 +3014,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 70,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -3456,6 +3457,7 @@
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 75,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -3975,7 +3977,7 @@
       "socketed_items": [],
       "type_name": "Guardian Crown",
       "reqstr": 196,
-      "levelreq": 65,
+      "levelreq": 42,
       "inv_file": "invba5",
       "inv_height": 2,
       "inv_width": 2,
@@ -4437,6 +4439,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 65,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -4677,92 +4680,7 @@
       "file_index": 1,
       "runeword_id": 67,
       "runeword_name": "Fortitude",
-      "runeword_attributes": 
-      [
-        {
-          "id": 16,
-          "values": [
-            200
-          ],
-          "name": "item_armor_percent",
-          "description": "+{0}% Enhanced Defense"
-        },
-        {
-          "id": 17,
-          "values": [
-            300,
-            300
-          ],
-          "name": "item_maxdamage_percent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
-          "id": 39,
-          "values": [
-            30
-          ],
-          "name": "fireresist",
-          "description": "Fire Resist +{0}%"
-        },
-        {
-          "id": 41,
-          "values": [
-            30
-          ],
-          "name": "lightresist",
-          "description": "Lightning Resist +{0}%"
-        },
-        {
-          "id": 43,
-          "values": [
-            30
-          ],
-          "name": "coldresist",
-          "description": "Cold Resist +{0}%"
-        },
-        {
-          "id": 45,
-          "values": [
-            30
-          ],
-          "name": "poisonresist",
-          "description": "Poison Resist +{0}%"
-        },
-        {
-          "id": 105,
-          "values": [
-            25
-          ],
-          "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
-        },
-        {
-          "id": 114,
-          "values": [
-            12
-          ],
-          "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
-        },
-        {
-          "id": 201,
-          "values": [
-            15,
-            60,
-            20
-          ],
-          "name": "item_skillongethit",
-          "description": "{2}% Chance to cast level {0} {1} when struck"
-        },
-        {
-          "id": 216,
-          "values": [
-            12
-          ],
-          "name": "item_hp_perlevel",
-          "description": "+{0} to Life (Based on Character Level)"
-        }
-      ]
+      "runeword_attributes": [
         {
           "id": 16,
           "values": [
@@ -4873,486 +4791,486 @@
         "maxdam": 35
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r01",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+{0} to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "type_name": "El Rune",
-            "levelreq": 11,
-            "inv_file": "invrEl",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+50 to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+{0} to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+50 to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r01",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r12",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "type_name": "Sol Rune",
-            "levelreq": 27,
-            "inv_file": "invrSol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ]
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "type_name": "El Rune",
+          "levelreq": 11,
+          "inv_file": "invrEl",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+50 to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+50 to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r12",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "type_name": "Sol Rune",
+          "levelreq": 27,
+          "inv_file": "invrSol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r14",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee {0}%"
-              }
-            ],
-            "type_name": "Dol Rune",
-            "levelreq": 31,
-            "inv_file": "invrDol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee 25%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee {0}%"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee 25%"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r14",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee {0}%"
+            }
+          ],
+          "type_name": "Dol Rune",
+          "levelreq": 31,
+          "inv_file": "invrDol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee 25%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee {0}%"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee 25%"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 3,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r28",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "{0}% Deadly Strike"
-              }
-            ],
-            "type_name": "Lo Rune",
-            "levelreq": 59,
-            "inv_file": "invrLo",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "20% Deadly Strike"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "{0}% Deadly Strike"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "20% Deadly Strike"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r28",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "{0}% Deadly Strike"
+            }
+          ],
+          "type_name": "Lo Rune",
+          "levelreq": 59,
+          "inv_file": "invrLo",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "20% Deadly Strike"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "{0}% Deadly Strike"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "20% Deadly Strike"
+            }
+          ]
+        }
       ],
       "type_name": "Phase Blade",
       "reqstr": 25,
@@ -5820,92 +5738,7 @@
       "file_index": 1,
       "runeword_id": 67,
       "runeword_name": "Fortitude",
-      "runeword_attributes": 
-      [
-        {
-          "id": 16,
-          "values": [
-            200
-          ],
-          "name": "item_armor_percent",
-          "description": "+{0}% Enhanced Defense"
-        },
-        {
-          "id": 17,
-          "values": [
-            300,
-            300
-          ],
-          "name": "item_maxdamage_percent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
-          "id": 39,
-          "values": [
-            30
-          ],
-          "name": "fireresist",
-          "description": "Fire Resist +{0}%"
-        },
-        {
-          "id": 41,
-          "values": [
-            30
-          ],
-          "name": "lightresist",
-          "description": "Lightning Resist +{0}%"
-        },
-        {
-          "id": 43,
-          "values": [
-            30
-          ],
-          "name": "coldresist",
-          "description": "Cold Resist +{0}%"
-        },
-        {
-          "id": 45,
-          "values": [
-            30
-          ],
-          "name": "poisonresist",
-          "description": "Poison Resist +{0}%"
-        },
-        {
-          "id": 105,
-          "values": [
-            25
-          ],
-          "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
-        },
-        {
-          "id": 114,
-          "values": [
-            12
-          ],
-          "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
-        },
-        {
-          "id": 201,
-          "values": [
-            15,
-            60,
-            20
-          ],
-          "name": "item_skillongethit",
-          "description": "{2}% Chance to cast level {0} {1} when struck"
-        },
-        {
-          "id": 216,
-          "values": [
-            12
-          ],
-          "name": "item_hp_perlevel",
-          "description": "+{0} to Life (Based on Character Level)"
-        }
-      ]
+      "runeword_attributes": [
         {
           "id": 16,
           "values": [
@@ -6016,486 +5849,486 @@
         "maxdam": 35
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r01",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+{0} to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "type_name": "El Rune",
-            "levelreq": 11,
-            "inv_file": "invrEl",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+50 to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+{0} to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 19,
-                "values": [
-                  50
-                ],
-                "name": "tohit",
-                "description": "+50 to Attack Rating"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r01",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r12",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "type_name": "Sol Rune",
-            "levelreq": 27,
-            "inv_file": "invrSol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ]
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "type_name": "El Rune",
+          "levelreq": 11,
+          "inv_file": "invrEl",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+50 to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+50 to Attack Rating"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r12",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "type_name": "Sol Rune",
+          "levelreq": 27,
+          "inv_file": "invrSol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r14",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee {0}%"
-              }
-            ],
-            "type_name": "Dol Rune",
-            "levelreq": 31,
-            "inv_file": "invrDol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee 25%"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee {0}%"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 112,
-                "values": [
-                  32
-                ],
-                "name": "item_howl",
-                "description": "Hit Causes Monsters to Flee 25%"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r14",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee {0}%"
+            }
+          ],
+          "type_name": "Dol Rune",
+          "levelreq": 31,
+          "inv_file": "invrDol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee 25%"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee {0}%"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 112,
+              "values": [
+                32
+              ],
+              "name": "item_howl",
+              "description": "Hit Causes Monsters to Flee 25%"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 3,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r28",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "{0}% Deadly Strike"
-              }
-            ],
-            "type_name": "Lo Rune",
-            "levelreq": 59,
-            "inv_file": "invrLo",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "20% Deadly Strike"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "{0}% Deadly Strike"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 141,
-                "values": [
-                  20
-                ],
-                "name": "item_deadlystrike",
-                "description": "20% Deadly Strike"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r28",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "{0}% Deadly Strike"
+            }
+          ],
+          "type_name": "Lo Rune",
+          "levelreq": 59,
+          "inv_file": "invrLo",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "20% Deadly Strike"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "{0}% Deadly Strike"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 141,
+              "values": [
+                20
+              ],
+              "name": "item_deadlystrike",
+              "description": "20% Deadly Strike"
+            }
+          ]
+        }
       ],
       "type_name": "Phase Blade",
       "reqstr": 25,
@@ -7772,92 +7605,7 @@
       "file_index": 1,
       "runeword_id": 67,
       "runeword_name": "Fortitude",
-      "runeword_attributes": 
-      [
-        {
-          "id": 16,
-          "values": [
-            200
-          ],
-          "name": "item_armor_percent",
-          "description": "+{0}% Enhanced Defense"
-        },
-        {
-          "id": 17,
-          "values": [
-            300,
-            300
-          ],
-          "name": "item_maxdamage_percent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
-          "id": 39,
-          "values": [
-            30
-          ],
-          "name": "fireresist",
-          "description": "Fire Resist +{0}%"
-        },
-        {
-          "id": 41,
-          "values": [
-            30
-          ],
-          "name": "lightresist",
-          "description": "Lightning Resist +{0}%"
-        },
-        {
-          "id": 43,
-          "values": [
-            30
-          ],
-          "name": "coldresist",
-          "description": "Cold Resist +{0}%"
-        },
-        {
-          "id": 45,
-          "values": [
-            30
-          ],
-          "name": "poisonresist",
-          "description": "Poison Resist +{0}%"
-        },
-        {
-          "id": 105,
-          "values": [
-            25
-          ],
-          "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
-        },
-        {
-          "id": 114,
-          "values": [
-            12
-          ],
-          "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
-        },
-        {
-          "id": 201,
-          "values": [
-            15,
-            60,
-            20
-          ],
-          "name": "item_skillongethit",
-          "description": "{2}% Chance to cast level {0} {1} when struck"
-        },
-        {
-          "id": 216,
-          "values": [
-            16
-          ],
-          "name": "item_hp_perlevel",
-          "description": "+{0} to Life (Based on Character Level)"
-        }
-      ]
+      "runeword_attributes": [
         {
           "id": 16,
           "values": [
@@ -7966,486 +7714,486 @@
         }
       ],
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r01",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 31,
-                "values": [
-                  15
-                ],
-                "name": "armorclass",
-                "description": "+{0} Defense"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "type_name": "El Rune",
-            "levelreq": 11,
-            "inv_file": "invrEl",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 31,
-                "values": [
-                  15
-                ],
-                "name": "armorclass",
-                "description": "+15 Defense"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 31,
-                "values": [
-                  15
-                ],
-                "name": "armorclass",
-                "description": "+{0} Defense"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+{0} to Light Radius"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 31,
-                "values": [
-                  15
-                ],
-                "name": "armorclass",
-                "description": "+15 Defense"
-              },
-              {
-                "id": 89,
-                "values": [
-                  1
-                ],
-                "name": "item_lightradius",
-                "description": "+1 to Light Radius"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r01",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+{0} Defense"
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r12",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 34,
-                "values": [
-                  7
-                ],
-                "name": "normal_damage_reduction",
-                "description": "Damage Reduced by {0}"
-              }
-            ],
-            "type_name": "Sol Rune",
-            "levelreq": 27,
-            "inv_file": "invrSol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 34,
-                "values": [
-                  7
-                ],
-                "name": "normal_damage_reduction",
-                "description": "Damage Reduced by 7"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 34,
-                "values": [
-                  7
-                ],
-                "name": "normal_damage_reduction",
-                "description": "Damage Reduced by {0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 34,
-                "values": [
-                  7
-                ],
-                "name": "normal_damage_reduction",
-                "description": "Damage Reduced by 7"
-              }
-            ]
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "type_name": "El Rune",
+          "levelreq": 11,
+          "inv_file": "invrEl",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+15 Defense"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+{0} Defense"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+{0} to Light Radius"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+15 Defense"
+            },
+            {
+              "id": 89,
+              "values": [
+                1
+              ],
+              "name": "item_lightradius",
+              "description": "+1 to Light Radius"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r12",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 34,
+              "values": [
+                7
+              ],
+              "name": "normal_damage_reduction",
+              "description": "Damage Reduced by {0}"
+            }
+          ],
+          "type_name": "Sol Rune",
+          "levelreq": 27,
+          "inv_file": "invrSol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 34,
+              "values": [
+                7
+              ],
+              "name": "normal_damage_reduction",
+              "description": "Damage Reduced by 7"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 34,
+              "values": [
+                7
+              ],
+              "name": "normal_damage_reduction",
+              "description": "Damage Reduced by {0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 34,
+              "values": [
+                7
+              ],
+              "name": "normal_damage_reduction",
+              "description": "Damage Reduced by 7"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r14",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  7
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "type_name": "Dol Rune",
-            "levelreq": 31,
-            "inv_file": "invrDol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  7
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +7"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  7
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +{0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 74,
-                "values": [
-                  7
-                ],
-                "name": "hpregen",
-                "description": "Replenish Life +7"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r14",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                7
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "type_name": "Dol Rune",
+          "levelreq": 31,
+          "inv_file": "invrDol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                7
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +7"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                7
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +{0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 74,
+              "values": [
+                7
+              ],
+              "name": "hpregen",
+              "description": "Replenish Life +7"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 3,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r28",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 42,
-                "values": [
-                  5
-                ],
-                "name": "maxlightresist",
-                "description": "+{0}% to Maximum Lightning Resist"
-              }
-            ],
-            "type_name": "Lo Rune",
-            "levelreq": 59,
-            "inv_file": "invrLo",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 42,
-                "values": [
-                  5
-                ],
-                "name": "maxlightresist",
-                "description": "+5% to Maximum Lightning Resist"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 42,
-                "values": [
-                  5
-                ],
-                "name": "maxlightresist",
-                "description": "+{0}% to Maximum Lightning Resist"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 42,
-                "values": [
-                  5
-                ],
-                "name": "maxlightresist",
-                "description": "+5% to Maximum Lightning Resist"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r28",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 42,
+              "values": [
+                5
+              ],
+              "name": "maxlightresist",
+              "description": "+{0}% to Maximum Lightning Resist"
+            }
+          ],
+          "type_name": "Lo Rune",
+          "levelreq": 59,
+          "inv_file": "invrLo",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 42,
+              "values": [
+                5
+              ],
+              "name": "maxlightresist",
+              "description": "+5% to Maximum Lightning Resist"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 42,
+              "values": [
+                5
+              ],
+              "name": "maxlightresist",
+              "description": "+{0}% to Maximum Lightning Resist"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 42,
+              "values": [
+                5
+              ],
+              "name": "maxlightresist",
+              "description": "+5% to Maximum Lightning Resist"
+            }
+          ]
+        }
       ],
       "type_name": "Archon Plate",
       "reqstr": 103,
@@ -8989,7 +8737,7 @@
       ],
       "type_name": "Scarabshell Boots",
       "reqstr": 91,
-      "levelreq": 49,
+      "levelreq": 64,
       "inv_file": "invvbt",
       "inv_height": 2,
       "inv_width": 2,
@@ -9353,7 +9101,7 @@
       ],
       "type_name": "Mithril Coil",
       "reqstr": 106,
-      "levelreq": 56,
+      "levelreq": 63,
       "inv_file": "invmbl",
       "inv_height": 1,
       "inv_width": 2,
@@ -9947,7 +9695,7 @@
       ],
       "type_name": "Ogre Gauntlets",
       "reqstr": 185,
-      "levelreq": 64,
+      "levelreq": 70,
       "inv_file": "invhgl",
       "inv_height": 2,
       "inv_width": 2,
@@ -11503,6 +11251,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 67,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -13761,69 +13510,7 @@
       "file_index": 1,
       "runeword_id": 62,
       "runeword_name": "Eternity",
-      "runeword_attributes": 
-      [
-        {
-          "id": 17,
-          "values": [
-            310,
-            310
-          ],
-          "name": "item_maxdamage_percent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
-          "id": 27,
-          "values": [
-            16
-          ],
-          "name": "manarecoverybonus",
-          "description": "Regenerate Mana {0}%"
-        },
-        {
-          "id": 74,
-          "values": [
-            16
-          ],
-          "name": "hpregen",
-          "description": "Replenish Life +{0}"
-        },
-        {
-          "id": 150,
-          "values": [
-            33
-          ],
-          "name": "item_slow",
-          "description": "Slows Target by {0}%"
-        },
-        {
-          "id": 152,
-          "values": [
-            1
-          ],
-          "name": "item_indesctructible",
-          "description": "Indestructible"
-        },
-        {
-          "id": 153,
-          "values": [
-            1
-          ],
-          "name": "item_cannotbefrozen",
-          "description": "Cannot Be Frozen"
-        },
-        {
-          "id": 204,
-          "values": [
-            8,
-            95,
-            88,
-            88
-          ],
-          "name": "item_charged_skill",
-          "description": "Level {0} {1} ({2}/{3} Charges)"
-        }
-      ]
+      "runeword_attributes": [
         {
           "id": 17,
           "values": [
@@ -13913,566 +13600,566 @@
         "maxdam": 71
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r11",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "{0}% Life Stolen Per Hit"
-              }
-            ],
-            "type_name": "Amn Rune",
-            "levelreq": 25,
-            "inv_file": "invrAmn",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "7% Life Stolen Per Hit"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "{0}% Life Stolen Per Hit"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "7% Life Stolen Per Hit"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r11",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life Stolen Per Hit"
+            }
+          ],
+          "type_name": "Amn Rune",
+          "levelreq": 25,
+          "inv_file": "invrAmn",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "7% Life Stolen Per Hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life Stolen Per Hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "7% Life Stolen Per Hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r30",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "{0}% Chance of Crushing Blow"
-              }
-            ],
-            "type_name": "Ber Rune",
-            "levelreq": 63,
-            "inv_file": "invrBer",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "20% Chance of Crushing Blow"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "{0}% Chance of Crushing Blow"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "20% Chance of Crushing Blow"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r30",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "{0}% Chance of Crushing Blow"
+            }
+          ],
+          "type_name": "Ber Rune",
+          "levelreq": 63,
+          "inv_file": "invrBer",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "20% Chance of Crushing Blow"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "{0}% Chance of Crushing Blow"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "20% Chance of Crushing Blow"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r24",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "{0}% Better Chance of Getting Magic Items"
-              }
-            ],
-            "type_name": "Ist Rune",
-            "levelreq": 51,
-            "inv_file": "invrIst",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "30% Better Chance of Getting Magic Items"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "{0}% Better Chance of Getting Magic Items"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "30% Better Chance of Getting Magic Items"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r24",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "{0}% Better Chance of Getting Magic Items"
+            }
+          ],
+          "type_name": "Ist Rune",
+          "levelreq": 51,
+          "inv_file": "invrIst",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "30% Better Chance of Getting Magic Items"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "{0}% Better Chance of Getting Magic Items"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "30% Better Chance of Getting Magic Items"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 3,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r12",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "type_name": "Sol Rune",
-            "levelreq": 27,
-            "inv_file": "invrSol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r12",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "type_name": "Sol Rune",
+          "levelreq": 27,
+          "inv_file": "invrSol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 4,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r29",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +{0}"
-              }
-            ],
-            "type_name": "Sur Rune",
-            "levelreq": 61,
-            "inv_file": "invrSur",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +1"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +{0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +1"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 4,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r29",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +{0}"
+            }
+          ],
+          "type_name": "Sur Rune",
+          "levelreq": 61,
+          "inv_file": "invrSur",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +1"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +{0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +1"
+            }
+          ]
+        }
       ],
       "type_name": "Berserker Axe",
       "reqstr": 138,
@@ -14857,69 +14544,7 @@
       "file_index": 1,
       "runeword_id": 62,
       "runeword_name": "Eternity",
-      "runeword_attributes": 
-      [
-        {
-          "id": 17,
-          "values": [
-            310,
-            310
-          ],
-          "name": "item_maxdamage_percent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
-          "id": 27,
-          "values": [
-            16
-          ],
-          "name": "manarecoverybonus",
-          "description": "Regenerate Mana {0}%"
-        },
-        {
-          "id": 74,
-          "values": [
-            16
-          ],
-          "name": "hpregen",
-          "description": "Replenish Life +{0}"
-        },
-        {
-          "id": 150,
-          "values": [
-            33
-          ],
-          "name": "item_slow",
-          "description": "Slows Target by {0}%"
-        },
-        {
-          "id": 152,
-          "values": [
-            1
-          ],
-          "name": "item_indesctructible",
-          "description": "Indestructible"
-        },
-        {
-          "id": 153,
-          "values": [
-            1
-          ],
-          "name": "item_cannotbefrozen",
-          "description": "Cannot Be Frozen"
-        },
-        {
-          "id": 204,
-          "values": [
-            8,
-            95,
-            88,
-            88
-          ],
-          "name": "item_charged_skill",
-          "description": "Level {0} {1} ({2}/{3} Charges)"
-        }
-      ]
+      "runeword_attributes": [
         {
           "id": 17,
           "values": [
@@ -15009,566 +14634,566 @@
         "maxdam": 71
       },
       "socketed_items": [
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 0,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r11",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "{0}% Life Stolen Per Hit"
-              }
-            ],
-            "type_name": "Amn Rune",
-            "levelreq": 25,
-            "inv_file": "invrAmn",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "7% Life Stolen Per Hit"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "{0}% Life Stolen Per Hit"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 60,
-                "values": [
-                  7
-                ],
-                "name": "lifedrainmindam",
-                "description": "7% Life Stolen Per Hit"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r11",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life Stolen Per Hit"
+            }
+          ],
+          "type_name": "Amn Rune",
+          "levelreq": 25,
+          "inv_file": "invrAmn",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "7% Life Stolen Per Hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life Stolen Per Hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 60,
+              "values": [
+                7
+              ],
+              "name": "lifedrainmindam",
+              "description": "7% Life Stolen Per Hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 1,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r30",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "{0}% Chance of Crushing Blow"
-              }
-            ],
-            "type_name": "Ber Rune",
-            "levelreq": 63,
-            "inv_file": "invrBer",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "20% Chance of Crushing Blow"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "{0}% Chance of Crushing Blow"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 136,
-                "values": [
-                  20
-                ],
-                "name": "item_crushingblow",
-                "description": "20% Chance of Crushing Blow"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r30",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "{0}% Chance of Crushing Blow"
+            }
+          ],
+          "type_name": "Ber Rune",
+          "levelreq": 63,
+          "inv_file": "invrBer",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "20% Chance of Crushing Blow"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "{0}% Chance of Crushing Blow"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 136,
+              "values": [
+                20
+              ],
+              "name": "item_crushingblow",
+              "description": "20% Chance of Crushing Blow"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 2,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r24",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "{0}% Better Chance of Getting Magic Items"
-              }
-            ],
-            "type_name": "Ist Rune",
-            "levelreq": 51,
-            "inv_file": "invrIst",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "30% Better Chance of Getting Magic Items"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "{0}% Better Chance of Getting Magic Items"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 80,
-                "values": [
-                  30
-                ],
-                "name": "item_magicbonus",
-                "description": "30% Better Chance of Getting Magic Items"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r24",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "{0}% Better Chance of Getting Magic Items"
+            }
+          ],
+          "type_name": "Ist Rune",
+          "levelreq": 51,
+          "inv_file": "invrIst",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "30% Better Chance of Getting Magic Items"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "{0}% Better Chance of Getting Magic Items"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 80,
+              "values": [
+                30
+              ],
+              "name": "item_magicbonus",
+              "description": "30% Better Chance of Getting Magic Items"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 3,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r12",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "type_name": "Sol Rune",
-            "levelreq": 27,
-            "inv_file": "invrSol",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+{0} to Minimum Damage"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 21,
-                "values": [
-                  9
-                ],
-                "name": "mindamage",
-                "description": "+9 to Minimum Damage"
-              }
-            ]
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
           },
-          {
-            "_unknown_data": {
-              "b0_3": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0
-              },
-              "b5_10": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
-                "5": 0
-              },
-              "b12": {
-                "0": 0
-              },
-              "b14_15": {
-                "0": 0,
-                "1": 0
-              },
-              "b18_20": {
-                "0": 0,
-                "1": 0,
-                "2": 0
-              },
-              "b23": {
-                "0": 1
-              },
-              "b25": {
-                "0": 0
-              },
-              "b27_31": {
-                "0": 0,
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0
-              }
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r12",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "type_name": "Sol Rune",
+          "levelreq": 27,
+          "inv_file": "invrSol",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+{0} to Minimum Damage"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 21,
+              "values": [
+                9
+              ],
+              "name": "mindamage",
+              "description": "+9 to Minimum Damage"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
             },
-            "identified": 1,
-            "socketed": 0,
-            "new": 0,
-            "is_ear": 0,
-            "starter_item": 0,
-            "simple_item": 1,
-            "ethereal": 0,
-            "personalized": 0,
-            "given_runeword": 0,
-            "version": 100,
-            "location_id": 6,
-            "equipped_id": 0,
-            "position_x": 4,
-            "position_y": 0,
-            "alt_position_id": 0,
-            "type": "r29",
-            "categories": [
-              "Rune",
-              "Socket Filler",
-              "Miscellaneous"
-            ],
-            "type_id": 4,
-            "nr_of_items_in_sockets": 0,
-            "magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +{0}"
-              }
-            ],
-            "type_name": "Sur Rune",
-            "levelreq": 61,
-            "inv_file": "invrSur",
-            "inv_height": 1,
-            "inv_width": 1,
-            "displayed_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +1"
-              }
-            ],
-            "displayed_runeword_attributes": [],
-            "combined_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +{0}"
-              }
-            ],
-            "displayed_combined_magic_attributes": [
-              {
-                "id": 113,
-                "values": [
-                  1
-                ],
-                "name": "item_stupidity",
-                "description": "Hit Blinds Target +1"
-              }
-            ]
-          }
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 100,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 4,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "r29",
+          "categories": [
+            "Rune",
+            "Socket Filler",
+            "Miscellaneous"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +{0}"
+            }
+          ],
+          "type_name": "Sur Rune",
+          "levelreq": 61,
+          "inv_file": "invrSur",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +1"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +{0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 113,
+              "values": [
+                1
+              ],
+              "name": "item_stupidity",
+              "description": "Hit Blinds Target +1"
+            }
+          ]
+        }
       ],
       "type_name": "Berserker Axe",
       "reqstr": 138,
