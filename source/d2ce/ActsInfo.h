@@ -1,6 +1,6 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2021 Walter Couto
+    Copyright (C) 2021-2022 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -130,10 +130,12 @@ namespace d2ce
         std::string getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat = false) const;
 
         std::uint16_t getActIntroducedData(EnumDifficulty diff, EnumAct act) const;
-        void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
+        void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const;
         std::uint16_t getActCompletedData(EnumDifficulty diff, EnumAct act) const;
-        void setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
+        void setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const;
         std::uint16_t getActVResetStatCompletedData(EnumDifficulty diff) const;
+
+        void validateAct(EnumDifficulty diff, EnumAct act, bool isExpansion);
 
     public:
         ActsInfo();
@@ -149,7 +151,8 @@ namespace d2ce
 
         // Act info
         bool getActIntroduced(EnumDifficulty diff, EnumAct act) const;
-        bool getActCompleted(EnumDifficulty diff, EnumAct act) const;
+        bool getActCompleted(EnumDifficulty diff, EnumAct act) const; 
+        bool getActYetToStart(EnumDifficulty diff, EnumAct act);
 
         // Act Quest info
         std::string getQuestName(EnumAct act, std::uint8_t quest) const;
@@ -157,6 +160,7 @@ namespace d2ce
         void setQuestData(EnumDifficulty diff, EnumAct act, std::uint8_t quest, std::uint16_t questValue);
         std::string getQuestNotes(EnumDifficulty diff, EnumAct act, std::uint8_t quest);
 
+        bool getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
         bool getQuestYetToStart(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
         bool getQuestStarted(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
         void startQuest(EnumDifficulty diff, EnumAct act, std::uint8_t quest);
@@ -186,6 +190,7 @@ namespace d2ce
         std::uint64_t getWaypoints(d2ce::EnumDifficulty difficulty) const;
         void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
         bool getWaypointActivated(EnumDifficulty diff, EnumAct act, std::uint8_t waypoint) const;
+        bool setWaypointActivated(EnumDifficulty diff, EnumAct act, std::uint8_t waypoint, bool flag);
 
         // NPCs
         std::uint64_t getNpcIntroductions(d2ce::EnumDifficulty difficulty) const;

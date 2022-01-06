@@ -105,7 +105,7 @@
     "map_id": 0,
     "quests_normal": {
       "act_i": {
-        "introduced": false,
+        "introduced": true,
         "den_of_evil": {
           "is_completed": false,
           "is_requirement_completed": false,

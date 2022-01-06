@@ -373,7 +373,7 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": true
       }
     },
     "quests_nm": {
@@ -433,7 +433,7 @@
         "completed": true
       },
       "act_ii": {
-        "introduced": false,
+        "introduced": true,
         "radaments_lair": {
           "is_completed": true,
           "is_requirement_completed": false,
@@ -560,10 +560,12 @@
           "done_recently": false
         },
         "terrors_end": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
           "is_received": false,
-          "closed": false,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
           "done_recently": false
         },
         "hellforge": {
@@ -574,7 +576,7 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": false
+        "completed": true
       },
       "act_v": {
         "introduced": true,
@@ -614,18 +616,23 @@
           "done_recently": false
         },
         "eve_of_destruction": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
-          "is_received": false,
-          "closed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "consumed_scroll": true,
+          "unk9": true,
+          "unk10": true,
+          "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": true
       }
     },
     "quests_hell": {
       "act_i": {
-        "introduced": false,
+        "introduced": true,
         "den_of_evil": {
           "is_completed": false,
           "is_requirement_completed": false,
@@ -662,16 +669,18 @@
           "done_recently": false
         },
         "sisters_to_the_slaughter": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
-          "is_received": false,
-          "closed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": true
       },
       "act_ii": {
-        "introduced": false,
+        "introduced": true,
         "radaments_lair": {
           "is_completed": false,
           "is_requirement_completed": false,
@@ -687,24 +696,27 @@
           "done_recently": false
         },
         "tainted_sun": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
-          "is_received": false,
-          "closed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
           "done_recently": false
         },
         "arcane_sanctuary": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
           "is_received": false,
-          "closed": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "closed": true,
           "done_recently": false
         },
         "the_summoner": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
-          "is_received": false,
-          "closed": false,
+          "is_received": true,
+          "closed": true,
           "done_recently": false
         },
         "the_seven_tombs": {
@@ -926,7 +938,7 @@
           "river_of_flame": false
         },
         "act_v": {
-          "harrogath": false,
+          "harrogath": true,
           "frigid_highlands": false,
           "arreat_plateau": false,
           "crystalline_passage": false,
@@ -950,7 +962,7 @@
           "catacombs_lvl_2": false
         },
         "act_ii": {
-          "lut_gholein": false,
+          "lut_gholein": true,
           "sewers_lvl_2": false,
           "dry_hills": false,
           "halls_of_the_dead_lvl_2": false,

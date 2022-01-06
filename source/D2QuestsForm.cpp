@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021 Walter Couto
+    Copyright (C) 2021-2022 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,21 @@ CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
 {
     // Initialize Quests
     IsExpansionCharacter = MainForm.isExpansionCharacter();
-    ItemIndex = static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
+    ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
+
+    std::uint8_t titlePos = (MainForm.getCharacterTitle().bits() & 0x0C) >> 2;
+    auto progression = d2ce::EnumDifficulty::Hell;
+    switch (titlePos)
+    {
+    case 0:
+        progression = d2ce::EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = d2ce::EnumDifficulty::Nightmare;
+        break;
+    }
+    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(progression));
 }
 //---------------------------------------------------------------------------
 CD2QuestsForm::~CD2QuestsForm()
@@ -168,10 +182,20 @@ BOOL CD2QuestsForm::OnInitDialog()
 
     EnableToolTips(TRUE);
 
+    CWnd* pWnd = nullptr;
+    for (auto i = MaxItemIndex + 1; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
+    {
+        pWnd = GetDlgItem(IDC_RADIO_DIFFICULTY_NORMAL + i);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+        }
+    }
+
     if (!IsExpansionCharacter)
     {
         // Hide all of Act V and Mo Mo Farm
-        CWnd* pWnd = GetDlgItem(IDC_STATIC_ACTV);
+        pWnd = GetDlgItem(IDC_STATIC_ACTV);
         if (pWnd != nullptr)
         {
             pWnd->EnableWindow(FALSE);
@@ -215,11 +239,17 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             questNumber = std::uint8_t(i % d2ce::NUM_OF_QUESTS);
 
             DDX_Check(pDX, nIDC, value);
+            if (Acts.getQuestIsRequired(diff, act, questNumber))
+            {
+                value = 1;
+            }
+
             switch (value)
             {
             case 0:
                 Acts.resetQuest(diff, act, questNumber);
                 break;
+
             case 1:
                 // Only change "Completed" bits if quest was not already in completed state
                 // so that we preserve current state
@@ -236,6 +266,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                     }
                 }
                 break;
+
             case 2:
                 // Only change "Started" bits if quest was not already in started state
                 // so that we preserve current state
@@ -264,11 +295,17 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             for (std::uint32_t nIDC = IDC_CHECK_ACTV_QUEST_1; questNumber < d2ce::NUM_OF_QUESTS; ++questNumber, ++nIDC)
             {
                 DDX_Check(pDX, nIDC, value);
+                if (Acts.getQuestIsRequired(diff, act, questNumber))
+                {
+                    value = 1;
+                }
+
                 switch (value)
                 {
                 case 0:
                     Acts.resetQuest(diff, act, questNumber);
                     break;
+
                 case 1:
                     // Only change "Completed" bits if quest was not already in completed state
                     // so that we preserve current state
@@ -285,6 +322,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                         }
                     }
                     break;
+
                 case 2:
                     // Only change "Started" bits if quest was not already in started state
                     // so that we preserve current state
@@ -306,25 +344,25 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
         }
 
         // Handle other cases
-        DDX_Check(pDX, IDC_CHECK_QUEST_FARM, value);
-        if (value == 1)
+        value = 0;
+        if (!Acts.getQuestCompleted(diff, d2ce::EnumAct::I, 0))
         {
-            Acts.setMooMooFarmComplete(diff);
-        }
-        else
-        {
-            Acts.clearMooMooFarmComplete(diff);
-        }
-
-        DDX_Check(pDX, IDC_CHECK_ACTI_RESET_STATS, value);
-        if (value == 1)
-        {
-            Acts.setStatsReset(diff);
-        }
-        else
-        {
+            GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(FALSE);
             Acts.clearStatsReset(diff);
         }
+        else
+        {
+            GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
+            if (Acts.getStatsReset(diff))
+            {
+                value = 1;
+            }
+        }
+        DDX_Check(pDX, IDC_CHECK_ACTI_RESET_STATS, value);
+
+        GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(Acts.getQuestYetToStart(diff, d2ce::EnumAct::I, 3) ? FALSE : TRUE);
+        value = Acts.getMooMooFarmComplete(diff) ? 1 : 0;
+        DDX_Check(pDX, IDC_CHECK_QUEST_FARM, value);
     }
 
     // Update radio after checkboxes
@@ -332,6 +370,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
     DDX_Radio(pDX, IDC_RADIO_DIFFICULTY_NORMAL, ItemIndex);
 
     // load checkbox values after difficulty level
+    BOOL bEnabled = TRUE;
     if (!pDX->m_bSaveAndValidate || (oldItemIndex != ItemIndex))
     {
         CDataExchange dx(this, FALSE);
@@ -343,10 +382,31 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
         // update non-Expansion Quests
         for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTI_QUEST_1; i < numQuests; ++i, ++nIDC)
         {
+            bEnabled = TRUE;
             actNumber = std::uint8_t(i / d2ce::NUM_OF_QUESTS);
             act = static_cast<d2ce::EnumAct>(actNumber);
             questNumber = std::uint8_t(i % d2ce::NUM_OF_QUESTS);
-            if (Acts.getQuestYetToStart(diff, act, questNumber))
+            if (Acts.getQuestIsRequired(diff, act, questNumber))
+            {
+                bEnabled = FALSE;
+                value = 1;
+                
+                // Only change "Completed" bits if quest was not already in completed state
+                // so that we preserve current state
+                if (!Acts.getQuestCompleted(diff, act, questNumber))
+                {
+                    if (OrigActs.getQuestCompleted(diff, act, questNumber))
+                    {
+                        // Use the original value
+                        Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                    }
+                    else
+                    {
+                        Acts.completeQuest(diff, act, questNumber);
+                    }
+                }
+            }
+            else if (Acts.getQuestYetToStart(diff, act, questNumber))
             {
                 value = 0;
             }
@@ -360,6 +420,40 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             }
 
             DDX_Check(&dx, nIDC, value);
+            GetDlgItem(nIDC)->EnableWindow(bEnabled);
+
+            switch (act)
+            {
+            case d2ce::EnumAct::I:
+                switch (questNumber)
+                {
+                case 0:
+                    if (value == 1)
+                    {
+                        GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
+                    }
+                    else
+                    {
+                        int tempValue = 0;
+                        DDX_Check(&dx, IDC_CHECK_ACTI_RESET_STATS, tempValue);
+                        GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(FALSE);
+
+                    }
+                    break;
+
+                case 3:
+                    if (value == 0)
+                    {
+                        int tempValue = 0;
+                        DDX_Check(&dx, IDC_CHECK_QUEST_FARM, tempValue);
+                        GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(value == 0 ? FALSE : true);
+                    }
+                    else
+                    {
+                        GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(TRUE);
+                    }
+                }
+            }
         }
 
         if (IsExpansionCharacter)
@@ -370,7 +464,28 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             questNumber = 0;
             for (std::uint32_t nIDC = IDC_CHECK_ACTV_QUEST_1; questNumber < d2ce::NUM_OF_QUESTS; ++questNumber, ++nIDC)
             {
-                if (Acts.getQuestYetToStart(diff, act, questNumber))
+                bEnabled = TRUE;
+                if (Acts.getQuestIsRequired(diff, act, questNumber))
+                {
+                    bEnabled = FALSE;
+                    value = 1;
+
+                    // Only change "Completed" bits if quest was not already in completed state
+                    // so that we preserve current state
+                    if (!Acts.getQuestCompleted(diff, act, questNumber))
+                    {
+                        if (OrigActs.getQuestCompleted(diff, act, questNumber))
+                        {
+                            // Use the original value
+                            Acts.setQuestData(diff, act, questNumber, OrigActs.getQuestData(diff, act, questNumber));
+                        }
+                        else
+                        {
+                            Acts.completeQuest(diff, act, questNumber);
+                        }
+                    }
+                }
+                else if (Acts.getQuestYetToStart(diff, act, questNumber))
                 {
                     value = 0;
                 }
@@ -384,9 +499,9 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                 }
 
                 DDX_Check(&dx, nIDC, value);
+                GetDlgItem(nIDC)->EnableWindow(bEnabled);
             }
         }
-
 
         value = 0;
         if (!Acts.getQuestCompleted(diff, d2ce::EnumAct::I, 0))
@@ -427,6 +542,12 @@ void CD2QuestsForm::SaveQuests()
     {
         MainForm.updateQuests(Acts);
     }
+}
+//---------------------------------------------------------------------------
+bool CD2QuestsForm::getQuestIsRequired(d2ce::EnumAct act, std::uint8_t questNumber)
+{
+    d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
+    return Acts.getQuestIsRequired(diff, act, questNumber);
 }
 //---------------------------------------------------------------------------
 void CD2QuestsForm::OnBnClickedOk()

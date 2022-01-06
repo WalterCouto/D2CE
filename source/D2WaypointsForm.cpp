@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021 Walter Couto
+    Copyright (C) 2021-2022 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
     : CDialogEx(CD2WaypointsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests())
 {
     // Initialize Waypoints
-    ItemIndex = 0;
     IsExpansionCharacter = MainForm.isExpansionCharacter();
     NormalWP = MainForm.getWaypoints(d2ce::EnumDifficulty::Normal);
     NightmareWP = MainForm.getWaypoints(d2ce::EnumDifficulty::Nightmare);
@@ -116,6 +115,20 @@ CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
     }
 
     ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
+
+    std::uint8_t titlePos = (MainForm.getCharacterTitle().bits() & 0x0C) >> 2;
+    auto progression = d2ce::EnumDifficulty::Hell;
+    switch (titlePos)
+    {
+    case 0:
+        progression = d2ce::EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = d2ce::EnumDifficulty::Nightmare;
+        break;
+    }
+    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(progression));
 }
 //---------------------------------------------------------------------------
 CD2WaypointsForm::~CD2WaypointsForm()
@@ -145,6 +158,16 @@ BOOL CD2WaypointsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
+    CWnd* pWnd = nullptr;
+    for (auto i = MaxItemIndex + 1; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
+    {
+        pWnd = GetDlgItem(IDC_RADIO_DIFFICULTY_NORMAL + i);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+        }
+    }
+
     d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
     GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::I) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
@@ -153,7 +176,7 @@ BOOL CD2WaypointsForm::OnInitDialog()
     if (!IsExpansionCharacter)
     {
         // Hide all of Act V
-        CWnd* pWnd = GetDlgItem(IDC_STATIC_ACTV);
+        pWnd = GetDlgItem(IDC_STATIC_ACTV);
         if (pWnd != nullptr)
         {
             pWnd->EnableWindow(FALSE);

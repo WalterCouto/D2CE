@@ -1,6 +1,6 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2021 Walter Couto
+    Copyright (C) 2021-2022 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ std::uint16_t& d2ce::ActsInfo::getQuestDataRef(EnumDifficulty diff, EnumAct act,
     // should not happen
     return dummy;
 }
-
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
 {
@@ -282,7 +281,7 @@ void d2ce::ActsInfo::applyJsonActIntro(const Json::Value& actIntroRoot, bool bSe
         questValue[0] = 1;
     }
 
-    setActIntroducedData(diff, act, std::uint16_t(questValue.to_ulong()));
+    setActIntroducedData(diff, act, std::uint16_t(questValue.to_ulong()), isExpansion);
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
@@ -331,7 +330,7 @@ void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bo
         questValue[0] = 1;
     }
 
-    setActCompletedData(diff, act, std::uint16_t(questValue.to_ulong()));
+    setActCompletedData(diff, act, std::uint16_t(questValue.to_ulong()), isExpansion);
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
@@ -2230,7 +2229,7 @@ std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct 
     return Acts[diffNum].ActV.Intro;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
+void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
@@ -2240,7 +2239,10 @@ void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std:
         return;
     }
 
-    Acts[diffNum].ActV.Intro = value;
+    if (isExpansion)
+    {
+        Acts[diffNum].ActV.Intro = value;
+    }
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getActIntroduced(EnumDifficulty diff, EnumAct act) const
@@ -2266,13 +2268,18 @@ std::uint16_t d2ce::ActsInfo::getActCompletedData(EnumDifficulty diff, EnumAct a
     return Acts[diffNum].ActV.Completed;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
+void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
     if (actNum < 3)
     {
         Acts[diffNum].Act[actNum].Completed = value;
+        if ((value != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
+        {
+            // Make sure act intro is set properly
+            Acts[diffNum].Act[actNum].Intro = 1;
+        }
         return;
     }
 
@@ -2280,10 +2287,25 @@ void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::
     {
         // "Completed" flag is at index 3 of the quests
         Acts[diffNum].Act[actNum].Quests[3] = value;
+        if ((value != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
+        {
+            // Make sure act intro is set properly
+            Acts[diffNum].Act[actNum].Intro = 1;
+        }
+        return;
+    }
+
+    if (!isExpansion)
+    {
         return;
     }
 
     Acts[diffNum].ActV.Completed = std::uint8_t(value);
+    if ((value != 0) && (Acts[diffNum].ActV.Intro == 0))
+    {
+        // Make sure act intro is set properly
+        Acts[diffNum].ActV.Intro = 1;
+    }
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ActsInfo::getActVResetStatCompletedData(EnumDifficulty diff) const
@@ -2293,9 +2315,133 @@ std::uint16_t d2ce::ActsInfo::getActVResetStatCompletedData(EnumDifficulty diff)
     return (resetStats << 8) | Acts[diffNum].ActV.Completed;
 }
 //---------------------------------------------------------------------------
+void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act, bool isExpansion)
+{
+    if (act == EnumAct::V && !isExpansion)
+    {
+        act = EnumAct::IV;
+    }
+
+    if (!getActIntroduced(diff, act))
+    {
+        if (getActYetToStart(diff, act))
+        {
+            return;
+        }
+
+        setActIntroducedData(diff, act, 1, isExpansion);
+    }
+
+    auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
+    if (actNum > 0)
+    {
+        auto preAct = static_cast<EnumAct>(actNum - 1);
+        if (!getActCompleted(diff, preAct))
+        {
+            setActCompletedData(diff, preAct, 1, isExpansion);
+        }
+
+        validateAct(diff, preAct, isExpansion);
+    }
+    else
+    {
+        auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
+        if (diffNum > 0)
+        {
+            auto preDiff = static_cast<EnumDifficulty>(diffNum - 1);
+            auto preAct = isExpansion ? EnumAct::V : EnumAct::IV;
+            if (!getActCompleted(preDiff, preAct))
+            {
+                setActCompletedData(preDiff, preAct, 1, isExpansion);
+            }
+
+            validateAct(preDiff, preAct, isExpansion);
+        }
+    }
+
+    // check the minumum requirements
+    if (getActCompleted(diff, act))
+    {
+        // Check all required Quests
+        for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+        {
+            if (getQuestIsRequired(diff, act, quest))
+            {
+                if (!getQuestCompleted(diff, act, quest))
+                {
+                    completeQuest(diff, act, quest);
+                }
+            }
+        }
+    }
+
+    std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
+    switch (act)
+    {
+    case EnumAct::I:
+        waypointValue[0] = 1; // Rogue Encampement
+        if (getActCompleted(diff, act))
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; // Lut Gholein
+        }
+        break;
+
+    case EnumAct::II:
+        waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; // Lut Gholein
+        if (getActCompleted(diff, act))
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1;// Kurast Docks 
+        }
+        break;
+
+    case EnumAct::III:
+        waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1; // Kurast Docks 
+        if (getActCompleted(diff, act))
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1; // The Pandemonium Fortress
+        }
+        break;
+
+    case EnumAct::IV:
+        waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1; // The Pandemonium Fortress
+        if (isExpansion && getActCompleted(diff, act))
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
+        }
+        break;
+
+    case EnumAct::V:
+        if (isExpansion)
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
+        }
+        break;
+    }
+
+    setWaypoints(diff, std::uint64_t(waypointValue.to_ullong()));
+}
+//---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
 {
     return (getActCompletedData(diff, act) & 0x01) != 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActYetToStart(EnumDifficulty diff, EnumAct act)
+{
+    if (getActIntroduced(diff, act))
+    {
+        return false;
+    }
+
+    for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+    {
+        if (!getQuestYetToStart(diff, act, quest))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ActsInfo::getQuestName(EnumAct act, std::uint8_t quest) const
@@ -2859,6 +3005,74 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
     return strTipText;
 }
 //---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
+{
+    if (!getActCompleted(diff, act))
+    {
+        return false;
+    }
+
+    switch (act)
+    {
+    case d2ce::EnumAct::I:
+        switch (quest)
+        {
+        case 5: // Sisters to the Slaughter
+            return true;
+        }
+        break;
+
+    case EnumAct::II:
+        switch (quest)
+        {
+        case 2: // Tainted Sun
+            return true;
+
+        case 3: // Arcane Sanctuary
+            return true;
+
+        case 4: // The Summoner
+            return true;
+
+        case 5: // The Seven Tombs
+            return true;
+        }
+        break;
+
+    case EnumAct::III:
+        switch (quest)
+        {
+        case 1: // // Khalims Will
+            return true;
+
+        case 4: // The Blackened Temple
+            return true;
+
+        case 5: // The Guardian
+            return true;
+        }
+        break;
+
+    case EnumAct::IV:
+        switch (quest)
+        {
+        case 1: // Terrors End
+            return true;
+        }
+        break;
+
+    case EnumAct::V:
+        switch (quest)
+        {
+        case 5: // Eve Of Destruction
+            return true;
+        }
+        break;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getQuestYetToStart(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
 {
     return getQuestData(diff, act, quest) == questNotStarted ? true : false;
@@ -3138,6 +3352,66 @@ bool d2ce::ActsInfo::getWaypointActivated(EnumDifficulty diff, EnumAct act, std:
 
     std::bitset<d2ce::NUM_OF_WAYPOINTS> wp = getWaypoints(diff);
     return wp[offset] == 0 ? false : true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::setWaypointActivated(EnumDifficulty diff, EnumAct act, std::uint8_t waypoint, bool flag)
+{
+    if (waypoint >= (act == EnumAct::IV ? NUM_WAYPOINTS_ACT_IV : MAX_WAYPOINTS_PER_ACT))
+    {
+        return false;
+    }
+
+    std::uint32_t offset = waypoint;
+    if (act == EnumAct::V)
+    {
+        offset += MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV;
+
+        // make sure Act V - Harrogath is active if applicable
+        if ((waypoint == 0) && getActCompleted(diff, d2ce::EnumAct::IV))
+        {
+            flag = true;
+        }
+    }
+    else if (act == EnumAct::IV)
+    {
+        offset += MAX_WAYPOINTS_PER_ACT * 3;
+
+        // make sure Act IV - Pandemonium Fortress is active if applicable
+        if ((waypoint == 0) && getActCompleted(diff, d2ce::EnumAct::III))
+        {
+            flag = true;
+        }
+    }
+    else if (act == EnumAct::III)
+    {
+        offset += MAX_WAYPOINTS_PER_ACT * 2;
+
+        // make sure Act III - Kurast Docks is active if applicable
+        if ((waypoint == 0) && getActCompleted(diff, d2ce::EnumAct::II))
+        {
+            flag = true;
+        }
+    }
+    else if (act == EnumAct::II)
+    {
+        offset += MAX_WAYPOINTS_PER_ACT;
+
+        // make sure Act II - Lut Gholein is active if applicable
+        if ((waypoint == 0) && getActCompleted(diff, d2ce::EnumAct::I))
+        {
+            flag = true;
+        }
+    }
+    else if (waypoint == 0)
+    {
+        // make sure Act I - Rogue Encampment is always active
+        flag = true;
+    }
+
+    std::bitset<d2ce::NUM_OF_WAYPOINTS> wp = getWaypoints(diff);
+    wp[offset] = flag;
+    setWaypoints(diff, wp.to_ullong());
+    return flag;
 }
 //---------------------------------------------------------------------------
 std::uint64_t d2ce::ActsInfo::getNpcIntroductions(d2ce::EnumDifficulty difficulty) const

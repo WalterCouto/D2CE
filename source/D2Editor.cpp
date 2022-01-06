@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021 Walter Couto
+    Copyright (C) 2021-2022 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,13 @@
 
 Revision History
 ================
+Version 2.08 (Jan 6, 2022)
+   - Updated: logic for handling Character progressions properly. Now
+              characer Title, Last Difficulty Played, Last Act Played,
+              or Quest completed will be properly validated.
+   - Updated: Quest and Waypoint dialogs now properly take into
+              account Character progression.
+    
 Version 2.07 (Dec 6, 2021)
    - Updated: json export to use jsoncpp for easier export/import logic
    - Updated: fix bug where Hardcore characters would be detected as dead
