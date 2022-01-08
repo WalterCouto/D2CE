@@ -127,7 +127,6 @@ namespace d2ce
         void writeTempFile();
 
         void headerAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
-        void validateTitle();
         void validateActs();
 
     public:
@@ -177,6 +176,7 @@ namespace d2ce
         const std::array<char, NAME_LENGTH>& getName() const;
         bitmask::bitmask<EnumCharStatus> getStatus() const;
         bitmask::bitmask<EnumCharTitle> getTitle() const;
+        EnumDifficulty getTitleDifficulty() const;
         EnumCharClass getClass() const;
         std::string getClassName() const;
         EnumDifficulty getDifficultyLastPlayed() const;

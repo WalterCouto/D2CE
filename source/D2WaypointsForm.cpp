@@ -115,20 +115,7 @@ CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
     }
 
     ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
-
-    std::uint8_t titlePos = (MainForm.getCharacterTitle().bits() & 0x0C) >> 2;
-    auto progression = d2ce::EnumDifficulty::Hell;
-    switch (titlePos)
-    {
-    case 0:
-        progression = d2ce::EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = d2ce::EnumDifficulty::Nightmare;
-        break;
-    }
-    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(progression));
+    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getCharacterTitleDifficulty()));
 }
 //---------------------------------------------------------------------------
 CD2WaypointsForm::~CD2WaypointsForm()

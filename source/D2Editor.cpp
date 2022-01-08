@@ -18,6 +18,13 @@
 
 Revision History
 ================
+Version 2.09 (Jan 8, 2022)
+   - Updated: Fix up logic around Act V being marked complete
+              when the truth is the game does not mark that
+              act complete when completing that difficulty.
+   - Updated: Fix up Quest dialog logic to properly handle
+              cases when quests state are modified.
+
 Version 2.08 (Jan 6, 2022)
    - Updated: logic for handling Character progressions properly. Now
               characer Title, Last Difficulty Played, Last Act Played,

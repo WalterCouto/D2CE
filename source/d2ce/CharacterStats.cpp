@@ -103,8 +103,8 @@ void d2ce::CharacterStats::updateMinStats()
         curVitality = std::max(curVitality, d2ce::ASSASSIN_VITALITY_MIN); // start stat
         curEnergy = std::max(curEnergy, d2ce::ASSASSIN_ENERGY_MIN); // start stat
         min_hit_points = 0x5400 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 3);
-        min_stamina = 0x5F00 + ((curLevel - 1) << 8) + std::uint32_t((((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 1.25));
-        min_mana = 0x1900 + std::uint32_t(((curLevel - 1) << 8) * 1.5) + std::uint32_t((((curEnergy - d2ce::ASSASSIN_ENERGY_MIN) << 8) * 1.75));
+        min_stamina = 0x5F00 + std::uint32_t(((curLevel - 1) << 8) * 1.25) + std::uint32_t((((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 1.75));
+        min_mana = 0x1900 + std::uint32_t(((curLevel - 1) << 8) * 1.5) + std::uint32_t((((curEnergy - d2ce::ASSASSIN_ENERGY_MIN) << 8) * 1.25));
         break;
 
     case d2ce::EnumCharClass::Sorceress:

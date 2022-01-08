@@ -921,7 +921,7 @@
           "CompletedBefore": true
         },
         "Completion": {
-          "RewardGranted": true,
+          "RewardGranted": false,
           "RewardPending": false,
           "Started": false,
           "LeftTown": false,
@@ -1797,7 +1797,7 @@
           "CompletedBefore": true
         },
         "Completion": {
-          "RewardGranted": true,
+          "RewardGranted": false,
           "RewardPending": false,
           "Started": false,
           "LeftTown": false,
@@ -2673,7 +2673,7 @@
           "CompletedBefore": true
         },
         "Completion": {
-          "RewardGranted": true,
+          "RewardGranted": false,
           "RewardPending": false,
           "Started": false,
           "LeftTown": false,

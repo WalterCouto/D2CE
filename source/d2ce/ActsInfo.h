@@ -75,8 +75,6 @@ namespace d2ce
         std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCIntroductions = { 0, 0, 0 };
         std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCCongrats = { 0, 0, 0 };
 
-        EnumCharVersion Version = APP_CHAR_VERSION; // Version for Character file
-
         std::uint32_t quests_start_location = 0,
             quests_location = 0,
             waypoints_start_location = 0,
@@ -88,57 +86,66 @@ namespace d2ce
         std::array<std::uint8_t, 4> waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
 
     private:
+        Character& CharInfo;
+
+    private:
         std::uint16_t& getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const;
 
         bool readQuests(std::FILE* charfile);
-        void applyJsonQuest(const Json::Value& questRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act, std::uint8_t quest);
-        void applyJsonActIntro(const Json::Value& actIntroRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
-        void applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
-        void applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
-        void applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
-        void applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion);
-        bool readQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
+        void applyJsonQuest(const Json::Value& questRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act, std::uint8_t quest);
+        void applyJsonActIntro(const Json::Value& actIntroRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
+        void applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
+        void applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
+        void applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
+        void applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat);
+        bool readQuests(const Json::Value& questsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool readWaypoints(std::FILE* charfile);
-        void applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act);
-        void applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
-        void applyJsonWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, bool isExpansion);
-        bool readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
+        void applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
+        void applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
+        void applyJsonWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat);
+        bool readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool readNPC(std::FILE* charfile);
-        void applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff);
-        void applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion);
-        bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile);
+        void applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
+        void applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat);
+        bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool writeQuests(std::FILE* charfile);
         bool writeWaypoints(std::FILE* charfile);
         bool writeNPC(std::FILE* charfile);
 
+        void validateAct(EnumDifficulty diff, EnumAct act);
+
     protected:
-        bool readActs(EnumCharVersion version, std::FILE* charfile);
-        bool readActs(const Json::Value& root, bool bSerializedFormat, bool isExpansion, EnumCharVersion version, std::FILE* charfile);
+        bool readActs(std::FILE* charfile);
+        bool readActs(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
         bool writeActs(std::FILE* charfile);
 
-        void questsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
+        void questsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         std::string getQuestsJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
         std::string getDifficultyJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;
         std::string getActJsonName(EnumAct act, bool bSerializedFormat = false) const;
         std::string getQuestJsonName(EnumAct act, std::uint8_t quest, bool bSerializedFormat = false) const;
         std::string getQuestBitJsonName(std::uint8_t bit, bool& isOptional, bool bSerializedFormat = false) const;
 
-        void waypointsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
+        void waypointsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint, bool bSerializedFormat = false) const;
 
-        void npcAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat = false) const;
-        std::string getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat = false) const;
+        void npcAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        std::string getNpcJsonName(std::uint8_t npc, bool bSerializedFormat = false) const;
 
         std::uint16_t getActIntroducedData(EnumDifficulty diff, EnumAct act) const;
-        void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const;
+        void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
         std::uint16_t getActCompletedData(EnumDifficulty diff, EnumAct act) const;
-        void setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const;
+        void setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;
         std::uint16_t getActVResetStatCompletedData(EnumDifficulty diff) const;
 
-        void validateAct(EnumDifficulty diff, EnumAct act, bool isExpansion);
+        void validateActs();
+        bool getActCompletedStrict(EnumDifficulty diff, EnumAct act) const;
+        void resetActs(EnumDifficulty diff);
+
+    protected:
+        ActsInfo(Character& charInfo);
 
     public:
-        ActsInfo();
         ActsInfo(const ActsInfo& other);
         ~ActsInfo();
 
@@ -152,7 +159,10 @@ namespace d2ce
         // Act info
         bool getActIntroduced(EnumDifficulty diff, EnumAct act) const;
         bool getActCompleted(EnumDifficulty diff, EnumAct act) const; 
-        bool getActYetToStart(EnumDifficulty diff, EnumAct act);
+        bool getActYetToStart(EnumDifficulty diff, EnumAct act) const; // has the act been introduced or a quest started?
+        bool getActQuestYetToStart(EnumDifficulty diff, EnumAct act) const; // has any quest started yet?
+        void resetAct(EnumAct act); // resets the act for the highest difficulty allowed if act after has no quests started
+        void updateAct(EnumAct act); // makes sure the act data is correct for the highest difficulty allowed
 
         // Act Quest info
         std::string getQuestName(EnumAct act, std::uint8_t quest) const;

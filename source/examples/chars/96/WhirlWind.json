@@ -570,7 +570,7 @@
           "done_recently": false,
           "unk15": true
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_nm": {
@@ -1037,7 +1037,7 @@
           "done_recently": false,
           "unk15": true
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_hell": {
@@ -1503,7 +1503,7 @@
           "done_recently": false,
           "unk15": true
         },
-        "completed": true
+        "completed": false
       }
     },
     "waypoints": {

@@ -41,20 +41,7 @@ CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
     // Initialize Quests
     IsExpansionCharacter = MainForm.isExpansionCharacter();
     ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
-
-    std::uint8_t titlePos = (MainForm.getCharacterTitle().bits() & 0x0C) >> 2;
-    auto progression = d2ce::EnumDifficulty::Hell;
-    switch (titlePos)
-    {
-    case 0:
-        progression = d2ce::EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = d2ce::EnumDifficulty::Nightmare;
-        break;
-    }
-    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(progression));
+    MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getCharacterTitleDifficulty()));
 }
 //---------------------------------------------------------------------------
 CD2QuestsForm::~CD2QuestsForm()
@@ -224,12 +211,15 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
     int value = 0;
     std::uint32_t numQuests = IDC_CHECK_ACTIV_QUEST_3 - IDC_CHECK_ACTI_QUEST_1 + 1;
 
+    bool bForceUpdate = false;
+
     // Save checkbox values before difficulty level
     if (pDX->m_bSaveAndValidate)
     {
         std::uint8_t actNumber = 0;
         std::uint8_t questNumber = 0;
         d2ce::EnumAct act = d2ce::EnumAct::I;
+        auto lastActStarted = act;
 
         // update non-Expansion Quests
         for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTI_QUEST_1; i < numQuests; ++i, ++nIDC)
@@ -241,6 +231,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             DDX_Check(pDX, nIDC, value);
             if (Acts.getQuestIsRequired(diff, act, questNumber))
             {
+                lastActStarted = act;
                 value = 1;
             }
 
@@ -251,6 +242,8 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                 break;
 
             case 1:
+                lastActStarted = act;
+
                 // Only change "Completed" bits if quest was not already in completed state
                 // so that we preserve current state
                 if (!Acts.getQuestCompleted(diff, act, questNumber))
@@ -268,6 +261,8 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                 break;
 
             case 2:
+                lastActStarted = act;
+
                 // Only change "Started" bits if quest was not already in started state
                 // so that we preserve current state
                 if (!Acts.getQuestStarted(diff, act, questNumber))
@@ -297,6 +292,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                 DDX_Check(pDX, nIDC, value);
                 if (Acts.getQuestIsRequired(diff, act, questNumber))
                 {
+                    lastActStarted = act;
                     value = 1;
                 }
 
@@ -307,6 +303,8 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                     break;
 
                 case 1:
+                    lastActStarted = act;
+
                     // Only change "Completed" bits if quest was not already in completed state
                     // so that we preserve current state
                     if (!Acts.getQuestCompleted(diff, act, questNumber))
@@ -324,6 +322,8 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                     break;
 
                 case 2:
+                    lastActStarted = act;
+
                     // Only change "Started" bits if quest was not already in started state
                     // so that we preserve current state
                     if (!Acts.getQuestStarted(diff, act, questNumber))
@@ -344,25 +344,83 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
         }
 
         // Handle other cases
+        CDataExchange dx(this, FALSE);
         value = 0;
-        if (!Acts.getQuestCompleted(diff, d2ce::EnumAct::I, 0))
+        if (!Acts.getQuestCompleted(diff, d2ce::EnumAct::I, 0)) // Den of Evil
         {
+            DDX_Check(&dx, IDC_CHECK_ACTI_RESET_STATS, value);
             GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(FALSE);
             Acts.clearStatsReset(diff);
         }
         else
         {
             GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
-            if (Acts.getStatsReset(diff))
+            DDX_Check(pDX, IDC_CHECK_ACTI_RESET_STATS, value);
+            if (value == 0)
             {
-                value = 1;
+                Acts.clearStatsReset(diff);
+            }
+            else
+            {
+                Acts.setStatsReset(diff);
             }
         }
-        DDX_Check(pDX, IDC_CHECK_ACTI_RESET_STATS, value);
 
-        GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(Acts.getQuestYetToStart(diff, d2ce::EnumAct::I, 3) ? FALSE : TRUE);
-        value = Acts.getMooMooFarmComplete(diff) ? 1 : 0;
-        DDX_Check(pDX, IDC_CHECK_QUEST_FARM, value);
+        value = 0;
+        if (Acts.getQuestYetToStart(diff, d2ce::EnumAct::I, 3)) // The Search for Cain
+        {
+            DDX_Check(&dx, IDC_CHECK_QUEST_FARM, value);
+            GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(FALSE);
+            Acts.clearMooMooFarmComplete(diff);
+        }
+        else
+        {
+            GetDlgItem(IDC_CHECK_QUEST_FARM)->EnableWindow(TRUE);
+            DDX_Check(pDX, IDC_CHECK_QUEST_FARM, value);
+            if (value == 0)
+            {
+                Acts.clearMooMooFarmComplete(diff);
+            }
+            else
+            {
+                Acts.setMooMooFarmComplete(diff);
+            }
+        }
+
+        if (ItemIndex == MaxItemIndex)
+        {
+            // Make sure all Acts are in a valid state
+            if (lastActStarted < (IsExpansionCharacter ? d2ce::EnumAct::V : d2ce::EnumAct::IV))
+            {
+                auto nextAct = static_cast<d2ce::EnumAct>(static_cast<std::underlying_type_t<d2ce::EnumAct>>(lastActStarted) + 1);
+                if (Acts.getActCompleted(diff, nextAct) || Acts.getActIntroduced(diff, nextAct))
+                {
+                    // we have an invalid state, so fix it
+                    Acts.resetAct(nextAct);
+                    bForceUpdate = true;
+                }
+                else if (lastActStarted > d2ce::EnumAct::I)
+                {
+                    auto prevAct = static_cast<d2ce::EnumAct>(static_cast<std::underlying_type_t<d2ce::EnumAct>>(lastActStarted) - 1);
+                    if (!Acts.getActCompleted(diff, prevAct))
+                    {
+                        // we have an invalid state, so fix it
+                        Acts.updateAct(lastActStarted);
+                        bForceUpdate = true;
+                    }
+                }
+            }
+            else if (lastActStarted > d2ce::EnumAct::I)
+            {
+                auto prevAct = static_cast<d2ce::EnumAct>(static_cast<std::underlying_type_t<d2ce::EnumAct>>(lastActStarted) - 1);
+                if (!Acts.getActCompleted(diff, prevAct))
+                {
+                    // we have an invalid state, so fix it
+                    Acts.updateAct(lastActStarted);
+                    bForceUpdate = true;
+                }
+            }
+        }
     }
 
     // Update radio after checkboxes
@@ -370,8 +428,9 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
     DDX_Radio(pDX, IDC_RADIO_DIFFICULTY_NORMAL, ItemIndex);
 
     // load checkbox values after difficulty level
+    bForceUpdate |= (oldItemIndex != ItemIndex);
     BOOL bEnabled = TRUE;
-    if (!pDX->m_bSaveAndValidate || (oldItemIndex != ItemIndex))
+    if (!pDX->m_bSaveAndValidate || bForceUpdate)
     {
         CDataExchange dx(this, FALSE);
         std::uint8_t actNumber = 0;
@@ -427,7 +486,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             case d2ce::EnumAct::I:
                 switch (questNumber)
                 {
-                case 0:
+                case 0: // Den of Evil
                     if (value == 1)
                     {
                         GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->EnableWindow(TRUE);
@@ -441,7 +500,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
                     }
                     break;
 
-                case 3:
+                case 3: // The Search for Cain
                     if (value == 0)
                     {
                         int tempValue = 0;

@@ -22,6 +22,7 @@
 #include <locale>
 #include "ActsInfo.h"
 #include "WaypointConstants.h"
+#include "Character.h"
 
 namespace d2ce
 {
@@ -92,7 +93,7 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
         quests_location = 0;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (Version >= EnumCharVersion::v109)
+        if (CharInfo.getVersion() >= EnumCharVersion::v109)
         {
             if (cur_pos < (long)MIN_START_QUEST_POS)
             {
@@ -169,7 +170,7 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
         return false;
     }
 
-    if (Version >= EnumCharVersion::v107)
+    if (CharInfo.getVersion() >= EnumCharVersion::v107)
     {
         return std::fread(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) == 1 ? true : false;
     }
@@ -193,14 +194,14 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonQuest(const Json::Value& questRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act, std::uint8_t quest)
+void d2ce::ActsInfo::applyJsonQuest(const Json::Value& questRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act, std::uint8_t quest)
 {
     if (questRoot.isNull())
     {
         return;
     }
 
-    if (act == EnumAct::V && !isExpansion)
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
     {
         return;
     }
@@ -235,14 +236,14 @@ void d2ce::ActsInfo::applyJsonQuest(const Json::Value& questRoot, bool bSerializ
     setQuestData(diff, act, quest, std::uint16_t(questValue.to_ulong()));
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonActIntro(const Json::Value& actIntroRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
+void d2ce::ActsInfo::applyJsonActIntro(const Json::Value& actIntroRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act)
 {
     if (actIntroRoot.isNull())
     {
         return;
     }
 
-    if (act == EnumAct::V && !isExpansion)
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
     {
         return;
     }
@@ -281,17 +282,17 @@ void d2ce::ActsInfo::applyJsonActIntro(const Json::Value& actIntroRoot, bool bSe
         questValue[0] = 1;
     }
 
-    setActIntroducedData(diff, act, std::uint16_t(questValue.to_ulong()), isExpansion);
+    setActIntroducedData(diff, act, std::uint16_t(questValue.to_ulong()));
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
+void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act)
 {
     if (actCompleteRoot.isNull())
     {
         return;
     }
 
-    if (act == EnumAct::V && !isExpansion)
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
     {
         return;
     }
@@ -330,17 +331,17 @@ void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bo
         questValue[0] = 1;
     }
 
-    setActCompletedData(diff, act, std::uint16_t(questValue.to_ulong()), isExpansion);
+    setActCompletedData(diff, act, std::uint16_t(questValue.to_ulong()));
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
+void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act)
 {
     if (questActRoot.isNull())
     {
         return;
     }
 
-    if (act == EnumAct::V && !isExpansion)
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
     {
         return;
     }
@@ -358,11 +359,11 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
         key = iter.name();
         if (_stricmp(key.c_str(), (bSerializedFormat ? "Introduction" : "introduced")) == 0)
         {
-            applyJsonActIntro(*iter, bSerializedFormat, isExpansion, diff, act);
+            applyJsonActIntro(*iter, bSerializedFormat, diff, act);
         }
         else if (_stricmp(key.c_str(), (bSerializedFormat ? "Completion" : "completed")) == 0)
         {
-            applyJsonActComplete(*iter, bSerializedFormat, isExpansion, diff, act);
+            applyJsonActComplete(*iter, bSerializedFormat, diff, act);
         }
         else
         {
@@ -371,7 +372,7 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
                 name = getQuestJsonName(act, quest, bSerializedFormat);
                 if (_stricmp(key.c_str(), name.c_str()) == 0)
                 {
-                    applyJsonQuest(*iter, bSerializedFormat, isExpansion, diff, act, quest);
+                    applyJsonQuest(*iter, bSerializedFormat, diff, act, quest);
                     break;
                 }
             }
@@ -379,7 +380,7 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff)
+void d2ce::ActsInfo::applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, EnumDifficulty diff)
 {
     if (questDiffRoot.isNull())
     {
@@ -400,7 +401,7 @@ void d2ce::ActsInfo::applyJsonQuestDifficulty(const Json::Value& questDiffRoot, 
         static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
         for (auto act : all_acts)
         {
-            if (act == EnumAct::V && !isExpansion)
+            if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
             {
                 continue;
             }
@@ -408,14 +409,14 @@ void d2ce::ActsInfo::applyJsonQuestDifficulty(const Json::Value& questDiffRoot, 
             name = getActJsonName(act, bSerializedFormat);
             if (_stricmp(key.c_str(), name.c_str()) == 0)
             {
-                applyJsonQuestAct(*iter, bSerializedFormat, isExpansion, diff, act);
+                applyJsonQuestAct(*iter, bSerializedFormat, diff, act);
                 break;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion)
+void d2ce::ActsInfo::applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat)
 {
     if (questsRoot.isNull())
     {
@@ -439,14 +440,14 @@ void d2ce::ActsInfo::applyJsonQuests(const Json::Value& questsRoot, bool bSerial
             name = getQuestsJsonName(diff, bSerializedFormat);
             if (_stricmp(key.c_str(), name.c_str()) == 0)
             {
-                applyJsonQuestDifficulty(*iter, bSerializedFormat, isExpansion, diff);
+                applyJsonQuestDifficulty(*iter, bSerializedFormat, diff);
                 break;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile)
+bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedFormat, std::FILE* charfile)
 {
     if (bSerializedFormat)
     {
@@ -490,8 +491,8 @@ bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedF
     std::fwrite(quests_version.data(), quests_version.size(), 1, charfile);
     std::fwrite(QUESTS_SIZE_MARKER.data(), QUESTS_SIZE_MARKER.size(), 1, charfile);
     quests_location = std::ftell(charfile);
-    applyJsonQuests(questsRoot, bSerializedFormat, isExpansion);
-    if (Version >= EnumCharVersion::v107)
+    applyJsonQuests(questsRoot, bSerializedFormat);
+    if (CharInfo.getVersion() >= EnumCharVersion::v107)
     {
         bool ret = std::fwrite(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) != 1 ? false : true;
         std::fflush(charfile);
@@ -531,7 +532,7 @@ bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
         waypoints_location = 0;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (Version >= EnumCharVersion::v109)
+        if (CharInfo.getVersion() >= EnumCharVersion::v109)
         {
             if (cur_pos < (long)MIN_START_WAYPOINTS_POS)
             {
@@ -601,7 +602,7 @@ bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff, EnumAct act)
+void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act)
 {
     if (waypointActRoot.isNull())
     {
@@ -612,7 +613,7 @@ void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bo
     std::size_t offset = 0;
     if (act == EnumAct::V)
     {
-        if (!isExpansion)
+        if (!CharInfo.isExpansionCharacter())
         {
             return;
         }
@@ -689,7 +690,7 @@ void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bo
     setWaypoints(diff, std::uint64_t(waypointValue.to_ullong()));
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff)
+void d2ce::ActsInfo::applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, EnumDifficulty diff)
 {
     if (waypointDiffRoot.isNull())
     {
@@ -710,7 +711,7 @@ void d2ce::ActsInfo::applyJsonWaypointDifficulty(const Json::Value& waypointDiff
         static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
         for (auto act : all_acts)
         {
-            if (act == EnumAct::V && !isExpansion)
+            if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
             {
                 continue;
             }
@@ -718,14 +719,14 @@ void d2ce::ActsInfo::applyJsonWaypointDifficulty(const Json::Value& waypointDiff
             name = getActJsonName(act, bSerializedFormat);
             if (_stricmp(key.c_str(), name.c_str()) == 0)
             {
-                applyJsonWaypointAct(*iter, bSerializedFormat, isExpansion, diff, act);
+                applyJsonWaypointAct(*iter, bSerializedFormat, diff, act);
                 break;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonWaypoints(const Json::Value& waypointsRoot, bool isExpansion, bool bSerializedFormat)
+void d2ce::ActsInfo::applyJsonWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat)
 {
     if (waypointsRoot.isNull())
     {
@@ -749,14 +750,14 @@ void d2ce::ActsInfo::applyJsonWaypoints(const Json::Value& waypointsRoot, bool i
             name = getDifficultyJsonName(diff, bSerializedFormat);
             if (_stricmp(key.c_str(), name.c_str()) == 0)
             {
-                applyJsonWaypointDifficulty(*iter, bSerializedFormat, isExpansion, diff);
+                applyJsonWaypointDifficulty(*iter, bSerializedFormat, diff);
                 break;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile)
+bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, std::FILE* charfile)
 {
     if (bSerializedFormat)
     {
@@ -800,7 +801,7 @@ bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSeria
     std::fwrite(waypoints_version.data(), waypoints_version.size(), 1, charfile);
     std::fwrite(WAYPOINTS_SIZE_MARKER.data(), WAYPOINTS_SIZE_MARKER.size(), 1, charfile);
     waypoints_location = std::ftell(charfile);
-    applyJsonWaypoints(waypointsRoot, isExpansion, bSerializedFormat);
+    applyJsonWaypoints(waypointsRoot, bSerializedFormat);
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
     {
         std::fwrite(&Waypoints_unknown[i], sizeof(Waypoints_unknown[i]), 1, charfile);
@@ -819,7 +820,7 @@ bool d2ce::ActsInfo::readNPC(std::FILE* charfile)
         npc_location = 0;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (Version >= EnumCharVersion::v109)
+        if (CharInfo.getVersion() >= EnumCharVersion::v109)
         {
             if (cur_pos < (long)MIN_START_NPC_POS)
             {
@@ -891,7 +892,7 @@ bool d2ce::ActsInfo::readNPC(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, bool isExpansion, EnumDifficulty diff)
+void d2ce::ActsInfo::applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, EnumDifficulty diff)
 {
     if (npcsDiffRoot.isNull())
     {
@@ -915,7 +916,7 @@ void d2ce::ActsInfo::applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bo
         key = iter.name();
         for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
         {
-            name = getNpcJsonName(npc, isExpansion, bSerializedFormat);
+            name = getNpcJsonName(npc, bSerializedFormat);
             if (name.empty())
             {
                 continue;
@@ -952,7 +953,7 @@ void d2ce::ActsInfo::applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bo
     setNpcCongrats(diff, std::uint64_t(congrats.to_ullong()));
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion)
+void d2ce::ActsInfo::applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat)
 {
     if (npcsRoot.isNull())
     {
@@ -976,14 +977,14 @@ void d2ce::ActsInfo::applyJsonNPCs(const Json::Value& npcsRoot, bool bSerialized
             name = getDifficultyJsonName(diff, bSerializedFormat);
             if (_stricmp(key.c_str(), name.c_str()) == 0)
             {
-                applyJsonNPCsDifficulty(*iter, bSerializedFormat, isExpansion, diff);
+                applyJsonNPCsDifficulty(*iter, bSerializedFormat, diff);
                 break;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, bool isExpansion, std::FILE* charfile)
+bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, std::FILE* charfile)
 {
     if (bSerializedFormat)
     {
@@ -1014,7 +1015,7 @@ bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat
     std::fwrite(NPC_MARKER.data(), NPC_MARKER.size(), 1, charfile);
     std::fwrite(NPC_SIZE_MARKER.data(), NPC_SIZE_MARKER.size(), 1, charfile);
     npc_location = std::ftell(charfile);
-    applyJsonNPCs(npcsRoot, bSerializedFormat, isExpansion);
+    applyJsonNPCs(npcsRoot, bSerializedFormat);
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
     {
         std::fwrite(&NPCIntroductions[i], sizeof(NPCIntroductions[i]), 1, charfile);
@@ -1038,7 +1039,7 @@ bool d2ce::ActsInfo::writeQuests(std::FILE* charfile)
     std::fwrite(QUESTS_MARKER.data(), QUESTS_MARKER.size(), 1, charfile);
     std::fwrite(quests_version.data(), quests_version.size(), 1, charfile);
     std::fwrite(QUESTS_SIZE_MARKER.data(), QUESTS_SIZE_MARKER.size(), 1, charfile);
-    if (Version >= EnumCharVersion::v107)
+    if (CharInfo.getVersion() >= EnumCharVersion::v107)
     {
         bool ret = std::fwrite(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) != 1 ? false : true;
         std::fflush(charfile);
@@ -1103,9 +1104,129 @@ bool d2ce::ActsInfo::writeNPC(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readActs(EnumCharVersion version, std::FILE* charfile)
+void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
 {
-    Version = version;
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    {
+        act = EnumAct::IV;
+    }
+
+    if (!getActIntroduced(diff, act))
+    {
+        if (getActYetToStart(diff, act))
+        {
+            return;
+        }
+
+        setActIntroducedData(diff, act, 1);
+    }
+
+    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
+    if (act > EnumAct::I)
+    {
+        auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) - 1);
+        if (!getActCompleted(diff, preAct))
+        {
+            setActCompletedData(diff, preAct, 1);
+        }
+
+        validateAct(diff, preAct);
+    }
+    else if (diff > d2ce::EnumDifficulty::Normal)
+    {
+        auto preDiff = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(diff) - 1);
+        auto preAct = lastAct;
+
+        // The last act is a special case where is may not be marked as done, so make sure it was introduced
+        if (!getActIntroduced(preDiff, preAct))
+        {
+            setActIntroducedData(preDiff, preAct, 1);
+        }
+
+        validateAct(preDiff, preAct);
+    }
+
+    // check the minumum requirements
+    if (getActCompleted(diff, act))
+    {
+        // Check all required Quests
+        for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+        {
+            if (getQuestIsRequired(diff, act, quest))
+            {
+                if (!getQuestCompleted(diff, act, quest))
+                {
+                    completeQuest(diff, act, quest);
+                }
+            }
+        }
+    }
+
+    std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
+    switch (act)
+    {
+    case EnumAct::I:
+        waypointValue[0] = 1; // Rogue Encampement
+        if (getActCompleted(diff, act)) // Lut Gholein
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; 
+        }
+        break;
+
+    case EnumAct::II:
+        waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; // Lut Gholein
+        if (getActCompleted(diff, act)) // Kurast Docks 
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1;
+        }
+        break;
+
+    case EnumAct::III:
+        waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1; // Kurast Docks 
+        if (getActCompleted(diff, act)) // The Pandemonium Fortress
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1;
+        }
+        break;
+
+    case EnumAct::IV:
+        waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1; // The Pandemonium Fortress
+        if (CharInfo.isExpansionCharacter())
+        {
+            if (getActCompleted(diff, act)) // Harrogath
+            {
+                waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; 
+            }
+        }
+        break;
+
+    case EnumAct::V:
+        if (CharInfo.isExpansionCharacter())
+        {
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
+        }
+        break;
+    }
+
+    setWaypoints(diff, std::uint64_t(waypointValue.to_ullong()));
+
+    // Handle special cases
+    if (act == EnumAct::I)
+    {
+        if (!getQuestCompleted(diff, act, 0)) // Den of Evil
+        {
+            clearStatsReset(diff);
+        }
+
+        if (getQuestYetToStart(diff, act, 3)) // The Search for Cain
+        {
+            clearMooMooFarmComplete(diff);
+        }
+    }
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::readActs(std::FILE* charfile)
+{
     update_locations = quests_location == 0 ? true : false;
     if (!readQuests(charfile) || quests_location == 0)
     {
@@ -1126,26 +1247,25 @@ bool d2ce::ActsInfo::readActs(EnumCharVersion version, std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat, bool isExpansion, EnumCharVersion version, std::FILE* charfile)
+bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
 {
-    Version = version;
     update_locations = true;
 
     Json::Value childRoot = root[bSerializedFormat ? "Quests" : "header"];
-    if (!readQuests(childRoot, bSerializedFormat, isExpansion, charfile) || quests_location == 0)
+    if (!readQuests(childRoot, bSerializedFormat, charfile) || quests_location == 0)
     {
         return false;
     }
 
     Json::Value header = root[bSerializedFormat ? "Header" : "header"];
     childRoot = bSerializedFormat ? root["Waypoints"] : header["waypoints"];
-    if (!readWaypoints(childRoot, bSerializedFormat, isExpansion, charfile) || waypoints_location == 0)
+    if (!readWaypoints(childRoot, bSerializedFormat, charfile) || waypoints_location == 0)
     {
         return false;
     }
 
     childRoot = bSerializedFormat ? root["NPCDialog"] : header["npcs"];
-    if (!readNPC(childRoot, bSerializedFormat, isExpansion, charfile) || npc_location == 0)
+    if (!readNPC(childRoot, bSerializedFormat, charfile) || npc_location == 0)
     {
         return false;
     }
@@ -1169,14 +1289,14 @@ bool d2ce::ActsInfo::writeActs(std::FILE* charfile)
     return writeNPC(charfile);
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat) const
+void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
     static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
     if (bSerializedFormat)
     {
         Json::Value quests;
-        quests["Magic"] = ((Version < EnumCharVersion::v115) ? "1" : "0");
+        quests["Magic"] = ((CharInfo.getVersion() < EnumCharVersion::v115) ? "1" : "0");
         quests["Header"] = *((std::uint32_t*)QUESTS_MARKER.data());
         quests["Version"] = *((std::uint32_t*)quests_version.data());
         quests["Length"] = *((std::uint16_t*)QUESTS_SIZE_MARKER.data());
@@ -1187,7 +1307,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool isExpansion, bool bS
             for (auto act : all_acts)
             {
                 Json::Value questAct;
-                if (act == EnumAct::V && !isExpansion)
+                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
                 {
                     continue;
                 }
@@ -1332,7 +1452,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool isExpansion, bool bS
             Json::Value questDiff;
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !isExpansion)
+                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
                 {
                     continue;
                 }
@@ -1359,7 +1479,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool isExpansion, bool bS
                     }
                     questAct[getQuestJsonName(act, quest, bSerializedFormat)] = questElement;
                 }
-                questAct["completed"] = getActCompleted(diff, act);
+                questAct["completed"] = getActCompletedStrict(diff, act); // Make sure we always reflect the actual value not the possible implied value for Act V
                 questDiff[getActJsonName(act, bSerializedFormat)] = questAct;
             }
             parent[getQuestsJsonName(diff, bSerializedFormat)] = questDiff;
@@ -1679,7 +1799,7 @@ std::string d2ce::ActsInfo::getQuestBitJsonName(std::uint8_t bit, bool& isOption
     return ss.str();
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat) const
+void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
     static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
@@ -1697,7 +1817,7 @@ void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool isExpansion, bool
 
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !isExpansion)
+                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
                 {
                     continue;
                 }
@@ -1721,7 +1841,7 @@ void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool isExpansion, bool
             Json::Value waypointDiff;
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !isExpansion)
+                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
                 {
                     continue;
                 }
@@ -1888,7 +2008,7 @@ std::string d2ce::ActsInfo::getWaypointJsonName(EnumAct act, std::uint8_t waypoi
     return "";
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool isExpansion, bool bSerializedFormat) const
+void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool bSerializedFormat) const
 {
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
 
@@ -1907,7 +2027,7 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool isExpansion, bool bSeri
             for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
             {
                 Json::Value npcElement;
-                npcName = getNpcJsonName(npc, isExpansion, bSerializedFormat);
+                npcName = getNpcJsonName(npc, bSerializedFormat);
                 if (npcName.empty())
                 {
                     continue;
@@ -1934,7 +2054,7 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool isExpansion, bool bSeri
             for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
             {
                 Json::Value npcElement;
-                npcName = getNpcJsonName(npc, isExpansion, bSerializedFormat);
+                npcName = getNpcJsonName(npc, bSerializedFormat);
                 if (npcName.empty())
                 {
                     continue;
@@ -1950,7 +2070,7 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool isExpansion, bool bSeri
     }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion, bool bSerializedFormat) const
+std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFormat) const
 {
     switch (npc)
     {
@@ -2051,10 +2171,10 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion, b
         return bSerializedFormat ? "Elzix" : "elzix";
 
     case 24:
-        return isExpansion ? (bSerializedFormat ? "Malah" : "malah") : "";
+        return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Malah" : "malah") : "";
 
     case 25:
-        return isExpansion ? (bSerializedFormat ? "Anya" : "anya") : "";
+        return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Anya" : "anya") : "";
 
     case 26:
         if (bSerializedFormat)
@@ -2122,13 +2242,13 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion, b
         break;
 
     case 37:
-        return isExpansion ? (bSerializedFormat ? "CainActV" : "cain_act_v") : "";
+        return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "CainActV" : "cain_act_v") : "";
 
     case 38:
-        return isExpansion ? (bSerializedFormat ? "Qualkehk" : "qualkehk") : "";
+        return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Qualkehk" : "qualkehk") : "";
 
     case 39:
-        return isExpansion ? (bSerializedFormat ? "Nihlathak" : "nihlathak") : "";
+        return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Nihlathak" : "nihlathak") : "";
 
     case 40:
         if (bSerializedFormat)
@@ -2141,11 +2261,11 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool isExpansion, b
     return "";
 }
 //---------------------------------------------------------------------------
-d2ce::ActsInfo::ActsInfo()
+d2ce::ActsInfo::ActsInfo(Character& charInfo) : CharInfo(charInfo)
 {
 }
 //---------------------------------------------------------------------------
-d2ce::ActsInfo::ActsInfo(const ActsInfo& other)
+d2ce::ActsInfo::ActsInfo(const ActsInfo& other) : CharInfo(other.CharInfo)
 {
     *this = other;
 }
@@ -2174,7 +2294,6 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(const ActsInfo& other)
     waypoints_location = other.waypoints_location;
     npc_location = other.npc_location;
     update_locations = other.update_locations;
-    Version = other.Version;
     return *this;
 }
 d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
@@ -2203,7 +2322,6 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
     waypoints_location = std::exchange(other.waypoints_location, 0);
     npc_location = std::exchange(other.npc_location, 0);
     update_locations = std::exchange(other.update_locations, true);
-    Version = std::exchange(other.Version, APP_CHAR_VERSION);
     return *this;
 }
 //---------------------------------------------------------------------------
@@ -2214,7 +2332,7 @@ void d2ce::ActsInfo::swap(ActsInfo& other)
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::clear()
 {
-    *this = ActsInfo();
+    *this = ActsInfo(CharInfo);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct act) const
@@ -2229,7 +2347,7 @@ std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct 
     return Acts[diffNum].ActV.Intro;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const
+void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
@@ -2239,7 +2357,7 @@ void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std:
         return;
     }
 
-    if (isExpansion)
+    if (CharInfo.isExpansionCharacter())
     {
         Acts[diffNum].ActV.Intro = value;
     }
@@ -2259,16 +2377,16 @@ std::uint16_t d2ce::ActsInfo::getActCompletedData(EnumDifficulty diff, EnumAct a
         return Acts[diffNum].Act[actNum].Completed;
     }
 
-    if (actNum == 3)
-    {
-        // "Completed" flag is at index 3 of the quests
-        return Acts[diffNum].Act[actNum].Quests[3];
-    }
+if (actNum == 3)
+{
+    // "Completed" flag is at index 3 of the quests
+    return Acts[diffNum].Act[actNum].Quests[3];
+}
 
-    return Acts[diffNum].ActV.Completed;
+return Acts[diffNum].ActV.Completed;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value, bool isExpansion) const
+void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
 {
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
@@ -2295,7 +2413,7 @@ void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::
         return;
     }
 
-    if (!isExpansion)
+    if (!CharInfo.isExpansionCharacter())
     {
         return;
     }
@@ -2315,13 +2433,180 @@ std::uint16_t d2ce::ActsInfo::getActVResetStatCompletedData(EnumDifficulty diff)
     return (resetStats << 8) | Acts[diffNum].ActV.Completed;
 }
 //---------------------------------------------------------------------------
-void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act, bool isExpansion)
+void d2ce::ActsInfo::validateActs()
 {
-    if (act == EnumAct::V && !isExpansion)
+    // Character should have validate Charactacter Title
+    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
+    std::uint8_t titlePos = (CharInfo.getTitle().bits() & 0x0C) >> 2;
+    auto progression = EnumDifficulty::Hell;
+    switch (titlePos)
     {
-        act = EnumAct::IV;
+    case 0:
+        progression = EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = EnumDifficulty::Nightmare;
+        break;
+
+    case 3:
+        validateAct(EnumDifficulty::Hell, lastAct);
+        return;
     }
 
+    // All acts for the next difficulty should be cleared
+    if (progression < EnumDifficulty::Hell)
+    {
+        auto nextProgression = progression;
+        do
+        {
+            nextProgression = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(nextProgression) + 1);
+            resetActs(nextProgression);
+        } while (nextProgression < EnumDifficulty::Hell);
+    }
+
+    auto startingAct = lastAct;
+    while ((startingAct > d2ce::EnumAct::I) && !getActCompleted(progression, startingAct) && getActYetToStart(progression, startingAct))
+    {
+        startingAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(startingAct) - 1);
+    }
+
+    if ((startingAct == d2ce::EnumAct::I) && (progression > d2ce::EnumDifficulty::Normal) && !getActCompleted(progression, startingAct) && getActYetToStart(progression, startingAct))
+    {
+        progression = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(progression) - 1);
+        startingAct = lastAct;
+        if (!getActYetToStart(progression, startingAct))
+        {
+            // should not happen
+            setActIntroducedData(progression, startingAct, 1);
+        }
+    }
+
+    validateAct(progression, startingAct);
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActCompletedStrict(EnumDifficulty diff, EnumAct act) const
+{
+    return ((getActCompletedData(diff, act) & 0x01) != 0) ? true : false;
+}
+//---------------------------------------------------------------------------
+void d2ce::ActsInfo::resetActs(EnumDifficulty diff)
+{
+    const d2ce::ActsInfo *pThis = this;
+    static std::initializer_list<EnumAct> all_acts = { EnumAct::V, EnumAct::IV, EnumAct::III, EnumAct::II, EnumAct::I };
+    for (auto act : all_acts)
+    {
+        if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+        {
+            continue;
+        }
+
+        pThis->setActCompletedData(diff, act, 0);
+        pThis->setActIntroducedData(diff, act, 0);
+        for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+        {
+            resetQuest(diff, act, quest);
+        }
+    }
+
+    // Handle special cases
+    clearStatsReset(diff);
+    clearMooMooFarmComplete(diff);
+
+    setWaypoints(diff, 1); // make sure Act I - Rogue Encampment is the only one active
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
+{
+    if (getActCompletedStrict(diff, act))
+    {
+        return true;
+    }
+
+    // Last Act may not be marked complete, so check progression
+    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
+    if (act == lastAct && !getActYetToStart(diff, act))
+    {
+        if (CharInfo.getTitleDifficulty() > diff)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActYetToStart(EnumDifficulty diff, EnumAct act) const
+{
+    if (getActIntroduced(diff, act))
+    {
+        return false;
+    }
+
+    return getActQuestYetToStart(diff, act);
+}
+//---------------------------------------------------------------------------
+bool d2ce::ActsInfo::getActQuestYetToStart(EnumDifficulty diff, EnumAct act) const
+{
+    for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+    {
+        if (!getQuestYetToStart(diff, act, quest))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+void d2ce::ActsInfo::resetAct(EnumAct act)
+{
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    {
+        return;
+    }
+
+    auto diff = CharInfo.getTitleDifficulty();
+    if (getActCompleted(diff, act))
+    {
+        if (act < (CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV))
+        {
+            auto nextAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) + 1);
+            if (getActCompleted(diff, nextAct) || !getActYetToStart(diff, nextAct))
+            {
+                // Can't reset an act if it is complete.
+                // Need to reset the next act first
+                return;
+            }
+        }
+    }
+
+    const d2ce::ActsInfo* pThis = this;
+    pThis->setActCompletedData(diff, act, 0);
+
+    // Don't reset Act I's introduced flag
+    if (act > EnumAct::I)
+    {
+        pThis->setActIntroducedData(diff, act, 0);
+
+        // Also reset the previous act's complete flag
+        auto prevAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) - 1);
+        pThis->setActCompletedData(diff, prevAct, 0);
+    }
+
+    for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+    {
+        resetQuest(diff, act, quest);
+    }
+}
+void d2ce::ActsInfo::updateAct(EnumAct act)
+{
+    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    {
+        return;
+    }
+
+    auto diff = CharInfo.getTitleDifficulty();
     if (!getActIntroduced(diff, act))
     {
         if (getActYetToStart(diff, act))
@@ -2329,34 +2614,18 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act, bool isExpans
             return;
         }
 
-        setActIntroducedData(diff, act, 1, isExpansion);
+        setActIntroducedData(diff, act, 1);
     }
 
-    auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
-    if (actNum > 0)
+    if (act > EnumAct::I)
     {
-        auto preAct = static_cast<EnumAct>(actNum - 1);
+        auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) - 1);
         if (!getActCompleted(diff, preAct))
         {
-            setActCompletedData(diff, preAct, 1, isExpansion);
+            setActCompletedData(diff, preAct, 1);
         }
 
-        validateAct(diff, preAct, isExpansion);
-    }
-    else
-    {
-        auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
-        if (diffNum > 0)
-        {
-            auto preDiff = static_cast<EnumDifficulty>(diffNum - 1);
-            auto preAct = isExpansion ? EnumAct::V : EnumAct::IV;
-            if (!getActCompleted(preDiff, preAct))
-            {
-                setActCompletedData(preDiff, preAct, 1, isExpansion);
-            }
-
-            validateAct(preDiff, preAct, isExpansion);
-        }
+        validateAct(diff, preAct);
     }
 
     // check the minumum requirements
@@ -2380,38 +2649,41 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act, bool isExpans
     {
     case EnumAct::I:
         waypointValue[0] = 1; // Rogue Encampement
-        if (getActCompleted(diff, act))
+        if (getActCompleted(diff, act)) // Lut Gholein
         {
-            waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; // Lut Gholein
+            waypointValue[MAX_WAYPOINTS_PER_ACT] = 1;
         }
         break;
 
     case EnumAct::II:
         waypointValue[MAX_WAYPOINTS_PER_ACT] = 1; // Lut Gholein
-        if (getActCompleted(diff, act))
+        if (getActCompleted(diff, act)) // Kurast Docks 
         {
-            waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1;// Kurast Docks 
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1;
         }
         break;
 
     case EnumAct::III:
         waypointValue[MAX_WAYPOINTS_PER_ACT * 2] = 1; // Kurast Docks 
-        if (getActCompleted(diff, act))
+        if (getActCompleted(diff, act)) // The Pandemonium Fortress
         {
-            waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1; // The Pandemonium Fortress
+            waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1;
         }
         break;
 
     case EnumAct::IV:
         waypointValue[MAX_WAYPOINTS_PER_ACT * 3] = 1; // The Pandemonium Fortress
-        if (isExpansion && getActCompleted(diff, act))
+        if (CharInfo.isExpansionCharacter())
         {
-            waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
+            if (getActCompleted(diff, act)) // Harrogath
+            {
+                waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1;
+            }
         }
         break;
 
     case EnumAct::V:
-        if (isExpansion)
+        if (CharInfo.isExpansionCharacter())
         {
             waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
         }
@@ -2419,29 +2691,20 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act, bool isExpans
     }
 
     setWaypoints(diff, std::uint64_t(waypointValue.to_ullong()));
-}
-//---------------------------------------------------------------------------
-bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
-{
-    return (getActCompletedData(diff, act) & 0x01) != 0 ? true : false;
-}
-//---------------------------------------------------------------------------
-bool d2ce::ActsInfo::getActYetToStart(EnumDifficulty diff, EnumAct act)
-{
-    if (getActIntroduced(diff, act))
-    {
-        return false;
-    }
 
-    for (std::uint8_t quest = 0; quest < (act == EnumAct::IV ? NUM_OF_QUESTS_ACT_IV : NUM_OF_QUESTS); ++quest)
+    // Handle special cases
+    if (act == EnumAct::I)
     {
-        if (!getQuestYetToStart(diff, act, quest))
+        if (!getQuestCompleted(diff, act, 0)) // Den of Evil
         {
-            return false;
+            clearStatsReset(diff);
+        }
+
+        if (getQuestYetToStart(diff, act, 3)) // The Search for Cain
+        {
+            clearMooMooFarmComplete(diff);
         }
     }
-
-    return true;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ActsInfo::getQuestName(EnumAct act, std::uint8_t quest) const
@@ -2620,6 +2883,7 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
 
             case 5:
                 strTipText += "\n- Activated by talking to Deckard Cain";
+                strTipText += "\n- Killing Andariel is required for the progress of\n  the game.";
                 break;
             }
             break;
@@ -2633,24 +2897,29 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
 
             case 1:
                 strTipText += "\n- Activated by bringing the Horadric Scroll that was\n  found in the Sewers, to Deckard Cain";
+                strTipText += "\n- This quest, the Tainted Sun quest, the Arcane\n  Sanctuary quest and The Summoner quest are required\n  to go to Tal Rasha's Tomb where Duriel can be found.";
                 break;
 
             case 2:
                 strTipText += "\n- Activated when a player enters the Lost City";
+                strTipText += "\n- This quest, The Horadric Staff quest, the\n  Arcane Sanctuary quest and The Summoner quest are\n  required to go to Tal Rasha's Tomb where Duriel can\n  be found.";
                 break;
 
             case 3:
                 strTipText += "\n- Available after completing the Tainted Sun";
                 strTipText += "\n- Activated by talking to Drognan";
+                strTipText += "\n- This quest, The Horadric Staff quest, the\n  Tainted Sun quest and The Summoner quest are\n  required to go to Tal Rasha's Tomb where Duriel\n  can be  found.";
                 break;
 
             case 4:
                 strTipText += "\n- Activated by approaching the platform in the Arcane\n  Sanctuary where The Summoner stands and Horazon's\n  Journal is located.";
+                strTipText += "\n- This quest, The Horadric Staff quest, the Tainted\n  Sun quest and the Arcane Sanctuary quest are required\n  to go to Tal Rasha's Tomb where Duriel can\n  be found.";
                 break;
 
             case 5:
                 strTipText += "\n- Available after completing Radament's Lair, The\n  Horadric Staff or Tainted Sun or after reaching\n  level 20";
                 strTipText += "\n- Activated by talking to Jerhyn";
+                strTipText += "\n- Killing Duriel is required for the progress of\n the game. (The Horadric Staff quest, the Tainted Sun\n  quest, the Arcane Sanctuary quest and The Summoner\n  quest are required to go to Tal Rasha's Tomb\n  where Duriel can be found)";
                 break;
             }
             break;
@@ -2664,8 +2933,9 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
                 break;
 
             case 1:
-                strTipText += "\n- Available after completing The Golden Bird";
+                strTipText += "\n- Available after completing The Golden Bird or\n  by entering the Great Marsh.";
                 strTipText += "\n- Activated by talking to Deckard Cain";
+                strTipText += "\n- This quest is required to go to Durance of Hate\n  where Mephisto can be found.";
                 break;
 
             case 2:
@@ -2678,12 +2948,14 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
                 break;
 
             case 4:
-                strTipText += "\n- Available after completing the Lam Esen's Tome";
+                strTipText += "\n- Available after completing the Lam Esen's Tome\n  or by entering the Kurast Causeway";
                 strTipText += "\n- Activated by talking to Ormus";
+                strTipText += "\n- This quest is required to go to Durance of Hate\n  where Mephisto can be found.";
                 break;
 
             case 5:
                 strTipText += "\n- Activated by talking to Ormus after nearing the\n  Travincal or after smashing the Compelling Orb";
+                strTipText += "\n- Killing Mephisto is required for the progress of\n  the game. (The Blackened Temple quest is required\n  to go to Durance of Hate where Mephisto can be\n  found)";
                 break;
             }
             break;
@@ -2698,6 +2970,7 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             case 1:
                 strTipText += "\n- Available after completing the Hell's Forge";
                 strTipText += "\n- Activated by talking to Tyrael";
+                strTipText += "\n- Killing Diablo is required for the progress of\n  the game.";
                 break;
 
             case 2:
@@ -2731,10 +3004,12 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             case 4:
                 strTipText += "\n- Available after completing the Betrayal of Harrogath";
                 strTipText += "\n- Activated by talking to Qual-Kehk";
+                strTipText += "\n- This quest is required to go to Worldstone Keep\n  where Baal can be found.";
                 break;
 
             case 5:
                 strTipText += "\n- Activated after completing the Rite of Passage";
+                strTipText += "\n- Killing Baal is required for the progress of\n  the game. (The Rite of Passage is required to go to\n  Worldstone Keep where Baal can be found)";
                 break;
             }
             break;
@@ -2742,12 +3017,14 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
         return strTipText;
     }
 
+    bool bQuestCompleted = false;
     if ((questValue & questCompletedFlag) == 0)
     {
         strTipText = "Quest Started";
     }
     else
     {
+        bQuestCompleted = true;
         strTipText = "Quest Completed";
     }
 
@@ -2805,6 +3082,13 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
                 strTipText += "\n- Entered The Forgotten Tower";
             }
             break;
+
+        case 5:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- Killing Andariel is required for the progress of\n  the game.";
+            }
+            break;
         }
         break;
 
@@ -2838,6 +3122,11 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             {
                 strTipText += "\n- You Made The Horadric Staff";
             }
+
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest, the Tainted Sun quest, the Arcane\n  Sanctuary quest and The Summoner quest are required\n  to go to Tal Rasha's Tomb where Duriel can be found.";
+            }
             break;
 
         case 2:
@@ -2849,6 +3138,25 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             if ((questValue & 0x40) != 0)
             {
                 strTipText += "\n- Talked To Drogan About the Sun";
+            }
+
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest, The Horadric Staff quest, the\n  Arcane Sanctuary quest and The Summoner quest are\n  required to go to Tal Rasha's Tomb where Duriel can\n  be found.";
+            }
+            break;
+
+        case 3:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest, The Horadric Staff quest, the\n  Tainted Sun quest and The Summoner quest are\n  required to go to Tal Rasha's Tomb where Duriel\n  can be  found.";
+            }
+            break;
+
+        case 4:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest, The Horadric Staff quest, the Tainted\n  Sun quest and the Arcane Sanctuary quest are required\n  to go to Tal Rasha's Tomb where Duriel can\n  be found.";
             }
             break;
 
@@ -2897,6 +3205,11 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             {
                 strTipText += "\n- Fara Congratulated You";
             }
+
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- Killing Duriel is required for the progress of\n the game. (The Horadric Staff quest, the Tainted Sun\n  quest, the Arcane Sanctuary quest and The Summoner\n  quest are required to go to Tal Rasha's Tomb\n  where Duriel can be found)";
+            }
             break;
         }
         break;
@@ -2904,6 +3217,13 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
     case EnumAct::III:
         switch (quest)
         {
+        case 1:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest is required to go to Durance of Hate\n  where Mephisto can be found.";
+            }
+            break;
+
         case 2:
             if ((questValue & 0x04) != 0)
             {
@@ -2937,6 +3257,32 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
                 strTipText += "\n- You Have The Potion of Life";
             }
             break;
+
+        case 4:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest is required to go to Durance of Hate\n  where Mephisto can be found.";
+            }
+            break;
+
+        case 5:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- Killing Mephisto is required for the progress of\n  the game. (The Blackened Temple quest is required\n  to go to Durance of Hate where Mephisto can be\n  found)";
+            }
+            break;
+        }
+        break;
+
+    case EnumAct::IV:
+        switch (quest)
+        {
+        case 1:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- Killing Diablo is required for the progress of\n  the game.";
+            }
+            break;
         }
         break;
 
@@ -2964,6 +3310,13 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             if ((questValue & 0x0100) != 0)
             {
                 strTipText += "\n- You Rescued Anya And Talked To Malah";
+            }
+            break;
+
+        case 4:
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- This quest is required to go to Worldstone Keep\n  where Baal can be found.";
             }
             break;
 
@@ -2997,6 +3350,11 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
             {
                 strTipText += "\n- Anya Congratulated You";
             }
+
+            if (!bQuestCompleted)
+            {
+                strTipText += "\n- Killing Baal is required for the progress of\n  the game. (The Rite of Passage is required to go to\n  Worldstone Keep where Baal can be found)";
+            }
             break;
         }
         break;
@@ -3025,6 +3383,9 @@ bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::u
     case EnumAct::II:
         switch (quest)
         {
+        case 1: // The Horadric Staff
+            return true;
+
         case 2: // Tainted Sun
             return true;
 
@@ -3042,7 +3403,7 @@ bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::u
     case EnumAct::III:
         switch (quest)
         {
-        case 1: // // Khalims Will
+        case 1: // Khalims Will
             return true;
 
         case 4: // The Blackened Temple
@@ -3062,10 +3423,16 @@ bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::u
         break;
 
     case EnumAct::V:
-        switch (quest)
+        if (CharInfo.isExpansionCharacter())
         {
-        case 5: // Eve Of Destruction
-            return true;
+            switch (quest)
+            {
+            case 4: // Rite of Passage
+                return true;
+
+            case 5: // Eve Of Destruction
+                return true;
+            }
         }
         break;
     }
@@ -3101,6 +3468,17 @@ void d2ce::ActsInfo::startQuest(EnumDifficulty diff, EnumAct act, std::uint8_t q
         return;
     }
 
+    // Handle special cases
+    if (act == EnumAct::I)
+    {
+        switch (quest)
+        {
+        case 0: // Den of Evil
+            clearStatsReset(diff);
+            break;
+        }
+    }
+
     getQuestDataRef(diff, act, quest) = questStarted;
 }
 //---------------------------------------------------------------------------
@@ -3134,6 +3512,21 @@ void d2ce::ActsInfo::resetQuest(EnumDifficulty diff, EnumAct act, std::uint8_t q
     }
 
     getQuestDataRef(diff, act, quest) = questNotStarted;
+
+    // Handle special cases
+    if (act == EnumAct::I)
+    {
+        switch (quest)
+        {
+        case 0: // Den of Evil
+            clearStatsReset(diff);
+            break;
+
+        case 3: // The Search for Cain
+            clearMooMooFarmComplete(diff);
+            break;
+        }
+    }
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getStatsReset(EnumDifficulty diff) const
@@ -3278,6 +3671,7 @@ std::uint16_t d2ce::ActsInfo::getStatPointsEarned() const
 void d2ce::ActsInfo::updateQuests(const ActsInfo& qi)
 {
     Acts = qi.Acts;
+    validateActs();
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::updateActs(const ActsInfo& qi)

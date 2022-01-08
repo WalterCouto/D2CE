@@ -328,7 +328,7 @@ namespace std
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-d2ce::Character::Character() : Merc(*this)
+d2ce::Character::Character() : Merc(*this), Acts(*this)
 {
     initialize();
 }
@@ -1309,24 +1309,22 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
 //---------------------------------------------------------------------------
 bool d2ce::Character::readActs()
 {
-    if (!Acts.readActs(Bs.Version, m_charfile))
+    if (!Acts.readActs(m_charfile))
     {
         return false;
     }
 
-    validateTitle();
     validateActs();
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::readActs(const Json::Value& root)
 {
-    if (!Acts.readActs(root, m_bJsonSerializedFormat, isExpansionCharacter(), Bs.Version, m_charfile))
+    if (!Acts.readActs(root, m_bJsonSerializedFormat, m_charfile))
     {
         return false;
     }
 
-    validateTitle();
     validateActs();
     return true;
 }
@@ -1850,9 +1848,9 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             Merc.asJson(parent, bSerializedFormat);
         }
 
-        Acts.questsAsJson(parent, isExpansionCharacter(), bSerializedFormat);
-        Acts.waypointsAsJson(parent, isExpansionCharacter(), bSerializedFormat);
-        Acts.npcAsJson(parent, isExpansionCharacter(), bSerializedFormat);
+        Acts.questsAsJson(parent, bSerializedFormat);
+        Acts.waypointsAsJson(parent, bSerializedFormat);
+        Acts.npcAsJson(parent, bSerializedFormat);
     }
     else
     {
@@ -1959,153 +1957,91 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             Merc.asJson(header, bSerializedFormat);
         }
 
-        Acts.questsAsJson(header, isExpansionCharacter(), bSerializedFormat);
-        Acts.waypointsAsJson(header, isExpansionCharacter(), bSerializedFormat);
-        Acts.npcAsJson(header, isExpansionCharacter(), bSerializedFormat);
+        Acts.questsAsJson(header, bSerializedFormat);
+        Acts.waypointsAsJson(header, bSerializedFormat);
+        Acts.npcAsJson(header, bSerializedFormat);
 
         parent["header"] = header;
-    }
-}
-//---------------------------------------------------------------------------
-void d2ce::Character::validateTitle()
-{
-    // Check Title to make sure it makes sense what difficulty is allowed to be played
-    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
-    bitmask::bitmask<EnumCharTitle> derivedTitle = EnumCharTitle::None;
-    if (Acts.getActCompleted(EnumDifficulty::Hell, EnumAct::V))
-    {
-        if (titlePos < 3)
-        {
-            Bs.Title = EnumCharTitle::BaronBaroness;
-            if (isExpansionCharacter())
-            {
-                Bs.Title |= EnumCharTitle::MPatriarch;
-            }
-        }
-    }
-    else if (Acts.getActCompleted(EnumDifficulty::Nightmare, EnumAct::V))
-    {
-        if (titlePos < 2)
-        {
-            Bs.Title = d2ce::EnumCharTitle::LordLady;
-            if (isExpansionCharacter())
-            {
-                Bs.Title |= EnumCharTitle::Champion;
-            }
-        }
-    }
-    else if (Acts.getActCompleted(EnumDifficulty::Normal, EnumAct::V))
-    {
-        if (titlePos < 1)
-        {
-            Bs.Title = d2ce::EnumCharTitle::SirDame;
-            if (isExpansionCharacter())
-            {
-                Bs.Title |= EnumCharTitle::Slayer;
-            }
-        }
     }
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::validateActs()
 {
     // Check Title to make sure it makes sense what difficulty is allowed to be played
-    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
-    auto progression = EnumDifficulty::Hell;
-    switch (titlePos)
+    auto progression = getTitleDifficulty();
+    if (progression < EnumDifficulty::Hell)
     {
-    case 0:
-        progression = EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = EnumDifficulty::Nightmare;
-        break;
-    }
-
-    auto startingAct = Bs.StartingAct;
-    if (titlePos == 3)
-    {
-        progression = EnumDifficulty::Hell;
-        startingAct = EnumAct::V;
-        if (!Acts.getActCompleted(progression, startingAct))
+        if (!Acts.getActYetToStart(EnumDifficulty::Hell, EnumAct::I))
         {
-            Acts.setActCompletedData(progression, startingAct, 1, isExpansionCharacter());
-        }
-    }
-    else
-    {
-        if (Bs.DifficultyLastPlayed > progression)
-        {
-            // Not able to allow this state
-            progression = Bs.DifficultyLastPlayed;
-            switch (progression)
+            if (progression < EnumDifficulty::Hell)
             {
-            case EnumDifficulty::Nightmare:
-                Bs.Title = EnumCharTitle::SirDame;
-                if (isExpansionCharacter())
-                {
-                    Bs.Title |= EnumCharTitle::Slayer;
-                }
-                break;
-
-            case EnumDifficulty::Hell:
                 Bs.Title = d2ce::EnumCharTitle::LordLady;
                 if (isExpansionCharacter())
                 {
                     Bs.Title |= EnumCharTitle::Champion;
                 }
-                break;
+                progression = EnumDifficulty::Hell;
             }
         }
-
-
-        startingAct = isExpansionCharacter() ? d2ce::EnumAct::V : d2ce::EnumAct::IV;
-        while ((startingAct > d2ce::EnumAct::I) && !Acts.getActCompleted(progression, startingAct) && Acts.getActYetToStart(progression, startingAct))
+        else if (!Acts.getActYetToStart(EnumDifficulty::Nightmare, EnumAct::I))
         {
-            switch (startingAct)
+            if (progression < EnumDifficulty::Nightmare)
             {
-            case d2ce::EnumAct::V:
-                startingAct = d2ce::EnumAct::IV;
-                break;
-
-            case d2ce::EnumAct::IV:
-                startingAct = d2ce::EnumAct::III;
-                break;
-
-            case d2ce::EnumAct::III:
-                startingAct = d2ce::EnumAct::II;
-                break;
-
-            case d2ce::EnumAct::II:
-                startingAct = d2ce::EnumAct::I;
-                break;
-            }
-        }
-
-        if ((startingAct == d2ce::EnumAct::I) && (progression > d2ce::EnumDifficulty::Normal) && !Acts.getActCompleted(progression, startingAct))
-        {
-            switch (progression)
-            {
-            case EnumDifficulty::Nightmare:
-                progression = d2ce::EnumDifficulty::Normal;
-                break;
-
-            case EnumDifficulty::Hell:
-                progression = d2ce::EnumDifficulty::Nightmare;
-                break;
-            }
-            startingAct = isExpansionCharacter() ? d2ce::EnumAct::V : d2ce::EnumAct::IV;
-
-            if (!Acts.getActCompleted(progression, startingAct))
-            {
-                Acts.setActCompletedData(progression, startingAct, 1, isExpansionCharacter());
+                Bs.Title = d2ce::EnumCharTitle::SirDame;
+                if (isExpansionCharacter())
+                {
+                    Bs.Title |= EnumCharTitle::Slayer;
+                }
+                progression = EnumDifficulty::Nightmare;
             }
         }
     }
 
-    Acts.validateAct(progression, startingAct, isExpansionCharacter());
-    validateTitle();
+    if (Bs.DifficultyLastPlayed > progression)
+    {
+        // Not able to allow this state
+        progression = Bs.DifficultyLastPlayed;
+        switch (progression)
+        {
+        case EnumDifficulty::Nightmare:
+            Bs.Title = EnumCharTitle::SirDame;
+            if (isExpansionCharacter())
+            {
+                Bs.Title |= EnumCharTitle::Slayer;
+            }
+            break;
+
+        case EnumDifficulty::Hell:
+            Bs.Title = d2ce::EnumCharTitle::LordLady;
+            if (isExpansionCharacter())
+            {
+                Bs.Title |= EnumCharTitle::Champion;
+            }
+            break;
+        }
+    }
+
+    if (Bs.DifficultyLastPlayed == progression)
+    {
+        // make sure Starting Act makes sense
+        while (Bs.StartingAct > EnumAct::I)
+        {
+            if (!Acts.getActYetToStart(progression, Bs.StartingAct))
+            {
+                break;
+            }
+
+            auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct) - 1);
+            if (Acts.getActCompleted(progression, preAct))
+            {
+                break;
+            }
+
+            Bs.StartingAct = preAct;
+        }
+    }
+
+    Acts.validateActs();
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::close()
@@ -2345,6 +2281,32 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
         break;
     }
 
+    auto progression = getTitleDifficulty();
+    if (Bs.DifficultyLastPlayed > progression)
+    {
+        Bs.DifficultyLastPlayed = progression;
+    }
+
+    if (Bs.DifficultyLastPlayed == progression)
+    {
+        // make sure Starting Act makes sense
+        while (Bs.StartingAct > EnumAct::I)
+        {
+            if (!Acts.getActYetToStart(progression, Bs.StartingAct))
+            {
+                break;
+            }
+
+            auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct) - 1);
+            if (Acts.getActCompleted(progression, preAct))
+            {
+                break;
+            }
+
+            Bs.StartingAct = preAct;
+        }
+    }
+
     // update values sent in to reflect any updates made
     std::memcpy(&bs, &Bs, sizeof(BasicStats));
 
@@ -2354,7 +2316,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
         Cs.updateClass(Bs.Class);
     }
 
-    validateActs();
+    Acts.validateActs();
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::updateCharacterStats(CharStats& cs)
@@ -2415,6 +2377,27 @@ bitmask::bitmask<d2ce::EnumCharStatus> d2ce::Character::getStatus() const
 bitmask::bitmask<d2ce::EnumCharTitle> d2ce::Character::getTitle() const
 {
     return Bs.Title;
+}
+//---------------------------------------------------------------------------
+/*
+   Returns a value indicating the difficulty level as give by the title
+*/
+d2ce::EnumDifficulty d2ce::Character::getTitleDifficulty() const
+{
+    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
+    auto progression = EnumDifficulty::Hell;
+    switch (titlePos)
+    {
+    case 0:
+        progression = EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = EnumDifficulty::Nightmare;
+        break;
+    }
+
+    return progression;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharClass d2ce::Character::getClass() const
@@ -2628,7 +2611,6 @@ void d2ce::Character::updateQuests(const ActsInfo& qi)
 {
     Acts.updateQuests(qi);
     Cs.updatePointsEarned(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
-    validateActs();
 }
 //---------------------------------------------------------------------------
 std::uint64_t d2ce::Character::getWaypoints(d2ce::EnumDifficulty difficulty) const

@@ -1951,6 +1951,26 @@ void CD2MainForm::OnCbnSelchangeCharTitleCmb()
     {
         bs.Title = getCharacterTitle();
         CtrlEditted.insert(CharTitle.GetDlgCtrlID());
+
+        std::uint8_t titlePos = (bs.Title.bits() & 0x0C) >> 2;
+        auto progression = d2ce::EnumDifficulty::Hell;
+        switch (titlePos)
+        {
+        case 0:
+            progression = d2ce::EnumDifficulty::Normal;
+            break;
+
+        case 1:
+            progression = d2ce::EnumDifficulty::Nightmare;
+            break;
+        }
+
+        if (bs.DifficultyLastPlayed > progression)
+        {
+            bs.DifficultyLastPlayed = progression;
+            CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+        }
+
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -1959,12 +1979,11 @@ void CD2MainForm::OnCbnSelchangeCharTitleCmb()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnCbnSelchangeStartingActCmb()
 {
-    d2ce::EnumAct startingAct = static_cast<d2ce::EnumAct>(StartingAct.GetCurSel());
     d2ce::BasicStats bs;
     CharInfo.fillBasicStats(bs);
-    if (bs.StartingAct != startingAct)
+    if (bs.StartingAct != getStartingAct())
     {
-        bs.StartingAct = startingAct;
+        bs.StartingAct = getStartingAct();
         CtrlEditted.insert(StartingAct.GetDlgCtrlID());
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
@@ -1976,11 +1995,36 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 {
     d2ce::BasicStats bs;
     CharInfo.fillBasicStats(bs);
+    std::uint8_t titlePos = (bs.Title.bits() & 0x0C) >> 2;
+    auto progression = d2ce::EnumDifficulty::Hell;
+    switch (titlePos)
+    {
+    case 0:
+        progression = d2ce::EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = d2ce::EnumDifficulty::Nightmare;
+        break;
+    }
+
+    bool updateCharInfo = false;
+    if (bs.DifficultyLastPlayed > progression)
+    {
+        updateCharInfo = true;
+        bs.DifficultyLastPlayed = progression;
+    }
+
     if (bs.DifficultyLastPlayed != getDifficultyLastPlayed())
     {
+        updateCharInfo = true;
         bs.DifficultyLastPlayed = getDifficultyLastPlayed();
         CtrlEditted.insert(Difficulty.GetDlgCtrlID());
         CharInfo.updateBasicStats(bs);
+    }
+
+    if(updateCharInfo)
+    {
         UpdateCharInfo();
         StatsChanged();
     }
@@ -2117,6 +2161,46 @@ void CD2MainForm::UpdateCharInfo()
             CtrlEditted.insert(CharTitle.GetDlgCtrlID());
             statsChanged = true;
         }
+    }
+
+    if (getDifficultyLastPlayed() != bs.DifficultyLastPlayed)
+    {
+        Difficulty.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(bs.DifficultyLastPlayed));
+        if (bs.DifficultyLastPlayed == Bs.DifficultyLastPlayed)
+        {
+            auto iter = CtrlEditted.find(Difficulty.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
+            {
+                CtrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+
+    if (getStartingAct() != bs.StartingAct)
+    {
+        UpdateStartingActDisplay();
+        if (bs.StartingAct == Bs.StartingAct)
+        {
+            auto iter = CtrlEditted.find(StartingAct.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
+            {
+                CtrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            CtrlEditted.insert(StartingAct.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+    else
+    {
+        UpdateStartingActDisplay();
     }
 
     d2ce::CharStats cs;
@@ -4209,6 +4293,24 @@ bitmask::bitmask<d2ce::EnumCharTitle> CD2MainForm::getCharacterTitle() const
     return title;
 }
 //---------------------------------------------------------------------------
+d2ce::EnumDifficulty CD2MainForm::getCharacterTitleDifficulty() const
+{
+    std::uint8_t titlePos = (getCharacterTitle().bits() & 0x0C) >> 2;
+    auto progression = d2ce::EnumDifficulty::Hell;
+    switch (titlePos)
+    {
+    case 0:
+        progression = d2ce::EnumDifficulty::Normal;
+        break;
+
+    case 1:
+        progression = d2ce::EnumDifficulty::Nightmare;
+        break;
+    }
+
+    return progression;
+}
+//---------------------------------------------------------------------------
 d2ce::EnumCharClass CD2MainForm::getCharacterClass() const
 {
     return static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel());
@@ -4217,6 +4319,11 @@ d2ce::EnumCharClass CD2MainForm::getCharacterClass() const
 d2ce::EnumDifficulty CD2MainForm::getDifficultyLastPlayed() const
 {
     return static_cast<d2ce::EnumDifficulty>(Difficulty.GetCurSel());
+}
+//---------------------------------------------------------------------------
+d2ce::EnumAct CD2MainForm::getStartingAct() const
+{
+    return static_cast<d2ce::EnumAct>(StartingAct.GetCurSel());
 }
 //---------------------------------------------------------------------------
 std::uint32_t CD2MainForm::getCharacterLevel() const

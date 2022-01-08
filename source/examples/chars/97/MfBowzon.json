@@ -373,7 +373,7 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_nm": {
@@ -609,10 +609,14 @@
           "done_recently": false
         },
         "rite_of_passage": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
-          "is_received": false,
-          "closed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk5": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
           "done_recently": false
         },
         "eve_of_destruction": {
@@ -627,7 +631,7 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       }
     },
     "quests_hell": {
@@ -689,10 +693,15 @@
           "done_recently": false
         },
         "the_horadric_staff": {
-          "is_completed": false,
+          "is_completed": true,
           "is_requirement_completed": false,
           "is_received": false,
-          "closed": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
           "done_recently": false
         },
         "tainted_sun": {

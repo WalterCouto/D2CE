@@ -70,6 +70,11 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.09 (Jan 8, 2022)**<br>
+- Updated: Fix up logic around Act V being marked complete when the truth is the game does not mark that act complete when completing that difficulty.<br>
+- Updated: Fix up Quest dialog logic to properly handle cases when quests state are modified.<br>
+<br>
+
 **Version 2.08 (Jan 6, 2022)**<br>
 - Updated: logic for handling Character progressions properly. Now characer Title, Last Difficulty Played, Last Act Played, or Quest completed will be properly validated.<br>
 - Updated: Quest and Waypoint dialogs now properly take into account Character progression.<br>
