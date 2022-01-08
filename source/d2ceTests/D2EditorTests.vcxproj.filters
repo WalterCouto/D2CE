@@ -244,7 +244,13 @@
     <CustomBuild Include="..\examples\chars\96\Complex.json">
       <Filter>examples\char\96</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\examples\chars\97\DannyIsGreat.json">
+    <CustomBuild Include="..\examples\chars\97\DannyIsGreatII.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\DannyIsGreat.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\DannyIsGreat_serialized.json">
       <Filter>examples\char\97</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -644,6 +644,14 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, true));
         }
 
+        TEST_METHOD(TestJsonExport13)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("DannyIsGreat.d2s", character, true));
+            auto json = character.asJson(true);
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, true));
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -731,7 +739,7 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen15)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("DannyIsGreat.json", character, true));
+            Assert::IsTrue(LoadChar97File("DannyIsGreatII.json", character, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange)

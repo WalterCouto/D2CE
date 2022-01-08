@@ -2527,7 +2527,7 @@ bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
     auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
     if (act == lastAct && !getActYetToStart(diff, act))
     {
-        if (CharInfo.getTitleDifficulty() > diff)
+        if ((CharInfo.getTitleDifficulty() > diff) || (((CharInfo.getTitle().bits() & 0x0C) >> 2) == 3))
         {
             return true;
         }
