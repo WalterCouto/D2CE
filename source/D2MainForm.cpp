@@ -1952,19 +1952,7 @@ void CD2MainForm::OnCbnSelchangeCharTitleCmb()
         bs.Title = getCharacterTitle();
         CtrlEditted.insert(CharTitle.GetDlgCtrlID());
 
-        std::uint8_t titlePos = (bs.Title.bits() & 0x0C) >> 2;
-        auto progression = d2ce::EnumDifficulty::Hell;
-        switch (titlePos)
-        {
-        case 0:
-            progression = d2ce::EnumDifficulty::Normal;
-            break;
-
-        case 1:
-            progression = d2ce::EnumDifficulty::Nightmare;
-            break;
-        }
-
+        auto progression = bs.getTitleDifficulty();
         if (bs.DifficultyLastPlayed > progression)
         {
             bs.DifficultyLastPlayed = progression;
@@ -1995,20 +1983,9 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 {
     d2ce::BasicStats bs;
     CharInfo.fillBasicStats(bs);
-    std::uint8_t titlePos = (bs.Title.bits() & 0x0C) >> 2;
-    auto progression = d2ce::EnumDifficulty::Hell;
-    switch (titlePos)
-    {
-    case 0:
-        progression = d2ce::EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = d2ce::EnumDifficulty::Nightmare;
-        break;
-    }
 
     bool updateCharInfo = false;
+    auto progression = bs.getTitleDifficulty();
     if (bs.DifficultyLastPlayed > progression)
     {
         updateCharInfo = true;

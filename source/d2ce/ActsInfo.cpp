@@ -2437,24 +2437,15 @@ void d2ce::ActsInfo::validateActs()
 {
     // Character should have validate Charactacter Title
     auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
-    std::uint8_t titlePos = (CharInfo.getTitle().bits() & 0x0C) >> 2;
-    auto progression = EnumDifficulty::Hell;
-    switch (titlePos)
+    if (CharInfo.isGameComplete())
     {
-    case 0:
-        progression = EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = EnumDifficulty::Nightmare;
-        break;
-
-    case 3:
         validateAct(EnumDifficulty::Hell, lastAct);
         return;
+
     }
 
     // All acts for the next difficulty should be cleared
+    auto progression = CharInfo.getTitleDifficulty();
     if (progression < EnumDifficulty::Hell)
     {
         auto nextProgression = progression;
@@ -2525,12 +2516,9 @@ bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
 
     // Last Act may not be marked complete, so check progression
     auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
-    if (act == lastAct && !getActYetToStart(diff, act))
+    if (act == lastAct && !getActYetToStart(diff, act) && CharInfo.isDifficultyComplete(diff))
     {
-        if ((CharInfo.getTitleDifficulty() > diff) || (((CharInfo.getTitle().bits() & 0x0C) >> 2) == 3))
-        {
-            return true;
-        }
+        return true;
     }
 
     return false;

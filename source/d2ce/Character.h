@@ -193,6 +193,10 @@ namespace d2ce
         void setIsResurrectedCharacter(bool flag);
         bool isDeadCharacter() const;
         void setIsDeadCharacter(bool flag);
+        bool isGameComplete() const;
+        void setGameComplete();
+        bool isDifficultyComplete(d2ce::EnumDifficulty diff) const;
+        void setDifficultyComplete(d2ce::EnumDifficulty diff);
 
         std::uint32_t getLevel() const;
         std::uint32_t getExperience() const;

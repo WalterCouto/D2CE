@@ -139,6 +139,51 @@ namespace d2ce
                 Status &= ~EnumCharStatus::Dead;
             }
         }
+
+        EnumDifficulty getTitleDifficulty() const
+        {
+            std::uint8_t titlePos = (Title.bits() & 0x0C) >> 2;
+            auto progression = EnumDifficulty::Hell;
+            switch (titlePos)
+            {
+            case 0:
+                progression = EnumDifficulty::Normal;
+                break;
+
+            case 1:
+                progression = EnumDifficulty::Nightmare;
+                break;
+            }
+
+            return progression;
+        }
+
+        bool isGameComplete() const
+        {
+            return (((Title.bits() & 0x0C) >> 2) == 3) ? true : false;
+        }
+
+        bool isDifficultyComplete(d2ce::EnumDifficulty diff) const
+        {
+            auto progression = getTitleDifficulty();
+            if (diff > progression)
+            {
+                return false;
+            }
+
+            if (progression > diff)
+            {
+                return true;
+            }
+
+            // If we have progressed to Hell, we need to check if we completed the game
+            if (diff != EnumDifficulty::Hell)
+            {
+                return false;
+            }
+
+            return isGameComplete();
+        }
     };
 
     struct CharStats

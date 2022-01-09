@@ -2384,20 +2384,7 @@ bitmask::bitmask<d2ce::EnumCharTitle> d2ce::Character::getTitle() const
 */
 d2ce::EnumDifficulty d2ce::Character::getTitleDifficulty() const
 {
-    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
-    auto progression = EnumDifficulty::Hell;
-    switch (titlePos)
-    {
-    case 0:
-        progression = EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = EnumDifficulty::Nightmare;
-        break;
-    }
-
-    return progression;
+    return Bs.getTitleDifficulty();
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharClass d2ce::Character::getClass() const
@@ -2505,6 +2492,85 @@ std::uint32_t d2ce::Character::getMaxGoldInBelt() const
 std::uint32_t d2ce::Character::getMaxGoldInStash() const
 {
     return Cs.getMaxGoldInStash();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::isGameComplete() const
+{
+    return Bs.isGameComplete();
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::setGameComplete()
+{
+    setDifficultyComplete(EnumDifficulty::Hell);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::isDifficultyComplete(d2ce::EnumDifficulty diff) const
+{
+    return Bs.isDifficultyComplete(diff);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::setDifficultyComplete(d2ce::EnumDifficulty diff)
+{
+    bitmask::bitmask<EnumCharTitle> title = EnumCharTitle::None;
+    switch (diff)
+    {
+    case EnumDifficulty::Normal:
+        title = EnumCharTitle::SirDame;
+        if (isExpansionCharacter())
+        {
+            title |= EnumCharTitle::Slayer;
+        }
+        break;
+
+    case EnumDifficulty::Nightmare:
+        title = d2ce::EnumCharTitle::LordLady;
+        if (isExpansionCharacter())
+        {
+            title |= EnumCharTitle::Champion;
+        }
+        break;
+
+    case EnumDifficulty::Hell:
+        title = EnumCharTitle::BaronBaroness;
+        if (isExpansionCharacter())
+        {
+            title |= EnumCharTitle::MPatriarch;
+        }
+        break;
+    }
+
+    if (Bs.Title == title)
+    {
+        return;
+    }
+
+    Bs.Title = title;
+
+    // fix up other indicators of progression
+    if (Bs.DifficultyLastPlayed > diff)
+    {
+        // diff can be at most be EnumDifficulty::Nightmare due to the greater than check above, so the next line is safe
+        Bs.DifficultyLastPlayed = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(diff) + 1);
+
+        // make sure Starting Act makes sense
+        while (Bs.StartingAct > EnumAct::I)
+        {
+            if (!Acts.getActYetToStart(Bs.DifficultyLastPlayed, Bs.StartingAct))
+            {
+                break;
+            }
+
+            auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct) - 1);
+            if (Acts.getActCompleted(Bs.DifficultyLastPlayed, preAct))
+            {
+                break;
+            }
+
+            Bs.StartingAct = preAct;
+        }
+    }
+
+    validateActs();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMinStrength() const
