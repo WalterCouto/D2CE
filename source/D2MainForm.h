@@ -344,6 +344,7 @@ public:
     std::uint32_t getWeaponSet() const;
 
     bool isExpansionCharacter() const;
+    d2ce::EnumAct getLastAct() const;
 
     uint32_t getSkillPointsEarned() const;
     uint32_t getStatPointsEarned() const;

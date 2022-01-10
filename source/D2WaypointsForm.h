@@ -60,7 +60,8 @@ private:
     std::bitset<d2ce::NUM_OF_WAYPOINTS> NormalWP, NightmareWP, HellWP;
     int ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Normal);
     int MaxItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell);
-    bool IsExpansionCharacter = false;
+    d2ce::EnumAct LastAct = d2ce::EnumAct::V;
+    std::uint32_t TotalNumWaypoints = d2ce::TOTAL_NUM_OF_WAYPOINTS_EXPANSION;
     bool Changed[d2ce::NUM_OF_DIFFICULTY] = { false, false, false };
     CD2MainForm& MainForm;
 };

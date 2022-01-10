@@ -181,6 +181,7 @@ namespace d2ce
         std::string getClassName() const;
         EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
+        EnumAct getLastAct() const;
         std::uint32_t getWeaponSet() const;
 
         bool isExpansionCharacter() const;
@@ -197,6 +198,7 @@ namespace d2ce
         void setGameComplete();
         bool isDifficultyComplete(d2ce::EnumDifficulty diff) const;
         void setDifficultyComplete(d2ce::EnumDifficulty diff);
+        void setNoDifficultyComplete();
 
         std::uint32_t getLevel() const;
         std::uint32_t getExperience() const;

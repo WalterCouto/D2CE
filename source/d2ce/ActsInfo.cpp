@@ -201,7 +201,7 @@ void d2ce::ActsInfo::applyJsonQuest(const Json::Value& questRoot, bool bSerializ
         return;
     }
 
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -243,7 +243,7 @@ void d2ce::ActsInfo::applyJsonActIntro(const Json::Value& actIntroRoot, bool bSe
         return;
     }
 
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -292,7 +292,7 @@ void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bo
         return;
     }
 
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -341,7 +341,7 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
         return;
     }
 
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -401,7 +401,7 @@ void d2ce::ActsInfo::applyJsonQuestDifficulty(const Json::Value& questDiffRoot, 
         static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
         for (auto act : all_acts)
         {
-            if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+            if (act > CharInfo.getLastAct())
             {
                 continue;
             }
@@ -611,13 +611,13 @@ void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bo
 
     std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
     std::size_t offset = 0;
+    if (act > CharInfo.getLastAct())
+    {
+        return;
+    }
+
     if (act == EnumAct::V)
     {
-        if (!CharInfo.isExpansionCharacter())
-        {
-            return;
-        }
-
         offset = MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV;
 
         // make sure Act V - Harrogath is active if applicable
@@ -711,7 +711,7 @@ void d2ce::ActsInfo::applyJsonWaypointDifficulty(const Json::Value& waypointDiff
         static std::initializer_list<EnumAct> all_acts = { EnumAct::I, EnumAct::II, EnumAct::III, EnumAct::IV, EnumAct::V };
         for (auto act : all_acts)
         {
-            if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+            if (act > CharInfo.getLastAct())
             {
                 continue;
             }
@@ -1106,14 +1106,15 @@ bool d2ce::ActsInfo::writeNPC(std::FILE* charfile)
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
 {
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    auto lastAct = CharInfo.getLastAct();
+    if (act > lastAct)
     {
-        act = EnumAct::IV;
+        act = lastAct;
     }
-
+    
     if (!getActIntroduced(diff, act))
     {
-        if (getActYetToStart(diff, act))
+        if (getActYetToStart(diff, act) && !CharInfo.isGameComplete())
         {
             return;
         }
@@ -1121,7 +1122,6 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
         setActIntroducedData(diff, act, 1);
     }
 
-    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
     if (act > EnumAct::I)
     {
         auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) - 1);
@@ -1307,7 +1307,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) c
             for (auto act : all_acts)
             {
                 Json::Value questAct;
-                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+                if (act > CharInfo.getLastAct())
                 {
                     continue;
                 }
@@ -1452,7 +1452,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) c
             Json::Value questDiff;
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+                if (act > CharInfo.getLastAct())
                 {
                     continue;
                 }
@@ -1817,7 +1817,7 @@ void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool bSerializedFormat
 
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+                if (act > CharInfo.getLastAct())
                 {
                     continue;
                 }
@@ -1841,7 +1841,7 @@ void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool bSerializedFormat
             Json::Value waypointDiff;
             for (auto act : all_acts)
             {
-                if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+                if (act > CharInfo.getLastAct())
                 {
                     continue;
                 }
@@ -2349,6 +2349,11 @@ std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct 
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
 {
+    if (act > CharInfo.getLastAct())
+    {
+        return;
+    }
+
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
     if (actNum < 4)
@@ -2357,10 +2362,7 @@ void d2ce::ActsInfo::setActIntroducedData(EnumDifficulty diff, EnumAct act, std:
         return;
     }
 
-    if (CharInfo.isExpansionCharacter())
-    {
-        Acts[diffNum].ActV.Intro = value;
-    }
+    Acts[diffNum].ActV.Intro = value;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getActIntroduced(EnumDifficulty diff, EnumAct act) const
@@ -2388,6 +2390,11 @@ return Acts[diffNum].ActV.Completed;
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
 {
+    if (act > CharInfo.getLastAct())
+    {
+        return;
+    }
+
     auto diffNum = static_cast<std::underlying_type_t<EnumDifficulty>>(diff);
     auto actNum = static_cast<std::underlying_type_t<EnumAct>>(act);
     if (actNum < 3)
@@ -2413,11 +2420,6 @@ void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::
         return;
     }
 
-    if (!CharInfo.isExpansionCharacter())
-    {
-        return;
-    }
-
     Acts[diffNum].ActV.Completed = std::uint8_t(value);
     if ((value != 0) && (Acts[diffNum].ActV.Intro == 0))
     {
@@ -2436,7 +2438,7 @@ std::uint16_t d2ce::ActsInfo::getActVResetStatCompletedData(EnumDifficulty diff)
 void d2ce::ActsInfo::validateActs()
 {
     // Character should have validate Charactacter Title
-    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
+    auto lastAct = CharInfo.getLastAct();
     if (CharInfo.isGameComplete())
     {
         validateAct(EnumDifficulty::Hell, lastAct);
@@ -2487,7 +2489,7 @@ void d2ce::ActsInfo::resetActs(EnumDifficulty diff)
     static std::initializer_list<EnumAct> all_acts = { EnumAct::V, EnumAct::IV, EnumAct::III, EnumAct::II, EnumAct::I };
     for (auto act : all_acts)
     {
-        if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+        if (act > CharInfo.getLastAct())
         {
             continue;
         }
@@ -2515,8 +2517,7 @@ bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const
     }
 
     // Last Act may not be marked complete, so check progression
-    auto lastAct = CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
-    if (act == lastAct && !getActYetToStart(diff, act) && CharInfo.isDifficultyComplete(diff))
+    if (act == CharInfo.getLastAct() && !getActYetToStart(diff, act) && CharInfo.isDifficultyComplete(diff))
     {
         return true;
     }
@@ -2549,7 +2550,7 @@ bool d2ce::ActsInfo::getActQuestYetToStart(EnumDifficulty diff, EnumAct act) con
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::resetAct(EnumAct act)
 {
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -2557,7 +2558,7 @@ void d2ce::ActsInfo::resetAct(EnumAct act)
     auto diff = CharInfo.getTitleDifficulty();
     if (getActCompleted(diff, act))
     {
-        if (act < (CharInfo.isExpansionCharacter() ? EnumAct::V : EnumAct::IV))
+        if (act < CharInfo.getLastAct())
         {
             auto nextAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) + 1);
             if (getActCompleted(diff, nextAct) || !getActYetToStart(diff, nextAct))
@@ -2589,7 +2590,7 @@ void d2ce::ActsInfo::resetAct(EnumAct act)
 }
 void d2ce::ActsInfo::updateAct(EnumAct act)
 {
-    if (act == EnumAct::V && !CharInfo.isExpansionCharacter())
+    if (act > CharInfo.getLastAct())
     {
         return;
     }
@@ -2632,6 +2633,11 @@ void d2ce::ActsInfo::updateAct(EnumAct act)
         }
     }
 
+    if (act > CharInfo.getLastAct())
+    {
+        return;
+    }
+
     std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
     switch (act)
     {
@@ -2671,10 +2677,7 @@ void d2ce::ActsInfo::updateAct(EnumAct act)
         break;
 
     case EnumAct::V:
-        if (CharInfo.isExpansionCharacter())
-        {
-            waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
-        }
+        waypointValue[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] = 1; // Harrogath
         break;
     }
 
@@ -3353,6 +3356,11 @@ std::string d2ce::ActsInfo::getQuestNotes(EnumDifficulty diff, EnumAct act, std:
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
 {
+    if (act > CharInfo.getLastAct())
+    {
+        return false;
+    }
+
     if (!getActCompleted(diff, act))
     {
         return false;
@@ -3411,16 +3419,13 @@ bool d2ce::ActsInfo::getQuestIsRequired(EnumDifficulty diff, EnumAct act, std::u
         break;
 
     case EnumAct::V:
-        if (CharInfo.isExpansionCharacter())
+        switch (quest)
         {
-            switch (quest)
-            {
-            case 4: // Rite of Passage
-                return true;
+        case 4: // Rite of Passage
+            return true;
 
-            case 5: // Eve Of Destruction
-                return true;
-            }
+        case 5: // Eve Of Destruction
+            return true;
         }
         break;
     }

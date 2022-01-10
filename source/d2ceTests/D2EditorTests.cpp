@@ -742,7 +742,7 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar97File("DannyIsGreatII.json", character, true));
         }
 
-        TEST_METHOD(TestJsonTestComplexChange)
+        TEST_METHOD(TestJsonTestComplexChange01)
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96TempFile("Merlina.d2s", character, true));
@@ -770,6 +770,78 @@ namespace D2EditorTests
             character.upgradePotions();
             auto json = character.asJson();
             Assert::AreEqual(json, GetChar96ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonTestComplexChange02)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97TempFile("DannyIsGreat.d2s", character, true));
+            Assert::IsTrue(character.isGameComplete());
+            d2ce::BasicStats bs;
+            character.fillBasicStats(bs);
+
+            std::string strNewText = "DannyIsGreatIII";
+            std::string expectedTempPath;
+            {
+                std::stringstream ss;
+                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
+                expectedTempPath = ss.str();
+                std::filesystem::remove(expectedTempPath);
+            }
+
+            bs.Name.fill(0);
+            strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+            character.updateBasicStats(bs);
+            Assert::IsTrue(character.save());
+            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+
+            // Change some items
+            character.setDifficultyComplete(d2ce::EnumDifficulty::Normal);
+            Assert::IsTrue(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
+            Assert::IsFalse(character.isGameComplete());
+            auto json = character.asJson();
+            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+
+            strNewText = "DannyIsGreatIV";
+            {
+                std::stringstream ss;
+                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
+                expectedTempPath = ss.str();
+                std::filesystem::remove(expectedTempPath);
+            }
+
+            bs.Name.fill(0);
+            strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+            character.updateBasicStats(bs);
+            Assert::IsTrue(character.save());
+            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+
+            // Change some items
+            character.setGameComplete();
+            Assert::IsTrue(character.isGameComplete());
+            json = character.asJson();
+            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+
+            strNewText = "DannyIsGreatV";
+            {
+                std::stringstream ss;
+                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
+                expectedTempPath = ss.str();
+                std::filesystem::remove(expectedTempPath);
+            }
+
+            bs.Name.fill(0);
+            strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+            character.updateBasicStats(bs);
+            Assert::IsTrue(character.save());
+            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+
+            // Change some items
+            character.setNoDifficultyComplete();
+            Assert::IsFalse(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
+            Assert::IsFalse(character.isGameComplete());
+            json = character.asJson();
+            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
         }
 	};
 }

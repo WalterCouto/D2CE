@@ -4318,6 +4318,11 @@ bool CD2MainForm::isExpansionCharacter() const
     return CharInfo.isExpansionCharacter();
 }
 //---------------------------------------------------------------------------
+d2ce::EnumAct CD2MainForm::getLastAct() const
+{
+    return CharInfo.getLastAct();
+}
+//---------------------------------------------------------------------------
 std::uint32_t CD2MainForm::getSkillPointsEarned() const
 {
     std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);

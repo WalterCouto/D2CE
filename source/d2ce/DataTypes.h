@@ -184,6 +184,11 @@ namespace d2ce
 
             return isGameComplete();
         }
+
+        EnumAct getLastAct() const
+        {
+            return isExpansionCharacter() ? EnumAct::V : EnumAct::IV;
+        }
     };
 
     struct CharStats

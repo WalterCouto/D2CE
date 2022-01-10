@@ -18,9 +18,12 @@
 
 Revision History
 ================
-Version 2.10 (Jan 8, 2022)
+Version 2.10 (Jan 10, 2022)
    - Updated: Fix bug with validation of Act V on Hell difficulty if
               game has been completed.
+
+   - Added: Helper methods for character progression changes olong
+            with unit tests.
 
 Version 2.09 (Jan 8, 2022)
    - Updated: Fix up logic around Act V being marked complete

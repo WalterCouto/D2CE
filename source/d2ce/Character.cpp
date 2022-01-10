@@ -2419,6 +2419,11 @@ d2ce::EnumAct d2ce::Character::getStartingAct() const
     return Bs.StartingAct;
 }
 //---------------------------------------------------------------------------
+d2ce::EnumAct d2ce::Character::getLastAct() const
+{
+    return Bs.getLastAct();
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getWeaponSet() const
 {
     return WeaponSet;
@@ -2570,7 +2575,44 @@ void d2ce::Character::setDifficultyComplete(d2ce::EnumDifficulty diff)
         }
     }
 
-    validateActs();
+    Acts.validateActs();
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::setNoDifficultyComplete()
+{
+    auto diff = EnumDifficulty::Normal;
+    if (!isDifficultyComplete(diff))
+    {
+        return;
+    }
+
+    Bs.Title = EnumCharTitle::None;
+
+    // fix up other indicators of progression
+    if (Bs.DifficultyLastPlayed != diff)
+    {
+        // diff can be at most be EnumDifficulty::Nightmare due to the greater than check above, so the next line is safe
+        Bs.DifficultyLastPlayed = diff;
+
+        // make sure Starting Act makes sense
+        while (Bs.StartingAct > EnumAct::I)
+        {
+            if (!Acts.getActYetToStart(Bs.DifficultyLastPlayed, Bs.StartingAct))
+            {
+                break;
+            }
+
+            auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct) - 1);
+            if (Acts.getActCompleted(Bs.DifficultyLastPlayed, preAct))
+            {
+                break;
+            }
+
+            Bs.StartingAct = preAct;
+        }
+    }
+
+    Acts.validateActs();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMinStrength() const

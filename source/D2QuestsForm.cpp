@@ -39,7 +39,7 @@ CD2QuestsForm::CD2QuestsForm(CD2MainForm& form)
     : CDialogEx(CD2QuestsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests()), OrigActs(form.getQuests())
 {
     // Initialize Quests
-    IsExpansionCharacter = MainForm.isExpansionCharacter();
+    LastAct = MainForm.getLastAct();
     ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getDifficultyLastPlayed());
     MaxItemIndex = std::max(ItemIndex, (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(MainForm.getCharacterTitleDifficulty()));
 }
@@ -179,7 +179,7 @@ BOOL CD2QuestsForm::OnInitDialog()
         }
     }
 
-    if (!IsExpansionCharacter)
+    if (LastAct < d2ce::EnumAct::V)
     {
         // Hide all of Act V and Mo Mo Farm
         pWnd = GetDlgItem(IDC_STATIC_ACTV);
@@ -281,7 +281,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             }
         }
 
-        if (IsExpansionCharacter)
+        if (LastAct == d2ce::EnumAct::V)
         {
             // update Expansion Quests
             actNumber = 4;
@@ -390,7 +390,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
         if (ItemIndex == MaxItemIndex)
         {
             // Make sure all Acts are in a valid state
-            if (lastActStarted < (IsExpansionCharacter ? d2ce::EnumAct::V : d2ce::EnumAct::IV))
+            if (lastActStarted < LastAct)
             {
                 auto nextAct = static_cast<d2ce::EnumAct>(static_cast<std::underlying_type_t<d2ce::EnumAct>>(lastActStarted) + 1);
                 if (Acts.getActCompleted(diff, nextAct) || Acts.getActIntroduced(diff, nextAct))
@@ -515,7 +515,7 @@ void CD2QuestsForm::DDX_CheckQuests(CDataExchange* pDX)
             }
         }
 
-        if (IsExpansionCharacter)
+        if (LastAct == d2ce::EnumAct::V)
         {
             // update Expansion Quests
             actNumber = 4;
@@ -625,7 +625,7 @@ void CD2QuestsForm::OnBnClickedCompleteAll()
 {
     Changed = true;
     HWND hWndCtrl;
-    std::uint32_t lastQuestIDC = IsExpansionCharacter ? IDC_CHECK_ACTV_QUEST_6 : IDC_CHECK_ACTIV_QUEST_3;
+    std::uint32_t lastQuestIDC = (LastAct == d2ce::EnumAct::V) ? IDC_CHECK_ACTV_QUEST_6 : IDC_CHECK_ACTIV_QUEST_3;
     for (std::uint32_t nIDC = IDC_CHECK_ACTI_QUEST_1; nIDC <= lastQuestIDC; ++nIDC)
     {
         GetDlgItem(nIDC, &hWndCtrl);

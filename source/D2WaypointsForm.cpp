@@ -37,7 +37,8 @@ CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
     : CDialogEx(CD2WaypointsForm::IDD, (CWnd*)&form), MainForm(form), Acts(form.getQuests())
 {
     // Initialize Waypoints
-    IsExpansionCharacter = MainForm.isExpansionCharacter();
+    LastAct = MainForm.getLastAct();
+    TotalNumWaypoints = (LastAct == d2ce::EnumAct::V) ? d2ce::TOTAL_NUM_OF_WAYPOINTS_EXPANSION : d2ce::TOTAL_NUM_OF_WAYPOINTS;
     NormalWP = MainForm.getWaypoints(d2ce::EnumDifficulty::Normal);
     NightmareWP = MainForm.getWaypoints(d2ce::EnumDifficulty::Nightmare);
     HellWP = MainForm.getWaypoints(d2ce::EnumDifficulty::Hell);
@@ -95,7 +96,7 @@ CD2WaypointsForm::CD2WaypointsForm(CD2MainForm& form)
         HellWP[IDC_CHECK_ACTIV_1 - IDC_CHECK_ACTI_1] = true;
     }
 
-    if (IsExpansionCharacter)
+    if (LastAct == d2ce::EnumAct::V)
     {
         // make sure Act V - Harrogath is active if applicable
         if (Acts.getActCompleted(d2ce::EnumDifficulty::Normal, d2ce::EnumAct::IV))
@@ -160,7 +161,7 @@ BOOL CD2WaypointsForm::OnInitDialog()
     GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::III) ? FALSE : TRUE);
 
-    if (!IsExpansionCharacter)
+    if (LastAct < d2ce::EnumAct::V)
     {
         // Hide all of Act V
         pWnd = GetDlgItem(IDC_STATIC_ACTV);
@@ -192,14 +193,13 @@ BOOL CD2WaypointsForm::OnInitDialog()
 void CD2WaypointsForm::DDX_CheckWaypoints(CDataExchange* pDX)
 {
     int value = 0;
-    std::uint32_t numWaypoints = IsExpansionCharacter ? d2ce::TOTAL_NUM_OF_WAYPOINTS_EXPANSION : d2ce::TOTAL_NUM_OF_WAYPOINTS;
 
     // Save checkbox values before difficulty level
     if (pDX->m_bSaveAndValidate)
     {
         auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
         wp[0] = true; // Always checked
-        for (UINT i = 1, nIDC = IDC_CHECK_ACTI_2; i < numWaypoints; ++i, ++nIDC)
+        for (UINT i = 1, nIDC = IDC_CHECK_ACTI_2; i < TotalNumWaypoints; ++i, ++nIDC)
         {
             DDX_Check(pDX, nIDC, value);
             wp[i] = value != 0 ? true : false;
@@ -214,7 +214,7 @@ void CD2WaypointsForm::DDX_CheckWaypoints(CDataExchange* pDX)
     GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::I) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
     GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::III) ? FALSE : TRUE);
-    if (IsExpansionCharacter)
+    if (LastAct == d2ce::EnumAct::V)
     {
         GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::IV) ? FALSE : TRUE);
     }
@@ -224,7 +224,7 @@ void CD2WaypointsForm::DDX_CheckWaypoints(CDataExchange* pDX)
     {
         CDataExchange dx(this, FALSE);
         auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
-        for (UINT i = 0, nIDC = IDC_CHECK_ACTI_1; i < numWaypoints; ++i, ++nIDC)
+        for (UINT i = 0, nIDC = IDC_CHECK_ACTI_1; i < TotalNumWaypoints; ++i, ++nIDC)
         {
             value = wp[i];
             DDX_Check(&dx, nIDC, value);
@@ -279,9 +279,8 @@ void CD2WaypointsForm::OnBnClickedCancel()
 //---------------------------------------------------------------------------
 void CD2WaypointsForm::OnBnClickedActivateAll()
 {
-    std::uint32_t numWaypoints = IsExpansionCharacter ? d2ce::TOTAL_NUM_OF_WAYPOINTS_EXPANSION : d2ce::TOTAL_NUM_OF_WAYPOINTS;
     auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
-    for (std::uint32_t i = 0; i < numWaypoints; ++i)
+    for (std::uint32_t i = 0; i < TotalNumWaypoints; ++i)
     {
         wp[i] = true;
     }

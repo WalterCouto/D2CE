@@ -61,7 +61,7 @@ private:
 private:
     int ItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Normal);
     int MaxItemIndex = (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell);
-    bool IsExpansionCharacter = false;
+    d2ce::EnumAct LastAct = d2ce::EnumAct::V;
     bool Changed = false;
     CD2MainForm& MainForm;
     d2ce::ActsInfo Acts;
