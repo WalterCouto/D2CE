@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<XML_DIZ_INFO>
+	<MASTER_PAD_VERSION_INFO>
+		<MASTER_PAD_VERSION>3.11</MASTER_PAD_VERSION>
+		<MASTER_PAD_EDITOR>PADGen 3.1.1.50 http://www.padgen.org</MASTER_PAD_EDITOR>
+		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://pad.asp-software.org</MASTER_PAD_INFO>
+	</MASTER_PAD_VERSION_INFO>
+	<Company_Info>
+		<Company_Name>Walter Couto</Company_Name>
+		<Address_1 />
+		<Address_2 />
+		<City_Town />
+		<State_Province />
+		<Zip_Postal_Code />
+		<Country />
+		<Company_WebSite_URL>https://github.com/WalterCouto/D2CE</Company_WebSite_URL>
+		<Contact_Info>
+			<Author_First_Name>Walter</Author_First_Name>
+			<Author_Last_Name>Couto</Author_Last_Name>
+			<Author_Email>walter_coiuto@hotmail.com</Author_Email>
+			<Contact_First_Name />
+			<Contact_Last_Name />
+			<Contact_Email />
+		</Contact_Info>
+		<Support_Info>
+			<Sales_Email />
+			<Support_Email />
+			<General_Email>walter_coiuto@hotmail.com</General_Email>
+			<Sales_Phone />
+			<Support_Phone />
+			<General_Phone />
+			<Fax_Phone />
+		</Support_Info>
+	</Company_Info>
+	<Program_Info>
+		<Program_Name>Diablo II Character Editor</Program_Name>
+		<Program_Version>2.0.9</Program_Version>
+		<Program_Release_Month>01</Program_Release_Month>
+		<Program_Release_Day>08</Program_Release_Day>
+		<Program_Release_Year>2022</Program_Release_Year>
+		<Program_Cost_Dollars>0</Program_Cost_Dollars>
+		<Program_Cost_Other_Code>CAD</Program_Cost_Other_Code>
+		<Program_Cost_Other />
+		<Program_Type>Freeware</Program_Type>
+		<Program_Release_Status>Major Update</Program_Release_Status>
+		<Program_Install_Support>No Install Support</Program_Install_Support>
+		<Program_OS_Support>WinOther,WinServer</Program_OS_Support>
+		<Program_Language>English</Program_Language>
+		<Program_Change_Info />
+		<Program_Specific_Category />
+		<Program_Category_Class />
+		<Program_System_Requirements />
+		<File_Info>
+			<File_Size_Bytes>10499584</File_Size_Bytes>
+			<File_Size_K>10253</File_Size_K>
+			<File_Size_MB>10.01</File_Size_MB>
+		</File_Info>
+		<Expire_Info>
+			<Has_Expire_Info>N</Has_Expire_Info>
+			<Expire_Count />
+			<Expire_Based_On>Days</Expire_Based_On>
+			<Expire_Other_Info />
+			<Expire_Month />
+			<Expire_Day />
+			<Expire_Year />
+		</Expire_Info>
+	</Program_Info>
+	<Program_Descriptions>
+		<English>
+			<Keywords />
+			<Char_Desc_45 />
+			<Char_Desc_80 />
+			<Char_Desc_250 />
+			<Char_Desc_450 />
+			<Char_Desc_2000>The Diablo II Character Editor is an updated relase of the original Diablo 2 Character Editor v 1.97 by Burton Tsan. I has been tested with Diablo II: Resurrected as well as  Diablo II Classic v1.14d and was designed to be a little tool that will help you edit the following stats of your Diablo II Character:
+
+  - Character class
+  - Character name
+  - Character state
+  - Character title
+  - Starting act
+  - Level
+  - Strength
+  - Energy
+  - Dexterity
+  - Vitality
+  - Maximum Life
+  - Maximum Mana
+  - Maximum Stamina
+  - Mercenary state, class, name, Level and Experience
+  - Skills
+  - Quests
+  - Waypoints
+  - Gold in belt and stash
+  - Experience
+  - Upgrade Gems to perfect state
+  - Upgrade Potions to their highest level
+  - Upgrade Potions to Full Rejuvenation
+  - Upgrade Durability of all weapons and armor to the max value
+  - Upgrade Quantity of all stackable items to the max value
+  - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull</Char_Desc_2000>
+		</English>
+	</Program_Descriptions>
+	<Web_Info>
+		<Application_URLs>
+			<Application_Info_URL>https://github.com/WalterCouto/D2CE</Application_Info_URL>
+			<Application_Order_URL />
+			<Application_Screenshot_URL>https://github.com/WalterCouto/D2CE/raw/main/screenshot.png</Application_Screenshot_URL>
+			<Application_Icon_URL>https://github.com/WalterCouto/D2CE/raw/main/source/res/D2Editor.ico</Application_Icon_URL>
+			<Application_XML_File_URL />
+		</Application_URLs>
+		<Download_URLs>
+			<Primary_Download_URL>https://github.com/WalterCouto/D2CE/raw/main/D2Editor.exe</Primary_Download_URL>
+			<Secondary_Download_URL />
+			<Additional_Download_URL_1 />
+			<Additional_Download_URL_2 />
+		</Download_URLs>
+	</Web_Info>
+	<Permissions>
+		<Distribution_Permissions />
+		<EULA />
+	</Permissions>
+	<ASP>
+		<ASP_FORM>Y</ASP_FORM>
+		<ASP_Member>N</ASP_Member>
+		<ASP_Member_Number />
+	</ASP>
+</XML_DIZ_INFO>
