@@ -39,13 +39,13 @@ You can edit the following stats:<br>
 - Upgrade Gems to perfect state<br>
 - Upgrade Potions to their highest level<br>
 - Upgrade Potions to Full Rejuvenation<br>
-- Upgrade Durablity of all weopons and armor to the max value<br>
+- Upgrade Durability of all weapons and armor to the max value<br>
 - Upgrade Quantity of all stackable items to the max value<br>
 - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull<br>
 
 ### Known Issues
 
-- Tested with Diablo II Ressurected v1.1.67554 and Diablo II Classic v1.14d (It has the logic for v1.00 through v1.09 including the Lord of Destruction expansion set so it should work the same as version 1.92 of the orginal code on those files)**
+- Tested with Diablo II Resurrected v1.1.67554 and Diablo II Classic v1.14d (It has the logic for v1.00 through v1.09 including the Lord of Destruction expansion set so it should work the same as version 1.92 of the orginal code on those files)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Ressurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - You must close the character file before playing Diablo II. This is because there are no options to enable file sharing for the read and write functions I'm using in ANSI C++.
 
