@@ -14,6 +14,8 @@ ______________________________________________
 4. Save changes (press CTRL-S or click on File, Save)<br>
 5. Play Diablo II.<br>
 
+![alt text](https://github.com/WalterCouto/D2CE/blob/main/screenshot.png)
+
 ### Notes
 
 You can edit the following stats:<br>
