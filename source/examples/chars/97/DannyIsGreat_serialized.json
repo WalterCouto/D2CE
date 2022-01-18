@@ -3746,7 +3746,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -3795,7 +3794,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -3844,7 +3842,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -4060,7 +4057,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -4113,7 +4109,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -4234,7 +4229,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -4287,7 +4281,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 12,
         "SetItemMask": 0,
         "StatLists": [
@@ -4340,7 +4333,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -4611,7 +4603,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -4882,7 +4873,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -5153,7 +5143,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -5424,7 +5413,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -5695,7 +5683,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -5966,7 +5953,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -6237,7 +6223,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 12,
         "SetItemMask": 0,
         "StatLists": [
@@ -6290,7 +6275,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -6374,7 +6358,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -6645,7 +6628,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -6916,7 +6898,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -7187,7 +7168,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -7458,7 +7438,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -7730,7 +7709,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [
@@ -7783,7 +7761,6 @@
         "RunewordId": 0,
         "Armor": 0,
         "MaxDurability": 0,
-        "Durability": 0,
         "Quantity": 0,
         "SetItemMask": 0,
         "StatLists": [],
@@ -8014,7 +7991,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8063,7 +8039,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8112,7 +8087,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8161,7 +8135,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8324,7 +8297,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8373,7 +8345,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8422,7 +8393,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],
@@ -8471,7 +8441,6 @@
             "RunewordId": 0,
             "Armor": 0,
             "MaxDurability": 0,
-            "Durability": 0,
             "Quantity": 0,
             "SetItemMask": 0,
             "StatLists": [],

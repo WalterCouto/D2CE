@@ -4266,8 +4266,8 @@ namespace d2ce
             {"pab", {"Sacred Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 47}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"pac", {"Sacred Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {109, 0, 52}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"pad", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {124, 0, 55}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"paf", {"Zakarum Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 61}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"paa", {"Vortex Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {148, 0, 66}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
+            {"pae", {"Zakarum Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 61}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
+            {"paf", {"Vortex Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {148, 0, 66}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
             {"neb", {"Minion Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 44}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
             {"nec", {"Hellspawn Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {82, 0, 50}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
             {"ned", {"Overseer Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 49}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
@@ -9456,6 +9456,21 @@ namespace d2ce
 
         if (leftStat == rightStat)
         {
+            if (left.Id == right.Id)
+            {
+                if (left.Values.empty())
+                {
+                    return right.Values.empty();
+                }
+
+                if (right.Values.empty())
+                {
+                    return true;
+                }
+
+                return left.Values[0] > right.Values[0];
+            }
+
             return (left.Id < right.Id);
         }
 
@@ -10113,12 +10128,12 @@ namespace d2ce
                         break;
                     }
                     }
+                }
 
-                    if (notMatched)
-                    {
-                        itemIndexMap.insert(std::make_pair(attrib.Id, attribs.size()));
-                        attribs.push_back(attrib);
-                    }
+                if (notMatched)
+                {
+                    itemIndexMap.insert(std::make_pair(attrib.Id, attribs.size()));
+                    attribs.push_back(attrib);
                 }
             }
         }
@@ -12122,7 +12137,8 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
     durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, 8);
     if (durability.Max == 0)
     {
-        return false;
+        // Indestructible without the need for the magical attribute of indestructibility
+        return true;
     }
 
     durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + 8, 8);
@@ -12132,7 +12148,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
 bool d2ce::Item::setDurability(const ItemDurability& attrib)
 {
     ItemDurability oldAttrib;
-    if (attrib.Max == 0 || !getDurability(oldAttrib))
+    if (attrib.Max == 0 || !getDurability(oldAttrib) || oldAttrib.Max == 0)
     {
         return false;
     }
@@ -12160,7 +12176,7 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
 bool d2ce::Item::fixDurability()
 {
     ItemDurability attrib;
-    if (!getDurability(attrib))
+    if (!getDurability(attrib) || attrib.Max == 0)
     {
         return false;
     }
@@ -12433,6 +12449,12 @@ bool d2ce::Item::getDisplayedDurability(ItemDurability& durability, std::uint32_
         return false;
     }
 
+    if (durability.Max == 0)
+    {
+        // Indestructible without the need for the magical attribute of indestructibility
+        return true;
+    }
+
     // Calculate item bonus
     std::uint64_t eDur = 0;
     std::uint64_t dur = 0;
@@ -12452,6 +12474,12 @@ bool d2ce::Item::getDisplayedDurability(ItemDurability& durability, std::uint32_
             case 75:
                 eDur += getMagicalAttributeValue(attrib, charLevel, 0, stat);
                 break;
+
+            case 152:
+                // Indestructible
+                durability.Max = 0;
+                durability.Current = 0;
+                return true;
             }
         }
 
@@ -12742,19 +12770,6 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
     }
 
-    if (itemType.isStackable())
-    {
-        if (bFirst)
-        {
-            bFirst = false;
-        }
-        else
-        {
-            ss << "\n";
-        }
-        ss << "Quantity: " << std::dec << getQuantity();
-    }
-
     auto defenseRating = getDisplayedDefenseRating(charLevel);
     if (defenseRating > 0)
     {
@@ -12796,6 +12811,19 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
     {
         ItemDamage dam;
         getDisplayedDamage(dam, charLevel);
+        if (dam.Missile.Max != 0)
+        {
+            if (bFirst)
+            {
+                bFirst = false;
+            }
+            else
+            {
+                ss << "\n";
+            }
+
+            ss << "Throw Damage: " << std::dec << dam.Missile.Min << " to " << std::dec << dam.Missile.Max;
+        }
         if (dam.OneHanded.Max != 0)
         {
             if (bFirst)
@@ -12823,24 +12851,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
 
             ss << "Two-Hand Damage: " << std::dec << dam.TwoHanded.Min << " to " << dam.TwoHanded.Max;
         }
-
-        if (dam.Missile.Max != 0)
-        {
-            if (bFirst)
-            {
-                bFirst = false;
-            }
-            else
-            {
-                ss << "\n";
-            }
-
-            ss << "Throw Damage: " << std::dec << dam.Missile.Min << " to " << std::dec << dam.Missile.Max;
-        }
     }
 
     ItemDurability durability;
-    if (getDisplayedDurability(durability, charLevel))
+    if (getDisplayedDurability(durability, charLevel) && durability.Max > 0)
     {
         if (bFirst)
         {
@@ -12852,6 +12866,19 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         ss << "Durability: " << std::dec << durability.Current << " of " << std::dec << durability.Max;
+    }
+
+    if (itemType.isStackable())
+    {
+        if (bFirst)
+        {
+            bFirst = false;
+        }
+        else
+        {
+            ss << "\n";
+        }
+        ss << "Quantity: " << std::dec << getQuantity();
     }
 
     ItemRequirements req;
@@ -15292,7 +15319,10 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         ItemDurability durability;
         getDurability(durability);
         item["MaxDurability"] = durability.Max;
-        item["Durability"] = durability.Current;
+        if (durability.Max > 0)
+        {
+            item["Durability"] = durability.Current;
+        }
         item["Quantity"] = getQuantity();
         item["SetItemMask"] = getSetItemMask();
 
@@ -15487,7 +15517,10 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             if (getDurability(durability))
             {
                 item["max_durability"] = durability.Max;
-                item["current_durability"] = durability.Current;
+                if (durability.Max > 0)
+                {
+                    item["current_durability"] = durability.Current;
+                }
             }
 
             if (isSocketed())
@@ -15743,10 +15776,17 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
         }
         else if (stat->encode == 4)
         {
+            numParms = 3;
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
                 // time-based stats were never implemented, so it's a corrupt file
-                return false;
+                if (stat->saveBits != 22 || stat->saveParamBits != 0)
+                {
+                    // corrupt file
+                    return false;
+                }
+
+                numParms = 1;
             }
 
             if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
@@ -15754,8 +15794,6 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
                 // corrupt file
                 return false;
             }
-
-            numParms = 3;
         }
         else if (stat->saveParamBits > 0)
         {
@@ -16200,41 +16238,54 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
                 // time-based stats were never implemented, so it's a corrupt file
-                return false;
-            }
+                if (stat->saveBits != 22 || stat->saveParamBits != 0)
+                {
+                    // corrupt file
+                    return false;
+                }
 
-            if (valueIdx >= values.size())
-            {
-                return false;
-            }
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
 
-            value = values[valueIdx] + stat->saveAdd;
-            ++valueIdx;
-            if (!setBits64(current_bit_offset, 3, value))
-            {
-                return false;
+                value = values[valueIdx] + stat->saveAdd;
             }
+            else
+            {
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
 
-            if (valueIdx >= values.size())
-            {
-                return false;
-            }
-            value = values[valueIdx] + stat->saveAdd;
-            ++valueIdx;
-            if (!setBits64(current_bit_offset, 13, value))
-            {
-                return false;
-            }
+                value = values[valueIdx] + stat->saveAdd;
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, 3, value))
+                {
+                    return false;
+                }
 
-            if (valueIdx >= values.size())
-            {
-                return false;
-            }
-            value = values[valueIdx] + stat->saveAdd;
-            ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveBits, value))
-            {
-                return false;
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
+                value = values[valueIdx] + stat->saveAdd;
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, 13, value))
+                {
+                    return false;
+                }
+
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
+                value = values[valueIdx] + stat->saveAdd;
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, stat->saveBits, value))
+                {
+                    return false;
+                }
             }
         }
         else if (stat->saveParamBits > 0)
@@ -16391,17 +16442,25 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
                 // time-based stats were never implemented, so it's a corrupt file
-                return false;
+                if (stat->saveBits != 22 || stat->saveParamBits != 0)
+                {
+                    // corrupt file
+                    return false;
+                }
+
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
             }
+            else
+            {
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat->saveAdd);
+                current_bit_offset += 3;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat->saveAdd);
-            current_bit_offset += 3;
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat->saveAdd);
+                current_bit_offset += 13;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat->saveAdd);
-            current_bit_offset += 13;
-
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-            current_bit_offset += stat->saveBits;
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
+                current_bit_offset += stat->saveBits;
+            }
         }
         else if (stat->saveParamBits > 0)
         {

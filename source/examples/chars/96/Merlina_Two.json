@@ -8004,20 +8004,20 @@
         {
           "id": 107,
           "values": [
-            37,
-            1
-          ],
-          "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
             40,
             1
           ],
           "name": "item_singleskill",
           "description": "+1 To Frozen Armor (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            37,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 To Warmth (Sorceress Only)"
         },
         {
           "id": 9,
@@ -8083,7 +8083,7 @@
           "id": 107,
           "values": [
             40,
-            2
+            1
           ],
           "name": "item_singleskill",
           "description": "+{1} To {0}"
@@ -8093,20 +8093,20 @@
         {
           "id": 107,
           "values": [
+            40,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 To Frozen Armor (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
             37,
             1
           ],
           "name": "item_singleskill",
           "description": "+1 To Warmth (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
-            40,
-            2
-          ],
-          "name": "item_singleskill",
-          "description": "+2 To Frozen Armor (Sorceress Only)"
         },
         {
           "id": 9,
@@ -8532,11 +8532,11 @@
         {
           "id": 107,
           "values": [
-            41,
+            48,
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
+          "description": "+1 To Nova (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8550,11 +8550,11 @@
         {
           "id": 107,
           "values": [
-            48,
+            41,
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Nova (Sorceress Only)"
+          "description": "+1 To Inferno (Sorceress Only)"
         },
         {
           "id": 41,
@@ -8622,15 +8622,6 @@
           "id": 107,
           "values": [
             46,
-            4
-          ],
-          "name": "item_singleskill",
-          "description": "+{1} To {0}"
-        },
-        {
-          "id": 107,
-          "values": [
-            48,
             2
           ],
           "name": "item_singleskill",
@@ -8684,38 +8675,29 @@
         {
           "id": 107,
           "values": [
-            41,
-            1
-          ],
-          "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
-            46,
-            4
-          ],
-          "name": "item_singleskill",
-          "description": "+4 To Blaze (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
-            48,
-            2
-          ],
-          "name": "item_singleskill",
-          "description": "+2 To Nova (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
             48,
             1
           ],
           "name": "item_singleskill",
           "description": "+1 To Nova (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            46,
+            2
+          ],
+          "name": "item_singleskill",
+          "description": "+2 To Blaze (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            41,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 To Inferno (Sorceress Only)"
         },
         {
           "id": 41,
@@ -8995,11 +8977,11 @@
         {
           "id": 107,
           "values": [
-            37,
+            45,
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 To Ice Blast (Sorceress Only)"
         },
         {
           "id": 107,
@@ -9013,11 +8995,11 @@
         {
           "id": 107,
           "values": [
-            45,
+            37,
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Ice Blast (Sorceress Only)"
+          "description": "+1 To Warmth (Sorceress Only)"
         },
         {
           "id": 7,
@@ -9051,16 +9033,7 @@
           "id": 107,
           "values": [
             41,
-            2
-          ],
-          "name": "item_singleskill",
-          "description": "+{1} To {0}"
-        },
-        {
-          "id": 107,
-          "values": [
-            45,
-            2
+            1
           ],
           "name": "item_singleskill",
           "description": "+{1} To {0}"
@@ -9079,38 +9052,29 @@
         {
           "id": 107,
           "values": [
-            37,
-            1
-          ],
-          "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
-            41,
-            2
-          ],
-          "name": "item_singleskill",
-          "description": "+2 To Inferno (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
-            45,
-            2
-          ],
-          "name": "item_singleskill",
-          "description": "+2 To Ice Blast (Sorceress Only)"
-        },
-        {
-          "id": 107,
-          "values": [
             45,
             1
           ],
           "name": "item_singleskill",
           "description": "+1 To Ice Blast (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            41,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 To Inferno (Sorceress Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            37,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 To Warmth (Sorceress Only)"
         },
         {
           "id": 7,
@@ -9914,33 +9878,6 @@
       "id": 107,
       "values": [
         41,
-        3
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        46,
-        8
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        48,
-        5
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        48,
         2
       ],
       "name": "item_singleskill",
@@ -9949,8 +9886,8 @@
     {
       "id": 107,
       "values": [
-        48,
-        1
+        46,
+        2
       ],
       "name": "item_singleskill",
       "description": "+{1} To {0}"
@@ -9976,258 +9913,6 @@
       "id": 107,
       "values": [
         37,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        37,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        37,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        37,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        37,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        37,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        5
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        2
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
-        1
-      ],
-      "name": "item_singleskill",
-      "description": "+{1} To {0}"
-    },
-    {
-      "id": 107,
-      "values": [
-        45,
         1
       ],
       "name": "item_singleskill",

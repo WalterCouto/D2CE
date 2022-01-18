@@ -145,6 +145,20 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
 
+    d2ce::ItemDurability durability;
+    if (CurrItem->getDurability(durability) && durability.Max == 0)
+    {
+        // Indestructible without the need for the magical attribute of indestructibility
+        strText = "Indestructible";
+
+        CSize prevSizeText = sizeText;
+        pDC->SetTextColor(colors[BLUE]);
+
+        sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+        sizeText.cy += prevSizeText.cy;
+        sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+    }
+
     // magical props
     std::vector<d2ce::MagicalAttribute> magicalAttributes;
     if (CurrItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))

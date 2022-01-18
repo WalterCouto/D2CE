@@ -161,7 +161,7 @@ namespace
                 CRect slotRect;
                 slotRect.top = slotGridOffset.cy;
                 slotRect.bottom = slotRect.top + slotSize.cy;
-                for (size_t i = 0; i < 1; ++i)
+                for (size_t i = 0; i < numSlots - 1; ++i)
                 {
                     slotRect.left = LONG(slotGridSize.cx * i + slotGridOffset.cx);
                     slotRect.right = slotRect.left + slotSize.cx;

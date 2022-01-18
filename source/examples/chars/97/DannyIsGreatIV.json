@@ -23527,8 +23527,8 @@
           "values": [
             4,
             226,
-            50,
-            50
+            25,
+            25
           ],
           "name": "item_charged_skill",
           "description": "Level {0} {1} ({2}/{3} Charges)"
@@ -23700,11 +23700,11 @@
           "values": [
             4,
             226,
-            50,
-            50
+            25,
+            25
           ],
           "name": "item_charged_skill",
-          "description": "Level 4 Oak Sage (50/50 Charges)"
+          "description": "Level 4 Oak Sage (25/25 Charges)"
         }
       ]
     },
@@ -24864,8 +24864,8 @@
       "values": [
         4,
         226,
-        100,
-        100
+        25,
+        25
       ],
       "name": "item_charged_skill",
       "description": "Level {0} {1} ({2}/{3} Charges)"

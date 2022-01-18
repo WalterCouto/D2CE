@@ -72,6 +72,17 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.10 (Jan 18, 2022)**<br>
+- Updated: Fix bug with validation of Act V on Hell difficulty if game has been complete<br>
+- Updated: Fix bug with identifiying Zakarum and Vortex shields<br>
+- Updated: Fix bug with combining multiple instances of a single magical attribute<br>
+- Updated: Fix bug with determining if an item is indescructible when the max durability is zero.<br>
+- Updated: Fix logic to keep reading magical properties even if a non-supported time based property exists.<br>
+<br>
+
+- Added: Helper methods for character progression changes along with unit tests.<br>
+<br>
+
 **Version 2.09 (Jan 8, 2022)**<br>
 - Updated: Fix up logic around Act V being marked complete when the truth is the game does not mark that act complete when completing that difficulty.<br>
 - Updated: Fix up Quest dialog logic to properly handle cases when quests state are modified.<br>

@@ -4766,6 +4766,7 @@
         }
       ],
       "timestamp": 0,
+      "max_durability": 0,
       "total_nr_of_sockets": 4,
       "magic_attributes": [
         {
@@ -5824,6 +5825,7 @@
         }
       ],
       "timestamp": 0,
+      "max_durability": 0,
       "total_nr_of_sockets": 4,
       "magic_attributes": [
         {
