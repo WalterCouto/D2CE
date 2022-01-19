@@ -548,6 +548,18 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar97File("test.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen11)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("Fist_YoU.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen12)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("FukK_U.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             d2ce::Character character;
@@ -652,6 +664,22 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, true));
         }
 
+        TEST_METHOD(TestJsonExport14)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("Fist_YoU.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport15)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("FukK_U.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, false));
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -740,6 +768,18 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("DannyIsGreatII.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen16)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("Fist_YoU.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen17)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar96File("FukK_U.json", character, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
