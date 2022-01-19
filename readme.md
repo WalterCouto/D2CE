@@ -74,9 +74,9 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 ### Revision History
 **Version 2.10 (Jan 18, 2022)**<br>
 - Updated: Fix bug with validation of Act V on Hell difficulty if game has been complete<br>
-- Updated: Fix bug with identifiying Zakarum and Vortex shields<br>
+- Updated: Fix bug with identifying Zakarum and Vortex shields<br>
 - Updated: Fix bug with combining multiple instances of a single magical attribute<br>
-- Updated: Fix bug with determining if an item is indescructible when the max durability is zero.<br>
+- Updated: Fix bug with determining if an item is indestructible when the max durability is zero.<br>
 - Updated: Fix logic to keep reading magical properties even if a non-supported time based property exists.<br>
 <br>
 

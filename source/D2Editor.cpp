@@ -21,10 +21,10 @@ Revision History
 Version 2.10 (Jan 18, 2022)
    - Updated: Fix bug with validation of Act V on Hell difficulty if
               game has been complete
-   - Updated: Fix bug with identifiying Zakarum and Vortex shields
+   - Updated: Fix bug with identifying Zakarum and Vortex shields
    - Updated: Fix bug with combining multiple instances of a single
               magical attribute
-   - Updated: Fix bug with determining if an item is indescructible
+   - Updated: Fix bug with determining if an item is indestructible
               when the max durability is zero.
    - Updated: Fix logic to keep reading magical properties even if
               a non-supported time based property exists.
