@@ -19,7 +19,7 @@
 Revision History
 ================
 Version 2.11 (Feb 6, 2022)
-   - Updated: Fix bug Gem convertor in Resurrected when new huffman
+   - Updated: Fix bug in Gem convertor in Resurrected when new huffman
               code is of a different size then the original the result
               caused game to crash on startup.
 
