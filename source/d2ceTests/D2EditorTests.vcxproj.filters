@@ -46,6 +46,9 @@
     <Filter Include="Header Files\jsoncpp">
       <UniqueIdentifier>{b08d97ef-02a3-4b4f-b8a2-c4f1f8e82b3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\rapidcsv">
+      <UniqueIdentifier>{0998a2a1-21f9-494f-973c-eef65f8ecd3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -164,6 +167,9 @@
     <ClInclude Include="..\d2ce\thirdparty\jsoncpp\include\json\historic_map.h">
       <Filter>Header Files\jsoncpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\rapidcsv\include\rapidcsv\rapidcsv.h">
+      <Filter>Header Files\rapidcsv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\examples\chars\96\Merlina.d2s">
@@ -274,10 +280,22 @@
     <CustomBuild Include="..\examples\chars\96\FukK_U.json">
       <Filter>examples\char\96</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Walter.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Walter_gem.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl">
       <Filter>Source Files\jsoncpp</Filter>
+    </None>
+    <None Include="..\d2ce\thirdparty\jsoncpp\LICENSE">
+      <Filter>Header Files\jsoncpp</Filter>
+    </None>
+    <None Include="d2ce\thirdparty\rapidcsv\LICENSE">
+      <Filter>Header Files\rapidcsv</Filter>
     </None>
   </ItemGroup>
 </Project>

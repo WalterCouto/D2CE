@@ -228,6 +228,7 @@
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\version.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\writer.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_tool.h" />
+    <ClInclude Include="d2ce\thirdparty\rapidcsv\include\rapidcsv\rapidcsv.h" />
     <ClInclude Include="D2Editor.h" />
     <ClInclude Include="D2GemsForm.h" />
     <ClInclude Include="D2ItemsForm.h" />
@@ -295,7 +296,9 @@
     <ResourceCompile Include="D2Editor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="d2ce\thirdparty\jsoncpp\LICENSE" />
     <None Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl" />
+    <None Include="d2ce\thirdparty\rapidcsv\LICENSE" />
     <None Include="res\D2Editor.rc2" />
   </ItemGroup>
   <ItemGroup>

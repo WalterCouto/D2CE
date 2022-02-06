@@ -156,10 +156,44 @@ BOOL CD2WaypointsForm::OnInitDialog()
         }
     }
 
+    auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
     d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
-    GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::I) ? FALSE : TRUE);
-    GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
-    GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::III) ? FALSE : TRUE);
+
+    auto actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::I);
+    wp[UINT(IDC_CHECK_ACTII_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTII_2; nIDC <= IDC_CHECK_ACTII_9; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
+
+    actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::II);
+    wp[INT(IDC_CHECK_ACTIII_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTIII_2; nIDC <= IDC_CHECK_ACTIII_9; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
+
+    actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::III);
+    wp[INT(IDC_CHECK_ACTIV_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTIV_2; nIDC <= IDC_CHECK_ACTIV_3; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
 
     if (LastAct < d2ce::EnumAct::V)
     {
@@ -183,7 +217,17 @@ BOOL CD2WaypointsForm::OnInitDialog()
     }
     else
     {
-        GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::IV) ? FALSE : TRUE);
+        actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::IV);
+        wp[UINT(IDC_CHECK_ACTV_1) - IDC_CHECK_ACTI_1] = actComplete;
+        GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(FALSE);
+        for (UINT nIDC = IDC_CHECK_ACTV_2; nIDC <= IDC_CHECK_ACTV_9; ++nIDC)
+        {
+            GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+            if (!actComplete)
+            {
+                wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+            }
+        }
     }
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -210,20 +254,64 @@ void CD2WaypointsForm::DDX_CheckWaypoints(CDataExchange* pDX)
     auto oldItemIndex = ItemIndex;
     DDX_Radio(pDX, IDC_RADIO_DIFFICULTY_NORMAL, ItemIndex);
 
+    auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
     d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
-    GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::I) ? FALSE : TRUE);
-    GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::II) ? FALSE : TRUE);
-    GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::III) ? FALSE : TRUE);
+
+    auto actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::I);
+    wp[UINT(IDC_CHECK_ACTII_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTII_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTII_2; nIDC <= IDC_CHECK_ACTII_9; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
+
+    actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::II);
+    wp[UINT(IDC_CHECK_ACTIII_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTIII_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTIII_2; nIDC <= IDC_CHECK_ACTIII_9; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
+
+    actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::III);
+    wp[UINT(IDC_CHECK_ACTIV_1) - IDC_CHECK_ACTI_1] = actComplete;
+    GetDlgItem(IDC_CHECK_ACTIV_1)->EnableWindow(FALSE);
+    for (UINT nIDC = IDC_CHECK_ACTIV_2; nIDC <= IDC_CHECK_ACTIV_3; ++nIDC)
+    {
+        GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+        if (!actComplete)
+        {
+            wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+        }
+    }
+
     if (LastAct == d2ce::EnumAct::V)
     {
-        GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(Acts.getActCompleted(diff, d2ce::EnumAct::IV) ? FALSE : TRUE);
+        actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::IV);
+        wp[UINT(IDC_CHECK_ACTV_1) - IDC_CHECK_ACTI_1] = actComplete;
+        GetDlgItem(IDC_CHECK_ACTV_1)->EnableWindow(FALSE);
+        for (UINT nIDC = IDC_CHECK_ACTV_2; nIDC <= IDC_CHECK_ACTV_9; ++nIDC)
+        {
+            GetDlgItem(nIDC)->EnableWindow(actComplete ? TRUE : FALSE);
+            if (!actComplete)
+            {
+                wp[nIDC - IDC_CHECK_ACTI_1] = 0;
+            }
+        }
     }
 
     // load checkbox values after difficulty level
     if (!pDX->m_bSaveAndValidate || (oldItemIndex != ItemIndex))
     {
         CDataExchange dx(this, FALSE);
-        auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
         for (UINT i = 0, nIDC = IDC_CHECK_ACTI_1; i < TotalNumWaypoints; ++i, ++nIDC)
         {
             value = wp[i];
@@ -280,9 +368,35 @@ void CD2WaypointsForm::OnBnClickedCancel()
 void CD2WaypointsForm::OnBnClickedActivateAll()
 {
     auto& wp = (ItemIndex == 2) ? HellWP : (ItemIndex == 1 ? NightmareWP : NormalWP);
-    for (std::uint32_t i = 0; i < TotalNumWaypoints; ++i)
+
+    // Act I
+    for (std::uint32_t i = 0; i < d2ce::MAX_WAYPOINTS_PER_ACT; ++i)
     {
         wp[i] = true;
+    }
+
+
+    // Reset of Acts
+    d2ce::EnumDifficulty diff = static_cast<d2ce::EnumDifficulty>(ItemIndex);
+    auto actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::I);
+    for (std::uint32_t i = d2ce::MAX_WAYPOINTS_PER_ACT; i < TotalNumWaypoints; ++i)
+    {
+        switch (i)
+        {
+        case 2 * d2ce::MAX_WAYPOINTS_PER_ACT:
+            actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::II);
+            break;
+
+        case 3 * d2ce::MAX_WAYPOINTS_PER_ACT:
+            actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::III);
+            break;
+
+        case 3 * d2ce::MAX_WAYPOINTS_PER_ACT + d2ce::NUM_WAYPOINTS_ACT_IV:
+            actComplete = Acts.getActCompleted(diff, d2ce::EnumAct::IV);
+            break;
+        }
+
+        wp[i] = actComplete;
     }
 
     UpdateData(FALSE);

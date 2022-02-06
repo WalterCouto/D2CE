@@ -31,6 +31,7 @@ namespace d2ce
     constexpr std::uint16_t EXPANSION_START_SKILL_ID = 221;
     constexpr std::uint16_t EXPANSION_END_SKILL_ID = 280;
     constexpr std::uint32_t NUM_OF_SKILLS = 30;
+    constexpr std::uint32_t NUM_OF_PD2_SKILLS = 3;
     constexpr std::uint8_t MAX_SKILL_VALUE = 20;
 
     const std::map<size_t, std::string> GenericSkillNames = {

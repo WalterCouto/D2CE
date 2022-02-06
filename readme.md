@@ -72,6 +72,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.11 (Feb 6, 2022)**<br>
+- Updated: Fix bug Gem convertor in Resurrected when new huffman code is of a different size then the original, the result caused game to crash on startup.<br>
+<br>
+
 **Version 2.10 (Jan 18, 2022)**<br>
 - Updated: Fix bug with validation of Act V on Hell difficulty if game has been complete<br>
 - Updated: Fix bug with identifying Zakarum and Vortex shields<br>

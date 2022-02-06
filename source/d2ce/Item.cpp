@@ -35,7 +35,6 @@ namespace d2ce
     constexpr std::uint16_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
     constexpr std::uint16_t MAX_DURABILITY = 0xFF;      // max durability of an item (0 is Indestructible)
 
-    constexpr std::array<std::uint8_t, 2> ITEM_MARKER = { 0x4A, 0x4D };        // alternatively "JM"
     constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };   // alternatively "jf"
     constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "jk"
 
@@ -16612,7 +16611,7 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
         bitsToCopy -= bits;
         value = readtemp_bits(oldData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(old_current_bit_offset, bits, value);
+        updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
         bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
     }
@@ -16622,7 +16621,7 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(old_current_bit_offset, bits, 0);
+        updateBits(current_bit_offset, bits, 0);
     }
 
     if (quest_difficulty_offset != 0)

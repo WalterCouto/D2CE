@@ -646,9 +646,9 @@ BOOL CD2GemsForm::OnInitDialog()
     auto it = NumGemMap.end();
     if (pFromCombo != nullptr)
     {
-        std::uint64_t itemData = 0;
         std::array<std::uint8_t, 4> gemCode;
-        *reinterpret_cast<std::uint32_t*>(gemCode.data()) = std::uint32_t(itemData);
+        std::uint32_t& itemData = *reinterpret_cast<std::uint32_t*>(gemCode.data());
+        itemData = 0;
         if (ItemPtr == nullptr)
         {
             auto& gems = MainForm.getGPSs();
@@ -660,11 +660,11 @@ BOOL CD2GemsForm::OnInitDialog()
                     continue;
                 }
 
-                it = NumGemMap.find(itemData);
+                it = NumGemMap.find(std::uint64_t(itemData));
                 if (it == NumGemMap.end())
                 {
-                    GemIdxMap.emplace(GetGPSSortIndex(gemCode), itemData);
-                    NumGemMap.emplace(itemData, 1);
+                    GemIdxMap.emplace(GetGPSSortIndex(gemCode), std::uint64_t(itemData));
+                    NumGemMap.emplace(std::uint64_t(itemData), 1);
                 }
                 else
                 {
@@ -678,8 +678,8 @@ BOOL CD2GemsForm::OnInitDialog()
             gemCode.fill(0);
             if (ItemPtr->getItemCode(gemCode))
             {
-                GemIdxMap.emplace(GetGPSSortIndex(gemCode), itemData);
-                NumGemMap.emplace(itemData, 1);
+                GemIdxMap.emplace(GetGPSSortIndex(gemCode), std::uint64_t(itemData));
+                NumGemMap.emplace(std::uint64_t(itemData), 1);
             }
 
             switch (ItemPtr->getLocation())
@@ -692,8 +692,7 @@ BOOL CD2GemsForm::OnInitDialog()
 
         for (auto& gem : GemIdxMap)
         {
-            itemData = gem.second;
-            pFromCombo->SetItemData(pFromCombo->AddString(GetGPSNameFromCode(gemCode)), itemData);
+            pFromCombo->SetItemData(pFromCombo->AddString(GetGPSNameFromCode(gemCode)), gem.second);
         }
 
         pFromCombo->SetCurSel(0);
@@ -703,9 +702,9 @@ BOOL CD2GemsForm::OnInitDialog()
     CComboBox* pToCombo = (CComboBox*)GetDlgItem(IDC_TO_COMBO);
     if (pToCombo != nullptr)
     {
-        std::uint64_t itemData = 0;
         std::array< std::uint8_t, 4> gemCode;
-        *reinterpret_cast<std::uint32_t*>(gemCode.data()) = std::uint32_t(itemData);
+        std::uint32_t& itemData = *reinterpret_cast<std::uint32_t*>(gemCode.data());
+        itemData = 0;
         std::uint8_t& gem = gemCode[0];
         std::uint8_t& gemCondition = gemCode[1];
         std::uint8_t& gemColour = gemCode[2];
@@ -866,7 +865,7 @@ BOOL CD2GemsForm::OnInitDialog()
                 gemColour = '0' + uint8_t(runeIdx % 10);
             }
 
-            pToCombo->SetItemData(pToCombo->AddString(GetGPSNameFromCode(gemCode)), itemData);
+            pToCombo->SetItemData(pToCombo->AddString(GetGPSNameFromCode(gemCode)), std::uint64_t(itemData));
         }
 
         pToCombo->SetCurSel(0);

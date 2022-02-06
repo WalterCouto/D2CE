@@ -883,5 +883,34 @@ namespace D2EditorTests
             json = character.asJson();
             Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
         }
+
+        TEST_METHOD(TestJsonTestComplexChange03)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97TempFile("Walter.d2s", character, true));
+            d2ce::BasicStats bs;
+            character.fillBasicStats(bs);
+
+            std::string strNewText = "Walter_gem";
+            std::string expectedTempPath;
+            {
+                std::stringstream ss;
+                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
+                expectedTempPath = ss.str();
+                std::filesystem::remove(expectedTempPath);
+            }
+
+            bs.Name.fill(0);
+            strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+            character.updateBasicStats(bs);
+            Assert::IsTrue(character.save());
+            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+
+            // Upgrade Gems
+            Assert::AreEqual(character.upgradeGems(), size_t(2));
+            Assert::IsTrue(character.save());
+            auto json = character.asJson();
+            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+        }
 	};
 }

@@ -18,6 +18,11 @@
 
 Revision History
 ================
+Version 2.11 (Feb 6, 2022)
+   - Updated: Fix bug Gem convertor in Resurrected when new huffman
+              code is of a different size then the original the result
+              caused game to crash on startup.
+
 Version 2.10 (Jan 18, 2022)
    - Updated: Fix bug with validation of Act V on Hell difficulty if
               game has been complete

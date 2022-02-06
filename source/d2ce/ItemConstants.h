@@ -22,6 +22,8 @@
 
 namespace d2ce
 {
+    constexpr std::array<std::uint8_t, 2> ITEM_MARKER = { 0x4A, 0x4D };        // alternatively "JM"
+
     // item version
     enum class EnumItemVersion : std::uint32_t
     {

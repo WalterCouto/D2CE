@@ -34,8 +34,10 @@ namespace d2ce
     private:
         mutable std::vector<std::uint8_t> data;
         std::uint32_t stats_location = 0,
-            skills_location = 0;
+            skills_location = 0,
+            pd2_skills_location = 0; // PD2 Skills
         bool update_locations = true;
+        bool has_pd2_skills = false; // PD2 Skills
 
         EnumCharVersion Version = APP_CHAR_VERSION;  // Version for Character file
         EnumCharClass Class = EnumCharClass::Amazon; // Class for Character file
@@ -93,8 +95,8 @@ namespace d2ce
         bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool readStats_109(std::FILE* charfile);
         bool readSkills(std::FILE* charfile);
-        void applyJsonSkills(const Json::Value& skillsRoot, bool bSerializedFormat);
-        bool readSkills(const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
+        void applyJsonSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat);
+        bool readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
 
         size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
         size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
@@ -110,6 +112,9 @@ namespace d2ce
                                       // Vitality:  pos 577 (pre-1.09)
 
         std::array<std::uint8_t, NUM_OF_SKILLS> Skills = { 0 };
+
+        // PD2 Skills
+        std::array<std::uint8_t, NUM_OF_PD2_SKILLS> PD2Skills = { 0 };
 
     protected:
         bool readStats(EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
@@ -171,6 +176,10 @@ namespace d2ce
         bool areSkillsMaxed() const;
         void maxSkills();
         void clearSkillChoices();
+
+        // PD2 Skills
+        bool isPD2Format() const;
+        std::array<std::uint8_t, NUM_OF_PD2_SKILLS>& getPD2Skills();
     };
     //---------------------------------------------------------------------------
 }

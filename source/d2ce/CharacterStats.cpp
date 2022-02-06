@@ -20,6 +20,7 @@
 #include "pch.h"
 #include "CharacterStats.h"
 #include "SkillConstants.h"
+#include "ItemConstants.h"
 //---------------------------------------------------------------------------
 namespace d2ce
 {
@@ -718,6 +719,8 @@ bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
     {
         // find stats location
         skills_location = 0;
+        pd2_skills_location = 0;
+        has_pd2_skills = false;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
         if (cur_pos < (long)stats_location)
@@ -761,10 +764,73 @@ bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
     }
 
     std::fread(Skills.data(), Skills.size(), 1, charfile);
+
+    if (update_locations && (Version == EnumCharVersion::v110))
+    {
+        // Check for PD2 version
+        std::uint8_t value = 0;
+        auto cur_pos = std::ftell(charfile);
+        auto temp_pos = cur_pos;
+        for (size_t num = 0; (num < 3) && !feof(charfile); ++num)
+        {
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[0])
+            {
+                continue;
+            }
+
+            temp_pos = std::ftell(charfile);
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[1])
+            {
+                std::fseek(charfile, temp_pos, SEEK_SET);
+                continue;
+            }
+
+            // not a PD2 file
+            std::fseek(charfile, cur_pos, SEEK_SET);
+            return true;
+        }
+
+        if (feof(charfile))
+        {
+            // not a PD2 file
+            std::fseek(charfile, cur_pos, SEEK_SET);
+            return true;
+        }
+
+        std::fread(&value, sizeof(value), 1, charfile);
+        if (value != ITEM_MARKER[0])
+        {
+            std::fseek(charfile, temp_pos, SEEK_SET);
+            return true;
+        }
+
+        if (feof(charfile))
+        {
+            // not a PD2 file
+            std::fseek(charfile, cur_pos, SEEK_SET);
+            return true;
+        }
+
+        std::fread(&value, sizeof(value), 1, charfile);
+        if (value != ITEM_MARKER[1])
+        {
+            std::fseek(charfile, temp_pos, SEEK_SET);
+            return true;
+        }
+
+        // we detected a PD2 file with 3 extra bytes for skills
+        pd2_skills_location = cur_pos;
+        has_pd2_skills = true;
+        std::fseek(charfile, pd2_skills_location, SEEK_SET);
+        std::fread(PD2Skills.data(), PD2Skills.size(), 1, charfile);
+    }
+
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::applyJsonSkills(const Json::Value& skillsRoot, bool bSerializedFormat)
+void d2ce::CharacterStats::applyJsonSkills(const Json::Value& /*root*/, const Json::Value& skillsRoot, bool bSerializedFormat)
 {
     if (skillsRoot.isNull())
     {
@@ -801,15 +867,69 @@ void d2ce::CharacterStats::applyJsonSkills(const Json::Value& skillsRoot, bool b
             }
         }
     }
+
+    pd2_skills_location = 0;
+    has_pd2_skills = false;
+    /*TODO:
+    if (Version == EnumCharVersion::v110)
+    {
+        Json::Value pd2SkillsRoot = root[bSerializedFormat ? "ClassSkills" : "pd2_skills"];
+        if (!pd2SkillsRoot.isNull() && bSerializedFormat)
+        {
+            pd2SkillsRoot = pd2SkillsRoot["PD2Skills"];
+        }
+
+        if (!pd2SkillsRoot.isNull())
+        {
+            has_pd2_skills = true;
+            iter_end = pd2SkillsRoot.end();
+            for (auto iter = pd2SkillsRoot.begin(); iter != iter_end; ++iter)
+            {
+                if (iter->isNull())
+                {
+                    continue;
+                }
+
+                value = iter->operator[](bSerializedFormat ? "Id" : "id");
+                if (value.isNull())
+                {
+                    continue;
+                }
+
+                id = std::uint16_t(value.asInt64());
+                for (std::uint32_t skill = 0; skill < NUM_OF_PD2_SKILLS; ++skill)
+                {
+                    if (id == getSkillId(skill + NUM_OF_SKILLS))
+                    {
+                        value = iter->operator[](bSerializedFormat ? "Points" : "points");
+                        if (!value.isNull())
+                        {
+                            PD2Skills[skill] = std::uint8_t(value.asInt64());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    */
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readSkills(const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::CharacterStats::readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile)
 {
     std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
     skills_location = std::ftell(charfile);
-    applyJsonSkills(skillsRoot, bSerializedFormat);
+    applyJsonSkills(root, skillsRoot, bSerializedFormat);
     std::fwrite(Skills.data(), Skills.size(), 1, charfile);
     std::fflush(charfile);
+
+    if (isPD2Format())
+    {
+        pd2_skills_location = std::ftell(charfile);
+        std::fwrite(PD2Skills.data(), PD2Skills.size(), 1, charfile);
+        std::fflush(charfile);
+    }
+
     return true;
 }
 //---------------------------------------------------------------------------
@@ -953,6 +1073,14 @@ bool d2ce::CharacterStats::writeSkills(std::FILE* charfile)
     skills_location = std::ftell(charfile);
     std::fwrite(Skills.data(), Skills.size(), 1, charfile);
     std::fflush(charfile);
+
+    if (isPD2Format())
+    {
+        pd2_skills_location = std::ftell(charfile);
+        std::fwrite(PD2Skills.data(), PD2Skills.size(), 1, charfile);
+        std::fflush(charfile);
+    }
+
     return true;
 }
 //---------------------------------------------------------------------------
@@ -965,7 +1093,6 @@ bool d2ce::CharacterStats::readStats(EnumCharVersion version, EnumCharClass char
     {
         return false;
     }
-
 
     if (!readSkills(charfile) || skills_location == 0)
     {
@@ -1006,7 +1133,7 @@ bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFo
         }
     }
 
-    if (!readSkills(childRoot, bSerializedFormat, charfile) || skills_location == 0)
+    if (!readSkills(root, childRoot, bSerializedFormat, charfile) || skills_location == 0)
     {
         return false;
     }
@@ -1270,6 +1397,22 @@ void d2ce::CharacterStats::skillsAsJson(Json::Value& parent, bool bSerializedFor
             skills.append(skillElement);
         }
         classSkills["Skills"] = skills;
+
+        /*TODO:
+        if (isPD2Format())
+        {
+            Json::Value pd2Skills(Json::arrayValue);
+            for (std::uint32_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
+            {
+                Json::Value skillElement;
+                skillElement["Id"] = std::uint16_t(getSkillId(skill));
+                skillElement["Points"] = std::uint16_t(getSkillPoints(skill));
+                pd2Skills.append(skillElement);
+            }
+            classSkills["PD2Skills"] = pd2Skills;
+        }
+        */
+
         parent["ClassSkills"] = classSkills;
     }
     else
@@ -1284,6 +1427,22 @@ void d2ce::CharacterStats::skillsAsJson(Json::Value& parent, bool bSerializedFor
             skills.append(skillElement);
         }
         parent["skills"] = skills;
+
+        /*TODO:
+        if (isPD2Format())
+        {
+            Json::Value pd2Skills(Json::arrayValue);
+            for (std::uint32_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
+            {
+                Json::Value skillElement;
+                skillElement["id"] = std::uint16_t(getSkillId(skill));
+                skillElement["points"] = std::uint16_t(getSkillPoints(skill));
+                skillElement["name"] = getSkillName(skill);
+                pd2Skills.append(skillElement);
+            }
+            parent["pd2_skills"] = pd2Skills;
+        }
+        */
     }
 }
 //---------------------------------------------------------------------------
@@ -1330,6 +1489,16 @@ void d2ce::CharacterStats::clear()
 void d2ce::CharacterStats::clearSkillChoices()
 {
     Cs.SkillChoices = 0;
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharacterStats::isPD2Format() const
+{
+    return has_pd2_skills;
+}
+//---------------------------------------------------------------------------
+std::array<std::uint8_t, d2ce::NUM_OF_PD2_SKILLS>& d2ce::CharacterStats::getPD2Skills()
+{
+    return PD2Skills;
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::fillCharacterStats(CharStats& cs)
@@ -1615,6 +1784,17 @@ std::uint8_t d2ce::CharacterStats::getSkillPoints(std::uint32_t skill) const
 {
     if (skill >= NUM_OF_SKILLS)
     {
+        if (isPD2Format())
+        {
+            auto pd2Skill = skill - NUM_OF_SKILLS;
+            if (pd2Skill >= NUM_OF_PD2_SKILLS)
+            {
+                return 0;
+            }
+
+            return PD2Skills[pd2Skill];
+        }
+
         return 0;
     }
 
@@ -1639,6 +1819,14 @@ std::uint32_t d2ce::CharacterStats::getSkillPointsUsed() const
         skillUsed += Skills[i];
     }
 
+    if (isPD2Format())
+    {
+        for (std::uint32_t i = 0; i < NUM_OF_PD2_SKILLS; ++i)
+        {
+            skillUsed += PD2Skills[i];
+        }
+    }
+
     return skillUsed;
 }
 //---------------------------------------------------------------------------
@@ -1651,9 +1839,20 @@ bool d2ce::CharacterStats::areSkillsMaxed() const
 {
     for (std::uint32_t i = 0; i < NUM_OF_SKILLS; ++i)
     {
-        if (Skills[i] != MAX_SKILL_VALUE)
+        if (Skills[i] < MAX_SKILL_VALUE)
         {
             return false;
+        }
+    }
+
+    if (isPD2Format())
+    {
+        for (std::uint32_t i = 0; i < NUM_OF_PD2_SKILLS; ++i)
+        {
+            if (PD2Skills[i] < MAX_SKILL_VALUE)
+            {
+                return false;
+            }
         }
     }
 
@@ -1663,5 +1862,10 @@ bool d2ce::CharacterStats::areSkillsMaxed() const
 void d2ce::CharacterStats::maxSkills()
 {
     Skills.fill(MAX_SKILL_VALUE);
+
+    if (isPD2Format())
+    {
+        PD2Skills.fill(MAX_SKILL_VALUE);
+    }
 }
 //---------------------------------------------------------------------------
