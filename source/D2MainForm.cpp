@@ -2079,10 +2079,49 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (_stricmp(CharInfo.getName().data(), Bs.Name.data()) == 0)
+    {
+        auto iter = CtrlEditted.find(CharName.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
+    else
+    {
+        CtrlEditted.insert(CharName.GetDlgCtrlID());
+        statsChanged = true;
+    }
 
     if (getCharacterClass() != bs.Class)
     {
         UpdateClassDisplay();
+        if (bs.Class == Bs.Class)
+        {
+            auto iter = CtrlEditted.find(CharClass.GetDlgCtrlID());
+            if (iter != CtrlEditted.end())
+            {
+                CtrlEditted.erase(iter);
+            }
+        }
+        else
+        {
+            CtrlEditted.insert(CharClass.GetDlgCtrlID());
+            statsChanged = true;
+        }
+    }
+    else if (bs.Class == Bs.Class)
+    {
+        auto iter = CtrlEditted.find(CharClass.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
+    else
+    {
+        CtrlEditted.insert(CharClass.GetDlgCtrlID());
+        statsChanged = true;
     }
 
     if (CharStatusHardcore.GetCheck() != (bs.isHardcoreCharacter() ? 1 : 0))
@@ -2107,6 +2146,12 @@ void CD2MainForm::UpdateCharInfo()
         StatusChanged = true;
         statsChanged = true;
     }
+    else if ((bs.isHardcoreCharacter() != Bs.isHardcoreCharacter()) ||
+        (bs.isExpansionCharacter() != Bs.isExpansionCharacter()))
+    {
+        StatusChanged = true;
+        statsChanged = true;
+    }
 
     if (CharStatusResurrected.GetCheck() != (bs.isResurrectedCharacter() ? 1 : 0))
     {
@@ -2114,10 +2159,20 @@ void CD2MainForm::UpdateCharInfo()
         StatusChanged = true;
         statsChanged = true;
     }
+    else if (bs.isResurrectedCharacter() != Bs.isResurrectedCharacter())
+    {
+        StatusChanged = true;
+        statsChanged = true;
+    }
 
     if (CharStatusLadder.GetCheck() != (bs.isLadderCharacter() ? 1 : 0))
     {
         CharStatusResurrected.SetCheck(CharInfo.isResurrectedCharacter() ? 1 : 0);
+        StatusChanged = true;
+        statsChanged = true;
+    }
+    else if (bs.isLadderCharacter() != Bs.isLadderCharacter())
+    {
         StatusChanged = true;
         statsChanged = true;
     }
@@ -2139,6 +2194,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (bs.Title == Bs.Title)
+    {
+        auto iter = CtrlEditted.find(CharTitle.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
+    else
+    {
+        CtrlEditted.insert(CharTitle.GetDlgCtrlID());
+        statsChanged = true;
+    }
 
     if (getDifficultyLastPlayed() != bs.DifficultyLastPlayed)
     {
@@ -2157,27 +2225,33 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
-
-    if (getStartingAct() != bs.StartingAct)
+    else if (bs.DifficultyLastPlayed == Bs.DifficultyLastPlayed)
     {
-        UpdateStartingActDisplay();
-        if (bs.StartingAct == Bs.StartingAct)
+        auto iter = CtrlEditted.find(Difficulty.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
         {
-            auto iter = CtrlEditted.find(StartingAct.GetDlgCtrlID());
-            if (iter != CtrlEditted.end())
-            {
-                CtrlEditted.erase(iter);
-            }
-        }
-        else
-        {
-            CtrlEditted.insert(StartingAct.GetDlgCtrlID());
-            statsChanged = true;
+            CtrlEditted.erase(iter);
         }
     }
     else
     {
-        UpdateStartingActDisplay();
+        CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+        statsChanged = true;
+    }
+
+    UpdateStartingActDisplay();
+    if (bs.StartingAct == Bs.StartingAct)
+    {
+        auto iter = CtrlEditted.find(StartingAct.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
+    else
+    {
+        CtrlEditted.insert(StartingAct.GetDlgCtrlID());
+        statsChanged = true;
     }
 
     d2ce::CharStats cs;
@@ -2201,6 +2275,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.Level)
+    {
+        CtrlEditted.insert(CharLevel.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CharLevel.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&CharStrength);
     if (value != cs.Strength)
@@ -2218,6 +2305,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(CharStrength.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.Strength)
+    {
+        CtrlEditted.insert(CharStrength.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CharStrength.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2239,6 +2339,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.Energy)
+    {
+        CtrlEditted.insert(CharEnergy.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CharEnergy.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&CharDexterity);
     if (value != cs.Dexterity)
@@ -2256,6 +2369,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(CharDexterity.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.Dexterity)
+    {
+        CtrlEditted.insert(CharDexterity.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CharDexterity.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2277,6 +2403,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.Vitality)
+    {
+        CtrlEditted.insert(CharVitality.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CharVitality.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&Experience);
     if (value != cs.Experience)
@@ -2294,6 +2433,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(Experience.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.Experience)
+    {
+        CtrlEditted.insert(Experience.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(Experience.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2315,6 +2467,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.GoldInBelt)
+    {
+        CtrlEditted.insert(GoldInBelt.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(GoldInBelt.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&GoldInStash);
     if (value != cs.GoldInStash)
@@ -2332,6 +2497,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(GoldInStash.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.GoldInStash)
+    {
+        CtrlEditted.insert(GoldInStash.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(GoldInStash.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2353,6 +2531,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.MaxLife)
+    {
+        CtrlEditted.insert(MaxLife.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(MaxLife.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&CurLife);
     if (value != cs.CurLife)
@@ -2370,6 +2561,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(CurLife.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.CurLife)
+    {
+        CtrlEditted.insert(CurLife.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CurLife.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2391,6 +2595,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.MaxStamina)
+    {
+        CtrlEditted.insert(MaxStamina.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(MaxStamina.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&CurStamina);
     if (value != cs.CurStamina)
@@ -2408,6 +2625,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(CurStamina.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.CurStamina)
+    {
+        CtrlEditted.insert(CurStamina.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CurStamina.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
@@ -2429,6 +2659,19 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
+    else if (value != Cs.MaxMana)
+    {
+        CtrlEditted.insert(MaxMana.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(MaxMana.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
+        }
+    }
 
     value = ToInt(&CurMana);
     if (value != cs.CurMana)
@@ -2446,6 +2689,19 @@ void CD2MainForm::UpdateCharInfo()
         {
             CtrlEditted.insert(CurMana.GetDlgCtrlID());
             statsChanged = true;
+        }
+    }
+    else if (value != Cs.CurMana)
+    {
+        CtrlEditted.insert(CurMana.GetDlgCtrlID());
+        statsChanged = true;
+    }
+    else
+    {
+        auto iter = CtrlEditted.find(CurMana.GetDlgCtrlID());
+        if (iter != CtrlEditted.end())
+        {
+            CtrlEditted.erase(iter);
         }
     }
 
