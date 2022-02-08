@@ -3,14 +3,14 @@
     "identifier": "aa55aa55",
     "version": 97,
     "filesize": 2769,
-    "checksum": "1a842140",
+    "checksum": "1a842940",
     "name": "Walter_gem",
     "status": {
       "hardcore": false,
       "died": true,
       "expansion": true
     },
-    "progression": 5,
+    "progression": 6,
     "active_arms": 0,
     "class": "Paladin",
     "level": 45,

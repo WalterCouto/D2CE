@@ -175,13 +175,17 @@ namespace d2ce
         EnumCharVersion getVersion() const;
         const std::array<char, NAME_LENGTH>& getName() const;
         bitmask::bitmask<EnumCharStatus> getStatus() const;
-        bitmask::bitmask<EnumCharTitle> getTitle() const;
+        std::uint8_t getTitle() const;
+        EnumCharTitle getTitleEnum() const;
         EnumDifficulty getTitleDifficulty() const;
+        EnumAct getTitleAct() const;
+        void ensureTitleAct(EnumAct act);
         EnumCharClass getClass() const;
         std::string getClassName() const;
         EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
         EnumAct getLastAct() const;
+        std::uint8_t getNumActs() const;
         std::uint32_t getWeaponSet() const;
 
         bool isExpansionCharacter() const;

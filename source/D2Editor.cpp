@@ -18,8 +18,9 @@
 
 Revision History
 ================
-Version 2.12 (Feb 6, 2022)
+Version 2.12 (Feb 7, 2022)
    - Updated: Fix detection of change in Character Form.
+   - Updated: Fix logic for handling character title/progression
 
 Version 2.11 (Feb 6, 2022)
    - Updated: Fix bug in Gem convertor in Resurrected when new huffman

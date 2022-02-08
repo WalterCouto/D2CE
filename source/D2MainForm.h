@@ -334,7 +334,7 @@ public:
     d2ce::Character& getCharacterInfo();
     d2ce::EnumCharVersion getCharacterVersion() const;
     bitmask::bitmask<d2ce::EnumCharStatus> getCharacterStatus() const;
-    bitmask::bitmask<d2ce::EnumCharTitle> getCharacterTitle() const;
+    std::uint8_t getCharacterTitle() const;
     d2ce::EnumDifficulty getCharacterTitleDifficulty() const;
     d2ce::EnumCharClass getCharacterClass() const;
     d2ce::EnumDifficulty getDifficultyLastPlayed() const;

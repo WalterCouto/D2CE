@@ -52,17 +52,11 @@ namespace d2ce
     enum class EnumCharStatus : std::uint8_t { NoDeaths, Hardcore = 0x04, Died = 0x08, Expansion = 0x20, Ladder = 0x40, Dead = 0x0C };
     BITMASK_DEFINE_VALUE_MASK(EnumCharStatus, 0xFF);
 
-    // character title
-    // Non-Expansion has upper 2 bits set (00, 01, 10 or 11)
-    // Expansion has both the upper and lower 2 bits set to the same 2 bit value (00, 01, 10 or 11)
-    // Thus we can use the upper bits as the main enumeration of title and the lower two bits are set if we are an Expansion character
+    // character title an Expansion character
     enum class EnumCharTitle : std::uint8_t
     {
-        None,
-        Slayer = 0x01, Champion = 0x02, MPatriarch = 0x03, // Expansion Titles
-        SirDame = 0x04, LordLady = 0x08, BaronBaroness = 0x0C
+        None = 0, SirDame, LordLady, BaronBaroness
     };
-    BITMASK_DEFINE_VALUE_MASK(EnumCharTitle, 0x0F);
 
     // error codes
     enum class CharacterErrc

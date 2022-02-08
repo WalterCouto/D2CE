@@ -2177,9 +2177,14 @@ void CD2MainForm::UpdateCharInfo()
         statsChanged = true;
     }
 
-    if (getCharacterTitle() != bs.Title)
+    if (getCharacterTitleDifficulty() != bs.getTitleDifficulty())
     {
-        CharTitle.SetCurSel((bs.Title.bits() & 0x0C) >> 2);
+        if (bs.getTitleDifficulty() == Bs.getTitleDifficulty())
+        {
+            bs.Title = Bs.Title;
+        }
+
+        CharTitle.SetCurSel(bs.Title / bs.getNumActs());
         if (bs.Title == Bs.Title)
         {
             auto iter = CtrlEditted.find(CharTitle.GetDlgCtrlID());
@@ -3434,7 +3439,7 @@ void CD2MainForm::UpdateTitleDisplay()
     int curSel = CharTitle.GetCurSel();
     if (curSel < 0)
     {
-        curSel = (CharInfo.getTitle().bits() & 0x0C) >> 2;
+        curSel = CharInfo.getTitle() / Bs.getNumActs();
     }
 
     CharTitle.ResetContent();
@@ -4493,55 +4498,39 @@ bitmask::bitmask<d2ce::EnumCharStatus> CD2MainForm::getCharacterStatus() const
     return status;
 }
 //---------------------------------------------------------------------------
-bitmask::bitmask<d2ce::EnumCharTitle> CD2MainForm::getCharacterTitle() const
+std::uint8_t CD2MainForm::getCharacterTitle() const
 {
-    bitmask::bitmask<d2ce::EnumCharTitle> title = d2ce::EnumCharTitle::None;
+    std::uint8_t value = 0;
+    d2ce::EnumCharTitle title = d2ce::EnumCharTitle::None;
     switch (CharTitle.GetCurSel())
     {
     case 1:
         title = d2ce::EnumCharTitle::SirDame;
-        if (isExpansionCharacter())
-        {
-            title |= d2ce::EnumCharTitle::Slayer;
-        }
+        value = Bs.getNumActs();
         break;
 
     case 2:
         title = d2ce::EnumCharTitle::LordLady;
-        if (isExpansionCharacter())
-        {
-            title |= d2ce::EnumCharTitle::Champion;
-        }
+        value = Bs.getNumActs() * 2;
         break;
 
     case 3:
         title = d2ce::EnumCharTitle::BaronBaroness;
-        if (isExpansionCharacter())
-        {
-            title |= d2ce::EnumCharTitle::MPatriarch;
-        }
+        value = Bs.getNumActs() * 3;
         break;
     }
 
-    return title;
+    if (title == Bs.getTitleEnum())
+    {
+        return Bs.Title;
+    }
+
+    return value;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumDifficulty CD2MainForm::getCharacterTitleDifficulty() const
 {
-    std::uint8_t titlePos = (getCharacterTitle().bits() & 0x0C) >> 2;
-    auto progression = d2ce::EnumDifficulty::Hell;
-    switch (titlePos)
-    {
-    case 0:
-        progression = d2ce::EnumDifficulty::Normal;
-        break;
-
-    case 1:
-        progression = d2ce::EnumDifficulty::Nightmare;
-        break;
-    }
-
-    return progression;
+    return static_cast<d2ce::EnumDifficulty>(getCharacterTitle() / Bs.getNumActs());
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharClass CD2MainForm::getCharacterClass() const

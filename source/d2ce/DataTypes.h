@@ -33,7 +33,7 @@ namespace d2ce
         std::array<char, d2ce::NAME_LENGTH> Name = { 0 };                   // pos 20 (1.09+, otherwise pos 8),
                                                                             // name includes terminating NULL
         bitmask::bitmask<EnumCharStatus> Status = EnumCharStatus::NoDeaths; // pos 36 (1.09+, otherwise, pos 24), determines character status
-        bitmask::bitmask<EnumCharTitle> Title = EnumCharTitle::None;        // pos 37 (1.09+, otherwise pos 25), character's title
+        std::uint8_t Title = 0;                                             // pos 37 (1.09+, otherwise pos 25), character's title
         EnumCharClass Class = EnumCharClass::Amazon;                        // pos 40 (1.09+, otherwise pos 34),
         EnumDifficulty DifficultyLastPlayed = EnumDifficulty::Normal;
         EnumAct StartingAct = EnumAct::I;
@@ -140,27 +140,53 @@ namespace d2ce
             }
         }
 
-        EnumDifficulty getTitleDifficulty() const
+        std::uint8_t getNumActs() const
         {
-            std::uint8_t titlePos = (Title.bits() & 0x0C) >> 2;
-            auto progression = EnumDifficulty::Hell;
-            switch (titlePos)
-            {
-            case 0:
-                progression = EnumDifficulty::Normal;
-                break;
-
-            case 1:
-                progression = EnumDifficulty::Nightmare;
-                break;
-            }
-
-            return progression;
+            return std::uint8_t(isExpansionCharacter() ? 5 : 4);
         }
 
         bool isGameComplete() const
         {
-            return (((Title.bits() & 0x0C) >> 2) == 3) ? true : false;
+            return (getNumActs() * 3) <= Title ? true : false;
+        }
+
+        EnumDifficulty getTitleDifficulty() const
+        {
+            if (isGameComplete())
+            {
+                return EnumDifficulty::Hell;
+            }
+
+            return static_cast<EnumDifficulty>(Title / getNumActs());
+        }
+
+        EnumCharTitle getTitleEnum() const
+        {
+            if (isGameComplete())
+            {
+                return EnumCharTitle::BaronBaroness;
+            }
+
+            switch (getTitleDifficulty())
+            {
+            case EnumDifficulty::Hell:
+                return EnumCharTitle::LordLady;
+
+            case EnumDifficulty::Nightmare:
+                return EnumCharTitle::SirDame;
+            }
+
+            return EnumCharTitle::None;
+        }
+
+        EnumAct getTitleAct() const
+        {
+            if (isGameComplete())
+            {
+                return EnumAct::V;
+            }
+
+            return static_cast<EnumAct>(Title % getNumActs());
         }
 
         bool isDifficultyComplete(d2ce::EnumDifficulty diff) const

@@ -2443,7 +2443,6 @@ void d2ce::ActsInfo::validateActs()
     {
         validateAct(EnumDifficulty::Hell, lastAct);
         return;
-
     }
 
     // All acts for the next difficulty should be cleared
@@ -2476,6 +2475,7 @@ void d2ce::ActsInfo::validateActs()
     }
 
     validateAct(progression, startingAct);
+    CharInfo.ensureTitleAct(startingAct);
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getActCompletedStrict(EnumDifficulty diff, EnumAct act) const

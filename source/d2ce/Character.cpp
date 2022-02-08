@@ -351,7 +351,7 @@ void d2ce::Character::initialize()
     Bs.Name.fill(0);
 
     Bs.Status = EnumCharStatus::NoDeaths;
-    Bs.Title = EnumCharTitle::None;
+    Bs.Title = 0;
     Bs.Class = EnumCharClass::Amazon;
     DisplayLevel = 1;
     LastPlayed = 0;
@@ -802,9 +802,8 @@ void d2ce::Character::readBasicInfo()
         }
     }
 
-    value = 0;
-    std::fread(&value, sizeof(value), 1, m_charfile);
-    Bs.Title = static_cast<EnumCharTitle>(value);
+    std::fread(&Bs.Title, sizeof(Bs.Title), 1, m_charfile);
+    Bs.Title = std::min(Bs.Title, std::uint8_t(Bs.getNumActs() * 3));
 
     if (Bs.Version < EnumCharVersion::v109)
     {
@@ -1134,14 +1133,13 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     std::fwrite(&value, sizeof(value), 1, m_charfile);
 
     // progression can be derived later when looking at the which Difficulty level is complete
-    value = 0;
+    Bs.Title = 0;
     jsonValue = m_bJsonSerializedFormat ? root["Progression"] : header["progression"];
     if (!jsonValue.isNull())
     {
-        value = std::uint8_t(jsonValue.asInt());
+        Bs.Title = std::min(std::uint8_t(jsonValue.asInt()), std::uint8_t(Bs.getNumActs() * 3));
     }
-    std::fwrite(&value, sizeof(value), 1, m_charfile);
-    Bs.Title = static_cast<EnumCharTitle>(value);
+    std::fwrite(&Bs.Title, sizeof(Bs.Title), 1, m_charfile);
 
     if (Bs.Version < EnumCharVersion::v109)
     {
@@ -1623,8 +1621,7 @@ void d2ce::Character::writeBasicInfo()
     std::uint8_t value = Bs.Status.bits();
     std::fwrite(&value, sizeof(value), 1, m_charfile);
 
-    value = Bs.Title.bits();
-    std::fwrite(&value, sizeof(value), 1, m_charfile);
+    std::fwrite(&Bs.Title, sizeof(Bs.Title), 1, m_charfile);
 
     if (Bs.Version < EnumCharVersion::v109)
     {
@@ -1759,7 +1756,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
         parent["Status"] = status;
 
-        parent["Progression"] = std::uint16_t(getTitle().bits());
+        parent["Progression"] = std::uint16_t(getTitle());
         parent["ClassId"] = std::uint16_t(getClass());
         parent["Level"] = std::uint16_t(DisplayLevel);
         if (Bs.Version >= EnumCharVersion::v109)
@@ -1888,7 +1885,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
         header["status"] = status;
 
-        header["progression"] = std::uint16_t(getTitle().bits());
+        header["progression"] = std::uint16_t(getTitle());
         header["active_arms"] = WeaponSet;
         header["class"] = getClassName();
         header["level"] = std::uint16_t(DisplayLevel);
@@ -1975,11 +1972,7 @@ void d2ce::Character::validateActs()
         {
             if (progression < EnumDifficulty::Hell)
             {
-                Bs.Title = d2ce::EnumCharTitle::LordLady;
-                if (isExpansionCharacter())
-                {
-                    Bs.Title |= EnumCharTitle::Champion;
-                }
+                Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(Bs.StartingAct));
                 progression = EnumDifficulty::Hell;
             }
         }
@@ -1987,11 +1980,7 @@ void d2ce::Character::validateActs()
         {
             if (progression < EnumDifficulty::Nightmare)
             {
-                Bs.Title = d2ce::EnumCharTitle::SirDame;
-                if (isExpansionCharacter())
-                {
-                    Bs.Title |= EnumCharTitle::Slayer;
-                }
+                Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(Bs.StartingAct));
                 progression = EnumDifficulty::Nightmare;
             }
         }
@@ -2004,20 +1993,15 @@ void d2ce::Character::validateActs()
         switch (progression)
         {
         case EnumDifficulty::Nightmare:
-            Bs.Title = EnumCharTitle::SirDame;
-            if (isExpansionCharacter())
-            {
-                Bs.Title |= EnumCharTitle::Slayer;
-            }
+            Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(Bs.StartingAct));
             break;
 
         case EnumDifficulty::Hell:
-            Bs.Title = d2ce::EnumCharTitle::LordLady;
-            if (isExpansionCharacter())
-            {
-                Bs.Title |= EnumCharTitle::Champion;
-            }
+            Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(Bs.StartingAct));
             break;
+
+        default:
+            Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(Bs.StartingAct));
         }
     }
 
@@ -2038,6 +2022,26 @@ void d2ce::Character::validateActs()
             }
 
             Bs.StartingAct = preAct;
+        }
+
+        auto actProgression = getTitleAct();
+        if (Bs.StartingAct > actProgression)
+        {
+            // Not able to allow this state
+            actProgression = Bs.StartingAct;
+            switch (progression)
+            {
+            case EnumDifficulty::Nightmare:
+                Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            case EnumDifficulty::Hell:
+                Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            default:
+                Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            }
         }
     }
 
@@ -2252,35 +2256,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     Bs.Name[15] = 0; // must be zero
 
     // Check Title
-    std::uint8_t titlePos = (Bs.Title.bits() & 0x0C) >> 2;
-    Bs.Title = EnumCharTitle::None;
-    switch (titlePos)
-    {
-    case 1:
-        Bs.Title = EnumCharTitle::SirDame;
-        if (isExpansionCharacter())
-        {
-            Bs.Title |= EnumCharTitle::Slayer;
-        }
-        break;
-
-    case 2:
-        Bs.Title = d2ce::EnumCharTitle::LordLady;
-        if (isExpansionCharacter())
-        {
-            Bs.Title |= EnumCharTitle::Champion;
-        }
-        break;
-
-    case 3:
-        Bs.Title = EnumCharTitle::BaronBaroness;
-        if (isExpansionCharacter())
-        {
-            Bs.Title |= EnumCharTitle::MPatriarch;
-        }
-        break;
-    }
-
+    Bs.Title = std::min(Bs.Title, std::uint8_t(Bs.getNumActs() * 3));
     auto progression = getTitleDifficulty();
     if (Bs.DifficultyLastPlayed > progression)
     {
@@ -2304,6 +2280,26 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
             }
 
             Bs.StartingAct = preAct;
+        }
+
+        auto actProgression = getTitleAct();
+        if (Bs.StartingAct > actProgression)
+        {
+            // Not able to allow this state
+            actProgression = Bs.StartingAct;
+            switch (progression)
+            {
+            case EnumDifficulty::Nightmare:
+                Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            case EnumDifficulty::Hell:
+                Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            default:
+                Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            }
         }
     }
 
@@ -2374,9 +2370,14 @@ bitmask::bitmask<d2ce::EnumCharStatus> d2ce::Character::getStatus() const
     return Bs.Status;
 }
 //---------------------------------------------------------------------------
-bitmask::bitmask<d2ce::EnumCharTitle> d2ce::Character::getTitle() const
+std::uint8_t d2ce::Character::getTitle() const
 {
     return Bs.Title;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumCharTitle d2ce::Character::getTitleEnum() const
+{
+    return Bs.getTitleEnum();
 }
 //---------------------------------------------------------------------------
 /*
@@ -2385,6 +2386,60 @@ bitmask::bitmask<d2ce::EnumCharTitle> d2ce::Character::getTitle() const
 d2ce::EnumDifficulty d2ce::Character::getTitleDifficulty() const
 {
     return Bs.getTitleDifficulty();
+}
+//---------------------------------------------------------------------------
+/*
+   Returns a value indicating the act currently completing
+*/
+d2ce::EnumAct  d2ce::Character::getTitleAct() const
+{
+    return Bs.getTitleAct();
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::ensureTitleAct(d2ce::EnumAct act)
+{
+    if (Bs.isGameComplete())
+    {
+        return;
+    }
+
+    // make sure act makes sense
+    auto progression = getTitleDifficulty();
+    while (act > EnumAct::I)
+    {
+        if (!Acts.getActYetToStart(progression, act))
+        {
+            break;
+        }
+
+        auto preAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(act) - 1);
+        if (Acts.getActCompleted(progression, preAct))
+        {
+            break;
+        }
+
+        act = preAct;
+    }
+
+    auto actProgression = getTitleAct();
+    if (act > actProgression)
+    {
+        // Not able to allow this state
+        actProgression = act;
+        switch (progression)
+        {
+        case EnumDifficulty::Nightmare:
+            Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            break;
+
+        case EnumDifficulty::Hell:
+            Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            break;
+
+        default:
+            Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+        }
+    }
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharClass d2ce::Character::getClass() const
@@ -2422,6 +2477,11 @@ d2ce::EnumAct d2ce::Character::getStartingAct() const
 d2ce::EnumAct d2ce::Character::getLastAct() const
 {
     return Bs.getLastAct();
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Character::getNumActs() const
+{
+    return Bs.getNumActs();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getWeaponSet() const
@@ -2516,31 +2576,19 @@ bool d2ce::Character::isDifficultyComplete(d2ce::EnumDifficulty diff) const
 //---------------------------------------------------------------------------
 void d2ce::Character::setDifficultyComplete(d2ce::EnumDifficulty diff)
 {
-    bitmask::bitmask<EnumCharTitle> title = EnumCharTitle::None;
+    std::uint8_t title = 0;
     switch (diff)
     {
     case EnumDifficulty::Normal:
-        title = EnumCharTitle::SirDame;
-        if (isExpansionCharacter())
-        {
-            title |= EnumCharTitle::Slayer;
-        }
+        title = Bs.getNumActs();
         break;
 
     case EnumDifficulty::Nightmare:
-        title = d2ce::EnumCharTitle::LordLady;
-        if (isExpansionCharacter())
-        {
-            title |= EnumCharTitle::Champion;
-        }
+        title = std::uint8_t(Bs.getNumActs() * 2);
         break;
 
     case EnumDifficulty::Hell:
-        title = EnumCharTitle::BaronBaroness;
-        if (isExpansionCharacter())
-        {
-            title |= EnumCharTitle::MPatriarch;
-        }
+        title = std::uint8_t(Bs.getNumActs() * 3);
         break;
     }
 
@@ -2573,6 +2621,26 @@ void d2ce::Character::setDifficultyComplete(d2ce::EnumDifficulty diff)
 
             Bs.StartingAct = preAct;
         }
+
+        auto actProgression = getTitleAct();
+        if (Bs.StartingAct > actProgression)
+        {
+            // Not able to allow this state
+            actProgression = Bs.StartingAct;
+            switch (Bs.getTitleDifficulty())
+            {
+            case EnumDifficulty::Nightmare:
+                Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            case EnumDifficulty::Hell:
+                Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            default:
+                Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            }
+        }
     }
 
     Acts.validateActs();
@@ -2586,7 +2654,7 @@ void d2ce::Character::setNoDifficultyComplete()
         return;
     }
 
-    Bs.Title = EnumCharTitle::None;
+    Bs.Title = 0;
 
     // fix up other indicators of progression
     if (Bs.DifficultyLastPlayed != diff)
@@ -2609,6 +2677,26 @@ void d2ce::Character::setNoDifficultyComplete()
             }
 
             Bs.StartingAct = preAct;
+        }
+
+        auto actProgression = getTitleAct();
+        if (Bs.StartingAct > actProgression)
+        {
+            // Not able to allow this state
+            actProgression = Bs.StartingAct;
+            switch (Bs.getTitleDifficulty())
+            {
+            case EnumDifficulty::Nightmare:
+                Bs.Title = std::uint8_t(Bs.getNumActs() + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            case EnumDifficulty::Hell:
+                Bs.Title = std::uint8_t(Bs.getNumActs() * 2 + static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+                break;
+
+            default:
+                Bs.Title = std::uint8_t(static_cast<std::underlying_type_t<EnumCharVersion>>(actProgression));
+            }
         }
     }
 

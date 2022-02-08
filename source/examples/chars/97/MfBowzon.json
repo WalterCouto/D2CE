@@ -10,7 +10,7 @@
       "died": true,
       "expansion": true
     },
-    "progression": 8,
+    "progression": 9,
     "active_arms": 0,
     "class": "Amazon",
     "level": 56,
@@ -609,26 +609,17 @@
           "done_recently": false
         },
         "rite_of_passage": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
-          "is_received": true,
-          "unk3": true,
-          "unk5": true,
-          "unk8": true,
-          "unk9": true,
-          "closed": true,
+          "is_received": false,
+          "closed": false,
           "done_recently": false
         },
         "eve_of_destruction": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
-          "is_received": true,
-          "unk3": true,
-          "unk4": true,
-          "consumed_scroll": true,
-          "unk9": true,
-          "unk10": true,
-          "closed": true,
+          "is_received": false,
+          "closed": false,
           "done_recently": false
         },
         "completed": false
@@ -636,7 +627,7 @@
     },
     "quests_hell": {
       "act_i": {
-        "introduced": true,
+        "introduced": false,
         "den_of_evil": {
           "is_completed": false,
           "is_requirement_completed": false,
@@ -673,18 +664,16 @@
           "done_recently": false
         },
         "sisters_to_the_slaughter": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
-          "is_received": true,
-          "unk3": true,
-          "unk4": true,
-          "closed": true,
+          "is_received": false,
+          "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       },
       "act_ii": {
-        "introduced": true,
+        "introduced": false,
         "radaments_lair": {
           "is_completed": false,
           "is_requirement_completed": false,
@@ -693,49 +682,41 @@
           "done_recently": false
         },
         "the_horadric_staff": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
           "is_received": false,
-          "unk3": true,
-          "unk4": true,
-          "unk5": true,
-          "unk10": true,
-          "unk11": true,
-          "closed": true,
+          "closed": false,
           "done_recently": false
         },
         "tainted_sun": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
-          "is_received": true,
-          "unk3": true,
-          "closed": true,
+          "is_received": false,
+          "closed": false,
           "done_recently": false
         },
         "arcane_sanctuary": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
           "is_received": false,
-          "consumed_scroll": true,
-          "unk8": true,
-          "closed": true,
+          "closed": false,
           "done_recently": false
         },
         "the_summoner": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
-          "is_received": true,
-          "closed": true,
+          "is_received": false,
+          "closed": false,
           "done_recently": false
         },
         "the_seven_tombs": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
           "is_received": false,
-          "closed": true,
+          "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       },
       "act_iii": {
         "introduced": false,
@@ -971,7 +952,7 @@
           "catacombs_lvl_2": false
         },
         "act_ii": {
-          "lut_gholein": true,
+          "lut_gholein": false,
           "sewers_lvl_2": false,
           "dry_hills": false,
           "halls_of_the_dead_lvl_2": false,
@@ -982,7 +963,7 @@
           "canyon_of_the_magi": false
         },
         "act_iii": {
-          "kurast_docks": true,
+          "kurast_docks": false,
           "spider_forest": false,
           "great_marsh": false,
           "flayer_jungle": false,
