@@ -123,7 +123,7 @@ namespace d2ce
         std::uint32_t getHeaderLocation();
 
         void resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned);
-        void updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS> &updated_skills, std::uint16_t skillPointsEarned);
+        void updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS> &updated_skills, std::uint16_t skillPointsEarned, std::uint32_t skillChoices);
         void resetSkills(std::uint16_t skillPointsEarned);
 
         void updateClass(EnumCharClass charClass);

@@ -370,7 +370,7 @@ public:
 
     // Skills
     std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& getSkills();
-    void updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills);
+    void updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills, std::uint32_t skillChoices);
 
     std::uint32_t getSkillPointsUsed() const;
     std::uint32_t getSkillChoices() const;

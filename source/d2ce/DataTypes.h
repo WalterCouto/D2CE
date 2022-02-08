@@ -145,9 +145,19 @@ namespace d2ce
             return std::uint8_t(isExpansionCharacter() ? 5 : 4);
         }
 
+        std::uint8_t getGameCompleteTitle() const
+        {
+            return std::uint8_t(getNumActs() * 3);
+        }
+
+        std::uint8_t getStartingActTitle() const
+        {
+            return std::uint8_t(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(DifficultyLastPlayed) * getNumActs() + static_cast<std::underlying_type_t<d2ce::EnumAct>>(StartingAct));
+        }
+
         bool isGameComplete() const
         {
-            return (getNumActs() * 3) <= Title ? true : false;
+            return (getGameCompleteTitle() <= Title) ? true : false;
         }
 
         EnumDifficulty getTitleDifficulty() const
@@ -183,7 +193,7 @@ namespace d2ce
         {
             if (isGameComplete())
             {
-                return EnumAct::V;
+                return static_cast<EnumAct>(getNumActs() - 1);
             }
 
             return static_cast<EnumAct>(Title % getNumActs());
@@ -191,24 +201,8 @@ namespace d2ce
 
         bool isDifficultyComplete(d2ce::EnumDifficulty diff) const
         {
-            auto progression = getTitleDifficulty();
-            if (diff > progression)
-            {
-                return false;
-            }
-
-            if (progression > diff)
-            {
-                return true;
-            }
-
-            // If we have progressed to Hell, we need to check if we completed the game
-            if (diff != EnumDifficulty::Hell)
-            {
-                return false;
-            }
-
-            return isGameComplete();
+            auto title = std::uint8_t(getNumActs() * (static_cast<std::underlying_type_t<EnumDifficulty>>(diff) + 1));
+            return title <= Title ? true : false;
         }
 
         EnumAct getLastAct() const

@@ -214,7 +214,7 @@ void d2ce::CharacterStats::updateSkillChoices(std::uint16_t skillPointsEarned)
     else
     {
         std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
-        std::uint32_t earnedPoints = (curLevel - 1) + std::min((curLevel - 1) + skillPointsEarned, MAX_SKILL_CHOICES_EARNED);
+        std::uint32_t earnedPoints = std::min((curLevel - 1) + skillPointsEarned, MAX_SKILL_CHOICES_EARNED);
         std::uint32_t curPoints = getSkillPointsUsed();
         if ((curPoints + Cs.SkillChoices) < earnedPoints)
         {
@@ -1204,18 +1204,20 @@ void d2ce::CharacterStats::resetStats(std::uint16_t lifePointsEarned, std::uint1
     resetSkills(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS>& updated_skills, std::uint16_t skillPointsEarned)
+void d2ce::CharacterStats::updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS>& updated_skills, std::uint16_t skillPointsEarned, std::uint32_t skillChoices)
 {
     for (size_t i = 0; i < NUM_OF_SKILLS; ++i)
     {
         Skills[i] = std::min(updated_skills[i], MAX_SKILL_VALUE);
     }
+    Cs.SkillChoices = skillChoices;
     updateSkillChoices(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::resetSkills(std::uint16_t skillPointsEarned)
 {
     Skills.fill(0);
+    Cs.SkillChoices = 0;
     updateSkillChoices(skillPointsEarned);
 }
 //---------------------------------------------------------------------------

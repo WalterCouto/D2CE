@@ -268,7 +268,7 @@ void CD2SkillTreeForm::SaveSkills()
 {
     if (SkillsChanged)
     {
-        MainForm.updateSkills(Skills);
+        MainForm.updateSkills(Skills, SkillChoices);
     }
 }
 //---------------------------------------------------------------------------

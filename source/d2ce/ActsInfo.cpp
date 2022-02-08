@@ -2457,12 +2457,18 @@ void d2ce::ActsInfo::validateActs()
         } while (nextProgression < EnumDifficulty::Hell);
     }
 
+    auto progressionAct = CharInfo.getTitleAct();
+    if ((progressionAct > d2ce::EnumAct::I) && !getActCompleted(progression, progressionAct) && getActYetToStart(progression, progressionAct))
+    {
+        setActIntroducedData(progression, progressionAct, 1);
+    }
+
     auto startingAct = lastAct;
-    while ((startingAct > d2ce::EnumAct::I) && !getActCompleted(progression, startingAct) && getActYetToStart(progression, startingAct))
+    while ((startingAct > progressionAct) && !getActCompleted(progression, startingAct) && getActYetToStart(progression, startingAct))
     {
         startingAct = static_cast<EnumAct>(static_cast<std::underlying_type_t<EnumAct>>(startingAct) - 1);
     }
-
+     
     if ((startingAct == d2ce::EnumAct::I) && (progression > d2ce::EnumDifficulty::Normal) && !getActCompleted(progression, startingAct) && getActYetToStart(progression, startingAct))
     {
         progression = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(progression) - 1);

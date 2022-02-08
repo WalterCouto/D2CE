@@ -1656,7 +1656,6 @@ void CD2MainForm::OnOptionsCheckChar()
                     CharInfo.resetStats();
                     CharInfo.fillCharacterStats(cs);
                     Cs.StatsLeft = cs.StatsLeft;
-                    Cs.SkillChoices = cs.SkillChoices;
                     StatsLeftChanged = true;
                     SkillChoicesChanged = true;
                     statChanged = true;
@@ -1686,7 +1685,6 @@ void CD2MainForm::OnOptionsCheckChar()
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
             cs.SkillChoices = 0;
-            Cs.SkillChoices = 0;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             SkillChoicesChanged = true;
@@ -1704,7 +1702,6 @@ void CD2MainForm::OnOptionsCheckChar()
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
             cs.SkillChoices = std::min(earnedPoints - CharInfo.getSkillPointsUsed(), d2ce::MAX_SKILL_CHOICES);
-            Cs.SkillChoices = cs.SkillChoices;
             SkillChoicesChanged = true;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
@@ -1724,9 +1721,9 @@ void CD2MainForm::OnOptionsCheckChar()
                     _T("Would you like to reset your skill points inorder to reallocate them?"),
                     MB_ICONQUESTION | MB_YESNO) == IDYES)
                 {
-                    CharInfo.resetStats();
-                    CharInfo.fillCharacterStats(cs);
-                    Cs.StatsLeft = cs.StatsLeft;
+                    CharInfo.resetSkills();
+                    cs.SkillChoices = earnedPoints;
+                    CharInfo.updateCharacterStats(cs);
                     Cs.SkillChoices = cs.SkillChoices;
                     StatsLeftChanged = true;
                     SkillChoicesChanged = true;
@@ -1952,11 +1949,24 @@ void CD2MainForm::OnCbnSelchangeCharTitleCmb()
         bs.Title = getCharacterTitle();
         CtrlEditted.insert(CharTitle.GetDlgCtrlID());
 
-        auto progression = bs.getTitleDifficulty();
-        if (bs.DifficultyLastPlayed > progression)
+        auto title = bs.getStartingActTitle();
+        if (title > bs.Title)
         {
-            bs.DifficultyLastPlayed = progression;
-            CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+            auto progression = bs.getTitleDifficulty();
+            auto progressionAct = bs.getTitleAct();
+            if (bs.DifficultyLastPlayed > progression)
+            {
+                bs.DifficultyLastPlayed = progression;
+                CtrlEditted.insert(Difficulty.GetDlgCtrlID());
+
+                bs.StartingAct = progressionAct;
+                CtrlEditted.insert(StartingAct.GetDlgCtrlID());
+            }
+            else if (bs.DifficultyLastPlayed == progression)
+            {
+                bs.StartingAct = progressionAct;
+                CtrlEditted.insert(StartingAct.GetDlgCtrlID());
+            }
         }
 
         CharInfo.updateBasicStats(bs);
@@ -1969,10 +1979,18 @@ void CD2MainForm::OnCbnSelchangeStartingActCmb()
 {
     d2ce::BasicStats bs;
     CharInfo.fillBasicStats(bs);
-    if (bs.StartingAct != getStartingAct())
+    if (getStartingAct() != bs.StartingAct)
     {
         bs.StartingAct = getStartingAct();
         CtrlEditted.insert(StartingAct.GetDlgCtrlID());
+
+        auto title = bs.getStartingActTitle();
+        if (title > bs.Title)
+        {
+            bs.Title = title;
+            CtrlEditted.insert(CharTitle.GetDlgCtrlID());
+        }
+
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -1983,25 +2001,19 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 {
     d2ce::BasicStats bs;
     CharInfo.fillBasicStats(bs);
-
-    bool updateCharInfo = false;
-    auto progression = bs.getTitleDifficulty();
-    if (bs.DifficultyLastPlayed > progression)
+    if (getDifficultyLastPlayed() != bs.DifficultyLastPlayed)
     {
-        updateCharInfo = true;
-        bs.DifficultyLastPlayed = progression;
-    }
-
-    if (bs.DifficultyLastPlayed != getDifficultyLastPlayed())
-    {
-        updateCharInfo = true;
         bs.DifficultyLastPlayed = getDifficultyLastPlayed();
         CtrlEditted.insert(Difficulty.GetDlgCtrlID());
-        CharInfo.updateBasicStats(bs);
-    }
 
-    if(updateCharInfo)
-    {
+        auto title = bs.getStartingActTitle();
+        if (title > bs.Title)
+        {
+            bs.Title = title;
+            CtrlEditted.insert(CharTitle.GetDlgCtrlID());
+        }
+
+        CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
     }
@@ -4500,32 +4512,13 @@ bitmask::bitmask<d2ce::EnumCharStatus> CD2MainForm::getCharacterStatus() const
 //---------------------------------------------------------------------------
 std::uint8_t CD2MainForm::getCharacterTitle() const
 {
-    std::uint8_t value = 0;
-    d2ce::EnumCharTitle title = d2ce::EnumCharTitle::None;
-    switch (CharTitle.GetCurSel())
-    {
-    case 1:
-        title = d2ce::EnumCharTitle::SirDame;
-        value = Bs.getNumActs();
-        break;
-
-    case 2:
-        title = d2ce::EnumCharTitle::LordLady;
-        value = Bs.getNumActs() * 2;
-        break;
-
-    case 3:
-        title = d2ce::EnumCharTitle::BaronBaroness;
-        value = Bs.getNumActs() * 3;
-        break;
-    }
-
+    d2ce::EnumCharTitle title = static_cast<d2ce::EnumCharTitle>(CharTitle.GetCurSel());
     if (title == Bs.getTitleEnum())
     {
         return Bs.Title;
     }
 
-    return value;
+    return std::uint8_t(CharInfo.getNumActs() * CharTitle.GetCurSel());
 }
 //---------------------------------------------------------------------------
 d2ce::EnumDifficulty CD2MainForm::getCharacterTitleDifficulty() const
@@ -4634,9 +4627,9 @@ std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& CD2MainForm::getSkills()
     return CharInfo.getSkills();
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills)
+void CD2MainForm::updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills, std::uint32_t skillChoices)
 {
-    CharInfo.updateSkills(updated_skills);
+    CharInfo.updateSkills(updated_skills, skillChoices);
     SkillChoicesChanged = true;
     UpdateCharInfo();
     StatsChanged();

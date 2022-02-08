@@ -30,6 +30,7 @@
 namespace d2ce
 {
     constexpr std::uint16_t MAX_TOME_QUANTITY = 20;     // max # of scrolls in tome
+    constexpr std::uint16_t MAX_KEY_QUANTITY_100 = 6;   // max # of keys stacked (verion 1.06 and lower)
     constexpr std::uint16_t MAX_KEY_QUANTITY = 12;      // max # of keys stacked
     constexpr std::uint16_t MAX_GLD_QUANTITY = 4095;    // max gld amount
     constexpr std::uint16_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
@@ -12071,8 +12072,9 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
     case 'k':
         if (gemcondition == 'e' && gemcolour == 'y')
         {
-            // only 12 keys can be sacked at need at least 1
-            quantity = std::max(std::uint16_t(1), std::min(quantity, MAX_KEY_QUANTITY));
+            // only 12 keys can be stacked ajd need at least 1
+            auto maxKeys = FileVersion < EnumCharVersion::v107 ? MAX_KEY_QUANTITY_100 : MAX_KEY_QUANTITY;
+            quantity = std::max(std::uint16_t(1), std::min(quantity, maxKeys));
         }
         break;
     case 'g':
