@@ -22,7 +22,7 @@ Version 2.12 (Feb 14, 2022)
    - Updated: Fix detection of change in Character Form.
    - Updated: Fix logic for handling character title/progression
    - Updated: Fix logic handling skill choices left that could
-              cause duplicatation of skill points
+              cause duplication of skill points
 
    - Added: Ability to add sockets to all items or in the Item
             Form. Number of sockets that can be added it limited

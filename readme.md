@@ -76,7 +76,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 **Version 2.12 (Feb 14, 2022)**
 - Updated: Fix detection of change in Character Form.<br>
 - Updated: Fix logic for handling character title/progression<br>
-- Updated: Fix logic handling skill choices left that could cause duplicatation of skill points<br>
+- Updated: Fix logic handling skill choices left that could cause duplication of skill points<br>
 <br>
 
 - Added: Ability to add sockets to all items or in the Item form. Number of sockets that can be added it limited by the type of item and the item level.<br>
