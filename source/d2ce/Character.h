@@ -274,6 +274,7 @@ namespace d2ce
         size_t getNumberOfWeapons() const;
         size_t fixAllItems();
         size_t maxDurabilityAllItems();
+        size_t maxSocketCountAllItems();
 
         size_t getNumberOfStackables() const;
         size_t fillAllStackables();

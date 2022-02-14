@@ -40,6 +40,18 @@ namespace d2ce
     constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "jk"
 
     constexpr std::uint32_t MIN_START_STATS_POS = 641;
+    constexpr std::uint32_t IS_SOCKETED_FLAG_OFFSET = 11;
+
+    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS = 4;
+    constexpr std::uint16_t REAL_DATA_NUM_BITS = 96;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS = 11;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108 = 10; // 1.09 or older
+    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS = 8;
+    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS = 8;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS = 9;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108 = 8; // 1.09 or older
+    constexpr std::uint16_t STACKABLE_NUM_BITS = 9;
+    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS = 12;
 
 #define readtemp_bits(data,start,size) \
     ((*((std::uint64_t*) &(data)[(start) / 8]) >> ((start) & 7))& (((std::uint64_t)1 << (size)) - 1))
@@ -2727,6 +2739,13 @@ namespace d2ce
         std::uint16_t inv_transform = 0;
         std::vector<std::string> categories;
 
+        // Maximumn Sockets for item given its levels:
+        // If vector is empty, then the item can't have sockets
+        // Index 0 is for levels 1 to 25 (if no other elements in then vector then value applies to all item levels)
+        // Index 1 is for levels 26 to 40 (if no other elements in the vector, then value applies to levels 26+)
+        // Index 2 is for levels 41+
+        std::vector<std::uint8_t> max_sockets;
+
         bool isStackable() const
         {
             return stackable;
@@ -2881,6 +2900,22 @@ namespace d2ce
             }
 
             return EnumItemType::Other;
+        }
+
+        bool canHaveSockets() const
+        {
+            return max_sockets.empty() ? false : true;
+        }
+
+        std::uint8_t getMaxSockets(std::uint8_t level) const
+        {
+            if (max_sockets.empty())
+            {
+                return 0;
+            }
+
+            size_t index = level > 40 ? 3 : (level > 25 ? 1 : 0);
+            return index >= max_sockets.size() ? max_sockets.back() : max_sockets.at(index);
         }
 
         std::uint8_t getBaseType() const
@@ -4219,60 +4254,60 @@ namespace d2ce
     const ItemType& getShieldItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> shieldBases = {
-            {"buc", {"Buckler", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"sml", {"Small Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {22, 0}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"lrg", {"Large Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {34, 0}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"kit", {"Kite Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"tow", {"Tower Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {75, 0}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"gts", {"Gothic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"bsh", {"Bone Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"spk", {"Spiked Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xuc", {"Defender", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 22}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xml", {"Round Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {53, 0, 25}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xrg", {"Scutum", {{ 0, 0 }, false, false, { 0, 0 }}, {71, 0, 25}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xit", {"Dragon Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 25}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xow", {"Pavise", {{ 0, 0 }, false, false, { 0, 0 }}, {133, 0, 25}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xts", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xsh", {"Grim Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"xpk", {"Barbed Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uuc", {"Heater", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 43}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uml", {"Luna", {{ 0, 0 }, false, false, { 0, 0 }}, {100, 0, 45}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"urg", {"Hyperion", {{ 0, 0 }, false, false, { 0, 0 }}, {127, 0, 48}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uit", {"Monarch", {{ 0, 0 }, false, false, { 0, 0 }}, {156, 0, 54}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uow", {"Aegis", {{ 0, 0 }, false, false, { 0, 0 }}, {219, 0, 59}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"uts", {"Ward", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 63}, {2, 5}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"ush", {"Troll Nest", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 57}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"upk", {"Blade Barrier", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 51}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}}},
-            {"pa1", {"Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa2", {"Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {26, 0, 6}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa3", {"Heraldic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {40, 0, 12}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa4", {"Aerin Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 15}, {2, 4}, false,"invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa5", {"Crown Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 18}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"ne1", {"Preserved Head", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0, 3}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne2", {"Zombie Head", {{ 0, 0 }, false, false, { 0, 0 }}, {14, 0, 6}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne3", {"Unraveller Head", {{ 0, 0 }, false, false, { 0, 0 }}, {18, 0, 12}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne4", {"Gargoyle Head", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 15}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne5", {"Demon Head", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0, 18}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"pa6", {"Akaran Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0, 26}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa7", {"Akaran Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {59, 0, 30}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa8", {"Protector Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {69, 0, 34}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pa9", {"Guilded Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {89, 0, 38}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"paa", {"Royal Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {114, 0, 41}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"ne6", {"Mummified Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 24}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne7", {"Fetish Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0, 29}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne8", {"Sexton Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0, 33}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ne9", {"Cantor Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 36}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"nea", {"Heirophant Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 40}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"pab", {"Sacred Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 47}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pac", {"Sacred Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {109, 0, 52}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pad", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {124, 0, 55}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"pae", {"Zakarum Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 61}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"paf", {"Vortex Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {148, 0, 66}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}}},
-            {"neb", {"Minion Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 44}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"nec", {"Hellspawn Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {82, 0, 50}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"ned", {"Overseer Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 49}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"nee", {"Succubae Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 60}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
-            {"nef", {"Bloodlord Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 65}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}}},
+            {"buc", {"Buckler", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {1}}},
+            {"sml", {"Small Shield", {{0, 0}, false, false, {0, 0}}, {22, 0}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"lrg", {"Large Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {34, 0}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"kit", {"Kite Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"tow", {"Tower Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {75, 0}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"gts", {"Gothic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"bsh", {"Bone Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"spk", {"Spiked Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"xuc", {"Defender", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 22}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {1}}},
+            {"xml", {"Round Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {53, 0, 25}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"xrg", {"Scutum", {{ 0, 0 }, false, false, { 0, 0 }}, {71, 0, 25}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"xit", {"Dragon Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 25}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"xow", {"Pavise", {{ 0, 0 }, false, false, { 0, 0 }}, {133, 0, 25}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"xts", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 4}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"xsh", {"Grim Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"xpk", {"Barbed Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"uuc", {"Heater", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 43}, {2, 2}, false, "invbuc", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"uml", {"Luna", {{ 0, 0 }, false, false, { 0, 0 }}, {100, 0, 45}, {2, 2}, false, "invsml", 5, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {2}}},
+            {"urg", {"Hyperion", {{ 0, 0 }, false, false, { 0, 0 }}, {127, 0, 48}, {2, 3}, false, "invlrg", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"uit", {"Monarch", {{ 0, 0 }, false, false, { 0, 0 }}, {156, 0, 54}, {2, 3}, false, "invkit", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3, 3, 4}}},
+            {"uow", {"Aegis", {{ 0, 0 }, false, false, { 0, 0 }}, {219, 0, 59}, {2, 3}, false, "invtow", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3, 3, 4}}},
+            {"uts", {"Ward", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 63}, {2, 5}, false, "invgts", 2, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3, 3, 4}}},
+            {"ush", {"Troll Nest", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 57}, {2, 3}, false, "invbsh", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"upk", {"Blade Barrier", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 51}, {2, 3}, false, "invspk", 8, {"Shield", "Any Shield", "Any Armor", "Second Hand"}, {3}}},
+            {"pa1", {"Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa2", {"Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {26, 0, 6}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa3", {"Heraldic Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {40, 0, 12}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa4", {"Aerin Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 15}, {2, 4}, false,"invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa5", {"Crown Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 18}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"ne1", {"Preserved Head", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0, 3}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne2", {"Zombie Head", {{ 0, 0 }, false, false, { 0, 0 }}, {14, 0, 6}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne3", {"Unraveller Head", {{ 0, 0 }, false, false, { 0, 0 }}, {18, 0, 12}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne4", {"Gargoyle Head", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 15}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne5", {"Demon Head", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0, 18}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"pa6", {"Akaran Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0, 26}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4, 4}}},
+            {"pa7", {"Akaran Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {59, 0, 30}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa8", {"Protector Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {69, 0, 34}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pa9", {"Guilded Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {89, 0, 38}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"paa", {"Royal Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {114, 0, 41}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"ne6", {"Mummified Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 24}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne7", {"Fetish Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0, 29}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne8", {"Sexton Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {47, 0, 33}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ne9", {"Cantor Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 36}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"nea", {"Heirophant Trophy", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 40}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"pab", {"Sacred Targe", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 47}, {2, 2}, false, "invpa1", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pac", {"Sacred Rondache", {{ 0, 0 }, false, false, { 0, 0 }}, {109, 0, 52}, {2, 2}, false, "invpa2", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"pad", {"Ancient Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {124, 0, 55}, {2, 4}, false, "invpa3", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3}}},
+            {"pae", {"Zakarum Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 61}, {2, 4}, false, "invpa4", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"paf", {"Vortex Shield", {{ 0, 0 }, false, false, { 0, 0 }}, {148, 0, 66}, {2, 2}, false, "invpa5", 0, {"Auric Shields", "Any Shield", "Any Armor", "Second Hand", "Paladin Item", "Class Specific"}, {3, 4}}},
+            {"neb", {"Minion Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 44}, {2, 2}, false, "invne1", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"nec", {"Hellspawn Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {82, 0, 50}, {2, 2}, false, "invne2", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"ned", {"Overseer Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {91, 0, 49}, {2, 2}, false, "invne3", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"nee", {"Succubae Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 60}, {2, 2}, false, "invne4", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
+            {"nef", {"Bloodlord Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 65}, {2, 2}, false, "invne5", 8,{"Voodoo Heads", "Any Shield", "Any Armor", "Second Hand", "Necromancer Item", "Class Specific"}, {2}}},
         };
 
         std::string testStr("   ");
@@ -4291,28 +4326,28 @@ namespace d2ce
     const ItemType& getArmorItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> armorBases = {
-            {"cap", {"Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}}},
-            {"skp", {"Skull Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {15, 0}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}}},
-            {"hlm", {"Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {26, 0}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}}},
-            {"fhl", {"Full Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}}},
-            {"ghm", {"Great Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {63, 0}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}}},
-            {"crn", {"Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}}},
-            {"msk", {"Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {23, 0}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}}},
-            {"qui", {"Quilted Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}}},
-            {"lea", {"Leather Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {15, 0}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}}},
-            {"hla", {"Hard Leather Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}}},
-            {"stu", {"Studded Leather", {{ 0, 0 }, false, false, { 0, 0 }}, {27, 0}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}}},
-            {"rng", {"Ring Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {36, 0}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}}},
-            {"scl", {"Scale Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}}},
-            {"chn", {"Chain Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {48, 0}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}}},
-            {"brs", {"Breast Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}}},
-            {"spl", {"Splint Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {51, 0}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}}},
-            {"plt", {"Plate Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}}},
-            {"fld", {"Field Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}}},
-            {"gth", {"Gothic Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {70, 0}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}}},
-            {"ful", {"Full Plate Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {80, 0}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}}},
-            {"aar", {"Ancient Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {100, 0}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}}},
-            {"ltp", {"Light Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}}},
+            {"cap", {"Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}, {2}}},
+            {"skp", {"Skull Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {15, 0}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}, {2}}},
+            {"hlm", {"Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {26, 0}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}, {2}}},
+            {"fhl", {"Full Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}, {2}}},
+            {"ghm", {"Great Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {63, 0}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"crn", {"Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"msk", {"Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {23, 0}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"qui", {"Quilted Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {12, 0}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}, {2}}},
+            {"lea", {"Leather Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {15, 0}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}, {2}}},
+            {"hla", {"Hard Leather Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}, {2}}},
+            {"stu", {"Studded Leather", {{ 0, 0 }, false, false, { 0, 0 }}, {27, 0}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}, {2}}},
+            {"rng", {"Ring Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {36, 0}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}, {3}}},
+            {"scl", {"Scale Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}, {2}}},
+            {"chn", {"Chain Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {48, 0}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}, {2}}},
+            {"brs", {"Breast Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}, {3}}},
+            {"spl", {"Splint Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {51, 0}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}, {2}}},
+            {"plt", {"Plate Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}, {2}}},
+            {"fld", {"Field Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}, {2}}},
+            {"gth", {"Gothic Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {70, 0}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ful", {"Full Plate Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {80, 0}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"aar", {"Ancient Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {100, 0}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ltp", {"Light Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {41, 0}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}, {3}}},
             {"lgl", {"Leather Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invlgl", 8, {"Gloves", "Any Armor"}}},
             {"vgl", {"Heavy Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invvgl", 8, {"Gloves", "Any Armor"}}},
             {"mgl", {"Chain Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 2}, false, "invmgl", 8, {"Gloves", "Any Armor"}}},
@@ -4328,29 +4363,29 @@ namespace d2ce
             {"mbl", {"Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
             {"tbl", {"Heavy Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {45, 0}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
             {"hbl", {"Plated Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {60, 0}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
-            {"bhm", {"Bone Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
-            {"xap", {"War Hat", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 22}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}}},
-            {"xkp", {"Sallet", {{ 0, 0 }, false, false, { 0, 0 }}, {43, 0, 25}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}}},
-            {"xlm", {"Casque", {{ 0, 0 }, false, false, { 0, 0 }}, {59, 0, 25}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}}},
-            {"xhl", {"Basinet", {{ 0, 0 }, false, false, { 0, 0 }}, {82, 0, 25}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}}},
-            {"xhm", {"Winged Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {115, 0, 25}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}}},
-            {"xrn", {"Grand Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}}},
-            {"xsk", {"Death Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 25}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}}},
-            {"xui", {"Ghost Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 22}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}}},
-            {"xea", {"Serpentskin Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {43, 0, 24}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}}},
-            {"xla", {"Demonhide Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 25}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}}},
-            {"xtu", {"Trellised Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {61, 0, 25}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}}},
-            {"xng", {"Linked Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {74, 0, 25}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}}},
-            {"xcl", {"Tigulated Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 25}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}}},
-            {"xhn", {"Mesh Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {92, 0, 25}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}}},
-            {"xrs", {"Cuirass", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}}},
-            {"xpl", {"Russet Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {97, 0, 25}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}}},
-            {"xlt", {"Templar Coat", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 25}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}}},
-            {"xld", {"Sharktooth Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}}},
-            {"xth", {"Embossed Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {125, 0, 25}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}}},
-            {"xul", {"Chaos Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {140, 0, 25}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}}},
-            {"xar", {"Ornate Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {170, 0, 25}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}}},
-            {"xtp", {"Mage Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 25}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}}},
+            {"bhm", {"Bone Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}, {2}}},
+            {"xap", {"War Hat", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 22}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}, {2}}},
+            {"xkp", {"Sallet", {{ 0, 0 }, false, false, { 0, 0 }}, {43, 0, 25}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}, {2}}},
+            {"xlm", {"Casque", {{ 0, 0 }, false, false, { 0, 0 }}, {59, 0, 25}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}, {2}}},
+            {"xhl", {"Basinet", {{ 0, 0 }, false, false, { 0, 0 }}, {82, 0, 25}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}, {2}}},
+            {"xhm", {"Winged Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {115, 0, 25}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"xrn", {"Grand Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"xsk", {"Death Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 25}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"xui", {"Ghost Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {38, 0, 22}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}, {2}}},
+            {"xea", {"Serpentskin Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {43, 0, 24}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}, {2}}},
+            {"xla", {"Demonhide Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 25}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}, {2}}},
+            {"xtu", {"Trellised Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {61, 0, 25}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}, {2}}},
+            {"xng", {"Linked Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {74, 0, 25}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xcl", {"Tigulated Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 25}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xhn", {"Mesh Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {92, 0, 25}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xrs", {"Cuirass", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 25}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xpl", {"Russet Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {97, 0, 25}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xlt", {"Templar Coat", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 25}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xld", {"Sharktooth Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}, {3}}},
+            {"xth", {"Embossed Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {125, 0, 25}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"xul", {"Chaos Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {140, 0, 25}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"xar", {"Ornate Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {170, 0, 25}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"xtp", {"Mage Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 25}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}, {3}}},
             {"xlg", {"Demonhide Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 21}, {2, 2}, false, "invlgl", 8, {"Gloves", "Any Armor"}}},
             {"xvg", {"Sharkskin Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 25}, {2, 2}, false, "invvgl", 8, {"Gloves", "Any Armor"}}},
             {"xmg", {"Heavy Bracers", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invmgl", 8, {"Gloves", "Any Armor"}}},
@@ -4363,47 +4398,47 @@ namespace d2ce
             {"xhb", {"War Boots", {{ 0, 0 }, false, false, { 0, 0 }}, {125, 0, 25}, {2, 2}, false, "invhbt", 8, {"Boots", "Any Armor"}}},
             {"zlb", {"Demonhide Sash", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 24}, {2, 1, 4, 3}, false, "invlbl", 8, {"Belt", "Any Armor"}}},
             {"zvb", {"Sharkskin Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 25}, {2, 1, 4, 3}, false, "invvbl", 8, {"Belt", "Any Armor"}}},
-            {"zmb", {"Mesh Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
+            {"zmb", {"Mesh Belt", {{0, 0}, false, false, {0, 0}}, {58, 0, 25}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
             {"ztb", {"Battle Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {88, 0, 25}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
             {"zhb", {"War Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {110, 0, 25}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
-            {"xh9", {"Grim Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
-            {"dr1", {"Wolf Head", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr2", {"Hawk Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 6}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr3", {"Antlers", {{ 0, 0 }, false, false, { 0, 0 }}, {24, 0, 12}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr4", {"Falcon Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {28, 0, 15}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr5", {"Spirit Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0, 18}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"ba1", {"Jawbone Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0, 3}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba2", {"Fanged Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {35, 0, 6}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba3", {"Horned Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {45, 0, 12}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba4", {"Assault Helmet", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 15}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba5", {"Avenger Guard", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 18}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ci0", {"Circlet", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 16}, {2, 2}, false, "invci0", 2, {"Circlet", "Helm", "Any Armor"}}},
-            {"ci1", {"Coronet", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 39}, {2, 2}, false, "invci1", 2, {"Circlet", "Helm", "Any Armor"}}},
-            {"ci2", {"Tiara", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 52}, {2, 2}, false, "invci2", 2, {"Circlet", "Helm", "Any Armor"}}},
-            {"ci3", {"Diadem", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 64}, {2, 2}, false, "invci3", 2, {"Circlet", "Helm", "Any Armor"}}},
-            {"uap", {"Shako", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 43}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}}},
-            {"ukp", {"Hydraskull", {{ 0, 0 }, false, false, { 0, 0 }}, {84, 0, 47}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}}},
-            {"ulm", {"Armet", {{ 0, 0 }, false, false, { 0, 0 }}, {109, 0, 51}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}}},
-            {"uhl", {"Giant Conch", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 40}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}}},
-            {"uhm", {"Spired Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {192, 0, 59}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}}},
-            {"urn", {"Corona", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 66}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}}},
-            {"usk", {"Demonhead", {{ 0, 0 }, false, false, { 0, 0 }}, {102, 0, 55}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}}},
-            {"uui", {"Dusk Shroud", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 49}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}}},
-            {"uea", {"Wyrmhide", {{ 0, 0 }, false, false, { 0, 0 }}, {84, 0, 50}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}}},
-            {"ula", {"Scarab Husk", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 51}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}}},
-            {"utu", {"Wire Fleece", {{ 0, 0 }, false, false, { 0, 0 }}, {111, 0, 53}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}}},
-            {"ung", {"Diamond Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {131, 0, 54}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}}},
-            {"ucl", {"Loricated Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {149, 0, 55}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}}},
-            {"uhn", {"Boneweave", {{ 0, 0 }, false, false, { 0, 0 }}, {158, 0, 47}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}}},
-            {"urs", {"Great Hauberk", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 56}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}}},
-            {"upl", {"Balrog Skin", {{ 0, 0 }, false, false, { 0, 0 }}, {165, 0, 57}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}}},
-            {"ult", {"Hellforged Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {196, 0, 59}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}}},
-            {"uld", {"Kraken Shell", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 61}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}}},
-            {"uth", {"Lacquered Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {208, 0, 62}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}}},
-            {"uul", {"Shadow Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {230, 0, 64}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}}},
-            {"uar", {"Sacred Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {232, 0, 66}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}}},
-            {"utp", {"Archon Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 63}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}}},
-            {"ulg", {"Bramble Mitts", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 42}, {2, 2}, false, "invlgl", 8, {"Gloves", "Any Armor"}}},
+            {"xh9", {"Grim Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}, {2}}},
+            {"dr1", {"Wolf Head", {{ 0, 0 }, false, false, { 0, 0 }}, {16, 0, 3}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr2", {"Hawk Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {20, 0, 6}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr3", {"Antlers", {{ 0, 0 }, false, false, { 0, 0 }}, {24, 0, 12}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr4", {"Falcon Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {28, 0, 15}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr5", {"Spirit Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {30, 0, 18}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"ba1", {"Jawbone Cap", {{ 0, 0 }, false, false, { 0, 0 }}, {25, 0, 3}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba2", {"Fanged Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {35, 0, 6}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba3", {"Horned Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {45, 0, 12}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba4", {"Assault Helmet", {{ 0, 0 }, false, false, { 0, 0 }}, {55, 0, 15}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba5", {"Avenger Guard", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 18}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ci0", {"Circlet", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 16}, {2, 2}, false, "invci0", 2, {"Circlet", "Helm", "Any Armor"}, {1, 2}}},
+            {"ci1", {"Coronet", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 39}, {2, 2}, false, "invci1", 2, {"Circlet", "Helm", "Any Armor"}, {1, 2}}},
+            {"ci2", {"Tiara", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 52}, {2, 2}, false, "invci2", 2, {"Circlet", "Helm", "Any Armor"}, {1, 2, 3}}},
+            {"ci3", {"Diadem", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 64}, {2, 2}, false, "invci3", 2, {"Circlet", "Helm", "Any Armor"}, {1, 2, 3}}},
+            {"uap", {"Shako", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 43}, {2, 2}, false, "invcap", 8, {"Helm", "Any Armor"}, {2}}},
+            {"ukp", {"Hydraskull", {{ 0, 0 }, false, false, { 0, 0 }}, {84, 0, 47}, {2, 2}, false, "invskp", 8, {"Helm", "Any Armor"}, {2}}},
+            {"ulm", {"Armet", {{ 0, 0 }, false, false, { 0, 0 }}, {109, 0, 51}, {2, 2}, false, "invhlm", 8, {"Helm", "Any Armor"}, {2}}},
+            {"uhl", {"Giant Conch", {{ 0, 0 }, false, false, { 0, 0 }}, {142, 0, 40}, {2, 2}, false, "invfhl", 8, {"Helm", "Any Armor"}, {2}}},
+            {"uhm", {"Spired Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {192, 0, 59}, {2, 2}, false, "invghm", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"urn", {"Corona", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 66}, {2, 2}, false, "invcrn", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"usk", {"Demonhead", {{ 0, 0 }, false, false, { 0, 0 }}, {102, 0, 55}, {2, 2}, false, "invmsk", 2, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"uui", {"Dusk Shroud", {{ 0, 0 }, false, false, { 0, 0 }}, {77, 0, 49}, {2, 3}, false, "invqlt", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uea", {"Wyrmhide", {{ 0, 0 }, false, false, { 0, 0 }}, {84, 0, 50}, {2, 3}, false, "invlea", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ula", {"Scarab Husk", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 51}, {2, 3}, false, "invhla", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"utu", {"Wire Fleece", {{ 0, 0 }, false, false, { 0, 0 }}, {111, 0, 53}, {2, 3}, false, "invstu", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ung", {"Diamond Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {131, 0, 54}, {2, 3}, false, "invrng", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ucl", {"Loricated Mail", {{ 0, 0 }, false, false, { 0, 0 }}, {149, 0, 55}, {2, 3}, false, "invscl", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uhn", {"Boneweave", {{ 0, 0 }, false, false, { 0, 0 }}, {158, 0, 47}, {2, 3}, false, "invchn", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"urs", {"Great Hauberk", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 56}, {2, 3}, false, "invbrs", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"upl", {"Balrog Skin", {{ 0, 0 }, false, false, { 0, 0 }}, {165, 0, 57}, {2, 3}, false, "invspl", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ult", {"Hellforged Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {196, 0, 59}, {2, 3}, false, "invplt", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uld", {"Kraken Shell", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 61}, {2, 3}, false, "invfld", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uth", {"Lacquered Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {208, 0, 62}, {2, 3}, false, "invgth", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uul", {"Shadow Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {230, 0, 64}, {2, 3}, false, "invful", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"uar", {"Sacred Armor", {{ 0, 0 }, false, false, { 0, 0 }}, {232, 0, 66}, {2, 3}, false, "invaar", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"utp", {"Archon Plate", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 63}, {2, 3}, false, "invltp", 8, {"Armor", "Any Armor"}, {3, 4}}},
+            {"ulg", {"Bramble Mitts", {{0, 0}, false, false, {0, 0}}, {50, 0, 42}, {2, 2}, false, "invlgl", 8, {"Gloves", "Any Armor"}}},
             {"uvg", {"Vampirebone Gloves", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 47}, {2, 2}, false, "invvgl", 8, {"Gloves", "Any Armor"}}},
             {"umg", {"Vambraces", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 51}, {2, 2}, false, "invmgl", 8, {"Gloves", "Any Armor"}}},
             {"utg", {"Crusader Gauntlets", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 57}, {2, 2}, false, "invtgl", 8, {"Gloves", "Any Armor"}}},
@@ -4418,27 +4453,27 @@ namespace d2ce
             {"umc", {"Mithril Coil", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 56}, {2, 1, 4, 3}, false, "invmbl", 8, {"Belt", "Any Armor"}}},
             {"utc", {"Troll Belt", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 62}, {2, 1, 4, 3}, false, "invtbl", 8, {"Belt", "Any Armor"}}},
             {"uhc", {"Colossus Girdle", {{ 0, 0 }, false, false, { 0, 0 }}, {185, 0, 67}, {2, 1, 4, 3}, false, "invhbl", 8, {"Belt", "Any Armor"}}},
-            {"uh9", {"Bone Visage", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 63}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}}},
-            {"dr6", {"Alpha Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0, 26}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr7", {"Griffon Headress", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 30}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr8", {"Hunter's Guise", {{ 0, 0 }, false, false, { 0, 0 }}, {56, 0, 29}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dr9", {"Sacred Feathers", {{ 0, 0 }, false, false, { 0, 0 }}, {62, 0, 32}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dra", {"Totemic Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 41}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"ba6", {"Jawbone Visor", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba7", {"Lion Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {73, 0, 29}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba8", {"Rage Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {88, 0, 29}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"ba9", {"Savage Helmet", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 32}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"baa", {"Slayer Guard", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 40}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"drb", {"Blood Spirt", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 46}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"drc", {"Sun Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 51}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"drd", {"Earth Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {104, 0, 57}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"dre", {"Sky Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {113, 0, 62}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"drf", {"Dream Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 66}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}}},
-            {"bab", {"Carnage Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 45}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"bac", {"Fury Visor", {{ 0, 0 }, false, false, { 0, 0 }}, {129, 0, 49}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"bad", {"Destroyer Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 54}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"bae", {"Conquerer Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 60}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
-            {"baf", {"Guardian Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {196, 0, 65}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}}},
+            {"uh9", {"Bone Visage", {{0, 0}, false, false, {0, 0}}, {106, 0, 63}, {2, 2}, false, "invbhm", 8, {"Helm", "Any Armor"}, {2, 2, 3}}},
+            {"dr6", {"Alpha Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {44, 0, 26}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr7", {"Griffon Headress", {{ 0, 0 }, false, false, { 0, 0 }}, {50, 0, 30}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr8", {"Hunter's Guise", {{ 0, 0 }, false, false, { 0, 0 }}, {56, 0, 29}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dr9", {"Sacred Feathers", {{ 0, 0 }, false, false, { 0, 0 }}, {62, 0, 32}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dra", {"Totemic Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {65, 0, 41}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"ba6", {"Jawbone Visor", {{ 0, 0 }, false, false, { 0, 0 }}, {58, 0, 25}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba7", {"Lion Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {73, 0, 29}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba8", {"Rage Mask", {{ 0, 0 }, false, false, { 0, 0 }}, {88, 0, 29}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"ba9", {"Savage Helmet", {{ 0, 0 }, false, false, { 0, 0 }}, {103, 0, 32}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"baa", {"Slayer Guard", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 40}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"drb", {"Blood Spirt", {{ 0, 0 }, false, false, { 0, 0 }}, {86, 0, 46}, {2, 2}, false, "invdr1", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"drc", {"Sun Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {95, 0, 51}, {2, 2}, false, "invdr2", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"drd", {"Earth Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {104, 0, 57}, {2, 2}, false, "invdr3", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"dre", {"Sky Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {113, 0, 62}, {2, 2}, false, "invdr4", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"drf", {"Dream Spirit", {{ 0, 0 }, false, false, { 0, 0 }}, {118, 0, 66}, {2, 2}, false, "invdr5", 8, {"Pelt", "Helm", "Any Armor", "Druid Item", "Class Specific"}, {2, 3}}},
+            {"bab", {"Carnage Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {106, 0, 45}, {2, 2}, false, "invba1", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"bac", {"Fury Visor", {{ 0, 0 }, false, false, { 0, 0 }}, {129, 0, 49}, {2, 2}, false, "invba2", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"bad", {"Destroyer Helm", {{ 0, 0 }, false, false, { 0, 0 }}, {151, 0, 54}, {2, 2}, false, "invba3", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"bae", {"Conquerer Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {174, 0, 60}, {2, 2}, false, "invba4", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
+            {"baf", {"Guardian Crown", {{ 0, 0 }, false, false, { 0, 0 }}, {196, 0, 65}, {2, 2}, false, "invba5", 8, {"Primal Helm", "Helm", "Any Armor", "Barbarian Item", "Class Specific"}, {2, 3}}},
         };
 
         std::string testStr("   ");
@@ -4458,49 +4493,49 @@ namespace d2ce
     const ItemType& getWeaponItemType(const std::array<std::uint8_t, 4>& strcode)
     {
         static const std::map<std::string, ItemType> weaponBases = {
-            {"hax", {"Hand Axe", {{ 3, 6 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"axe", {"Axe", {{ 4, 11 }, false, false, { 0, 0 }}, {32, 0}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"2ax", {"Double Axe", {{ 5, 13 }, false, false, { 0, 0 }}, {43, 0}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"mpi", {"Military Pick", {{ 7, 11 }, false, false, { 0, 0 }}, {49, 33}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"wax", {"War Axe", {{ 10, 18 }, false, false, { 0, 0 }}, {67, 0}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"lax", {"Large Axe", {{ 0, 0 }, false, true, { 6, 13 }}, {35, 0}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"bax", {"Broad Axe", {{ 0, 0 }, false, true, { 10, 18 }}, {48, 0}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"btx", {"Battle Axe", {{ 0, 0 }, false, true, { 12, 32 }}, {54, 0}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"gax", {"Great Axe", {{ 0, 0 }, false, true, { 9, 30 }}, {63, 39}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"gix", {"Giant Axe", {{ 0, 0 }, false, true, { 22, 45 }}, {70, 0}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"wnd", {"Wand", {{ 2, 4 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"ywn", {"Yew Wand", {{ 2, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"bwn", {"Bone Wand", {{ 3, 7 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"gwn", {"Grim Wand", {{ 5, 11 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"clb", {"Club", {{ 1, 6 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"scp", {"Scepter", {{ 6, 11 }, false, false, { 0, 0 }}, {25, 0}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"gsc", {"Grand Scepter", {{ 8, 18 }, false, false, { 0, 0 }}, {37, 0}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"wsp", {"War Scepter", {{ 10, 17 }, false, false, { 0, 0 }}, {55, 0}, {1, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"spc", {"Spiked Club", {{ 5, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"mac", {"Mace", {{ 3, 10 }, false, false, { 0, 0 }}, {27, 0}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"mst", {"Morning Star", {{ 7, 16 }, false, false, { 0, 0 }}, {36, 0}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"fla", {"Flail", {{ 1, 24 }, false, false, { 0, 0 }}, {41, 35}, {1, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"whm", {"War Hammer", {{ 19, 29 }, false, false, { 0, 0 }}, {53, 0}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"mau", {"Maul", {{ 0, 0 }, false, true, { 30, 43 }}, {69, 0}, {2, 4}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"gma", {"Great Maul", {{ 0, 0 }, false, true, { 38, 58 }}, {99, 0}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"ssd", {"Short Sword", {{ 2, 7 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"scm", {"Scimitar", {{ 2, 6 }, false, false, { 0, 0 }}, {0, 21}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"sbr", {"Sabre", {{ 3, 8 }, false, false, { 0, 0 }}, {25, 25}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"flc", {"Falchion", {{ 9, 17 }, false, false, { 0, 0 }}, {33, 0}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"crs", {"Crystal Sword", {{ 5, 15 }, false, false, { 0, 0 }}, {43, 0}, {1, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"bsd", {"Broad Sword", {{ 7, 14 }, false, false, { 0, 0 }}, {48, 0}, {1, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"lsd", {"Long Sword", {{ 3, 19 }, false, false, { 0, 0 }}, {55, 39}, {1, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"wsd", {"War Sword", {{ 8, 20 }, false, false, { 0, 0 }}, {71, 45}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"2hs", {"Two Handed Sword", {{ 2, 9 }, true, true, { 8, 17 }}, {35, 27}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"clm", {"Claymore", {{ 5, 12 }, true, true, { 13, 30 }}, {47, 0}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"gis", {"Giant Sword", {{ 3, 16 }, true, true, { 9, 28 }}, {56, 34}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"bsw", {"Bastard Sword", {{ 7, 19 }, true, true, { 20, 28 }}, {62, 0}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"flb", {"Flamberge", {{ 9, 15 }, true, true, { 13, 26 }}, {70, 49}, {1, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"gsd", {"Great Sword", {{ 12, 20 }, true, true, { 25, 42 }}, {100, 60}, {1, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"dgr", {"Dagger", {{ 1, 4 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"dir", {"Dirk", {{ 3, 9 }, false, false, { 0, 0 }}, {0, 25}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"kri", {"Kris", {{ 2, 11 }, false, false, { 0, 0 }}, {0, 45}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"bld", {"Blade", {{ 4, 15 }, false, false, { 0, 0 }}, {35, 51}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}}},
+            {"hax", {"Hand Axe", {{ 3, 6 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}, {2}}},
+            {"axe", {"Axe", {{ 4, 11 }, false, false, { 0, 0 }}, {32, 0}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"2ax", {"Double Axe", {{ 5, 13 }, false, false, { 0, 0 }}, {43, 0}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"mpi", {"Military Pick", {{ 7, 11 }, false, false, { 0, 0 }}, {49, 33}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"wax", {"War Axe", {{ 10, 18 }, false, false, { 0, 0 }}, {67, 0}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"lax", {"Large Axe", {{ 0, 0 }, false, true, { 6, 13 }}, {35, 0}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"bax", {"Broad Axe", {{ 0, 0 }, false, true, { 10, 18 }}, {48, 0}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"btx", {"Battle Axe", {{ 0, 0 }, false, true, { 12, 32 }}, {54, 0}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"gax", {"Great Axe", {{ 0, 0 }, false, true, { 9, 30 }}, {63, 39}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"gix", {"Giant Axe", {{ 0, 0 }, false, true, { 22, 45 }}, {70, 0}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"wnd", {"Wand", {{ 2, 4 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {1}}},
+            {"ywn", {"Yew Wand", {{ 2, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {1}}},
+            {"bwn", {"Bone Wand", {{ 3, 7 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"gwn", {"Grim Wand", {{ 5, 11 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"clb", {"Club", {{ 1, 6 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"scp", {"Scepter", {{ 6, 11 }, false, false, { 0, 0 }}, {25, 0}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"gsc", {"Grand Scepter", {{ 8, 18 }, false, false, { 0, 0 }}, {37, 0}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"wsp", {"War Scepter", {{ 10, 17 }, false, false, { 0, 0 }}, {55, 0}, {1, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3, 5}}},
+            {"spc", {"Spiked Club", {{ 5, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"mac", {"Mace", {{ 3, 10 }, false, false, { 0, 0 }}, {27, 0}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"mst", {"Morning Star", {{ 7, 16 }, false, false, { 0, 0 }}, {36, 0}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"fla", {"Flail", {{ 1, 24 }, false, false, { 0, 0 }}, {41, 35}, {1, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"whm", {"War Hammer", {{ 19, 29 }, false, false, { 0, 0 }}, {53, 0}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"mau", {"Maul", {{ 0, 0 }, false, true, { 30, 43 }}, {69, 0}, {2, 4}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"gma", {"Great Maul", {{ 0, 0 }, false, true, { 38, 58 }}, {99, 0}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"ssd", {"Short Sword", {{ 2, 7 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"scm", {"Scimitar", {{ 2, 6 }, false, false, { 0, 0 }}, {0, 21}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"sbr", {"Saber", {{ 3, 8 }, false, false, { 0, 0 }}, {25, 25}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"flc", {"Falchion", {{ 9, 17 }, false, false, { 0, 0 }}, {33, 0}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"crs", {"Crystal Sword", {{ 5, 15 }, false, false, { 0, 0 }}, {43, 0}, {1, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"bsd", {"Broad Sword", {{ 7, 14 }, false, false, { 0, 0 }}, {48, 0}, {1, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"lsd", {"Long Sword", {{ 3, 19 }, false, false, { 0, 0 }}, {55, 39}, {1, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"wsd", {"War Sword", {{ 8, 20 }, false, false, { 0, 0 }}, {71, 45}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"2hs", {"Two-Handed Sword", {{ 2, 9 }, true, true, { 8, 17 }}, {35, 27}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"clm", {"Claymore", {{ 5, 12 }, true, true, { 13, 30 }}, {47, 0}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"gis", {"Giant Sword", {{ 3, 16 }, true, true, { 9, 28 }}, {56, 34}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"bsw", {"Bastard Sword", {{ 7, 19 }, true, true, { 20, 28 }}, {62, 0}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"flb", {"Flamberge", {{ 9, 15 }, true, true, { 13, 26 }}, {70, 49}, {1, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"gsd", {"Great Sword", {{ 12, 20 }, true, true, { 25, 42 }}, {100, 60}, {1, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"dgr", {"Dagger", {{ 1, 4 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"dir", {"Dirk", {{ 3, 9 }, false, false, { 0, 0 }}, {0, 25}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"kri", {"Kriss", {{ 2, 11 }, false, false, { 0, 0 }}, {0, 45}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}, {2, 3}}},
+            {"bld", {"Blade", {{ 4, 15 }, false, false, { 0, 0 }}, {35, 51}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}, {2}}},
             {"tkf", {"Throwing Knife", {{ 2, 3 }, false, false, { 0, 0 }, { 4, 9 }}, {0, 21}, {1, 2}, true, "invtkn", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
             {"tax", {"Throwing Axe", {{ 4, 7 }, false, false, { 0, 0 }, { 8, 12 }}, {0, 40}, {1, 2}, true, "invtax", 2, {"Throwing Axe", "Combo Weapon", "Axe", "Melee Weapon", "Weapon"}}},
             {"bkf", {"Balanced Knife", {{ 1, 8 }, false, false, { 0, 0 }, { 6, 11 }}, {0, 51}, {1, 2}, true, "invbkf", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
@@ -4510,34 +4545,34 @@ namespace d2ce
             {"ssp", {"Short Spear", {{ 2, 13 }, false, false, { 0, 0 }, { 10, 22 }}, {40, 40}, {1, 3}, true, "invssp", 8, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"glv", {"Glaive", {{ 5, 17 }, false, false, { 0, 0 }, { 16, 22 }}, {52, 35}, {1, 4}, true, "invglv", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"tsp", {"Throwing Spear", {{ 5, 15 }, false, false, { 0, 0 }, { 12, 30 }}, {0, 65}, {1, 4}, true, "invtsp", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
-            {"spr", {"Spear", {{ 0, 0 }, false, true, { 3, 15 }}, {0, 20}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"tri", {"Trident", {{ 0, 0 }, false, true, { 9, 15 }}, {38, 24}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"brn", {"Brandistock", {{ 0, 0 }, false, true, { 7, 17 }}, {40, 50}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"spt", {"Spetum", {{ 0, 0 }, false, true, { 15, 23 }}, {54, 35}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"pik", {"Pike", {{ 0, 0 }, false, true, { 14, 63 }}, {60, 45}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"bar", {"Bardiche", {{ 0, 0 }, false, true, { 1, 27 }}, {40, 0}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"vou", {"Voulge", {{ 0, 0 }, false, true, { 6, 21 }}, {50, 0}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"scy", {"Scythe", {{ 0, 0 }, false, true, { 8, 20 }}, {41, 41}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"pax", {"Pole Axe", {{ 0, 0 }, false, true, { 18, 39 }}, {62, 0}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"hal", {"Halberd", {{ 0, 0 }, false, true, { 12, 45 }}, {75, 47}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"wsc", {"War Scythe", {{ 0, 0 }, false, true, { 15, 36 }}, {80, 80}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"sst", {"Short Staff", {{ 0, 0 }, false, true, { 1, 5 }}, {0, 0}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"lst", {"Long Staff", {{ 0, 0 }, false, true, { 2, 8 }}, {0, 0}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"cst", {"Gnarled Staff", {{ 0, 0 }, false, true, { 4, 12 }}, {0, 0}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"bst", {"Battle Staff", {{ 0, 0 }, false, true, { 6, 13 }}, {0, 0}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"wst", {"War Staff", {{ 0, 0 }, false, true, { 12, 28 }}, {0, 0}, {2, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"sbw", {"Short Bow", {{ 0, 0 }, false, true, { 1, 4 }}, {0, 15}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"hbw", {"Hunter's Bow", {{ 0, 0 }, false, true, { 2, 6 }}, {0, 28}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"lbw", {"Long Bow", {{ 0, 0 }, false, true, { 3, 10 }}, {22, 19}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"cbw", {"Composite Bow", {{ 0, 0 }, false, true, { 4, 8 }}, {25, 35}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"sbb", {"Short Battle Bow", {{ 0, 0 }, false, true, { 5, 11 }}, {30, 40}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"lbb", {"Long Battle Bow", {{ 0, 0 }, false, true, { 3, 18 }}, {40, 50}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"swb", {"Short War Bow", {{ 0, 0 }, false, true, { 6, 14 }}, {35, 55}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"lwb", {"Long War Bow", {{ 0, 0 }, false, true, { 3, 23 }}, {50, 65}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"lxb", {"Light Crossbow", {{ 0, 0 }, false, true, { 6, 9 }}, {21, 27}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"mxb", {"Crossbow", {{ 0, 0 }, false, true, { 9, 16 }}, {40, 33}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"hxb", {"Heavy Crossbow", {{ 0, 0 }, false, true, { 14, 26 }}, {60, 40}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"rxb", {"Repeating Crossbow", {{ 0, 0 }, false, true, { 6, 12 }}, {40, 50}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
+            {"spr", {"Spear", {{ 0, 0 }, false, true, { 3, 15 }}, {0, 20}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}, {3}}},
+            {"tri", {"Trident", {{ 0, 0 }, false, true, { 9, 15 }}, {38, 24}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"brn", {"Brandistock", {{ 0, 0 }, false, true, { 7, 17 }}, {40, 50}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"spt", {"Spetum", {{ 0, 0 }, false, true, { 15, 23 }}, {54, 35}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"pik", {"Pike", {{ 0, 0 }, false, true, { 14, 63 }}, {60, 45}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"bar", {"Bardiche", {{ 0, 0 }, false, true, { 1, 27 }}, {40, 0}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3}}},
+            {"vou", {"Voulge", {{ 0, 0 }, false, true, { 6, 21 }}, {50, 0}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"scy", {"Scythe", {{ 0, 0 }, false, true, { 8, 20 }}, {41, 41}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"pax", {"Poleaxe", {{ 0, 0 }, false, true, { 18, 39 }}, {62, 0}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"hal", {"Halberd", {{ 0, 0 }, false, true, { 12, 45 }}, {75, 47}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"wsc", {"War Scythe", {{ 0, 0 }, false, true, { 15, 36 }}, {80, 80}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"sst", {"Short Staff", {{ 0, 0 }, false, true, { 1, 5 }}, {0, 0}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"lst", {"Long Staff", {{ 0, 0 }, false, true, { 2, 8 }}, {0, 0}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"cst", {"Gnarled Staff", {{ 0, 0 }, false, true, { 4, 12 }}, {0, 0}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"bst", {"Battle Staff", {{ 0, 0 }, false, true, { 6, 13 }}, {0, 0}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"wst", {"War Staff", {{ 0, 0 }, false, true, { 12, 28 }}, {0, 0}, {2, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {5, 6}}},
+            {"sbw", {"Short Bow", {{ 0, 0 }, false, true, { 1, 4 }}, {0, 15}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3}}},
+            {"hbw", {"Hunter's Bow", {{ 0, 0 }, false, true, { 2, 6 }}, {0, 28}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"lbw", {"Long Bow", {{ 0, 0 }, false, true, { 3, 10 }}, {22, 19}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"cbw", {"Composite Bow", {{ 0, 0 }, false, true, { 4, 8 }}, {25, 35}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"sbb", {"Short Battle Bow", {{ 0, 0 }, false, true, { 5, 11 }}, {30, 40}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"lbb", {"Long Battle Bow", {{ 0, 0 }, false, true, { 3, 18 }}, {40, 50}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"swb", {"Short War Bow", {{ 0, 0 }, false, true, { 6, 14 }}, {35, 55}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"lwb", {"Long War Bow", {{ 0, 0 }, false, true, { 3, 23 }}, {50, 65}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"lxb", {"Light Crossbow", {{ 0, 0 }, false, true, { 6, 9 }}, {21, 27}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3}}},
+            {"mxb", {"Crossbow", {{ 0, 0 }, false, true, { 9, 16 }}, {40, 33}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"hxb", {"Heavy Crossbow", {{ 0, 0 }, false, true, { 14, 26 }}, {60, 40}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"rxb", {"Repeating Crossbow", {{ 0, 0 }, false, true, { 6, 12 }}, {40, 50}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
             {"gps", {"Rancid Gas Potion", {{ 0, 1 }, false, false, { 0, 0 }}, {0, 0, 24}, {1, 1}, true, "invgpl", 0, {"Missile Potion", "Thrown Weapon", "Weapon"}}},
             {"ops", {"Oil Potion", {{ 0, 1 }, false, false, { 0, 0 }}, {0, 0, 20}, {1, 1}, true, "invopl", 0, {"Missile Potion", "Thrown Weapon", "Weapon"}}},
             {"gpm", {"Choking Gas Potion", {0, 1, false, false, 0, 0, 16}, {0, 0}, {1, 1}, true, "invgpm", 0, {"Missile Potion", "Thrown Weapon", "Weapon"}}},
@@ -4546,54 +4581,54 @@ namespace d2ce
             {"opl", {"Fulminating Potion", {{ 0, 1 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, true, "invops", 0, {"Missile Potion", "Thrown Weapon", "Weapon"}}},
             {"d33", {"Decoy Gidbinn", {{ 1, 2 }, false, false, { 0, 0 }}, {15, 20}, {1, 2}, false, "invd33", 2, {"Knife", "Melee Weapon", "Weapon"}}},
             {"g33", {"The Gidbinn", {{ 3, 7 }, false, false, { 0, 0 }}, {15, 25}, {1, 2}, false, "invg33", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"leg", {"Wirt's Leg", {{ 2, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invleg", 8, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
+            {"leg", {"Wirt's Leg", {{ 2, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 3}, false, "invleg", 8, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
             {"hdm", {"Horadric Malus", {{ 6, 15 }, false, false, { 0, 0 }}, {15, 15}, {1, 2}, false, "invhmr", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"hfh", {"Hellforge Hammer", {{ 6, 15 }, false, false, { 0, 0 }}, {0, 0}, {2, 3}, false, "invhfh", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
+            {"hfh", {"Hellforge Hammer", {{ 6, 15 }, false, false, { 0, 0 }}, {0, 0}, {2, 3}, false, "invhfh", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
             {"hst", {"Horadric Staff", {{ 0, 0 }, false, true, { 12, 20 }}, {30, 0}, {1, 4}, false, "invhst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
             {"msf", {"Staff of the Kings",{0, 0, false, true, 10, 15}, {25, 0}, {1, 3}, false, "invmsf", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9ha", {"Hatchet", {{ 10, 21 }, false, false, { 0, 0 }}, {25, 35, 19}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9ax", {"Cleaver", {{ 10, 33 }, false, false, { 0, 0 }}, {68, 0, 22}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"92a", {"Twin Axe", {{ 13, 38 }, false, false, { 0, 0 }}, {85, 0, 25}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9mp", {"Crowbill", {{ 14, 34 }, false, false, { 0, 0 }}, {94, 70, 25}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9wa", {"Naga", {{ 16, 45 }, false, false, { 0, 0 }}, {121, 0, 25}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9la", {"Military Axe", {{ 0, 0 }, false, true, { 14, 34 }}, {73, 0, 22}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9ba", {"Bearded Axe", {{ 0, 0 }, false, true, { 21, 49 }}, {92, 0, 25}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9bt", {"Tabar", {{ 0, 0 }, false, true, { 24, 77 }}, {101, 0, 25}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9ga", {"Gothic Axe", {{ 0, 0 }, false, true, { 18, 70 }}, {115, 79, 25}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9gi", {"Ancient Axe", {{ 0, 0 }, false, true, { 43, 85 }}, {125, 0, 25}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"9wn", {"Burnt Wand", {{ 8, 18 }, false, false, { 0, 0 }}, {25, 0, 19}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9yw", {"Petrified Wand", {{ 8, 24 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9bw", {"Tomb Wand", {{ 10, 22 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9gw", {"Grave Wand", {{ 13, 29 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9cl", {"Cudgel", {{ 6, 21 }, false, false, { 0, 0 }}, {25, 0, 18}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9sc", {"Rune Scepter", {{ 13, 24 }, false, false, { 0, 0 }}, {58, 0, 19}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9qs", {"Holy Water Sprinkler", {{ 14, 36 }, false, false, { 0, 0 }}, {76, 0, 25}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9ws", {"Divine Scepter", {{ 16, 38 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9sp", {"Barbed Club", {{ 13, 25 }, false, false, { 0, 0 }}, {30, 0, 20}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9ma", {"Flanged Mace", {{ 15, 23 }, false, false, { 0, 0 }}, {61, 0, 23}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9mt", {"Jagged Star", {{ 20, 31 }, false, false, { 0, 0 }}, {74, 0, 25}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9fl", {"Knout", {{ 13, 35 }, false, false, { 0, 0 }}, {82, 73, 25}, {2, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9wh", {"Battle Hammer", {{ 35, 58 }, false, false, { 0, 0 }}, {100, 0, 25}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9m9", {"War Club", {{ 0, 0 }, false, true, { 53, 78 }}, {124, 0, 25}, {2, 3}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9gm", {"Martel De Fer", {{ 0, 0 }, false, true, { 61, 99 }}, {169, 0, 25}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"9ss", {"Gladius", {{ 8, 22 }, false, false, { 0, 0 }}, {25, 0, 18}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9sm", {"Cutlass", {{ 8, 21 }, false, false, { 0, 0 }}, {25, 52, 25}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9sb", {"Shamshir", {{ 10, 24 }, false, false, { 0, 0 }}, {58, 58, 25}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9fc", {"Tulwar", {{ 16, 35 }, false, false, { 0, 0 }}, {70, 42, 25}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9cr", {"Dimensional Blade", {{ 13, 35 }, false, false, { 0, 0 }}, {85, 60, 25}, {2, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9bs", {"Battle Sword", {{ 16, 34 }, false, false, { 0, 0 }}, {92, 43, 25}, {2, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9ls", {"Rune Sword", {{ 10, 42 }, false, false, { 0, 0 }}, {103, 79, 25}, {2, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9wd", {"Ancient Sword",{18, 43, false, false, 0, 0}, {127, 88, 25}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"92h", {"Espandon", {{ 8, 26 }, true, true, { 18, 40 }}, {73, 61, 25}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9cm", {"Dacian Falx", {{ 13, 30 }, true, true, { 26, 61 }}, {91, 20, 25}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9gs", {"Tusk Sword", {{ 10, 37 }, true, true, { 19, 58 }}, {104, 71, 25}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9b9", {"Gothic Sword", {{ 14, 40 }, true, true, { 39, 60 }}, {113, 20, 25}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9fb", {"Zweihander", {{ 19, 35 }, true, true, { 29, 54 }}, {125, 94, 25}, {2, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9gd", {"Executioner Sword", {{ 24, 40 }, true, true, { 47, 80 }}, {170, 110, 25}, {2, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"9dg", {"Poignard", {{ 6, 18 }, false, false, { 0, 0 }}, {25, 0, 19}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"9di", {"Rondel", {{ 10, 26 }, false, false, { 0, 0 }}, {25, 58, 24}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"9kr", {"Ciquedeas", {{ 15, 31 }, false, false, { 0, 0 }}, {25, 88, 25}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"9bl", {"Stiletto", {{ 19, 36 }, false, false, { 0, 0 }}, {47, 97, 25}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}}},
+            {"9ha", {"Hatchet", {{ 10, 21 }, false, false, { 0, 0 }}, {25, 35, 19}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}, {2}}},
+            {"9ax", {"Cleaver", {{ 10, 33 }, false, false, { 0, 0 }}, {68, 0, 22}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"92a", {"Twin Axe", {{ 13, 38 }, false, false, { 0, 0 }}, {85, 0, 25}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"9mp", {"Crowbill", {{ 14, 34 }, false, false, { 0, 0 }}, {94, 70, 25}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"9wa", {"Naga", {{ 16, 45 }, false, false, { 0, 0 }}, {121, 0, 25}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"9la", {"Military Axe", {{ 0, 0 }, false, true, { 14, 34 }}, {73, 0, 22}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"9ba", {"Bearded Axe", {{ 0, 0 }, false, true, { 21, 49 }}, {92, 0, 25}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"9bt", {"Tabar", {{ 0, 0 }, false, true, { 24, 77 }}, {101, 0, 25}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"9ga", {"Gothic Axe", {{ 0, 0 }, false, true, { 18, 70 }}, {115, 79, 25}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"9gi", {"Ancient Axe", {{ 0, 0 }, false, true, { 43, 85 }}, {125, 0, 25}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"9wn", {"Burnt Wand", {{ 8, 18 }, false, false, { 0, 0 }}, {25, 0, 19}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {1}}},
+            {"9yw", {"Petrified Wand", {{ 8, 24 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9bw", {"Tomb Wand", {{ 10, 22 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9gw", {"Grave Wand", {{ 13, 29 }, false, false, { 0, 0 }}, {25, 0, 25}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9cl", {"Cudgel", {{ 6, 21 }, false, false, { 0, 0 }}, {25, 0, 18}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9sc", {"Rune Scepter", {{ 13, 24 }, false, false, { 0, 0 }}, {58, 0, 19}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9qs", {"Holy Water Sprinkler", {{ 14, 36 }, false, false, { 0, 0 }}, {76, 0, 25}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"9ws", {"Divine Scepter", {{ 16, 38 }, false, false, { 0, 0 }}, {103, 0, 25}, {2, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3, 5}}},
+            {"9sp", {"Barbed Club", {{ 13, 25 }, false, false, { 0, 0 }}, {30, 0, 20}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"9ma", {"Flanged Mace", {{ 15, 23 }, false, false, { 0, 0 }}, {61, 0, 23}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"9mt", {"Jagged Star", {{ 20, 31 }, false, false, { 0, 0 }}, {74, 0, 25}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"9fl", {"Knout", {{ 13, 35 }, false, false, { 0, 0 }}, {82, 73, 25}, {2, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"9wh", {"Battle Hammer", {{ 35, 58 }, false, false, { 0, 0 }}, {100, 0, 25}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9m9", {"War Club", {{ 0, 0 }, false, true, { 53, 78 }}, {124, 0, 25}, {2, 3}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9gm", {"Martel De Fer", {{ 0, 0 }, false, true, { 61, 99 }}, {169, 0, 25}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9ss", {"Gladius", {{ 8, 22 }, false, false, { 0, 0 }}, {25, 0, 18}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"9sm", {"Cutlass", {{ 8, 21 }, false, false, { 0, 0 }}, {25, 52, 25}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"9sb", {"Shamshir", {{ 10, 24 }, false, false, { 0, 0 }}, {58, 58, 25}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"9fc", {"Tulwar", {{ 16, 35 }, false, false, { 0, 0 }}, {70, 42, 25}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"9cr", {"Dimensional Blade", {{ 13, 35 }, false, false, { 0, 0 }}, {85, 60, 25}, {2, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9bs", {"Battle Sword", {{ 16, 34 }, false, false, { 0, 0 }}, {92, 43, 25}, {2, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9ls", {"Rune Sword", {{ 10, 42 }, false, false, { 0, 0 }}, {103, 79, 25}, {2, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9wd", {"Ancient Sword",{18, 43, false, false, 0, 0}, {127, 88, 25}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"92h", {"Espadon", {{ 8, 26 }, true, true, { 18, 40 }}, {73, 61, 25}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"9cm", {"Dacian Falx", {{ 13, 30 }, true, true, { 26, 61 }}, {91, 20, 25}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9gs", {"Tusk Sword", {{ 10, 37 }, true, true, { 19, 58 }}, {104, 71, 25}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9b9", {"Gothic Sword", {{ 14, 40 }, true, true, { 39, 60 }}, {113, 20, 25}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9fb", {"Zweihander", {{ 19, 35 }, true, true, { 29, 54 }}, {125, 94, 25}, {2, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"9gd", {"Executioner Sword", {{ 24, 40 }, true, true, { 47, 80 }}, {170, 110, 25}, {2, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9dg", {"Poignard", {{ 6, 18 }, false, false, { 0, 0 }}, {25, 0, 19}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"9di", {"Rondel", {{ 10, 26 }, false, false, { 0, 0 }}, {25, 58, 24}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"9kr", {"Cinquedeas", {{ 15, 31 }, false, false, { 0, 0 }}, {25, 88, 25}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}, {2, 3}}},
+            {"9bl", {"Stilleto", {{ 19, 36 }, false, false, { 0, 0 }}, {47, 97, 25}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}, {2}}},
             {"9tk", {"Battle Dart", {{ 8, 16 }, false, false, { 0, 0 }, { 11, 24 }}, {25, 52, 19}, {1, 2}, true, "invtkn", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
             {"9ta", {"Francisca", {{ 11, 22 }, false, false, { 0, 0 }, { 18, 33 }}, {25, 80, 22}, {1, 2}, true, "invtax", 2, {"Throwing Axe", "Combo Weapon", "Axe", "Melee Weapon", "Weapon"}}},
             {"9bk", {"War Dart", {{ 6, 24 }, false, false, { 0, 0 }, { 14, 27 }}, {25, 97, 25}, {1, 2}, true, "invbkf", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
@@ -4603,100 +4638,100 @@ namespace d2ce
             {"9s9", {"Simbilan", {{ 8, 32 }, false, false, { 0, 0 }, { 27, 50 }}, {80, 80, 25}, {1, 3}, true, "invssp", 8, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"9gl", {"Spiculum", {{ 13, 38 }, false, false, { 0, 0 }, { 32, 60 }}, {98, 73, 25}, {1, 4}, true, "invglv", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"9ts", {"Harpoon", {{ 13, 35 }, false, false, { 0, 0 }, { 18, 54 }}, {25, 118, 25}, {1, 4}, true, "invtsp", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
-            {"9sr", {"War Spear", {{ 0, 0 }, false, true, { 10, 37 }}, {25, 25, 21}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"9tr", {"Fuscina", {{ 0, 0 }, false, true, { 19, 37 }}, {77, 25, 24}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"9br", {"War Fork", {{ 0, 0 }, false, true, { 16, 40 }}, {80, 95, 25}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"9st", {"Yari", {{ 0, 0 }, false, true, { 29, 59 }}, {101, 0, 25}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"9p9", {"Lance", {{ 0, 0 }, false, true, { 27, 114 }}, {110, 88, 25}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"9b7", {"Lochaber Axe", {{ 0, 0 }, false, true, { 6, 58 }}, {80, 0, 21}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"9vo", {"Bill", {{ 0, 0 }, false, true, { 14, 53 }}, {95, 0, 25}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"9s8", {"Battle Scythe", {0, 0, false, true, 18, 45, 25}, {82, 82}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"9pa", {"Partizan", {{ 0, 0 }, false, true, { 34, 75 }}, {113, 67, 25}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"9h9", {"Bec-De-Corbin", {{ 0, 0 }, false, true, { 13, 85 }}, {133, 91, 25}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"9wc", {"Grim Scythe", {{ 0, 0 }, false, true, { 30, 70 }}, {140, 140, 25}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"8ss", {"Jo Staff", {{ 0, 0 }, false, true, { 6, 21 }}, {25, 0, 18}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"8ls", {"Quarterstaff", {{ 0, 0 }, false, true, { 8, 26 }}, {25, 0, 23}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"8cs", {"Cedar Staff", {{ 0, 0 }, false, true, { 11, 32 }}, {25, 0, 25}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"8bs", {"Gothic Staff", {{ 0, 0 }, false, true, { 14, 34 }}, {25, 0, 25}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"8ws", {"Rune Staff", {{ 0, 0 }, false, true, { 24, 58 }}, {25, 0, 25}, {1, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"8sb", {"Edge Bow", {{ 0, 0 }, false, true, { 6, 19 }}, {25, 53, 18}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8hb", {"Razor Bow", {{ 0, 0 }, false, true, { 8, 22 }}, {25, 62, 21}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8lb", {"Cedar Bow", {{ 0, 0 }, false, true, { 10, 29 }}, {53, 49, 23}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8cb", {"Double Bow", {{ 0, 0 }, false, true, { 11, 26 }}, {58, 73, 25}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8s8", {"Short Siege Bow", {{ 0, 0 }, false, true, { 13, 30 }}, {65, 80, 25}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8l8", {"Long Siege Bow", {{ 0, 0 }, false, true, { 10, 42 }}, {80, 95, 25}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8sw", {"Rune Bow", {{ 0, 0 }, false, true, { 14, 35 }}, {73, 103, 25}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8lw", {"Gothic Bow", {{ 0, 0 }, false, true, { 10, 50 }}, {95, 118, 25}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"8lx", {"Arbalest", {{ 0, 0 }, false, true, { 14, 27 }}, {52, 61, 22}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"8mx", {"Siege Crossbow", {{ 0, 0 }, false, true, { 20, 42 }}, {80, 70, 25}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"8hx", {"Ballista", {{ 0, 0 }, false, true, { 33, 55 }}, {110, 80, 25}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"8rx", {"Chu-Ko-Nu", {{ 0, 0 }, false, true, { 14, 32 }}, {80, 95, 25}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
+            {"9sr", {"War Spear", {{ 0, 0 }, false, true, { 10, 37 }}, {25, 25, 21}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}, {3}}},
+            {"9tr", {"Fuscina", {{ 0, 0 }, false, true, { 19, 37 }}, {77, 25, 24}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9br", {"War Fork", {{ 0, 0 }, false, true, { 16, 40 }}, {80, 95, 25}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"9st", {"Yari", {{ 0, 0 }, false, true, { 29, 59 }}, {101, 0, 25}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9p9", {"Lance", {{ 0, 0 }, false, true, { 27, 114 }}, {110, 88, 25}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9b7", {"Lochaber Axe", {{ 0, 0 }, false, true, { 6, 58 }}, {80, 0, 21}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3}}},
+            {"9vo", {"Bill", {{ 0, 0 }, false, true, { 14, 53 }}, {95, 0, 25}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"9s8", {"Battle Scythe", {0, 0, false, true, 18, 45, 25}, {82, 82}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"9pa", {"Partizan", {{ 0, 0 }, false, true, { 34, 75 }}, {113, 67, 25}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"9h9", {"Bec-De-Corbin", {{ 0, 0 }, false, true, { 13, 85 }}, {133, 91, 25}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"9wc", {"Grim Scythe", {{ 0, 0 }, false, true, { 30, 70 }}, {140, 140, 25}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"8ss", {"Jo Staff", {{ 0, 0 }, false, true, { 6, 21 }}, {25, 0, 18}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"8ls", {"Quarterstaff", {{ 0, 0 }, false, true, { 8, 26 }}, {25, 0, 23}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"8cs", {"Cedar Staff", {{ 0, 0 }, false, true, { 11, 32 }}, {25, 0, 25}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"8bs", {"Gothic Staff", {{ 0, 0 }, false, true, { 14, 34 }}, {25, 0, 25}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"8ws", {"Rune Staff", {{ 0, 0 }, false, true, { 24, 58 }}, {25, 0, 25}, {1, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {5, 6}}},
+            {"8sb", {"Edge Bow", {{ 0, 0 }, false, true, { 6, 19 }}, {25, 53, 18}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3}}},
+            {"8hb", {"Razor Bow", {{ 0, 0 }, false, true, { 8, 22 }}, {25, 62, 21}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"8lb", {"Cedar Bow", {{ 0, 0 }, false, true, { 10, 29 }}, {53, 49, 23}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"8cb", {"Double Bow", {{ 0, 0 }, false, true, { 11, 26 }}, {58, 73, 25}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"8s8", {"Short Siege Bow", {{ 0, 0 }, false, true, { 13, 30 }}, {65, 80, 25}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"8l8", {"Long Siege Bow", {{ 0, 0 }, false, true, { 10, 42 }}, {80, 95, 25}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"8sw", {"Rune Bow", {{ 0, 0 }, false, true, { 14, 35 }}, {73, 103, 25}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"8lw", {"Gothic Bow", {{ 0, 0 }, false, true, { 10, 50 }}, {95, 118, 25}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"8lx", {"Arbalest", {{ 0, 0 }, false, true, { 14, 27 }}, {52, 61, 22}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3}}},
+            {"8mx", {"Siege Crossbow", {{ 0, 0 }, false, true, { 20, 42 }}, {80, 70, 25}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"8hx", {"Balista", {{ 0, 0 }, false, true, { 33, 55 }}, {110, 80, 25}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"8rx", {"Chu-Ko-Nu", {{ 0, 0 }, false, true, { 14, 32 }}, {80, 95, 25}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
             {"qf1", {"Khalim's Flail", {{ 1, 15 }, false, false, { 0, 0 }}, {41, 35}, {2, 3}, false, "invqf1", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
             {"qf2", {"Khalim's Will", {{ 1, 15 }, false, false, { 0, 0 }}, {0, 0}, {2, 3}, false, "invqf2", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"ktr", {"Katar", {{ 4, 7 }, false, false, { 0, 0 }}, {20, 20}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"wrb", {"Wrist Blade", {{ 5, 9 }, false, false, { 0, 0 }}, {33, 33}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"axf", {"Hatchet Hands", {{ 2, 15 }, false, false, { 0, 0 }}, {37, 37}, {1, 3}, false, "invaxf", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"ces", {"Cestus", {{ 7, 15 }, false, false, { 0, 0 }}, {42, 42}, {1, 3}, false, "invaxf", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"clw", {"Claws", {{ 8, 15 }, false, false, { 0, 0 }}, {46, 46}, {1, 3}, false, "invclw", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"btl", {"Blade Talons", {{ 10, 14 }, false, false, { 0, 0 }}, {50, 50}, {1, 3}, false, "invclw", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"skr", {"Scissors Katar", {{ 9, 17 }, false, false, { 0, 0 }}, {55, 55}, {1, 2}, false, "invskr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9ar", {"Quhab", {{ 11, 24 }, false, false, { 0, 0 }}, {57, 57, 21}, {1, 2}, false, "invskr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9wb", {"Wrist Spike", {{ 13, 27 }, false, false, { 0, 0 }}, {66, 66, 24}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9xf", {"Fascia", {{ 8, 37 }, false, false, { 0, 0 }}, {69, 69, 27}, {1, 2}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9cs", {"Hand Scythe", {{ 16, 37 }, false, false, { 0, 0 }}, {73, 73, 30}, {1, 2}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9lw", {"Greater Claws", {{ 18, 37 }, false, false, { 0, 0 }}, {76, 76, 33}, {1, 2}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9tw", {"Greater Talons", {{ 21, 35 }, false, false, { 0, 0 }}, {79, 79, 37}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"9qr", {"Scissors Quhab", {{ 19, 40 }, false, false, { 0, 0 }}, {82, 82, 40}, {1, 3}, false, "invskr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7ar", {"Suwayyah", {{ 39, 52 }, false, false, { 0, 0 }}, {99, 99, 44}, {1, 3}, false, "invktr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7wb", {"Wrist Sword", {{ 34, 45 }, false, false, { 0, 0 }}, {105, 105, 46}, {1, 3}, false, "invktr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7xf", {"War Fist", {{ 44, 53 }, false, false, { 0, 0 }}, {108, 108, 51}, {1, 3}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7cs", {"Battle Cestus", {{ 36, 42 }, false, false, { 0, 0 }}, {110, 110, 54}, {1, 3}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7lw", {"Feral Claws", {{ 22, 53 }, false, false, { 0, 0 }}, {113, 113, 58}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7tw", {"Runic Talons", {{ 24, 44 }, false, false, { 0, 0 }}, {115, 115, 60}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7qr", {"Scissors Suwayh", {{ 40, 51 }, false, false, { 0, 0 }}, {118, 188, 64}, {1, 3}, false, "invskr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}}},
-            {"7ha", {"Tomahawk", {{ 33, 58 }, false, false, { 0, 0 }}, {125, 67, 40}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ax", {"Small Crescent", {{ 38, 60 }, false, false, { 0, 0 }}, {115, 83, 45}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"72a", {"Ettin Axe", {{ 33, 66 }, false, false, { 0, 0 }}, {145, 45, 52}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7mp", {"War Spike", {{ 30, 48 }, false, false, { 0, 0 }}, {133, 54, 59}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7wa", {"Berserker Axe", {{ 24, 71 }, false, false, { 0, 0 }}, {138, 59, 64}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7la", {"Feral Axe", {{ 0, 0 }, false, true, { 25, 123 }}, {196, 0, 42}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ba", {"Silver Edged Ax", {{ 0, 0 }, false, true, { 62, 110 }}, {166, 65, 48}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7bt", {"Decapitator", {{ 0, 0 }, false, true, { 49, 137 }}, {189, 33, 54}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7ga", {"Champion Axe", {{ 0, 0 }, false, true, { 59, 94 }}, {167, 59, 61}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7gi", {"Glorious Axe", {{ 0, 0 }, false, true, { 60, 124 }}, {164, 55, 66}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}}},
-            {"7wn", {"Polished Wand", {{ 18, 33 }, false, false, { 0, 0 }}, {25, 0, 41}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7yw", {"Ghost Wand", {{ 20, 40 }, false, false, { 0, 0 }}, {25, 0, 48}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7bw", {"Lich Wand", {{ 10, 31 }, false, false, { 0, 0 }}, {25, 0, 56}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7gw", {"Unearthed Wand", {{ 22, 28 }, false, false, { 0, 0 }}, {25, 0, 64}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7cl", {"Truncheon", {{ 35, 43 }, false, false, { 0, 0 }}, {88, 43, 39}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7sc", {"Mighty Sceptre", {{ 40, 52 }, false, false, { 0, 0 }}, {125, 65, 46}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7qs", {"Seraph Rod", {{ 45, 54 }, false, false, { 0, 0 }}, {108, 69, 57}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7ws", {"Caduceus", {{ 37, 43 }, false, false, { 0, 0 }}, {97, 70, 66}, {2, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7sp", {"Tyrant Club", {{ 32, 58 }, false, false, { 0, 0 }}, {133, 0, 42}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7ma", {"Reinforced Mace", {{ 41, 49 }, false, false, { 0, 0 }}, {145, 46, 47}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7mt", {"Devil Star", {{ 43, 53 }, false, false, { 0, 0 }}, {153, 44, 52}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7fl", {"Scourge", {{ 3, 80 }, false, false, { 0, 0 }}, {125, 77, 57}, {2, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7wh", {"Legendary Mallt", {{ 50, 61 }, false, false, { 0, 0 }}, {189, 0, 61}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7m7", {"Ogre Maul", {{ 0, 0 }, false, true, { 77, 106 }}, {225, 0, 51}, {2, 4}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7gm", {"Thunder Maul", {{ 0, 0 }, false, true, { 33, 180 }}, {253, 0, 65}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"7ss", {"Falcata", {{ 31, 59 }, false, false, { 0, 0 }}, {150, 88, 42}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7sm", {"Ataghan", {{ 26, 46 }, false, false, { 0, 0 }}, {138, 95, 45}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7sb", {"Elegant Blade", {{ 33, 45 }, false, false, { 0, 0 }}, {109, 122, 47}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7fc", {"Hydra Edge", {{ 28, 68 }, false, false, { 0, 0 }}, {142, 105, 51}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7cr", {"Phase Blade", {{ 31, 35 }, false, false, { 0, 0 }}, {25, 136, 54}, {2, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7bs", {"Conquest Sword", {{ 37, 53 }, false, false, { 0, 0 }}, {142, 112, 58}, {2, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7ls", {"Cryptic Sword", {{ 5, 77 }, false, false, { 0, 0 }}, {99, 109, 61}, {2, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7wd", {"Mythical Sword", {{ 40, 50 }, false, false, { 0, 0 }}, {147, 124, 66}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"72h", {"Legend Sword", {{ 22, 56 }, true, true, { 50, 94 }}, {175, 100, 44}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7cm", {"Highland Blade", {{ 22, 62 }, true, true, { 67, 96 }}, {171, 104, 49}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7gs", {"Balrog Blade", {{ 15, 75 }, true, true, { 55, 118 }}, {185, 87, 53}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7b7", {"Champion Sword", {{ 24, 54 }, true, true, { 71, 83 }}, {163, 103, 57}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7fb", {"Colossal Sword", {{ 26, 70 }, true, true, { 61, 121 }}, {182, 95, 60}, {2, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7gd", {"Colossus Blade", {{ 25, 65 }, true, true, { 58, 115 }}, {189, 110, 63}, {2, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}}},
-            {"7dg", {"Bone Knife", {{ 23, 49 }, false, false, { 0, 0 }}, {38, 75, 43}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"7di", {"Mithral Point", {{ 37, 53 }, false, false, { 0, 0 }}, {55, 98, 52}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"7kr", {"Fanged Knife", {{ 15, 57 }, false, false, { 0, 0 }}, {42, 86, 62}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}}},
-            {"7bl", {"Legend Spike", {{ 31, 47 }, false, false, { 0, 0 }}, {65, 67, 66}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}}},
+            {"ktr", {"Katar", {{ 4, 7 }, false, false, { 0, 0 }}, {20, 20}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"wrb", {"Wrist Blade", {{ 5, 9 }, false, false, { 0, 0 }}, {33, 33}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"axf", {"Hatchet Hands", {{ 2, 15 }, false, false, { 0, 0 }}, {37, 37}, {1, 3}, false, "invaxf", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"ces", {"Cestus", {{ 7, 15 }, false, false, { 0, 0 }}, {42, 42}, {1, 3}, false, "invaxf", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"clw", {"Claws", {{ 8, 15 }, false, false, { 0, 0 }}, {46, 46}, {1, 3}, false, "invclw", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"btl", {"Blade Talons", {{ 10, 14 }, false, false, { 0, 0 }}, {50, 50}, {1, 3}, false, "invclw", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"skr", {"Scissors Katar", {{ 9, 17 }, false, false, { 0, 0 }}, {55, 55}, {1, 2}, false, "invskr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"9ar", {"Quhab", {{ 11, 24 }, false, false, { 0, 0 }}, {57, 57, 21}, {1, 2}, false, "invskr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"9wb", {"Wrist Spike", {{ 13, 27 }, false, false, { 0, 0 }}, {66, 66, 24}, {1, 3}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"9xf", {"Fascia", {{ 8, 37 }, false, false, { 0, 0 }}, {69, 69, 27}, {1, 2}, false, "invktr", 2, {"Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"9cs", {"Hand Scythe", {{ 16, 37 }, false, false, { 0, 0 }}, {73, 73, 30}, {1, 2}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"9lw", {"Greater Claws", {{ 18, 37 }, false, false, { 0, 0 }}, {76, 76, 33}, {1, 2}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"9tw", {"Greater Talons", {{ 21, 35 }, false, false, { 0, 0 }}, {79, 79, 37}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"9qr", {"Scissors Quhab", {{ 19, 40 }, false, false, { 0, 0 }}, {82, 82, 40}, {1, 3}, false, "invskr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7ar", {"Suwayyah", {{ 39, 52 }, false, false, { 0, 0 }}, {99, 99, 44}, {1, 3}, false, "invktr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7wb", {"Wrist Sword", {{ 34, 45 }, false, false, { 0, 0 }}, {105, 105, 46}, {1, 3}, false, "invktr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7xf", {"War Fist", {{ 44, 53 }, false, false, { 0, 0 }}, {108, 108, 51}, {1, 3}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"7cs", {"Battle Cestus", {{ 36, 42 }, false, false, { 0, 0 }}, {110, 110, 54}, {1, 3}, false, "invaxf", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2}}},
+            {"7lw", {"Feral Claws", {{ 22, 53 }, false, false, { 0, 0 }}, {113, 113, 58}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7tw", {"Runic Talons", {{ 24, 44 }, false, false, { 0, 0 }}, {115, 115, 60}, {1, 3}, false, "invclw", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7qr", {"Scissors Suwayyah", {{ 40, 51 }, false, false, { 0, 0 }}, {118, 188, 64}, {1, 3}, false, "invskr", 2, {"Hand to Hand 2", "Hand to Hand", "Melee Weapon", "Weapon", "Assassin Item", "Class Specific"}, {2, 3}}},
+            {"7ha", {"Tomahawk", {{ 33, 58 }, false, false, { 0, 0 }}, {125, 67, 40}, {1, 3}, false, "invhax", 2, {"Axe", "Melee Weapon", "Weapon"}, {2}}},
+            {"7ax", {"Small Crescent", {{ 38, 60 }, false, false, { 0, 0 }}, {115, 83, 45}, {2, 3}, false, "invaxe", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"72a", {"Ettin Axe", {{ 33, 66 }, false, false, { 0, 0 }}, {145, 45, 52}, {2, 3}, false, "inv2ax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"7mp", {"War Spike", {{ 30, 48 }, false, false, { 0, 0 }}, {133, 54, 59}, {2, 3}, false, "invmpi", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"7wa", {"Berserker Axe", {{ 24, 71 }, false, false, { 0, 0 }}, {138, 59, 64}, {2, 3}, false, "invwax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"7la", {"Feral Axe", {{ 0, 0 }, false, true, { 25, 123 }}, {196, 0, 42}, {2, 3}, false, "invlax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4}}},
+            {"7ba", {"Silver Edged Axe", {{ 0, 0 }, false, true, { 62, 110 }}, {166, 65, 48}, {2, 3}, false, "invbrx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"7bt", {"Decapitator", {{ 0, 0 }, false, true, { 49, 137 }}, {189, 33, 54}, {2, 3}, false, "invbtx", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5}}},
+            {"7ga", {"Champion Axe", {{ 0, 0 }, false, true, { 59, 94 }}, {167, 59, 61}, {2, 4}, false, "invgax", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"7gi", {"Glorious Axe", {{ 0, 0 }, false, true, { 60, 124 }}, {164, 55, 66}, {2, 3}, false, "invgix", 2, {"Axe", "Melee Weapon", "Weapon"}, {4, 5, 6}}},
+            {"7wn", {"Polished Wand", {{ 18, 33 }, false, false, { 0, 0 }}, {25, 0, 41}, {1, 2}, false, "invwnd", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7yw", {"Ghost Wand", {{ 20, 40 }, false, false, { 0, 0 }}, {25, 0, 48}, {1, 2}, false, "invywn", 8, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7bw", {"Lich Wand", {{ 10, 31 }, false, false, { 0, 0 }}, {25, 0, 56}, {1, 2}, false, "invbwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7gw", {"Unearthed Wand", {{ 22, 28 }, false, false, { 0, 0 }}, {25, 0, 64}, {1, 2}, false, "invgwn", 2, {"Wand", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7cl", {"Truncheon", {{ 35, 43 }, false, false, { 0, 0 }}, {88, 43, 39}, {1, 3}, false, "invclb", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7sc", {"Mighty Scepter", {{ 40, 52 }, false, false, { 0, 0 }}, {125, 65, 46}, {1, 3}, false, "invscp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7qs", {"Seraph Rod", {{ 45, 54 }, false, false, { 0, 0 }}, {108, 69, 57}, {1, 3}, false, "invgsc", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"7ws", {"Caduceus", {{ 37, 43 }, false, false, { 0, 0 }}, {97, 70, 66}, {2, 3}, false, "invwsp", 2, {"Scepter", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3, 5}}},
+            {"7sp", {"Tyrant Club", {{ 32, 58 }, false, false, { 0, 0 }}, {133, 0, 42}, {1, 3}, false, "invspc", 2, {"Club", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"7ma", {"Reinforced Mace", {{ 41, 49 }, false, false, { 0, 0 }}, {145, 46, 47}, {1, 3}, false, "invmac", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"7mt", {"Devil Star", {{ 43, 53 }, false, false, { 0, 0 }}, {153, 44, 52}, {1, 3}, false, "invmst", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"7fl", {"Scourge", {{ 3, 80 }, false, false, { 0, 0 }}, {125, 77, 57}, {2, 3}, false, "invfla", 2, {"Mace", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"7wh", {"Legendary Mallet", {{ 50, 61 }, false, false, { 0, 0 }}, {189, 0, 61}, {2, 3}, false, "invwhm", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7m7", {"Ogre Maul", {{ 0, 0 }, false, true, { 77, 106 }}, {225, 0, 51}, {2, 4}, false, "invmau", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7gm", {"Thunder Maul", {{ 0, 0 }, false, true, { 33, 180 }}, {253, 0, 65}, {2, 3}, false, "invgma", 2, {"Hammer", "Blunt", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7ss", {"Falcata", {{ 31, 59 }, false, false, { 0, 0 }}, {150, 88, 42}, {1, 3}, false, "invssd", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"7sm", {"Ataghan", {{ 26, 46 }, false, false, { 0, 0 }}, {138, 95, 45}, {1, 3}, false, "invscm", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"7sb", {"Elegant Blade", {{ 33, 45 }, false, false, { 0, 0 }}, {109, 122, 47}, {1, 3}, false, "invsbr", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"7fc", {"Hydra Edge", {{ 28, 68 }, false, false, { 0, 0 }}, {142, 105, 51}, {1, 3}, false, "invflc", 2, {"Sword", "Melee Weapon", "Weapon"}, {2}}},
+            {"7cr", {"Phase Blade", {{ 31, 35 }, false, false, { 0, 0 }}, {25, 136, 54}, {2, 3}, false, "invcrs", 8, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7bs", {"Conquest Sword", {{ 37, 53 }, false, false, { 0, 0 }}, {142, 112, 58}, {2, 3}, false, "invbsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7ls", {"Cryptic Sword", {{ 5, 77 }, false, false, { 0, 0 }}, {99, 109, 61}, {2, 3}, false, "invlsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7wd", {"Mythical Sword", {{ 40, 50 }, false, false, { 0, 0 }}, {147, 124, 66}, {1, 3}, false, "invwsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"72h", {"Legend Sword", {{ 22, 56 }, true, true, { 50, 94 }}, {175, 100, 44}, {1, 4}, false, "inv2hs", 2, {"Sword", "Melee Weapon", "Weapon"}, {3}}},
+            {"7cm", {"Highland Blade", {{ 22, 62 }, true, true, { 67, 96 }}, {171, 104, 49}, {1, 4}, false, "invclm", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7gs", {"Balrog Blade", {{ 15, 75 }, true, true, { 55, 118 }}, {185, 87, 53}, {1, 4}, false, "invgis", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7b7", {"Champion Sword", {{ 24, 54 }, true, true, { 71, 83 }}, {163, 103, 57}, {1, 4}, false, "invbsw", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7fb", {"Colossal Sword", {{ 26, 70 }, true, true, { 61, 121 }}, {182, 95, 60}, {2, 4}, false, "invflb", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"7gd", {"Colossus Blade", {{ 25, 65 }, true, true, { 58, 115 }}, {189, 110, 63}, {2, 4}, false, "invgsd", 2, {"Sword", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7dg", {"Bone Knife", {{ 23, 49 }, false, false, { 0, 0 }}, {38, 75, 43}, {1, 2}, false, "invdgr", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"7di", {"Mithril Point", {{ 37, 53 }, false, false, { 0, 0 }}, {55, 98, 52}, {1, 2}, false, "invdir", 2, {"Knife", "Melee Weapon", "Weapon"}, {1}}},
+            {"7kr", {"Fanged Knife", {{ 15, 57 }, false, false, { 0, 0 }}, {42, 86, 62}, {1, 3}, false, "invkrs", 2, {"Knife", "Melee Weapon", "Weapon"}, {2, 3}}},
+            {"7bl", {"Legend Spike", {{ 31, 47 }, false, false, { 0, 0 }}, {65, 67, 66}, {1, 3}, false, "invbld", 2, {"Knife", "Melee Weapon", "Weapon"}, {2}}},
             {"7tk", {"Flying Knife", {{ 23, 54 }, false, false, { 0, 0 }, { 23, 54 }}, {48, 141, 48}, {1, 2}, true, "invtkn", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
             {"7ta", {"Flying Axe", {{ 17, 65 }, false, false, { 0, 0 }, { 15, 66 }}, {88, 108, 42}, {1, 2}, true, "invtax", 2, {"Throwing Axe", "Combo Weapon", "Axe", "Melee Weapon", "Weapon"}}},
             {"7bk", {"Winged Knife", {{ 27, 35 }, false, false, { 0, 0 }, { 23, 39 }}, {45, 142, 57}, {1, 2}, true, "invbkf", 2, {"Throwing Knife", "Combo Weapon", "Knife", "Melee Weapon", "Weapon"}}},
@@ -4706,63 +4741,63 @@ namespace d2ce
             {"7s7", {"Balrog Spear", {{ 33, 63 }, false, false, { 0, 0 }, { 40, 62 }}, {127, 95, 53}, {1, 3}, true, "invssp", 8, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"7gl", {"Ghost Glaive", {{ 19, 60 }, false, false, { 0, 0 }, { 30, 85 }}, {89, 137, 59}, {1, 4}, true, "invglv", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
             {"7ts", {"Winged Harpoon", {{ 27, 35 }, false, false, { 0, 0 }, { 11, 77 }}, {76, 145, 65}, {1, 4}, true, "invtsp", 2, {"Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon"}}},
-            {"7sr", {"Hyperion Spear", {{ 0, 0 }, false, true, { 35, 119 }}, {155, 120, 43}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"7tr", {"Stygian Pike", {{ 0, 0 }, false, true, { 29, 144 }}, {168, 97, 49}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"7br", {"Mancatcher", {{ 0, 0 }, false, true, { 42, 92 }}, {132, 134, 55}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"7st", {"Ghost Spear", {{ 0, 0 }, false, true, { 18, 155 }}, {122, 163, 62}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"7p7", {"War Pike", {{ 0, 0 }, false, true, { 33, 178 }}, {165, 106, 66}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}}},
-            {"7o7", {"Ogre Axe", {{ 0, 0 }, false, true, { 28, 145 }}, {195, 75, 45}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"7vo", {"Colossus Voulge", {{ 0, 0 }, false, true, { 17, 165 }}, {210, 55, 48}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"7s8", {"Thresher", {{ 0, 0 }, false, true, { 12, 141 }}, {152, 118, 53}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"7pa", {"Cryptic Axe", {{ 0, 0 }, false, true, { 33, 150 }}, {165, 103, 59}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"7h7", {"Great Poleaxe", {{ 0, 0 }, false, true, { 46, 127 }}, {179, 99, 63}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"7wc", {"Giant Thresher", {{ 0, 0 }, false, true, { 40, 114 }}, {188, 140, 66}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}}},
-            {"6ss", {"Walking Stick", {{ 0, 0 }, false, true, { 69, 85 }}, {25, 0, 43}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"6ls", {"Stalagmite", {{ 0, 0 }, false, true, { 75, 107 }}, {63, 35, 49}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"6cs", {"Elder Staff", {{ 0, 0 }, false, true, { 80, 93 }}, {44, 37, 55}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"6bs", {"Shillelagh", {{ 0, 0 }, false, true, { 65, 108 }}, {52, 27, 62}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"6ws", {"Archon Staff", {{ 0, 0 }, false, true, { 83, 99 }}, {34, 0, 66}, {2, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}}},
-            {"6sb", {"Spider Bow", {{ 0, 0 }, false, true, { 23, 50 }}, {64, 143, 41}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6hb", {"Blade Bow", {{ 0, 0 }, false, true, { 21, 41 }}, {76, 119, 45}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6lb", {"Shadow Bow", {{ 0, 0 }, false, true, { 15, 59 }}, {52, 188, 47}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6cb", {"Great Bow", {{ 0, 0 }, false, true, { 12, 52 }}, {121, 107, 51}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6s7", {"Diamond Bow", {{ 0, 0 }, false, true, { 33, 40 }}, {89, 132, 54}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6l7", {"Crusader Bow", {{ 0, 0 }, false, true, { 15, 63 }}, {97, 121, 57}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6sw", {"Ward Bow", {{ 0, 0 }, false, true, { 20, 53 }}, {72, 146, 60}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6lw", {"Hydra Bow", {{ 0, 0 }, false, true, { 10, 68 }}, {134, 160, 63}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}}},
-            {"6lx", {"Pellet Bow", {{ 0, 0 }, false, true, { 28, 73 }}, {83, 155, 42}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"6mx", {"Gorgon Crossbow", {{ 0, 0 }, false, true, { 25, 87 }}, {117, 105, 50}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"6hx", {"Colossus Crossbow", {{ 0, 0 }, false, true, { 32, 91 }}, {163, 77, 56}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"6rx", {"Demon Crossbow", {{ 0, 0 }, false, true, { 26, 40 }}, {141, 98, 63}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}}},
-            {"ob1", {"Eagle Orb", {{ 2, 5 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob2", {"Sacred Globe", {{ 3, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob3", {"Smoked Sphere", {{ 4, 10 }, false, false, { 0, 0 }}, {0, 0, 8}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob4", {"Clasped Orb", {{ 5, 12 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob5", {"Dragon Stone", {{ 8, 18 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"am1", {"Stag Bow", {{ 0, 0 }, false, true, { 7, 12 }}, {30, 45, 14}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am2", {"Reflex Bow", {{ 0, 0 }, false, true, { 9, 19 }}, {35, 60, 20}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am3", {"Maiden Spear", {{ 0, 0 }, false, true, { 18, 24 }}, {54, 40, 14}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am4", {"Maiden Pike", {{ 0, 0 }, false, true, { 23, 55 }}, {63, 52, 20}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
+            {"7sr", {"Hyperion Spear", {{ 0, 0 }, false, true, { 35, 119 }}, {155, 120, 43}, {2, 4}, false, "invspr", 8, {"Spear", "Melee Weapon", "Weapon"}, {3}}},
+            {"7tr", {"Stygian Pike", {{ 0, 0 }, false, true, { 29, 144 }}, {168, 97, 49}, {2, 4}, false, "invtri", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7br", {"Mancatcher", {{ 0, 0 }, false, true, { 42, 92 }}, {132, 134, 55}, {2, 4}, false, "invbrn", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"7st", {"Ghost Spear", {{ 0, 0 }, false, true, { 18, 155 }}, {122, 163, 62}, {2, 4}, false, "invspt", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7p7", {"War Pike", {{ 0, 0 }, false, true, { 33, 178 }}, {165, 106, 66}, {2, 4}, false, "invpik", 8, {"Spear", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7o7", {"Ogre Axe", {{ 0, 0 }, false, true, { 28, 145 }}, {195, 75, 45}, {2, 4}, false, "invbar", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3}}},
+            {"7vo", {"Colossus Voulge", {{ 0, 0 }, false, true, { 17, 165 }}, {210, 55, 48}, {2, 4}, false, "invvou", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4}}},
+            {"7s8", {"Thresher", {{ 0, 0 }, false, true, { 12, 141 }}, {152, 118, 53}, {2, 4}, false, "invscy", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"7pa", {"Cryptic Axe", {{ 0, 0 }, false, true, { 33, 150 }}, {165, 103, 59}, {2, 4}, false, "invpax", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 5}}},
+            {"7h7", {"Great Poleaxe", {{ 0, 0 }, false, true, { 46, 127 }}, {179, 99, 63}, {2, 4}, false, "invhal", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"7wc", {"Giant Thresher", {{ 0, 0 }, false, true, { 40, 114 }}, {188, 140, 66}, {2, 4}, false, "invwsc", 2, {"Polearm", "Melee Weapon", "Weapon"}, {3, 4, 6}}},
+            {"6ss", {"Walking Stick", {{ 0, 0 }, false, true, { 69, 85 }}, {25, 0, 43}, {1, 3}, false, "invsst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {2}}},
+            {"6ls", {"Stalagmite", {{ 0, 0 }, false, true, { 75, 107 }}, {63, 35, 49}, {1, 4}, false, "invlst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {3}}},
+            {"6cs", {"Elder Staff", {{ 0, 0 }, false, true, { 80, 93 }}, {44, 37, 55}, {1, 4}, false, "invcst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"6bs", {"Shillelagh", {{ 0, 0 }, false, true, { 65, 108 }}, {52, 27, 62}, {1, 4}, false, "invbst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {4}}},
+            {"6ws", {"Archon Staff", {{ 0, 0 }, false, true, { 83, 99 }}, {34, 0, 66}, {2, 4}, false, "invwst", 8, {"Staff", "Staves And Rods", "Blunt", "Melee Weapon", "Weapon"}, {5, 6}}},
+            {"6sb", {"Spider Bow", {{ 0, 0 }, false, true, { 23, 50 }}, {64, 143, 41}, {2, 3}, false, "invsbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3}}},
+            {"6hb", {"Blade Bow", {{ 0, 0 }, false, true, { 21, 41 }}, {76, 119, 45}, {2, 3}, false, "invhbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"6lb", {"Shadow Bow", {{ 0, 0 }, false, true, { 15, 59 }}, {52, 188, 47}, {2, 4}, false, "invlbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"6cb", {"Great Bow", {{ 0, 0 }, false, true, { 12, 52 }}, {121, 107, 51}, {2, 3}, false, "invcbw", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"6s7", {"Diamond Bow", {{ 0, 0 }, false, true, { 33, 40 }}, {89, 132, 54}, {2, 3}, false, "invsbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"6l7", {"Crusader Bow", {{ 0, 0 }, false, true, { 15, 63 }}, {97, 121, 57}, {2, 4}, false, "invlbb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"6sw", {"Ward Bow", {{ 0, 0 }, false, true, { 20, 53 }}, {72, 146, 60}, {2, 3}, false, "invswb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"6lw", {"Hydra Bow", {{ 0, 0 }, false, true, { 10, 68 }}, {134, 160, 63}, {2, 4}, false, "invlwb", 8, {"Bow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"6lx", {"Pellet Bow", {{ 0, 0 }, false, true, { 28, 73 }}, {83, 155, 42}, {2, 3}, false, "invlxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3}}},
+            {"6mx", {"Gorgon Crossbow", {{ 0, 0 }, false, true, { 25, 87 }}, {117, 105, 50}, {2, 3}, false, "invmxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4}}},
+            {"6hx", {"Colossus Crossbow", {{ 0, 0 }, false, true, { 32, 91 }}, {163, 77, 56}, {2, 4}, false, "invhxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 6}}},
+            {"6rx", {"Demon Crossbow", {{ 0, 0 }, false, true, { 26, 40 }}, {141, 98, 63}, {2, 3}, false, "invrxb", 8, {"Crossbow", "Missile Weapon", "Weapon"}, {3, 4, 5}}},
+            {"ob1", {"Eagle Orb", {{ 2, 5 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob2", {"Sacred Globe", {{ 3, 8 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob3", {"Smoked Sphere", {{ 4, 10 }, false, false, { 0, 0 }}, {0, 0, 8}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob4", {"Clasped Orb", {{ 5, 12 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob5", {"Dragon Stone", {{ 8, 18 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"am1", {"Stag Bow", {{ 0, 0 }, false, true, { 7, 12 }}, {30, 45, 14}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"am2", {"Reflex Bow", {{ 0, 0 }, false, true, { 9, 19 }}, {35, 60, 20}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"am3", {"Maiden Spear", {{ 0, 0 }, false, true, { 18, 24 }}, {54, 40, 14}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
+            {"am4", {"Maiden Pike", {{ 0, 0 }, false, true, { 23, 55 }}, {63, 52, 20}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
             {"am5", {"Maiden Javelin", {{ 8, 14 }, false, false, { 0, 0 }, { 6, 22 }}, {33, 47, 17}, {1, 3}, true, "invam5", 2, {"Amazon Javelin", "Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"ob6", {"Glowing Orb", {{ 8, 21 }, false, false, { 0, 0 }}, {0, 0, 24}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob7", {"Crystalline Glb", {{ 10, 26 }, false, false, { 0, 0 }}, {0, 0, 27}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob8", {"Cloudy Sphere", {{ 11, 29 }, false, false, { 0, 0 }}, {0, 0, 30}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"ob9", {"Sparkling Ball", {{ 13, 32 }, false, false, { 0, 0 }}, {0, 0, 34}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"oba", {"Swirling Crystal", {{ 18, 42 }, false, false, { 0, 0 }}, {0, 0, 37}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"am6", {"Ashwood Bow", {{ 0, 0 }, false, true, { 16, 29 }}, {56, 77, 29}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am7", {"Ceremonial Bow", {{ 0, 0 }, false, true, { 19, 41 }}, {73, 110, 35}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am8", {"Ceremonial Spear", {{ 0, 0 }, false, true, { 34, 51 }}, {101, 80, 32}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"am9", {"Ceremonial Pike", {{ 0, 0 }, false, true, { 42, 101 }}, {115, 98, 38}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
+            {"ob6", {"Glowing Orb", {{ 8, 21 }, false, false, { 0, 0 }}, {0, 0, 24}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob7", {"Crystalline Globe", {{ 10, 26 }, false, false, { 0, 0 }}, {0, 0, 27}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob8", {"Cloudy Sphere", {{ 11, 29 }, false, false, { 0, 0 }}, {0, 0, 30}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"ob9", {"Sparkling Ball", {{ 13, 32 }, false, false, { 0, 0 }}, {0, 0, 34}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"oba", {"Swirling Crystal", {{ 18, 42 }, false, false, { 0, 0 }}, {0, 0, 37}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"am6", {"Ashwood Bow", {{ 0, 0 }, false, true, { 16, 29 }}, {56, 77, 29}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"am7", {"Ceremonial Bow", {{ 0, 0 }, false, true, { 19, 41 }}, {73, 110, 35}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"am8", {"Ceremonial Spear", {{ 0, 0 }, false, true, { 34, 51 }}, {101, 80, 32}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
+            {"am9", {"Ceremonial Pike", {{ 0, 0 }, false, true, { 42, 101 }}, {115, 98, 38}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
             {"ama", {"Ceremonial Javelin", {{ 18, 35 }, false, false, { 0, 0 }, { 18, 54 }}, {25, 109, 26}, {1, 3}, true, "invam5", 2, {"Amazon Javelin", "Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"obb", {"Heavenly Stone", {{ 21, 46 }, false, false, { 0, 0 }}, {0, 0, 44}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"obc", {"Eldritch Orb", {{ 18, 50 }, false, false, { 0, 0 }}, {0, 0, 50}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"obd", {"Demon Heart", {{ 23, 55 }, false, false, { 0, 0 }}, {0, 0, 56}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"obe", {"Vortex Orb", {{ 12, 66 }, false, false, { 0, 0 }}, {0, 0, 63}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"obf", {"Dimensional Shard", {{ 30, 53 }, false, false, { 0, 0 }}, {0, 0, 66}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}}},
-            {"amb", {"Matriarchal Bow", {{ 0, 0 }, false, true, { 20, 47 }}, {87, 187, 39}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"amc", {"Grand Matron Bow", {{ 0, 0 }, false, true, { 14, 72 }}, {108, 152, 58}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"amd", {"Matriarchal Spear", {{ 0, 0 }, false, true, { 65, 95 }}, {114, 142, 45}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
-            {"ame", {"Matriarchal Pike", {{ 0, 0 }, false, true, { 37, 153 }}, {132, 149, 60}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
+            {"obb", {"Heavenly Stone", {{ 21, 46 }, false, false, { 0, 0 }}, {0, 0, 44}, {1, 2}, false, "invob1", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"obc", {"Eldritch Orb", {{ 18, 50 }, false, false, { 0, 0 }}, {0, 0, 50}, {1, 2}, false, "invob2", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"obd", {"Demon Heart", {{ 23, 55 }, false, false, { 0, 0 }}, {0, 0, 56}, {1, 2}, false, "invob3", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"obe", {"Vortex Orb", {{ 12, 66 }, false, false, { 0, 0 }}, {0, 0, 63}, {1, 2}, false, "invob4", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"obf", {"Dimensional Shard", {{ 30, 53 }, false, false, { 0, 0 }}, {0, 0, 66}, {1, 3}, false, "invob5", 8, {"Orb", "Weapon", "Sorceress Item", "Class Specific"}, {2, 3}}},
+            {"amb", {"Matriarchal Bow", {{ 0, 0 }, false, true, { 20, 47 }}, {87, 187, 39}, {2, 4}, false, "invam1", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"amc", {"Grand Matron Bow", {{ 0, 0 }, false, true, { 14, 72 }}, {108, 152, 58}, {2, 4}, false, "invam2", 8, {"Amazon Bow", "Bow", "Missile Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 5}}},
+            {"amd", {"Matriarchal Spear", {{ 0, 0 }, false, true, { 65, 95 }}, {114, 142, 45}, {2, 4}, false, "invam3", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
+            {"ame", {"Matriarchal Pike", {{ 0, 0 }, false, true, { 37, 153 }}, {132, 149, 60}, {2, 4}, false, "invam4", 8, {"Amazon Spear", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}, {3, 4, 6}}},
             {"amf", {"Matriarchal Javelin", {{ 30, 54 }, false, false, { 0, 0 }, { 35, 66 }}, {107, 151, 48}, {1, 3}, true, "invam5", 2, {"Amazon Javelin", "Javelin", "Combo Weapon", "Spear", "Melee Weapon", "Weapon", "Amazon Item", "Class Specific"}}},
         };
 
@@ -10419,7 +10454,7 @@ bool d2ce::Item::isSocketed() const
         return false;
     }
 
-    return read_uint32_bits(start_bit_offset + 11, 1) != 0 ? true : false;
+    return read_uint32_bits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isNew() const
@@ -12022,6 +12057,28 @@ bool d2ce::Item::isHoradricCube() const
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::canHaveSockets() const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    if (totalNumberOfSockets() > 0)
+    {
+        return true;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = getItemTypeHelper(strcode);
+        return result.canHaveSockets();
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::totalNumberOfSockets() const
 {
     if (isSimpleItem() || (socket_count_bit_offset == 0))
@@ -12029,7 +12086,7 @@ std::uint8_t d2ce::Item::totalNumberOfSockets() const
         return 0;
     }
 
-    return (std::uint8_t)read_uint32_bits(socket_count_bit_offset, 4);
+    return (std::uint8_t)read_uint32_bits(socket_count_bit_offset, SOCKET_COUNT_NUM_BITS);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getQuantity() const
@@ -12041,10 +12098,10 @@ std::uint16_t d2ce::Item::getQuantity() const
 
     if (gld_stackable_bit_offset != 0)
     {
-        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 12);
+        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
     }
 
-    return (std::uint8_t)read_uint32_bits(stackable_bit_offset, 9);
+    return (std::uint8_t)read_uint32_bits(stackable_bit_offset, STACKABLE_NUM_BITS);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setQuantity(std::uint16_t quantity)
@@ -12099,10 +12156,10 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
 
     if (gld_stackable_bit_offset != 0)
     {
-        return updateBits(gld_stackable_bit_offset, 12, quantity);
+        return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
     }
 
-    return updateBits(stackable_bit_offset, 9, quantity);
+    return updateBits(stackable_bit_offset, STACKABLE_NUM_BITS, quantity);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMaxQuantity()
@@ -12124,7 +12181,7 @@ std::uint16_t d2ce::Item::getDefenseRating() const
     }
 
     static const auto& stat = itemStats[31];
-    return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, 11) - stat.saveAdd);
+    return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)) - stat.saveAdd);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDurability(ItemDurability& durability) const
@@ -12135,14 +12192,14 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         return false;
     }
 
-    durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, 8);
+    durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, DURABILITY_MAX_NUM_BITS);
     if (durability.Max == 0)
     {
         // Indestructible without the need for the magical attribute of indestructibility
         return true;
     }
 
-    durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + 8, 8);
+    durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -12226,6 +12283,274 @@ bool d2ce::Item::getRealmDataFlag() const
     }
 
     return read_uint32_bits(realm_bit_offset, 1) == 0 ? false : true;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getMaxSocketCount() const
+{
+    std::uint8_t maxSockets = 0;
+    if (isSimpleItem())
+    {
+        return maxSockets;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        return maxSockets;
+    }
+
+    const auto& result = getItemTypeHelper(strcode);
+    if (!result.canHaveSockets())
+    {
+        return maxSockets;
+    }
+
+    return result.getMaxSockets(getLevel());
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::addMaxSocketCount()
+{
+    auto maxSockets = getMaxSocketCount();
+    if (maxSockets <= totalNumberOfSockets())
+    {
+        // no more room
+        return false;
+    }
+
+    return setSocketCount(maxSockets);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::addSocket()
+{
+    auto maxSockets = getMaxSocketCount();
+    auto curSockets = totalNumberOfSockets();
+    if (maxSockets <= curSockets)
+    {
+        // no more room
+        return false;
+    }
+
+    return setSocketCount(uint8_t(curSockets + 1));
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::removeEmptySockets()
+{
+    if (!isSocketed())
+    {
+        return false;
+    }
+    
+    auto numSocketed = socketedItemCount();
+    auto numSockets = totalNumberOfSockets();
+    if (numSocketed >= numSockets)
+    {
+        // no empty sockets
+        return false;
+    }
+
+    return setSocketCount(numSocketed);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::removeSocket()
+{
+    if (!isSocketed())
+    {
+        return false;
+    }
+
+    auto numSocketed = socketedItemCount();
+    auto numSockets = totalNumberOfSockets();
+    if (numSocketed >= numSockets)
+    {
+        // no empty sockets
+        return false;
+    }
+
+    return setSocketCount(uint8_t(numSockets - 1));
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    numSockets = std::min(numSockets, getMaxSocketCount());
+    if (isSocketed())
+    {
+        // Already has sockets, so just update count
+        auto numSocketed = socketedItemCount();
+        numSockets = std::max(numSockets, numSocketed); // can only remove empty sockets
+        if (numSockets == totalNumberOfSockets())
+        {
+            // nothing to do
+            return false;
+        }
+
+        if (socket_count_bit_offset == 0)
+        {
+            return false;
+        }
+
+        size_t current_bit_offset = socket_count_bit_offset;
+        if (numSockets > 0)
+        {
+            return setBits(current_bit_offset, SOCKET_COUNT_NUM_BITS, numSockets);
+        }
+
+        // Complex change, we are removing all sockets
+        size_t old_current_bit_offset = current_bit_offset + SOCKET_COUNT_NUM_BITS;
+        auto old_item_end_bit_offset = item_end_bit_offset;
+        size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
+
+        // move bits up
+        std::uint32_t value = 0;
+        std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        while (bitsToCopy > 0)
+        {
+            bitsToCopy -= bits;
+            value = read_uint32_bits(old_current_bit_offset, bits);
+            old_current_bit_offset += bits;
+            updateBits(current_bit_offset, bits, value);
+            current_bit_offset += bits;
+            bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        }
+
+        // clear any bits not written to
+        if ((current_bit_offset % 8) > 0)
+        {
+            value = 0;
+            bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+            updateBits(current_bit_offset, bits, 0);
+        }
+        
+        // Set item as not socketed
+        updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 0);
+
+        // truncate data
+        item_end_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        size_t newSize = (item_end_bit_offset + 7) / 8;
+        data.resize(newSize, 0);
+
+        if (bonus_bits_bit_offset != 0)
+        {
+            bonus_bits_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        }
+
+        if (magical_props_bit_offset != 0)
+        {
+            magical_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        }
+
+        if (set_bonus_props_bit_offset != 0)
+        {
+            set_bonus_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        }
+
+        if (runeword_props_bit_offset != 0)
+        {
+            runeword_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        }
+
+        return true;
+    }
+
+    if (numSockets == 0)
+    {
+        // must have at least one socket
+        return false;
+    }
+
+    // not socketed already, complex change
+    // make a copy first
+    std::vector<std::uint8_t> oldData(data);
+
+    // resize to fit socket count
+    auto old_item_end_bit_offset = item_end_bit_offset;
+    item_end_bit_offset += SOCKET_COUNT_NUM_BITS;
+    size_t newSize = (item_end_bit_offset + 7) / 8;
+    data.resize(newSize, 0);
+
+    // Locate position for socket count
+    size_t current_bit_offset = realm_bit_offset + 1;
+    if (read_uint32_bits(realm_bit_offset, 1) != 0)
+    {
+        current_bit_offset += REAL_DATA_NUM_BITS;
+    }
+
+    if (defense_rating_bit_offset != 0)
+    {
+        current_bit_offset += ((FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108);
+    }
+
+    if (durability_bit_offset != 0)
+    {
+        current_bit_offset += DURABILITY_MAX_NUM_BITS;
+        if (read_uint32_bits(durability_bit_offset, DURABILITY_MAX_NUM_BITS) > 0)
+        {
+            // current durability value (8 bits + unknown single bit)
+            current_bit_offset += ((FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108);
+        }
+    }
+
+    if (stackable_bit_offset != 0)
+    {
+        current_bit_offset += STACKABLE_NUM_BITS;
+    }
+
+    // We have reached the byte that needs to be update
+    size_t old_current_bit_offset = current_bit_offset;
+    size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
+   
+    // Set item as socketed
+    updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 1);
+    socket_count_bit_offset = current_bit_offset;
+    updateBits(socket_count_bit_offset, SOCKET_COUNT_NUM_BITS, numSockets);
+    current_bit_offset += SOCKET_COUNT_NUM_BITS;
+
+    // now copy the remaining bits
+    std::uint32_t value = 0;
+    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    while (bitsToCopy > 0)
+    {
+        bitsToCopy -= bits;
+        value = readtemp_bits(oldData, old_current_bit_offset, bits);
+        old_current_bit_offset += bits;
+        updateBits(current_bit_offset, bits, value);
+        current_bit_offset += bits;
+        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    }
+
+    // clear any bits not written to
+    if ((current_bit_offset % 8) > 0)
+    {
+        value = 0;
+        bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+        updateBits(current_bit_offset, bits, 0);
+    }
+
+    if (bonus_bits_bit_offset != 0)
+    {
+        bonus_bits_bit_offset += SOCKET_COUNT_NUM_BITS;
+    }
+
+    if (magical_props_bit_offset != 0)
+    {
+        magical_props_bit_offset += SOCKET_COUNT_NUM_BITS;
+    }
+
+    if (set_bonus_props_bit_offset != 0)
+    {
+        set_bonus_props_bit_offset += SOCKET_COUNT_NUM_BITS;
+    }
+
+    if (runeword_props_bit_offset != 0)
+    {
+        runeword_props_bit_offset += SOCKET_COUNT_NUM_BITS;
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedItemName() const
@@ -12388,6 +12713,7 @@ std::string d2ce::Item::getDisplayedSocketedRunes() const
             if (bFirstItem)
             {
                 ss << "'";
+                bFirstItem = false;
             }
 
             name = item.getItemTypeName();
@@ -13222,7 +13548,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         {
             // Is this correct for gld items? It's not currently used, so is it even needed?
             gld_stackable_bit_offset = extended_data_offset + 1;
-            if (!skipBits(charfile, extended_data_offset, 12))
+            if (!skipBits(charfile, extended_data_offset, GLD_STACKABLE_NUM_BITS))
             {
                 return false;
             }
@@ -13416,7 +13742,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     realm_bit_offset = current_bit_offset;
     if (readBits(charfile, current_bit_offset, 1) != 0)
     {
-        if (!skipBits(charfile, current_bit_offset, 96))
+        if (!skipBits(charfile, current_bit_offset, REAL_DATA_NUM_BITS))
         {
             return false;
         }
@@ -13433,7 +13759,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         {
             // Defense rating
             defense_rating_bit_offset = current_bit_offset;
-            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? 11 : 10)))
+            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)))
             {
                 return false;
             }
@@ -13441,10 +13767,10 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 
         // Some armor/weapons like phase blades don't have durability
         durability_bit_offset = current_bit_offset;
-        if (readBits(charfile, current_bit_offset, 8) > 0)
+        if (readBits(charfile, current_bit_offset, DURABILITY_MAX_NUM_BITS) > 0)
         {
             // current durability value (8 bits + unknown single bit)
-            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? 9 : 8)))
+            if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108)))
             {
                 return false;
             }
@@ -13461,7 +13787,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         // If the item is a stacked item, e.g. a javelin or something, these 9
         // bits will contain the quantity.
         stackable_bit_offset = current_bit_offset;
-        if (!skipBits(charfile, current_bit_offset, 9))
+        if (!skipBits(charfile, current_bit_offset, STACKABLE_NUM_BITS))
         {
             return false;
         }
@@ -13473,7 +13799,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         // number of total sockets the item have, regardless of how many are occupied
         // by an item.
         socket_count_bit_offset = current_bit_offset;
-        if (!skipBits(charfile, current_bit_offset, 4))
+        if (!skipBits(charfile, current_bit_offset, SOCKET_COUNT_NUM_BITS))
         {
             return false;
         }
@@ -14142,7 +14468,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             }
             // can hold up to 4095 gold pieces
             value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
-            bitSize = 12;
+            bitSize = GLD_STACKABLE_NUM_BITS;
             current_bit_offset = gld_stackable_bit_offset;
             if (!setBits(current_bit_offset, bitSize, value))
             {
@@ -14808,7 +15134,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             static const auto& stat = itemStats[31];
             defense_rating_bit_offset = current_bit_offset;
             value = stat.saveAdd;
-            bitSize = (FileVersion >= EnumCharVersion::v110) ? 11 : 10;
+            bitSize = (FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108;
             node = itemRoot[bSerializedFormat ? "Armor" : "defense_rating"];
             if (!node.isNull())
             {
@@ -14826,7 +15152,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         // Some armor/weapons like phase blades don't have durability
         durability_bit_offset = current_bit_offset;
         value = 0;
-        bitSize = 8;
+        bitSize = DURABILITY_MAX_NUM_BITS;
         node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
         if (!node.isNull())
         {
@@ -14842,7 +15168,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         if(value > 0)
         {
             // current durability value (8 bits + unknown single bit)
-            bitSize = (FileVersion >= EnumCharVersion::v110) ? 9 : 8;
+            bitSize = (FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108;
             value = 0;
             node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
             if (!node.isNull())
@@ -14864,7 +15190,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         // bits will contain the quantity.
         stackable_bit_offset = current_bit_offset;
         value = 0;
-        bitSize = 9;
+        bitSize = STACKABLE_NUM_BITS;
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
         if (!node.isNull())
         {
@@ -14885,7 +15211,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         // by an item.
         socket_count_bit_offset = current_bit_offset;
         value = 0;
-        bitSize = 4;
+        bitSize = SOCKET_COUNT_NUM_BITS;
         node = itemRoot[bSerializedFormat ? "TotalNumberOfSockets" : "total_nr_of_sockets"];
         if (node.isNull())
         {
@@ -18595,6 +18921,36 @@ size_t d2ce::Items::maxDurabilityAllItems()
     }
 
     return itemsFixed;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Items::maxSocketCountAllItems()
+{
+    size_t itemsChanged = 0;
+    for (auto& item : Armor)
+    {
+        if (item.get().addMaxSocketCount())
+        {
+            ++itemsChanged;
+        }
+    }
+
+    for (auto& item : Weapons)
+    {
+        if (item.get().addMaxSocketCount())
+        {
+            ++itemsChanged;
+        }
+    }
+
+    for (auto& item : MercItems)
+    {
+        if (item.addMaxSocketCount())
+        {
+            ++itemsChanged;
+        }
+    }
+
+    return itemsChanged;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

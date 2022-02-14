@@ -18,11 +18,15 @@
 
 Revision History
 ================
-Version 2.12 (Feb 12, 2022)
+Version 2.12 (Feb 14, 2022)
    - Updated: Fix detection of change in Character Form.
    - Updated: Fix logic for handling character title/progression
    - Updated: Fix logic handling skill choices left that could
               cause duplicatation of skill points
+
+   - Added: Ability to add sockets to all items or in the Item
+            Form. Number of sockets that can be added it limited
+            by the type of item and the item level.
 
 Version 2.11 (Feb 6, 2022)
    - Updated: Fix bug in Gem convertor in Resurrected when new huffman

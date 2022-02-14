@@ -179,7 +179,9 @@ namespace d2ce
         bool isCharm() const;
         bool isBelt() const;
         bool isHoradricCube() const;
+        bool canHaveSockets() const;
         std::uint8_t totalNumberOfSockets() const;
+        std::uint8_t getMaxSocketCount() const;
         std::uint16_t getQuantity() const;
         bool setQuantity(std::uint16_t quantity);
         bool setMaxQuantity();
@@ -190,6 +192,11 @@ namespace d2ce
         bool setMaxDurability();
         bool getDamage(ItemDamage& damage) const;
         bool getRealmDataFlag() const;
+        bool addMaxSocketCount();
+        bool addSocket();
+        bool removeEmptySockets();
+        bool removeSocket(); // can only remove empty sockets
+        bool setSocketCount(std::uint8_t numSockets);
 
         // Helper methods that return the text displayed on tooltips
         std::string getDisplayedItemName() const;
@@ -352,6 +359,7 @@ namespace d2ce
         size_t fillAllStackables();
         size_t fixAllItems();
         size_t maxDurabilityAllItems();
+        size_t maxSocketCountAllItems();
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getCharmBonuses(std::vector<MagicalAttribute>& attribs) const;

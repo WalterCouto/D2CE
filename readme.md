@@ -44,6 +44,7 @@ You can edit the following stats:<br>
 - Upgrade Durability of all weapons and armor to the max value<br>
 - Upgrade Quantity of all stackable items to the max value<br>
 - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull<br>
+- Add Sockets to items<br>
 
 ### Known Issues
 
@@ -72,6 +73,14 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.12 (Feb 14, 2022)**
+- Updated: Fix detection of change in Character Form.<br>
+- Updated: Fix logic for handling character title/progression<br>
+- Updated: Fix logic handling skill choices left that could cause duplicatation of skill points<br>
+<br>
+
+- Added: Ability to add sockets to all items or in the Item form. Number of sockets that can be added it limited by the type of item and the item level.<br>
+
 **Version 2.11 (Feb 6, 2022)**<br>
 - Updated: Fix bug in Gem convertor in Resurrected when new huffman code is of a different size then the original, the result caused game to crash on startup.<br>
 <br>

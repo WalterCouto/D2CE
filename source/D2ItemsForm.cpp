@@ -122,20 +122,48 @@ namespace
             return false;
         }
 
-        // must be at least 2x2
-        if (dimension.Width <= 1 || dimension.Height <= 1)
+        BITMAP itemBmp;
+        itemImage.GetBitmap(&itemBmp);
+
+        auto socketedItemCount = item.socketedItemCount();
+        CSize slotSize(itemBmp.bmWidth / dimension.Width, itemBmp.bmHeight / dimension.Height);
+        auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+        if (numSlots == 0)
         {
             return false;
         }
 
-        BITMAP itemBmp;
-        itemImage.GetBitmap(&itemBmp);
-
-        CSize slotSize(itemBmp.bmWidth / dimension.Width, itemBmp.bmHeight / dimension.Height);
-        auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(item.socketedItemCount()));
-        if (numSlots == 0)
+        if (numSlots < item.socketedItemCount() && (numSlots <= 7))
         {
-            return false;
+            // not enough room
+            if (dimension.Width < 2)
+            {
+                if (std::uint16_t(2 * dimension.Height) >= socketedItemCount)
+                {
+                    dimension.Width = 2;
+                    slotSize.cx = itemBmp.bmWidth / dimension.Width;
+                    numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                }
+                else if (dimension.Height < 3)
+                {
+                    if (6 >= socketedItemCount)
+                    {
+                        dimension.Width = 2;
+                        dimension.Height = 3;
+                        slotSize.cx = itemBmp.bmWidth / dimension.Width;
+                        slotSize.cx = itemBmp.bmHeight / dimension.Height;
+                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                    }
+                    else
+                    {
+                        dimension.Width = 2;
+                        dimension.Height = 4;
+                        slotSize.cx = itemBmp.bmWidth / dimension.Width;
+                        slotSize.cx = itemBmp.bmHeight / dimension.Height;
+                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                    }
+                }
+            }
         }
 
         if (numSlots <= 3)
@@ -1097,6 +1125,8 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2ItemsForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2ItemsForm::OnItemContextLoad)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2ItemsForm::OnItemContextMaxdurability)
+    ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2ItemsForm::OnItemContextAddsocket)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, &CD2ItemsForm::OnItemContextUpgradeRejuvenation)
@@ -2110,6 +2140,13 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+        }
+        else if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->totalNumberOfSockets())))
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -2202,6 +2239,28 @@ void CD2ItemsForm::OnItemContextMaxdurability()
     }
 
     MainForm.setItemMaxDurability(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextAddsocket()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.addItemSocket(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextMaxsockets()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemMaxSocketCount(*CurrItem);
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

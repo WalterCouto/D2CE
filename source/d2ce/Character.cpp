@@ -2811,6 +2811,11 @@ size_t d2ce::Character::maxDurabilityAllItems()
     return m_items.maxDurabilityAllItems();
 }
 //---------------------------------------------------------------------------
+size_t d2ce::Character::maxSocketCountAllItems()
+{
+    return m_items.maxSocketCountAllItems();
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfStackables() const
 {
     return m_items.getNumberOfStackables();

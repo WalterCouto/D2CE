@@ -887,6 +887,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_FIXALLITEMS, &CD2MainForm::OnUpdateOptionsFixallitems)
     ON_COMMAND(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnOptionsMaxdurabilityforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
+    ON_COMMAND(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnOptionsMaxsocketsforallitems)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxsocketsforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
     ON_COMMAND(ID_VIEW_MERCENARY, &CD2MainForm::OnViewMercenary)
@@ -1656,6 +1658,7 @@ void CD2MainForm::OnOptionsCheckChar()
                     CharInfo.resetStats();
                     CharInfo.fillCharacterStats(cs);
                     Cs.StatsLeft = cs.StatsLeft;
+                    Cs.SkillChoices = cs.SkillChoices;
                     StatsLeftChanged = true;
                     SkillChoicesChanged = true;
                     statChanged = true;
@@ -4400,10 +4403,10 @@ void CD2MainForm::OnUpdateOptionsFixallitems(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 {
-    auto numConverted = CharInfo.maxDurabilityAllItems();
+    auto numChanged = CharInfo.maxDurabilityAllItems();
     CString msg;
-    msg.Format(_T("%zd item(s) have been given the highest durability value"), numConverted);
-    if (numConverted > 0)
+    msg.Format(_T("%zd item(s) have been given the highest durability value"), numChanged);
+    if (numChanged > 0)
     {
         StatusBar.SetWindowText(msg);
 
@@ -4415,6 +4418,27 @@ void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 }
 
 void CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsMaxsocketsforallitems()
+{
+    auto numChanged = CharInfo.maxSocketCountAllItems();
+    CString msg;
+    msg.Format(_T("%zd item(s) have been given the highest number of sockets"), numChanged);
+    if (numChanged > 0)
+    {
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsMaxsocketsforallitems(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
 }
@@ -4886,6 +4910,30 @@ bool CD2MainForm::setItemMaxQuantity(d2ce::Item& item)
 bool CD2MainForm::setItemMaxDurability(d2ce::Item& item)
 {
     bool ret = item.setMaxDurability();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::addItemSocket(d2ce::Item& item)
+{
+    bool ret = item.addSocket();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemMaxSocketCount(d2ce::Item& item)
+{
+    bool ret = item.addMaxSocketCount();
     if (ret)
     {
         ItemsChanged = true;
