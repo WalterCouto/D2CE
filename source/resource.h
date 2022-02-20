@@ -248,6 +248,7 @@
 #define IDB_INVHP4                      383
 #define IDB_INVMP4                      384
 #define IDB_INVRGUL                     385
+#define IDB_INVHP3                      386
 #define IDB_INVRPS                      386
 #define IDB_INVRHEL                     387
 #define IDB_INVHRB                      388
@@ -272,6 +273,7 @@
 #define IDB_INVRLO                      410
 #define IDB_INVRLUM                     411
 #define IDB_INVRMAL                     412
+#define IDB_INVMP3                      414
 #define IDB_INVBPS                      414
 #define IDB_INVMSS                      415
 #define IDB_INVHP1                      416
@@ -570,9 +572,9 @@
 #define ID_OPTIONS_BACKUP_CHAR          32774
 #define ID_OPTIONS_RESTORE_CHAR         32775
 #define ID_OPTIONS_CHECK_CHAR           32776
-#define ID_OPTIONS_CHECK_CHARACTER      32777
+#define ID_OPTIONS_INDESTRUCTIBLEFORALLITEMS 32777
 #define ID_OPTIONS_MAX_EVERYTHING       32778
-#define ID_OPTIONS_REMOVE               32779
+#define ID_ITEM_CONTEXT_INDESTRUCTIBLE  32779
 #define ID_OPTIONS_UPGRADE_GEMS         32780
 #define ID_VIEW_WAYPOINTS               32781
 #define ID_VIEW_QUESTS                  32782
@@ -588,7 +590,7 @@
 #define ID_FILE_EXPORT_AS_JSON_SERIALIZED 32792
 #define ID_VIEW_MERCENARY               32793
 #define ID_OPTIONS_FIXALLITEMS          32794
-#define ID_OPTIONS_REFILLALLSTACKABLES  32795
+#define ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION 32795
 #define ID_ITEM_CONTEXT_LOAD            32796
 #define ID_ITEM_CONTEXT_FIX             32797
 #define ID_ITEM_CONTEXT_MAXDURABILITY   32798
@@ -600,13 +602,14 @@
 #define ID_OPTIONS_MAXSOCKETSFORALLITEMS 32804
 #define ID_ITEM_CONTEXT_MAXSOCKETS      32805
 #define ID_ITEM_CONTEXT_ADDSOCKET       32806
+#define ID_ITEM_CONTEXT_PERSONALIZE     32807
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        494
-#define _APS_NEXT_COMMAND_VALUE         32807
+#define _APS_NEXT_COMMAND_VALUE         32808
 #define _APS_NEXT_CONTROL_VALUE         1147
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

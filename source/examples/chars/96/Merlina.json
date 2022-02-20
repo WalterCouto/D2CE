@@ -3311,8 +3311,8 @@
       "quality": 5,
       "multiple_pictures": 0,
       "class_specific": 0,
-      "set_id": 23,
-      "set_name": "Milabrega's Diadem",
+      "set_id": 55,
+      "set_name": "Arctic Furs",
       "set_list_count": 2,
       "set_attributes": [
         [
@@ -3384,12 +3384,12 @@
       ],
       "type_name": "Quilted Armor",
       "reqstr": 12,
-      "levelreq": 17,
+      "levelreq": 2,
       "inv_file": "invqlt",
       "inv_height": 3,
       "inv_width": 2,
       "inv_transform": 8,
-      "transform_color": "dblu",
+      "transform_color": "lgld",
       "displayed_magic_attributes": [
         {
           "id": 16,
@@ -5689,8 +5689,26 @@
       "inv_transform": 8,
       "displayed_magic_attributes": [],
       "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "combined_magic_attributes": [
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
+        }
+      ]
     },
     {
       "_unknown_data": {
@@ -8568,6 +8586,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 41,
           "values": [
             6
@@ -8645,6 +8671,14 @@
           ],
           "name": "item_fasterattackrate",
           "description": "20% Increased Attack Speed"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         },
         {
           "id": 48,
@@ -9839,6 +9873,14 @@
       ],
       "name": "item_fastergethitrate",
       "description": "{0}% Faster Hit Recovery"
+    },
+    {
+      "id": 122,
+      "values": [
+        50
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 48,

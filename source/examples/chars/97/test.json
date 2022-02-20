@@ -1904,6 +1904,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 107,
           "values": [
             36,
@@ -1914,6 +1922,14 @@
         }
       ],
       "displayed_combined_magic_attributes": [
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
+        },
         {
           "id": 107,
           "values": [

@@ -1000,7 +1000,7 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
     CSize itemPos = CSize(cx, cy);
     if (GetDlgCtrlID() == IDC_INV_BELT_GRID) // Belt
     {
-        itemPos = CSize(cx % 4, cx / 4);
+        itemPos = CSize(cx % 4, GridBoxSize.cy - cx / 4 - 1);
     }
 
     if (((itemPos.cx + dimension.Width) > GridBoxSize.cx) || ((itemPos.cy + dimension.Height) > GridBoxSize.cy))
@@ -1125,8 +1125,11 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2ItemsForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2ItemsForm::OnItemContextLoad)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2ItemsForm::OnItemContextMaxdurability)
+    ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLE, &CD2ItemsForm::OnItemContextIndestructible)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2ItemsForm::OnItemContextAddsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
+    ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2ItemsForm::OnItemContextPersonalize)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, &CD2ItemsForm::OnItemContextUpgradeRejuvenation)
@@ -1912,9 +1915,9 @@ CSize CD2ItemsForm::getInvGridSize(UINT id) const
         // STASH is at most a 10 x 10 grid
         if (getCharacterVersion() < d2ce::EnumCharVersion::v115)
         {
-            // STASH is a 6 x 8 grid
+            // STASH is a 6 x 4/8 grid
             rectBoxWidth = 6;
-            rectBoxHeight = 8;
+            rectBoxHeight = (getCharacterVersion() < d2ce::EnumCharVersion::v107) ? 4 : 8;
         }
         else
         {
@@ -2140,13 +2143,35 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
         }
-        else if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->totalNumberOfSockets())))
+        else
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+            if (CurrItem->isIndestructible())
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            }
+
+            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->totalNumberOfSockets())))
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+            }
+
+            if (CurrItem->isPersonalized())
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+            }
+            else
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+            }
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -2242,6 +2267,17 @@ void CD2ItemsForm::OnItemContextMaxdurability()
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextIndestructible()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemIndestructible(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextAddsocket()
 {
     if (CurrItem == nullptr)
@@ -2261,6 +2297,28 @@ void CD2ItemsForm::OnItemContextMaxsockets()
     }
 
     MainForm.setItemMaxSocketCount(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextPersonalize()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.personalizeItem(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextRemovePersonalization()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.removeItemPersonalization(*CurrItem);
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

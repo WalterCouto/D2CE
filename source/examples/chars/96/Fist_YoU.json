@@ -18822,9 +18822,11 @@
       "type": "vip",
       "categories": [
         "Amulet",
-        "Miscellaneous"
+        "Miscellaneous",
+        "Quest"
       ],
       "type_id": 4,
+      "quest_difficulty": 0,
       "nr_of_items_in_sockets": 0,
       "id": 30081541,
       "level": 90,
@@ -34147,6 +34149,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 17,
           "values": [
             511,
@@ -34492,6 +34502,14 @@
           ],
           "name": "item_normaldamage",
           "description": "Damage +491"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         },
         {
           "id": 307,
@@ -38701,6 +38719,14 @@
       ],
       "name": "item_nonclassskill",
       "description": "+{1} To {0}"
+    },
+    {
+      "id": 122,
+      "values": [
+        50
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 151,

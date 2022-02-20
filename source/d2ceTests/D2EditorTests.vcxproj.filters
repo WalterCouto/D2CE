@@ -81,6 +81,9 @@
     <ClCompile Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>Source Files\jsoncpp</Filter>
     </ClCompile>
+    <ClCompile Include="..\d2ce\helpers\ItemHelpers.cpp">
+      <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="..\d2ce\thirdparty\rapidcsv\include\rapidcsv\rapidcsv.h">
       <Filter>Header Files\rapidcsv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\helpers\ItemHelpers.h">
+      <Filter>Header Files\d2ce</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

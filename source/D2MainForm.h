@@ -215,6 +215,8 @@ protected:
     afx_msg void OnUpdateOptionsFixallitems(CCmdUI* pCmdUI);
     afx_msg void OnOptionsMaxdurabilityforallitems();
     afx_msg void OnUpdateOptionsMaxdurabilityforallitems(CCmdUI* pCmdUI);
+    afx_msg void OnOptionsIndestructibleforallitems();
+    afx_msg void OnUpdateOptionsIndestructibleforallitems(CCmdUI* pCmdUI);
     afx_msg void OnOptionsMaxsocketsforallitems();
     afx_msg void OnUpdateOptionsMaxsocketsforallitems(CCmdUI* pCmdUI);
     afx_msg void OnOptionsResetStats();
@@ -390,6 +392,9 @@ public:
     bool setItemMaxDurability(d2ce::Item& item);
     bool addItemSocket(d2ce::Item& item);
     bool setItemMaxSocketCount(d2ce::Item& item);
+    bool personalizeItem(d2ce::Item& item);
+    bool removeItemPersonalization(d2ce::Item& item);
+    bool setItemIndestructible(d2ce::Item& item);
 
     size_t getNumberOfEquippedItems() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;

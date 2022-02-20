@@ -887,6 +887,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_FIXALLITEMS, &CD2MainForm::OnUpdateOptionsFixallitems)
     ON_COMMAND(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnOptionsMaxdurabilityforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXDURABILITYFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems)
+    ON_COMMAND(ID_OPTIONS_INDESTRUCTIBLEFORALLITEMS, &CD2MainForm::OnOptionsIndestructibleforallitems)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_INDESTRUCTIBLEFORALLITEMS, &CD2MainForm::OnUpdateOptionsIndestructibleforallitems)
     ON_COMMAND(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnOptionsMaxsocketsforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxsocketsforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
@@ -2065,7 +2067,9 @@ void CD2MainForm::DisplayCharInfo()
     SetInt(&GoldInStash, cs.GoldInStash);
     CheckStatsLeft();
 
-    CharStatusLadder.EnableWindow(CharInfo.getVersion() >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
+    auto vesion = CharInfo.getVersion();
+    CharStatusLadder.EnableWindow(vesion >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
+    CharStatusExpansion.EnableWindow((vesion < d2ce::EnumCharVersion::v107 || vesion == d2ce::EnumCharVersion::v108) ? FALSE : TRUE);
     s_levelInfo.ResetVersion(CharInfo.getVersion());
 }
 //---------------------------------------------------------------------------
@@ -4422,6 +4426,27 @@ void CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsIndestructibleforallitems()
+{
+    auto numChanged = CharInfo.setIndestructibleAllItems();
+    CString msg;
+    msg.Format(_T("%zd item(s) have been change to be indestructible"), numChanged);
+    if (numChanged > 0)
+    {
+        StatusBar.SetWindowText(msg);
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsIndestructibleforallitems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxsocketsforallitems()
 {
     auto numChanged = CharInfo.maxSocketCountAllItems();
@@ -4934,6 +4959,43 @@ bool CD2MainForm::addItemSocket(d2ce::Item& item)
 bool CD2MainForm::setItemMaxSocketCount(d2ce::Item& item)
 {
     bool ret = item.addMaxSocketCount();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::personalizeItem(d2ce::Item& item)
+{
+    std::string name(CharInfo.getName().data());
+    bool ret = item.addPersonalization(name);
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::removeItemPersonalization(d2ce::Item& item)
+{
+    bool ret = item.removePersonalization();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemIndestructible(d2ce::Item& item)
+{
+    bool ret = item.setIndestructible();
     if (ret)
     {
         ItemsChanged = true;

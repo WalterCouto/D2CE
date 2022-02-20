@@ -35,6 +35,8 @@ namespace d2ce
         v115, // v1.15 Diable II: Resurrected
     };
 
+    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v115; // default version used by application
+
     enum class EnumItemType : std::uint8_t
     {
         Armor = 1,

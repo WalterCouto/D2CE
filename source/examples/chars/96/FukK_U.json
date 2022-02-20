@@ -38441,7 +38441,7 @@
             511
           ],
           "name": "magicmaxdam",
-          "description": "+{0} Magic Damage"
+          "description": "+{0} to Maximum Magic Damage"
         },
         {
           "id": 54,
@@ -38749,7 +38749,7 @@
             511
           ],
           "name": "magicmaxdam",
-          "description": "+511 Magic Damage"
+          "description": "+511 to Maximum Magic Damage"
         },
         {
           "id": 48,
@@ -39014,7 +39014,7 @@
             511
           ],
           "name": "magicmaxdam",
-          "description": "+{0} Magic Damage"
+          "description": "+{0} to Maximum Magic Damage"
         },
         {
           "id": 54,
@@ -39307,7 +39307,7 @@
             511
           ],
           "name": "magicmaxdam",
-          "description": "+511 Magic Damage"
+          "description": "+511 to Maximum Magic Damage"
         },
         {
           "id": 48,
@@ -42477,7 +42477,7 @@
         511
       ],
       "name": "magicmaxdam",
-      "description": "+{0} Magic Damage"
+      "description": "+{0} to Maximum Magic Damage"
     },
     {
       "id": 54,

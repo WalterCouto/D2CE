@@ -1078,5 +1078,25 @@ namespace d2ce
             }
         }
     };
+
+    struct MagicalCachev100
+    {
+        MagicalAffixes Affixes;
+        std::vector<MagicalAttribute> MagicalAttributes;
+
+        MagicalCachev100()
+        {
+            Affixes.PrefixId = MAXUINT16;
+            Affixes.SuffixId = MAXUINT16;
+        }
+
+        void clear()
+        {
+            Affixes.clear();
+            MagicalAttributes.clear();
+            Affixes.PrefixId = MAXUINT16;
+            Affixes.SuffixId = MAXUINT16;
+        }
+    };
 }
 //---------------------------------------------------------------------------

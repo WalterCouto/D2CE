@@ -3870,6 +3870,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 356,
           "values": [
             1
@@ -3878,6 +3886,14 @@
         }
       ],
       "displayed_combined_magic_attributes": [
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
+        },
         {
           "id": 356,
           "values": [
@@ -6175,8 +6191,8 @@
       "multiple_pictures": 1,
       "picture_id": 1,
       "class_specific": 0,
-      "set_id": 21,
-      "set_name": "Milabrega's Orb",
+      "set_id": 53,
+      "set_name": "Angelic Wings",
       "set_list_count": 2,
       "set_attributes": [
         [
@@ -6220,11 +6236,11 @@
         }
       ],
       "type_name": "Amulet",
-      "levelreq": 17,
+      "levelreq": 12,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "dblu",
+      "transform_color": "lgry",
       "displayed_magic_attributes": [
         {
           "id": 114,
@@ -6706,8 +6722,8 @@
       "multiple_pictures": 1,
       "picture_id": 4,
       "class_specific": 0,
-      "set_id": 20,
-      "set_name": "Vidala's Snare",
+      "set_id": 52,
+      "set_name": "Angelic Halo",
       "set_list_count": 2,
       "set_attributes": [
         [
@@ -6751,11 +6767,11 @@
         }
       ],
       "type_name": "Ring",
-      "levelreq": 14,
+      "levelreq": 12,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "blac",
+      "transform_color": "lgry",
       "displayed_magic_attributes": [
         {
           "id": 7,

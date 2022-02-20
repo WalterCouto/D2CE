@@ -18,6 +18,13 @@
 
 Revision History
 ================
+Version 2.13 (Feb 16, 2022)
+   - Updated: Fix detection of ID for set items.
+
+   - Added: Ability to personalize items or remove the personalization
+            from items.
+   - Added: Ability to make weapons or armor indestructible.
+
 Version 2.12 (Feb 14, 2022)
    - Updated: Fix detection of change in Character Form.
    - Updated: Fix logic for handling character title/progression

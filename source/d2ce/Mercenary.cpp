@@ -22,6 +22,7 @@
 #include "MercenaryConstants.h"
 #include "Character.h"
 #include <sstream>
+#include <random>
 
 //---------------------------------------------------------------------------
 namespace d2ce
@@ -1184,7 +1185,10 @@ void d2ce::Mercenary::setIsHired(bool bIsHired)
         return;
     }
 
-    Merc.Id = uint32_t(rand() | 0x10); // new id
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<std::uint32_t> spread(0, MAXUINT32);
+    Merc.Id = std::uint32_t(spread(gen) | 0x10); // new id
 
     // check experience
     setExperience(Merc.Experience);

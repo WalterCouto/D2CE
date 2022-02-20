@@ -95,7 +95,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +120,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,7 +182,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -214,6 +214,7 @@
     <ClInclude Include="d2ce\CharacterStats.h" />
     <ClInclude Include="d2ce\CharacterStatsConstants.h" />
     <ClInclude Include="d2ce\Constants.h" />
+    <ClInclude Include="d2ce\helpers\ItemHelpers.h" />
     <ClInclude Include="d2ce\Mercenary.h" />
     <ClInclude Include="d2ce\MercenaryConstants.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\allocator.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="d2ce\ActsInfo.cpp" />
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemHelpers.cpp" />
     <ClCompile Include="d2ce\Mercenary.cpp" />
     <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

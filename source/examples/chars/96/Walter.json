@@ -3129,9 +3129,11 @@
         "Staves And Rods",
         "Blunt",
         "Melee Weapon",
-        "Weapon"
+        "Weapon",
+        "Quest"
       ],
       "type_id": 3,
+      "quest_difficulty": 0,
       "nr_of_items_in_sockets": 0,
       "id": 439090945,
       "level": 1,
@@ -3272,6 +3274,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 7,
           "values": [
             10
@@ -3336,6 +3346,14 @@
           ],
           "name": "item_fasterattackrate",
           "description": "50% Increased Attack Speed"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         },
         {
           "id": 7,
@@ -10878,6 +10896,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 19,
           "values": [
             75
@@ -10932,6 +10958,14 @@
           ],
           "name": "tohit",
           "description": "+75 to Attack Rating"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         }
       ]
     },
@@ -11397,6 +11431,14 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
+        {
           "id": 17,
           "values": [
             18,
@@ -11456,6 +11498,14 @@
           ],
           "name": "tohit",
           "description": "+12 to Attack Rating"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         },
         {
           "id": 107,
@@ -12150,7 +12200,7 @@
       "reqstr": 43,
       "inv_file": "invcrs",
       "inv_height": 3,
-      "inv_width": 1,
+      "inv_width": 2,
       "inv_transform": 8,
       "displayed_magic_attributes": [
         {
@@ -12544,6 +12594,14 @@
       ],
       "name": "item_fasterattackrate",
       "description": "{0}% Increased Attack Speed"
+    },
+    {
+      "id": 122,
+      "values": [
+        100
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 218,

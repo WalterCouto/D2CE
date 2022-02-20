@@ -92,7 +92,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -108,7 +108,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -126,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -146,7 +146,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(VCInstallDir)UnitTest\include;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -163,6 +163,7 @@
     <ClCompile Include="..\d2ce\ActsInfo.cpp" />
     <ClCompile Include="..\d2ce\Character.cpp" />
     <ClCompile Include="..\d2ce\CharacterStats.cpp" />
+    <ClCompile Include="..\d2ce\helpers\ItemHelpers.cpp" />
     <ClCompile Include="..\d2ce\Item.cpp" />
     <ClCompile Include="..\d2ce\Mercenary.cpp" />
     <ClCompile Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
@@ -201,6 +202,7 @@
     <ClInclude Include="..\d2ce\Constants.h" />
     <ClInclude Include="..\d2ce\DataTypes.h" />
     <ClInclude Include="..\d2ce\ExperienceConstants.h" />
+    <ClInclude Include="..\d2ce\helpers\ItemHelpers.h" />
     <ClInclude Include="..\d2ce\Item.h" />
     <ClInclude Include="..\d2ce\ItemConstants.h" />
     <ClInclude Include="..\d2ce\Mercenary.h" />

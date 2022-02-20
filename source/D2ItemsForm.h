@@ -159,8 +159,11 @@ protected:
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextLoad();
     afx_msg void OnItemContextMaxdurability();
+    afx_msg void OnItemContextIndestructible();
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
+    afx_msg void OnItemContextPersonalize();
+    afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextUpgradeGem();
     afx_msg void OnItemContextUpgradePotion();
     afx_msg void OnItemContextUpgradeRejuvenation();

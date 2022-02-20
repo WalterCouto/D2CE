@@ -35,8 +35,8 @@ namespace d2ce
     private:
         mutable std::vector<std::uint8_t> data;
         EnumCharVersion FileVersion = APP_CHAR_VERSION;
+        EnumItemVersion ItemVersion = APP_ITEM_VERSION;
         size_t start_bit_offset = 16;
-        mutable size_t is_potion_bit_offset = 36;
         size_t location_bit_offset = 58;
         size_t equipped_id_offset = 61;
         size_t position_offset = 65;
@@ -51,9 +51,10 @@ namespace d2ce
         mutable size_t quality_bit_offset = 0;
         mutable size_t multi_graphic_bit_offset = 0;
         mutable size_t autoAffix_bit_offset = 0;
-        size_t quality_attrib_bit_offset = 0;
+        mutable size_t quality_attrib_bit_offset = 0;
         size_t runeword_id_bit_offset = 0;
         size_t personalized_bit_offset = 0;
+        size_t personalized_bit_offset_marker = 0; // offset where to put the personalization
         size_t tome_bit_offset = 0;
         size_t realm_bit_offset = 0;
         size_t defense_rating_bit_offset = 0;
@@ -61,11 +62,15 @@ namespace d2ce
         size_t stackable_bit_offset = 0;
         size_t gld_stackable_bit_offset = 0;
         size_t socket_count_bit_offset = 0;
+        size_t socket_count_bit_offset_marker = 0;
         size_t bonus_bits_bit_offset = 0;
         size_t magical_props_bit_offset = 0;
         size_t set_bonus_props_bit_offset = 0;
         size_t runeword_props_bit_offset = 0;
         size_t item_end_bit_offset = 0;
+        size_t dwa_bit_offset = 0;
+        mutable size_t dwb_bit_offset = 0;
+        mutable MagicalCachev100 magic_affixes_v100;
 
     private:
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
@@ -80,6 +85,12 @@ namespace d2ce
         bool updateBits(size_t start, size_t size, std::uint32_t value);
         bool updateBits64(size_t start, size_t size, std::uint64_t value);
         bool updateItemCodev115(std::uint64_t code, size_t numBitsSet);
+
+        std::uint8_t getInferiorQualityIdv100() const;
+        bool getMagicalAffixesv100(MagicalAffixes& affixes) const;
+        bool getSetAttributesv100(SetAttributes& attrib) const;
+        bool getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const;
+        
 
     protected:
         bool readItem(EnumCharVersion version, std::FILE* charfile);
@@ -115,8 +126,10 @@ namespace d2ce
         // Simple information
         EnumItemVersion Version() const;
         bool isIdentified() const;
+        bool isDisabled() const; // item is broken
         bool isSocketed() const;
         bool isNew() const;
+        bool isBadEquipped() const;
         bool isEar() const;
         bool isStarterItem() const;
         bool isSimpleItem() const;
@@ -167,6 +180,7 @@ namespace d2ce
         std::uint16_t getSetItemMask() const; // used in serialization
         bool isArmor() const;
         bool isWeapon() const;
+        bool isMissileWeapon() const;
         bool isTome() const;
         bool isStackable() const;
         bool isPotion() const;
@@ -178,7 +192,10 @@ namespace d2ce
         bool isJewel() const;
         bool isCharm() const;
         bool isBelt() const;
+        bool isQuestItem() const;
         bool isHoradricCube() const;
+        bool isIndestructible() const;
+        bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         std::uint8_t totalNumberOfSockets() const;
         std::uint8_t getMaxSocketCount() const;
@@ -197,6 +214,9 @@ namespace d2ce
         bool removeEmptySockets();
         bool removeSocket(); // can only remove empty sockets
         bool setSocketCount(std::uint8_t numSockets);
+        bool addPersonalization(const std::string& name);
+        bool removePersonalization();
+        bool setIndestructible();
 
         // Helper methods that return the text displayed on tooltips
         std::string getDisplayedItemName() const;
@@ -360,6 +380,7 @@ namespace d2ce
         size_t fixAllItems();
         size_t maxDurabilityAllItems();
         size_t maxSocketCountAllItems();
+        size_t setIndestructibleAllItems();
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getCharmBonuses(std::vector<MagicalAttribute>& attribs) const;

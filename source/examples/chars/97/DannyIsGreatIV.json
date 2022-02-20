@@ -23352,7 +23352,7 @@
       "reqdex": 35,
       "inv_file": "invfla",
       "inv_height": 3,
-      "inv_width": 1,
+      "inv_width": 2,
       "inv_transform": 2,
       "displayed_magic_attributes": [],
       "displayed_runeword_attributes": [
@@ -23447,6 +23447,14 @@
         }
       ],
       "combined_magic_attributes": [
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        },
         {
           "id": 39,
           "values": [
@@ -23607,6 +23615,14 @@
           ],
           "name": "item_demon_tohit",
           "description": "+100 to Attack Rating against Demons"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         },
         {
           "id": 54,
@@ -24799,6 +24815,14 @@
       ],
       "name": "item_skillonhit",
       "description": "{2}% Chance to cast level {0} {1} on striking"
+    },
+    {
+      "id": 122,
+      "values": [
+        50
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 41,

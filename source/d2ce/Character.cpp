@@ -2176,7 +2176,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     }
 
     // Check Name
-    // Remove any invalid characters from the number
+    // Remove any invalid characters from the name
     bs.Name[15] = 0; // must be zero
     std::string curName(bs.Name.data());
     std::string strNewText;
@@ -2187,7 +2187,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
         {
             strNewText += c;
         }
-        else if ((c == '_' || c == '-') && strNewText.size() != 0 && numberOfUnderscores < 1)
+        else if ((c == '_' || c == '-') && !strNewText.empty() && numberOfUnderscores < 1)
         {
             strNewText += c;
             ++numberOfUnderscores;
@@ -2809,6 +2809,11 @@ size_t d2ce::Character::fixAllItems()
 size_t d2ce::Character::maxDurabilityAllItems()
 {
     return m_items.maxDurabilityAllItems();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::setIndestructibleAllItems()
+{
+    return m_items.setIndestructibleAllItems();
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::maxSocketCountAllItems()
