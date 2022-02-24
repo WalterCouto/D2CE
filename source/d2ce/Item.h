@@ -68,6 +68,7 @@ namespace d2ce
         size_t set_bonus_props_bit_offset = 0;
         size_t runeword_props_bit_offset = 0;
         size_t item_end_bit_offset = 0;
+        size_t item_current_socket_idx = 0; // temp varaible for v1.04 - 1.06 socketed gems
         size_t dwa_bit_offset = 0;
         mutable size_t dwb_bit_offset = 0;
         mutable MagicalCachev100 magic_affixes_v100;
@@ -91,6 +92,8 @@ namespace d2ce
         bool getSetAttributesv100(SetAttributes& attrib) const;
         bool getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const;
         
+        bool readItemv100(const Json::Value& itemRoot, bool bSerializedFormat);
+        bool readItemv104(const Json::Value& itemRoot, bool bSerializedFormat);
 
     protected:
         bool readItem(EnumCharVersion version, std::FILE* charfile);

@@ -29,6 +29,7 @@ namespace d2ce
     enum class EnumAct : std::uint8_t { I = 0, II = 1, III = 2, IV = 3, V = 4 };
 
     constexpr std::uint32_t NUM_OF_CLASSES = 7;
+    constexpr std::uint32_t NUM_OF_CLASSES_NO_EXPANSION = 5;
     constexpr std::uint32_t NUM_OF_DIFFICULTY = 3;
     constexpr std::uint32_t NUM_OF_SKILL_HOTKEYS = 16;
 }

@@ -4415,7 +4415,7 @@ bool d2ce::ItemHelpers::generateMagicalAffixesv100(std::uint16_t typeCode, std::
             return false;
         }
 
-        auto& suffix = suffixes[generateRandomv100(rnd) % prefixes.size()];
+        auto& suffix = suffixes[generateRandomv100(rnd) % suffixes.size()];
         cache.Affixes.SuffixId = std::uint16_t(suffix.code);
         cache.Affixes.SuffixName = ItemHelpers::getMagicalSuffixFromId(cache.Affixes.SuffixId);
 

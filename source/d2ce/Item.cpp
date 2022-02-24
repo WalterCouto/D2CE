@@ -108,7 +108,6 @@ namespace d2ce
     constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET   =  80;
     constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET   =  82;
     constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET   =  82;
-    constexpr std::uint32_t ITEM_V104_EAR_ITEMCODE_BIT_OFFSET  =  49;
     constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 145;
     constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET        = 171;
     constexpr std::uint32_t ITEM_V104_EX_DWB_BIT_OFFSET        = 203;
@@ -230,6 +229,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     set_bonus_props_bit_offset = other.set_bonus_props_bit_offset;
     runeword_props_bit_offset = other.runeword_props_bit_offset;
     item_end_bit_offset = other.item_end_bit_offset;
+    item_current_socket_idx = other.item_current_socket_idx;
     dwa_bit_offset = other.dwa_bit_offset;
     dwb_bit_offset = other.dwb_bit_offset;
     magic_affixes_v100 = other.magic_affixes_v100;
@@ -282,6 +282,7 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     set_bonus_props_bit_offset = std::exchange(other.set_bonus_props_bit_offset, 0);
     runeword_props_bit_offset = std::exchange(other.runeword_props_bit_offset, 0);
     item_end_bit_offset = std::exchange(other.item_end_bit_offset, 0);
+    item_current_socket_idx = std::exchange(other.item_current_socket_idx, 0);
     dwa_bit_offset = std::exchange(other.dwa_bit_offset, 0);
     dwb_bit_offset = std::exchange(other.dwb_bit_offset, 0);
     magic_affixes_v100 = std::exchange(other.magic_affixes_v100, MagicalCachev100());
@@ -561,6 +562,7 @@ std::uint8_t d2ce::Item::getPositionX() const
     switch (Version())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
@@ -573,9 +575,6 @@ std::uint8_t d2ce::Item::getPositionX() const
             return 0;
         }
         break;
-
-    case EnumItemVersion::v104: // v1.04 - v1.06
-        return (std::uint8_t)read_uint32_bits(position_offset, 5);
 
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
@@ -592,6 +591,7 @@ std::uint8_t d2ce::Item::getPositionY() const
     switch (Version())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
@@ -604,9 +604,6 @@ std::uint8_t d2ce::Item::getPositionY() const
             return 0;
         }
         break;
-
-    case EnumItemVersion::v104: // v1.04 - v1.06
-        return (std::uint8_t)read_uint32_bits(position_offset + 5, 2);
 
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
@@ -4106,6 +4103,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     data.clear();
     SocketedItems.clear();
 
+    item_current_socket_idx = 0;
     dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
@@ -4698,6 +4696,1756 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedFormat)
+{
+    if (itemRoot.isNull())
+    {
+        return false;
+    }
+
+    Json::Value node;
+    std::uint32_t value = 0;
+    size_t current_bit_offset = start_bit_offset;
+
+    location_bit_offset = 0;
+    equipped_id_offset = 0;
+    alt_position_id_offset = 0;
+    durability_bit_offset = 0;
+    nr_of_items_in_sockets_offset = 0;
+    quality_attrib_bit_offset = 0;
+    item_level_bit_offset = 0;
+
+    // 27 bytes total
+    data.resize((ITEM_V100_NUM_BITS + 7) / 8, 0);
+
+    extended_data_offset = ITEM_V100_NUM_BITS;
+    if (isEar())
+    {
+        position_offset = ITEM_V100_EAR_COORDINATES_BIT_OFFSET + 2;
+        type_code_offset = ITEM_V100_EAR_TYPECODE_BIT_OFFSET;
+
+        size_t bitSize = 10;
+        current_bit_offset = type_code_offset;
+        if (!setBits(current_bit_offset, bitSize, 0x13B))
+        {
+            return false;
+        }
+
+        Json::Value earRoot = bSerializedFormat ? itemRoot : itemRoot["ear_attributes"];
+        if (earRoot.isNull())
+        {
+            return false;
+        }
+
+        EarAttributes earAttrib;
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        if (bSerializedFormat)
+        {
+            value = std::uint32_t(node.asInt64());
+            if (value > std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION))
+            {
+                return false;
+            }
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+        else
+        {
+            bool bFound = false;
+            std::string className = node.asString();
+            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION); ++idx)
+            {
+                if (ClassNames[idx].compare(className) == 0)
+                {
+                    bFound = true;
+                    value = idx;
+                    break;
+                }
+            }
+
+            if (!bFound)
+            {
+                return false;
+            }
+
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+
+        node = earRoot[bSerializedFormat ? "EarLevel" : "level"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        earAttrib.Level = std::uint32_t(node.asInt64());
+
+        node = earRoot[bSerializedFormat ? "PlayerName" : "name"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // Check Name
+        // Remove any invalid characters from the number
+        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
+        {
+            return false;
+        }
+
+        current_bit_offset = type_code_offset;
+        bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Class)))
+        {
+            return false;
+        }
+
+        bitSize = 8;
+        if (!setBits(current_bit_offset, bitSize, earAttrib.Level))
+        {
+            return false;
+        }
+
+        // up to 15 7 bit characters
+        bitSize = 7;
+        for (size_t idx = 0; idx < 15; ++idx)
+        {
+            if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
+            {
+                return false;
+            }
+
+            if (earAttrib.Name[idx] == 0)
+            {
+                break;
+            }
+        }
+
+        node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
+        {
+            return false;
+        }
+
+        EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
+        {
+            return false;
+        }
+        EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionX = std::uint16_t(node.asInt64());
+
+        node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionY = std::uint16_t(node.asInt64());
+
+        switch (locationId)
+        {
+        case EnumItemLocation::STORED:
+            switch (altPositionId)
+            {
+            case EnumAltItemLocation::INVENTORY:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x9F);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::STASH:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint8_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x9F) | 0x40);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::HORADRIC_CUBE:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint8_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x9F) | 0x60);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+            }
+            break;
+
+        case EnumItemLocation::BELT:
+        case EnumItemLocation::EQUIPPED:
+        case EnumItemLocation::SOCKET:
+            return false; // Ears can't be equipped, socketted or put into the belt
+        }
+
+        item_end_bit_offset = ITEM_V100_NUM_BITS;
+        return true;
+    }
+
+    equipped_id_offset = ITEM_V100_BITFIELD3_BIT_OFFSET;
+    nr_of_items_in_sockets_offset = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
+    nr_of_items_in_sockets_bits = 2;
+    type_code_offset = ITEM_V100_TYPECODE_BIT_OFFSET;
+    durability_bit_offset = ITEM_V100_DURABILITY_BIT_OFFSET;
+    position_offset = ITEM_V100_COORDINATES_BIT_OFFSET + 1;
+    quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_100;
+    quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
+    item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
+    dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
+    dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
+
+    node = itemRoot[bSerializedFormat ? "Code" : "type"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    std::string sValue = node.asString();
+    if (sValue.size() < 3)
+    {
+        return false;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    std::memcpy(strcode.data(), sValue.c_str(), 3);
+    std::uint16_t itemCode = ItemHelpers::getTypeCodeV100(strcode);
+    if (itemCode >= UINT16_MAX)
+    {
+        return false;
+    }
+
+    size_t bitSize = 10;
+    current_bit_offset = type_code_offset;
+    if (!setBits(current_bit_offset, bitSize, itemCode))
+    {
+        return false;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Quality" : "quality"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint32_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
+    {
+        return false;
+    }
+
+    current_bit_offset = quality_bit_offset;
+    bitSize = 3;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::TEMPERED:
+        break;
+
+    case EnumItemQuality::SET:
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "set_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
+
+        current_bit_offset = quality_attrib_bit_offset;
+        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::UNIQUE:
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "unique_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+
+        current_bit_offset = quality_attrib_bit_offset;
+        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+    }
+
+    value = 0;
+    bitSize = DURABILITY_MAX_NUM_BITS;
+    node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
+    if (!node.isNull())
+    {
+        value = std::uint16_t(node.asInt64());
+    }
+
+    current_bit_offset = durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+
+    if (value > 0)
+    {
+        current_bit_offset = durability_bit_offset;
+        bitSize = DURABILITY_CURRENT_NUM_BITS_108;
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+
+    stackable_bit_offset = 0;
+    gld_stackable_bit_offset = 0;
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    if (itemType.isGoldItem())
+    {
+        gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
+
+        node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // can hold up to 4095 gold pieces
+        value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
+        bitSize = GLD_STACKABLE_NUM_BITS;
+        current_bit_offset = gld_stackable_bit_offset;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+    else if (itemType.isStackable())
+    {
+        stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
+
+        value = 0;
+        bitSize = STACKABLE_NUM_BITS;
+        node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+        if (!node.isNull())
+        {
+            value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+
+    node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomMagicLevel();
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = item_level_bit_offset;
+    if (!setBits(current_bit_offset, 8, value))
+    {
+        return false;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    value = std::uint16_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
+    {
+        return false;
+    }
+
+    EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
+
+    node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    value = std::uint16_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
+    {
+        return false;
+    }
+    EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
+
+    EnumEquippedId equippedId = EnumEquippedId::NONE;
+    node = itemRoot[bSerializedFormat ? "Location" : "equipped_id"];
+    if (!node.isNull())
+    {
+        value = std::uint16_t(node.asInt64());
+        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+        {
+            equippedId = static_cast<EnumEquippedId>(value);
+        }
+    }
+
+    node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    auto positionX = std::uint16_t(node.asInt64());
+
+    node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    auto positionY = std::uint16_t(node.asInt64());
+
+    switch (locationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case EnumAltItemLocation::INVENTORY:
+            current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = equipped_id_offset;
+            bitSize = 4;
+            if (!setBits(current_bit_offset, bitSize, 0))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+
+        case EnumAltItemLocation::STASH:
+            current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = equipped_id_offset;
+            bitSize = 4;
+            if (!setBits(current_bit_offset, bitSize, 0))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+
+        case EnumAltItemLocation::HORADRIC_CUBE:
+            current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = equipped_id_offset;
+            bitSize = 4;
+            if (!setBits(current_bit_offset, bitSize, 0))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        positionY = positionX / 4;
+        positionX = positionX % 4;
+        current_bit_offset = position_offset;
+        bitSize = 2;
+        if (!setBits(current_bit_offset, bitSize, positionX))
+        {
+            return false;
+        }
+
+        current_bit_offset = position_offset + bitSize;
+        bitSize = 2;
+        if (!setBits(current_bit_offset, bitSize, positionY))
+        {
+            return false;
+        }
+
+        current_bit_offset = equipped_id_offset;
+        bitSize = 4;
+        if (!setBits(current_bit_offset, bitSize, 0))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = position_offset;
+        bitSize = 16;
+        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = equipped_id_offset;
+        bitSize = 4;
+        value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x4000);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemLocation::SOCKET:
+        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V100_COORDINATES_BIT_OFFSET;
+        bitSize = 8;
+        value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xE1);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V100_BITFIELD3_BIT_OFFSET;
+        bitSize = 8;
+        value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF0);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+    }
+
+    value = 0;
+    node = itemRoot[bSerializedFormat ? "Dwa" : "dwa"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomDW();
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = dwa_bit_offset;
+    if (!setBits(current_bit_offset, 32, value))
+    {
+        return false;
+    }
+
+    value = 0;
+    node = itemRoot[bSerializedFormat ? "Dwb" : "dwb"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomDW();
+        if (getQuality() == EnumItemQuality::SET)
+        {
+            // Find correct DWB value for the SET
+            value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
+        }
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = dwb_bit_offset;
+    if (!setBits(current_bit_offset, 32, value))
+    {
+        return false;
+    }
+
+    item_end_bit_offset = ITEM_V100_NUM_BITS;
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedFormat)
+{
+    if (itemRoot.isNull())
+    {
+        return false;
+    }
+
+    Json::Value node;
+    std::uint32_t value = 0;
+    size_t current_bit_offset = start_bit_offset;
+
+    location_bit_offset = 0;
+    equipped_id_offset = 0;
+    alt_position_id_offset = 0;
+    type_code_offset = 0;
+    durability_bit_offset = 0;
+    nr_of_items_in_sockets_offset = 0;
+    quality_attrib_bit_offset = 0;
+    item_level_bit_offset = 0;
+
+    if (isEar())
+    {
+        position_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET + 2;
+        type_code_offset = ITEM_V104_EAR_ATTRIBE_BIT_OFFSET;
+
+        // 26 bytes total
+        data.resize((ITEM_V104_EAR_NUM_BITS + 7) / 8, 0);
+        extended_data_offset = ITEM_V104_EAR_NUM_BITS;
+
+        Json::Value earRoot = bSerializedFormat ? itemRoot : itemRoot["ear_attributes"];
+        if (earRoot.isNull())
+        {
+            return false;
+        }
+
+        EarAttributes earAttrib;
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        if (bSerializedFormat)
+        {
+            value = std::uint32_t(node.asInt64());
+            if (value > std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION))
+            {
+                return false;
+            }
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+        else
+        {
+            bool bFound = false;
+            std::string className = node.asString();
+            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION); ++idx)
+            {
+                if (ClassNames[idx].compare(className) == 0)
+                {
+                    bFound = true;
+                    value = idx;
+                    break;
+                }
+            }
+
+            if (!bFound)
+            {
+                return false;
+            }
+
+            earAttrib.Class = static_cast<EnumCharClass>(value);
+        }
+
+        node = earRoot[bSerializedFormat ? "EarLevel" : "level"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        earAttrib.Level = std::uint32_t(node.asInt64());
+
+        node = earRoot[bSerializedFormat ? "PlayerName" : "name"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // Check Name
+        // Remove any invalid characters from the number
+        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
+        {
+            return false;
+        }
+
+        current_bit_offset = type_code_offset;
+        size_t bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Class)))
+        {
+            return false;
+        }
+
+        bitSize = 8;
+        if (!setBits(current_bit_offset, bitSize, earAttrib.Level))
+        {
+            return false;
+        }
+
+        // up to 15 7 bit characters
+        bitSize = 7;
+        for (size_t idx = 0; idx < 15; ++idx)
+        {
+            if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
+            {
+                return false;
+            }
+
+            if (earAttrib.Name[idx] == 0)
+            {
+                break;
+            }
+        }
+
+        node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
+        {
+            return false;
+        }
+
+        EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
+        {
+            return false;
+        }
+        EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionX = std::uint16_t(node.asInt64());
+
+        node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionY = std::uint16_t(node.asInt64());
+
+        switch (locationId)
+        {
+        case EnumItemLocation::STORED:
+            switch (altPositionId)
+            {
+            case EnumAltItemLocation::INVENTORY:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::STASH:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF) | 0x1000);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::HORADRIC_CUBE:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF) | 0x0C00);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                break;
+            }
+            break;
+
+        case EnumItemLocation::BELT:
+        case EnumItemLocation::EQUIPPED:
+        case EnumItemLocation::SOCKET:
+            return false; // Ears can't be equipped, socketted or put into the belt
+        }
+
+        item_end_bit_offset = ITEM_V104_EAR_NUM_BITS;
+        return true;
+    }
+
+    if (isSimpleItem())
+    {
+        position_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET + 2;
+        type_code_offset = ITEM_V104_SM_TYPECODE_BIT_OFFSET;
+
+        // 15 bytes total
+        data.resize((ITEM_V104_SM_NUM_BITS + 7) / 8, 0);
+        extended_data_offset = ITEM_V104_SM_NUM_BITS;
+
+        node = itemRoot[bSerializedFormat ? "Code" : "type"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        std::string sValue = node.asString();
+        if (sValue.size() < 3)
+        {
+            return false;
+        }
+
+        std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+        std::memcpy(strcode.data(), sValue.c_str(), 3);
+        std::uint32_t itemCode = *((std::uint32_t*)strcode.data());
+        size_t bitSize = 30;
+        current_bit_offset = type_code_offset;
+        if (!setBits(current_bit_offset, bitSize, itemCode))
+        {
+            return false;
+        }
+
+        node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
+        {
+            return false;
+        }
+
+        EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+        if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
+        {
+            return false;
+        }
+        EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
+
+        node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionX = std::uint16_t(node.asInt64());
+
+        node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        auto positionY = std::uint16_t(node.asInt64());
+
+        switch (locationId)
+        {
+        case EnumItemLocation::STORED:
+            switch (altPositionId)
+            {
+            case EnumAltItemLocation::INVENTORY:
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x03FE);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::STASH:
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x1000);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                break;
+
+            case EnumAltItemLocation::HORADRIC_CUBE:
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x0C00);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                break;
+            }
+            break;
+
+        case EnumItemLocation::BELT:
+            current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            positionY = positionX / 4;
+            positionX = positionX % 4;
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+            bitSize = 32;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x00000003);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+
+        case EnumItemLocation::EQUIPPED:
+            return false; // Simple items can't be equipped
+
+        case EnumItemLocation::SOCKET:
+            current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03E0) | 0xFC1B);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            if (item_current_socket_idx >= 7)
+            {
+                return false;
+            }
+
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xFC7F) | (item_current_socket_idx << 7));
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+            bitSize = 32;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x00000003);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+        }
+
+        current_bit_offset = ITEM_V104_SM_NUM_BITS;
+        return true;
+    }
+
+    type_code_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET;
+    equipped_id_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET;
+    nr_of_items_in_sockets_offset = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
+    nr_of_items_in_sockets_bits = 3;
+    durability_bit_offset = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
+    position_offset = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
+    quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
+    item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
+    dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
+    dwb_bit_offset = ITEM_V104_EX_DWB_BIT_OFFSET;
+
+    // 31 bytes total
+    data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
+    extended_data_offset = ITEM_V104_EX_NUM_BITS;
+
+    node = itemRoot[bSerializedFormat ? "Code" : "type"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    std::string sValue = node.asString();
+    if (sValue.size() < 3)
+    {
+        return false;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    std::memcpy(strcode.data(), sValue.c_str(), 3);
+    std::uint32_t itemCode = *((std::uint32_t*)strcode.data());
+    size_t bitSize = 30;
+    current_bit_offset = type_code_offset;
+    if (!setBits(current_bit_offset, bitSize, itemCode))
+    {
+        return false;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Quality" : "quality"];
+    if (node.isNull())
+    {
+        return false;
+    }
+
+    value = std::uint32_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
+    {
+        return false;
+    }
+
+    current_bit_offset = quality_bit_offset;
+    bitSize = 4;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::TEMPERED:
+        break;
+
+    case EnumItemQuality::SET:
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "set_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
+
+        current_bit_offset = quality_attrib_bit_offset;
+        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::UNIQUE:
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "unique_id"];
+        if (node.isNull())
+        {
+            return false;
+        }
+        value = std::uint16_t(node.asInt64());
+
+        current_bit_offset = quality_attrib_bit_offset;
+        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+    }
+
+    value = 0;
+    bitSize = DURABILITY_MAX_NUM_BITS;
+    node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
+    if (!node.isNull())
+    {
+        value = std::uint16_t(node.asInt64());
+    }
+
+    current_bit_offset = durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
+    }
+
+    if (value > 0)
+    {
+        current_bit_offset = durability_bit_offset;
+        bitSize = DURABILITY_CURRENT_NUM_BITS_108;
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+
+    stackable_bit_offset = 0;
+    gld_stackable_bit_offset = 0;
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    if (itemType.isGoldItem())
+    {
+        gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_104;
+
+        node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        // can hold up to 4095 gold pieces
+        value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
+        bitSize = GLD_STACKABLE_NUM_BITS;
+        current_bit_offset = gld_stackable_bit_offset;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+    else if (itemType.isStackable())
+    {
+        stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_104;
+
+        value = 0;
+        bitSize = STACKABLE_NUM_BITS;
+        node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
+        if (!node.isNull())
+        {
+            value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+    }
+
+    node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomMagicLevel();
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = item_level_bit_offset;
+    if (!setBits(current_bit_offset, 8, value))
+    {
+        return false;
+    }
+
+    node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    value = std::uint16_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
+    {
+        return false;
+    }
+
+    EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
+
+    node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    value = std::uint16_t(node.asInt64());
+    if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
+    {
+        return false;
+    }
+    EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
+
+    EnumEquippedId equippedId = EnumEquippedId::NONE;
+    node = itemRoot[bSerializedFormat ? "Location" : "equipped_id"];
+    if (!node.isNull())
+    {
+        value = std::uint16_t(node.asInt64());
+        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+        {
+            equippedId = static_cast<EnumEquippedId>(value);
+        }
+    }
+
+    node = itemRoot[bSerializedFormat ? "X" : "position_x"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    auto positionX = std::uint16_t(node.asInt64());
+
+    node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
+    if (node.isNull())
+    {
+        return false;
+    }
+    auto positionY = std::uint16_t(node.asInt64());
+
+    switch (locationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case EnumAltItemLocation::INVENTORY:
+            current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+            bitSize = 8;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+            bitSize = 32;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+
+        case EnumAltItemLocation::STASH:
+            current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+            bitSize = 8;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+            bitSize = 32;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+
+        case EnumAltItemLocation::HORADRIC_CUBE:
+            current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, positionX))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset + bitSize;
+            bitSize = 2;
+            if (!setBits(current_bit_offset, bitSize, positionY))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+            bitSize = 8;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+            bitSize = 32;
+            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+            bitSize = 16;
+            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::SOCKET:
+        return false; // Only simple items can be socketted or put into the belt
+
+    case EnumItemLocation::EQUIPPED:
+        current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+        bitSize = 16;
+        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = position_offset;
+        bitSize = 16;
+        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+        bitSize = 8;
+        value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = equipped_id_offset;
+        bitSize = 4;
+        value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+        bitSize = 32;
+        value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+        bitSize = 16;
+        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x4000);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        break;
+    }
+
+    value = 0;
+    node = itemRoot[bSerializedFormat ? "Dwa" : "dwa"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomDW();
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = dwa_bit_offset;
+    if (!setBits(current_bit_offset, 32, value))
+    {
+        return false;
+    }
+
+    value = 0;
+    node = itemRoot[bSerializedFormat ? "Dwb" : "dwb"];
+    if (node.isNull())
+    {
+        // generate new one
+        value = ItemHelpers::generarateRandomDW();
+        if (getQuality() == EnumItemQuality::SET)
+        {
+            // Find correct DWB value for the SET
+            value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
+        }
+    }
+    else
+    {
+        value = std::uint32_t(node.asInt64());
+    }
+
+    current_bit_offset = dwb_bit_offset;
+    if (!setBits(current_bit_offset, 32, value))
+    {
+        return false;
+    }
+
+    item_end_bit_offset = ITEM_V104_EX_NUM_BITS;
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumCharVersion version)
 {
     if (itemRoot.isNull())
@@ -4709,6 +6457,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     data.clear();
     SocketedItems.clear();
 
+    item_current_socket_idx = 0;
     dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
@@ -4866,6 +6615,12 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     if (FileVersion >= EnumCharVersion::v107)
     {
         flags[23] = 1; // unknown but always one as far as I have noticed
+
+        node = itemRoot[bSerializedFormat ? "IsPersonalized" : "personalized"];
+        SetFlagBit(node, IS_PERSONALIZED_FLAG_OFFSET, flags);
+
+        node = itemRoot[bSerializedFormat ? "IsRuneword" : "given_runeword"];
+        SetFlagBit(node, IS_RUNEWORD_FLAG_OFFSET, flags);
     }
     else if (ItemVersion == EnumItemVersion::v104)
     {
@@ -4873,12 +6628,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         flags[19] = 1;
         flags[20] = 1;
     }
-
-    node = itemRoot[bSerializedFormat ? "IsPersonalized" : "personalized"];
-    SetFlagBit(node, IS_PERSONALIZED_FLAG_OFFSET, flags);
-
-    node = itemRoot[bSerializedFormat ? "IsRuneword" : "given_runeword"];
-    SetFlagBit(node, IS_RUNEWORD_FLAG_OFFSET, flags);
 
     if (!bSerializedFormat)
     {
@@ -4968,981 +6717,26 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         switch (ItemVersion)
         {
         case EnumItemVersion::v100:
-            location_bit_offset = 0;
-            equipped_id_offset = 0;
-            alt_position_id_offset = 0;
-            durability_bit_offset = 0;
-            nr_of_items_in_sockets_offset = 0;
-            quality_attrib_bit_offset = 0;
-            item_level_bit_offset = 0;
+            if (!readItemv100(itemRoot, bSerializedFormat))
+            {
+                return 0;
+            }
 
-            // 27 bytes total
-            data.resize((ITEM_V100_NUM_BITS + 7) / 8, 0);
-
-            extended_data_offset = ITEM_V100_NUM_BITS;
-            max_bit_offset = ITEM_V100_NUM_BITS;
             if (isEar())
             {
                 numSocketed = 0;
-                position_offset = ITEM_V100_EAR_COORDINATES_BIT_OFFSET + 2;
-                type_code_offset = ITEM_V100_EAR_TYPECODE_BIT_OFFSET;
-
-                size_t bitSize = 10;
-                current_bit_offset = ITEM_V104_EAR_ITEMCODE_BIT_OFFSET;
-                if (!setBits(current_bit_offset, bitSize, 0x13B))
-                {
-                    return false;
-                }
-
-                Json::Value earRoot = bSerializedFormat ? itemRoot : itemRoot["ear_attributes"];
-                if (earRoot.isNull())
-                {
-                    return false;
-                }
-
-                EarAttributes earAttrib;
-                node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                if (bSerializedFormat)
-                {
-                    value = std::uint32_t(node.asInt64());
-                    if (value > std::uint8_t(NUM_OF_CLASSES))
-                    {
-                        return false;
-                    }
-                    earAttrib.Class = static_cast<EnumCharClass>(value);
-                }
-                else
-                {
-                    bool bFound = false;
-                    std::string className = node.asString();
-                    for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES); ++idx)
-                    {
-                        if (ClassNames[idx].compare(className) == 0)
-                        {
-                            bFound = true;
-                            value = idx;
-                            break;
-                        }
-                    }
-
-                    if (!bFound)
-                    {
-                        return false;
-                    }
-
-                    earAttrib.Class = static_cast<EnumCharClass>(value);
-                }
-
-                node = earRoot[bSerializedFormat ? "EarLevel" : "level"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                earAttrib.Level = std::uint32_t(node.asInt64());
-
-                node = earRoot[bSerializedFormat ? "PlayerName" : "name"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                // Check Name
-                // Remove any invalid characters from the number
-                if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
-                {
-                    return false;
-                }
-
-                current_bit_offset = type_code_offset;
-                if (!setBits(current_bit_offset, 3, std::uint32_t(earAttrib.Class)))
-                {
-                    return false;
-                }
-
-                if (!setBits(current_bit_offset, 8, earAttrib.Level))
-                {
-                    return false;
-                }
-
-                // up to 15 7 bit characters
-                for (size_t idx = 0; idx < 15; ++idx)
-                {
-                    if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
-                    {
-                        return false;
-                    }
-
-                    if (earAttrib.Name[idx] == 0)
-                    {
-                        break;
-                    }
-                }
-
-                item_end_bit_offset = max_bit_offset;
-                return true;
-            }
-            else
-            {
-                equipped_id_offset = ITEM_V100_BITFIELD3_BIT_OFFSET;
-                nr_of_items_in_sockets_offset = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
-                nr_of_items_in_sockets_bits = 2;
-                type_code_offset = ITEM_V100_TYPECODE_BIT_OFFSET;
-                durability_bit_offset = ITEM_V100_DURABILITY_BIT_OFFSET;
-                position_offset = ITEM_V100_COORDINATES_BIT_OFFSET + 1;
-                quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_100;
-                quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
-                item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
-                dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
-                dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
-
-                node = itemRoot[bSerializedFormat ? "Code" : "type"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                std::string sValue = node.asString();
-                if (sValue.size() < 3)
-                {
-                    return false;
-                }
-
-                std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
-                std::memcpy(strcode.data(), sValue.c_str(), 3);
-                std::uint16_t itemCode = ItemHelpers::getTypeCodeV100(strcode);
-                if (itemCode >= UINT16_MAX)
-                {
-                    return false;
-                }
-
-                size_t bitSize = 10;
-                current_bit_offset = type_code_offset;
-                if (!setBits(current_bit_offset, bitSize, itemCode))
-                {
-                    return false;
-                }
-
-                node = itemRoot[bSerializedFormat ? "Quality" : "quality"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                value = std::uint32_t(node.asInt64());
-                if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
-                {
-                    return false;
-                }
-
-                current_bit_offset = quality_bit_offset;
-                bitSize = 3;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    return false;
-                }
-
-                switch (getQuality())
-                {
-                case EnumItemQuality::RARE:
-                case EnumItemQuality::CRAFT:
-                case EnumItemQuality::TEMPERED:
-                    break;
-
-                case EnumItemQuality::SET:
-                    node = itemRoot[bSerializedFormat ? "FileIndex" : "set_id"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-                    value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
-
-                    current_bit_offset = quality_attrib_bit_offset;
-                    bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-
-                case EnumItemQuality::UNIQUE:
-                    node = itemRoot[bSerializedFormat ? "FileIndex" : "unique_id"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-                    value = std::uint16_t(node.asInt64());
-
-                    current_bit_offset = quality_attrib_bit_offset;
-                    bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-                }
-
-                value = 0;
-                bitSize = DURABILITY_MAX_NUM_BITS;
-                node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
-                if (!node.isNull())
-                {
-                    value = std::uint16_t(node.asInt64());
-                }
-
-                current_bit_offset = durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    return false;
-                }
-
-                if (value > 0)
-                {
-                    current_bit_offset = durability_bit_offset;
-                    bitSize = DURABILITY_CURRENT_NUM_BITS_108;
-                    value = 0;
-                    node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
-                    if (!node.isNull())
-                    {
-                        value = std::uint16_t(node.asInt64());
-                    }
-
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-                }
-
-                stackable_bit_offset = 0;
-                gld_stackable_bit_offset = 0;
-                const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-                if (itemType.isGoldItem())
-                {
-                    gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
-
-                    node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-
-                    // can hold up to 4095 gold pieces
-                    value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
-                    bitSize = GLD_STACKABLE_NUM_BITS;
-                    current_bit_offset = gld_stackable_bit_offset;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                }
-                else if (itemType.isStackable())
-                {
-                    stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
-
-                    value = 0;
-                    bitSize = STACKABLE_NUM_BITS;
-                    node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
-                    if (!node.isNull())
-                    {
-                        value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
-                    }
-
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                }
-
-                node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomMagicLevel();
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = item_level_bit_offset;
-                if (!setBits(current_bit_offset, 8, value))
-                {
-                    return false;
-                }
-
-                node = itemRoot[bSerializedFormat ? "Mode" : "location_id"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-                value = std::uint16_t(node.asInt64());
-                if (value > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
-                {
-                    return false;
-                }
-
-                EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
-
-                node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-                value = std::uint16_t(node.asInt64());
-                if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
-                {
-                    return false;
-                }
-                EnumAltItemLocation altPositionId = static_cast<EnumAltItemLocation>(value);
-
-                EnumEquippedId equippedId = EnumEquippedId::NONE;
-                node = itemRoot[bSerializedFormat ? "Location" : "equipped_id"];
-                if (!node.isNull())
-                {
-                    value = std::uint16_t(node.asInt64());
-                    if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
-                    {
-                        equippedId = static_cast<EnumEquippedId>(value);
-                    }
-                }
-
-                node = itemRoot[bSerializedFormat ? "X" : "position_x"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-                auto positionX = std::uint16_t(node.asInt64());
-
-                node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-                auto positionY = std::uint16_t(node.asInt64());
-                
-                switch (locationId)
-                {
-                case EnumItemLocation::STORED:
-                    switch (altPositionId)
-                    {
-                    case EnumAltItemLocation::INVENTORY:
-                        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset;
-                        bitSize = 5;
-                        if (!setBits(current_bit_offset, bitSize, positionX))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset + bitSize;
-                        bitSize = 2;
-                        if (!setBits(current_bit_offset, bitSize, positionY))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = equipped_id_offset;
-                        bitSize = 4;
-                        if (!setBits(current_bit_offset, bitSize, 0))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-                        break;
-
-                    case EnumAltItemLocation::STASH:
-                        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset;
-                        bitSize = 5;
-                        if (!setBits(current_bit_offset, bitSize, positionX))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset + bitSize;
-                        bitSize = 2;
-                        if (!setBits(current_bit_offset, bitSize, positionY))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = equipped_id_offset;
-                        bitSize = 4;
-                        if (!setBits(current_bit_offset, bitSize, 0))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-                        break;
-
-                    case EnumAltItemLocation::HORADRIC_CUBE:
-                        current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset;
-                        bitSize = 5;
-                        if (!setBits(current_bit_offset, bitSize, positionX))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = position_offset + bitSize;
-                        bitSize = 2;
-                        if (!setBits(current_bit_offset, bitSize, positionY))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = equipped_id_offset;
-                        bitSize = 4;
-                        if (!setBits(current_bit_offset, bitSize, 0))
-                        {
-                            return false;
-                        }
-
-                        current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
-                        bitSize = 16;
-                        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            return false;
-                        }
-                        break;
-                    }
-                    break;
-
-                case EnumItemLocation::BELT:
-                    current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
-                    bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-
-                    positionY = positionX / 4;
-                    positionX = positionX % 4;
-                    current_bit_offset = position_offset;
-                    bitSize = 2;
-                    if (!setBits(current_bit_offset, bitSize, positionX))
-                    {
-                        return false;
-                    }
-
-                    current_bit_offset = position_offset + bitSize;
-                    bitSize = 2;
-                    if (!setBits(current_bit_offset, bitSize, positionY))
-                    {
-                        return false;
-                    }
-
-                    current_bit_offset = equipped_id_offset;
-                    bitSize = 4;
-                    if (!setBits(current_bit_offset, bitSize, 0))
-                    {
-                        return false;
-                    }
-
-                    current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
-                    bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-
-                case EnumItemLocation::EQUIPPED:
-                    current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
-                    bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-
-                    current_bit_offset = position_offset;
-                    bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-
-                    current_bit_offset = equipped_id_offset;
-                    bitSize = 4;
-                    value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-                }
-
-                value = 0;
-                node = itemRoot[bSerializedFormat ? "Dwa" : "dwa"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomDW();
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = dwa_bit_offset;
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    return false;
-                }
-
-                value = 0;
-                node = itemRoot[bSerializedFormat ? "Dwb" : "dwb"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomDW();
-                    if (getQuality() == EnumItemQuality::SET)
-                    {
-                        // Find correct DWB value for the SET
-                        value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
-                    }
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = dwb_bit_offset;
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    return false;
-                }
-
-                current_bit_offset = max_bit_offset;
             }
             break;
 
         case EnumItemVersion::v104: // v1.04 - v1.06
-            location_bit_offset = 0;
-            equipped_id_offset = 0;
-            alt_position_id_offset = 0;
-            type_code_offset = 0;
-            durability_bit_offset = 0;
-            nr_of_items_in_sockets_offset = 0;
-            quality_attrib_bit_offset = 0;
-            item_level_bit_offset = 0;
-
-            if (isEar())
+            if (!readItemv104(itemRoot, bSerializedFormat))
             {
-                position_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET + 2;
-                type_code_offset = ITEM_V104_EAR_ATTRIBE_BIT_OFFSET;
-                numSocketed = 0;
-
-                // 26 bytes total
-                data.resize((ITEM_V104_EAR_NUM_BITS + 7) / 8, 0);
-                extended_data_offset = ITEM_V104_EAR_NUM_BITS;
-                max_bit_offset = ITEM_V104_EAR_NUM_BITS;
-
-                Json::Value earRoot = bSerializedFormat ? itemRoot : itemRoot["ear_attributes"];
-                if (earRoot.isNull())
-                {
-                    return false;
-                }
-
-                EarAttributes earAttrib;
-                node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                if (bSerializedFormat)
-                {
-                    value = std::uint32_t(node.asInt64());
-                    if (value > std::uint8_t(NUM_OF_CLASSES))
-                    {
-                        return false;
-                    }
-                    earAttrib.Class = static_cast<EnumCharClass>(value);
-                }
-                else
-                {
-                    bool bFound = false;
-                    std::string className = node.asString();
-                    for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES); ++idx)
-                    {
-                        if (ClassNames[idx].compare(className) == 0)
-                        {
-                            bFound = true;
-                            value = idx;
-                            break;
-                        }
-                    }
-
-                    if (!bFound)
-                    {
-                        return false;
-                    }
-
-                    earAttrib.Class = static_cast<EnumCharClass>(value);
-                }
-
-                node = earRoot[bSerializedFormat ? "EarLevel" : "level"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                earAttrib.Level = std::uint32_t(node.asInt64());
-
-                node = earRoot[bSerializedFormat ? "PlayerName" : "name"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                // Check Name
-                // Remove any invalid characters from the number
-                if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
-                {
-                    return false;
-                }
-
-                current_bit_offset = type_code_offset;
-                if (!setBits(current_bit_offset, 3, std::uint32_t(earAttrib.Class)))
-                {
-                    return false;
-                }
-
-                if (!setBits(current_bit_offset, 8, earAttrib.Level))
-                {
-                    return false;
-                }
-
-                // up to 15 7 bit characters
-                for (size_t idx = 0; idx < 15; ++idx)
-                {
-                    if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
-                    {
-                        return false;
-                    }
-
-                    if (earAttrib.Name[idx] == 0)
-                    {
-                        break;
-                    }
-                }
-
-                item_end_bit_offset = max_bit_offset;
-                return true;
+                return 0;
             }
-            else if (isSimpleItem())
+
+            if (isEar() || isSimpleItem())
             {
-                position_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET + 2;
-                type_code_offset = ITEM_V104_SM_TYPECODE_BIT_OFFSET;
                 numSocketed = 0;
-
-                // 15 bytes total
-                data.resize((ITEM_V104_SM_NUM_BITS + 7) / 8, 0);
-                extended_data_offset = ITEM_V104_SM_NUM_BITS;
-                max_bit_offset = ITEM_V104_SM_NUM_BITS;
-
-                node = itemRoot[bSerializedFormat ? "Code" : "type"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                std::string sValue = node.asString();
-                if (sValue.size() < 3)
-                {
-                    return false;
-                }
-
-                std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
-                std::memcpy(strcode.data(), sValue.c_str(), 3);
-                std::uint32_t itemCode = *((std::uint32_t*)strcode.data());
-                size_t bitSize = 30;
-                current_bit_offset = type_code_offset;
-                if (!setBits(current_bit_offset, bitSize, itemCode))
-                {
-                    return false;
-                }
-
-                current_bit_offset = max_bit_offset;
-                break;
-            }
-            else
-            {
-                type_code_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET;
-                equipped_id_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET;
-                nr_of_items_in_sockets_offset = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
-                nr_of_items_in_sockets_bits = 3;
-                durability_bit_offset = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
-                position_offset = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
-                quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
-                item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
-                dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
-                dwb_bit_offset = ITEM_V104_EX_DWB_BIT_OFFSET;
-
-                // 31 bytes total
-                data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
-                extended_data_offset = ITEM_V104_EX_NUM_BITS;
-                max_bit_offset = ITEM_V104_EX_NUM_BITS;
-
-                node = itemRoot[bSerializedFormat ? "Code" : "type"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                std::string sValue = node.asString();
-                if (sValue.size() < 3)
-                {
-                    return false;
-                }
-
-                std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
-                std::memcpy(strcode.data(), sValue.c_str(), 3);
-                std::uint32_t itemCode = *((std::uint32_t*)strcode.data());
-                size_t bitSize = 30;
-                current_bit_offset = type_code_offset;
-                if (!setBits(current_bit_offset, bitSize, itemCode))
-                {
-                    return false;
-                }
-
-                node = itemRoot[bSerializedFormat ? "Quality" : "quality"];
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                value = std::uint32_t(node.asInt64());
-                if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
-                {
-                    return false;
-                }
-
-                current_bit_offset = quality_bit_offset;
-                bitSize = 4;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    return false;
-                }
-
-                switch (getQuality())
-                {
-                case EnumItemQuality::RARE:
-                case EnumItemQuality::CRAFT:
-                case EnumItemQuality::TEMPERED:
-                    break;
-
-                case EnumItemQuality::SET:
-                    node = itemRoot[bSerializedFormat ? "FileIndex" : "set_id"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-                    value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
-
-                    current_bit_offset = quality_attrib_bit_offset;
-                    bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-
-                case EnumItemQuality::UNIQUE:
-                    node = itemRoot[bSerializedFormat ? "FileIndex" : "unique_id"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-                    value = std::uint16_t(node.asInt64());
-
-                    current_bit_offset = quality_attrib_bit_offset;
-                    bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    break;
-                }
-
-                value = 0;
-                bitSize = DURABILITY_MAX_NUM_BITS;
-                node = itemRoot[bSerializedFormat ? "MaxDurability" : "max_durability"];
-                if (!node.isNull())
-                {
-                    value = std::uint16_t(node.asInt64());
-                }
-
-                current_bit_offset = durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    return false;
-                }
-
-                if (value > 0)
-                {
-                    current_bit_offset = durability_bit_offset;
-                    bitSize = DURABILITY_CURRENT_NUM_BITS_108;
-                    value = 0;
-                    node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
-                    if (!node.isNull())
-                    {
-                        value = std::uint16_t(node.asInt64());
-                    }
-
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-                }
-
-                stackable_bit_offset = 0;
-                gld_stackable_bit_offset = 0;
-                const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-                if (itemType.isGoldItem())
-                {
-                    gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_104;
-
-                    node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
-                    if (node.isNull())
-                    {
-                        return false;
-                    }
-
-                    // can hold up to 4095 gold pieces
-                    value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
-                    bitSize = GLD_STACKABLE_NUM_BITS;
-                    current_bit_offset = gld_stackable_bit_offset;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                }
-                else if (itemType.isStackable())
-                {
-                    stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_104;
-
-                    value = 0;
-                    bitSize = STACKABLE_NUM_BITS;
-                    node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
-                    if (!node.isNull())
-                    {
-                        value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
-                    }
-
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        return false;
-                    }
-                }
-
-                node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomMagicLevel();
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = item_level_bit_offset;
-                if (!setBits(current_bit_offset, 8, value))
-                {
-                    return false;
-                }
-
-                value = 0;
-                node = itemRoot[bSerializedFormat ? "Dwa" : "dwa"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomDW();
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = dwa_bit_offset;
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    return false;
-                }
-
-                value = 0;
-                node = itemRoot[bSerializedFormat ? "Dwb" : "dwb"];
-                if (node.isNull())
-                {
-                    // generate new one
-                    value = ItemHelpers::generarateRandomDW();
-                    if (getQuality() == EnumItemQuality::SET)
-                    {
-                        // Find correct DWB value for the SET
-                        value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
-                    }
-                }
-                else
-                {
-                    value = std::uint32_t(node.asInt64());
-                }
-
-                current_bit_offset = dwb_bit_offset;
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    return false;
-                }
-
-                current_bit_offset = max_bit_offset;
             }
             break;
         }
@@ -5956,8 +6750,9 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 return false;
             }
 
+            item_current_socket_idx = 0;
             auto iter_end = node.end();
-            for (auto iter = node.begin(); iter != iter_end; ++iter)
+            for (auto iter = node.begin(); iter != iter_end; ++iter, ++item_current_socket_idx)
             {
                 SocketedItems.resize(SocketedItems.size() + 1);
                 auto& childItem = SocketedItems.back();
@@ -5980,7 +6775,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             }
         }
 
-        item_end_bit_offset = max_bit_offset;
         return true;
     }
 
