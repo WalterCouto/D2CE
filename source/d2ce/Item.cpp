@@ -3243,7 +3243,13 @@ std::string d2ce::Item::getDisplayedItemName() const
     std::string personalizedName = getPersonalizedName();
     if (!personalizedName.empty())
     {
-        ss << personalizedName << "'s ";
+        
+        ss << personalizedName << "'";
+        if (personalizedName.back() != 's')
+        {
+            ss << "s";
+        }
+        ss << " ";
     }
 
     MagicalAffixes affixes;
