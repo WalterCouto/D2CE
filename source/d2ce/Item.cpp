@@ -57,7 +57,7 @@ namespace d2ce
 
     constexpr std::uint32_t QUALITY_BIT_OFFSET     = 134;
     constexpr std::uint32_t QUALITY_BIT_OFFSET_100 =  65;
-    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 =  96;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 =  97;
 
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69;
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101;
@@ -506,7 +506,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
                     return EnumItemLocation::SOCKET;
                 }
 
-                return EnumItemLocation::STORED;
+                return EnumItemLocation::BELT;
             }
         }
 
@@ -1751,7 +1751,7 @@ bool d2ce::Item::hasMultipleGraphics() const
         {
         case EnumItemVersion::v100: // v1.00 - v1.03
         case EnumItemVersion::v104: // v1.04 - v1.06
-            return false;
+            return hasMultipleGraphicsv100();
 
         case EnumItemVersion::v107: // v1.07 item
         case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
@@ -1770,6 +1770,13 @@ std::uint8_t d2ce::Item::getPictureId() const
     if (!hasMultipleGraphics())
     {
         return 0;
+    }
+
+    switch (Version())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        return getPictureIdv100();
     }
 
     return (std::uint8_t)read_uint32_bits(multi_graphic_bit_offset + 1, 3);
@@ -4263,6 +4270,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 nr_of_items_in_sockets_bits = 3;
                 durability_bit_offset = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
                 position_offset = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
+                quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_104;
                 quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
                 item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
                 dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
@@ -5967,6 +5975,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     nr_of_items_in_sockets_bits = 3;
     durability_bit_offset = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
     position_offset = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
+    quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_104;
     quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
     item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
     dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
@@ -6658,7 +6667,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                     continue;
                 }
 
-                bitNum = byteInfo.startIdx;
                 auto iter_end = node.end();
                 for (auto iter = node.begin(); iter != iter_end; ++iter)
                 {
@@ -6667,7 +6675,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                         continue;
                     }
 
-                    bitNum += size_t(std::stoi(iter.name()));
+                    bitNum = byteInfo.startIdx + size_t(std::stoi(iter.name()));
                     SetFlagBit(*iter, bitNum, flags);
                 }
             }
@@ -9814,6 +9822,52 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
     }
 
     return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::hasMultipleGraphicsv100() const
+{
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        return false;
+    }
+
+    auto code = ItemHelpers::getTypeCodeV100(strcode);
+    switch (code)
+    {
+    case 0x117: // amulet
+    case 0x119: // rings
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getPictureIdv100() const
+{
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        return false;
+    }
+
+    std::uint32_t modulo = 3;
+    auto code = ItemHelpers::getTypeCodeV100(strcode);
+    switch (code)
+    {
+    case 0x117: // amulet
+        modulo = 3;
+        break;
+
+    case 0x119: // rings
+        modulo = 5;
+        break;
+
+    default:
+        return 0;
+    }
+
+    return std::uint8_t(ItemHelpers::generateDWARandomOffsetv100((std::uint32_t)read_uint64_bits(dwa_bit_offset, 32), 1) % modulo);
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::findItems()

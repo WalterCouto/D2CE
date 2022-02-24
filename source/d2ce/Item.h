@@ -91,6 +91,8 @@ namespace d2ce
         bool getMagicalAffixesv100(MagicalAffixes& affixes) const;
         bool getSetAttributesv100(SetAttributes& attrib) const;
         bool getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const;
+        bool hasMultipleGraphicsv100() const;
+        std::uint8_t getPictureIdv100() const;
         
         bool readItemv100(const Json::Value& itemRoot, bool bSerializedFormat);
         bool readItemv104(const Json::Value& itemRoot, bool bSerializedFormat);

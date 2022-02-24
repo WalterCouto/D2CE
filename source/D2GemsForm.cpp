@@ -692,6 +692,7 @@ BOOL CD2GemsForm::OnInitDialog()
 
         for (auto& gem : GemIdxMap)
         {
+            *reinterpret_cast<std::uint32_t*>(gemCode.data()) = std::uint32_t(gem.second);
             pFromCombo->SetItemData(pFromCombo->AddString(GetGPSNameFromCode(gemCode)), gem.second);
         }
 

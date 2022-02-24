@@ -137,6 +137,7 @@ namespace d2ce
         static std::uint32_t generateSetDWBCodev100(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwb, std::uint16_t magicLevel);
         static std::uint8_t generateInferiorQualityIdv100(std::uint32_t dwb, std::uint16_t magicLevel);
         static bool generateMagicalAffixesv100(std::uint16_t itemCode, std::uint32_t dwb, std::uint16_t magicLevel, MagicalCachev100& cache);
+        static std::uint32_t generateDWARandomOffsetv100(std::uint32_t dwa, std::uint16_t numRndCalls);
         static std::uint32_t generarateRandomDW();
         static std::uint32_t generarateRandomMagicLevel();
         static std::string getSetNameFromId(std::uint16_t id);

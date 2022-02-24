@@ -4474,6 +4474,17 @@ bool d2ce::ItemHelpers::generateMagicalAffixesv100(std::uint16_t typeCode, std::
     return true;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::ItemHelpers::generateDWARandomOffsetv100(std::uint32_t dwa, std::uint16_t numRndCalls)
+{
+    ItemRandStruct rnd = { dwa, 666 };
+    for (size_t i = 0; i < numRndCalls; ++i)
+    {
+        generateRandomv100(rnd);
+    }
+
+    return rnd.seed;
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::ItemHelpers::generarateRandomDW()
 {
     static std::random_device rd;
@@ -9490,7 +9501,7 @@ void d2ce::ItemHelpers::combineMagicalAttribute(std::multimap<size_t, size_t>& i
             attribs.push_back(attrib);
             switch (attrib.Id)
             {
-            case 52:
+            case 54:
                 numColdAttribs = 1;
                 numColdTimeSum = attrib.Values[2];
                 break;
