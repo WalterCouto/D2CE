@@ -864,6 +864,22 @@ const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* 
     return nullptr;
 }
 //---------------------------------------------------------------------------
+CSize CD2MercenaryForm::getInvGridSize(UINT /*id*/) const
+{
+    return CSize(0, 0);
+}
+//---------------------------------------------------------------------------
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MercenaryForm::getInvGridItems(UINT /*id*/) const
+{
+    static std::vector<std::reference_wrapper<d2ce::Item>> s_empty;
+    return s_empty;
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
+{
+    return MainForm.getItemBitmap(item, bitmap);
+}
+//---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::OnInitDialog()
 {
     __super::OnInitDialog();

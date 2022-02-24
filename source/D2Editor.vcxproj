@@ -391,6 +391,8 @@
     <Image Include="res\Misc\a Jade Figuring.bmp" />
     <Image Include="res\Misc\Amethyst.bmp" />
     <Image Include="res\Misc\Amn Rune.bmp" />
+    <Image Include="res\Misc\Amulet 2.bmp" />
+    <Image Include="res\Misc\Amulet 3.bmp" />
     <Image Include="res\Misc\Amulet.bmp" />
     <Image Include="res\Misc\Antidote Potion.bmp" />
     <Image Include="res\Misc\Arrows.bmp" />
@@ -486,6 +488,10 @@
     <Image Include="res\Misc\Ral Rune.bmp" />
     <Image Include="res\Misc\Reiuvenation Potion.bmp" />
     <Image Include="res\Misc\Rejuvenation Potion.bmp" />
+    <Image Include="res\Misc\Ring 2.bmp" />
+    <Image Include="res\Misc\Ring 3.bmp" />
+    <Image Include="res\Misc\Ring 4.bmp" />
+    <Image Include="res\Misc\Ring 5.bmp" />
     <Image Include="res\Misc\Ring.bmp" />
     <Image Include="res\Misc\Rpl.bmp" />
     <Image Include="res\Misc\Rps.bmp" />
@@ -504,9 +510,8 @@
     <Image Include="res\Misc\Skeleton Flag.bmp" />
     <Image Include="res\Misc\Skeleton Heart.bmp" />
     <Image Include="res\Misc\Skeleton Horn.bmp" />
-    <Image Include="res\Misc\Skeleton Jawbone.bmp" />
+    <Image Include="res\Misc\Skeleton Jaw.bmp" />
     <Image Include="res\Misc\Skeleton Quill.bmp" />
-    <Image Include="res\Misc\Skeleton Scalp.bmp" />
     <Image Include="res\Misc\Skeleton Soul.bmp" />
     <Image Include="res\Misc\Skeleton Spleen.bmp" />
     <Image Include="res\Misc\Skeleton Tail.bmp" />

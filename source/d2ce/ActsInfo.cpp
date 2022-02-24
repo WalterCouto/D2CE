@@ -517,6 +517,14 @@ bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedF
                 return false;
             }
         }
+
+        static std::array<std::uint8_t, 12> unknownEnd = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        };
+        if (std::fwrite(unknownEnd.data(), unknownEnd.size(), 1, charfile) != 1)
+        {
+            return false;
+        }
         std::fflush(charfile);
     }
 
@@ -1079,6 +1087,8 @@ bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile)
         std::fwrite(&Waypoints[i], sizeof(Waypoints[i]), 1, charfile);
         std::fwrite(Waypoints_extraBits[i].data(), Waypoints_extraBits[i].size(), 1, charfile); // skip extra bits
     }
+
+    std::fflush(charfile);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1101,6 +1111,8 @@ bool d2ce::ActsInfo::writeNPC(std::FILE* charfile)
     {
         std::fwrite(&NPCCongrats[i], sizeof(NPCCongrats[i]), 1, charfile);
     }
+
+    std::fflush(charfile);
     return true;
 }
 //---------------------------------------------------------------------------

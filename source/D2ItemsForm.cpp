@@ -23,6 +23,7 @@
 #include "afxdialogex.h"
 #include "D2MainForm.h"
 #include "D2GemsForm.h"
+#include "D2MercenaryForm.h"
 #include <deque>
 
 #ifdef _DEBUG
@@ -60,7 +61,7 @@ namespace
         image.Attach(image2.Detach());
     }
 
-    void MergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay, CRect rect, bool center = false)
+    void AlphaMergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay, CRect rect, bool center = false, std::uint8_t alpha = 64)
     {
         BITMAP bmp;
         image.GetBitmap(&bmp);
@@ -98,6 +99,17 @@ namespace
         // combine bmps
         memDestDC.TransparentBlt(rect.left + cx, rect.top - cy, rect.Width(), rect.Height(), &memSrcDc2, 0, 0, bmp2.bmWidth, bmp2.bmHeight, ::GetPixel(memSrcDc2, 0, 0));
 
+        if (alpha > 0)
+        {
+            // blend back the image
+            BLENDFUNCTION bf;
+            bf.AlphaFormat = 0;
+            bf.BlendOp = AC_SRC_OVER;
+            bf.SourceConstantAlpha = alpha;
+            bf.BlendFlags = 0;
+            AlphaBlend(memDestDC, 0, 0, bmp.bmWidth, bmp.bmHeight, memSrcDc, 0, 0, bmp.bmWidth, bmp.bmHeight, bf);
+        }
+
         HGDIOBJ hbitmap_detach = image.Detach();
         if (hbitmap_detach)
         {
@@ -105,6 +117,11 @@ namespace
         }
 
         image.Attach(image2.Detach());
+    }
+
+    void MergeImage(CDC* pDC, CBitmap& image, CBitmap& overlay, CRect rect, bool center = false)
+    {
+        AlphaMergeImage(pDC, image, overlay, rect, center, 0);
     }
 
     bool CalcSocketRects(const d2ce::Item& item, CBitmap& itemImage, std::deque<CRect>& slotRectMap)
@@ -125,34 +142,34 @@ namespace
         BITMAP itemBmp;
         itemImage.GetBitmap(&itemBmp);
 
-        auto socketedItemCount = item.socketedItemCount();
+        auto socketCount = item.totalNumberOfSockets();
         CSize slotSize(itemBmp.bmWidth / dimension.Width, itemBmp.bmHeight / dimension.Height);
-        auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+        auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketCount));
         if (numSlots == 0)
         {
             return false;
         }
 
-        if (numSlots < item.socketedItemCount() && (numSlots <= 7))
+        if (numSlots < item.totalNumberOfSockets() && (numSlots <= 7))
         {
             // not enough room
             if (dimension.Width < 2)
             {
-                if (std::uint16_t(2 * dimension.Height) >= socketedItemCount)
+                if (std::uint16_t(2 * dimension.Height) >= socketCount)
                 {
                     dimension.Width = 2;
                     slotSize.cx = itemBmp.bmWidth / dimension.Width;
-                    numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                    numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketCount));
                 }
                 else if (dimension.Height < 3)
                 {
-                    if (6 >= socketedItemCount)
+                    if (6 >= socketCount)
                     {
                         dimension.Width = 2;
                         dimension.Height = 3;
                         slotSize.cx = itemBmp.bmWidth / dimension.Width;
                         slotSize.cx = itemBmp.bmHeight / dimension.Height;
-                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketCount));
                     }
                     else
                     {
@@ -160,7 +177,7 @@ namespace
                         dimension.Height = 4;
                         slotSize.cx = itemBmp.bmWidth / dimension.Width;
                         slotSize.cx = itemBmp.bmHeight / dimension.Height;
-                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketedItemCount));
+                        numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketCount));
                     }
                 }
             }
@@ -228,7 +245,6 @@ namespace
                         slotRectMap.push_back(slotRect);
                         continue;
                     }
-
                 }
 
                 slotRect.top = LONG(slotGridSize.cy * idy + slotGridOffset.cy);
@@ -253,6 +269,60 @@ namespace
         }
 
         return slotRectMap.empty() ? false : true;
+    }
+
+    bool AddSocketsToImage(CDC* pDC, const d2ce::Item& item, CBitmap& bitmap, CD2ItemsGridCallback* pCallback)
+    {
+        if (pDC == nullptr || pCallback == nullptr)
+        {
+            return false;
+        }
+
+        std::deque<CRect> socketRects;
+        CalcSocketRects(item, bitmap, socketRects);
+        if (socketRects.empty())
+        {
+            return false;
+        }
+
+        // Fill in any use socket slots
+        CRect socketRect;
+        for (const auto& socketItem : item.SocketedItems)
+        {
+            if (socketRects.empty())
+            {
+                break;
+            }
+
+            socketRect = socketRects.front();
+            socketRects.pop_front();
+
+            CBitmap socketBitmap;
+            if (!pCallback->getItemBitmap(socketItem, socketBitmap))
+            {
+                continue;
+            }
+
+            ScaleImage(pDC, socketBitmap, socketRect);
+            AlphaMergeImage(pDC, bitmap, socketBitmap, socketRect);
+        }
+
+        if (!socketRects.empty())
+        {
+            // Fill in any empty socket slots
+            CBitmap socketBitmap;
+            socketBitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_EMPTY_SOCKET)));
+            ScaleImage(pDC, socketBitmap, socketRects.front());
+
+            while (!socketRects.empty())
+            {
+                socketRect = socketRects.front();
+                socketRects.pop_front();
+                AlphaMergeImage(pDC, bitmap, socketBitmap, socketRect, false, 128);
+            }
+        }
+
+        return true;
     }
    
     bool CalcItemRect(const d2ce::Item& item, CStatic& invBox, CRect& rect, CSize& slotSize, UINT id)
@@ -578,43 +648,7 @@ BOOL CD2EquippedItemStatic::LoadItemImage(const d2ce::Item& item, CBitmap& bitma
     invItemPtr = &item;
     auto pDC = GetParent()->GetDC();
     ScaleImage(pDC, bitmap, rect);
-
-    std::deque<CRect> socketRects;
-    CalcSocketRects(item, bitmap, socketRects);
-    if (!socketRects.empty())
-    {
-        // Fill in any use socket slots
-        CRect socketRect;
-        for (const auto& socketItem : item.SocketedItems)
-        {
-            socketRect = socketRects.front();
-            socketRects.pop_front();
-
-            CBitmap socketBitmap;
-            if (!GetItemBitmap(socketItem, socketBitmap))
-            {
-                continue;
-            }
-
-            ScaleImage(pDC, socketBitmap, socketRect);
-            MergeImage(pDC, bitmap, socketBitmap, socketRect);
-        }
-
-        if (!socketRects.empty())
-        {
-            // Fill in any empty socket slots
-            CBitmap socketBitmap;
-            socketBitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_EMPTY_SOCKET)));
-            ScaleImage(pDC, socketBitmap, socketRects.front());
-
-            while (!socketRects.empty())
-            {
-                socketRect = socketRects.front();
-                socketRects.pop_front();
-                MergeImage(pDC, bitmap, socketBitmap, socketRect, true);
-            }
-        }
-    }
+    AddSocketsToImage(pDC, item, bitmap, GetCallback());
 
     MergeImage(pDC, invImage, bitmap, rect, true);
     return TRUE;
@@ -622,13 +656,24 @@ BOOL CD2EquippedItemStatic::LoadItemImage(const d2ce::Item& item, CBitmap& bitma
 //---------------------------------------------------------------------------
 bool CD2EquippedItemStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
-    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    CD2ItemsGridCallback* pCallback = GetCallback();
     if (pCallback == nullptr)
     {
         return false;
     }
 
     return pCallback->getItemBitmap(item, bitmap);
+}
+//---------------------------------------------------------------------------
+CD2ItemsGridCallback* CD2EquippedItemStatic::GetCallback() const
+{
+    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    if (pCallback == nullptr)
+    {
+        pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2MercenaryForm, GetParent()));
+    }
+
+    return pCallback;
 }
 //---------------------------------------------------------------------------
 BOOL CD2EquippedItemStatic::OnEraseBkgnd(CDC* pDC)
@@ -925,8 +970,8 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
 
         ScaleImage(pDC, bitmap, rect);
 
-        std::deque<CRect> socketRects;
-        CalcSocketRects(item, bitmap, socketRects);
+        CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+        AddSocketsToImage(pDC, item, bitmap, pCallback);
 
         MergeImage(pDC, InvImage, bitmap, rect);
 
@@ -954,7 +999,7 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
 //---------------------------------------------------------------------------
 CSize CD2ItemsGridStatic::GetInvGridSize() const
 {
-    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    CD2ItemsGridCallback* pCallback = GetCallback();;
     if (pCallback == nullptr)
     {
         return CSize(0, 0);
@@ -965,7 +1010,7 @@ CSize CD2ItemsGridStatic::GetInvGridSize() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsGridStatic::GetInvGridItems() const
 {
-    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    CD2ItemsGridCallback* pCallback = GetCallback();
     if (pCallback == nullptr)
     {
         static std::vector<std::reference_wrapper<d2ce::Item>> s_empty;
@@ -977,7 +1022,7 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsGridStatic::GetIn
 //---------------------------------------------------------------------------
 bool CD2ItemsGridStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
-    CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    CD2ItemsGridCallback* pCallback = GetCallback();
     if (pCallback == nullptr)
     {
         return false;
@@ -1014,6 +1059,11 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
     rect.left = itemPos.cx * SlotSize.cx;
     rect.right = rect.left + dimension.Width * SlotSize.cx;
     return rect;
+}
+//---------------------------------------------------------------------------
+CD2ItemsGridCallback* CD2ItemsGridStatic::GetCallback() const
+{
+    return dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
 }
 //---------------------------------------------------------------------------
 BOOL CD2ItemsGridStatic::OnEraseBkgnd(CDC* pDC)
@@ -2164,13 +2214,21 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
             }
 
-            if (CurrItem->isPersonalized())
+            if (getCharacterVersion() < d2ce::EnumCharVersion::v109)
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
             else
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                if (CurrItem->isPersonalized())
+                {
+                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                }
+                else
+                {
+                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                }
             }
         }
 

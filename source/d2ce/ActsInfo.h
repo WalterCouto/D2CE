@@ -58,7 +58,6 @@ namespace d2ce
             ActVInfo ActV;                            // Act V is 32 bytes in size
         };
 
-
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
         // hell act info starts at pos 537 (1.09+ only)

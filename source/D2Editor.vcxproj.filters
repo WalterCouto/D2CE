@@ -1190,13 +1190,7 @@
     <Image Include="res\Misc\Skeleton Horn.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\Misc\Skeleton Jawbone.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\Misc\Skeleton Quill.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Scalp.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Misc\Skeleton Soul.bmp">
@@ -1350,6 +1344,27 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\gemsocket.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Amulet 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Amulet 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Jaw.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

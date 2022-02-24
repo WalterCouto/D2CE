@@ -25,6 +25,16 @@
 #include "D2ItemToolTipCtrl.h"
 
 //---------------------------------------------------------------------------
+class CD2ItemsGridCallback
+{
+public:
+    virtual ~CD2ItemsGridCallback() = default;
+    virtual CSize getInvGridSize(UINT id) const = 0;
+    virtual const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const = 0;
+    virtual bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const = 0;
+};
+
+//---------------------------------------------------------------------------
 class CD2EquippedItemStatic : public CStatic
 {
     friend class CD2ItemsForm;
@@ -61,6 +71,7 @@ protected:
     BOOL LoadItemImage(const d2ce::Item& item, CBitmap& bitmap, BOOL isAltImage = FALSE);
 
     bool GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
+    CD2ItemsGridCallback* GetCallback() const;
 
 protected:
     CBitmap InvImage;
@@ -71,21 +82,10 @@ protected:
 };
 
 //---------------------------------------------------------------------------
-class CD2ItemsGridCallback
-{
-public:
-    virtual ~CD2ItemsGridCallback() = default;
-    virtual CSize getInvGridSize(UINT id) const = 0;
-    virtual const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const = 0;
-    virtual bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const = 0;
-};
-
-//---------------------------------------------------------------------------
 class CD2ItemsGridStatic : public CStatic
 {
     friend class CD2ItemsForm;
     DECLARE_DYNAMIC(CD2ItemsGridStatic)
-
 
     // Construction
 public:
@@ -117,6 +117,7 @@ protected:
     const std::vector<std::reference_wrapper<d2ce::Item>>& GetInvGridItems() const;
     bool GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
     CRect GetInvRect(const d2ce::Item& item) const;
+    CD2ItemsGridCallback* GetCallback() const;
 
 protected:
     CBitmap InvGridImage;

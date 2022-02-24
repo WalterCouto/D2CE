@@ -301,8 +301,8 @@
 #define IDB_INVSCB                      440
 #define IDB_INVBSC                      443
 #define IDB_INVRSHAE                    444
-#define IDB_INVFANG                     447
-#define IDB_INVFLAG                     448
+#define IDB_INVFNG                      447
+#define IDB_INVFLG                      448
 #define IDB_INVSKU                      457
 #define IDB_INVCHM1                     458
 #define IDB_INVRSOL                     459
@@ -340,6 +340,18 @@
 #define IDB_INV_WEAPONS                 491
 #define IDR_ITEM_MENU                   492
 #define IDB_INV_EMPTY_SOCKET            493
+#define IDB_INVRIN_1                    494
+#define IDB_INVRIN_2                    495
+#define IDB_INVRIN_3                    496
+#define IDB_INVRIN_4                    497
+#define IDB_INVAMU_1                    498
+#define IDB_INVAMU_2                    499
+#define IDB_INVHRN                      500
+#define IDB_INVJAW                      501
+#define IDB_INVTAL                      502
+#define IDB_INVQLL                      503
+#define IDB_INVSOL                      504
+#define IDB_INVSPE                      505
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -608,7 +620,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        494
+#define _APS_NEXT_RESOURCE_VALUE        506
 #define _APS_NEXT_COMMAND_VALUE         32808
 #define _APS_NEXT_CONTROL_VALUE         1147
 #define _APS_NEXT_SYMED_VALUE           103

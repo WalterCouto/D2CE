@@ -3436,7 +3436,7 @@
       "magic_attributes": [],
       "type_name": "Standard of Heroes",
       "levelreq": 90,
-      "inv_file": "invflag",
+      "inv_file": "invflg",
       "inv_height": 1,
       "inv_width": 1,
       "displayed_magic_attributes": [],

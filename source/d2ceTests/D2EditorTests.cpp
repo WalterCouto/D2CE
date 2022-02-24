@@ -46,6 +46,20 @@ namespace D2EditorTests
         return charBaseTempPath;
     }
 
+    static std::string GetChar71TempPathName()
+    {
+        static std::string char71TempPath;
+        if (char71TempPath.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBaseTempPathName() << "\\71";
+            char71TempPath = ss.str();
+            std::filesystem::create_directories(char71TempPath);
+        }
+
+        return char71TempPath;
+    }
+
     static std::string GetChar87TempPathName()
     {
         static std::string char87TempPath;
@@ -159,6 +173,19 @@ namespace D2EditorTests
         return charBasePath;
     }
 
+    static std::string GetChar71PathName()
+    {
+        static std::string char71Path;
+        if (char71Path.empty())
+        {
+            std::stringstream ss;
+            ss << GetCharBasePathName() << "\\71";
+            char71Path = ss.str();
+        }
+
+        return char71Path;
+    }
+
     static std::string GetChar87PathName()
     {
         static std::string char87Path;
@@ -224,6 +251,13 @@ namespace D2EditorTests
         return char97Path;
     }
 
+    static bool LoadChar71File(const char* fileName, d2ce::Character& character, bool /*validateChecksum*/)
+    {
+        std::stringstream ss;
+        ss << GetChar71PathName() << "\\" << fileName;
+        return character.open(ss.str().c_str(), false);
+    }
+
     static bool LoadChar87File(const char* fileName, d2ce::Character& character, bool validateChecksum)
     {
         std::stringstream ss;
@@ -257,6 +291,26 @@ namespace D2EditorTests
         std::stringstream ss;
         ss << GetChar97PathName() << "\\" << fileName;
         return character.open(ss.str().c_str(), validateChecksum);
+    }
+
+    static bool LoadChar71TempFile(const char* fileName, d2ce::Character& character, bool /*validateChecksum*/)
+    {
+        std::string tempFile;
+        {
+            std::stringstream ss;
+            ss << GetChar71TempPathName() << "\\" << fileName;
+            tempFile = ss.str();
+        }
+
+        std::string origFile;
+        {
+            std::stringstream ss;
+            ss << GetChar71PathName() << "\\" << fileName;
+            origFile = ss.str();
+        }
+        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
+        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
+        return character.open(tempFile.c_str(), false);
     }
 
     static bool LoadChar87TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
@@ -357,6 +411,46 @@ namespace D2EditorTests
         std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
         std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
         return character.open(tempFile.c_str(), validateChecksum);
+    }
+
+    static std::string GetChar71ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
+    {
+        std::stringstream ss;
+        ss << GetChar71PathName() << "\\" << character.getName().data();
+        if (bSerializedFormat)
+        {
+            ss << "_serialized";
+        }
+        ss << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
+    }
+
+    static std::string GetChar71ExpectedSerialzedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
+    {
+        std::stringstream ss;
+        ss << GetChar71PathName() << "\\" << character.getName().data();
+        if (bSerializedFormat)
+        {
+            ss << "_serialized";
+        }
+        ss << ".json";
+
+#ifdef _MSC_VER
+        std::ifstream expectedFile(ss.str(), std::ios::binary);
+#else
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
     }
 
     static std::string GetChar87ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
@@ -560,6 +654,54 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar96File("FukK_U.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen13)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Amazon.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen14)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Barbarian.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen15)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Bow.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen16)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Necromancer.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen17)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Paladin.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen18)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Sorceress.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen19)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Spartacus.d2s", character, true));
+        }
+
+        TEST_METHOD(TestOpen20)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Spartacus_II.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             d2ce::Character character;
@@ -680,6 +822,62 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, false));
         }
 
+        TEST_METHOD(TestJsonExport16)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Amazon.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport17)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Barbarian.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport18)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Bow.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport19)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Necromancer.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport20)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Paladin.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport21)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Sorceress.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+        }
+
+        TEST_METHOD(TestJsonExport22)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Spartacus.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, false));
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -780,6 +978,24 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar96File("FukK_U.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen18)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Necromancer.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen19)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar71File("Bow.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen20)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Spartacus.json", character, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
@@ -908,6 +1124,35 @@ namespace D2EditorTests
 
             // Upgrade Gems
             Assert::AreEqual(character.upgradeGems(), size_t(2));
+            Assert::IsTrue(character.save());
+            auto json = character.asJson();
+            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+        }
+
+        TEST_METHOD(TestJsonTestComplexChange04)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97TempFile("Spartacus.d2s", character, true));
+            d2ce::BasicStats bs;
+            character.fillBasicStats(bs);
+
+            std::string strNewText = "Spartacus_II";
+            std::string expectedTempPath;
+            {
+                std::stringstream ss;
+                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
+                expectedTempPath = ss.str();
+                std::filesystem::remove(expectedTempPath);
+            }
+
+            bs.Name.fill(0);
+            strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+            character.updateBasicStats(bs);
+            Assert::IsTrue(character.save());
+            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+
+            // Upgrade potions
+            Assert::AreEqual(character.upgradeRejuvenationPotions(), size_t(26));
             Assert::IsTrue(character.save());
             auto json = character.asJson();
             Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));

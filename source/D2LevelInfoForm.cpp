@@ -134,7 +134,7 @@ void CD2LevelInfoForm::FillCells()
 
         if (Version < d2ce::EnumCharVersion::v110) // 1.00 - 1.09 character
         {
-            if (i < 31)
+            if (i < 31) // 1.00 - 1.09 character
             {
                 goldValue = (i / 10 + 1) * 50000;
             }
@@ -142,16 +142,9 @@ void CD2LevelInfoForm::FillCells()
             {
                 goldValue = (i / 2 + 1) * 50000;
             }
-            else // pre 1.07 character
+            else // 1.00 - 1.06 character
             {
-                if (i < 90)
-                {
-                    goldValue = (i / 10 + 1) * 50000;
-                }
-                else
-                {
-                    goldValue = 2000000;
-                }
+                goldValue = (std::min(i, 90ui32) / 10 + 1) * 50000;
             }
         }
 
@@ -193,17 +186,17 @@ BOOL CD2LevelInfoForm::Show(CWnd* pParent)
 {
     if (!::IsWindow(GetSafeHwnd()))
     {
+        Version = d2ce::APP_CHAR_VERSION;
+        if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
+        {
+            Version = ((CD2MainForm*)pParent)->getCharacterVersion();
+        }
+
         Modal = FALSE;
         BOOL bCreated = __super::Create(CD2LevelInfoForm::IDD, pParent);
         if (!bCreated)
         {
             return FALSE;
-        }
-
-        Version = d2ce::APP_CHAR_VERSION;
-        if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
-        {
-            Version = ((CD2MainForm*)pParent)->getCharacterVersion();
         }
     }
 

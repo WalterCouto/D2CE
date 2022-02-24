@@ -3198,7 +3198,7 @@ void CD2MainForm::OnOptionsMaxEverything()
     cs.Level = d2ce::NUM_OF_LEVELS;
     cs.Experience = d2ce::MAX_EXPERIENCE;
     cs.GoldInBelt = cs.getMaxGoldInBelt();
-    cs.GoldInStash = cs.getMaxGoldInStash();
+    cs.GoldInStash = cs.getMaxGoldInStash(CharInfo.getVersion());
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 
@@ -3763,7 +3763,7 @@ void CD2MainForm::OnBnClickedDexterityPlus()
         StatsLeftChanged = true;
         d2ce::CharStats cs;
         CharInfo.fillCharacterStats(cs);
-        cs.Energy = std::min(value, d2ce::MAX_BASICSTATS);
+        cs.Dexterity = std::min(value, d2ce::MAX_BASICSTATS);
         cs.StatsLeft = Cs.StatsLeft;
         CharInfo.updateCharacterStats(cs);
         UpdateCharInfo();
@@ -4832,7 +4832,7 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
             std::stringstream ss;
             ss << invFile.GetString();
             ss << "_";
-            ss << pictureID;
+            ss << std::dec << std::uint16_t(pictureID);
             invFile = ss.str().c_str();
         }
     }

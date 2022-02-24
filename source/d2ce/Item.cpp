@@ -709,7 +709,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
         }
         else
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_EX_COORDINATES_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_EX_CONTAINER_BIT_OFFSET, 16);
             switch (loc16 & 0x07F8)
             {
             case 0x0000:
@@ -843,7 +843,7 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
     switch (Version())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03
-        code = ItemHelpers::getTypeCodeV100(newgem);
+        code = ItemHelpers::getTypeCodev100(newgem);
         if (code >= UINT16_MAX)
         {
             return false;
@@ -957,20 +957,63 @@ bool d2ce::Item::upgradePotion()
     switch (gem)
     {
     case 'r': // rejuvenation potions
-        if (gemcondition == 'v' && gemcolour == 's')
+        switch (gemcondition)
         {
-            gemcolour = 'l';
-            return updateGem(strcode);
+        case 'v':
+            switch (gemcolour)
+            {
+            case 's':
+                gemcolour = 'l';
+                return updateGem(strcode);
+            }
+            break;
+
+        case 'p': // not a valid potion
+            switch (gemcolour)
+            {
+            case 's':
+            case 'l':
+                gem = 'h';
+                gemcolour = '5';
+                return updateGem(strcode);
+            }
+            break;
+        }
+        break;
+
+    case 'b': // not a valid potion
+        switch (gemcondition)
+        {
+        case 'p': // not a valid potion
+            switch (gemcolour)
+            {
+            case 's':
+            case 'l':
+                gem = 'm';
+                gemcolour = '5';
+                return updateGem(strcode);
+            }
+            break;
         }
         break;
 
     case 'h': // healing potions
     case 'm': // mana potions
-        if (gemcondition == 'p' &&
-            gemcolour >= '1' && gemcolour <= '4')
+        switch (gemcondition)
         {
-            gemcolour = '5';
-            return updateGem(strcode);
+        case 'p':
+            switch (gemcolour)
+            {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case 'f': // not a valid potion
+            case 'o': // not a valid potion
+                gemcolour = '5';
+                return updateGem(strcode);
+            }
+            break;
         }
         break;
     }  // end switch
@@ -993,22 +1036,66 @@ bool d2ce::Item::upgradeToFullRejuvenationPotion()
     switch (gem)
     {
     case 'r': // rejuvenation potions
-        if (gemcondition == 'v' && gemcolour == 's')
+        switch (gemcondition)
         {
-            gemcolour = 'l';
-            return updateGem(strcode);
+        case 'v':
+            switch (gemcolour)
+            {
+            case 's':
+                gemcolour = 'l';
+                return updateGem(strcode);
+            }
+            break;
+
+        case 'p': // not a valid potion
+            switch (gemcolour)
+            {
+            case 's':
+            case 'l':
+                gemcondition = 'v';
+                gemcolour = 'l';
+                return updateGem(strcode);
+            }
+            break;
+        }
+        break;
+
+    case 'b': // not a valid potion
+        switch (gemcondition)
+        {
+        case 'p': // not a valid potion
+            switch (gemcolour)
+            {
+            case 's':
+            case 'l':
+                gem = 'r';
+                gemcondition = 'v';
+                gemcolour = 'l';
+                return updateGem(strcode);
+            }
+            break;
         }
         break;
 
     case 'h': // healing potions
     case 'm': // mana potions
-        if (gemcondition == 'p' &&
-            gemcolour >= '1' && gemcolour <= '5')
+        switch (gemcondition)
         {
-            gem = 'r';
-            gemcondition = 'v';
-            gemcolour = 'l';
-            return updateGem(strcode);
+        case 'p':
+            switch (gemcolour)
+            {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case 'f': // not a valid potion
+            case 'o': // not a valid potion
+                gem = 'r';
+                gemcondition = 'v';
+                gemcolour = 'l';
+                return updateGem(strcode);
+            }
         }
         break;
     }  // end switch
@@ -2296,6 +2383,13 @@ std::uint16_t d2ce::Item::getDefenseRating() const
 {
     if (defense_rating_bit_offset == 0)
     {
+        switch (Version())
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v104: // v1.04 - v1.06
+            return getDefenseRatingv100();
+        }
+
         return 0;
     }
 
@@ -2501,21 +2595,19 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
         return maxSockets;
     }
 
+    switch (Version())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        return ItemHelpers::getMaxSocketsv100(strcode);
+    }
+
     const auto& result = ItemHelpers::getItemTypeHelper(strcode);
     if (!result.canHaveSockets())
     {
         return maxSockets;
     }
-    
-    auto itemLevel = getLevel();
-    switch (Version())
-    {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
-        itemLevel = 1;
-    }
-
-    return result.getMaxSockets(itemLevel);
+    return result.getMaxSockets(getLevel());
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::addMaxSocketCount()
@@ -3407,12 +3499,11 @@ std::string d2ce::Item::getDisplayedSocketedRunes() const
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getDisplayedDefenseRating(std::uint32_t charLevel) const
 {
-    if (defense_rating_bit_offset == 0)
+    auto defenseRating = getDefenseRating();
+    if (defenseRating == 0)
     {
         return 0;
     }
-
-    auto defenseRating = getDefenseRating();
 
     // Calculate item bonus
     std::vector<MagicalAttribute> magicalAttributes;
@@ -4992,7 +5083,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
     std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
     std::memcpy(strcode.data(), sValue.c_str(), 3);
-    std::uint16_t itemCode = ItemHelpers::getTypeCodeV100(strcode);
+    std::uint16_t itemCode = ItemHelpers::getTypeCodev100(strcode);
     if (itemCode >= UINT16_MAX)
     {
         return false;
@@ -9838,7 +9929,7 @@ bool d2ce::Item::hasMultipleGraphicsv100() const
         return false;
     }
 
-    auto code = ItemHelpers::getTypeCodeV100(strcode);
+    auto code = ItemHelpers::getTypeCodev100(strcode);
     switch (code)
     {
     case 0x117: // amulet
@@ -9858,7 +9949,7 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
     }
 
     std::uint32_t modulo = 3;
-    auto code = ItemHelpers::getTypeCodeV100(strcode);
+    auto code = ItemHelpers::getTypeCodev100(strcode);
     switch (code)
     {
     case 0x117: // amulet
@@ -9874,6 +9965,22 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
     }
 
     return std::uint8_t(ItemHelpers::generateDWARandomOffsetv100((std::uint32_t)read_uint64_bits(dwa_bit_offset, 32), 1) % modulo);
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getDefenseRatingv100() const
+{
+    if (dwa_bit_offset == 0)
+    {
+        return 0;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        return false;
+    }
+
+    return ItemHelpers::generateDefenseRatingv100(strcode, (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32));
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::findItems()
@@ -10344,6 +10451,7 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
     }
 
     std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+    std::fflush(charfile);
     corpse_location = std::ftell(charfile);
 
     if (CorpseInfo.IsDead > 0)
@@ -10389,6 +10497,34 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
 //---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(std::FILE* charfile)
 {
+    if (!isFileExpansionCharacter)
+    {
+        if (Version < EnumCharVersion::v109)
+        {
+            MercId_v100 = 0;
+            if (feof(charfile))
+            {
+                return;
+            }
+
+            std::uint8_t value = 0;
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[0])
+            {
+                return;
+            }
+
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[1])
+            {
+                return;
+            }
+
+            std::fread(&MercId_v100, 6, 1, charfile);
+        }
+        return;
+    }
+
     if (update_locations)
     {
         bool bFoundMercMarker = false;
@@ -10454,6 +10590,23 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
 {
+    if (!isFileExpansionCharacter)
+    {
+        if (Version < EnumCharVersion::v109)
+        {
+            MercId_v100 = 0;
+            Json::Value jsonValue = root[bSerializedFormat ? "MercId" : "merc_id"];
+            if (!jsonValue.isNull())
+            {
+                MercId_v100 = std::uint64_t(std::stoull(jsonValue.asString(), nullptr, 16));
+            }
+
+            std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+            std::fwrite(&MercId_v100, 6, 1, charfile);
+        }
+        return;
+    }
+
     bool checkItemCount = false;
     std::uint16_t expectedNumOfItems = 0;
     Json::Value mercItemsRoot;
@@ -10686,6 +10839,7 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
     }
 
     std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+    std::fflush(charfile);
     corpse_location = std::ftell(charfile);
 
     if (CorpseInfo.IsDead > 0)
@@ -10712,6 +10866,16 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::Items::writeMercItems(std::FILE* charfile)
 {
+    if (!isFileExpansionCharacter)
+    {
+        if (Version < EnumCharVersion::v109)
+        {
+            std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+            std::fwrite(&MercId_v100, 6, 1, charfile);
+        }
+        return true;
+    }
+
     std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
     NumOfMercItems = (std::uint16_t)MercItems.size();
     if (merc_location != 0)
@@ -10764,10 +10928,7 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
         return false;
     }
 
-    if (isExpansion)
-    {
-        readMercItems(charfile);
-    }
+    readMercItems(charfile);
 
     update_locations = false;
     findItems();
@@ -10790,10 +10951,7 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, Enu
         return false;
     }
 
-    if (isExpansion)
-    {
-        readMercItems(root, bSerializedFormat, charfile);
-    }
+    readMercItems(root, bSerializedFormat, charfile);
 
     update_locations = false;
     findItems();
@@ -10803,6 +10961,8 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, Enu
 // write items in place at offset saved from reasding
 bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
 {
+    isFileExpansionCharacter = isExpansion;
+
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
     NumOfItems = (std::uint16_t)Inventory.size();
@@ -10821,12 +10981,9 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
         return false;
     }
 
-    if (isExpansion)
+    if (!writeMercItems(charfile))
     {
-        if (!writeMercItems(charfile))
-        {
-            return false;
-        }
+        return false;
     }
 
     return true;
@@ -10905,7 +11062,14 @@ bool d2ce::Items::mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, 
 {
     if (!isFileExpansionCharacter)
     {
-        return false;
+        if ((Version < EnumCharVersion::v109) && MercId_v100 > 0)
+        {
+            std::stringstream ss;
+            ss << std::hex << MercId_v100;
+            parent[bSerializedFormat ? "MercId" : "merc_id"] = ss.str();
+        }
+
+        return true;
     }
 
     if (bSerializedFormat)

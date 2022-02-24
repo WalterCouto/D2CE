@@ -49,6 +49,9 @@
     <Filter Include="Header Files\rapidcsv">
       <UniqueIdentifier>{0998a2a1-21f9-494f-973c-eef65f8ecd3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples\char\71">
+      <UniqueIdentifier>{de6613e1-4101-4787-a1e4-dc75b26f4e09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -290,6 +293,54 @@
       <Filter>examples\char\97</Filter>
     </CustomBuild>
     <CustomBuild Include="..\examples\chars\97\Walter_gem.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Amazon.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Amazon.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Barbarian.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Barbarian.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Bow.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Bow.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Necromancer.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Necromancer.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Paladin.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Paladin.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Sorceress.d2s">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\71\Sorceress.json">
+      <Filter>examples\char\71</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Spartacus.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Spartacus.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Spartacus_II.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Spartacus_II.json">
       <Filter>examples\char\97</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -117,7 +117,8 @@ namespace d2ce
         static const d2ce::ItemStat& getItemStat(size_t idx);
         static size_t getItemStatSize();
 
-        static std::uint16_t getTypeCodeV100(const std::array<std::uint8_t, 4>& strcode);
+        static std::uint16_t getTypeCodev100(const std::array<std::uint8_t, 4>& strcode);
+        static std::uint8_t getMaxSocketsv100(const std::array<std::uint8_t, 4>& strcode);
         static bool getItemCodev100(std::uint16_t code, std::array<std::uint8_t, 4>& strcode);
         static std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
         static void d2ce::ItemHelpers::encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
@@ -136,7 +137,9 @@ namespace d2ce
         static std::uint16_t getSetCodev100(std::uint16_t id);
         static std::uint32_t generateSetDWBCodev100(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwb, std::uint16_t magicLevel);
         static std::uint8_t generateInferiorQualityIdv100(std::uint32_t dwb, std::uint16_t magicLevel);
-        static bool generateMagicalAffixesv100(std::uint16_t itemCode, std::uint32_t dwb, std::uint16_t magicLevel, MagicalCachev100& cache);
+        static bool generateMagicalAffixesv100(std::uint16_t typeCode, std::uint32_t dwb, std::uint16_t magicLevel, MagicalCachev100& cache);
+        static bool generateRareOrCraftedAffixesv100(std::uint16_t typeCode, std::uint32_t dwb, std::uint16_t magicLevel, RareOrCraftedCachev100& cache);
+        static std::uint8_t generateDefenseRatingv100(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa);
         static std::uint32_t generateDWARandomOffsetv100(std::uint32_t dwa, std::uint16_t numRndCalls);
         static std::uint32_t generarateRandomDW();
         static std::uint32_t generarateRandomMagicLevel();

@@ -48,7 +48,7 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II Resurrected v1.1.67554 and Diablo II Classic v1.14d (It has the logic for v1.00 through v1.09 including the Lord of Destruction expansion set so it should work the same as version 1.92 of the orginal code on those files)**
+- Tested with Diablo II Resurrected v1.1.67554 and Diablo II Classic v1.14d (It has unit test confirming it supports the older versions from v1.00 through to v1.09 as well but the files used in testing have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Ressurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - You must close the character file before playing Diablo II. This is because there are no options to enable file sharing for the read and write functions I'm using in ANSI C++.
 
@@ -64,6 +64,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 
 ### Useful Links
 
+* https://github.com/zhaoleimxd/JamellaD2E<br>
 * https://github.com/dschu012/D2SLib<br>
 * https://github.com/squeek502/d2itemreader<br>
 * https://github.com/nokka/d2s<br>
@@ -73,6 +74,19 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.13 (Feb 26, 2022)**
+- Updated: Fix detection of ID for set items.<br>
+- Updated: Fix up logic for reading/writing 1.00 - 1.06 files<br>
+- Updated: Add alternate ring/amulet images<br>
+- Updated: Fix issue with upgrading unsupported potion<br>
+- Updated: Fix dexterity "+" button to work properly<br>
+- Updated: Display items in sockets in all locations.<br>
+<br>
+
+- Added: Ability to personalize items or remove the personalization from items.<br>
+- Added: Ability to make weapons or armor indestructible.<br>
+<br>
+
 **Version 2.12 (Feb 14, 2022)**
 - Updated: Fix detection of change in Character Form.<br>
 - Updated: Fix logic for handling character title/progression<br>
@@ -80,6 +94,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 <br>
 
 - Added: Ability to add sockets to all items or in the Item form. Number of sockets that can be added it limited by the type of item and the item level.<br>
+<br>
 
 **Version 2.11 (Feb 6, 2022)**<br>
 - Updated: Fix bug in Gem convertor in Resurrected when new huffman code is of a different size then the original, the result caused game to crash on startup.<br>

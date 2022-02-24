@@ -36,7 +36,7 @@ namespace d2ce
 
     constexpr std::uint32_t HEADER_LENGTH = 4;
     constexpr std::uint32_t NAME_LENGTH = 16;        // character name including terminating NULL
-    constexpr std::uint32_t APPEARANCES_LENGTH = 32; // character name including terminating NULL
+    constexpr std::uint32_t APPEARANCES_LENGTH = 32;
 
     // character version
     enum class EnumCharVersion : std::uint32_t { v100 = 0x47, v107 = 0x57, v108 = 0x59, v109 = 0x5C, v110 = 0x60, v115 = 0x61 };

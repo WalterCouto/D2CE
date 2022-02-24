@@ -499,7 +499,7 @@ bool d2ce::Character::openJson(const char* szjsonfilename)
     }
 
     m_charfile = NULL;
-    fopen_s(&m_charfile, name1, "wb");
+    fopen_s(&m_charfile, name1, "wb+");
     if (m_charfile == nullptr)
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
@@ -706,13 +706,14 @@ bool d2ce::Character::refresh(const Json::Value& root)
         return false;
     }
 
+    // store the file's size
+    std::fflush(m_charfile);
+    std::fseek(m_charfile, 0, SEEK_END);
+    FileSize = std::ftell(m_charfile);
+
     // determine if a checksum needs to be calculated and stored
     if (Bs.Version >= EnumCharVersion::v109)
     {
-        // store the file's size
-        std::fflush(m_charfile);
-        std::fseek(m_charfile, 0, SEEK_END);
-        FileSize = std::ftell(m_charfile);
         std::fseek(m_charfile, m_filesize_location, SEEK_SET);
         std::fwrite(&FileSize, sizeof(FileSize), 1, m_charfile);
 
@@ -834,7 +835,16 @@ void d2ce::Character::readBasicInfo()
 
     if (Bs.Version < EnumCharVersion::v109)
     {
-        m_starting_location = std::ftell(m_charfile);
+        if (Bs.Version < EnumCharVersion::v107)
+        {
+            m_starting_location = 38;
+            std::fseek(m_charfile, m_starting_location, SEEK_SET);
+        }
+        else
+        {
+            m_starting_location = std::ftell(m_charfile);
+        }
+
         m_appearances_location = m_starting_location;
         std::fread(Appearances.data(), Appearances.size(), 1, m_charfile);
 
@@ -857,13 +867,16 @@ void d2ce::Character::readBasicInfo()
         m_difficulty_location = std::ftell(m_charfile);
         std::uint8_t difficultyAndAct = 0;
         std::fread(&difficultyAndAct, sizeof(difficultyAndAct), 1, m_charfile);
-        Bs.DifficultyLastPlayed = static_cast<EnumDifficulty>(difficultyAndAct & 0x0F);
+        Bs.DifficultyLastPlayed = static_cast<EnumDifficulty>(std::min(std::uint32_t(difficultyAndAct & 0x0F), NUM_OF_DIFFICULTY - 1));
         Bs.StartingAct = static_cast<EnumAct>(difficultyAndAct >> 4);
 
         StartingAct.fill(0);
         StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
 
         m_mapid_location = 126;
+        auto diff = m_mapid_location -std::ftell(m_charfile);
+        diff;
+        std::fseek(m_charfile, m_mapid_location, SEEK_SET);
         std::fread(&MapID, sizeof(MapID), 1, m_charfile);
     }
     else
@@ -1195,6 +1208,11 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         DisplayLevel = std::uint8_t(jsonValue.asInt());
     }
     std::fwrite(&DisplayLevel, sizeof(DisplayLevel), 1, m_charfile);
+    if (Bs.Version < EnumCharVersion::v107)
+    {
+        value = 0;
+        std::fwrite(&value, sizeof(value), 1, m_charfile);
+    }
 
     jsonValue = m_bJsonSerializedFormat ? root["Appearances"] : header["menu_appearance"];
     ApplyJsonAppearnces(jsonValue, Appearances);
@@ -1237,10 +1255,11 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         std::fwrite(&value, sizeof(value), 1, m_charfile);
 
         m_difficulty_location = std::ftell(m_charfile);
-        value = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
+        std::uint16_t difficultyAndAct = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
         value <<= 4;
         value |= (static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed) & 0x0F);
         std::fwrite(&value, sizeof(value), 1, m_charfile);
+        std::fwrite(&difficultyAndAct, sizeof(difficultyAndAct), 1, m_charfile);
 
         std::fwrite(UNKNOWN_05A_v100.data(), UNKNOWN_05A_v100.size(), 1, m_charfile);
 
@@ -1518,13 +1537,14 @@ bool d2ce::Character::save()
         }
     }
 
+    // store the file's size
+    std::fflush(m_charfile);
+    std::fseek(m_charfile, 0, SEEK_END);
+    FileSize = std::ftell(m_charfile);
+
     // determine if a checksum needs to be calculated and stored
     if (Bs.Version >= EnumCharVersion::v109)
     {
-        // store the file's size
-        std::fflush(m_charfile);
-        std::fseek(m_charfile, 0, SEEK_END);
-        FileSize = std::ftell(m_charfile);
         std::fseek(m_charfile, m_filesize_location, SEEK_SET);
         std::fwrite(&FileSize, sizeof(FileSize), 1, m_charfile);
 

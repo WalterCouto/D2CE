@@ -93,6 +93,7 @@ namespace d2ce
         bool getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const;
         bool hasMultipleGraphicsv100() const;
         std::uint8_t getPictureIdv100() const;
+        std::uint16_t getDefenseRatingv100() const;
         
         bool readItemv100(const Json::Value& itemRoot, bool bSerializedFormat);
         bool readItemv104(const Json::Value& itemRoot, bool bSerializedFormat);
@@ -278,6 +279,7 @@ namespace d2ce
         // Expansion Character data
         std::uint16_t NumOfMercItems = 0;  // # of Mercenary items (according to file)
         std::list<Item> MercItems;         // items mercenary is currently wearing.
+        std::uint64_t MercId_v100 = 0;     // 1.00 - 1.08
 
         std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
         Item GolemItem;                    // Item for the Golem

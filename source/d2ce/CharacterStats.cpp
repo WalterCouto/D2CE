@@ -1064,6 +1064,7 @@ bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile)
         std::fwrite(&Cs.GoldInStash, sizeof(Cs.GoldInStash), 1, charfile);
     }
     std::fflush(charfile);
+
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1155,23 +1156,28 @@ bool d2ce::CharacterStats::writeStats(std::FILE* charfile)
     std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
     if (Version < EnumCharVersion::v110)
     {
-        return writeStats_109(charfile);
+        if (!writeStats_109(charfile))
+        {
+            return false;
+        }
     }
-
-    size_t current_bit_offset = 0;
-    data.clear();
-
-    size_t totalBitsWritten = 0;
-    for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
+    else
     {
-        totalBitsWritten += updateStat(charfile, current_bit_offset, stat);
-    }
-    totalBitsWritten += updateStat(charfile, current_bit_offset, STAT_END_MARKER);
+        size_t current_bit_offset = 0;
+        data.clear();
 
-    std::fflush(charfile);
-    if (totalBitsWritten == 0)
-    {
-        return false;
+        size_t totalBitsWritten = 0;
+        for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
+        {
+            totalBitsWritten += updateStat(charfile, current_bit_offset, stat);
+        }
+        totalBitsWritten += updateStat(charfile, current_bit_offset, STAT_END_MARKER);
+
+        std::fflush(charfile);
+        if (totalBitsWritten == 0)
+        {
+            return false;
+        }
     }
 
     return writeSkills(charfile);

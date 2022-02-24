@@ -24,7 +24,7 @@
 #include "D2ItemsForm.h"
 
 //---------------------------------------------------------------------------
-class CD2MercenaryForm : public CDialogEx, CD2ItemToolTipCtrlCallback
+class CD2MercenaryForm : public CDialogEx, CD2ItemToolTipCtrlCallback, public CD2ItemsGridCallback
 {
     DECLARE_DYNAMIC(CD2MercenaryForm)
 
@@ -125,5 +125,10 @@ private:
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;
     virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
+
+    // Inherited via CD2ItemsGridCallback
+    CSize getInvGridSize(UINT id) const override;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const override;
+    bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const override;
 };
 //---------------------------------------------------------------------------

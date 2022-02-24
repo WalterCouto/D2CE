@@ -18,8 +18,13 @@
 
 Revision History
 ================
-Version 2.13 (Feb 16, 2022)
+Version 2.13 (Feb 26, 2022)
    - Updated: Fix detection of ID for set items.
+   - Updated: Fix up logic for reading/writing 1.00 - 1.06 files
+   - Updated: Add alternate ring/amulet images
+   - Updated: Fix issue with upgrading unsupported potion
+   - Updated: Fix dexterity "+" button to work properly
+   - Updated: Display items in sockets in all locations.
 
    - Added: Ability to personalize items or remove the personalization
             from items.

@@ -264,23 +264,18 @@ namespace d2ce
             }
 
             std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
-            if (curLevel < 31) // 1.00 - 1.09 character
+            if (curLevel < 31) // 1.00 - 1.09 characters
             {
+
                 return (curLevel / 10 + 1) * 50000;
             }
 
-            if (version >= EnumCharVersion::v107) // 1.07 - 1.09 character
+            if (version < EnumCharVersion::v107) // 1.00 - 1.06 character
             {
-                return (curLevel / 2 + 1) * 50000;
+                return (std::min(curLevel, 90ui32) / 10 + 1) * 50000;
             }
 
-            // pre 1.07 character
-            if (curLevel < 90)
-            {
-                return (curLevel / 10 + 1) * 50000;
-            }
-
-            return 2000000;
+            return (curLevel / 2 + 1) * 50000; // 1.07 - 1.09 characters
         }
 
         std::uint32_t getMinExperienceRequired() const
@@ -1096,6 +1091,30 @@ namespace d2ce
             MagicalAttributes.clear();
             Affixes.PrefixId = MAXUINT16;
             Affixes.SuffixId = MAXUINT16;
+        }
+    };
+
+    struct RareOrCraftedCachev100
+    {
+        std::uint16_t Id = 0;
+        std::string Name;
+        std::uint16_t Id2 = 0;
+        std::string Name2;
+        std::vector<MagicalCachev100> affixes;
+
+        RareOrCraftedCachev100()
+        {
+            Id = MAXUINT16;
+            Id2 = MAXUINT16;
+        }
+
+        void clear()
+        {
+            Id = MAXUINT16;
+            Name.clear();
+            Id2 = MAXUINT16;
+            Name2.clear();
+            affixes.clear();
         }
     };
 }
