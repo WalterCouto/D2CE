@@ -23300,7 +23300,8 @@
               "id": 54,
               "values": [
                 3,
-                14
+                14,
+                25
               ],
               "name": "coldmindam",
               "description": "Adds {0}-{1} Cold Damage"
@@ -23316,7 +23317,8 @@
               "id": 54,
               "values": [
                 3,
-                14
+                14,
+                25
               ],
               "name": "coldmindam",
               "description": "Adds 3-14 Cold Damage"
@@ -23328,7 +23330,8 @@
               "id": 54,
               "values": [
                 3,
-                14
+                14,
+                25
               ],
               "name": "coldmindam",
               "description": "Adds {0}-{1} Cold Damage"
@@ -23339,7 +23342,8 @@
               "id": 54,
               "values": [
                 3,
-                14
+                14,
+                25
               ],
               "name": "coldmindam",
               "description": "Adds 3-14 Cold Damage"
@@ -23577,7 +23581,8 @@
           "id": 54,
           "values": [
             3,
-            14
+            14,
+            25
           ],
           "name": "coldmindam",
           "description": "Adds {0}-{1} Cold Damage"
@@ -23628,7 +23633,8 @@
           "id": 54,
           "values": [
             3,
-            14
+            14,
+            25
           ],
           "name": "coldmindam",
           "description": "Adds 3-14 Cold Damage"
@@ -24930,7 +24936,8 @@
       "id": 54,
       "values": [
         3,
-        14
+        14,
+        25
       ],
       "name": "coldmindam",
       "description": "Adds {0}-{1} Cold Damage"

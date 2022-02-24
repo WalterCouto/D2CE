@@ -2965,6 +2965,7 @@ bool d2ce::ItemType::getSocketedMagicalAttributes(const d2ce::Item& item, std::v
                     ids.push_back(54);
                     values.push_back(3);
                     values.push_back(14);
+                    values.push_back(25); // TODO: duration seconds * 25?
                     break;
 
                 case EnumItemType::Shield:
