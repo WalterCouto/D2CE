@@ -18,7 +18,7 @@
 
 Revision History
 ================
-Version 2.13 (Feb 26, 2022)
+Version 2.13 (Feb 28, 2022)
    - Updated: Fix detection of ID for set items.
    - Updated: Fix up logic for reading/writing 1.00 - 1.06 files
    - Updated: Add alternate ring/amulet images
@@ -29,6 +29,9 @@ Version 2.13 (Feb 26, 2022)
    - Added: Ability to personalize items or remove the personalization
             from items.
    - Added: Ability to make weapons or armor indestructible.
+   - Added: Gems, Potions & Skulls Creator dialog and menu items. This
+            allows you to add Gems, Potions, Skulls or Runes to empty
+            slots in our inventory.
 
 Version 2.12 (Feb 14, 2022)
    - Updated: Fix detection of change in Character Form.

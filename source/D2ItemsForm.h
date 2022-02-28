@@ -136,6 +136,7 @@ class CD2ItemsForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, public
 {
     friend class CD2ItemsGrid;
     friend class CD2GemsForm;
+    friend class CD2AddGemsForm;
     DECLARE_DYNAMIC(CD2ItemsForm)
 
 public:
@@ -169,6 +170,7 @@ protected:
     afx_msg void OnItemContextUpgradePotion();
     afx_msg void OnItemContextUpgradeRejuvenation();
     afx_msg void OnItemContextGpsConvertor();
+    afx_msg void OnItemContextGpsCreator();
     afx_msg void OnClickedInvWeaponRadio();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
@@ -231,11 +233,16 @@ protected:
 
     void CheckToolTipCtrl();
 
+    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
     bool updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem);
     bool upgradeGem(d2ce::Item& item);
     bool upgradePotion(d2ce::Item& item);
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
     void refreshGrid(const d2ce::Item& item) const;
+
+    bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    void refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const;
 
     // Helpers
     d2ce::EnumCharVersion getCharacterVersion() const;
@@ -254,6 +261,10 @@ protected:
     bool getHasHoradricCube() const;
     size_t getNumberOfItemsInHoradricCube() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInHoradricCube() const;
+
+    bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
+    bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const;
+    bool getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
 
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;

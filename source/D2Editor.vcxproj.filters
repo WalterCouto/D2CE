@@ -162,6 +162,9 @@
     <ClInclude Include="d2ce\helpers\ItemHelpers.h">
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
+    <ClInclude Include="D2AddGemsForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -223,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="d2ce\helpers\ItemHelpers.cpp">
       <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
+    <ClCompile Include="D2AddGemsForm.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1365,6 +1371,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Misc\Skeleton Jaw.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\gemsocket.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

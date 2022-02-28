@@ -207,6 +207,7 @@
     </ManifestResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="D2AddGemsForm.h" />
     <ClInclude Include="d2ce\ActsInfo.h" />
     <ClInclude Include="d2ce\bitmask.hpp" />
     <ClInclude Include="d2ce\Character.h" />
@@ -253,6 +254,7 @@
     <ClInclude Include="d2ce\WaypointConstants.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D2AddGemsForm.cpp" />
     <ClCompile Include="d2ce\ActsInfo.cpp" />
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
@@ -433,6 +435,7 @@
     <Image Include="res\Misc\Flawless Topaz.bmp" />
     <Image Include="res\Misc\Full Reiuvenation Potion.bmp" />
     <Image Include="res\Misc\Full Rejuvenation Potion.bmp" />
+    <Image Include="res\Misc\gemsocket.bmp" />
     <Image Include="res\Misc\Gold.bmp" />
     <Image Include="res\Misc\Grand Charm.bmp" />
     <Image Include="res\Misc\Greater Healing Potion.bmp" />

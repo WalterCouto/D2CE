@@ -1128,106 +1128,106 @@ namespace d2ce
         return s_invalidItemType;
     }
 
+    static const std::map<std::string, ItemType> gpsItemTypes = {
+        {"elx", {"Elixer of Vitality", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invpot", 0, {"Elixir", "Miscellaneous"}}},
+        {"hpo", {"Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrps", 0, {"Healing Potion", "Potion", "Miscellaneous", "Unused"}}},
+        {"mpo", {"Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbps", 0, {"Mana Potion", "Potion", "Miscellaneous", "Unused"}}},
+        {"hpf", {"Full Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrpl", 0, {"Healing Potion", "Potion", "Miscellaneous", "Unused"}}},
+        {"mpf", {"Full Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbpl", 0, {"Mana Potion", "Potion", "Miscellaneous", "Unused"}}},
+        {"vps", {"Stamina Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invwps", 0, {"Stamina Potion", "Potion", "Miscellaneous"}}},
+        {"yps", {"Antidote Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invnps", 0, {"Antidote Potion", "Potion", "Miscellaneous"}}},
+        {"rvs", {"Rejuvenation Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invvps", 0, {"Rejuv Potion", "Healing Potion", "Mana Potion", "Potion", "Miscellaneous"}}},
+        {"rvl", {"Full Rejuvenation Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invvpl", 0, {"Rejuv Potion", "Healing Potion", "Mana Potion", "Potion", "Miscellaneous"}}},
+        {"wms", {"Thawing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invyps", 0, {"Thawing Potion", "Potion", "Miscellaneous"}}},
+        {"gcv", {"Chipped Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsva", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfv", {"Flawed Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsvb", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsv", {"Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsvc", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"gzv", {"Flawless Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsvd", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpv", {"Perfect Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsve", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"gcy", {"Chipped Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsya", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfy", {"Flawed Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsyb", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsy", {"Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsyc", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"gly", {"Flawless Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsyd", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpy", {"Perfect Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsye", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"gcb", {"Chipped Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsba", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfb", {"Flawed Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsbb", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsb", {"Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsbc", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"glb", {"Flawless Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsbd", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpb", {"Perfect Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsbe", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"gcg", {"Chipped Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsga", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfg", {"Flawed Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsgb", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsg", {"Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsgc", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"glg", {"Flawless Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsgd", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpg", {"Perfect Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsge", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"gcr", {"Chipped Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsra", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfr", {"Flawed Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsrb", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsr", {"Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsrc", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"glr", {"Flawless Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsrd", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpr", {"Perfect Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsre", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"gcw", {"Chipped Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgswa", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"gfw", {"Flawed Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgswb", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"gsw", {"Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgswc", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"glw", {"Flawless Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgswd", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"gpw", {"Perfect Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgswe", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"hp1", {"Minor Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp1", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
+        {"hp2", {"Light Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp2", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
+        {"hp3", {"Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp3", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
+        {"hp4", {"Greater Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp4", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
+        {"hp5", {"Super Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp5", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
+        {"mp1", {"Minor Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp1", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
+        {"mp2", {"Light Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp2", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
+        {"mp3", {"Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp3", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
+        {"mp4", {"Greater Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp4", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
+        {"mp5", {"Super Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp5", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
+        {"skc", {"Chipped Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invskc", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
+        {"skf", {"Flawed Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invskf", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
+        {"sku", {"Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invsku", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
+        {"skl", {"Flawless Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invskl", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
+        {"skz", {"Perfect Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invskz", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
+        {"r01", {"El Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 11}, {1, 1}, false, "invrEl", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r02", {"Eld Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 11}, {1, 1}, false, "invrEld", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r03", {"Tir Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 1}, false, "invrTir", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r04", {"Nef Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 1}, false, "invrNef", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r05", {"Eth Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invrEth", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r06", {"Ith Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invrIth", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r07", {"Tal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 17}, {1, 1}, false, "invrTal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r08", {"Ral Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 19}, {1, 1}, false, "invrRal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r09", {"Ort Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 21}, {1, 1}, false, "invrOrt", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r10", {"Thul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 23}, {1, 1}, false, "invrThul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r11", {"Amn Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 25}, {1, 1}, false, "invrAmn", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r12", {"Sol Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 27}, {1, 1}, false, "invrSol", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r13", {"Shael Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 29}, {1, 1}, false, "invrShae", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r14", {"Dol Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 31}, {1, 1}, false, "invrDol", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r15", {"Hel Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrHel", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r16", {"Io Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 35}, {1, 1}, false, "invrIo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r17", {"Lum Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 37}, {1, 1}, false, "invrLum", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r18", {"Ko Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 39}, {1, 1}, false, "invrKo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r19", {"Fal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 41}, {1, 1}, false, "invrFal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r20", {"Lem Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 43}, {1, 1}, false, "invrLem", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r21", {"Pul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 45}, {1, 1}, false, "invrPul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r22", {"Um Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 47}, {1, 1}, false, "invrUm", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r23", {"Mal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 49}, {1, 1}, false, "invrMal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r24", {"Ist Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 51}, {1, 1}, false, "invrIst", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r25", {"Gul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 53}, {1, 1}, false, "invrGul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r26", {"Vex Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 55}, {1, 1}, false, "invrVex", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r27", {"Ohm Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 57}, {1, 1}, false, "invrOhm", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r28", {"Lo Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 59}, {1, 1}, false, "invrLo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r29", {"Sur Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 61}, {1, 1}, false, "invrSur", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r30", {"Ber Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 63}, {1, 1}, false, "invrBer", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r31", {"Jah Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 65}, {1, 1}, false, "invrJo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r32", {"Cham Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 67}, {1, 1}, false, "invrCham", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"r33", {"Zod Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 69}, {1, 1}, false, "invrZod", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
+        {"jew", {"Jewel", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invjew", 0, {"Jewel", "Socket Filler", "Miscellaneous"}}},
+    };
+
     const ItemType& getGPSItemType(const std::array<std::uint8_t, 4>& strcode)
     {
-        static const std::map<std::string, ItemType> essenceBases = {
-            {"elx", {"Elixer of Vitality", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invpot", 0, {"Elixir", "Miscellaneous"}}},
-            {"hpo", {"Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrps", 0, {"Healing Potion", "Potion", "Miscellaneous", "Unused"}}},
-            {"mpo", {"Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbps", 0, {"Mana Potion", "Potion", "Miscellaneous", "Unused"}}},
-            {"hpf", {"Full Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrpl", 0, {"Healing Potion", "Potion", "Miscellaneous", "Unused"}}},
-            {"mpf", {"Full Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbpl", 0, {"Mana Potion", "Potion", "Miscellaneous", "Unused"}}},
-            {"vps", {"Stamina Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invwps", 0, {"Stamina Potion", "Potion", "Miscellaneous"}}},
-            {"yps", {"Antidote Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invnps", 0, {"Antidote Potion", "Potion", "Miscellaneous"}}},
-            {"rvs", {"Rejuvenation Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invvps", 0, {"Rejuv Potion", "Healing Potion", "Mana Potion", "Potion", "Miscellaneous"}}},
-            {"rvl", {"Full Rejuvenation Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invvpl", 0, {"Rejuv Potion", "Healing Potion", "Mana Potion", "Potion", "Miscellaneous"}}},
-            {"wms", {"Thawing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invyps", 0, {"Thawing Potion", "Potion", "Miscellaneous"}}},
-            {"gcv", {"Chipped Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsva", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfv", {"Flawed Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsvb", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsv", {"Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsvc", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"gzv", {"Flawless Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsvd", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpv", {"Perfect Amethyst", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsve", 0, {"Amethyst", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"gcy", {"Chipped Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsya", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfy", {"Flawed Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsyb", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsy", {"Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsyc", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"gly", {"Flawless Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsyd", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpy", {"Perfect Topaz", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsye", 0, {"Topaz", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"gcb", {"Chipped Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsba", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfb", {"Flawed Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsbb", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsb", {"Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsbc", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"glb", {"Flawless Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsbd", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpb", {"Perfect Sapphire", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsbe", 0, {"Sapphire", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"gcg", {"Chipped Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsga", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfg", {"Flawed Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsgb", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsg", {"Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsgc", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"glg", {"Flawless Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsgd", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpg", {"Perfect Emerald", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsge", 0, {"Emerald", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"gcr", {"Chipped Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgsra", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfr", {"Flawed Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgsrb", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsr", {"Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgsrc", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"glr", {"Flawless Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgsrd", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpr", {"Perfect Ruby", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgsre", 0, {"Ruby", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"gcw", {"Chipped Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invgswa", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"gfw", {"Flawed Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invgswb", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"gsw", {"Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invgswc", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"glw", {"Flawless Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invgswd", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"gpw", {"Perfect Diamond", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invgswe", 0, {"Diamond", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"hp1", {"Minor Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp1", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
-            {"hp2", {"Light Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp2", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
-            {"hp3", {"Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp3", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
-            {"hp4", {"Greater Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp4", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
-            {"hp5", {"Super Healing Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invhp5", 0, {"Healing Potion", "Potion", "Miscellaneous"}}},
-            {"mp1", {"Minor Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp1", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
-            {"mp2", {"Light Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp2", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
-            {"mp3", {"Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp3", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
-            {"mp4", {"Greater Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp4", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
-            {"mp5", {"Super Mana Potion", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmp5", 0, {"Mana Potion", "Potion", "Miscellaneous"}}},
-            {"skc", {"Chipped Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 1}, {1, 1}, false, "invskc", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Chipped Gem"}}},
-            {"skf", {"Flawed Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 5}, {1, 1}, false, "invskf", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Flawed Gem"}}},
-            {"sku", {"Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 12}, {1, 1}, false, "invsku", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Standard Gem"}}},
-            {"skl", {"Flawless Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invskl", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Flawless Gem"}}},
-            {"skz", {"Perfect Skull", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 18}, {1, 1}, false, "invskz", 0, {"Skull", "Gem", "Socket Filler", "Miscellaneous", "Perfect Gem"}}},
-            {"r01", {"El Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 11}, {1, 1}, false, "invrEl", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r02", {"Eld Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 11}, {1, 1}, false, "invrEld", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r03", {"Tir Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 1}, false, "invrTir", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r04", {"Nef Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 13}, {1, 1}, false, "invrNef", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r05", {"Eth Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invrEth", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r06", {"Ith Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 15}, {1, 1}, false, "invrIth", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r07", {"Tal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 17}, {1, 1}, false, "invrTal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r08", {"Ral Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 19}, {1, 1}, false, "invrRal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r09", {"Ort Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 21}, {1, 1}, false, "invrOrt", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r10", {"Thul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 23}, {1, 1}, false, "invrThul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r11", {"Amn Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 25}, {1, 1}, false, "invrAmn", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r12", {"Sol Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 27}, {1, 1}, false, "invrSol", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r13", {"Shael Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 29}, {1, 1}, false, "invrShae", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r14", {"Dol Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 31}, {1, 1}, false, "invrDol", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r15", {"Hel Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrHel", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r16", {"Io Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 35}, {1, 1}, false, "invrIo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r17", {"Lum Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 37}, {1, 1}, false, "invrLum", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r18", {"Ko Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 39}, {1, 1}, false, "invrKo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r19", {"Fal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 41}, {1, 1}, false, "invrFal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r20", {"Lem Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 43}, {1, 1}, false, "invrLem", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r21", {"Pul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 45}, {1, 1}, false, "invrPul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r22", {"Um Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 47}, {1, 1}, false, "invrUm", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r23", {"Mal Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 49}, {1, 1}, false, "invrMal", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r24", {"Ist Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 51}, {1, 1}, false, "invrIst", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r25", {"Gul Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 53}, {1, 1}, false, "invrGul", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r26", {"Vex Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 55}, {1, 1}, false, "invrVex", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r27", {"Ohm Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 57}, {1, 1}, false, "invrOhm", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r28", {"Lo Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 59}, {1, 1}, false, "invrLo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r29", {"Sur Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 61}, {1, 1}, false, "invrSur", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r30", {"Ber Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 63}, {1, 1}, false, "invrBer", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r31", {"Jah Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 65}, {1, 1}, false, "invrJo", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r32", {"Cham Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 67}, {1, 1}, false, "invrCham", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"r33", {"Zod Rune", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0, 69}, {1, 1}, false, "invrZod", 0, {"Rune", "Socket Filler", "Miscellaneous"}}},
-            {"jew", {"Jewel", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invjew", 0, {"Jewel", "Socket Filler", "Miscellaneous"}}},
-        };
-
         std::string testStr("   ");
         testStr[0] = (char)strcode[0];
         testStr[1] = (char)strcode[1];
         testStr[2] = (char)strcode[2];
-        auto iter = essenceBases.find(testStr);
-        if (iter != essenceBases.end())
+        auto iter = gpsItemTypes.find(testStr);
+        if (iter != gpsItemTypes.end())
         {
             return iter->second;
         }
@@ -2434,6 +2434,31 @@ bool d2ce::ItemType::isCharm() const
 bool d2ce::ItemType::isBelt() const
 {
     return std::find(categories.begin(), categories.end(), "Belt") != categories.end() ? true : false;
+}
+
+bool d2ce::ItemType::isScroll() const
+{
+    return std::find(categories.begin(), categories.end(), "Scroll") != categories.end() ? true : false;
+}
+
+bool d2ce::ItemType::isSimpleItem() const
+{
+    if (isWeapon() || isArmor() || isStackable() || isBook() || isJewel() || isQuestItem())
+    {
+        return false;
+    }
+
+    if (dimensions.Height != 1 || dimensions.Width != 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool d2ce::ItemType::isUnusedItem() const
+{
+    return std::find(categories.begin(), categories.end(), "Unused") != categories.end() ? true : false;
 }
 
 bool d2ce::ItemType::hasUndeadBonus() const
@@ -4029,6 +4054,316 @@ std::uint8_t d2ce::ItemHelpers::HuffmanDecodeBitString(const std::string& bitstr
 
     // something went wrong
     return UINT8_MAX;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ItemHelpers::getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode)
+{
+    std::uint16_t idx = 0;
+    const std::uint8_t& gem = strcode[0];
+    const std::uint8_t& gemCondition = strcode[1];
+    const std::uint8_t& gemColour = strcode[2];
+    switch (gem)
+    {
+    case 'g': // gem
+        switch (gemColour)
+        {
+        case 'v': // amethyst
+            idx = 0;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'z': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        case 'y': // topaz
+            idx = 6;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        case 'b': // sapphire
+            idx = 4;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        case 'g': // emerald
+            idx = 2;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        case 'r': // ruby
+            idx = 3;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        case 'w': // diamond
+            idx = 1;
+            switch (gemCondition)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 's': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+            break;
+        }
+        break;
+
+    case 's': // skull
+        idx = 5;
+        if (gemCondition == 'k')
+        {
+            switch (gemColour)
+            {
+            case 'c': // chipped
+                return idx;
+            case 'f': // flawed
+                return idx + 7;
+            case 'u': // regular
+                return idx + 14;
+            case 'l': // flawless
+                return idx + 21;
+            default: // perfect
+                return idx + 28;
+            }
+        }
+        break;
+
+    case 'h': // healing
+        if (gemCondition == 'p')
+        {
+            idx = 35;
+            switch (gemColour)
+            {
+            case '1': // Minor
+                return idx;
+            case '2': // Light
+                return idx + 1;
+            case '3': // Regular
+                return idx + 2;
+            case '4': // Greater
+                return idx + 3;
+            default: // Super
+                return idx + 4;
+            }
+        }
+        break;
+
+    case 'm': // mana
+        if (gemCondition == 'p')
+        {
+            idx = 40;
+            switch (gemColour)
+            {
+            case '1': // Minor
+                return idx;
+            case '2': // Light
+                return idx + 1;
+            case '3': // Regular
+                return idx + 2;
+            case '4': // Greater
+                return idx + 3;
+            default: // Super
+                return idx + 4;
+            }
+        }
+        break;
+
+    case 'r':
+
+        switch (gemCondition)
+        {
+        case 'v': // rejuvenation potion
+            idx = 45;
+            switch (gemColour)
+            {
+            case 's': // Regular
+                return idx;
+            default: // Full
+                return idx + 1;
+            }
+            break;
+        case '0': // El Rune - Ort Rune
+            idx = 50;
+            if (gemColour >= '1' && gemColour <= '9')
+            {
+                return idx + gemColour - '1';
+            }
+            break;
+
+        case '1': // Thul Rune - Fal Rune
+            idx = 59;
+            if (gemColour >= '0' && gemColour <= '9')
+            {
+                return idx + gemColour - '0';
+            }
+            break;
+
+        case '2': // Lem Rune - Sur Rune
+            idx = 69;
+            if (gemColour >= '0' && gemColour <= '9')
+            {
+                return idx + gemColour - '0';
+            }
+            break;
+
+        case '3': // Ber Rune - Zod Rune
+            idx = 79;
+            if (gemColour >= '0' && gemColour <= '3')
+            {
+                return idx + gemColour - '0';
+            }
+            break;
+        }
+
+        if (gemCondition == 'v') // rejuvenation potion
+        {
+            idx = 45;
+            switch (gemColour)
+            {
+            case 's': // Regular
+                return idx;
+            default: // Full
+                return idx + 1;
+            }
+        }
+        break;
+
+    case 'y': // antidote potion
+        if (gemCondition == 'p' && gemColour == 's')
+        {
+            return 47;
+        }
+        break;
+
+    case 'v': //stamina potion
+        if (gemCondition == 'p' && gemColour == 's')
+        {
+            return 48;
+        }
+        break;
+
+    case 'w': // thawing potion
+        if (gemCondition == 'm' && gemColour == 's')
+        {
+            return 49;
+        }
+        break;
+    }
+
+    return MAXUINT16; // unknown
+}
+//---------------------------------------------------------------------------
+void d2ce::ItemHelpers::getValidGPSCodes(std::vector<std::string>& gpsCodes, bool isExpansion)
+{
+    gpsCodes.clear();
+    gpsCodes.reserve(83);
+
+    std::map<std::uint16_t, std::uint32_t> gemIdxMap;
+    std::array<std::uint8_t, 4> gemCode = { 0x20, 0x20, 0x20, 0x20 };
+    std::uint32_t& itemData = *reinterpret_cast<std::uint32_t*>(gemCode.data());
+    std::string typeStr;
+    std::uint16_t idx = 0;
+    for (const auto& gpsItem : gpsItemTypes)
+    {
+        typeStr = gpsItem.first.c_str();
+        if (typeStr.length() < 3)
+        {
+            // invalid
+            continue;
+        }
+
+        if (gpsItem.second.isUnusedItem())
+        {
+            continue;
+        }
+
+        if (!gpsItem.second.isPotion() && !gpsItem.second.isGem() && !gpsItem.second.isRune())
+        {
+            continue;
+        }
+
+        if (!isExpansion && gpsItem.second.isRune())
+        {
+            // Rune are only available in expansion
+            continue;
+        }
+
+        gemCode[0] = typeStr[0];
+        gemCode[1] = typeStr[1];
+        gemCode[2] = typeStr[2];
+        idx = getGPSSortIndex(gemCode);
+        if(idx == MAXUINT16)
+        {
+            // invalid
+            continue;
+        }
+
+        gemIdxMap.emplace(idx, itemData);
+    }
+
+    for (auto& gem : gemIdxMap)
+    {
+        *reinterpret_cast<std::uint32_t*>(gemCode.data()) = gem.second;
+        gpsCodes.push_back(std::string(reinterpret_cast<char*>(gemCode.data()), 4));
+    }
 }
 //---------------------------------------------------------------------------
 const d2ce::ItemType& d2ce::ItemHelpers::getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode)

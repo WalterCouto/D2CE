@@ -23,6 +23,7 @@
 #include "afxdialogex.h"
 #include "D2MainForm.h"
 #include "D2GemsForm.h"
+#include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include <deque>
 
@@ -1184,6 +1185,7 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, &CD2ItemsForm::OnItemContextUpgradeRejuvenation)
     ON_COMMAND(ID_ITEM_CONTEXT_GPS_CONVERTOR, &CD2ItemsForm::OnItemContextGpsConvertor)
+    ON_COMMAND(ID_ITEM_CONTEXT_GPS_CREATOR, &CD2ItemsForm::OnItemContextGpsCreator)
     ON_BN_CLICKED(IDC_INV_WEAPON_I, &CD2ItemsForm::OnClickedInvWeaponRadio)
     ON_BN_CLICKED(IDC_INV_WEAPON_II, &CD2ItemsForm::OnClickedInvWeaponRadio)
 END_MESSAGE_MAP()
@@ -1616,6 +1618,21 @@ void CD2ItemsForm::CheckToolTipCtrl()
     }
 }
 //---------------------------------------------------------------------------
+size_t CD2ItemsForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
+{
+    auto numCoverted = MainForm.convertGPSs(existingGem, desiredGem);
+    if (numCoverted > 0)
+    {
+        // refresh all grids
+        InvBeltGrid.LoadItemImages();
+        InvCubeGrid.LoadItemImages();
+        InvGrid.LoadItemImages();
+        InvStashGrid.LoadItemImages();
+    }
+
+    return numCoverted;
+}
+//---------------------------------------------------------------------------
 bool CD2ItemsForm::updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem)
 {
     if (!MainForm.updateGem(item, newgem))
@@ -1662,17 +1679,49 @@ bool CD2ItemsForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
 //---------------------------------------------------------------------------
 void CD2ItemsForm::refreshGrid(const d2ce::Item& item) const
 {
-    auto itemAltLocation = d2ce::EnumAltItemLocation::UKNOWN;
+    auto itemAltLocation = d2ce::EnumAltItemLocation::UNKNOWN;
     auto itemLocation = item.getLocation();
     switch (itemLocation)
+    {
+    case d2ce::EnumItemLocation::STORED:
+        itemAltLocation = item.getAltPositionId();
+    }
+
+    refreshGrid(itemLocation, itemAltLocation);
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    if (!MainForm.addItem(locationId, altPositionId, strcode))
+    {
+        return false;
+    }
+
+    refreshGrid(locationId, altPositionId);
+    return true;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    auto numAdded = MainForm.fillEmptySlots(locationId, altPositionId, strcode);
+    if (numAdded > 0)
+    {
+        refreshGrid(locationId, altPositionId);
+    }
+
+    return numAdded;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
+{
+    switch (locationId)
     {
     case d2ce::EnumItemLocation::BELT:
         InvBeltGrid.LoadItemImages();
         break;
 
     case d2ce::EnumItemLocation::STORED:
-        itemAltLocation = item.getAltPositionId();
-        switch (itemAltLocation)
+        switch (altPositionId)
         {
         case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
             InvCubeGrid.LoadItemImages();
@@ -1747,6 +1796,21 @@ size_t CD2ItemsForm::getNumberOfItemsInHoradricCube() const
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsForm::getItemsInHoradricCube() const
 {
     return MainForm.getItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
+{
+    return MainForm.getItemLocationDimensions(locationId, altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const
+{
+    return MainForm.getItemLocationDimensions(locationId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
+{
+    return MainForm.getItemLocationDimensions(altPositionId, dimensions);
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
@@ -1945,46 +2009,27 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
 //---------------------------------------------------------------------------
 CSize CD2ItemsForm::getInvGridSize(UINT id) const
 {
-    std::uint16_t rectBoxWidth = 0;
-    std::uint16_t rectBoxHeight = 0;
+    d2ce::ItemDimensions dimensions;
     switch (id)
     {
     case IDC_INV_GRID:
-        // Inventory is a 10 x 4 grid
-        rectBoxWidth = 10;
-        rectBoxHeight = 4;
+        getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, dimensions);
         break;
 
     case IDC_INV_BELT_GRID:
-        // Belts is at most a 4 x 4 grid
-        rectBoxWidth = 4;
-        rectBoxHeight = std::max(std::uint16_t(1), std::uint16_t(getMaxNumberOfItemsInBelt() / 4));
+        getItemLocationDimensions(d2ce::EnumItemLocation::BELT, dimensions);
         break;
 
     case IDC_INV_STASH_GRID:
-        // STASH is at most a 10 x 10 grid
-        if (getCharacterVersion() < d2ce::EnumCharVersion::v115)
-        {
-            // STASH is a 6 x 4/8 grid
-            rectBoxWidth = 6;
-            rectBoxHeight = (getCharacterVersion() < d2ce::EnumCharVersion::v107) ? 4 : 8;
-        }
-        else
-        {
-            // STASH is at most a 10 x 10 grid
-            rectBoxWidth = 10;
-            rectBoxHeight = 10;
-        }
+        getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, dimensions);
         break;
 
     case IDC_INV_CUBE_GRID:
-        // HORADRIC CUBE is a 3 x 4 grid
-        rectBoxWidth = 3;
-        rectBoxHeight = 4;
+        getItemLocationDimensions(d2ce::EnumAltItemLocation::HORADRIC_CUBE, dimensions);
         break;
     }
 
-    return CSize(rectBoxWidth, rectBoxHeight);
+    return CSize(dimensions.InvWidth, dimensions.InvHeight);
 }
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsForm::getInvGridItems(UINT id) const
@@ -2167,6 +2212,13 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     CurrItem = const_cast<d2ce::Item*>(InvHitTest(hitTestPoint));
     if (CurrItem == nullptr)
     {
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+
+        CMenu* pPopup = menu.GetSubMenu(2);
+        ENSURE(pPopup != NULL);
+
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
         return;
     }
 
@@ -2415,12 +2467,14 @@ void CD2ItemsForm::OnItemContextUpgradeRejuvenation()
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextGpsConvertor()
 {
-    if (CurrItem == nullptr)
-    {
-        return;
-    }
-
     CD2GemsForm dlg(*this, CurrItem);
+    dlg.DoModal();
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextGpsCreator()
+{
+    CD2AddGemsForm dlg(*this, CurrItem);
     dlg.DoModal();
     CurrItem = nullptr;
 }

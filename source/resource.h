@@ -24,6 +24,7 @@
 #define IDD_MERC_DIALOG                 153
 #define IDR_RESOURCE_HEADER             154
 #define IDD_ITEMS_DIALOG                155
+#define IDD_ADD_GPS_DIALOG              156
 #define IDB_INVQLT                      157
 #define IDB_INVLEA                      158
 #define IDB_INVHLA                      159
@@ -579,6 +580,7 @@
 #define IDC_INV_WEAPON_II               1144
 #define IDC_INV_CUBE_GROUP              1145
 #define IDC_INV_BELT_GROUP              1146
+#define IDC_FILL_BUTTON                 1147
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -615,14 +617,16 @@
 #define ID_ITEM_CONTEXT_MAXSOCKETS      32805
 #define ID_ITEM_CONTEXT_ADDSOCKET       32806
 #define ID_ITEM_CONTEXT_PERSONALIZE     32807
+#define ID_OPTIONS_GPS_CREATOR          32808
+#define ID_ITEM_CONTEXT_GPS_CREATOR     32809
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        506
-#define _APS_NEXT_COMMAND_VALUE         32808
-#define _APS_NEXT_CONTROL_VALUE         1147
+#define _APS_NEXT_RESOURCE_VALUE        507
+#define _APS_NEXT_COMMAND_VALUE         32810
+#define _APS_NEXT_CONTROL_VALUE         1148
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

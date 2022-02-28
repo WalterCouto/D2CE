@@ -268,7 +268,11 @@ namespace d2ce
 
         bool getHasHoradricCube() const;
         size_t getNumberOfItemsInHoradricCube() const;
-        const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const;
+        const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const; 
+        
+        bool getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
+        bool getItemLocationDimensions(EnumItemLocation locationId, ItemDimensions& dimensions) const;
+        bool getItemLocationDimensions(EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
 
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;
@@ -289,6 +293,13 @@ namespace d2ce
         size_t upgradePotions();
         bool anyUpgradableRejuvenations() const;
         size_t upgradeRejuvenationPotions();
+
+        bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+        bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;

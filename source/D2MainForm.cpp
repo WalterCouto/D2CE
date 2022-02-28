@@ -27,6 +27,7 @@
 #include "D2WaypointsForm.h"
 #include "D2QuestsForm.h"
 #include "D2GemsForm.h"
+#include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include "D2ItemsForm.h"
 #include "d2ce\ExperienceConstants.h"
@@ -881,6 +882,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_UPGRADE_REJUVENATION, &CD2MainForm::OnUpdateOptionsUpgradeRejuvenation)
     ON_COMMAND(ID_OPTIONS_GPS_CONVERTOR, &CD2MainForm::OnOptionsGpsConvertor)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_GPS_CONVERTOR, &CD2MainForm::OnUpdateOptionsGpsConvertor)
+    ON_COMMAND(ID_OPTIONS_GPS_CREATOR, &CD2MainForm::OnOptionsGpsCreator)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_GPS_CREATOR, &CD2MainForm::OnUpdateOptionsGpsCreator)
     ON_COMMAND(ID_OPTIONS_MAXFILLSTACKABLES, &CD2MainForm::OnOptionsMaxfillstackables)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXFILLSTACKABLES, &CD2MainForm::OnUpdateOptionsMaxfillstackables)
     ON_COMMAND(ID_OPTIONS_FIXALLITEMS, &CD2MainForm::OnOptionsFixallitems)
@@ -4363,6 +4366,17 @@ void CD2MainForm::OnUpdateOptionsGpsConvertor(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfGPSs() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsGpsCreator()
+{
+    CD2AddGemsForm dlg(*this);
+    dlg.DoModal();
+}
+
+void CD2MainForm::OnUpdateOptionsGpsCreator(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxfillstackables()
 {
     auto numConverted = CharInfo.fillAllStackables();
@@ -5005,6 +5019,81 @@ bool CD2MainForm::setItemIndestructible(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    if (!CharInfo.addItem(locationId, altPositionId, strcode))
+    {
+        return false;
+    }
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode)
+{
+    if (!CharInfo.addItem(locationId, strcode))
+    {
+        return false;
+    }
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    if(!CharInfo.addItem(altPositionId, strcode))
+    {
+        return false;
+    }
+
+    ItemsChanged = true;
+    StatsChanged();
+    return true;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    auto numAdded = CharInfo.fillEmptySlots(locationId, altPositionId, strcode);
+    if (numAdded > 0)
+    {
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numAdded;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::fillEmptySlots(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode)
+{
+    auto numAdded = CharInfo.fillEmptySlots(locationId, strcode);
+    if (numAdded > 0)
+    {
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numAdded;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    auto numAdded = CharInfo.fillEmptySlots(altPositionId, strcode);
+    if (numAdded > 0)
+    {
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numAdded;
+}
+//---------------------------------------------------------------------------
 size_t CD2MainForm::getNumberOfEquippedItems() const
 {
     return CharInfo.getNumberOfEquippedItems();
@@ -5068,6 +5157,21 @@ size_t CD2MainForm::getNumberOfItemsInHoradricCube() const
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInHoradricCube() const
 {
     return CharInfo.getItemsInHoradricCube();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
+{
+    return CharInfo.getItemLocationDimensions(locationId, altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const
+{
+    return CharInfo.getItemLocationDimensions(locationId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
+{
+    return CharInfo.getItemLocationDimensions(altPositionId, dimensions);
 }
 //---------------------------------------------------------------------------
 

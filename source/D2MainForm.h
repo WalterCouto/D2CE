@@ -209,6 +209,8 @@ protected:
     afx_msg void OnUpdateOptionsUpgradeRejuvenation(CCmdUI* pCmdUI);
     afx_msg void OnOptionsGpsConvertor();
     afx_msg void OnUpdateOptionsGpsConvertor(CCmdUI* pCmdUI);
+    afx_msg void OnOptionsGpsCreator();
+    afx_msg void OnUpdateOptionsGpsCreator(CCmdUI* pCmdUI);
     afx_msg void OnOptionsMaxfillstackables();
     afx_msg void OnUpdateOptionsMaxfillstackables(CCmdUI* pCmdUI);
     afx_msg void OnOptionsFixallitems();
@@ -395,6 +397,12 @@ public:
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
     bool setItemIndestructible(d2ce::Item& item);
+    bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    bool addItem(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+    bool addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    size_t fillEmptySlots(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+    size_t fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
 
     size_t getNumberOfEquippedItems() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;
@@ -413,5 +421,9 @@ public:
     bool getHasHoradricCube() const;
     size_t getNumberOfItemsInHoradricCube() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInHoradricCube() const;
+
+    bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
+    bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const;
+    bool getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
 };
 //---------------------------------------------------------------------------

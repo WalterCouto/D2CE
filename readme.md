@@ -74,7 +74,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.13 (Feb 26, 2022)**
+**Version 2.13 (Feb 28, 2022)**
 - Updated: Fix detection of ID for set items.<br>
 - Updated: Fix up logic for reading/writing 1.00 - 1.06 files<br>
 - Updated: Add alternate ring/amulet images<br>
@@ -85,6 +85,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 
 - Added: Ability to personalize items or remove the personalization from items.<br>
 - Added: Ability to make weapons or armor indestructible.<br>
+- Added: Gems, Potions & Skulls Creator dialog and menu items. This allows you to add Gems, Potions, Skulls or Runes to empty slots in our inventory.<br>
 <br>
 
 **Version 2.12 (Feb 14, 2022)**

@@ -47,7 +47,7 @@ namespace d2ce
 
     enum class EnumItemQuality : std::uint8_t
     {
-        UKNOWN = 0,
+        UNKNOWN = 0,
         INFERIOR = 0x01,
         NORMAL,
         SUPERIOR,
@@ -87,7 +87,7 @@ namespace d2ce
 
     enum class EnumAltItemLocation : std::uint8_t
     {
-        UKNOWN = 0x00,
+        UNKNOWN = 0x00,
         INVENTORY = 0x01,
         HORADRIC_CUBE = 0x04,
         STASH = 0x05

@@ -24,6 +24,7 @@
 #include "ItemConstants.h"
 #include "DataTypes.h"
 #include <json/json.h>
+#include <set>
 
 namespace d2ce
 {
@@ -72,6 +73,7 @@ namespace d2ce
         size_t dwa_bit_offset = 0;
         mutable size_t dwb_bit_offset = 0;
         mutable MagicalCachev100 magic_affixes_v100;
+        mutable RareOrCraftedCachev100 rare_affixes_v100;
 
     private:
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
@@ -91,6 +93,7 @@ namespace d2ce
         bool getMagicalAffixesv100(MagicalAffixes& affixes) const;
         bool getSetAttributesv100(SetAttributes& attrib) const;
         bool getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const;
+        bool getRareOrCraftedAttributesv100(RareAttributes& attrib) const;
         bool hasMultipleGraphicsv100() const;
         std::uint8_t getPictureIdv100() const;
         std::uint16_t getDefenseRatingv100() const;
@@ -108,6 +111,9 @@ namespace d2ce
         void byteRangeAsJson(Json::Value& parent, size_t startByte, size_t numBytes) const;
 
         std::uint16_t getRawVersion() const;
+
+        Item(EnumCharVersion version, EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
+        bool setItemLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
 
     public:
         Item();
@@ -268,6 +274,9 @@ namespace d2ce
         mutable std::map<d2ce::EnumItemLocation, std::vector<std::reference_wrapper<Item>>> ItemLocationReference;       // Iventory of items equipped or stored in the belt
         mutable std::map<d2ce::EnumAltItemLocation, std::vector<std::reference_wrapper<Item>>> ItemAltLocationReference; // Iventory of items not equipped or stored in the belt
 
+        mutable std::map < d2ce::EnumItemLocation, std::set<std::uint16_t>> ItemLocationEmptySpots;  // a set of empty spots on body or belt
+        mutable std::map<d2ce::EnumAltItemLocation, std::set<std::uint16_t>> ItemAltLocationEmptySpots; // a set of empty spots in storage
+
         bool HasHoradricCube = false;
         bool HasBeltEquipped = false;
         size_t EquippedBeltSlots = 0;
@@ -331,6 +340,11 @@ namespace d2ce
 
         void clear();
 
+        EnumItemVersion getDefaultItemVersion();
+        bool getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
+        bool getItemLocationDimensions(EnumItemLocation locationId, ItemDimensions& dimensions) const;
+        bool getItemLocationDimensions(EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
+
         bool anyUpgradableGems() const;
         bool anyUpgradablePotions() const;
         bool anyUpgradableRejuvenations() const;
@@ -388,6 +402,12 @@ namespace d2ce
         size_t maxDurabilityAllItems();
         size_t maxSocketCountAllItems();
         size_t setIndestructibleAllItems();
+        bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+        bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
+        size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getCharmBonuses(std::vector<MagicalAttribute>& attribs) const;

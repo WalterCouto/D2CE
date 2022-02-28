@@ -2811,6 +2811,21 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItems
     return m_items.getItemsInHoradricCube();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const
+{
+    return m_items.getItemLocationDimensions(locationId, altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getItemLocationDimensions(EnumItemLocation locationId, ItemDimensions& dimensions) const
+{
+    return m_items.getItemLocationDimensions(locationId, dimensions);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getItemLocationDimensions(EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const
+{
+    return m_items.getItemLocationDimensions(altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfArmor() const
 {
     return m_items.getNumberOfArmor();
@@ -2924,6 +2939,36 @@ bool d2ce::Character::anyUpgradableRejuvenations() const
 size_t d2ce::Character::upgradeRejuvenationPotions()
 {
     return m_items.upgradeRejuvenationPotions();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.addItem(locationId, altPositionId, strcode);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.addItem(locationId, strcode);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.addItem(altPositionId, strcode);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.fillEmptySlots(locationId, altPositionId, strcode);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.fillEmptySlots(locationId, strcode);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
+{
+    return m_items.fillEmptySlots(altPositionId, strcode);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

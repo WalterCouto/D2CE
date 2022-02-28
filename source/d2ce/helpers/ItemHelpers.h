@@ -94,6 +94,9 @@ namespace d2ce
         bool isRune() const;
         bool isCharm() const;
         bool isBelt() const;
+        bool isScroll() const;
+        bool isSimpleItem() const;
+        bool isUnusedItem() const;
 
         bool hasUndeadBonus() const;
 
@@ -123,6 +126,8 @@ namespace d2ce
         static std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
         static void d2ce::ItemHelpers::encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
         static std::uint8_t HuffmanDecodeBitString(const std::string& bitstr);
+        static std::uint16_t getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode);
+        static void getValidGPSCodes(std::vector <std::string>& gpsCodes, bool isExpansion = true);
 
         static const ItemType& getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode);
         static std::uint8_t getItemBase(const std::array<std::uint8_t, 4>& strcode);
