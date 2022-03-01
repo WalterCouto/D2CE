@@ -74,6 +74,14 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.14 (Mar 7, 2022)**
+- Updated: Updated jewel alternate images.<br>
+- Updated: Updated item context menus across forms showing items.<br>
+<br>
+
+- Added: Shared Stash support. Users can now view and edit items in the shared stash if the file is present in the same location as their character.<br>
+<br>
+
 **Version 2.13 (Feb 28, 2022)**
 - Updated: Fix detection of ID for set items.<br>
 - Updated: Fix up logic for reading/writing 1.00 - 1.06 files<br>

@@ -65,6 +65,11 @@ protected:
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextLoad();
     afx_msg void OnItemContextMaxdurability();
+    afx_msg void OnItemContextIndestructible();
+    afx_msg void OnItemContextAddsocket();
+    afx_msg void OnItemContextMaxsockets();
+    afx_msg void OnItemContextPersonalize();
+    afx_msg void OnItemContextRemovePersonalization();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -111,6 +116,7 @@ private:
     void UpdateAttributes();
     void UpdateModified();
     void LoadMercItemImages();
+    void refreshEquipped(const d2ce::Item& item);
 
     std::string ToStdString(const CWnd* Sender) const;
     CString ToText(const CWnd* Sender) const;

@@ -165,6 +165,12 @@
     <ClInclude Include="D2AddGemsForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="d2ce\SharedStash.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="D2SharedStashForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -228,6 +234,12 @@
       <Filter>Source Files\d2ce</Filter>
     </ClCompile>
     <ClCompile Include="D2AddGemsForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\SharedStash.cpp">
+      <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
+    <ClCompile Include="D2SharedStashForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1374,6 +1386,39 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Misc\gemsocket.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Small Charm 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Small Charm 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Large Charm 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Large Charm 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Grand Charm 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Grand Charm 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel 2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel 3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel 4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel 5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel 6.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

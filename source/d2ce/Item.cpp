@@ -29,11 +29,11 @@
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint16_t MAX_TOME_QUANTITY    =   20; // max # of scrolls in tome
-    constexpr std::uint16_t MAX_KEY_QUANTITY_100 =    6; // max # of keys stacked (verion 1.06 and lower)
-    constexpr std::uint16_t MAX_KEY_QUANTITY     =   12; // max # of keys stacked
-    constexpr std::uint16_t MAX_GLD_QUANTITY     = 4095; // max gld amount
-    constexpr std::uint16_t MAX_STACKED_QUANTITY =  511; // max # of items in a stack
+    constexpr std::uint32_t MAX_TOME_QUANTITY    =   20; // max # of scrolls in tome
+    constexpr std::uint32_t MAX_KEY_QUANTITY_100 =    6; // max # of keys stacked (verion 1.06 and lower)
+    constexpr std::uint32_t MAX_KEY_QUANTITY     =   12; // max # of keys stacked
+    constexpr std::uint32_t MAX_GLD_QUANTITY     = 4095; // max gld amount
+    constexpr std::uint32_t MAX_STACKED_QUANTITY =  511; // max # of items in a stack
     constexpr std::uint16_t MAX_DURABILITY       = 0xFF; // max durability of an item (0 is Indestructible)
 
     constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER  = { 0x6A, 0x66 };  // alternatively "jf"
@@ -62,23 +62,24 @@ namespace d2ce
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69;
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101;
 
-    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS            =  4;
-    constexpr std::uint16_t REAL_DATA_NUM_BITS               = 96;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS          = 11;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108      = 10; // 1.09 or older
-    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS          =  8;
-    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS =  8;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS      =  9;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108  =  8; // 1.09 or older
-    constexpr std::uint16_t STACKABLE_NUM_BITS               =  9;
-    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS           = 12;
-    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS             = 12;
-    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS        =  4;
-    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS           = 11;
-    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS           = 12;
-    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS    =  3;
-    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS         =  8;
-    constexpr std::uint16_t PROPERTY_ID_NUM_BITS             =  9;
+    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS            =   4;
+    constexpr std::uint16_t REAL_DATA_NUM_BITS               =  96; //128 (one file had this at 128 TODO figure out how to know this section ends)
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS          =  11;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108      =  10; // 1.09 or older
+    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS          =   8;
+    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS =   8;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS      =   9;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108  =   8; // 1.09 or older
+    constexpr std::uint16_t STACKABLE_NUM_BITS               =   9;
+    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS           =  12;
+    constexpr std::uint16_t GLD_STACKABLE_LARGE_NUM_BITS     =  32;
+    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS             =  12;
+    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS        =   4;
+    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS           =  11;
+    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS           =  12;
+    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS    =   3;
+    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS         =   8;
+    constexpr std::uint16_t PROPERTY_ID_NUM_BITS             =   9;
 
     constexpr std::uint16_t ITEM_V100_NUM_BITS           = 216;
     constexpr std::uint16_t ITEN_V100_UNIQUE_ID_NUM_BITS =   8;
@@ -162,6 +163,16 @@ namespace d2ce
                 flags[bitNum] = (std::uint16_t(node.asInt64()) != 0 ? 1 : 0);
             }
         }
+    }
+
+    std::uint64_t SaveGetNodeValue(Json::Value& node)
+    {
+        if (node.isNull())
+        {
+            return 0;
+        }
+
+        return node.asInt64();
     }
 }
 
@@ -3257,7 +3268,7 @@ bool d2ce::Item::canHaveSockets() const
     return false;
 }
 //---------------------------------------------------------------------------
-std::uint8_t d2ce::Item::totalNumberOfSockets() const
+std::uint8_t d2ce::Item::socketCount() const
 {
     if (isSimpleItem() || !isSocketed())
     {
@@ -3285,7 +3296,7 @@ std::uint8_t d2ce::Item::totalNumberOfSockets() const
     return 0;
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::Item::getQuantity() const
+std::uint32_t d2ce::Item::getQuantity() const
 {
     if (!isStackable() || (stackable_bit_offset == 0 && gld_stackable_bit_offset == 0))
     {
@@ -3294,13 +3305,23 @@ std::uint16_t d2ce::Item::getQuantity() const
 
     if (gld_stackable_bit_offset != 0)
     {
-        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
+        if (FileVersion < EnumCharVersion::v107)
+        {
+            return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
+        }
+
+        if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
+        {
+            return (std::uint32_t)read_uint64_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS);
+        }
+
+        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS);
     }
 
     return (std::uint8_t)read_uint32_bits(stackable_bit_offset, STACKABLE_NUM_BITS);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::setQuantity(std::uint16_t quantity)
+bool d2ce::Item::setQuantity(std::uint32_t quantity)
 {
     if (!isStackable() || (stackable_bit_offset == 0 && gld_stackable_bit_offset == 0))
     {
@@ -3327,14 +3348,27 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
         {
             // only 12 keys can be stacked ajd need at least 1
             auto maxKeys = FileVersion < EnumCharVersion::v107 ? MAX_KEY_QUANTITY_100 : MAX_KEY_QUANTITY;
-            quantity = std::max(std::uint16_t(1), std::min(quantity, maxKeys));
+            quantity = std::max(1ui32, std::min(quantity, maxKeys));
         }
         break;
     case 'g':
         if (gemcondition == 'l' && gemcolour == 'd')
         {
-            // can hold up to 4095 gold pieces
-            quantity = std::min(quantity, MAX_GLD_QUANTITY);
+            if (gld_stackable_bit_offset != 0)
+            {
+                if (FileVersion < EnumCharVersion::v107)
+                {
+                    return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
+                }
+
+                if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
+                {
+                    return updateBits64(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS, quantity);
+                }
+
+                quantity = std::min(quantity, MAX_GLD_QUANTITY);
+                return updateBits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS, quantity);
+            }
         }
         break;
 
@@ -3350,11 +3384,6 @@ bool d2ce::Item::setQuantity(std::uint16_t quantity)
         return false;
     }
 
-    if (gld_stackable_bit_offset != 0)
-    {
-        return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
-    }
-
     return updateBits(stackable_bit_offset, STACKABLE_NUM_BITS, quantity);
 }
 //---------------------------------------------------------------------------
@@ -3365,7 +3394,7 @@ bool d2ce::Item::setMaxQuantity()
         return false;
     }
 
-    std::uint16_t quantity = gld_stackable_bit_offset != 0 ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
+    std::uint32_t quantity = gld_stackable_bit_offset != 0 ? MAXUINT32 : MAX_STACKED_QUANTITY;
     return setQuantity(quantity);
 }
 //---------------------------------------------------------------------------
@@ -3603,7 +3632,7 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
 bool d2ce::Item::addMaxSocketCount()
 {
     auto maxSockets = getMaxSocketCount();
-    if (maxSockets <= totalNumberOfSockets())
+    if (maxSockets <= socketCount())
     {
         // no more room
         return false;
@@ -3615,7 +3644,7 @@ bool d2ce::Item::addMaxSocketCount()
 bool d2ce::Item::addSocket()
 {
     auto maxSockets = getMaxSocketCount();
-    auto curSockets = totalNumberOfSockets();
+    auto curSockets = socketCount();
     if (maxSockets <= curSockets)
     {
         // no more room
@@ -3633,7 +3662,7 @@ bool d2ce::Item::removeEmptySockets()
     }
     
     auto numSocketed = socketedItemCount();
-    auto numSockets = totalNumberOfSockets();
+    auto numSockets = socketCount();
     if (numSocketed >= numSockets)
     {
         // no empty sockets
@@ -3651,7 +3680,7 @@ bool d2ce::Item::removeSocket()
     }
 
     auto numSocketed = socketedItemCount();
-    auto numSockets = totalNumberOfSockets();
+    auto numSockets = socketCount();
     if (numSocketed >= numSockets)
     {
         // no empty sockets
@@ -3713,7 +3742,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         // Already has sockets, so just update count
         auto numSocketed = socketedItemCount();
         numSockets = std::max(numSockets, numSocketed); // can only remove empty sockets
-        if (numSockets == totalNumberOfSockets())
+        if (numSockets == socketCount())
         {
             // nothing to do
             return false;
@@ -4457,6 +4486,37 @@ std::string d2ce::Item::getDisplayedItemName() const
     }
 
     return ss.str();
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getDisplayedSocketCount() const
+{
+    auto count = socketCount();
+    if (count == 0)
+    {
+        return 0;
+    }
+
+    // Calculate item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getCombinedMagicalAttributes(magicalAttributes))
+    {
+        std::uint64_t eCount = 0;
+        ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
+        for (auto& attrib : magicalAttributes)
+        {
+            const auto& stat = ItemHelpers::getItemStat(attrib.Id);
+            switch (attrib.Id)
+            {
+            case 194:
+                eCount += ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat);
+                break;
+            }
+        }
+
+        count += (std::uint8_t)eCount;
+    }
+
+    return count;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedSocketedRunes() const
@@ -5456,9 +5516,19 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             {
                 // Is this correct for gld items? It's not currently used, so is it even needed?
                 gld_stackable_bit_offset = extended_data_offset + 1;
-                if (!skipBits(charfile, extended_data_offset, GLD_STACKABLE_NUM_BITS))
+                if (readBits(charfile, current_bit_offset, 1) != 0)
                 {
-                    return false;
+                    if (!skipBits(charfile, current_bit_offset, GLD_STACKABLE_LARGE_NUM_BITS))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!skipBits(charfile, current_bit_offset, GLD_STACKABLE_NUM_BITS))
+                    {
+                        return false;
+                    }
                 }
 
                 nr_of_items_in_sockets_offset = current_bit_offset;
@@ -6190,10 +6260,29 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             return false;
         }
 
-        // can hold up to 4095 gold pieces
-        value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
-        bitSize = GLD_STACKABLE_NUM_BITS;
         current_bit_offset = gld_stackable_bit_offset;
+        value = std::uint32_t(node.asInt64());
+        if (value > MAX_GLD_QUANTITY)
+        {
+            if (!setBits(current_bit_offset, 1, 1))
+            {
+                return false;
+            }
+
+            bitSize = GLD_STACKABLE_LARGE_NUM_BITS;
+        }
+        else
+        {
+            if (!setBits(current_bit_offset, 1, 0))
+            {
+                return false;
+            }
+
+            // can hold up to 4095 gold pieces
+            value = std::min(value, MAX_GLD_QUANTITY);
+            bitSize = GLD_STACKABLE_NUM_BITS;
+        }
+
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -6208,7 +6297,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
         if (!node.isNull())
         {
-            value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
+            value = std::min(std::uint32_t(node.asInt64()), MAX_STACKED_QUANTITY);
         }
 
         if (!setBits(current_bit_offset, bitSize, value))
@@ -7199,7 +7288,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         // can hold up to 4095 gold pieces
-        value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
+        value = std::min(std::uint32_t(node.asInt64()), MAX_GLD_QUANTITY);
         bitSize = GLD_STACKABLE_NUM_BITS;
         current_bit_offset = gld_stackable_bit_offset;
         if (!setBits(current_bit_offset, bitSize, value))
@@ -7216,7 +7305,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
         if (!node.isNull())
         {
-            value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
+            value = std::min(std::uint32_t(node.asInt64()), MAX_STACKED_QUANTITY);
         }
 
         if (!setBits(current_bit_offset, bitSize, value))
@@ -8135,7 +8224,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 return false;
             }
             // can hold up to 4095 gold pieces
-            value = std::min(std::uint16_t(node.asInt64()), MAX_GLD_QUANTITY);
+            value = std::min(std::uint32_t(node.asInt64()), MAX_GLD_QUANTITY);
             bitSize = GLD_STACKABLE_NUM_BITS;
             current_bit_offset = gld_stackable_bit_offset;
             if (!setBits(current_bit_offset, bitSize, value))
@@ -8863,7 +8952,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
         if (!node.isNull())
         {
-            value = std::min(std::uint16_t(node.asInt64()), MAX_STACKED_QUANTITY);
+            value = std::min(std::uint32_t(node.asInt64()), MAX_STACKED_QUANTITY);
         }
 
         if (!setBits(current_bit_offset, bitSize, value))
@@ -9224,7 +9313,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         }
 
         item["NumberOfSocketedItems"] = std::uint16_t(socketedItemCount());
-        item["TotalNumberOfSockets"] = std::uint16_t(totalNumberOfSockets());
+        item["TotalNumberOfSockets"] = std::uint16_t(socketCount());
 
         // Socketed items
         Json::Value socketedItems(Json::arrayValue);
@@ -9521,7 +9610,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
 
             if (isSocketed())
             {
-                item["total_nr_of_sockets"] = std::uint16_t(totalNumberOfSockets());
+                item["total_nr_of_sockets"] = std::uint16_t(socketCount());
             }
 
             Json::Value magicalAttribs(Json::arrayValue);
@@ -9775,14 +9864,12 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
             numParms = 3;
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
-                // time-based stats were never implemented, so it's a corrupt file
+                // time-based stats were never implemented, but we handle them
                 if (stat->saveBits != 22 || stat->saveParamBits != 0)
                 {
                     // corrupt file
                     return false;
                 }
-
-                numParms = 1;
             }
 
             if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
@@ -9901,12 +9988,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             case 50:
             case 52:
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 ++iter;
                 if (iter == iter_end)
@@ -9928,23 +10010,13 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 }
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
                 break;
 
             case 54:
             case 57:
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 ++iter;
                 if (iter == iter_end)
@@ -9966,12 +10038,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 }
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 ++iter;
                 if (iter == iter_end)
@@ -9993,38 +10060,18 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 }
 
                 node = iter->operator[]("Values");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
                 break;
 
             case 188:
                 node = iter->operator[]("SkillTab");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("SkillLevel");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
                 break;
 
             case 195:
@@ -10034,83 +10081,40 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             case 199:
             case 201:
                 node = iter->operator[]("SkillLevel");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("SkillId");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
+                values.push_back(SaveGetNodeValue(node));
 
                 values.push_back(node.asInt64());
                 break;
 
             case 204:
                 node = iter->operator[]("SkillLevel");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("SkillId");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("MaxCharges");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
                 break;
 
             default:
                 if (stat->saveParamBits > 0)
                 {
                     node = iter->operator[]("Param");
-                    if (node.isNull())
-                    {
-                        values.push_back(0);
-                    }
-
-                    values.push_back(node.asInt64());
+                    values.push_back(SaveGetNodeValue(node));
                 }
 
                 node = iter->operator[]("Value");
-                if (node.isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(node.asInt64());
+                values.push_back(SaveGetNodeValue(node));
                 break;
             }
         }
@@ -10125,12 +10129,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             auto iter2_end = node.end();
             for (auto iter2 = node.begin(); iter2 != iter2_end; ++iter2)
             {
-                if (iter2->isNull())
-                {
-                    values.push_back(0);
-                }
-
-                values.push_back(iter2->asInt64());
+                values.push_back(SaveGetNodeValue(*iter2));
             }
         }
 
@@ -10233,7 +10232,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
         {
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
-                // time-based stats were never implemented, so it's a corrupt file
+                // time-based stats were never implemented, but we handle them
                 if (stat->saveBits != 22 || stat->saveParamBits != 0)
                 {
                     // corrupt file
@@ -10245,7 +10244,50 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                     return false;
                 }
 
-                value = values[valueIdx] + stat->saveAdd;
+                if (values.size() == 1)
+                {
+                    // all 22 bits stored in one value (old format that we should still support)
+                    value = values[valueIdx];
+                    ++valueIdx;
+                    if (!setBits64(current_bit_offset, stat->saveBits, value))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    auto saveBits = stat->saveBits;
+                    value = values[valueIdx];
+                    ++valueIdx;
+                    saveBits -= 2;
+                    if (!setBits64(current_bit_offset, 2, value))
+                    {
+                        return false;
+                    }
+
+                    if (valueIdx >= values.size())
+                    {
+                        return false;
+                    }
+                    value = values[valueIdx];
+                    ++valueIdx;
+                    saveBits -= 10;
+                    if (!setBits64(current_bit_offset, 10, value))
+                    {
+                        return false;
+                    }
+
+                    if (valueIdx >= values.size())
+                    {
+                        return false;
+                    }
+                    value = values[valueIdx];
+                    ++valueIdx;
+                    if (!setBits64(current_bit_offset, saveBits, value))
+                    {
+                        return false;
+                    }
+                }
             }
             else
             {
@@ -10437,14 +10479,21 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         {
             if (stat->saveBits != 3 || stat->saveParamBits != 16)
             {
-                // time-based stats were never implemented, so it's a corrupt file
+                // time-based stats were never implemented, but we handle them
                 if (stat->saveBits != 22 || stat->saveParamBits != 0)
                 {
                     // corrupt file
                     return false;
                 }
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 2));
+                current_bit_offset += 2;
+
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+                current_bit_offset += 10;
+
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+                current_bit_offset += 10;
             }
             else
             {
@@ -11181,6 +11230,79 @@ void d2ce::Items::findItems()
     }
 }
 //---------------------------------------------------------------------------
+void d2ce::Items::findSharedStashItems()
+{
+    GPSs.clear();
+    Stackables.clear();
+    Armor.clear();
+    Weapons.clear();
+    ItemLocationReference.clear();
+    ItemAltLocationReference.clear();
+    ItemLocationEmptySpots.clear();
+    ItemAltLocationEmptySpots.clear();
+    HasBeltEquipped = false;
+    HasHoradricCube = false;
+    EquippedBeltSlots = 0;
+
+    ItemDimensions stashDimensions;
+    {
+        auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::STASH];
+        if (getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, stashDimensions))
+        {
+            std::uint16_t totalPos = stashDimensions.InvHeight * stashDimensions.InvWidth;
+            for (std::uint16_t pos = 0; pos < totalPos; ++pos)
+            {
+                emptySlots.insert(pos);
+            }
+        }
+    }
+
+    ItemDimensions dimensions;
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    for (auto& item : Inventory)
+    {
+        item.getItemCode(strcode);
+        const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+        if (itemType.isStackable())
+        {
+            Stackables.push_back(item);
+
+            if (itemType.isWeapon())
+            {
+                Weapons.push_back(item);
+            }
+        }
+        else if (itemType.isWeapon())
+        {
+            Weapons.push_back(item);
+        }
+        else if (itemType.isArmor())
+        {
+            Armor.push_back(item);
+        }
+        else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+        {
+            GPSs.push_back(item);
+        }
+
+        ItemAltLocationReference[d2ce::EnumAltItemLocation::STASH].push_back(const_cast<d2ce::Item&>(item));
+        if (item.getDimensions(dimensions))
+        {
+            // remove slots from empty list
+            auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::STASH];
+            auto posX = item.getPositionX();
+            auto posY = item.getPositionY();
+            for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
+            {
+                for (std::uint16_t x = posX; x < posX + dimensions.Width; ++x)
+                {
+                    emptySlots.erase(y * stashDimensions.Width + x);
+                }
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
 bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<d2ce::Item>& items)
 {
     numItems = 0;
@@ -11197,6 +11319,67 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::u
             std::fseek(charfile, cur_pos, SEEK_SET);
         }
 
+        while (!feof(charfile))
+        {
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[0])
+            {
+                continue;
+            }
+
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[1])
+            {
+                continue;
+            }
+
+            // found item marker
+            std::fread(&numItems, sizeof(numItems), 1, charfile);
+            location = std::ftell(charfile);
+            break;
+        }
+
+        if (location == 0)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (location == 0)
+        {
+            return false;
+        }
+
+        std::fseek(charfile, location - sizeof(numItems), SEEK_SET);
+        std::fread(&numItems, sizeof(numItems), 1, charfile);
+    }
+
+    if (numItems > 0)
+    {
+        if (!fillItemsArray(charfile, location, numItems, items))
+        {
+            // Corrupt file
+            if (update_locations)
+            {
+                location = 0;
+            }
+            return false;
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::readSharedStashPage(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<d2ce::Item>& items)
+{
+    numItems = 0;
+    items.clear();
+    if (update_locations)
+    {
+        // find items location
+        location = 0;
+        std::uint8_t value = 0;
         while (!feof(charfile))
         {
             std::fread(&value, sizeof(value), 1, charfile);
@@ -12053,6 +12236,25 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfile)
+{
+    Version = version;
+    update_locations = items_location == 0 ? true : false;
+    isFileExpansionCharacter = false;
+    GPSs.clear();
+    Stackables.clear();
+    Armor.clear();
+    Weapons.clear();
+    if (!readSharedStashPage(charfile, items_location, NumOfItems, Inventory) || items_location == 0)
+    {
+        return false;
+    }
+
+    update_locations = false;
+    findSharedStashItems();
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion)
 {
     clear();
@@ -12102,6 +12304,23 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
     if (!writeMercItems(charfile))
     {
         return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::writeSharedStashPage(std::FILE* charfile)
+{
+    // Write Items
+    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
+    NumOfItems = (std::uint16_t)Inventory.size();
+    std::fwrite(&NumOfItems, sizeof(NumOfItems), 1, charfile);
+    for (auto& item : Inventory)
+    {
+        if (!item.writeItem(charfile))
+        {
+            return false;
+        }
     }
 
     return true;
@@ -12920,17 +13139,51 @@ const d2ce::Item& d2ce::Items::getGolemItem() const
    Converts the all gems to their perfect state
    Returns the number of gems converted.
 */
-size_t d2ce::Items::upgradeGems()
+size_t d2ce::Items::upgradeGems(ItemFilter filter)
 {
     if (GPSs.empty())
     {
         return 0;
     }
+    
+    bool bFiltered = false;
+    filter.clearEquipped(); // GPS can't be equipped
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+    }
 
     size_t gemsconverted = 0;
-
     for (auto& item : GPSs)
     {
+        if (bFiltered)
+        {
+            if (item.get().getLocation() != filter.LocationId)
+            {
+                // skip item
+                continue;
+            }
+
+            if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+            {
+                // skip item
+                continue;
+            }
+        }
+
         if (item.get().upgradeGem())
         {
             ++gemsconverted;
@@ -12944,16 +13197,51 @@ size_t d2ce::Items::upgradeGems()
    Converts the all potions to their highest quality.
    Returns the number of potions converted.
 */
-size_t d2ce::Items::upgradePotions()
+size_t d2ce::Items::upgradePotions(ItemFilter filter)
 {
     if (GPSs.empty())
     {
         return 0;
     }
 
+    bool bFiltered = false;
+    filter.clearEquipped(); // GPS can't be equipped
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+    }
+
     size_t gemsconverted = 0;
     for (auto& item : GPSs)
     {
+        if (bFiltered)
+        {
+            if (item.get().getLocation() != filter.LocationId)
+            {
+                // skip item
+                continue;
+            }
+
+            if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+            {
+                // skip item
+                continue;
+            }
+        }
+
         if (item.get().upgradePotion())
         {
             ++gemsconverted;
@@ -12967,16 +13255,51 @@ size_t d2ce::Items::upgradePotions()
    Converts the all potions to Full Rejuvenation potions.
    Returns the number of potions converted.
 */
-size_t d2ce::Items::upgradeRejuvenationPotions()
+size_t d2ce::Items::upgradeRejuvenationPotions(ItemFilter filter)
 {
     if (GPSs.empty())
     {
         return 0;
     }
 
+    bool bFiltered = false;
+    filter.clearEquipped(); // GPS can't be equipped
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+    }
+
     size_t gemsconverted = 0;
     for (auto& item : GPSs)
     {
+        if (bFiltered)
+        {
+            if (item.get().getLocation() != filter.LocationId)
+            {
+                // skip item
+                continue;
+            }
+
+            if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+            {
+                // skip item
+                continue;
+            }
+        }
+
         if (item.get().upgradeToFullRejuvenationPotion())
         {
             ++gemsconverted;
@@ -12991,11 +13314,31 @@ size_t d2ce::Items::upgradeRejuvenationPotions()
    final gem, potion or skull.
    Returns the number of gems converted.
 */
-size_t d2ce::Items::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
+size_t d2ce::Items::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, ItemFilter filter)
 {
     if (GPSs.empty())
     {
         return 0;
+    }
+
+    bool bFiltered = false;
+    filter.clearEquipped(); // GPS can't be equipped
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
     }
 
     const std::uint8_t& oldgem = existingGem[0];
@@ -13010,6 +13353,21 @@ size_t d2ce::Items::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, 
     size_t gemsconverted = 0;
     for (auto& item : GPSs)
     {
+        if (bFiltered)
+        {
+            if (item.get().getLocation() != filter.LocationId)
+            {
+                // skip item
+                continue;
+            }
+
+            if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+            {
+                // skip item
+                continue;
+            }
+        }
+
         item.get().getItemCode(temp);
         if (oldgem == currentgem && oldgemcondition == currentgemcondition && oldgemcolour == currentgemcolour)
         {
@@ -13024,11 +13382,56 @@ size_t d2ce::Items::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, 
     return gemsconverted;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Items::fillAllStackables()
+size_t d2ce::Items::fillAllStackables(ItemFilter filter)
 {
+    if (Stackables.empty())
+    {
+        return 0;
+    }
+
+    bool bFiltered = false;
+    filter.clearEquipped(); // only fill stackables for equipped on us
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        bFiltered = true;
+        filter.IsBody = true;
+        break;
+    }
+
     size_t itemsFilled = 0;
     for (auto& item : Stackables)
     {
+        if (bFiltered)
+        {
+            if (item.get().getLocation() != filter.LocationId)
+            {
+                // skip item
+                continue;
+            }
+
+            if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+            {
+                // skip item
+                continue;
+            }
+        }
+
         if (item.get().setMaxQuantity())
         {
             ++itemsFilled;
@@ -13038,136 +13441,378 @@ size_t d2ce::Items::fillAllStackables()
     return itemsFilled;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Items::fixAllItems()
+size_t d2ce::Items::repairAllItems(ItemFilter filter)
 {
+    bool bFiltered = false;
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        bFiltered = true;
+        break;
+    }
+
     size_t itemsFixed = 0;
-    for (auto& item : Armor)
+    if (!bFiltered || filter.IsBody || (filter.LocationId != EnumItemLocation::EQUIPPED))
     {
-        if (item.get().fixDurability())
+        for (auto& item : Armor)
         {
-            ++itemsFixed;
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().fixDurability())
+            {
+                ++itemsFixed;
+            }
+        }
+
+        for (auto& item : Weapons)
+        {
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().fixDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
-    for (auto& item : Weapons)
+    if (!bFiltered || filter.IsMerc)
     {
-        if (item.get().fixDurability())
+        for (auto& item : MercItems)
         {
-            ++itemsFixed;
+            if (item.fixDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
-    for (auto& item : MercItems)
+    if (!bFiltered || filter.IsGolem)
     {
-        if (item.fixDurability())
+        if (HasGolem)
         {
-            ++itemsFixed;
-        }
-    }
-
-    if (HasGolem)
-    {
-        if (GolemItem.fixDurability())
-        {
-            ++itemsFixed;
+            if (GolemItem.fixDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
     return itemsFixed;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Items::maxDurabilityAllItems()
+size_t d2ce::Items::maxDurabilityAllItems(ItemFilter filter)
 {
+    bool bFiltered = false;
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        bFiltered = true;
+        break;
+    }
+
     size_t itemsFixed = 0;
-    for (auto& item : Armor)
+    if (!bFiltered || filter.IsBody || (filter.LocationId != EnumItemLocation::EQUIPPED))
     {
-        if (item.get().setMaxDurability())
+        for (auto& item : Armor)
         {
-            ++itemsFixed;
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().setMaxDurability())
+            {
+                ++itemsFixed;
+            }
+        }
+
+        for (auto& item : Weapons)
+        {
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().setMaxDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
-    for (auto& item : Weapons)
+    if (!bFiltered || filter.IsMerc)
     {
-        if (item.get().setMaxDurability())
+        for (auto& item : MercItems)
         {
-            ++itemsFixed;
+            if (item.setMaxDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
-    for (auto& item : MercItems)
+    if (!bFiltered || filter.IsGolem)
     {
-        if (item.setMaxDurability())
+        if (HasGolem)
         {
-            ++itemsFixed;
-        }
-    }
-
-    if (HasGolem)
-    {
-        if (GolemItem.setMaxDurability())
-        {
-            ++itemsFixed;
+            if (GolemItem.setMaxDurability())
+            {
+                ++itemsFixed;
+            }
         }
     }
 
     return itemsFixed;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Items::maxSocketCountAllItems()
+size_t d2ce::Items::maxSocketCountAllItems(ItemFilter filter)
 {
+    bool bFiltered = false;
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        bFiltered = true;
+        break;
+    }
+
     size_t itemsChanged = 0;
-    for (auto& item : Armor)
+    if (!bFiltered || filter.IsBody || (filter.LocationId != EnumItemLocation::EQUIPPED))
     {
-        if (item.get().addMaxSocketCount())
+        for (auto& item : Armor)
         {
-            ++itemsChanged;
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().addMaxSocketCount())
+            {
+                ++itemsChanged;
+            }
+        }
+
+        for (auto& item : Weapons)
+        {
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().addMaxSocketCount())
+            {
+                ++itemsChanged;
+            }
         }
     }
 
-    for (auto& item : Weapons)
+    if (!bFiltered || filter.IsMerc)
     {
-        if (item.get().addMaxSocketCount())
+        for (auto& item : MercItems)
         {
-            ++itemsChanged;
-        }
-    }
-
-    for (auto& item : MercItems)
-    {
-        if (item.addMaxSocketCount())
-        {
-            ++itemsChanged;
+            if (item.addMaxSocketCount())
+            {
+                ++itemsChanged;
+            }
         }
     }
 
     return itemsChanged;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Items::setIndestructibleAllItems()
+size_t d2ce::Items::setIndestructibleAllItems(ItemFilter filter)
 {
+    bool bFiltered = false;
+    switch (filter.LocationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (filter.AltPositionId)
+        {
+        case EnumAltItemLocation::HORADRIC_CUBE:
+        case EnumAltItemLocation::INVENTORY:
+        case EnumAltItemLocation::STASH:
+            bFiltered = true;
+            break;
+        }
+        break;
+
+    case EnumItemLocation::BELT:
+        bFiltered = true;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        bFiltered = true;
+        break;
+    }
+
     size_t itemsChanged = 0;
-    for (auto& item : Armor)
+    if (!bFiltered || filter.IsBody || (filter.LocationId != EnumItemLocation::EQUIPPED))
     {
-        if (item.get().setIndestructible())
+        for (auto& item : Armor)
         {
-            ++itemsChanged;
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().setIndestructible())
+            {
+                ++itemsChanged;
+            }
+        }
+
+        for (auto& item : Weapons)
+        {
+            if (bFiltered)
+            {
+                if (item.get().getLocation() != filter.LocationId)
+                {
+                    // skip item
+                    continue;
+                }
+
+                if ((filter.LocationId == EnumItemLocation::STORED) && (item.get().getAltPositionId() != filter.AltPositionId))
+                {
+                    // skip item
+                    continue;
+                }
+            }
+
+            if (item.get().setIndestructible())
+            {
+                ++itemsChanged;
+            }
         }
     }
 
-    for (auto& item : Weapons)
+    if (!bFiltered || filter.IsMerc)
     {
-        if (item.get().setIndestructible())
+        for (auto& item : MercItems)
         {
-            ++itemsChanged;
-        }
-    }
-
-    for (auto& item : MercItems)
-    {
-        if (item.setIndestructible())
-        {
-            ++itemsChanged;
+            if (item.setIndestructible())
+            {
+                ++itemsChanged;
+            }
         }
     }
 

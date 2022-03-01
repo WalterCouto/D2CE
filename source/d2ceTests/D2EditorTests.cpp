@@ -702,6 +702,13 @@ namespace D2EditorTests
             Assert::IsTrue(LoadChar97File("Spartacus_II.d2s", character, true));
         }
 
+        TEST_METHOD(TestOpen21)
+        {
+            // This character has the realm data of size 128 bits
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Loradiel.d2s", character, true));
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             d2ce::Character character;
@@ -878,6 +885,15 @@ namespace D2EditorTests
             Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, false));
         }
 
+        TEST_METHOD(TestJsonExport23)
+        {
+            // This character has the realm data of size 128 bits
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Loradiel.d2s", character, true));
+            auto json = character.asJson(false);
+            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, false));
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -996,6 +1012,12 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadChar97File("Spartacus.json", character, true));
+        }
+
+        TEST_METHOD(TestJsonOpen21)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadChar97File("Loradiel.json", character, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

@@ -30,6 +30,7 @@
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include "D2ItemsForm.h"
+#include "D2SharedStashForm.h"
 #include "d2ce\ExperienceConstants.h"
 #include "d2ce\Constants.h"
 #include "afxdialogex.h"
@@ -878,8 +879,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_COMMAND(ID_VIEW_LEVEL_REQ, &CD2MainForm::OnViewLevelReq)
     ON_COMMAND(ID_OPTIONS_UPGRADE_POTIONS, &CD2MainForm::OnOptionsUpgradePotions)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_UPGRADE_POTIONS, &CD2MainForm::OnUpdateOptionsUpgradePotions)
-    ON_COMMAND(ID_OPTIONS_UPGRADE_REJUVENATION, &CD2MainForm::OnOptionsUpgradeRejuvenation)
-    ON_UPDATE_COMMAND_UI(ID_OPTIONS_UPGRADE_REJUVENATION, &CD2MainForm::OnUpdateOptionsUpgradeRejuvenation)
+    ON_COMMAND(ID_OPTIONS_UPGRADE_REJUVENATIONS, &CD2MainForm::OnOptionsUpgradeRejuvenation)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_UPGRADE_REJUVENATIONS, &CD2MainForm::OnUpdateOptionsUpgradeRejuvenation)
     ON_COMMAND(ID_OPTIONS_GPS_CONVERTOR, &CD2MainForm::OnOptionsGpsConvertor)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_GPS_CONVERTOR, &CD2MainForm::OnUpdateOptionsGpsConvertor)
     ON_COMMAND(ID_OPTIONS_GPS_CREATOR, &CD2MainForm::OnOptionsGpsCreator)
@@ -900,6 +901,8 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_VIEW_MERCENARY, &CD2MainForm::OnUpdateViewMercenary)
     ON_COMMAND(ID_VIEW_ITEMS, &CD2MainForm::OnViewItems)
     ON_UPDATE_COMMAND_UI(ID_VIEW_ITEMS, &CD2MainForm::OnUpdateViewItems)
+    ON_COMMAND(ID_VIEW_SHAREDSTASH, &CD2MainForm::OnViewSharedstash)
+    ON_UPDATE_COMMAND_UI(ID_VIEW_SHAREDSTASH, &CD2MainForm::OnUpdateViewSharedstash)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -3043,7 +3046,7 @@ void CD2MainForm::OnFileSaveAs()
             CopyFile(newD2SPath, backupname, false);
         }
     }
-  
+
     bool bSuccess = true;
     if (!CharInfo.saveAsD2s())
     {
@@ -4043,7 +4046,7 @@ void CD2MainForm::OnEnKillfocusGoldInBelt()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
-    cs.GoldInBelt = ToInt(&GoldInBelt);;
+    cs.GoldInBelt = ToInt(&GoldInBelt);
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4379,15 +4382,12 @@ void CD2MainForm::OnUpdateOptionsGpsCreator(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxfillstackables()
 {
-    auto numConverted = CharInfo.fillAllStackables();
+    auto numConverted = fillAllStackables();
     CString msg;
     msg.Format(_T("%zd stackable item(s) have been fully filled"), numConverted);
     if (numConverted > 0)
     {
         StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
     }
 
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -4400,15 +4400,12 @@ void CD2MainForm::OnUpdateOptionsMaxfillstackables(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsFixallitems()
 {
-    auto numConverted = CharInfo.fixAllItems();
+    auto numConverted = repairAllItems();
     CString msg;
     msg.Format(_T("%zd item(s) have been fixed"), numConverted);
     if (numConverted > 0)
     {
         StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
     }
 
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -4421,15 +4418,12 @@ void CD2MainForm::OnUpdateOptionsFixallitems(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxdurabilityforallitems()
 {
-    auto numChanged = CharInfo.maxDurabilityAllItems();
+    auto numChanged = maxDurabilityAllItems();
     CString msg;
     msg.Format(_T("%zd item(s) have been given the highest durability value"), numChanged);
     if (numChanged > 0)
     {
         StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
     }
 
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -4442,15 +4436,12 @@ void CD2MainForm::OnUpdateOptionsMaxdurabilityforallitems(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsIndestructibleforallitems()
 {
-    auto numChanged = CharInfo.setIndestructibleAllItems();
+    auto numChanged = setIndestructibleAllItems();
     CString msg;
     msg.Format(_T("%zd item(s) have been change to be indestructible"), numChanged);
     if (numChanged > 0)
     {
         StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
     }
 
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -4463,15 +4454,12 @@ void CD2MainForm::OnUpdateOptionsIndestructibleforallitems(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsMaxsocketsforallitems()
 {
-    auto numChanged = CharInfo.maxSocketCountAllItems();
+    auto numChanged = maxSocketCountAllItems();
     CString msg;
     msg.Format(_T("%zd item(s) have been given the highest number of sockets"), numChanged);
     if (numChanged > 0)
     {
         StatusBar.SetWindowText(msg);
-
-        ItemsChanged = true;
-        StatsChanged();
     }
 
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -4520,9 +4508,25 @@ void CD2MainForm::OnUpdateViewItems(CCmdUI* pCmdUI)
     pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnViewSharedstash()
+{
+    CD2SharedStashForm dlg(*this);
+    dlg.DoModal();
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnUpdateViewSharedstash(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() && CharInfo.hasSharedStash() ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 d2ce::Character& CD2MainForm::getCharacterInfo()
 {
     return CharInfo;
+}
+//---------------------------------------------------------------------------
+std::string CD2MainForm::getCharacterName()
+{
+    return std::string(CharInfo.getName().data());
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharVersion CD2MainForm::getCharacterVersion() const
@@ -4718,9 +4722,9 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getGPSs()
    final gem, potion or skull.
    Returns the number of gems converted.
 */
-size_t CD2MainForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
+size_t CD2MainForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, d2ce::ItemFilter filter)
 {
-    auto numConverted = CharInfo.convertGPSs(existingGem, desiredGem);
+    auto numConverted = CharInfo.convertGPSs(existingGem, desiredGem, filter);
     if (numConverted > 0)
     {
         hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
@@ -4782,6 +4786,19 @@ bool CD2MainForm::upgradeGem(d2ce::Item& item)
     return true;
 }
 //---------------------------------------------------------------------------
+size_t CD2MainForm::upgradeGems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = CharInfo.upgradeGems(filter);
+    if (numUpgraded > 0)
+    {
+        hasUpgradableGems = CharInfo.anyUpgradableGems();
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::upgradePotion(d2ce::Item& item)
 {
     if (!item.upgradePotion())
@@ -4805,6 +4822,28 @@ bool CD2MainForm::upgradePotion(d2ce::Item& item)
     return true;
 }
 //---------------------------------------------------------------------------
+size_t CD2MainForm::upgradePotions(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = CharInfo.upgradePotions(filter);
+    if (numUpgraded > 0)
+    {
+        hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+        if (!hasUpgradableRejuvenations)
+        {
+            // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+            hasUpgradablePotions = false;
+        }
+        else
+        {
+            hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+        }
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
 {
     if (!item.upgradeToFullRejuvenationPotion())
@@ -4826,6 +4865,28 @@ bool CD2MainForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
     ItemsChanged = true;
     StatsChanged();
     return true;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::upgradeRejuvenationPotions(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = CharInfo.upgradeRejuvenationPotions(filter);
+    if (numUpgraded > 0)
+    {
+        hasUpgradableRejuvenations = CharInfo.anyUpgradableRejuvenations();
+        if (!hasUpgradableRejuvenations)
+        {
+            // implies no potions or all Full Rejuvenation potions so nothing to upgrade
+            hasUpgradablePotions = false;
+        }
+        else
+        {
+            hasUpgradablePotions = CharInfo.anyUpgradablePotions();
+        }
+
+        ItemsChanged = true;
+        StatsChanged();
+    }
+    return numUpgraded;
 }
 //---------------------------------------------------------------------------
 bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
@@ -4984,8 +5045,7 @@ bool CD2MainForm::setItemMaxSocketCount(d2ce::Item& item)
 //---------------------------------------------------------------------------
 bool CD2MainForm::personalizeItem(d2ce::Item& item)
 {
-    std::string name(CharInfo.getName().data());
-    bool ret = item.addPersonalization(name);
+    bool ret = item.addPersonalization(getCharacterName());
     if (ret)
     {
         ItemsChanged = true;
@@ -5045,7 +5105,7 @@ bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, std::array<std::uin
 //---------------------------------------------------------------------------
 bool CD2MainForm::addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
-    if(!CharInfo.addItem(altPositionId, strcode))
+    if (!CharInfo.addItem(altPositionId, strcode))
     {
         return false;
     }
@@ -5086,12 +5146,71 @@ size_t CD2MainForm::fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std:
     auto numAdded = CharInfo.fillEmptySlots(altPositionId, strcode);
     if (numAdded > 0)
     {
-
         ItemsChanged = true;
         StatsChanged();
     }
 
     return numAdded;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::fillAllStackables(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.fillAllStackables(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::repairAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.repairAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::maxDurabilityAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.maxDurabilityAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::setIndestructibleAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.setIndestructibleAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::maxSocketCountAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.maxSocketCountAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
 }
 //---------------------------------------------------------------------------
 size_t CD2MainForm::getNumberOfEquippedItems() const
@@ -5172,6 +5291,16 @@ bool CD2MainForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d
 bool CD2MainForm::getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
 {
     return CharInfo.getItemLocationDimensions(altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
+d2ce::SharedStash& CD2MainForm::getSharedStash()
+{
+    return CharInfo.getSharedStash();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::hasSharedStash() const
+{
+    return CharInfo.hasSharedStash();
 }
 //---------------------------------------------------------------------------
 

@@ -87,6 +87,9 @@
     <ClCompile Include="..\d2ce\helpers\ItemHelpers.cpp">
       <Filter>Source Files\d2ce</Filter>
     </ClCompile>
+    <ClCompile Include="..\d2ce\SharedStash.cpp">
+      <Filter>Source Files\d2ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files\rapidcsv</Filter>
     </ClInclude>
     <ClInclude Include="..\d2ce\helpers\ItemHelpers.h">
+      <Filter>Header Files\d2ce</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\SharedStash.h">
       <Filter>Header Files\d2ce</Filter>
     </ClInclude>
   </ItemGroup>
@@ -341,6 +347,12 @@
       <Filter>examples\char\97</Filter>
     </CustomBuild>
     <CustomBuild Include="..\examples\chars\97\Spartacus_II.json">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Loradiel.d2s">
+      <Filter>examples\char\97</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Loradiel.json">
       <Filter>examples\char\97</Filter>
     </CustomBuild>
   </ItemGroup>

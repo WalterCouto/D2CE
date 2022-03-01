@@ -25,6 +25,7 @@
 #include "ExperienceConstants.h"
 #include "ItemConstants.h"
 #include "SkillConstants.h"
+#include "SharedStash.h"
 #include <fstream>
 
 //---------------------------------------------------------------------------
@@ -387,6 +388,8 @@ void d2ce::Character::initialize()
     m_stats_header_location = 0;
     m_update_locations = true;
 
+    m_shared_stash.clear();
+
     if (m_charfile != nullptr)
     {
         std::rewind(m_charfile);
@@ -449,6 +452,7 @@ bool d2ce::Character::openD2S(const char* szfilename, bool validateChecksum)
     }
 
     m_update_locations = false;
+    m_shared_stash.reset(*this);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -2836,24 +2840,24 @@ size_t d2ce::Character::getNumberOfWeapons() const
     return m_items.getNumberOfWeapons();
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Character::fixAllItems()
+size_t d2ce::Character::repairAllItems(d2ce::ItemFilter filter)
 {
-    return m_items.fixAllItems();
+    return m_items.repairAllItems(filter);
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Character::maxDurabilityAllItems()
+size_t d2ce::Character::maxDurabilityAllItems(d2ce::ItemFilter filter)
 {
-    return m_items.maxDurabilityAllItems();
+    return m_items.maxDurabilityAllItems(filter);
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Character::setIndestructibleAllItems()
+size_t d2ce::Character::setIndestructibleAllItems(d2ce::ItemFilter filter)
 {
-    return m_items.setIndestructibleAllItems();
+    return m_items.setIndestructibleAllItems(filter);
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Character::maxSocketCountAllItems()
+size_t d2ce::Character::maxSocketCountAllItems(d2ce::ItemFilter filter)
 {
-    return m_items.maxSocketCountAllItems();
+    return m_items.maxSocketCountAllItems(filter);
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfStackables() const
@@ -2861,9 +2865,9 @@ size_t d2ce::Character::getNumberOfStackables() const
     return m_items.getNumberOfStackables();
 }
 //---------------------------------------------------------------------------
-size_t d2ce::Character::fillAllStackables()
+size_t d2ce::Character::fillAllStackables(d2ce::ItemFilter filter)
 {
-    return m_items.fillAllStackables();
+    return m_items.fillAllStackables(filter);
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfGPSs() const
@@ -2881,9 +2885,9 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getGPSs(
    final gem, potion or skull.
    Returns the number of gems converted.
 */
-size_t d2ce::Character::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
+size_t d2ce::Character::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, ItemFilter filter)
 {
-    return m_items.convertGPSs(existingGem, desiredGem);
+    return m_items.convertGPSs(existingGem, desiredGem, filter);
 }
 //---------------------------------------------------------------------------
 /*
@@ -2899,9 +2903,9 @@ bool d2ce::Character::anyUpgradableGems() const
    Converts the all gems to their perfect state
    Returns the number of gems converted.
 */
-size_t d2ce::Character::upgradeGems()
+size_t d2ce::Character::upgradeGems(ItemFilter filter)
 {
-    return m_items.upgradeGems();
+    return m_items.upgradeGems(filter);
 }
 //---------------------------------------------------------------------------
 /*
@@ -2918,9 +2922,9 @@ bool d2ce::Character::anyUpgradablePotions() const
    Converts the all potions to their highest quiality.
    Returns the number of potions converted.
 */
-size_t d2ce::Character::upgradePotions()
+size_t d2ce::Character::upgradePotions(ItemFilter filter)
 {
-    return m_items.upgradePotions();
+    return m_items.upgradePotions(filter);
 }
 //---------------------------------------------------------------------------
 /*
@@ -2936,9 +2940,9 @@ bool d2ce::Character::anyUpgradableRejuvenations() const
    Converts the all potions to Full Rejuvenation potions.
    Returns the number of potions converted.
 */
-size_t d2ce::Character::upgradeRejuvenationPotions()
+size_t d2ce::Character::upgradeRejuvenationPotions(ItemFilter filter)
 {
-    return m_items.upgradeRejuvenationPotions();
+    return m_items.upgradeRejuvenationPotions(filter);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
@@ -2979,5 +2983,15 @@ bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) con
 bool d2ce::Character::getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const
 {
     return m_items.getDisplayedItemBonuses(attribs, getLevel());
+}
+//---------------------------------------------------------------------------
+d2ce::SharedStash& d2ce::Character::getSharedStash()
+{
+    return m_shared_stash;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::hasSharedStash() const
+{
+    return m_shared_stash.hasSharedStash();
 }
 //---------------------------------------------------------------------------

@@ -1,6 +1,5 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2000-2003  Burton Tsang
     Copyright (C) 2021-2022 Walter Couto
 
     This program is free software; you can redistribute it and/or modify
@@ -53,6 +52,7 @@ public:
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;  // get tool at point
 
     void SetUseAltImage(BOOL flag = FALSE);
+    void Redraw();
 
     // Generated message map functions
 protected:
@@ -84,7 +84,8 @@ protected:
 //---------------------------------------------------------------------------
 class CD2ItemsGridStatic : public CStatic
 {
-    friend class CD2ItemsForm;
+    friend class CD2ItemsForm; 
+    friend class CD2SharedStashForm;
     DECLARE_DYNAMIC(CD2ItemsGridStatic)
 
     // Construction
@@ -137,6 +138,7 @@ class CD2ItemsForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, public
     friend class CD2ItemsGrid;
     friend class CD2GemsForm;
     friend class CD2AddGemsForm;
+    friend class CD2SharedStashForm;
     DECLARE_DYNAMIC(CD2ItemsForm)
 
 public:
@@ -151,24 +153,34 @@ public:
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
 
     // Implementation
 protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedOk();
+    afx_msg void OnBnClickedSharedStashButton();
     afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
     afx_msg void OnItemContextFix();
+    afx_msg void OnItemContextFixallitems();
     afx_msg void OnItemContextLoad();
+    afx_msg void OnItemContextMaxfillstackables();
     afx_msg void OnItemContextMaxdurability();
+    afx_msg void OnItemContextMaxdurabilityforallitems();
     afx_msg void OnItemContextIndestructible();
+    afx_msg void OnItemContextIndestructibleforallitems();
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
+    afx_msg void OnItemContextMaxsocketsforallitems();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextUpgradeGem();
+    afx_msg void OnItemContextUpgradeGems();
     afx_msg void OnItemContextUpgradePotion();
+    afx_msg void OnItemContextUpgradePotions();
     afx_msg void OnItemContextUpgradeRejuvenation();
+    afx_msg void OnItemContextUpgradeRejuvenations();
     afx_msg void OnItemContextGpsConvertor();
     afx_msg void OnItemContextGpsCreator();
     afx_msg void OnClickedInvWeaponRadio();
@@ -221,6 +233,7 @@ protected:
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;
     d2ce::Item* CurrItem = nullptr;
+    std::array< std::uint8_t, 2> CurrItemLocation = { 0x00, 0x00 };
     bool HasHoradricCube = false;
     bool HasBeltEquipped = false;
     BOOL IsWeaponII = FALSE;
@@ -230,19 +243,29 @@ protected:
     void LoadMercItemImages();
     void LoadGolemItemImages();
     void LoadGridItemImages();
-
+    
     void CheckToolTipCtrl();
 
-    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
+    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem);
     bool upgradeGem(d2ce::Item& item);
+    size_t upgradeGems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool upgradePotion(d2ce::Item& item);
+    size_t upgradePotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
-    void refreshGrid(const d2ce::Item& item) const;
+    size_t upgradeRejuvenationPotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    void refreshGrid(const d2ce::Item& item);
+    void refreshEquipped(const d2ce::Item& item);
+    size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     void refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const;
+    void refreshAllGrids();
 
     // Helpers
     d2ce::EnumCharVersion getCharacterVersion() const;
@@ -266,6 +289,11 @@ protected:
     bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const;
     bool getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
 
+    void SetCurrItemInfo(CPoint point);
+    void ClearCurrItemInfo();
+
+    d2ce::ItemFilter GetCurrItemFilter() const;
+
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;
     const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
@@ -275,4 +303,5 @@ protected:
     const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const override;
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const override;
 };
+
 //---------------------------------------------------------------------------

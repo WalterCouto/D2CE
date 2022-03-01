@@ -59,8 +59,12 @@ CD2GemsForm::CD2GemsForm(CD2MainForm& form)
 
 }
 //---------------------------------------------------------------------------
-CD2GemsForm::CD2GemsForm(CD2ItemsForm& form, d2ce::Item* itemPtr)
-    : CDialogEx(CD2GemsForm::IDD, (CWnd*)&form), MainForm(form.MainForm), ItemsFormPtr(&form), ItemPtr(itemPtr)
+CD2GemsForm::CD2GemsForm(CD2ItemsForm& form)
+    : CDialogEx(CD2GemsForm::IDD, (CWnd*)&form), MainForm(form.MainForm), ItemsFormPtr(&form), ItemPtr(form.CurrItem)
+{
+}
+CD2GemsForm::CD2GemsForm(CD2SharedStashForm& form)
+    : CDialogEx(CD2GemsForm::IDD, (CWnd*)&form), MainForm(form.MainForm), SharedStashFormPtr(&form), ItemPtr(form.CurrItem)
 {
 }
 //---------------------------------------------------------------------------
@@ -172,6 +176,101 @@ BOOL CD2GemsForm::OnInitDialog()
         pToCombo->SetCurSel(0);
     }
 
+    if (ItemPtr != nullptr)
+    {
+        auto pWnd = GetDlgItem(IDC_LOCATION_COMBO);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+            pWnd->ShowWindow(SW_HIDE);
+        }
+
+        pWnd = GetDlgItem(IDC_LOCATION_STATIC);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+            pWnd->ShowWindow(SW_HIDE);
+        }
+    }
+    else if (SharedStashFormPtr != nullptr)
+    {
+        CComboBox* pLocationCombo = (CComboBox*)GetDlgItem(IDC_LOCATION_COMBO);
+        if (pLocationCombo != nullptr)
+        {
+            CString str;
+            str.Format(_T("Shared Stash %ld"), SharedStashFormPtr->getCurrentPage() + 1);
+            auto insertedIdx = pLocationCombo->AddString(str);
+            pLocationCombo->SetItemData(insertedIdx, std::uint64_t(SharedStashFormPtr->getCurrentPage()));
+            pLocationCombo->SetCurSel(0);
+        }
+    }
+    else
+    {
+        CComboBox* pLocationCombo = (CComboBox*)GetDlgItem(IDC_LOCATION_COMBO);
+        if (pLocationCombo != nullptr)
+        {
+            std::uint16_t selectedItemData = 0;
+            if (ItemsFormPtr != nullptr)
+            {
+                selectedItemData = *reinterpret_cast<std::uint16_t*>(ItemsFormPtr->CurrItemLocation.data());
+            }
+
+            std::array< std::uint8_t, 2> locationCode = { 0x00, 0x00 };
+            std::uint16_t& itemData = *reinterpret_cast<std::uint16_t*>(locationCode.data());
+            std::uint8_t& locationID = locationCode[0];
+            std::uint8_t& altLocationId = locationCode[1];
+
+            int selectedIdx = 0;
+            auto insertedIdx = pLocationCombo->AddString(_T("All Locations"));
+            pLocationCombo->SetItemData(insertedIdx, std::uint64_t(itemData));
+            if (itemData == selectedItemData)
+            {
+                selectedIdx = insertedIdx;
+            }
+            
+            locationID = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::BELT);
+            altLocationId = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::UNKNOWN);
+            insertedIdx = pLocationCombo->AddString(_T("Belt"));
+            pLocationCombo->SetItemData(insertedIdx, std::uint64_t(itemData));
+            if (itemData == selectedItemData)
+            {
+                selectedIdx = insertedIdx;
+            }
+
+            if (MainForm.getHasHoradricCube())
+            {
+                locationID = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+                altLocationId = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::HORADRIC_CUBE);
+                insertedIdx = pLocationCombo->AddString(_T("Horadric Cube"));
+                pLocationCombo->SetItemData(insertedIdx, std::uint64_t(itemData));
+                if (itemData == selectedItemData)
+                {
+                    selectedIdx = insertedIdx;
+                }
+            }
+
+            locationID = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+            altLocationId = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::INVENTORY);
+            insertedIdx = pLocationCombo->AddString(_T("Inventory"));
+            pLocationCombo->SetItemData(insertedIdx, std::uint64_t(itemData));
+            if (itemData == selectedItemData)
+            {
+                selectedIdx = insertedIdx;
+            }
+
+            locationID = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+            altLocationId = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::STASH);
+            insertedIdx = pLocationCombo->AddString(_T("Stash"));
+            pLocationCombo->SetItemData(insertedIdx, std::uint64_t(itemData));
+            if (itemData == selectedItemData)
+            {
+                selectedIdx = insertedIdx;
+            }
+
+            pLocationCombo->SetCurSel(selectedIdx);
+        }
+    }
+
     return TRUE;  // return TRUE unless you set the focus to a control
                   // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -182,6 +281,56 @@ void CD2GemsForm::OnBnClickedConvert()
 {
     CComboBox* pFromCombo = (CComboBox*)GetDlgItem(IDC_FROM_COMBO);
     CComboBox* pToCombo = (CComboBox*)GetDlgItem(IDC_TO_COMBO);
+    CComboBox* pLocationCombo = (CComboBox*)GetDlgItem(IDC_LOCATION_COMBO);
+
+    d2ce::EnumItemLocation locationId = d2ce::EnumItemLocation::BUFFER;
+    d2ce::EnumAltItemLocation altLocationId = d2ce::EnumAltItemLocation::UNKNOWN;
+    bool bFiltered = false;
+    size_t stashPage = 0;
+    if (pLocationCombo != nullptr && pLocationCombo->IsWindowEnabled())
+    {
+        auto locationIdx = pLocationCombo->GetCurSel();
+        if (locationIdx >= 0)
+        {
+            if (SharedStashFormPtr != nullptr)
+            {
+                bFiltered = true;
+                stashPage = size_t(pLocationCombo->GetItemData(locationIdx));
+            }
+            else
+            {
+                std::array< std::uint8_t, 2> locationCode = { 0x00, 0x00 };
+                std::uint16_t& itemDataLocation = *reinterpret_cast<std::uint16_t*>(locationCode.data());
+                itemDataLocation = std::uint16_t(pLocationCombo->GetItemData(locationIdx));
+                locationId = static_cast<d2ce::EnumItemLocation>(locationCode[0]);
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                    altLocationId = static_cast<d2ce::EnumAltItemLocation>(locationCode[1]);
+                    switch (altLocationId)
+                    {
+                    case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+                    case d2ce::EnumAltItemLocation::INVENTORY:
+                    case d2ce::EnumAltItemLocation::STASH:
+                        bFiltered = true;
+                        break;
+                    }
+                    break;
+
+                case d2ce::EnumItemLocation::BELT:
+                    bFiltered = true;
+                    break;
+                }
+            }
+        }
+
+        if (!bFiltered)
+        {
+            locationId = d2ce::EnumItemLocation::BUFFER;
+            altLocationId = d2ce::EnumAltItemLocation::UNKNOWN;
+            stashPage = SharedStashFormPtr->getCurrentPage();
+        }
+    }
 
     size_t numConverted = 0;
     if (pFromCombo != nullptr && pToCombo != nullptr)
@@ -191,45 +340,58 @@ void CD2GemsForm::OnBnClickedConvert()
         auto toIdx = pToCombo->GetCurSel();
         if (fromIdx >= 0 && toIdx >= 0 && pFromCombo->GetItemData(fromIdx) != pToCombo->GetItemData(toIdx))
         {
-            std::uint64_t itemDataFrom = pFromCombo->GetItemData(fromIdx);
             std::array<std::uint8_t, 4> gemCodeFrom;
-            *reinterpret_cast<std::uint32_t*>(gemCodeFrom.data()) = std::uint32_t(itemDataFrom);
+            std::uint32_t& itemDataFrom = *reinterpret_cast<std::uint32_t*>(gemCodeFrom.data());
+            itemDataFrom = std::uint32_t(pFromCombo->GetItemData(fromIdx));
 
-            std::uint64_t itemDataTo = pToCombo->GetItemData(toIdx);
             std::array<std::uint8_t, 4> gemCodeTo;
-            *reinterpret_cast<std::uint32_t*>(gemCodeTo.data()) = std::uint32_t(itemDataTo);
+            std::uint32_t& itemDataTo = *reinterpret_cast<std::uint32_t*>(gemCodeTo.data());
+            itemDataTo = std::uint32_t(pToCombo->GetItemData(toIdx));
 
             if (ItemPtr == nullptr)
             {
-                if (ItemsFormPtr == nullptr)
+                d2ce::ItemFilter filter;
+                filter.LocationId = locationId;
+                filter.AltPositionId = altLocationId;
+                if (SharedStashFormPtr != nullptr)
                 {
-                    numConverted = MainForm.convertGPSs(gemCodeFrom, gemCodeTo);
+                    numConverted = SharedStashFormPtr->convertGPSs(gemCodeFrom, gemCodeTo, stashPage);
+                }
+                else if (ItemsFormPtr != nullptr)
+                {
+                    numConverted = ItemsFormPtr->convertGPSs(gemCodeFrom, gemCodeTo, filter);
                 }
                 else
                 {
-                    numConverted = ItemsFormPtr->convertGPSs(gemCodeFrom, gemCodeTo);
+                    numConverted = MainForm.convertGPSs(gemCodeFrom, gemCodeTo, filter);
                 }
             }
             else
             {
-                if (ItemsFormPtr == nullptr)
+                if (SharedStashFormPtr != nullptr)
                 {
-                    numConverted = MainForm.updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
+                    numConverted = SharedStashFormPtr->updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
+                }
+                else if (ItemsFormPtr != nullptr)
+                {
+                    numConverted = ItemsFormPtr->updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
                 }
                 else
                 {
-                    numConverted = ItemsFormPtr->updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
+                    numConverted = MainForm.updateGem(*ItemPtr, gemCodeTo) ? 1 : 0;
                 }
             }
 
             if (numConverted > 0)
             {
                 // Update entries in from combo box
+                bool bFromListModified = false;
                 auto iter = NumGemMap.find(itemDataFrom);
                 if (iter != NumGemMap.end())
                 {
                     if (numConverted >= iter->second)
                     {
+                        bFromListModified = true;
                         NumGemMap.erase(iter);
                         auto iterIdx = GemIdxMap.find(GetGPSSortIndex(gemCodeFrom));
                         if (iterIdx != GemIdxMap.end())
@@ -246,18 +408,26 @@ void CD2GemsForm::OnBnClickedConvert()
                 iter = NumGemMap.find(itemDataTo);
                 if (iter == NumGemMap.end())
                 {
+                    bFromListModified = true;
                     GemIdxMap.emplace(GetGPSSortIndex(gemCodeTo), itemDataTo);
                     NumGemMap.emplace(itemDataTo, numConverted);
                 }
-
-                pFromCombo->ResetContent();
-                for (auto& gem : GemIdxMap)
+                else
                 {
-                    itemDataTo = gem.second;
-                    pFromCombo->SetItemData(pFromCombo->AddString(GetGPSNameFromCode(gemCodeTo)), itemDataTo);
+                    iter->second = iter->second + numConverted;
                 }
 
-                pFromCombo->SetCurSel(0);
+                if (bFromListModified)
+                {
+                    pFromCombo->ResetContent();
+                    for (auto& gem : GemIdxMap)
+                    {
+                        itemDataTo = std::uint32_t(gem.second);
+                        pFromCombo->SetItemData(pFromCombo->AddString(GetGPSNameFromCode(gemCodeTo)), itemDataTo);
+                    }
+
+                    pFromCombo->SetCurSel(0);
+                }
             }
         }
     }

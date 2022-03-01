@@ -28,6 +28,30 @@
 
 namespace d2ce
 {
+    struct ItemFilter
+    {
+        EnumItemLocation LocationId = EnumItemLocation::BUFFER;
+        EnumAltItemLocation AltPositionId = EnumAltItemLocation::UNKNOWN;
+        bool IsMerc = false;
+        bool IsCorpse = false;
+        bool IsGolem = false;
+        bool IsBody = false;
+
+        void clearEquipped()
+        {
+            IsMerc = false;
+            IsCorpse = false;
+            IsGolem = false;
+            IsBody = false;
+        }
+
+        void clear()
+        {
+            LocationId = EnumItemLocation::BUFFER;
+            AltPositionId = EnumAltItemLocation::UNKNOWN;
+            clearEquipped();
+        }
+    };
     //---------------------------------------------------------------------------
     class Item
     {
@@ -209,10 +233,11 @@ namespace d2ce
         bool isIndestructible() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
-        std::uint8_t totalNumberOfSockets() const;
+        std::uint8_t getDisplayedSocketCount() const;
+        std::uint8_t socketCount() const;
         std::uint8_t getMaxSocketCount() const;
-        std::uint16_t getQuantity() const;
-        bool setQuantity(std::uint16_t quantity);
+        std::uint32_t getQuantity() const;
+        bool setQuantity(std::uint32_t quantity);
         bool setMaxQuantity();
         std::uint16_t getDefenseRating() const;
         bool getDurability(ItemDurability& attrib) const;
@@ -252,6 +277,7 @@ namespace d2ce
     class Items
     {
         friend class Character;
+        friend class SharedStash;
 
     protected:
         EnumCharVersion Version = APP_CHAR_VERSION;
@@ -298,8 +324,10 @@ namespace d2ce
 
     private:
         void findItems();
+        void findSharedStashItems();
 
         bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
+        bool readSharedStashPage(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
         bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<Item>& items);
         bool readItemsList(const Json::Value& itemListroot, bool bSerializedFormat, std::list<Item>& items);
         bool readItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
@@ -318,8 +346,10 @@ namespace d2ce
 
     protected:
         bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
+        bool readSharedStashPage(EnumCharVersion version, std::FILE* charfile);
         bool readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
         bool writeItems(std::FILE* charfile, bool isExpansion = false);
+        bool writeSharedStashPage(std::FILE* charfile);
 
         void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
@@ -393,15 +423,15 @@ namespace d2ce
         size_t getNumberOfWeapons() const;
         const std::vector<std::reference_wrapper<Item>>& getWeapons() const;
 
-        size_t upgradeGems();
-        size_t upgradePotions();
-        size_t upgradeRejuvenationPotions();
-        size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
-        size_t fillAllStackables();
-        size_t fixAllItems();
-        size_t maxDurabilityAllItems();
-        size_t maxSocketCountAllItems();
-        size_t setIndestructibleAllItems();
+        size_t upgradeGems(ItemFilter filter = ItemFilter());
+        size_t upgradePotions(ItemFilter filter = ItemFilter());
+        size_t upgradeRejuvenationPotions(ItemFilter filter = ItemFilter());
+        size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, ItemFilter filter = ItemFilter());
+        size_t fillAllStackables(ItemFilter filter = ItemFilter());
+        size_t repairAllItems(ItemFilter filter = ItemFilter());
+        size_t maxDurabilityAllItems(ItemFilter filter = ItemFilter());
+        size_t maxSocketCountAllItems(ItemFilter filter = ItemFilter());
+        size_t setIndestructibleAllItems(ItemFilter filter = ItemFilter());
         bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);

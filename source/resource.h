@@ -26,6 +26,7 @@
 #define IDD_ITEMS_DIALOG                155
 #define IDD_ADD_GPS_DIALOG              156
 #define IDB_INVQLT                      157
+#define IDD_SHARED_STASH_DIALOG         157
 #define IDB_INVLEA                      158
 #define IDB_INVHLA                      159
 #define IDB_INVSTU                      160
@@ -260,6 +261,7 @@
 #define IDB_INVRITH                     395
 #define IDB_INVRJO                      396
 #define IDB_INVJEW                      397
+#define IDB_INVJEW_1                    398
 #define IDB_INVKEY                      399
 #define IDB_INVBRNZ                     400
 #define IDB_INVEAR                      401
@@ -274,12 +276,14 @@
 #define IDB_INVRLO                      410
 #define IDB_INVRLUM                     411
 #define IDB_INVRMAL                     412
+#define IDB_INVJEW_2                    413
 #define IDB_INVMP3                      414
 #define IDB_INVBPS                      414
 #define IDB_INVMSS                      415
 #define IDB_INVHP1                      416
 #define IDB_INVMP1                      417
 #define IDB_INVBPL                      418
+#define IDB_INVJEW_3                    419
 #define IDB_INVRNEF                     420
 #define IDB_INVROHM                     421
 #define IDB_INVRORT                     422
@@ -296,10 +300,12 @@
 #define IDB_INVVPS                      433
 #define IDB_INVRIN                      434
 #define IDB_INVRPL                      435
+#define IDB_INVJEW_4                    436
 #define IDB_INVGSRC                     437
 #define IDB_INVGSBC                     438
 #define IDB_INVRSC                      439
 #define IDB_INVSCB                      440
+#define IDB_INVJEW_5                    441
 #define IDB_INVBSC                      443
 #define IDB_INVRSHAE                    444
 #define IDB_INVFNG                      447
@@ -353,6 +359,12 @@
 #define IDB_INVQLL                      503
 #define IDB_INVSOL                      504
 #define IDB_INVSPE                      505
+#define IDB_INVCHM1_1                   506
+#define IDB_INVCHM1_2                   507
+#define IDB_INVCHM2_1                   508
+#define IDB_INVCHM2_2                   509
+#define IDB_INVCHM3_1                   510
+#define IDB_INVCHM3_2                   511
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -535,7 +547,9 @@
 #define IDC_STATIC_TREE_3_SKILL_10      1099
 #define IDC_FROM_COMBO                  1100
 #define IDC_TO_COMBO                    1101
+#define IDC_LOCATION_COMBO              1102
 #define IDC_MFCLINK1                    1102
+#define IDC_LOCATION_STATIC             1103
 #define IDC_ENERGY_PLUS_BTN             1103
 #define IDC_VITALITY_PLUS_BTN           1104
 #define IDC_STRENGTH_PLUS_BTN           1105
@@ -581,6 +595,8 @@
 #define IDC_INV_CUBE_GROUP              1145
 #define IDC_INV_BELT_GROUP              1146
 #define IDC_FILL_BUTTON                 1147
+#define IDC_PAGE_COMBO                  1150
+#define IDC_SHARED_STASH_BUTTON         1151
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -594,7 +610,7 @@
 #define ID_VIEW_QUESTS                  32782
 #define ID_VIEW_SKILL_TREE              32783
 #define ID_OPTIONS_UPGRADE_POTIONS      32784
-#define ID_OPTIONS_UPGRADE_REJUVENATION 32785
+#define ID_OPTIONS_UPGRADE_REJUVENATIONS 32785
 #define ID_OPTIONS_GOLD                 32786
 #define ID_OPTIONS_GPS_CONVERTOR        32787
 #define ID_OPTIONS_MAXFILLSTACKABLES    32788
@@ -619,14 +635,23 @@
 #define ID_ITEM_CONTEXT_PERSONALIZE     32807
 #define ID_OPTIONS_GPS_CREATOR          32808
 #define ID_ITEM_CONTEXT_GPS_CREATOR     32809
+#define ID_ITEM_CONTEXT_UPGRADE_GEMS    32810
+#define ID_ITEM_CONTEXT_UPGRADE_POTIONS 32811
+#define ID_ITEM_CONTEXT_UPGRADE_REJUVENATIONS 32812
+#define ID_ITEM_CONTEXT_MAXFILLSTACKABLES 32813
+#define ID_ITEM_CONTEXT_FIXALLITEMS     32814
+#define ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS 32815
+#define ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS 32816
+#define ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS 32817
+#define ID_VIEW_SHAREDSTASH             32818
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        507
-#define _APS_NEXT_COMMAND_VALUE         32810
-#define _APS_NEXT_CONTROL_VALUE         1148
+#define _APS_NEXT_RESOURCE_VALUE        512
+#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

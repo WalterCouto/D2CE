@@ -28,6 +28,42 @@
 
 namespace
 {
+    int FindPopupPosition(CMenu& parent, size_t idx = 0)
+    {
+        auto numItems = parent.GetMenuItemCount();
+        if (numItems <= 0)
+        {
+            return -1;
+        }
+
+        size_t curIdx = 0;
+        for (int i = 0; i < numItems; ++i)
+        {
+            auto id = parent.GetMenuItemID(i);
+            if (id == -1) // popup
+            {
+                if (curIdx == idx)
+                {
+                    return i;
+                }
+                ++curIdx;
+            }
+        }
+
+        return -1;
+    }
+
+    CMenu* FindPopup(CMenu& parent, size_t idx = 0)
+    {
+        int pos = FindPopupPosition(parent, idx);;
+        if (pos < 0)
+        {
+            return nullptr;
+        }
+
+        return parent.GetSubMenu(pos);
+    }
+
     template <class charT>
     class num_printer
         : public std::numpunct<charT>
@@ -170,10 +206,11 @@ namespace
             return TRUE;
         }
 
-        // determine if this is a rebar:
         CWnd* pWnd = CWnd::FromHandle(hwnd);
         if (!pWnd->IsKindOf(RUNTIME_CLASS(CD2EquippedItemStatic)) &&
-            !pWnd->IsKindOf(RUNTIME_CLASS(CD2ItemsGridStatic)))
+            !pWnd->IsKindOf(RUNTIME_CLASS(CD2ItemsGridStatic)) &&
+            !pWnd->IsKindOf(RUNTIME_CLASS(CEdit)) &&
+            !pWnd->IsKindOf(RUNTIME_CLASS(CComboBox)))
         {
             return TRUE;
         }
@@ -288,6 +325,11 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2MercenaryForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2MercenaryForm::OnItemContextLoad)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2MercenaryForm::OnItemContextMaxdurability)
+    ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLE, &CD2MercenaryForm::OnItemContextIndestructible)
+    ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2MercenaryForm::OnItemContextAddsocket)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2MercenaryForm::OnItemContextMaxsockets)
+    ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2MercenaryForm::OnItemContextPersonalize)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2MercenaryForm::OnItemContextRemovePersonalization)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -672,6 +714,35 @@ void CD2MercenaryForm::LoadMercItemImages()
     }
 }
 //---------------------------------------------------------------------------
+void CD2MercenaryForm::refreshEquipped(const d2ce::Item& item)
+{
+    CWaitCursor wait;
+    if (item.getLocation() != d2ce::EnumItemLocation::EQUIPPED)
+    {
+        return;
+    }
+
+    CBitmap bitmap;
+    switch (item.getEquippedId())
+    {
+    case d2ce::EnumEquippedId::HEAD:
+        InvMercHeadBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::HAND_RIGHT:
+        InvMercHandRightBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::TORSO:
+        InvMercTorsoBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::HAND_LEFT:
+        InvMercHandLeftBox.Redraw();
+        break;
+    }
+}
+//---------------------------------------------------------------------------
 std::string CD2MercenaryForm::ToStdString(const CWnd* Sender) const
 {
     return (LPCSTR)CStringA(ToText(Sender));
@@ -900,8 +971,11 @@ BOOL CD2MercenaryForm::OnInitDialog()
     MercLevel.SetLimitText(2);
     Experience.SetLimitText(10);
 
-    DisplayMercInfo();
-    LoadMercItemImages();
+    {
+        CWaitCursor wait;
+        DisplayMercInfo();
+        LoadMercItemImages();
+    }
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // EXCEPTION: OCX Property Pages should return FALSE
@@ -1166,15 +1240,12 @@ INT_PTR CD2MercenaryForm::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
     ti.cbSize = sizeof(TOOLINFO);
 
     TOOLINFO* pTi = (pTI == nullptr) ? &ti : pTI;
-    if (InvHitTest(point, pTi) == nullptr)
-    {
-        return (INT_PTR)-1;
-    }
+    InvHitTest(point, pTi);
 
     UINT_PTR nHit = pTi->uId;
     if (pTi->uFlags & TTF_IDISHWND)
     {
-        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+        nHit = UINT_PTR(::GetDlgCtrlID(HWND(pTi->uId)));
     }
 
     return (INT_PTR)nHit;
@@ -1190,19 +1261,79 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    CMenu menu;
-    VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
-
-    CMenu* pPopup = menu.GetSubMenu(0);
-    ENSURE(pPopup != NULL);
-
-    if (!CurrItem->isStackable())
+    bool isStackable = CurrItem->isStackable();
+    bool isArmor = !isStackable && CurrItem->isArmor();
+    bool isWeapon = !isArmor && CurrItem->isWeapon();
+    if (isArmor || isWeapon || isStackable)
     {
-        pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
-    }
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
-    pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
-}
+        CMenu* pPopup = FindPopup(menu, 0);
+        ENSURE(pPopup != NULL);
+
+        auto pos = FindPopupPosition(*pPopup, 0);
+        if (pos >= 0)
+        {
+            pPopup->DeleteMenu(pos, MF_BYPOSITION);
+        }
+
+        pos = FindPopupPosition(*pPopup, 0);
+        if (pos >= 0)
+        {
+            pPopup->DeleteMenu(pos, MF_BYPOSITION);
+        }
+
+        if (!isStackable)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
+        }
+
+        if (!isArmor && !isWeapon)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+        }
+        else
+        {
+            if (CurrItem->isIndestructible())
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            }
+
+            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+            }
+
+            if (MainForm.getCharacterInfo().getVersion() < d2ce::EnumCharVersion::v109)
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+            }
+            else
+            {
+                if (CurrItem->isPersonalized())
+                {
+                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                }
+                else
+                {
+                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                }
+            }
+        }
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+}   
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnItemContextFix()
 {
@@ -1234,6 +1365,63 @@ void CD2MercenaryForm::OnItemContextMaxdurability()
     }
 
     MainForm.setItemMaxDurability(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextIndestructible()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemIndestructible(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextAddsocket()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.addItemSocket(*CurrItem);
+    refreshEquipped(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextMaxsockets()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.setItemMaxSocketCount(*CurrItem);
+    refreshEquipped(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextPersonalize()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.personalizeItem(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextRemovePersonalization()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    MainForm.removeItemPersonalization(*CurrItem);
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

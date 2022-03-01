@@ -218,6 +218,7 @@
     <ClInclude Include="d2ce\helpers\ItemHelpers.h" />
     <ClInclude Include="d2ce\Mercenary.h" />
     <ClInclude Include="d2ce\MercenaryConstants.h" />
+    <ClInclude Include="d2ce\SharedStash.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\allocator.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\assertions.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\config.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="D2MainForm.h" />
     <ClInclude Include="D2MercenaryForm.h" />
     <ClInclude Include="D2QuestsForm.h" />
+    <ClInclude Include="D2SharedStashForm.h" />
     <ClInclude Include="D2SkillTreeForm.h" />
     <ClInclude Include="D2WaypointsForm.h" />
     <ClInclude Include="d2ce\DataTypes.h" />
@@ -260,6 +262,7 @@
     <ClCompile Include="d2ce\CharacterStats.cpp" />
     <ClCompile Include="d2ce\helpers\ItemHelpers.cpp" />
     <ClCompile Include="d2ce\Mercenary.cpp" />
+    <ClCompile Include="d2ce\SharedStash.cpp" />
     <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -286,6 +289,7 @@
     <ClCompile Include="D2MainForm.cpp" />
     <ClCompile Include="D2MercenaryForm.cpp" />
     <ClCompile Include="D2QuestsForm.cpp" />
+    <ClCompile Include="D2SharedStashForm.cpp" />
     <ClCompile Include="D2SkillTreeForm.cpp" />
     <ClCompile Include="D2WaypointsForm.cpp" />
     <ClCompile Include="d2ce\Item.cpp" />
@@ -437,6 +441,8 @@
     <Image Include="res\Misc\Full Rejuvenation Potion.bmp" />
     <Image Include="res\Misc\gemsocket.bmp" />
     <Image Include="res\Misc\Gold.bmp" />
+    <Image Include="res\Misc\Grand Charm 2.bmp" />
+    <Image Include="res\Misc\Grand Charm 3.bmp" />
     <Image Include="res\Misc\Grand Charm.bmp" />
     <Image Include="res\Misc\Greater Healing Potion.bmp" />
     <Image Include="res\Misc\Greater Mana Potion.bmp" />
@@ -452,6 +458,11 @@
     <Image Include="res\Misc\Ist Rune.bmp" />
     <Image Include="res\Misc\Ith Rune.bmp" />
     <Image Include="res\Misc\Jah Rune.bmp" />
+    <Image Include="res\Misc\Jewel 2.bmp" />
+    <Image Include="res\Misc\Jewel 3.bmp" />
+    <Image Include="res\Misc\Jewel 4.bmp" />
+    <Image Include="res\Misc\Jewel 5.bmp" />
+    <Image Include="res\Misc\Jewel 6.bmp" />
     <Image Include="res\Misc\Jewel.bmp" />
     <Image Include="res\Misc\Key to the Cairn Stones.bmp" />
     <Image Include="res\Misc\Key.bmp" />
@@ -461,6 +472,8 @@
     <Image Include="res\Misc\Khalim%27s Heart.bmp" />
     <Image Include="res\Misc\Ko Rune.bmp" />
     <Image Include="res\Misc\Lam Esen%27s Tome.bmp" />
+    <Image Include="res\Misc\Large Charm 2.bmp" />
+    <Image Include="res\Misc\Large Charm 3.bmp" />
     <Image Include="res\Misc\Large Charm.bmp" />
     <Image Include="res\Misc\Lem Rune.bmp" />
     <Image Include="res\Misc\Light Healing Potion.bmp" />
@@ -519,6 +532,8 @@
     <Image Include="res\Misc\Skeleton Spleen.bmp" />
     <Image Include="res\Misc\Skeleton Tail.bmp" />
     <Image Include="res\Misc\Skull.bmp" />
+    <Image Include="res\Misc\Small Charm 2.bmp" />
+    <Image Include="res\Misc\Small Charm 3.bmp" />
     <Image Include="res\Misc\Small Charm.bmp" />
     <Image Include="res\Misc\Sol Rune.bmp" />
     <Image Include="res\Misc\Stamina Potion.bmp" />

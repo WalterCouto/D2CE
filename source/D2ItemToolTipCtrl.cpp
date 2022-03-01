@@ -34,7 +34,7 @@ namespace
         strText.Replace(_T("\t"), _T("    "));
         if (strText.Find(_T('\n')) >= 0) // Multi-line text
         {
-            UINT nFormat = DT_CENTER | DT_NOPREFIX;;
+            UINT nFormat = DT_CENTER | DT_NOPREFIX;
             if (bCalcOnly)
             {
                 nFormat |= DT_CALCRECT;
@@ -194,7 +194,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         {
             // Socketed text
             CString temp;
-            temp.Format(_T(", Socketed (%d)"), (int)CurrItem->totalNumberOfSockets());
+            temp.Format(_T(", Socketed (%d)"), (int)CurrItem->getDisplayedSocketCount());
             strText += temp;
         }
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
@@ -206,7 +206,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         // Socketed text
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
-        strText.Format(_T("Socketed (%d)"), (int)CurrItem->totalNumberOfSockets());
+        strText.Format(_T("Socketed (%d)"), (int)CurrItem->getDisplayedSocketCount());
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
@@ -241,11 +241,6 @@ END_MESSAGE_MAP()
 //---------------------------------------------------------------------------
 void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
 {
-    if (CurrItem != nullptr)
-    {
-        //AfxGetModuleThreadState()->m_nLastHit = static_cast<INT_PTR>(-1);
-    }
-
     bool isInvItem = false;
     auto currID = (UINT)pNMHDR->idFrom;
     switch (currID)

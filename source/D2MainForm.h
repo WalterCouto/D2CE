@@ -230,6 +230,8 @@ protected:
     afx_msg void OnUpdateViewMercenary(CCmdUI* pCmdUI);
     afx_msg void OnViewItems();
     afx_msg void OnUpdateViewItems(CCmdUI* pCmdUI);
+    afx_msg void OnViewSharedstash();
+    afx_msg void OnUpdateViewSharedstash(CCmdUI* pCmdUI);
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -338,6 +340,7 @@ private:
 public:
     // Character Stats
     d2ce::Character& getCharacterInfo();
+    std::string getCharacterName();
     d2ce::EnumCharVersion getCharacterVersion() const;
     bitmask::bitmask<d2ce::EnumCharStatus> getCharacterStatus() const;
     std::uint8_t getCharacterTitle() const;
@@ -383,11 +386,14 @@ public:
 
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();
-    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
+    size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool updateGem(d2ce::Item& item, const std::array<std::uint8_t, 4>& newgem);
     bool upgradeGem(d2ce::Item& item);
+    size_t upgradeGems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool upgradePotion(d2ce::Item& item);
+    size_t upgradePotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
+    size_t upgradeRejuvenationPotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
     bool repairItem(d2ce::Item& item);
     bool setItemMaxQuantity(d2ce::Item& item);
@@ -403,6 +409,11 @@ public:
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter()); 
 
     size_t getNumberOfEquippedItems() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;
@@ -425,5 +436,9 @@ public:
     bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
     bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const;
     bool getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
+
+    // SharedStash Info
+    d2ce::SharedStash& getSharedStash();
+    bool hasSharedStash() const;
 };
 //---------------------------------------------------------------------------

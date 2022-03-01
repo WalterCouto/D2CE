@@ -3475,9 +3475,46 @@
         {
           "id": 291,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_absorb_pois_bytime"
+        },
+        {
+          "id": 338,
+          "values": [
+            127
+          ],
+          "name": "passive_dodge"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 357,
+          "values": [
+            461
+          ],
+          "name": "passive_mag_mastery"
+        },
+        {
+          "id": 358,
+          "values": [
+            255
+          ],
+          "name": "passive_mag_pierce"
         }
       ],
       "type_name": "Diadem",
@@ -3700,9 +3737,46 @@
         {
           "id": 291,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_absorb_pois_bytime"
+        },
+        {
+          "id": 338,
+          "values": [
+            127
+          ],
+          "name": "passive_dodge"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 357,
+          "values": [
+            461
+          ],
+          "name": "passive_mag_mastery"
+        },
+        {
+          "id": 358,
+          "values": [
+            255
+          ],
+          "name": "passive_mag_pierce"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3917,9 +3991,46 @@
         {
           "id": 291,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_absorb_pois_bytime"
+        },
+        {
+          "id": 338,
+          "values": [
+            127
+          ],
+          "name": "passive_dodge"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 357,
+          "values": [
+            461
+          ],
+          "name": "passive_mag_mastery"
+        },
+        {
+          "id": 358,
+          "values": [
+            255
+          ],
+          "name": "passive_mag_pierce"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4136,9 +4247,46 @@
         {
           "id": 291,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_absorb_pois_bytime"
+        },
+        {
+          "id": 338,
+          "values": [
+            127
+          ],
+          "name": "passive_dodge"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 357,
+          "values": [
+            461
+          ],
+          "name": "passive_mag_mastery"
+        },
+        {
+          "id": 358,
+          "values": [
+            255
+          ],
+          "name": "passive_mag_pierce"
         }
       ]
     },
@@ -11356,9 +11504,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -11369,9 +11570,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -11578,6 +11790,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -11785,18 +12039,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -12003,6 +12321,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -12284,9 +12644,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -12297,9 +12710,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -12506,6 +12930,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -12713,18 +13179,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -12931,6 +13461,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -13212,9 +13784,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -13225,9 +13850,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -13434,6 +14070,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -13641,18 +14319,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -13859,6 +14601,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -14140,9 +14924,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -14153,9 +14990,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -14362,6 +15210,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -14569,18 +15459,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -14787,6 +15741,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -15068,9 +16064,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -15081,9 +16130,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -15290,6 +16350,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -15497,18 +16599,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -15715,6 +16881,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -15996,9 +17204,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -16009,9 +17270,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -16218,6 +17490,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -16425,18 +17739,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -16643,6 +18021,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -16924,9 +18344,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -16937,9 +18410,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -17146,6 +18630,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -17353,18 +18879,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -17571,6 +19161,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -17852,9 +19484,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -17865,9 +19550,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -18074,6 +19770,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -18281,18 +20019,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -18499,6 +20301,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -18780,9 +20624,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -18793,9 +20690,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -19002,6 +20910,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -19209,18 +21159,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -19427,6 +21441,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -19708,9 +21764,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -19721,9 +21830,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -19930,6 +22050,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -20137,18 +22299,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -20355,6 +22581,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -20636,9 +22904,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -20649,9 +22970,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -20858,6 +23190,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -21065,18 +23439,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -21283,6 +23721,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -21564,9 +24044,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -21577,9 +24110,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -21786,6 +24330,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -21993,18 +24579,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -22211,6 +24861,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -22492,9 +25184,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -22505,9 +25250,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -22714,6 +25470,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -22921,18 +25719,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -23139,6 +26001,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -23420,9 +26324,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -23433,9 +26390,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -23642,6 +26610,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -23849,18 +26859,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -24067,6 +27141,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -24348,9 +27464,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -24361,9 +27530,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -24570,6 +27750,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -24777,18 +27999,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -24995,6 +28281,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -25276,9 +28604,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -25289,9 +28670,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -25498,6 +28890,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -25705,18 +29139,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -25923,6 +29421,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -26204,9 +29744,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -26217,9 +29810,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -26426,6 +30030,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -26633,18 +30279,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -26851,6 +30561,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -27132,9 +30884,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -27145,9 +30950,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -27354,6 +31170,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -27561,18 +31419,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -27779,6 +31701,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -28060,9 +32024,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -28073,9 +32090,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -28282,6 +32310,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -28489,18 +32559,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -28707,6 +32841,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -28988,9 +33164,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -29001,9 +33230,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -29210,6 +33450,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -29417,18 +33699,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -29635,6 +33981,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -29916,9 +34304,62 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "type_name": "Small Charm",
@@ -29929,9 +34370,20 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -30138,6 +34590,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -30345,18 +34839,82 @@
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
           "id": 270,
           "values": [
-            4194303
+            3,
+            1023,
+            1023
           ],
           "name": "item_hp_bytime"
+        },
+        {
+          "id": 293,
+          "values": [
+            3,
+            1023,
+            1023
+          ],
+          "name": "item_find_magic_bytime"
         },
         {
           "id": 156,
@@ -30563,6 +35121,48 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 342,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_th"
+        },
+        {
+          "id": 343,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_dmg"
+        },
+        {
+          "id": 344,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_melee_crit"
+        },
+        {
+          "id": 345,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_th"
+        },
+        {
+          "id": 346,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_dmg"
+        },
+        {
+          "id": 347,
+          "values": [
+            255
+          ],
+          "name": "passive_mastery_throw_crit"
         }
       ]
     },
@@ -42139,9 +46739,46 @@
     {
       "id": 291,
       "values": [
-        4194303
+        3,
+        1023,
+        1023
       ],
       "name": "item_absorb_pois_bytime"
+    },
+    {
+      "id": 338,
+      "values": [
+        127
+      ],
+      "name": "passive_dodge"
+    },
+    {
+      "id": 343,
+      "values": [
+        1530
+      ],
+      "name": "passive_mastery_melee_dmg"
+    },
+    {
+      "id": 344,
+      "values": [
+        1530
+      ],
+      "name": "passive_mastery_melee_crit"
+    },
+    {
+      "id": 357,
+      "values": [
+        2305
+      ],
+      "name": "passive_mag_mastery"
+    },
+    {
+      "id": 358,
+      "values": [
+        1275
+      ],
+      "name": "passive_mag_pierce"
     },
     {
       "id": 38,
@@ -42299,40 +46936,12 @@
       "name": "passive_mastery_melee_th"
     },
     {
-      "id": 343,
-      "values": [
-        1275
-      ],
-      "name": "passive_mastery_melee_dmg"
-    },
-    {
-      "id": 344,
-      "values": [
-        1275
-      ],
-      "name": "passive_mastery_melee_crit"
-    },
-    {
       "id": 19,
       "values": [
         1023
       ],
       "name": "tohit",
       "description": "+{0} to Attack Rating"
-    },
-    {
-      "id": 357,
-      "values": [
-        1844
-      ],
-      "name": "passive_mag_mastery"
-    },
-    {
-      "id": 358,
-      "values": [
-        1020
-      ],
-      "name": "passive_mag_pierce"
     },
     {
       "id": 0,

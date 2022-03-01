@@ -18,6 +18,15 @@
 
 Revision History
 ================
+Version 2.14 (Mar 7, 2022)
+   - Updated: Updated jewel alternate images.
+   - Updated: Updated item context menus across forms showing
+              items.
+
+   - Added: Shared Stash support. Users can now view and edit
+            items in the shared stash if the file is present in the
+            same location as their character.
+
 Version 2.13 (Feb 28, 2022)
    - Updated: Fix detection of ID for set items.
    - Updated: Fix up logic for reading/writing 1.00 - 1.06 files

@@ -28,6 +28,7 @@
 #include "CharacterStats.h"
 #include "Mercenary.h"
 #include "Item.h"
+#include "SharedStash.h"
 #include <json/json.h>
 
 namespace d2ce
@@ -101,6 +102,8 @@ namespace d2ce
             m_stats_header_location = 0;
         bool m_update_locations = true;
         bool m_bJsonSerializedFormat = false;
+
+        SharedStash m_shared_stash;
 
         void calculateChecksum();
 
@@ -276,23 +279,23 @@ namespace d2ce
 
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;
-        size_t fixAllItems();
-        size_t maxDurabilityAllItems();
-        size_t setIndestructibleAllItems();
-        size_t maxSocketCountAllItems();
+        size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
         size_t getNumberOfStackables() const;
-        size_t fillAllStackables();
+        size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
         size_t getNumberOfGPSs() const;
         const std::vector<std::reference_wrapper<Item>>& getGPSs();
-        size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem);
+        size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, ItemFilter filter = ItemFilter());
         bool anyUpgradableGems() const;
-        size_t upgradeGems();
+        size_t upgradeGems(ItemFilter filter = ItemFilter());
         bool anyUpgradablePotions() const;
-        size_t upgradePotions();
+        size_t upgradePotions(ItemFilter filter = ItemFilter());
         bool anyUpgradableRejuvenations() const;
-        size_t upgradeRejuvenationPotions();
+        size_t upgradeRejuvenationPotions(ItemFilter filter = ItemFilter());
 
         bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
@@ -303,6 +306,10 @@ namespace d2ce
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
+
+        // Shared Stash Info
+        SharedStash& getSharedStash();
+        bool hasSharedStash() const;
     };
 }
 //---------------------------------------------------------------------------

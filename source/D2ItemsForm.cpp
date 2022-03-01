@@ -25,6 +25,7 @@
 #include "D2GemsForm.h"
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
+#include "D2SharedStashForm.h"
 #include <deque>
 
 #ifdef _DEBUG
@@ -33,6 +34,108 @@
 
 namespace
 {
+    CMenu* FindPopup(CMenu& parent, size_t idx = 0)
+    {
+        auto numItems = parent.GetMenuItemCount();
+        if (numItems <= 0)
+        {
+            return nullptr;
+        }
+
+        size_t curIdx = 0;
+        for (int i = 0; i < numItems; ++i)
+        {
+            auto id = parent.GetMenuItemID(i);
+            if (id == -1) // popup
+            {
+                if (curIdx == idx)
+                {
+                    return parent.GetSubMenu(i);
+                }
+                ++curIdx;
+            }
+        }
+
+        return nullptr;
+    }
+
+    CString BuildItemFilterLocationMessage(d2ce::ItemFilter& filter)
+    {
+        CString msg;
+        switch (filter.LocationId)
+        {
+        case d2ce::EnumItemLocation::STORED:
+            switch (filter.AltPositionId)
+            {
+            case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+                msg += _T(" located in the Horadric Cube");
+                break;
+
+            case d2ce::EnumAltItemLocation::INVENTORY:
+                msg += _T(" located in the inventory");
+                break;
+
+            case d2ce::EnumAltItemLocation::STASH:
+                msg += _T(" located in the Stash");
+                break;
+            }
+            break;
+
+        case d2ce::EnumItemLocation::BELT:
+            msg += _T(" located on the belt");
+            break;
+
+        case d2ce::EnumItemLocation::EQUIPPED:
+            if (filter.IsCorpse)
+            {
+                msg += _T(" located on the corpse");
+            }
+            else if (filter.IsMerc)
+            {
+                msg += _T(" located on the mercenary");
+            }
+            else
+            {
+                msg += _T(" equipped");
+            }
+            break;
+        }
+
+        return msg;
+    }
+
+    CString BuildNumItemsChangedMessage(size_t numChanged, d2ce::ItemFilter& filter)
+    {
+        CString msg;
+        msg.Format(_T("%zd item(s)"), numChanged);
+        msg += BuildItemFilterLocationMessage(filter);
+        return msg;
+    }
+
+    CString BuildNumStatckedItemsChangedMessage(size_t numChanged, d2ce::ItemFilter& filter)
+    {
+        CString msg;
+        msg.Format(_T("%zd stackable item(s)"), numChanged);
+        msg += BuildItemFilterLocationMessage(filter);
+        return msg;
+    }
+
+    CString BuildNumPotionsChangedMessage(size_t numChanged, d2ce::ItemFilter& filter)
+    {
+        CString msg;
+        msg.Format(_T("%zd potion(s)"), numChanged);
+        msg += BuildItemFilterLocationMessage(filter);
+        return msg;
+    }
+
+    CString BuildNumGemsChangedMessage(size_t numChanged, d2ce::ItemFilter& filter)
+    {
+        CString msg;
+        msg.Format(_T("%zd gem(s)"), numChanged);
+        msg += BuildItemFilterLocationMessage(filter);
+        return msg;
+    }
+
     void ScaleImage(CDC* pDC, CBitmap& image, const CRect& rectLocation)
     {
         BITMAP bmp;
@@ -143,7 +246,7 @@ namespace
         BITMAP itemBmp;
         itemImage.GetBitmap(&itemBmp);
 
-        auto socketCount = item.totalNumberOfSockets();
+        auto socketCount = item.getDisplayedSocketCount();
         CSize slotSize(itemBmp.bmWidth / dimension.Width, itemBmp.bmHeight / dimension.Height);
         auto numSlots = std::min(std::min(std::uint16_t(7), std::uint16_t(dimension.Width * dimension.Height)), std::uint16_t(socketCount));
         if (numSlots == 0)
@@ -151,7 +254,7 @@ namespace
             return false;
         }
 
-        if (numSlots < item.totalNumberOfSockets() && (numSlots <= 7))
+        if (numSlots < item.getDisplayedSocketCount() && (numSlots <= 7))
         {
             // not enough room
             if (dimension.Width < 2)
@@ -184,7 +287,7 @@ namespace
             }
         }
 
-        if (numSlots <= 3)
+        if (numSlots <= 4)
         {
             if (dimension.Height >= numSlots)
             {
@@ -200,7 +303,7 @@ namespace
                     slotRectMap.push_back(slotRect);
                 }
             }
-            else // 3 slots with item being 2 slots high
+            else // 3 or 4 slots with item being 2 or 3 slots high
             {
                 CSize slotGridSize((dimension.Width * slotSize.cx)/2, (dimension.Height * slotSize.cy) / 2);
                 CSize slotGridOffset((slotGridSize.cx - slotSize.cx) / 2, (slotGridSize.cy - slotSize.cy) / 2);
@@ -391,7 +494,6 @@ namespace
             return TRUE;
         }
 
-        // determine if this is a rebar:
         CWnd* pWnd = CWnd::FromHandle(hwnd);
         if (!pWnd->IsKindOf(RUNTIME_CLASS(CD2EquippedItemStatic)) && 
             !pWnd->IsKindOf(RUNTIME_CLASS(CD2ItemsGridStatic)))
@@ -467,7 +569,7 @@ INT_PTR CD2EquippedItemStatic::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
     UINT_PTR nHit = pTi->uId;
     if (pTi->uFlags & TTF_IDISHWND)
     {
-        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+        nHit = UINT_PTR(::GetDlgCtrlID(HWND(pTi->uId)));
     }
 
     return (INT_PTR)nHit;
@@ -482,6 +584,12 @@ void CD2EquippedItemStatic::SetUseAltImage(BOOL flag)
 
     UseAltImage = flag;
     Invalidate();
+}
+//---------------------------------------------------------------------------
+void CD2EquippedItemStatic::Redraw()
+{
+    InitBackgroundImage();
+    RedrawWindow();
 }
 
 //---------------------------------------------------------------------------
@@ -511,7 +619,24 @@ BOOL CD2EquippedItemStatic::InitBackgroundImage()
         return FALSE;
     }
 
+    if (InvItemPtr != nullptr)
+    {
+        CBitmap bitmap;
+        if (GetItemBitmap(*InvItemPtr, bitmap))
+        {
+            LoadItemImage(*InvItemPtr, bitmap);
+        }
+    }
+
     LoadBackgroundImage(TRUE);
+    if (InvAltItemPtr != nullptr)
+    {
+        CBitmap bitmap;
+        if (GetItemBitmap(*InvAltItemPtr, bitmap))
+        {
+            LoadItemImage(*InvAltItemPtr, bitmap, TRUE);
+        }
+    }
     return TRUE;
 }
 //---------------------------------------------------------------------------
@@ -791,7 +916,7 @@ INT_PTR CD2ItemsGridStatic::OnToolHitTest(CPoint point, TOOLINFO* pTI) const
     UINT_PTR nHit = pTi->uId;
     if (pTi->uFlags & TTF_IDISHWND)
     {
-        nHit = (UINT)::GetDlgCtrlID(HWND(pTi->uId));
+        nHit = UINT_PTR(::GetDlgCtrlID(HWND(pTi->uId)));
     }
 
     return (INT_PTR)nHit;
@@ -970,9 +1095,7 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
         }
 
         ScaleImage(pDC, bitmap, rect);
-
-        CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
-        AddSocketsToImage(pDC, item, bitmap, pCallback);
+        AddSocketsToImage(pDC, item, bitmap, GetCallback());
 
         MergeImage(pDC, InvImage, bitmap, rect);
 
@@ -1000,7 +1123,7 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
 //---------------------------------------------------------------------------
 CSize CD2ItemsGridStatic::GetInvGridSize() const
 {
-    CD2ItemsGridCallback* pCallback = GetCallback();;
+    CD2ItemsGridCallback* pCallback = GetCallback();
     if (pCallback == nullptr)
     {
         return CSize(0, 0);
@@ -1064,7 +1187,13 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
 //---------------------------------------------------------------------------
 CD2ItemsGridCallback* CD2ItemsGridStatic::GetCallback() const
 {
-    return dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    auto pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
+    if (pCallback == nullptr)
+    {
+        pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2SharedStashForm, GetParent()));
+    }
+
+    return pCallback;
 }
 //---------------------------------------------------------------------------
 BOOL CD2ItemsGridStatic::OnEraseBkgnd(CDC* pDC)
@@ -1166,6 +1295,39 @@ void CD2ItemsForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_INV_CUBE_GROUP, CubeGroupBox);
     DDX_Control(pDX, IDC_INV_CUBE_GRID, InvCubeGrid);
 }
+//---------------------------------------------------------------------------
+BOOL CD2ItemsForm::PreTranslateMessage(MSG* pMsg)
+{
+    CWnd* pWndFocus = GetFocus();
+    if (pWndFocus != NULL && IsChild(pWndFocus))
+    {
+        UINT message = pMsg->message;
+        if ((message == WM_MOUSEMOVE || message == WM_NCMOUSEMOVE ||
+            message == WM_LBUTTONUP || message == WM_RBUTTONUP ||
+            message == WM_MBUTTONUP) &&
+            (GetKeyState(VK_LBUTTON) >= 0 && GetKeyState(VK_RBUTTON) >= 0 &&
+                GetKeyState(VK_MBUTTON) >= 0))
+        {
+            CheckToolTipCtrl();
+        }
+
+        if (pMsg->message == WM_KEYDOWN)
+        {
+            if (pMsg->wParam == VK_RETURN)
+            {
+                TCHAR szClass[10];
+                if (GetClassName(pWndFocus->m_hWnd, szClass, 10) &&
+                    (lstrcmpi(szClass, _T("EDIT")) == 0))
+                {
+                    // pressing the ENTER key will take the focus to the next control
+                    pMsg->wParam = VK_TAB;
+                }
+            }
+        }
+    }
+
+    return __super::PreTranslateMessage(pMsg);
+}
 
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
@@ -1174,20 +1336,30 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
     ON_WM_CONTEXTMENU()
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2ItemsForm::OnItemContextFix)
+    ON_COMMAND(ID_ITEM_CONTEXT_FIXALLITEMS, &CD2ItemsForm::OnItemContextFixallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2ItemsForm::OnItemContextLoad)
+    ON_COMMAND(ID_ITEM_CONTEXT_FIXALLITEMS, &CD2ItemsForm::OnItemContextMaxfillstackables)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITY, &CD2ItemsForm::OnItemContextMaxdurability)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, &CD2ItemsForm::OnItemContextMaxdurabilityforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLE, &CD2ItemsForm::OnItemContextIndestructible)
+    ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, &CD2ItemsForm::OnItemContextIndestructibleforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2ItemsForm::OnItemContextAddsocket)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2ItemsForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2ItemsForm::OnItemContextMaxsocketsforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2ItemsForm::OnItemContextUpgradeGems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTIONS, &CD2ItemsForm::OnItemContextUpgradePotions)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, &CD2ItemsForm::OnItemContextUpgradeRejuvenation)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_REJUVENATIONS, &CD2ItemsForm::OnItemContextUpgradeRejuvenations)
     ON_COMMAND(ID_ITEM_CONTEXT_GPS_CONVERTOR, &CD2ItemsForm::OnItemContextGpsConvertor)
     ON_COMMAND(ID_ITEM_CONTEXT_GPS_CREATOR, &CD2ItemsForm::OnItemContextGpsCreator)
     ON_BN_CLICKED(IDC_INV_WEAPON_I, &CD2ItemsForm::OnClickedInvWeaponRadio)
     ON_BN_CLICKED(IDC_INV_WEAPON_II, &CD2ItemsForm::OnClickedInvWeaponRadio)
+    ON_BN_CLICKED(IDC_SHARED_STASH_BUTTON, &CD2ItemsForm::OnBnClickedSharedStashButton)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -1618,16 +1790,48 @@ void CD2ItemsForm::CheckToolTipCtrl()
     }
 }
 //---------------------------------------------------------------------------
-size_t CD2ItemsForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem)
+size_t CD2ItemsForm::convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, d2ce::ItemFilter filter)
 {
-    auto numCoverted = MainForm.convertGPSs(existingGem, desiredGem);
+    auto numCoverted = MainForm.convertGPSs(existingGem, desiredGem, filter);
     if (numCoverted > 0)
     {
-        // refresh all grids
-        InvBeltGrid.LoadItemImages();
-        InvCubeGrid.LoadItemImages();
-        InvGrid.LoadItemImages();
-        InvStashGrid.LoadItemImages();
+        bool bFiltered = false;
+        switch (filter.LocationId)
+        {
+        case d2ce::EnumItemLocation::STORED:
+            switch (filter.AltPositionId)
+            {
+            case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+                bFiltered = true;
+                InvCubeGrid.LoadItemImages();
+                break;
+
+            case d2ce::EnumAltItemLocation::INVENTORY:
+                bFiltered = true;
+                InvGrid.LoadItemImages();
+                break;
+
+            case d2ce::EnumAltItemLocation::STASH:
+                bFiltered = true;
+                InvStashGrid.LoadItemImages();
+                break;
+            }
+            break;
+
+        case d2ce::EnumItemLocation::BELT:
+            InvBeltGrid.LoadItemImages();
+            bFiltered = true;
+            break;
+        }
+
+        if (!bFiltered)
+        {
+            // refresh all grids
+            InvBeltGrid.LoadItemImages();
+            InvCubeGrid.LoadItemImages();
+            InvGrid.LoadItemImages();
+            InvStashGrid.LoadItemImages();
+        }
     }
 
     return numCoverted;
@@ -1655,6 +1859,16 @@ bool CD2ItemsForm::upgradeGem(d2ce::Item& item)
     return true;
 }
 //---------------------------------------------------------------------------
+size_t CD2ItemsForm::upgradeGems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.upgradeGems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
 bool CD2ItemsForm::upgradePotion(d2ce::Item& item)
 {
     if (!MainForm.upgradePotion(item))
@@ -1664,6 +1878,16 @@ bool CD2ItemsForm::upgradePotion(d2ce::Item& item)
 
     refreshGrid(item);
     return true;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::upgradePotions(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.upgradePotions(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
 }
 //---------------------------------------------------------------------------
 bool CD2ItemsForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
@@ -1677,7 +1901,17 @@ bool CD2ItemsForm::upgradeToFullRejuvenationPotion(d2ce::Item& item)
     return true;
 }
 //---------------------------------------------------------------------------
-void CD2ItemsForm::refreshGrid(const d2ce::Item& item) const
+size_t CD2ItemsForm::upgradeRejuvenationPotions(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.upgradeRejuvenationPotions(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::refreshGrid(const d2ce::Item& item)
 {
     auto itemAltLocation = d2ce::EnumAltItemLocation::UNKNOWN;
     auto itemLocation = item.getLocation();
@@ -1685,9 +1919,141 @@ void CD2ItemsForm::refreshGrid(const d2ce::Item& item) const
     {
     case d2ce::EnumItemLocation::STORED:
         itemAltLocation = item.getAltPositionId();
+        break;
+
+    case d2ce::EnumItemLocation::EQUIPPED:
+        refreshEquipped(item);
+        return;
     }
 
     refreshGrid(itemLocation, itemAltLocation);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::refreshEquipped(const d2ce::Item& item)
+{
+    CWaitCursor wait;
+    if (item.getLocation() != d2ce::EnumItemLocation::EQUIPPED)
+    {
+        return;
+    }
+
+    CBitmap bitmap;
+    switch (item.getEquippedId())
+    {
+    case d2ce::EnumEquippedId::HEAD:
+        InvHeadBox.Redraw();
+        if (MainForm.isExpansionCharacter() && Merc.isHired())
+        {
+            InvMercHeadBox.Redraw();
+        }
+        break;
+
+    case d2ce::EnumEquippedId::NECK:
+        InvNeckBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::HAND_RIGHT:
+        InvHandRightBox.Redraw();
+        if (MainForm.isExpansionCharacter() && Merc.isHired())
+        {
+            InvMercHandRightBox.Redraw();
+        }
+        break;
+
+    case d2ce::EnumEquippedId::ALT_HAND_RIGHT:
+        InvHandRightBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::TORSO:
+        InvTorsoBox.Redraw();
+        if (MainForm.isExpansionCharacter() && Merc.isHired())
+        {
+            InvMercTorsoBox.Redraw();
+        }
+        break;
+
+    case d2ce::EnumEquippedId::HAND_LEFT:
+        InvHandLeftBox.Redraw();
+        if (MainForm.isExpansionCharacter() && Merc.isHired())
+        {
+            InvMercHandLeftBox.Redraw();
+        }
+        break;
+
+    case d2ce::EnumEquippedId::ALT_HAND_LEFT:
+        InvHandLeftBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::HANDS:
+        InvGloveBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::RIGHT_FINGER:
+        InvRingRightBox.LoadItemImage(item, bitmap);
+        break;
+
+    case d2ce::EnumEquippedId::WAIST:
+        InvBeltBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::LEFT_FINGER:
+        InvRingLeftBox.Redraw();
+        break;
+
+    case d2ce::EnumEquippedId::FEET:
+        InvBootsBox.Redraw();
+        break;
+    }
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::fillAllStackables(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.fillAllStackables(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::repairAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.repairAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::maxDurabilityAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.maxDurabilityAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::setIndestructibleAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.setIndestructibleAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::maxSocketCountAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.maxSocketCountAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
 }
 //---------------------------------------------------------------------------
 bool CD2ItemsForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
@@ -1714,9 +2080,12 @@ size_t CD2ItemsForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::Enu
 //---------------------------------------------------------------------------
 void CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
 {
+    CWaitCursor wait;
+    bool bRefreshAll = true;
     switch (locationId)
     {
     case d2ce::EnumItemLocation::BELT:
+        bRefreshAll = false;
         InvBeltGrid.LoadItemImages();
         break;
 
@@ -1724,17 +2093,41 @@ void CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltI
         switch (altPositionId)
         {
         case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            bRefreshAll = false;
             InvCubeGrid.LoadItemImages();
             break;
 
         case d2ce::EnumAltItemLocation::INVENTORY:
+            bRefreshAll = false;
             InvGrid.LoadItemImages();
             break;
 
         case d2ce::EnumAltItemLocation::STASH:
+            bRefreshAll = false;
             InvStashGrid.LoadItemImages();
             break;
         }
+    }
+
+    if (bRefreshAll)
+    {
+        InvBeltGrid.LoadItemImages();
+        InvCubeGrid.LoadItemImages();
+        InvGrid.LoadItemImages();
+        InvStashGrid.LoadItemImages();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::refreshAllGrids()
+{
+    CWaitCursor wait;
+    InvBeltGrid.LoadItemImages();
+    InvGrid.LoadItemImages();
+    InvStashGrid.LoadItemImages();
+
+    if (getHasHoradricCube())
+    {
+        InvCubeGrid.LoadItemImages();
     }
 }
 //---------------------------------------------------------------------------
@@ -1811,6 +2204,203 @@ bool CD2ItemsForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, 
 bool CD2ItemsForm::getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
 {
     return MainForm.getItemLocationDimensions(altPositionId, dimensions);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::SetCurrItemInfo(CPoint point)
+{
+    CurrItemLocation = { 0, 0 };
+    TOOLINFO ti = { 0 };
+    ti.cbSize = sizeof(TOOLINFO);
+    CurrItem = const_cast<d2ce::Item*>(InvHitTest(point, &ti));
+    if (CurrItem != nullptr)
+    {
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(CurrItem->getLocation());
+        if (CurrItem->getLocation() == d2ce::EnumItemLocation::EQUIPPED)
+        {
+            // figure out which stoarge location we are located in
+            INT_PTR nHit = (INT_PTR)ti.uId;
+            if (ti.uFlags & TTF_IDISHWND)
+            {
+                nHit = (INT_PTR)::GetDlgCtrlID(HWND(ti.uId));
+            }
+
+            switch (nHit)
+            {
+            case IDC_INV_HEAD:
+            case IDC_INV_NECK:
+            case IDC_INV_HAND_RIGHT:
+            case IDC_INV_TORSO:
+            case IDC_INV_HAND_LEFT:
+            case IDC_INV_GLOVE:
+            case IDC_INV_RING_RIGHT:
+            case IDC_INV_BELT:
+            case IDC_INV_RING_LEFT:
+            case IDC_INV_BOOTS:
+                CurrItemLocation[1] = 1; // character body
+                break;
+
+            case IDC_INV_CORPSE_HEAD:
+            case IDC_INV_CORPSE_NECK:
+            case IDC_INV_CORPSE_HAND_RIGHT:
+            case IDC_INV_CORPSE_TORSO:
+            case IDC_INV_CORPSE_HAND_LEFT:
+            case IDC_INV_CORPSE_GLOVE:
+            case IDC_INV_CORPSE_RING_RIGHT:
+            case IDC_INV_CORPSE_BELT:
+            case IDC_INV_CORPSE_RING_LEFT:
+            case IDC_INV_CORPSE_BOOTS:
+                CurrItemLocation[1] = 2; // character corpse
+                break;
+
+            case IDC_INV_MERC_HEAD:
+            case IDC_INV_MERC_HAND_RIGHT:
+            case IDC_INV_MERC_TORSO:
+            case IDC_INV_MERC_HAND_LEFT:
+                CurrItemLocation[1] = 3; // Mercenary body
+                break;
+
+            case IDC_INV_GOLEM:
+                CurrItemLocation[1] = 4; // Iron Golem
+                break;
+            }
+        }
+        else
+        {
+            CurrItemLocation[1] = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(CurrItem->getAltPositionId());
+        }
+
+        return;
+    }
+
+    // figure out which stoarge location we are located in
+    INT_PTR nHit = (INT_PTR)ti.uId;
+    if (ti.uFlags & TTF_IDISHWND)
+    {
+        nHit = (INT_PTR)::GetDlgCtrlID(HWND(ti.uId));
+    }
+
+    switch (nHit)
+    {
+    case IDC_INV_HEAD:
+    case IDC_INV_NECK:
+    case IDC_INV_HAND_RIGHT:
+    case IDC_INV_TORSO:
+    case IDC_INV_HAND_LEFT:
+    case IDC_INV_GLOVE:
+    case IDC_INV_RING_RIGHT:
+    case IDC_INV_BELT:
+    case IDC_INV_RING_LEFT:
+    case IDC_INV_BOOTS:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
+        CurrItemLocation[1] = 1; // character body
+        break;
+
+    case IDC_INV_CORPSE_HEAD:
+    case IDC_INV_CORPSE_NECK:
+    case IDC_INV_CORPSE_HAND_RIGHT:
+    case IDC_INV_CORPSE_TORSO:
+    case IDC_INV_CORPSE_HAND_LEFT:
+    case IDC_INV_CORPSE_GLOVE:
+    case IDC_INV_CORPSE_RING_RIGHT:
+    case IDC_INV_CORPSE_BELT:
+    case IDC_INV_CORPSE_RING_LEFT:
+    case IDC_INV_CORPSE_BOOTS:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
+        CurrItemLocation[1] = 2; // character corpse
+        break;
+
+    case IDC_INV_MERC_HEAD:
+    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_TORSO:
+    case IDC_INV_MERC_HAND_LEFT:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
+        CurrItemLocation[1] = 3; // Mercenary body
+        break;
+
+    case IDC_INV_GOLEM:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
+        CurrItemLocation[1] = 4; // Iron Golem
+        break;
+
+    case IDC_INV_GRID:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+        CurrItemLocation[1] = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::INVENTORY);
+        break;
+
+    case IDC_INV_STASH_GRID:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+        CurrItemLocation[1] = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::STASH);
+        break;
+
+    case IDC_INV_CUBE_GRID:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::STORED);
+        CurrItemLocation[1] = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::HORADRIC_CUBE);
+        break;
+
+    case IDC_INV_BELT_GRID:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::BELT);
+        break;
+
+    default:
+        CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::BUFFER);
+        CurrItemLocation[1] = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::UNKNOWN);
+        break;
+    }
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::ClearCurrItemInfo()
+{
+    CurrItemLocation = { 0, 0 };
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+d2ce::ItemFilter CD2ItemsForm::GetCurrItemFilter() const
+{
+    d2ce::ItemFilter filter;
+    if (CurrItemLocation[0] == 0 && CurrItemLocation[1] == 0)
+    {
+        return filter; // invalid state
+    }
+
+    switch (static_cast<d2ce::EnumItemLocation>(CurrItemLocation[0]))
+    {
+    case d2ce::EnumItemLocation::STORED:
+        filter.LocationId = d2ce::EnumItemLocation::STORED;
+        filter.AltPositionId = static_cast<d2ce::EnumAltItemLocation>(CurrItemLocation[1]);
+        break;
+
+    case d2ce::EnumItemLocation::BELT:
+        filter.LocationId = d2ce::EnumItemLocation::BELT;
+        break;
+
+    case d2ce::EnumItemLocation::EQUIPPED:
+        filter.LocationId = d2ce::EnumItemLocation::EQUIPPED;
+        switch (CurrItemLocation[1])
+        {
+        case 1: // body
+            filter.LocationId = d2ce::EnumItemLocation::EQUIPPED;
+            filter.IsBody = true;
+            break;
+
+        case 2: // corpse
+            filter.LocationId = d2ce::EnumItemLocation::EQUIPPED;
+            filter.IsCorpse = true;
+            break;
+
+        case 3: // mercenary
+            filter.LocationId = d2ce::EnumItemLocation::EQUIPPED;
+            filter.IsMerc = true;
+            break;
+
+        case 4: // Iron Golem
+            filter.LocationId = d2ce::EnumItemLocation::EQUIPPED;
+            filter.IsGolem = true;
+            break;
+        }
+        break;
+    }
+
+    return filter;
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
@@ -2074,11 +2664,23 @@ BOOL CD2ItemsForm::OnInitDialog()
         IsWeaponII = FALSE;
     }
 
-    LoadEquippedItemImages();
-    LoadCorpseItemImages();
-    LoadMercItemImages();
-    LoadGolemItemImages();
-    LoadGridItemImages();
+    if (!MainForm.hasSharedStash())
+    {
+        auto* pWnd = GetDlgItem(IDC_SHARED_STASH_BUTTON);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow(FALSE);
+        }
+    }
+
+    {
+        CWaitCursor wait;
+        LoadEquippedItemImages();
+        LoadCorpseItemImages();
+        LoadMercItemImages();
+        LoadGolemItemImages();
+        LoadGridItemImages();
+    }
 
     return TRUE;  // return TRUE unless you set the focus to a control
                   // EXCEPTION: OCX Property Pages should return FALSE
@@ -2134,6 +2736,7 @@ BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         case IDC_INV_STASH_GRID:
         case IDC_INV_CUBE_GRID:
         case IDC_INV_BELT_GRID:
+        case IDC_INV_GOLEM:
             strTipText = _T("N/A");
             break;
         }
@@ -2160,6 +2763,13 @@ void CD2ItemsForm::OnBnClickedOk()
 {
     UpdateData(TRUE); // save results
     __super::OnOK();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnBnClickedSharedStashButton()
+{
+    CD2SharedStashForm dlg(MainForm);
+    dlg.DoModal();
+    SetFocus();
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsForm::InvHitTest(CPoint point, TOOLINFO* pTI) const
@@ -2209,14 +2819,39 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
     CPoint hitTestPoint = point;
     ScreenToClient(&hitTestPoint);
-    CurrItem = const_cast<d2ce::Item*>(InvHitTest(hitTestPoint));
+    SetCurrItemInfo(hitTestPoint);
+    auto filter(GetCurrItemFilter());
     if (CurrItem == nullptr)
     {
+        if (filter.LocationId == d2ce::EnumItemLocation::EQUIPPED)
+        {
+            return;
+        }
+
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
-        CMenu* pPopup = menu.GetSubMenu(2);
+        CMenu* pPopup = FindPopup(menu, 2);
         ENSURE(pPopup != NULL);
+
+        if (filter.LocationId == d2ce::EnumItemLocation::BELT)
+        {
+            CMenu* pSubPopup = FindPopup(*pPopup, 0);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
+            auto numItems = pSubPopup->GetMenuItemCount();
+            if (numItems > 1)
+            {
+                if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                {
+                    pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                }
+            }
+        }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
         return;
@@ -2233,7 +2868,7 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
-        CMenu* pPopup = menu.GetSubMenu(0);
+        CMenu* pPopup = FindPopup(menu, 0);
         ENSURE(pPopup != NULL);
 
         if (!isStackable)
@@ -2260,7 +2895,7 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
             }
 
-            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->totalNumberOfSockets())))
+            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
@@ -2291,52 +2926,54 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
-        CMenu* pPopup = menu.GetSubMenu(1);
+        CMenu* pPopup = FindPopup(menu, 1);
         ENSURE(pPopup != NULL);
 
         if (isRune)
         {
-            // remove popup
-            pPopup->DeleteMenu(0, MF_BYPOSITION);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
         }
         else if (isGem)
         {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
             if (!CurrItem->isUpgradableGem())
             {
-                // remove popup
-                pPopup->DeleteMenu(0, MF_BYPOSITION);
-            }
-            else
-            {
-                CMenu* pSubPopup = pPopup->GetSubMenu(0);
-                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
-                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
             }
         }
         else
         {
-            if (!CurrItem->isUpgradablePotion())
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
+            if (filter.LocationId == d2ce::EnumItemLocation::BELT)
             {
-                if (!CurrItem->isUpgradableToFullRejuvenationPotion())
+                CMenu* pSubPopup = FindPopup(*pPopup, 0);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
+                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
+                auto numItems = pSubPopup->GetMenuItemCount();
+                if (numItems > 1)
                 {
-                    // remove popup
-                    pPopup->DeleteMenu(0, MF_BYPOSITION);
-                }
-                else
-                {
-                    CMenu* pSubPopup = pPopup->GetSubMenu(0);
-                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
-                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+                    if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                    {
+                        pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                    }
                 }
             }
-            else
+
+            if (!CurrItem->isUpgradablePotion())
             {
-                CMenu* pSubPopup = pPopup->GetSubMenu(0);
-                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
-                if (!CurrItem->isUpgradableToFullRejuvenationPotion())
-                {
-                    pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
-                }
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
+            }
+
+            if (!CurrItem->isUpgradableToFullRejuvenationPotion())
+            {
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_REJUVENATION, MF_BYCOMMAND);
             }
         }
 
@@ -2352,7 +2989,18 @@ void CD2ItemsForm::OnItemContextFix()
     }
 
     MainForm.repairItem(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextFixallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = repairAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been fixed");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextLoad()
@@ -2363,7 +3011,18 @@ void CD2ItemsForm::OnItemContextLoad()
     }
 
     MainForm.setItemMaxQuantity(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextMaxfillstackables()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = fillAllStackables(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumStatckedItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been fully filled");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextMaxdurability()
@@ -2374,7 +3033,18 @@ void CD2ItemsForm::OnItemContextMaxdurability()
     }
 
     MainForm.setItemMaxDurability(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextMaxdurabilityforallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = maxDurabilityAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been given the highest durability value");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextIndestructible()
@@ -2385,7 +3055,18 @@ void CD2ItemsForm::OnItemContextIndestructible()
     }
 
     MainForm.setItemIndestructible(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextIndestructibleforallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = setIndestructibleAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been change to be indestructible");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextAddsocket()
@@ -2395,8 +3076,11 @@ void CD2ItemsForm::OnItemContextAddsocket()
         return;
     }
 
-    MainForm.addItemSocket(*CurrItem);
-    CurrItem = nullptr;
+    if (MainForm.addItemSocket(*CurrItem))
+    {
+        refreshGrid(*CurrItem);
+    }
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextMaxsockets()
@@ -2406,8 +3090,22 @@ void CD2ItemsForm::OnItemContextMaxsockets()
         return;
     }
 
-    MainForm.setItemMaxSocketCount(*CurrItem);
-    CurrItem = nullptr;
+    if (MainForm.setItemMaxSocketCount(*CurrItem))
+    {
+        refreshGrid(*CurrItem);
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextMaxsocketsforallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = maxSocketCountAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been given the highest number of sockets");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextPersonalize()
@@ -2418,7 +3116,7 @@ void CD2ItemsForm::OnItemContextPersonalize()
     }
 
     MainForm.personalizeItem(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextRemovePersonalization()
@@ -2429,7 +3127,7 @@ void CD2ItemsForm::OnItemContextRemovePersonalization()
     }
 
     MainForm.removeItemPersonalization(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextUpgradeGem()
@@ -2440,7 +3138,18 @@ void CD2ItemsForm::OnItemContextUpgradeGem()
     }
 
     upgradeGem(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradeGems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = upgradeGems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumGemsChangedMessage(numChanged, filter));
+    msg += _T(" have been upgraded to perfect state");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextUpgradePotion()
@@ -2451,7 +3160,18 @@ void CD2ItemsForm::OnItemContextUpgradePotion()
     }
 
     upgradePotion(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradePotions()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = upgradePotions(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumPotionsChangedMessage(numChanged, filter));
+    msg += _T(" have been upgraded to their highest level");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextUpgradeRejuvenation()
@@ -2462,21 +3182,32 @@ void CD2ItemsForm::OnItemContextUpgradeRejuvenation()
     }
 
     upgradeToFullRejuvenationPotion(*CurrItem);
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradeRejuvenations()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = upgradeRejuvenationPotions(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumPotionsChangedMessage(numChanged, filter));
+    msg += _T(" have been upgraded to Full Rejuvenation potions");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextGpsConvertor()
 {
-    CD2GemsForm dlg(*this, CurrItem);
+    CD2GemsForm dlg(*this);
     dlg.DoModal();
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextGpsCreator()
 {
-    CD2AddGemsForm dlg(*this, CurrItem);
+    CD2AddGemsForm dlg(*this);
     dlg.DoModal();
-    CurrItem = nullptr;
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnClickedInvWeaponRadio()
@@ -2496,5 +3227,3 @@ void CD2ItemsForm::OnClickedInvWeaponRadio()
     InvCorpseHandLeftBox.SetUseAltImage(IsWeaponII);
     InvCorpseHandLeftBox.RedrawWindow();
 }
-//---------------------------------------------------------------------------
-

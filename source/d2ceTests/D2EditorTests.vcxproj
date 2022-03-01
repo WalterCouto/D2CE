@@ -166,6 +166,7 @@
     <ClCompile Include="..\d2ce\helpers\ItemHelpers.cpp" />
     <ClCompile Include="..\d2ce\Item.cpp" />
     <ClCompile Include="..\d2ce\Mercenary.cpp" />
+    <ClCompile Include="..\d2ce\SharedStash.cpp" />
     <ClCompile Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -207,6 +208,7 @@
     <ClInclude Include="..\d2ce\ItemConstants.h" />
     <ClInclude Include="..\d2ce\Mercenary.h" />
     <ClInclude Include="..\d2ce\MercenaryConstants.h" />
+    <ClInclude Include="..\d2ce\SharedStash.h" />
     <ClInclude Include="..\d2ce\SkillConstants.h" />
     <ClInclude Include="..\d2ce\thirdparty\jsoncpp\include\json\allocator.h" />
     <ClInclude Include="..\d2ce\thirdparty\jsoncpp\include\json\assertions.h" />
@@ -825,6 +827,36 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\examples\chars\97\Spartacus_II.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Loradiel.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\97\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\97\Loradiel.json">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\97\"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\97\</Message>

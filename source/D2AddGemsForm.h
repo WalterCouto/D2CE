@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------
 #include "D2MainForm.h"
 #include "D2ItemsForm.h"
+#include "D2SharedStashForm.h"
 
 //---------------------------------------------------------------------------
 class CD2AddGemsForm : public CDialogEx
@@ -30,7 +31,8 @@ class CD2AddGemsForm : public CDialogEx
 
 public:
 	CD2AddGemsForm(CD2MainForm& form);
-    CD2AddGemsForm(CD2ItemsForm& form, d2ce::Item* itemPtr = nullptr);
+    CD2AddGemsForm(CD2ItemsForm& form);
+    CD2AddGemsForm(CD2SharedStashForm& form);
 	virtual ~CD2AddGemsForm();
 
 // Dialog Data
@@ -48,6 +50,7 @@ private:
     std::map<size_t, std::uint64_t> GemIdxMap;
     std::map<std::uint64_t, size_t> NumGemMap;
     CD2ItemsForm* ItemsFormPtr = nullptr;
+    CD2SharedStashForm* SharedStashFormPtr = nullptr;
     d2ce::Item * ItemPtr = nullptr;
 
 public:
