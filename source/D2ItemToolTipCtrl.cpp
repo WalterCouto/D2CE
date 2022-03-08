@@ -91,29 +91,49 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     enum { WHITE = 0, BLUE, GREEN, RARE, UNIQUE, CRAFT, RED, GRAY };
 
     // Get color of top text
-    COLORREF color = CurrItem->isIdentified() ? (CurrItem->isEthereal() ? colors[GRAY] : colors[WHITE]) : colors[RED];
-    switch (CurrItem->getQuality())
+    COLORREF color = colors[WHITE];
+    if (CurrItem->isIdentified())
     {
-    case d2ce::EnumItemQuality::MAGIC:
-        color = colors[BLUE];
-        break;
+        if (CurrItem->isEthereal())
+        {
+            color = colors[GRAY];
+        }
+        else if (CurrItem->isQuestItem())
+        {
+            color = colors[UNIQUE];
+        }
+        else if (CurrItem->isRune())
+        {
+            color = colors[CRAFT];
+        }
 
-    case d2ce::EnumItemQuality::SET:
-        color = colors[GREEN];
-        break;
+        switch (CurrItem->getQuality())
+        {
+        case d2ce::EnumItemQuality::MAGIC:
+            color = colors[BLUE];
+            break;
 
-    case d2ce::EnumItemQuality::RARE:
-        color = colors[RARE];
-        break;
+        case d2ce::EnumItemQuality::SET:
+            color = colors[GREEN];
+            break;
 
-    case d2ce::EnumItemQuality::UNIQUE:
-        color = colors[UNIQUE];
-        break;
+        case d2ce::EnumItemQuality::RARE:
+            color = colors[RARE];
+            break;
 
-    case d2ce::EnumItemQuality::CRAFT:
-    case d2ce::EnumItemQuality::TEMPERED:
-        color = colors[CRAFT];
-        break;
+        case d2ce::EnumItemQuality::UNIQUE:
+            color = colors[UNIQUE];
+            break;
+
+        case d2ce::EnumItemQuality::CRAFT:
+        case d2ce::EnumItemQuality::TEMPERED:
+            color = colors[CRAFT];
+            break;
+        }
+    }
+    else
+    {
+        color = colors[RED];
     }
     pDC->SetTextColor(color);
 

@@ -1727,7 +1727,7 @@ bool d2ce::Character::writeStats()
 //---------------------------------------------------------------------------
 bool d2ce::Character::writeItems()
 {
-    return m_items.writeItems(m_charfile, isExpansionCharacter());
+    return m_items.writeItems(m_charfile, isExpansionCharacter(), hasMercenary());
 }
 //---------------------------------------------------------------------------
 /*
@@ -1758,7 +1758,7 @@ void d2ce::Character::writeTempFile()
     Cs.writeStats(tempfile);
 
     // Write Character, Corpse, Mercenary and Golem m_items
-    m_items.writeItems(tempfile, isExpansionCharacter());
+    m_items.writeItems(tempfile, isExpansionCharacter(), hasMercenary());
     std::fclose(tempfile);
 }
 //---------------------------------------------------------------------------
@@ -2096,6 +2096,11 @@ std::error_code d2ce::Character::getLastError() const
 std::uint32_t d2ce::Character::getFileSize() const
 {
     return FileSize;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::hasMercenary() const
+{
+    return Merc.isHired();
 }
 //---------------------------------------------------------------------------
 d2ce::Mercenary& d2ce::Character::getMercenaryInfo()

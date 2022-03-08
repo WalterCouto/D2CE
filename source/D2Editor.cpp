@@ -18,10 +18,11 @@
 
 Revision History
 ================
-Version 2.14 (Mar 7, 2022)
+Version 2.14 (Mar 11, 2022)
    - Updated: Updated jewel alternate images.
    - Updated: Updated item context menus across forms showing
               items.
+   - Updated: Fixed hiring of new mercenary to properly save items.
 
    - Added: Shared Stash support. Users can now view and edit
             items in the shared stash if the file is present in the

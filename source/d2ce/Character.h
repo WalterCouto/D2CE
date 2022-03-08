@@ -151,6 +151,7 @@ namespace d2ce
         std::uint32_t getFileSize() const;
 
         // Mercenary Info
+        bool hasMercenary() const;
         Mercenary& getMercenaryInfo();
         const std::list<d2ce::Item>& getMercItems() const;
 

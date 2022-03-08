@@ -11862,7 +11862,7 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         }
     }
 
-    // lock ahead for no merc case
+    // look ahead for no merc case
     bool bHasMercId = true;
     if (!feof(charfile))
     {
@@ -11884,6 +11884,7 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         {
             return;
         }
+        isMercHired = true;
     }
 
     readGolemItem(charfile);
@@ -11982,6 +11983,7 @@ void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat,
         std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
         std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
         merc_location = std::ftell(charfile);
+        isMercHired = true;
         for (auto& item : MercItems)
         {
             if (!item.writeItem(charfile))
@@ -12179,11 +12181,11 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile)
 
     std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
     NumOfMercItems = (std::uint16_t)MercItems.size();
-    if (merc_location != 0)
+    if (NumOfMercItems > 0 || isMercHired)
     {
+        isMercHired = true;
         std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
         std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
-        merc_location = std::ftell(charfile);
         for (auto& item : MercItems)
         {
             if (!item.writeItem(charfile))
@@ -12215,6 +12217,7 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
     Version = version;
     update_locations = items_location == 0 ? true : false;
     isFileExpansionCharacter = isExpansion;
+    isMercHired = false;
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
@@ -12241,6 +12244,7 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
     Version = version;
     update_locations = items_location == 0 ? true : false;
     isFileExpansionCharacter = false;
+    isMercHired = false;
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
@@ -12261,6 +12265,7 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, Enu
     Version = version;
     update_locations = true;
     isFileExpansionCharacter = isExpansion;
+    isMercHired = false;
     if (!readItems(root, bSerializedFormat, charfile, items_location, NumOfItems, Inventory) || items_location == 0)
     {
         return false;
@@ -12279,9 +12284,10 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, Enu
 }
 //---------------------------------------------------------------------------
 // write items in place at offset saved from reasding
-bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion)
+bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMercID)
 {
     isFileExpansionCharacter = isExpansion;
+    isMercHired = !MercItems.empty() | hasMercID;
 
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
@@ -12551,6 +12557,7 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
 
     update_locations = other.update_locations;
     isFileExpansionCharacter = other.isFileExpansionCharacter;
+    isMercHired = other.isMercHired;
 
     // refetch references to items
     GPSs.clear();
@@ -12605,6 +12612,7 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
 
     update_locations = std::exchange(other.update_locations, true);
     isFileExpansionCharacter = std::exchange(other.isFileExpansionCharacter, false);
+    isMercHired = std::exchange(other.isMercHired, false);
     return *this;
 }
 //---------------------------------------------------------------------------

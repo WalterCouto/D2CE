@@ -321,6 +321,7 @@ namespace d2ce
 
         bool update_locations = true;
         bool isFileExpansionCharacter = false;
+        bool isMercHired = false;
 
     private:
         void findItems();
@@ -348,7 +349,7 @@ namespace d2ce
         bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
         bool readSharedStashPage(EnumCharVersion version, std::FILE* charfile);
         bool readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
-        bool writeItems(std::FILE* charfile, bool isExpansion = false);
+        bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false);
         bool writeSharedStashPage(std::FILE* charfile);
 
         void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;

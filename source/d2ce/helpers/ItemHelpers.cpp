@@ -1087,7 +1087,7 @@ namespace d2ce
             {"bbb", {"Lam Esen's Tome", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invbbb", 0, {"Quest"}}},
             {"mbr", {"Mephisto's Brain", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invbrnz", 0, {"Quest"}}},
             {"luv", {"Mephisto's Key", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 2}, false, "invmph", 0, {"Key", "Miscellaneous", "Quest"}}},
-            {"mss", {"Mephisto's Soul Stone", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmss", 0, {"Quest"}}},
+            {"mss", {"Mephisto's Soulstone", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invmss", 0, {"Quest"}}},
             {"ass", {"Book of Skill", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {2, 2}, false, "invsbk", 0, {"Quest"}}},
             {"rin", {"Ring", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invrin", 0, {"Ring", "Miscellaneous"}}},
             {"xyz", {"Potion of Life", {{ 0, 0 }, false, false, { 0, 0 }}, {0, 0}, {1, 1}, false, "invxyz", 0, {"Quest"}}},

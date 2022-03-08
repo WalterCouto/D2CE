@@ -77,6 +77,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 **Version 2.14 (Mar 7, 2022)**
 - Updated: Updated jewel alternate images.<br>
 - Updated: Updated item context menus across forms showing items.<br>
+- Updated: Fixed hiring of new mercenary to properly save items.<br>
 <br>
 
 - Added: Shared Stash support. Users can now view and edit items in the shared stash if the file is present in the same location as their character.<br>
