@@ -74,7 +74,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.14 (Mar 7, 2022)**
+**Version 2.14 (Mar 11, 2022)**
 - Updated: Updated jewel alternate images.<br>
 - Updated: Updated item context menus across forms showing items.<br>
 - Updated: Fixed hiring of new mercenary to properly save items.<br>
