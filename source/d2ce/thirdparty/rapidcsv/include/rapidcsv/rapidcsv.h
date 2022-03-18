@@ -125,9 +125,11 @@ namespace rapidcsv
     void ToStr(const T& pVal, std::string& pStr) const
     {
       if (typeid(T) == typeid(int) ||
+          typeid(T) == typeid(short) ||
           typeid(T) == typeid(long) ||
           typeid(T) == typeid(long long) ||
           typeid(T) == typeid(unsigned) ||
+          typeid(T) == typeid(unsigned short) ||
           typeid(T) == typeid(unsigned long) ||
           typeid(T) == typeid(unsigned long long) ||
           typeid(T) == typeid(float) ||
@@ -159,6 +161,11 @@ namespace rapidcsv
           pVal = static_cast<T>(std::stoi(pStr));
           return;
         }
+        else if (typeid(T) == typeid(short))
+        {
+            pVal = static_cast<T>(std::stol(pStr));
+            return;
+        }
         else if (typeid(T) == typeid(long))
         {
           pVal = static_cast<T>(std::stol(pStr));
@@ -173,6 +180,11 @@ namespace rapidcsv
         {
           pVal = static_cast<T>(std::stoul(pStr));
           return;
+        }
+        else if (typeid(T) == typeid(unsigned short))
+        {
+            pVal = static_cast<T>(std::stoul(pStr));
+            return;
         }
         else if (typeid(T) == typeid(unsigned long))
         {

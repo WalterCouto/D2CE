@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CppUnitTest.h"
 #include <algorithm>
 
@@ -18,413 +18,324 @@ namespace D2EditorTests
         return data;
     }
 
-    static::std::string GetTempPathName()
+    static const std::filesystem::path& GetTempPathName()
     {
-        static std::string tempPath;
+        static std::filesystem::path tempPath;
         if (tempPath.empty())
         {
-            std::stringstream ss;
-            ss << std::filesystem::temp_directory_path().string() << "D2CE";
-            tempPath = ss.str();
+            tempPath = std::filesystem::temp_directory_path() / L"D2CE";
             std::filesystem::create_directories(tempPath);
         }
 
         return tempPath;
     }
 
-    static std::string GetCharBaseTempPathName()
+    static const std::filesystem::path& GetCharBaseTempPathName()
     {
-        static std::string charBaseTempPath;
+        static std::filesystem::path charBaseTempPath;
         if (charBaseTempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetTempPathName() << "\\char";
-            charBaseTempPath = ss.str();
+            charBaseTempPath = GetTempPathName() / L"char";
             std::filesystem::create_directories(charBaseTempPath);
         }
 
         return charBaseTempPath;
     }
 
-    static std::string GetChar71TempPathName()
+    static const std::filesystem::path& GetChar71TempPathName()
     {
-        static std::string char71TempPath;
+        static std::filesystem::path char71TempPath;
         if (char71TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\71";
-            char71TempPath = ss.str();
+            char71TempPath = GetCharBaseTempPathName() / L"71";
             std::filesystem::create_directories(char71TempPath);
         }
 
         return char71TempPath;
     }
 
-    static std::string GetChar87TempPathName()
+    static const std::filesystem::path& GetChar87TempPathName()
     {
-        static std::string char87TempPath;
+        static std::filesystem::path char87TempPath;
         if (char87TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\87";
-            char87TempPath = ss.str();
+            char87TempPath = GetCharBaseTempPathName() / L"87";
             std::filesystem::create_directories(char87TempPath);
         }
 
         return char87TempPath;
     }
 
-    static std::string GetChar89TempPathName()
+    static const std::filesystem::path& GetChar89TempPathName()
     {
-        static std::string char89TempPath;
+        static std::filesystem::path char89TempPath;
         if (char89TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\89";
-            char89TempPath = ss.str();
+            char89TempPath = GetCharBaseTempPathName() / L"89";
             std::filesystem::create_directories(char89TempPath);
         }
 
         return char89TempPath;
     }
 
-    static std::string GetChar92TempPathName()
+    static const std::filesystem::path& GetChar92TempPathName()
     {
-        static std::string char92TempPath;
+        static std::filesystem::path char92TempPath;
         if (char92TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\92";
-            char92TempPath = ss.str();
+            char92TempPath = GetCharBaseTempPathName() / L"92";
             std::filesystem::create_directories(char92TempPath);
         }
 
         return char92TempPath;
     }
 
-    static std::string GetChar96TempPathName()
+    static const std::filesystem::path& GetChar96TempPathName()
     {
-        static std::string char96TempPath;
+        static std::filesystem::path char96TempPath;
         if (char96TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\96";
-            char96TempPath = ss.str();
+            char96TempPath = GetCharBaseTempPathName() / L"96";
             std::filesystem::create_directories(char96TempPath);
         }
 
         return char96TempPath;
     }
 
-    static std::string GetChar97TempPathName()
+    static const std::filesystem::path& GetChar97TempPathName()
     {
-        static std::string char97TempPath;
+        static std::filesystem::path char97TempPath;
         if (char97TempPath.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBaseTempPathName() << "\\97";
-            char97TempPath = ss.str();
+            char97TempPath = GetCharBaseTempPathName() / L"97";
             std::filesystem::create_directories(char97TempPath);
         }
 
         return char97TempPath;
     }
 
-    static std::string GetPathName()
+    static const std::filesystem::path& GetChar98TempPathName()
     {
-        static std::string modulePathName;
-        if (modulePathName.empty())
+        static std::filesystem::path char98TempPath;
+        if (char98TempPath.empty())
         {
+            char98TempPath = GetCharBaseTempPathName() / L"98";
+            std::filesystem::create_directories(char98TempPath);
+        }
+
+        return char98TempPath;
+    }
+
+    static const std::filesystem::path& GetCharTempPathName(d2ce::EnumCharVersion version)
+    {
+        switch (version)
+        {
+        case d2ce::EnumCharVersion::v100:
+            return GetChar71TempPathName();
+
+        case d2ce::EnumCharVersion::v107:
+            return GetChar87TempPathName();
+
+        case d2ce::EnumCharVersion::v108:
+            return GetChar89TempPathName();
+
+        case d2ce::EnumCharVersion::v109:
+            return GetChar92TempPathName();
+
+        case d2ce::EnumCharVersion::v110:
+            return GetChar96TempPathName();
+
+        case d2ce::EnumCharVersion::v115:
+            return GetChar97TempPathName();
+
+        default:
+            return GetChar98TempPathName();
+        }
+    }
+
+    static const std::filesystem::path& GetPathName()
+    {
+        static std::filesystem::path modulePath;
+        if (modulePath.empty())
+        {
+            std::wstring modulePathName;
             HMODULE hm = NULL;
-            if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+            if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                 GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                (LPSTR)&GetPathName, &hm) == 0)
+                (LPWSTR)&GetPathName, &hm) == 0)
             {
-                return "";
+                return modulePath;
             }
 
-            char cstr[2048];
-            DWORD dw = ::GetModuleFileNameA(hm, cstr, 2048);
+            wchar_t cstr[2048];
+            DWORD dw = ::GetModuleFileNameW(hm, cstr, 2048);
             if (dw != 0)
             {
                 // Remove the DLL's name from the path.
                 modulePathName = cstr;
-                size_t index = modulePathName.find_last_of("\\");
+                size_t index = modulePathName.find_last_of(L"\\");
                 if (index != modulePathName.npos)
                 {
-                    modulePathName = modulePathName.substr(0, index);
+                    modulePath = modulePathName.substr(0, index);
+
                 }
             }
         }
 
-        return modulePathName;
+        return modulePath;
     }
 
-    static::std::string GetCharBasePathName()
+    static const std::filesystem::path& GetCharBasePathName()
     {
-        static std::string charBasePath;
+        static std::filesystem::path charBasePath;
         if (charBasePath.empty())
         {
-            std::stringstream ss;
-            ss << GetPathName() << "\\examples\\char";
-            charBasePath = ss.str();
+            charBasePath = GetPathName() / L"examples" / L"char";
         }
 
         return charBasePath;
     }
 
-    static std::string GetChar71PathName()
+    static const std::filesystem::path& GetChar71PathName()
     {
-        static std::string char71Path;
+        static std::filesystem::path char71Path;
         if (char71Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\71";
-            char71Path = ss.str();
+            char71Path = GetCharBasePathName() / L"71";
         }
 
         return char71Path;
     }
 
-    static std::string GetChar87PathName()
+    static const std::filesystem::path& GetChar87PathName()
     {
-        static std::string char87Path;
+        static std::filesystem::path char87Path;
         if (char87Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\87";
-            char87Path = ss.str();
+            char87Path = GetCharBasePathName() / L"87";
         }
 
         return char87Path;
     }
 
-    static std::string GetChar89PathName()
+    static const std::filesystem::path& GetChar89PathName()
     {
-        static std::string char89Path;
+        static std::filesystem::path char89Path;
         if (char89Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\89";
-            char89Path = ss.str();
+            char89Path = GetCharBasePathName() / L"89";
         }
 
         return char89Path;
     }
 
-    static std::string GetChar92PathName()
+    static const std::filesystem::path& GetChar92PathName()
     {
-        static std::string char92Path;
+        static std::filesystem::path char92Path;
         if (char92Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\92";
-            char92Path = ss.str();
+            char92Path = GetCharBasePathName() / L"92";
         }
 
         return char92Path;
     }
 
-    static std::string GetChar96PathName()
+    static const std::filesystem::path& GetChar96PathName()
     {
-        static std::string char96Path;
+        static std::filesystem::path char96Path;
         if (char96Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\96";
-            char96Path = ss.str();
+            char96Path = GetCharBasePathName() / L"96";
         }
 
         return char96Path;
     }
 
-    static std::string GetChar97PathName()
+    static const std::filesystem::path& GetChar97PathName()
     {
-        static std::string char97Path;
+        static std::filesystem::path char97Path;
         if (char97Path.empty())
         {
-            std::stringstream ss;
-            ss << GetCharBasePathName() << "\\97";
-            char97Path = ss.str();
+            char97Path = GetCharBasePathName() / L"97";
         }
 
         return char97Path;
     }
 
-    static bool LoadChar71File(const char* fileName, d2ce::Character& character, bool /*validateChecksum*/)
+    static const std::filesystem::path& GetChar98PathName()
     {
-        std::stringstream ss;
-        ss << GetChar71PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), false);
-    }
-
-    static bool LoadChar87File(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::stringstream ss;
-        ss << GetChar87PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), validateChecksum);
-    }
-
-    static bool LoadChar89File(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::stringstream ss;
-        ss << GetChar89PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), validateChecksum);
-    }
-
-    static bool LoadChar92File(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::stringstream ss;
-        ss << GetChar92PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), validateChecksum);
-    }
-
-    static bool LoadChar96File(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::stringstream ss;
-        ss << GetChar96PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), validateChecksum);
-    }
-
-    static bool LoadChar97File(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::stringstream ss;
-        ss << GetChar97PathName() << "\\" << fileName;
-        return character.open(ss.str().c_str(), validateChecksum);
-    }
-
-    static bool LoadChar71TempFile(const char* fileName, d2ce::Character& character, bool /*validateChecksum*/)
-    {
-        std::string tempFile;
+        static std::filesystem::path char98Path;
+        if (char98Path.empty())
         {
-            std::stringstream ss;
-            ss << GetChar71TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
+            char98Path = GetCharBasePathName() / L"98";
         }
 
-        std::string origFile;
+        return char98Path;
+    }
+
+    static const std::filesystem::path& GetCharPathName(d2ce::EnumCharVersion version)
+    {
+        switch (version)
         {
-            std::stringstream ss;
-            ss << GetChar71PathName() << "\\" << fileName;
-            origFile = ss.str();
+        case d2ce::EnumCharVersion::v100:
+            return GetChar71PathName();
+
+        case d2ce::EnumCharVersion::v107:
+            return GetChar87PathName();
+
+        case d2ce::EnumCharVersion::v108:
+            return GetChar89PathName();
+
+        case d2ce::EnumCharVersion::v109:
+            return GetChar92PathName();
+
+        case d2ce::EnumCharVersion::v110:
+            return GetChar96PathName();
+
+        case d2ce::EnumCharVersion::v115:
+            return GetChar97PathName();
+
+        default:
+            return GetChar98PathName();
         }
+    }
+
+    static bool LoadCharFile(const std::filesystem::path& fileName, d2ce::Character& character, d2ce::EnumCharVersion version, bool /*validateChecksum*/)
+    {
+        std::filesystem::path p = GetCharPathName(version) / fileName;
+        return character.open(p, false);
+    }
+
+    static bool LoadCharTempFile(const char* fileName, d2ce::Character& character, d2ce::EnumCharVersion version, bool validateChecksum)
+    {
+        switch (version)
+        {
+        case d2ce::EnumCharVersion::v100:
+            validateChecksum = false; // checksum not used
+            break;
+        }
+
+        std::filesystem::path tempFile = GetCharTempPathName(version) / fileName;
+        std::filesystem::path origFile = GetCharPathName(version) / fileName;
         std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
         std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), false);
+        return character.open(tempFile, validateChecksum);
     }
 
-    static bool LoadChar87TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::string tempFile;
-        {
-            std::stringstream ss;
-            ss << GetChar87TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
-        }
-
-        std::string origFile;
-        {
-            std::stringstream ss;
-            ss << GetChar87PathName() << "\\" << fileName;
-            origFile = ss.str();
-        }
-        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
-        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), validateChecksum);
-    }
-
-    static bool LoadChar89TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::string tempFile;
-        {
-            std::stringstream ss;
-            ss << GetChar89TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
-        }
-
-        std::string origFile;
-        {
-            std::stringstream ss;
-            ss << GetChar89PathName() << "\\" << fileName;
-            origFile = ss.str();
-        }
-        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
-        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), validateChecksum);
-    }
-
-    static bool LoadChar92TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::string tempFile;
-        {
-            std::stringstream ss;
-            ss << GetChar92TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
-        }
-
-        std::string origFile;
-        {
-            std::stringstream ss;
-            ss << GetChar92PathName() << "\\" << fileName;
-            origFile = ss.str();
-        }
-        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
-        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), validateChecksum);
-    }
-
-    static bool LoadChar96TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::string tempFile;
-        {
-            std::stringstream ss;
-            ss << GetChar96TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
-        }
-
-        std::string origFile;
-        {
-            std::stringstream ss;
-            ss << GetChar96PathName() << "\\" << fileName;
-            origFile = ss.str();
-        }
-        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
-        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), validateChecksum);
-    }
-
-    static bool LoadChar97TempFile(const char* fileName, d2ce::Character& character, bool validateChecksum)
-    {
-        std::string tempFile;
-        {
-            std::stringstream ss;
-            ss << GetChar97TempPathName() << "\\" << fileName;
-            tempFile = ss.str();
-        }
-
-        std::string origFile;
-        {
-            std::stringstream ss;
-            ss << GetChar97PathName() << "\\" << fileName;
-            origFile = ss.str();
-        }
-        std::filesystem::copy_file(origFile, tempFile, std::filesystem::copy_options::update_existing);
-        std::filesystem::permissions(tempFile, std::filesystem::perms::owner_all, std::filesystem::perm_options::add);
-        return character.open(tempFile.c_str(), validateChecksum);
-    }
-
-    static std::string GetChar71ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
+    static std::string GetCharExpectedJsonOutput(const d2ce::Character& character, d2ce::EnumCharVersion version, bool bSerializedFormat = false)
     {
         std::stringstream ss;
-        ss << GetChar71PathName() << "\\" << character.getName().data();
+        ss << character.getName().data();
         if (bSerializedFormat)
         {
             ss << "_serialized";
         }
         ss << ".json";
 
+        std::filesystem::path expectedPath = GetCharPathName(version) / std::filesystem::u8path(ss.str());
+
 #ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
+        std::ifstream expectedFile(expectedPath, std::ios::binary);
 #else
         std::ifstream expectedFile(expectedPath, std::ios::binary);
 #endif
@@ -433,144 +344,18 @@ namespace D2EditorTests
         return ConvertNewLines(text);
     }
 
-    static std::string GetChar71ExpectedSerialzedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
+    void TestOpenBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum)
     {
-        std::stringstream ss;
-        ss << GetChar71PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
+        d2ce::Character character;
+        Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
     }
 
-    static std::string GetChar87ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
+    void TestJsonExportBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum, bool serialized = false)
     {
-        std::stringstream ss;
-        ss << GetChar87PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss <<  ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
-    }
-
-    static std::string GetChar87ExpectedSerialzedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
-    {
-        std::stringstream ss;
-        ss << GetChar87PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
-    }
-
-    static std::string GetChar89ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
-    {
-        std::stringstream ss;
-        ss << GetChar89PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
-    }
-
-    static std::string GetChar92ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
-    {
-        std::stringstream ss;
-        ss << GetChar92PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
-    }
-
-    static std::string GetChar96ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
-    {
-        std::stringstream ss;
-        ss << GetChar96PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
-    }
-
-    static std::string GetChar97ExpectedJsonOutput(const d2ce::Character& character, bool bSerializedFormat = false)
-    {
-        std::stringstream ss;
-        ss << GetChar97PathName() << "\\" << character.getName().data();
-        if (bSerializedFormat)
-        {
-            ss << "_serialized";
-        }
-        ss << ".json";
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(ss.str(), std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
+        d2ce::Character character;
+        Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
+        auto json = character.asJson(serialized);
+        Assert::AreEqual(ConvertNewLines(json), GetCharExpectedJsonOutput(character, version, serialized));
     }
 
     TEST_CLASS(D2EditorTests)
@@ -584,455 +369,540 @@ namespace D2EditorTests
 
 		TEST_METHOD(TestOpen01)
 		{
-			d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Merlina.d2s", character, true));
+            TestOpenBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
 		}
 
         TEST_METHOD(TestOpen02)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Walter.d2s", character, true));
+            TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestOpen03)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
+            TestOpenBase("WhirlWind.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestOpen04)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
+            TestOpenBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestOpen05)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
+            TestOpenBase("testtt.d2s", d2ce::EnumCharVersion::v107, true);
         }
 
         TEST_METHOD(TestOpen06)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
+            TestOpenBase("fddfss.d2s", d2ce::EnumCharVersion::v108, true);
         }
 
         TEST_METHOD(TestOpen07)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
+            TestOpenBase("afa.d2s", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestOpen08)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
+            TestOpenBase("sdfsf.d2s", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestOpen09)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
+            TestOpenBase("MfBowzon.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestOpen10)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("test.d2s", character, true));
+            TestOpenBase("test.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestOpen11)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Fist_YoU.d2s", character, true));
+            TestOpenBase("Fist_YoU.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestOpen12)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("FukK_U.d2s", character, true));
+            TestOpenBase("FukK_U.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestOpen13)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Amazon.d2s", character, true));
+            TestOpenBase("Amazon.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen14)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Barbarian.d2s", character, true));
+            TestOpenBase("Barbarian.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen15)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Bow.d2s", character, true));
+            TestOpenBase("Bow.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen16)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Necromancer.d2s", character, true));
+            TestOpenBase("Necromancer.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen17)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Paladin.d2s", character, true));
+            TestOpenBase("Paladin.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen18)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Sorceress.d2s", character, true));
+            TestOpenBase("Sorceress.d2s", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestOpen19)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Spartacus.d2s", character, true));
+            TestOpenBase("Spartacus.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestOpen20)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Spartacus_II.d2s", character, true));
+            TestOpenBase("Spartacus_II.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestOpen21)
         {
             // This character has the realm data of size 128 bits
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Loradiel.d2s", character, true));
+            TestOpenBase("Loradiel.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
+        TEST_METHOD(TestOpen22)
+        {
+            TestOpenBase("Amazona.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen23)
+        {
+            TestOpenBase("Amazonb.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen24)
+        {
+            TestOpenBase("Amazonc.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen25)
+        {
+            TestOpenBase("Amazond.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen26)
+        {
+            TestOpenBase("Amazone.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen27)
+        {
+            TestOpenBase("Amazonf.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen28)
+        {
+            TestOpenBase("Amazong.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen29)
+        {
+            TestOpenBase("Barbariana.d2s", d2ce::EnumCharVersion::v100, true);
+        }
+
+        TEST_METHOD(TestOpen30)
+        {
+            TestOpenBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen31)
+        {
+            TestOpenBase("Amazon.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen32)
+        {
+            TestOpenBase("Drui.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen33)
+        {
+            TestOpenBase("Nicro.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen34)
+        {
+            TestOpenBase("Rose.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen35)
+        {
+            TestOpenBase("Rui.d2s", d2ce::EnumCharVersion::v116, true);
+        }
+
+        TEST_METHOD(TestOpen36)
+        {
+            TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v116, true);
+        }
         TEST_METHOD(TestJsonExport01)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Merlina.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
+            TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonExport02)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Walter.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
+            TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonExport03)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character));
+            TestJsonExportBase("WhirlWind.d2s", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonExport04)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Scroll_Test.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
+            TestJsonExportBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonExport05)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar87File("testtt.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar87ExpectedJsonOutput(character));
+            TestJsonExportBase("testtt.d2s", d2ce::EnumCharVersion::v107, true);
         }
 
         TEST_METHOD(TestJsonExport06)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar89File("fddfss.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar89ExpectedJsonOutput(character));
+            TestJsonExportBase("fddfss.d2s", d2ce::EnumCharVersion::v108, true);
         }
 
         TEST_METHOD(TestJsonExport07)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("afa.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
+            TestJsonExportBase("afa.d2s", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestJsonExport08)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("sdfsf.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar92ExpectedJsonOutput(character));
+            TestJsonExportBase("sdfsf.d2s", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestJsonExport09)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("MfBowzon.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
+            TestJsonExportBase("MfBowzon.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonExport10)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("test.d2s", character, true));
-            auto json = character.asJson();
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character));
+            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonExport11)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("WhirlWind.d2s", character, true));
-            auto json = character.asJson(true);
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, true));
+            TestJsonExportBase("WhirlWind.d2s", d2ce::EnumCharVersion::v110, true, true);
         }
 
         TEST_METHOD(TestJsonExport12)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("test.d2s", character, true));
-            auto json = character.asJson(true);
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, true));
+            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v115, true, true);
         }
 
         TEST_METHOD(TestJsonExport13)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("DannyIsGreat.d2s", character, true));
-            auto json = character.asJson(true);
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, true));
+            TestJsonExportBase("DannyIsGreat.d2s", d2ce::EnumCharVersion::v115, true, true);
         }
 
         TEST_METHOD(TestJsonExport14)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Fist_YoU.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Fist_YoU.d2s", d2ce::EnumCharVersion::v110, true, false);
         }
 
         TEST_METHOD(TestJsonExport15)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("FukK_U.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar96ExpectedJsonOutput(character, false));
+            TestJsonExportBase("FukK_U.d2s", d2ce::EnumCharVersion::v110, true, false);
         }
 
         TEST_METHOD(TestJsonExport16)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Amazon.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Amazon.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport17)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Barbarian.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Barbarian.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport18)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Bow.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Bow.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport19)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Necromancer.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Necromancer.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport20)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Paladin.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Paladin.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport21)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Sorceress.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar71ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Sorceress.d2s", d2ce::EnumCharVersion::v100, true, false);
         }
 
         TEST_METHOD(TestJsonExport22)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Spartacus.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Spartacus.d2s", d2ce::EnumCharVersion::v115, true, false);
         }
 
         TEST_METHOD(TestJsonExport23)
         {
             // This character has the realm data of size 128 bits
-            d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Loradiel.d2s", character, true));
-            auto json = character.asJson(false);
-            Assert::AreEqual(ConvertNewLines(json), GetChar97ExpectedJsonOutput(character, false));
+            TestJsonExportBase("Loradiel.d2s", d2ce::EnumCharVersion::v115, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport24)
+        {
+            TestJsonExportBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport25)
+        {
+            TestJsonExportBase("Amazon.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport26)
+        {
+            TestJsonExportBase("Drui.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport27)
+        {
+            TestJsonExportBase("Nicro.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport28)
+        {
+            TestJsonExportBase("Rose.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport29)
+        {
+            TestJsonExportBase("Rui.d2s", d2ce::EnumCharVersion::v116, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport30)
+        {
+            TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v116, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Merlina.json", character, true));
+            Assert::IsTrue(LoadCharFile("Merlina.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen02)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Walter.json", character, true));
+            Assert::IsTrue(LoadCharFile("Walter.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen03)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("WhirlWind.json", character, true));
+            Assert::IsTrue(LoadCharFile("WhirlWind.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen04)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Scroll_Test.json", character, true));
+            Assert::IsTrue(LoadCharFile("Scroll_Test.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen05)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar87File("testtt.json", character, true));
+            Assert::IsTrue(LoadCharFile("testtt.json", character, d2ce::EnumCharVersion::v107, true));
         }
 
         TEST_METHOD(TestJsonOpen06)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar89File("fddfss.json", character, true));
+            Assert::IsTrue(LoadCharFile("fddfss.json", character, d2ce::EnumCharVersion::v108, true));
         }
 
         TEST_METHOD(TestJsonOpen07)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("afa.json", character, true));
+            Assert::IsTrue(LoadCharFile("afa.json", character, d2ce::EnumCharVersion::v109, true));
         }
 
         TEST_METHOD(TestJsonOpen08)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar92File("sdfsf.json", character, true));
+            Assert::IsTrue(LoadCharFile("sdfsf.json", character, d2ce::EnumCharVersion::v109, true));
         }
 
         TEST_METHOD(TestJsonOpen09)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("MfBowzon.json", character, true));
+            Assert::IsTrue(LoadCharFile("MfBowzon.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen10)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("test.json", character, true));
+            Assert::IsTrue(LoadCharFile("test.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen11)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("WhirlWind_serialized.json", character, true));
+            Assert::IsTrue(LoadCharFile("WhirlWind_serialized.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen12)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("test_serialized.json", character, true));
+            Assert::IsTrue(LoadCharFile("test_serialized.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen13)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("NokkaSorc.json", character, true));
+            Assert::IsTrue(LoadCharFile("NokkaSorc.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen14)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Complex.json", character, true));
+            Assert::IsTrue(LoadCharFile("Complex.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen15)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("DannyIsGreatII.json", character, true));
+            Assert::IsTrue(LoadCharFile("DannyIsGreatII.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen16)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("Fist_YoU.json", character, true));
+            Assert::IsTrue(LoadCharFile("Fist_YoU.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen17)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96File("FukK_U.json", character, true));
+            Assert::IsTrue(LoadCharFile("FukK_U.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonOpen18)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Necromancer.json", character, true));
+            Assert::IsTrue(LoadCharFile("Necromancer.json", character, d2ce::EnumCharVersion::v100, true));
         }
 
         TEST_METHOD(TestJsonOpen19)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar71File("Bow.json", character, true));
+            Assert::IsTrue(LoadCharFile("Bow.json", character, d2ce::EnumCharVersion::v100, true));
         }
 
         TEST_METHOD(TestJsonOpen20)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Spartacus.json", character, true));
+            Assert::IsTrue(LoadCharFile("Spartacus.json", character, d2ce::EnumCharVersion::v115, true));
         }
 
         TEST_METHOD(TestJsonOpen21)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97File("Loradiel.json", character, true));
+            Assert::IsTrue(LoadCharFile("Loradiel.json", character, d2ce::EnumCharVersion::v115, true));
+        }
+
+        TEST_METHOD(TestJsonOpen22)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazona.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen23)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazonb.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen24)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazonc.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen25)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazond.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen26)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazone.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen27)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazonf.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen28)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Amazong.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen29)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Barbariana.json", character, d2ce::EnumCharVersion::v100, true));
+        }
+
+        TEST_METHOD(TestJsonOpen30)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile(L"任务完成信.json", character, d2ce::EnumCharVersion::v116, true));
+        }
+
+        TEST_METHOD(TestJsonOpen31)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Rui.d2s", character, d2ce::EnumCharVersion::v116, true));
+        }
+
+        TEST_METHOD(TestJsonOpen32)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Drui.d2s", character, d2ce::EnumCharVersion::v116, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar96TempFile("Merlina.d2s", character, true));
+            Assert::IsTrue(LoadCharTempFile("Merlina.d2s", character, d2ce::EnumCharVersion::v110, true));
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "Merlina_Two";
-            std::string expectedTempPath;
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v110);
             {
                 std::stringstream ss;
-                ss << GetChar96TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1040,30 +910,31 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.maxDurabilityAllItems();
             character.fillAllStackables();
             character.upgradePotions();
+            Assert::IsTrue(character.save());
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar96ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v110));
         }
 
         TEST_METHOD(TestJsonTestComplexChange02)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97TempFile("DannyIsGreat.d2s", character, true));
+            Assert::IsTrue(LoadCharTempFile("DannyIsGreat.d2s", character, d2ce::EnumCharVersion::v115, true));
             Assert::IsTrue(character.isGameComplete());
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "DannyIsGreatIII";
-            std::string expectedTempPath;
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
             {
                 std::stringstream ss;
-                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1071,20 +942,22 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setDifficultyComplete(d2ce::EnumDifficulty::Normal);
+            Assert::IsTrue(character.save());
             Assert::IsTrue(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
 
             strNewText = "DannyIsGreatIV";
+            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
             {
                 std::stringstream ss;
-                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1092,19 +965,21 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setGameComplete();
+            Assert::IsTrue(character.save());
             Assert::IsTrue(character.isGameComplete());
             json = character.asJson();
-            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
 
             strNewText = "DannyIsGreatV";
+            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
             {
                 std::stringstream ss;
-                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1112,29 +987,30 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setNoDifficultyComplete();
+            Assert::IsTrue(character.save());
             Assert::IsFalse(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
             json = character.asJson();
-            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 
         TEST_METHOD(TestJsonTestComplexChange03)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97TempFile("Walter.d2s", character, true));
+            Assert::IsTrue(LoadCharTempFile("Walter.d2s", character, d2ce::EnumCharVersion::v115, true));
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "Walter_gem";
-            std::string expectedTempPath;
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
             {
                 std::stringstream ss;
-                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1142,28 +1018,28 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Upgrade Gems
             Assert::AreEqual(character.upgradeGems(), size_t(2));
             Assert::IsTrue(character.save());
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 
         TEST_METHOD(TestJsonTestComplexChange04)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadChar97TempFile("Spartacus.d2s", character, true));
+            Assert::IsTrue(LoadCharTempFile("Spartacus.d2s", character, d2ce::EnumCharVersion::v115, true));
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "Spartacus_II";
-            std::string expectedTempPath;
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
             {
                 std::stringstream ss;
-                ss << GetChar97TempPathName() << "\\" << strNewText << ".d2s";
-                expectedTempPath = ss.str();
+                ss << strNewText << ".d2s";
+                expectedTempPath /= std::filesystem::u8path(ss.str());
                 std::filesystem::remove(expectedTempPath);
             }
 
@@ -1171,13 +1047,13 @@ namespace D2EditorTests
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
             Assert::IsTrue(character.save());
-            Assert::AreEqual(expectedTempPath.c_str(), character.getPathName());
+            Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Upgrade potions
             Assert::AreEqual(character.upgradeRejuvenationPotions(), size_t(26));
             Assert::IsTrue(character.save());
             auto json = character.asJson();
-            Assert::AreEqual(json, GetChar97ExpectedJsonOutput(character));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 	};
 }

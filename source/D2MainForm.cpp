@@ -31,11 +31,14 @@
 #include "D2MercenaryForm.h"
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
-#include "d2ce\ExperienceConstants.h"
-#include "d2ce\Constants.h"
+#include "d2ce/ExperienceConstants.h"
+#include "d2ce/Constants.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 #include "afxdialogex.h"
 #include "resource.h"
 #include <regex>
+#include <winnls.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,6 +46,44 @@
 
 namespace
 {
+    const std::string& GetResourceHeader()
+    {
+        static std::string resourceHeader;
+        if (resourceHeader.empty())
+        {
+            HINSTANCE hInstance = ::GetModuleHandle(NULL);
+            HRSRC hres = ::FindResource(hInstance, MAKEINTRESOURCE(IDR_RESOURCE_HEADER), _T("TEXT"));
+            if (hres == NULL)
+            {
+                return resourceHeader;
+            }
+
+            DWORD dwSizeBytes = ::SizeofResource(hInstance, hres);
+            if (dwSizeBytes == 0)
+            {
+                return resourceHeader;
+            }
+
+            HGLOBAL hglobal = ::LoadResource(hInstance, hres);
+            if (hglobal == NULL)
+            {
+                return resourceHeader;
+            }
+
+            BYTE* pRes = (BYTE*)LockResource(hglobal);
+            if (pRes == nullptr)
+            {
+                ::FreeResource(hglobal);
+                return resourceHeader;
+            }
+
+            resourceHeader.assign((char*)pRes, dwSizeBytes);
+            ::FreeResource(hglobal);
+        }
+
+        return resourceHeader;
+    }
+
     void ScaleImage(CDC* pDC, CBitmap& image, const CRect& rect)
     {
         BITMAP bmp;
@@ -82,7 +123,7 @@ namespace
         button.SetBitmap(image);
     }
 
-    static CD2LevelInfoForm s_levelInfo;
+    static CD2LevelInfoForm* s_pLevelInfo = nullptr;
     CString ExtractFilePath(LPCTSTR fullPath)
     {
         if (fullPath == nullptr)
@@ -177,6 +218,97 @@ namespace
 
         std::filesystem::path p = fullPath;
         return p.replace_extension().c_str();
+    }
+
+    bool HasBackupFile(LPCTSTR fullPath)
+    {
+        if (fullPath == nullptr)
+        {
+            return false;
+        }
+
+        CString temp = (LPCTSTR)fullPath;
+        if (temp.IsEmpty())
+        {
+            return false;
+        }
+
+        std::filesystem::path p = fullPath;
+        auto fileExt = p.extension().wstring();
+        if (fileExt == L".d2s")
+        {
+            p.replace_extension();
+        }
+
+        auto parentPath = p.parent_path();
+        auto filenameMatch = p.filename().wstring() + L".";
+        for (const auto& entry : std::filesystem::directory_iterator(parentPath))
+        {
+            if (entry.is_regular_file())
+            {
+                const auto& full_path = entry.path();
+                if (const auto filename = full_path.filename().wstring(); (filename.find(filenameMatch) == 0) && (filename.rfind(L".bak") == (filename.size() - 4)))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    CString GetLastBackupFile(LPCTSTR fullPath)
+    {
+        if (fullPath == nullptr)
+        {
+            return false;
+        }
+
+        CString temp = (LPCTSTR)fullPath;
+        if (temp.IsEmpty())
+        {
+            return false;
+        }
+
+        std::wstring oldBackupFile;
+        std::set<std::wstring> backupFiles;
+
+        std::filesystem::path p = fullPath;
+        auto fileExt = p.extension().wstring();
+        if (fileExt == L"d2s")
+        {
+            p.replace_extension();
+        }
+
+        std::wstring backupExt(L".bak");
+        auto parentPath = p.parent_path();
+        auto filenameMatch = p.filename().wstring() + L".";
+        for (const auto& entry : std::filesystem::directory_iterator(parentPath))
+        {
+            if (entry.is_regular_file())
+            {
+                const auto& full_path = entry.path();
+                if (const auto filename = full_path.filename().wstring(); (filename.find(filenameMatch) == 0) && (filename.rfind(backupExt) == (filename.size() - backupExt.size())))
+                {
+                    if (filename.rfind(backupExt) == (filenameMatch.length() - 1))
+                    {
+                        // old format
+                        oldBackupFile = full_path.wstring();
+                    }
+                    else
+                    {
+                        backupFiles.insert(full_path.wstring());
+                    }
+                }
+            }
+        }
+
+        if (!backupFiles.empty())
+        {
+            return CString(backupFiles.rbegin()->c_str());
+        }
+
+        return CString(oldBackupFile.c_str());
     }
 
     bool FileExists(LPCTSTR fullPath)
@@ -350,6 +482,11 @@ CCharNameEdit::CCharNameEdit()
 CCharNameEdit::~CCharNameEdit()
 {
 }
+//---------------------------------------------------------------------------
+void CCharNameEdit::SetASCIIOnly(BOOL bFlag)
+{
+    m_bASCII = bFlag;
+}
 
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CCharNameEdit, CEdit)
@@ -364,7 +501,22 @@ END_MESSAGE_MAP()
 //---------------------------------------------------------------------------
 void CCharNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-    if (isalpha(nChar) || nChar == '_' || nChar == '-')
+    switch (nChar)
+    {
+    case VK_CANCEL:
+    case VK_BACK:
+    case VK_PRIOR:
+    case VK_NEXT:
+    case VK_DELETE:
+        __super::OnChar(nChar, nRepCnt, nFlags);
+        return;
+    }
+
+    if ((nChar >= 'a' && nChar <= 'z') || (nChar >= 'A' && nChar <= 'Z') ||
+        nChar == '_' || nChar == '-' || (!m_bASCII &&
+            (nChar == 0x8A || nChar == 0x8C || nChar == 0x8E
+             || nChar == 0x0A || nChar == 0x9C || nChar == 0x9E || nChar == 0x9F
+             || (nChar >= 0xC0 && nChar <= 0xD0) || (nChar >= 0xD8 && nChar <= 0xF6) || nChar >= 0xF8)))
     {
         if (nChar == '_' || nChar == '-')
         {
@@ -385,10 +537,7 @@ void CCharNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
             }
         }
         __super::OnChar(nChar, nRepCnt, nFlags);
-    }
-    else if (nChar == VK_BACK)
-    {
-        __super::OnChar(nChar, nRepCnt, nFlags);
+        return;
     }
 }
 //---------------------------------------------------------------------------
@@ -447,29 +596,12 @@ CString CCharNameEdit::GetValidText(LPCTSTR value) const
         return _T("");
     }
 
-    CString strNewText;
-    CString strText(value);
-    UINT maxSize = GetLimitText();
-
-    // Remove any invalid characters from the number
-    for (UINT iPos = 0, nNewLen = 0, NumberOfUnderscores = 0, nLen = strText.GetLength(); iPos < nLen && nNewLen < maxSize; ++iPos)
-    {
-        TCHAR c = strText[iPos];
-
-        if (isalpha(c))
-        {
-            strNewText += c;
-            ++nNewLen;
-        }
-        else if ((c == '_' || c == '-') && nNewLen != 0 && NumberOfUnderscores < 1)
-        {
-            strNewText += c;
-            ++nNewLen;
-            ++NumberOfUnderscores;
-        }
-    }
-
-    return strNewText.TrimRight(_T("_-"));
+    CStringW wValue(value);
+    auto curName = utf8::utf16to8(reinterpret_cast<const char16_t*>(wValue.GetString()));
+    d2ce::LocalizationHelpers::CheckCharName(curName, (m_bASCII ? true : false));
+    auto uText = utf8::utf8to16(curName);
+    wValue = reinterpret_cast<LPCWSTR>(uText.c_str());
+    return CString(wValue);
 }
 //---------------------------------------------------------------------------
 // CStatsLeftImage
@@ -1050,9 +1182,10 @@ void CD2MainForm::OnSysCommand(UINT nID, LPARAM lParam)
             return;
         }
 
-        if (::IsWindow(s_levelInfo.GetSafeHwnd()))
+        if((s_pLevelInfo != nullptr) && ::IsWindow(s_pLevelInfo->GetSafeHwnd()))
         {
-            s_levelInfo.DestroyWindow();
+            s_pLevelInfo->DestroyWindow();
+            s_pLevelInfo = nullptr;
         }
     }
 
@@ -1440,14 +1573,14 @@ void CD2MainForm::OnOptionsCheckChar()
     CharInfo.fillCharacterStats(cs);
 
     // does a valid level range check
-    if (cs.Level < 1 || cs.Level > d2ce::NUM_OF_LEVELS)
+    if (cs.Level < 1 || cs.Level > cs.MaxLevel)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Level\" amount exceeds the recommended maximum limit.\n")
             _T("Would you like the amount changed to the recommended maximum limit?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            cs.Level = d2ce::NUM_OF_LEVELS;
+            cs.Level = cs.MaxLevel;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             statChanged = true;
@@ -1461,14 +1594,7 @@ void CD2MainForm::OnOptionsCheckChar()
     }
 
     // does a level-experience check
-    std::uint32_t expLevel = d2ce::NUM_OF_LEVELS;
-    std::uint32_t value = (std::uint32_t)ToInt(&Experience);
-    // find the correct level
-    while ((expLevel > 1) && (value < d2ce::MinExpRequired[expLevel - 1]))
-    {
-        --expLevel;
-    }
-
+    std::uint32_t expLevel = getCharacterLevelFromExperience((std::uint32_t)ToInt(&Experience));
     if (expLevel > cs.Level)
     {
         bFoundIssue = true;
@@ -1489,7 +1615,7 @@ void CD2MainForm::OnOptionsCheckChar()
             _T("Would you like experience changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            cs.Experience = d2ce::MinExpRequired[cs.Level - 1];
+            cs.Experience = cs.MinExperienceLevel;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             statChanged = true;
@@ -1497,28 +1623,28 @@ void CD2MainForm::OnOptionsCheckChar()
     }
 
     // does a level-gold check
-    if (ToInt(&GoldInBelt) > cs.getMaxGoldInBelt())
+    if (ToInt(&GoldInBelt) > cs.MaxGoldInBelt)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Gold In Belt\" amount exceeds the maximum limit.\n")
             _T("Would you like the amount changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            cs.GoldInBelt = cs.getMaxGoldInBelt();
+            cs.GoldInBelt = cs.MaxGoldInBelt;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             statChanged = true;
         }
     }
 
-    if (ToInt(&GoldInStash) > cs.getMaxGoldInStash())
+    if (ToInt(&GoldInStash) > cs.MaxGoldInBelt)
     {
         bFoundIssue = true;
         if (AfxMessageBox(_T("\"Gold In Stash\" amount exceeds the maximum limit.\n")
             _T("Would you like the amount changed to match your character's level?"),
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
-            cs.GoldInStash = cs.getMaxGoldInStash();
+            cs.GoldInStash = cs.MaxGoldInStash;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             statChanged = true;
@@ -1656,7 +1782,7 @@ void CD2MainForm::OnOptionsCheckChar()
         if (expLevel > cs.Level)
         {
             bFoundIssue = true;
-            if (expLevel > d2ce::NUM_OF_LEVELS)
+            if (expLevel > cs.MaxLevel)
             {
                 // stats do not make sense
                 if (AfxMessageBox(_T("\"Total Stat Points\" is higher then what can be achieved in the game.\n")
@@ -1725,7 +1851,7 @@ void CD2MainForm::OnOptionsCheckChar()
         if (expLevel > cs.Level)
         {
             bFoundIssue = true;
-            if (expLevel > d2ce::NUM_OF_LEVELS)
+            if (expLevel > cs.MaxLevel)
             {
                 // stats do not make sense
                 if (AfxMessageBox(_T("\"Total Skill Points\" is higher then what can be achieved in the game.\n")
@@ -2076,7 +2202,10 @@ void CD2MainForm::DisplayCharInfo()
     auto vesion = CharInfo.getVersion();
     CharStatusLadder.EnableWindow(vesion >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
     CharStatusExpansion.EnableWindow((vesion < d2ce::EnumCharVersion::v107 || vesion == d2ce::EnumCharVersion::v108) ? FALSE : TRUE);
-    s_levelInfo.ResetVersion(CharInfo.getVersion());
+    if (s_pLevelInfo != nullptr)
+    {
+        s_pLevelInfo->ResetView();
+    }
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::UpdateCharInfo()
@@ -2089,7 +2218,7 @@ void CD2MainForm::UpdateCharInfo()
     auto strValue = ToStdString(&CharName);
     if (_stricmp(strValue.c_str(), CharInfo.getName().data()) != 0)
     {
-        SetText(&CharName, CharInfo.getName().data());
+        SetUTF8Text(&CharName, CharInfo.getName().data());
         if (_stricmp(CharInfo.getName().data(), Bs.Name.data()) == 0)
         {
             auto iter = CtrlEditted.find(CharName.GetDlgCtrlID());
@@ -2814,6 +2943,8 @@ void CD2MainForm::EnableCharInfoBox(BOOL bEnable)
         GoldInStash.SetWindowText(_T(""));
         CharTitle.SetCurSel(-1);
         CharTitle.ResetContent();
+        Difficulty.SetCurSel(-1);
+        Difficulty.ResetContent();
 
         // Update Static so we refresh properly
         SetText(&NextExperience, _T(""));
@@ -2879,10 +3010,13 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         return;
     }
 
-    CStringA newPathNameA(filename);
+    if (filename == nullptr)
+    {
+        return;
+    }
 
     // return if open not successful
-    if (!CharInfo.open(newPathNameA, false))
+    if (!CharInfo.open(filename, false))
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -2902,29 +3036,17 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         if (AfxMessageBox(_T("Character File checksum is not valid.\nDo you wish to correct it now?"), MB_ICONERROR | MB_YESNO) == IDYES)
         {
             // The checksum was updated on load, so just save the file
+            CWaitCursor wait;
             CharInfo.save();
         }
     }
 
     CheckFileSize();
 
-    CurPathName = filename;
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
-    CString backupname;
-    if (CharInfo.is_json())
-    {
-        backupname = CurPathName + _T(".bak");
-    }
-    else
-    {
-        backupname = ChangeFileExt(CurPathName, _T(".bak"));
-    }
-
-    if (FileExists(backupname))
-    {
-        hasBackupFile = true;
-    }
+    hasBackupFile = HasBackupFile(CurPathName);
 
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
@@ -2961,7 +3083,10 @@ int CD2MainForm::DoFileCloseAction()
     }
 
     CharInfo.close();
-    s_levelInfo.ResetVersion(d2ce::EnumCharVersion::v110);
+    if (s_pLevelInfo != nullptr)
+    {
+        s_pLevelInfo->ResetView();
+    }
 
     CurPathName.Empty();
     Initialize();
@@ -2975,6 +3100,7 @@ int CD2MainForm::DoFileCloseAction()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnFileSave()
 {
+    CWaitCursor wait;
     if (BackupChar)
     {
         WriteBackupFile();
@@ -2995,8 +3121,7 @@ void CD2MainForm::OnFileSave()
         return;
     }
 
-    CurPathName = CharInfo.getPathName();
-
+    CurPathName = CharInfo.getPath().wstring().c_str();
     if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::AuxFileRenameError)
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
@@ -3033,21 +3158,22 @@ void CD2MainForm::OnFileSaveAs()
         return;
     }
 
-    CStringA jsonPathA(CurPathName);
     if (BackupChar)
     {
-        std::filesystem::path p = CurPathName.GetString();
+        std::filesystem::path p(CurPathName.GetString());
         p.replace_extension();
-        p = p.replace_filename(CharInfo.getName().data()).string() + ".d2s";
+        p.replace_filename(std::filesystem::u8path(CharInfo.getName().data()));
+        p.replace_extension(".d2s");
         if (std::filesystem::exists(p))
         {
-            CString newD2SPath(p.string().c_str());
+            CString newD2SPath(p.wstring().c_str());
             CString backupname(ChangeFileExt(newD2SPath, _T(".bak")));
             CopyFile(newD2SPath, backupname, false);
         }
     }
 
     bool bSuccess = true;
+    CWaitCursor wait;
     if (!CharInfo.saveAsD2s())
     {
         bSuccess = false;
@@ -3063,7 +3189,7 @@ void CD2MainForm::OnFileSaveAs()
         OnFileClose();
 
         // return if open not successful
-        if (!CharInfo.open(jsonPathA, false))
+        if (!CharInfo.open(CurPathName.GetString(), false))
         {
             return;
         }
@@ -3071,14 +3197,10 @@ void CD2MainForm::OnFileSaveAs()
 
     CheckFileSize();
 
-    CurPathName = CharInfo.getPathName();
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
-    if (FileExists(ChangeFileExt(CurPathName, _T(".bak"))))
-    {
-        hasBackupFile = true;
-    }
-
+    hasBackupFile = HasBackupFile(CurPathName);
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     DisplayCharInfo();
@@ -3105,8 +3227,9 @@ void CD2MainForm::ExportAsJson(bool bSerializedFormat)
         return;
     }
 
-    CString filename(CharInfo.getName().data());
-    filename += ".json";
+    auto uName = utf8::utf8to16(CharInfo.getName().data());
+    CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    filename += _T(".json");
 
     CFileDialog fileDialog(FALSE, _T("json"), filename,
         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
@@ -3117,9 +3240,10 @@ void CD2MainForm::ExportAsJson(bool bSerializedFormat)
         return;
     }
 
-    CStringA jsonFileName(fileDialog.GetPathName());
+    CWaitCursor wait;
+    auto jsonfilename = utf8::utf16to8(reinterpret_cast<const char16_t*>(fileDialog.GetPathName().GetString()));
     std::FILE* jsonFile = NULL;
-    fopen_s(&jsonFile, jsonFileName.GetString(), "wb");
+    _wfopen_s(&jsonFile, fileDialog.GetPathName(), L"wb");
     std::rewind(jsonFile);
 
     auto output = CharInfo.asJson(bSerializedFormat);
@@ -3201,10 +3325,10 @@ void CD2MainForm::OnOptionsMaxEverything()
 
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
-    cs.Level = d2ce::NUM_OF_LEVELS;
-    cs.Experience = d2ce::MAX_EXPERIENCE;
-    cs.GoldInBelt = cs.getMaxGoldInBelt();
-    cs.GoldInStash = cs.getMaxGoldInStash(CharInfo.getVersion());
+    cs.Level = cs.MaxLevel;
+    cs.Experience = cs.MaxExperience;
+    cs.GoldInBelt = cs.MaxGoldInBelt;
+    cs.GoldInStash = cs.MaxGoldInStash;
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 
@@ -3287,7 +3411,7 @@ void CD2MainForm::SetupBasicStats()
     CharInfo.fillBasicStats(bs);
 
     // display character stats
-    SetText(&CharName, &bs.Name[0]);
+    SetUTF8Text(&CharName, &bs.Name[0]);
 
     if (bs.isHardcoreCharacter())
     {
@@ -3314,7 +3438,7 @@ void CD2MainForm::SetupBasicStats()
 
     UpdateTitleDisplay();
     UpdateClassDisplay();
-    Difficulty.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(bs.DifficultyLastPlayed));
+    UpdateDifficultyDisplay();
     UpdateStartingActDisplay();
 }
 //---------------------------------------------------------------------------
@@ -3401,8 +3525,11 @@ void CD2MainForm::UpdateAppTitle()
             }
             switch (CharInfo.getVersion())
             {
+            case d2ce::EnumCharVersion::v115:
+                newAppTitle += _T(" (Version 1.0.x - 1.1.x)");
+                break;
             case d2ce::EnumCharVersion::v110:
-                newAppTitle += _T(" (Version 1.10-1.14d)");
+                newAppTitle += _T(" (Version 1.10 - 1.14d)");
                 break;
             case d2ce::EnumCharVersion::v109:
                 newAppTitle += _T(" (Version 1.09)");
@@ -3424,35 +3551,16 @@ void CD2MainForm::UpdateAppTitle()
 //---------------------------------------------------------------------------
 void CD2MainForm::UpdateClassDisplay()
 {
-    // Check if we need to add before selected class
-    if (CharInfo.isExpansionCharacter())
+    auto curClass = CharInfo.getClass();
+    CharClass.ResetContent();
+    std::u16string uText;
+    for (const auto& type : d2ce::LocalizationHelpers::GetCharacterTypes(CharInfo.isExpansionCharacter()))
     {
-        if (CharClass.GetCount() < d2ce::NUM_OF_CLASSES)
-        {
-            // add the expansion set characters to combo box component
-            CharClass.AddString(_T("Druid"));
-            CharClass.AddString(_T("Assassin"));
-        }
+        uText = utf8::utf8to16(type);
+        CharClass.AddString(CString(reinterpret_cast<LPCWSTR>(uText.c_str())));
     }
 
-    CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(CharInfo.getClass()));
-
-    // Check if we need to remove after selecting class
-    if (!CharInfo.isExpansionCharacter())
-    {
-        // remove expansion set classes from combo box component
-        auto pos = CharClass.FindStringExact(0, _T("Druid"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-
-        pos = CharClass.FindStringExact(0, _T("Assassin"));
-        if (pos != CB_ERR)
-        {
-            CharClass.DeleteString(pos);
-        }
-    }
+    CharClass.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(curClass));
 }
 //---------------------------------------------------------------------------
 /*
@@ -3468,69 +3576,35 @@ void CD2MainForm::UpdateTitleDisplay()
     }
 
     CharTitle.ResetContent();
-
-    const char** pValidTitles = nullptr;
-    switch (static_cast<d2ce::EnumCharClass>(CharClass.GetCurSel()))
+    
+    std::u16string uText;
+    for (const auto& str : d2ce::LocalizationHelpers::GetCharacterTitles(CharInfo.isFemaleCharacter(), CharInfo.isHardcoreCharacter(), CharInfo.isExpansionCharacter()))
     {
-    case d2ce::EnumCharClass::Amazon:
-    case d2ce::EnumCharClass::Assassin:
-    case d2ce::EnumCharClass::Sorceress: // add titles for female characters
-        if (CharInfo.isExpansionCharacter())
+        if (str.empty())
         {
-            if (CharInfo.isHardcoreCharacter())
-            {
-                pValidTitles = HardcoreExpansionTitle;
-            }
-            else
-            {
-                pValidTitles = FemaleExpansionTitle;
-            }
+            CharTitle.AddString(_T(""));
+            continue;
         }
-        else if (CharInfo.isHardcoreCharacter())
-        {
-            pValidTitles = FemaleHardcoreTitle;
-        }
-        else
-        {
-            pValidTitles = FemaleTitle;
-        }
-        break;
-    case d2ce::EnumCharClass::Barbarian:
-    case d2ce::EnumCharClass::Druid:
-    case d2ce::EnumCharClass::Necromancer:
-    case d2ce::EnumCharClass::Paladin: // add titles for male characters
-    default:
-        if (CharInfo.isExpansionCharacter())
-        {
-            if (CharInfo.isHardcoreCharacter())
-            {
-                pValidTitles = HardcoreExpansionTitle;
-            }
-            else
-            {
-                pValidTitles = MaleExpansionTitle;
-            }
-        }
-        else if (CharInfo.isHardcoreCharacter())
-        {
-            pValidTitles = MaleHardcoreTitle;
-        }
-        else
-        {
-            pValidTitles = MaleTitle;
-        }
-        break;
-    }
-
-    if (pValidTitles != nullptr)
-    {
-        for (std::uint32_t i = 0; i < NUM_OF_TITLES; i++)
-        {
-            CharTitle.AddString(CString(pValidTitles[i]));
-        }
+        uText = utf8::utf8to16(str);
+        CharTitle.AddString(CString(reinterpret_cast<LPCWSTR>(uText.c_str())));
     }
 
     CharTitle.SetCurSel(curSel);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::UpdateDifficultyDisplay()
+{
+    std::string strValue;
+    static std::initializer_list<d2ce::EnumDifficulty> all_diff = { d2ce::EnumDifficulty::Normal, d2ce::EnumDifficulty::Nightmare, d2ce::EnumDifficulty::Hell };
+    Difficulty.ResetContent();
+    for (auto diff : all_diff)
+    {
+        d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(diff, strValue);
+        auto uName = utf8::utf8to16(strValue);
+        Difficulty.AddString(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    }
+
+    Difficulty.SetCurSel(static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(CharInfo.getDifficultyLastPlayed()));
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::UpdateStartingActDisplay()
@@ -3647,13 +3721,19 @@ void CD2MainForm::WriteBackupFile()
 {
     CStringA oldPathNameA(CurPathName);
     CString backupname;
+
+    auto now = std::chrono::system_clock::now();
+    auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    auto ext = "." + std::to_string(UTC) + ".bak";
+    CString backupExt(ext.c_str());
+
     if (CharInfo.is_json())
     {
-        backupname = CurPathName + _T(".bak");
+        backupname = CurPathName + backupExt;
     }
     else
     {
-        backupname = ChangeFileExt(CurPathName, _T(".bak"));
+        backupname = ChangeFileExt(CurPathName, backupExt);
     }
 
     if (CopyFile(CurPathName, backupname, false))
@@ -3728,7 +3808,7 @@ void CD2MainForm::OnEnKillfocusCharName()
         if (FileExists(newFileName) && Editted)
         {
             AfxMessageBox(_T("A file with that name already exists.  Please select another name."), MB_OK | MB_ICONEXCLAMATION);
-            SetText(&CharName, prev_name.c_str());
+            SetText(&CharName, prev_name);
             return;
         }
 
@@ -3830,7 +3910,7 @@ void CD2MainForm::OnEnKillfocusCharLevel()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
-    std::uint32_t level = std::min(std::max(ToInt(&CharLevel), std::uint32_t(1)), d2ce::NUM_OF_LEVELS);
+    std::uint32_t level = std::min(std::max(ToInt(&CharLevel), std::uint32_t(1)), cs.MaxLevel);
     if (level != cs.Level)
     {
         cs.Level = level;
@@ -4029,7 +4109,7 @@ void CD2MainForm::OnEnKillfocusCharExperience()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
-    cs.Experience = std::min(ToInt(&Experience), d2ce::MAX_EXPERIENCE);
+    cs.Experience = std::min(ToInt(&Experience), CharInfo.getMaxExperience());
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4070,7 +4150,8 @@ void CD2MainForm::OnEnKillfocusGoldInStash()
 //---------------------------------------------------------------------------
 std::string CD2MainForm::ToStdString(const CWnd* Sender) const
 {
-    return (LPCSTR)CStringA(ToText(Sender));
+    CStringW wValue(ToText(Sender));
+    return utf8::utf16to8(reinterpret_cast<const char16_t*>(wValue.GetString()));
 }
 //---------------------------------------------------------------------------
 CString CD2MainForm::ToText(const CWnd* Sender) const
@@ -4095,6 +4176,17 @@ CString CD2MainForm::ToText(const CWnd* Sender) const
 CStringA CD2MainForm::ToTextA(const CWnd* Sender) const
 {
     return CStringA(ToText(Sender));
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::SetText(CWnd* Sender, const std::string& newValue)
+{
+    SetUTF8Text(Sender, newValue.c_str());
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::SetUTF8Text(CWnd* Sender, const char* newValue)
+{
+    auto uText = utf8::utf8to16(newValue);
+    SetText(Sender, reinterpret_cast<LPCWSTR>(uText.c_str()));
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::SetText(CWnd* Sender, const char* newValue)
@@ -4202,6 +4294,7 @@ void CD2MainForm::SetInt(CWnd* Sender, std::uint32_t newValue)
 {
     if (Sender->IsKindOf(RUNTIME_CLASS(CEdit)) || Sender->IsKindOf(RUNTIME_CLASS(CStatic)))
     {
+        std::uint32_t value;
         switch (Sender->GetDlgCtrlID())
         {
         case IDC_CUR_LIFE:
@@ -4213,13 +4306,14 @@ void CD2MainForm::SetInt(CWnd* Sender, std::uint32_t newValue)
             newValue >>= 8; // shift right 8 bits for actual value
             break;
         case IDC_CHAR_LEVEL:
-            if (newValue + 1 <= d2ce::NUM_OF_LEVELS)
+            value = getCharacterNextExperience(newValue);
+            if (value == MAXUINT32)
             {
-                SetInt(&NextExperience, d2ce::MinExpRequired[newValue]);
+                SetText(&NextExperience, _T("NONE"));
             }
             else
             {
-                SetText(&NextExperience, _T("NONE"));
+                SetInt(&NextExperience, value);
             }
             break;
         }
@@ -4287,41 +4381,44 @@ void CD2MainForm::OnOptionsRestoreChar()
         return;
     }
 
-    hasBackupFile = false;
-    CStringA origNameA(ExtractFileName(RemoveFileExtFromPath(CurPathName)));
-    CStringA oldPathNameA(CurPathName);
-    CStringA backupname;
-    if (CharInfo.is_json())
+    CString curPathName = CurPathName;
+    CString backupname = GetLastBackupFile(CurPathName);
+    if (backupname.IsEmpty())
     {
-        backupname = CurPathName + _T(".bak");
-    }
-    else
-    {
-        backupname = ChangeFileExt(CurPathName, _T(".bak"));
+        return;
     }
 
     Editted = false;
     DoFileCloseAction();
 
-    // rename temp file to character file
-    if (std::remove((LPCSTR)oldPathNameA))
+    try
+    {
+        std::filesystem::remove(curPathName.GetString());
+
+        try
+        {
+            // rename temp file to character file
+            std::filesystem::rename(backupname.GetString(), curPathName.GetString());
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+            CString msg;
+            msg.Format(_T("Failed to rename backup character file: %s"), backupname.GetString());
+            AfxMessageBox(CString(msg), MB_OK | MB_ICONERROR);
+            return;
+        }
+    }
+    catch (std::filesystem::filesystem_error const&)
     {
         CString msg;
-        msg.Format(_T("Failed to delete existing character file: %s"), CurPathName.GetString());
+        msg.Format(_T("Failed to delete existing character file: %s"), curPathName.GetString());
         AfxMessageBox(msg, MB_OK | MB_ICONERROR);
 
         // just reopen it again
     }
-    else if (std::rename((LPCSTR)backupname, (LPCSTR)oldPathNameA))
-    {
-        CStringA msg;
-        msg.Format("Failed to rename backup character file: %s", backupname.GetString());
-        AfxMessageBox(CString(msg), MB_OK | MB_ICONERROR);
-        return;
-    }
 
     // return if open not successful
-    if (!CharInfo.open(oldPathNameA))
+    if (!CharInfo.open(curPathName.GetString()))
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -4336,7 +4433,11 @@ void CD2MainForm::OnOptionsRestoreChar()
     }
 
     Initialize();
+
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
+
+    hasBackupFile = HasBackupFile(CurPathName);
 
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
@@ -4355,7 +4456,13 @@ void CD2MainForm::OnUpdateOptionsRestoreChar(CCmdUI* pCmdUI)
 //---------------------------------------------------------------------------
 void CD2MainForm::OnViewLevelReq()
 {
-    s_levelInfo.Show(this);
+    static CD2LevelInfoForm levelInfo(*this);
+    if (s_pLevelInfo == nullptr)
+    {
+        s_pLevelInfo = &levelInfo;
+    }
+
+    s_pLevelInfo->Show();
 }
 //---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsGpsConvertor()
@@ -4613,6 +4720,36 @@ std::uint32_t CD2MainForm::getCharacterLevel() const
     return CharInfo.getLevel();
 }
 //---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterMaxLevel() const
+{
+    return CharInfo.getMaxLevel();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterMaxExperience() const
+{
+    return CharInfo.getMaxExperience();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterMinExperience(std::uint32_t level) const
+{
+    return CharInfo.getMinExperience(level);
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterNextExperience(std::uint32_t level) const
+{
+    return CharInfo.getNextExperience(level);
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterLevelFromExperience() const
+{
+    return CharInfo.getLevelFromExperience();
+}
+//---------------------------------------------------------------------------
+std::uint32_t CD2MainForm::getCharacterLevelFromExperience(std::uint32_t experience) const
+{
+    return CharInfo.getLevelFromExperience(experience);
+}
+//---------------------------------------------------------------------------
 std::uint32_t CD2MainForm::getWeaponSet() const
 {
     return CharInfo.getWeaponSet();
@@ -4623,6 +4760,11 @@ bool CD2MainForm::isExpansionCharacter() const
     return CharInfo.isExpansionCharacter();
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::isFemaleCharacter() const
+{
+    return CharInfo.isFemaleCharacter();
+}
+//---------------------------------------------------------------------------
 d2ce::EnumAct CD2MainForm::getLastAct() const
 {
     return CharInfo.getLastAct();
@@ -4630,13 +4772,13 @@ d2ce::EnumAct CD2MainForm::getLastAct() const
 //---------------------------------------------------------------------------
 std::uint32_t CD2MainForm::getSkillPointsEarned() const
 {
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
+    std::uint32_t curLevel = std::min(ToInt(&CharLevel), CharInfo.getMaxLevel());
     return CharInfo.getSkillPointsEarned(curLevel);
 }
 //---------------------------------------------------------------------------
 std::uint32_t CD2MainForm::getStatPointsEarned() const
 {
-    std::uint32_t curLevel = std::min(ToInt(&CharLevel), d2ce::NUM_OF_LEVELS);
+    std::uint32_t curLevel = std::min(ToInt(&CharLevel), CharInfo.getMaxLevel());
     return CharInfo.getStatPointsEarned(curLevel);
 }
 //---------------------------------------------------------------------------
@@ -4689,6 +4831,59 @@ void CD2MainForm::setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t ne
     StatsChanged();
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::getSkillBitmap(const d2ce::SkillType& skill, CBitmap& bitmap) const
+{
+    CStringA skillIcon;
+    if (skill.classInfo.has_value())
+    {
+        std::stringstream ss;
+        ss << d2ce::CharClassHelper::getClassCode(skill.classInfo.value().charClass);
+        ss << std::setw(2) << std::setfill('0') << skill.classInfo.value().iconIndex;
+        skillIcon = ss.str().c_str();
+    }
+    else
+    {
+        skillIcon = "UNK";
+    }
+
+    static const std::string& resourceHeader = GetResourceHeader();
+    if (resourceHeader.empty())
+    {
+        return false;
+    }
+
+    std::string regexStr;
+    {
+        std::stringstream ss;
+        ss << "^[\\s]*#define\\s+IDB_SKILL_";
+        ss << skillIcon.MakeUpper().GetString();
+        ss << "\\s+([0-9]+)\\s*$";
+        regexStr = ss.str();
+    }
+    std::regex regexDefine(regexStr, std::regex::ECMAScript | std::regex::icase);
+    std::cmatch m;
+    auto pStr = resourceHeader.c_str();
+    if (std::regex_search(pStr, m, regexDefine))
+    {
+        bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+        return bitmap.GetSafeHandle() == NULL ? false : true;
+    }
+    else
+    {
+        std::stringstream ss;
+        ss << "^[\\s]*#define\\s+IDB_SKILL_UNK";
+        ss << "\\s+([0-9]+)\\s*$";
+        std::regex regexDefineBase(ss.str(), std::regex::ECMAScript | std::regex::icase);
+        if (std::regex_search(pStr, m, regexDefineBase))
+        {
+            bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+            return bitmap.GetSafeHandle() == NULL ? false : true;
+        }
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& CD2MainForm::getSkills()
 {
     return CharInfo.getSkills();
@@ -4710,6 +4905,11 @@ std::uint32_t CD2MainForm::getSkillPointsUsed() const
 std::uint32_t CD2MainForm::getSkillChoices() const
 {
     return CharInfo.getSkillChoices();
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::getSkillBonusPoints(std::vector<std::uint16_t>& points) const
+{
+    return CharInfo.getSkillBonusPoints(points);
 }
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getGPSs()
@@ -4912,42 +5112,10 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
         }
     }
 
-    static std::string resourceHeader;
+    static const std::string& resourceHeader = GetResourceHeader();
     if (resourceHeader.empty())
     {
-        HINSTANCE hInstance = ::GetModuleHandle(NULL);
-        HRSRC hres = ::FindResource(hInstance, MAKEINTRESOURCE(IDR_RESOURCE_HEADER), _T("TEXT"));
-        if (hres == NULL)
-        {
-            return false;
-        }
-
-        DWORD dwSizeBytes = ::SizeofResource(hInstance, hres);
-        if (dwSizeBytes == 0)
-        {
-            return false;
-        }
-
-        HGLOBAL hglobal = ::LoadResource(hInstance, hres);
-        if (hglobal == NULL)
-        {
-            return false;
-        }
-
-        BYTE* pRes = (BYTE*)LockResource(hglobal);
-        if (pRes == nullptr)
-        {
-            ::FreeResource(hglobal);
-            return false;
-        }
-
-        resourceHeader.assign((char*)pRes, dwSizeBytes);
-        ::FreeResource(hglobal);
-
-        if (resourceHeader.empty())
-        {
-            return false;
-        }
+        return false;
     }
 
     std::string regexStr;

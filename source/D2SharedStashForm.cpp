@@ -26,6 +26,7 @@
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include <deque>
+#include <utf8/utf8.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1492,8 +1493,8 @@ void CD2SharedStashForm::OnBnClickedOk()
         CWaitCursor wait;
         if (!Stash.save())
         {
-            CStringA msg;
-            msg.Format("Failed to savefile: %s", Stash.getPathName());
+            CStringW msg;
+            msg.Format(L"Failed to savefile: %s", Stash.getPath().wstring().c_str());
             AfxMessageBox(CString(msg), MB_OK | MB_ICONERROR);
             return;
         }
@@ -1514,7 +1515,8 @@ void CD2SharedStashForm::OnBnClickedCancel()
 //---------------------------------------------------------------------------
 std::string CD2SharedStashForm::ToStdString(const CWnd* Sender) const
 {
-    return (LPCSTR)CStringA(ToText(Sender));
+    CStringW wValue(ToText(Sender));
+    return utf8::utf16to8(reinterpret_cast<const char16_t*>(wValue.GetString()));
 }
 //---------------------------------------------------------------------------
 CString CD2SharedStashForm::ToText(const CWnd* Sender) const

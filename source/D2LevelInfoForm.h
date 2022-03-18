@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include "d2ce\CharacterConstants.h"
+#include "D2MainForm.h"
+#include "d2ce/CharacterConstants.h"
 #include "resource.h"
 
 //---------------------------------------------------------------------------
@@ -29,7 +30,7 @@ class CD2LevelInfoForm : public CDialogEx
     DECLARE_DYNAMIC(CD2LevelInfoForm)
 
 public:
-    CD2LevelInfoForm(CWnd* pParent = nullptr);   // standard constructor
+    CD2LevelInfoForm(CD2MainForm& form);   // standard constructor
     virtual ~CD2LevelInfoForm();
 
     // Dialog Data
@@ -50,12 +51,12 @@ public:
     virtual BOOL OnInitDialog();
 
 private:
-    d2ce::EnumCharVersion Version = d2ce::APP_CHAR_VERSION;
+    CD2MainForm& MainForm;
     BOOL Modal = FALSE;
 
 public:
     virtual INT_PTR DoModal();
     BOOL Show(CWnd* pParentWnd = NULL);
-    void ResetVersion(d2ce::EnumCharVersion version);
+    void ResetView();
 };
 //---------------------------------------------------------------------------

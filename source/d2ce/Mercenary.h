@@ -57,6 +57,8 @@ namespace d2ce
         bool readInfo(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile);
         bool writeInfo(std::FILE* charfile);
 
+        void setTxtReader();
+
     public:
         void clear();
 
@@ -76,6 +78,7 @@ namespace d2ce
         std::uint32_t getMaxExperience() const;
         void setExperience(std::uint32_t experience);
         EnumMercenaryClass getClass() const;
+        const std::string& getClassName() const;
         void setClass(EnumMercenaryClass mercClass);
         EnumDifficulty getDifficulty() const;
         void setDifficulty(EnumDifficulty difficulty);
@@ -103,6 +106,11 @@ namespace d2ce
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
 
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const;
+
+        static const std::vector<std::string>& getMercNames(EnumMercenaryClass mercClass);
+        static const std::vector<std::string>& getMercClassNames();
+        static const std::vector<std::string>& getMercAttributes(EnumMercenaryClass mercClass);
+        static const std::string& getMercClassName(EnumMercenaryClass mercClass);
     };
 }
 //---------------------------------------------------------------------------

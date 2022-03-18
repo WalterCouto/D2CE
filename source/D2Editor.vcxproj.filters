@@ -28,6 +28,108 @@
     <Filter Include="Header Files\rapidcsv">
       <UniqueIdentifier>{59645a1f-9baf-4dd6-8ab5-fdf86c4d77d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Armor">
+      <UniqueIdentifier>{32809611-18ac-4a64-94cc-8e3736c1ccdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Belt">
+      <UniqueIdentifier>{11c54458-13b6-49fc-87ac-d15c46600715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Boots">
+      <UniqueIdentifier>{693349b5-e556-40d1-a5f7-044c7b00f115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Gloves">
+      <UniqueIdentifier>{18b60a1e-c0a0-42b1-8c73-d368a96952b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Helm">
+      <UniqueIdentifier>{546ab00e-ae5a-4654-b66d-fe01e2d88899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Misc">
+      <UniqueIdentifier>{7e5ccc3f-4b6c-4e7c-a515-a57eaf234be7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shield">
+      <UniqueIdentifier>{21ccd7b4-5d54-4e79-bb12-6f9252677068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT">
+      <UniqueIdentifier>{0346a663-68b6-4040-810a-729d26455e6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons">
+      <UniqueIdentifier>{5cf39168-0b67-40e7-8d67-05b7cdde1ecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Helm\Barbarian">
+      <UniqueIdentifier>{8890b230-9511-4de9-96c4-8e20b1fd275a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Helm\Circlet">
+      <UniqueIdentifier>{608273ea-03c9-4f8f-8068-73fad4277537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Helm\Druid">
+      <UniqueIdentifier>{168bb61b-cfec-46f8-ac16-5c2f0bf552ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shield\Necromancer">
+      <UniqueIdentifier>{e911676c-a1eb-4535-b753-382f3714735d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shield\Paladin">
+      <UniqueIdentifier>{bcf14d83-07a4-4bc6-8a91-976742ddd96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Amazon">
+      <UniqueIdentifier>{59adcf98-489c-45f3-9d25-3e6f76fd5d75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Assassin">
+      <UniqueIdentifier>{c76ae5a0-75df-4304-b247-1a129a4f2832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Axe">
+      <UniqueIdentifier>{11662c25-f79b-4116-9d8f-7313d4a0206a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Bow">
+      <UniqueIdentifier>{4b01d42a-53a2-4576-b6fb-54abbb76f4f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Club">
+      <UniqueIdentifier>{edc58910-728f-4872-addf-738a69b73573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Javelin">
+      <UniqueIdentifier>{c257dad3-997a-4bbd-87ef-5f7d82e790e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Necromancer">
+      <UniqueIdentifier>{080870a4-c3ec-474f-94db-732b1ad4518b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Orb">
+      <UniqueIdentifier>{1eb70608-158f-4101-a683-8636fb93a4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Quest">
+      <UniqueIdentifier>{cc9e960a-ecff-4acf-bb85-d4ea954ca37c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Paladin">
+      <UniqueIdentifier>{18c2e8b1-000e-490b-8c07-57ef2b9854ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Potion">
+      <UniqueIdentifier>{58d81b68-0e6b-45da-ba7c-175646431e4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Throwing">
+      <UniqueIdentifier>{41cff87f-5534-4fc0-9629-446b5d054a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Sword">
+      <UniqueIdentifier>{2123bbe5-38cc-4196-9817-d038390bb419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Staff">
+      <UniqueIdentifier>{32e93d4f-b50f-4787-b5f9-881c7957ed2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Weapons\Spear">
+      <UniqueIdentifier>{1fe8995a-f7b3-4f2b-9ce3-7af10d4e99f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utf8">
+      <UniqueIdentifier>{2b38910e-96eb-452a-b344-1171ff2a86ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Skills">
+      <UniqueIdentifier>{411c5705-7630-4a7c-85f1-9499ab2b5de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\LNG">
+      <UniqueIdentifier>{338fc447-c8c7-45a9-9e8e-230af3e693bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2ce\Helpers">
+      <UniqueIdentifier>{b32fd661-ff94-4015-9910-8064e812a414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\d2ce\Helpers">
+      <UniqueIdentifier>{0f27b7aa-8a9f-4d06-b499-b07fac52cf42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D2Editor.h">
@@ -159,9 +261,6 @@
     <ClInclude Include="d2ce\thirdparty\rapidcsv\include\rapidcsv\rapidcsv.h">
       <Filter>Header Files\rapidcsv</Filter>
     </ClInclude>
-    <ClInclude Include="d2ce\helpers\ItemHelpers.h">
-      <Filter>Header Files\d2ce</Filter>
-    </ClInclude>
     <ClInclude Include="D2AddGemsForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -170,6 +269,27 @@
     </ClInclude>
     <ClInclude Include="D2SharedStashForm.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8.h">
+      <Filter>Header Files\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\checked.h">
+      <Filter>Header Files\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\core.h">
+      <Filter>Header Files\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\cpp17.h">
+      <Filter>Header Files\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\unchecked.h">
+      <Filter>Header Files\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\helpers\ItemHelpers.h">
+      <Filter>Header Files\d2ce\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="d2ce\helpers\DefaultTxtReader.h">
+      <Filter>Header Files\d2ce\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +350,6 @@
     <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_writer.cpp">
       <Filter>Source Files\jsoncpp</Filter>
     </ClCompile>
-    <ClCompile Include="d2ce\helpers\ItemHelpers.cpp">
-      <Filter>Source Files\d2ce</Filter>
-    </ClCompile>
     <ClCompile Include="D2AddGemsForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -241,6 +358,111 @@
     </ClCompile>
     <ClCompile Include="D2SharedStashForm.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\DefaultTxtReader.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemHelpers.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemGemsJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemNameAffixesJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemNamesJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemRunesJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\MercenariesJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\MonstersJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\QuestsJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\SkillsJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\UIJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemModifiersJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\CharStatsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\PlayerClassTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ExperienceTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\HirelingTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemStatCostTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ItemTypesTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\PropertiesTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\GemsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\BeltsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\ArmorTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\WeaponsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\MiscTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\MagicPrefixTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\MagicSuffixTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\RarePrefixTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\RareSuffixTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\UniqueItemsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\SetsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\SetItemsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\RunesTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\SkillsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\SkillDescTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\LevelsJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -261,12 +483,45 @@
     <None Include="d2ce\thirdparty\rapidcsv\LICENSE">
       <Filter>Header Files\rapidcsv</Filter>
     </None>
+    <None Include="d2ce\thirdparty\utf8\include\utf8\LICENSE">
+      <Filter>Header Files\utf8</Filter>
+    </None>
+    <None Include="res\TXT\LNG\item-gems.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\item-modifiers.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\item-nameaffixes.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\item-names.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\item-runes.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\mercenaries.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\monsters.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\quests.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\skills.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\ui.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
+    <None Include="res\TXT\LNG\levels.json">
+      <Filter>Resource Files\TXT\LNG</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\D2Editor.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\CharStats.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\quest.bmp">
@@ -287,1054 +542,7 @@
     <Image Include="res\stasLeft.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\001 Quilted Armor.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\002 Leather Armor.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\003 Hard Leather Armor.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\004 Studded Leather.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\005 Ring Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\006 Scale Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\007 Chain Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\008 Breast Plate.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\009 Splint Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\010 Plate Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\011 Field Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\012 Gothic Plate.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\013 Full Plate Mail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\014 Ancient Armor.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Armor\015 Light Plate.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Boots\01 Boots.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Boots\02 Heavy Boots.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Boots\03 Chain Boots.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Boots\04 Light Plated Boots.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Boots\05 Greaves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Glove\01 Leather Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Glove\02 Heavy Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Glove\03 Chain Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Glove\04 Light Gauntlets.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Glove\05 Gauntlets.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\01 Cap.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\02 Skull Cap.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\03 Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\04 Full Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\05 Great Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\06 Crown.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\07 Mask.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\08 Grim Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Barbarian\21 Jawbone Cap.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Barbarian\22 Fanged Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Barbarian\23 Horned Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Barbarian\24 Assault Helmet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Barbarian\25 Avenger Guard.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Crown\09 Circlet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Crown\10 Coronet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Crown\11 Tiara.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Crown\12 Diadem.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Circlet\09 Circlet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Circlet\10 Coronet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Circlet\11 Tiara.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Circlet\12 Diadem.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Druid\16 Wolf Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Druid\17 Hawk Helm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Druid\18 Antlers.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Druid\19 Spirit Mask.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Helm\Druid\20 Falcon Mask.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Sash\01 Sash.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Sash\02 Light Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Sash\03 Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Sash\04 Heavy Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Sash\05 Plated Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Belt\01 Sash.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Belt\02 Light Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Belt\03 Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Belt\04 Heavy Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Belt\05 Plated Belt.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\01 Buckler.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\02 Small Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\03 Large Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\04 Kite Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\06 Tower Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\07 Gothic Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\08 Bone Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\09 Spiked Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Gloves\01 Leather Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Gloves\02 Heavy Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Gloves\03 Chain Gloves.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Gloves\04 Light Gauntlets.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Gloves\05 Gauntlets.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Necromancer\01 Preserved Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Necromancer\02 Zombie Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Necromancer\03 Unraveller Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Necromancer\04 Gargoyle Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Necromancer\05 Demon Head.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Paladin\10 Targe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Paladin\11 Rondache.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Paladin\12 Heraldic Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Paladin\13 Aerin Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Shield\Paladin\14 Crown Shield.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\01 Hand Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\02 Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\03 Double Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\04 Military Pick.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\05 War Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\06 Large Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\07 Broad Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\08 Battle Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\09 Great Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Axe\10 Gaint Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Necromancer\01 Wand.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Necromancer\02 Yew Wand.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Necromancer\03 Bone Wand.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Necromancer\04 Grim Wand.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\01 Club.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\02 Spiked Club.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\03 Mace.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\04 Morning Star.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\05 Flail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\06 War Hammer.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\07 Maul.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Club\08 Great Maul.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Paladin\01 Scepter.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Paladin\02 Grand Scepter.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Paladin\03 War Scepter.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\01 Short Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\02 Scimitar.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\03 Sabre.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\04 Falchion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\05 Crystal Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\06 Broad Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\07 Long Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\08 War Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\09 Tow Handed Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\10 Claymore.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\11 Giant Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\12 Bastard Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\13 Flamberge.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\14 Great Sword.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\15 Dagger.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\16 Dirk.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\17 Kris.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Sword\18 Blade.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Throwing\1 Throwing Knife.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Throwing\2 Throwing Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Throwing\3 Balanced Knife.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Throwing\4 Balanced Axe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Javelin\1 Javelin.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Javelin\2 Pilum.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Javelin\3 Short Spear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Javelin\4 Glaive.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Javelin\5 Throwing Spear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\weapons\sword\bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\01 Spear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\02 Trident.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\03 Brandistock.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\04 Spetum.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\05 Pike.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\06 Bardiche.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\07 Voulge.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\08 Scythe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\09 Poleaxe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\10 Halberd.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Spear\11 War Scythe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Staff\01 Short Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Staff\02 Long Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Staff\03 Ganrled Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Staff\04 Battle Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Staff\05 War Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\01 Short Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\02 Hunter%27s Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\03 Long Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\04 Composite Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\05 Short Battle Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\06 Long Battle Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\07 Short War Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\08 Long War Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\09 Light Crossbow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\10 Crossbow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\11 Heavy Crossbow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Bow\12 Repeating Crossbow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\01 Rancid Gas Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\02 Oil Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\03 Choking Gas Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\04 Exploding Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\05 Strangling Gas Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Potion\06 Fulminating Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\01 Decoy Gidbinn.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\02 The Gidbinn.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\03 Wirt%27s Leg.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\04 Horadric Malus.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\05 Hell Forge Hammer.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\06 Horadric Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\07 Staff Of Kings.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\08 Khalim%27s Flail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Quest\09 Khalim%27s Will.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Assassin\01 Katar.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Assassin\02 Hatchet Hands.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Assassin\03 Claws.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Assassin\04 Scissors Katar.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Orb\1 Eagle Orb.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Orb\2 Sacred Globe.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Orb\3 Smoked Sphere.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Orb\4 Clasped Orb.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Orb\5 Jared%27s Stone.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Amazon\1 Stag Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Amazon\2 Reflex Bow.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Amazon\3 Maiden Spear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Amazon\4 Maiden Pike.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Weapons\Amazon\5 Maiden Javelin.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\a Jade Figuring.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Amethyst.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Amn Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Amulet.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Antidote Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Arrows.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ber Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Bolts.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Book of Skill.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Bpl.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Bps.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Cham Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Amethyst.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Diamond.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Emerald.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Ruby.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Sapphire.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Skull.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Chipped Topaz.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Diamond.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Dol Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\El Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Eld Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Elixir.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Emerald.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Eth Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Fal Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Amethyst.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Diamond.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Emerald.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Saphire.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Skull.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawed Topaz.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawled Ruby.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Amethyst.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Diamond.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Emerald.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Ruby.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Sapphire.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Skull.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Flawless Topaz.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Full Reiuvenation Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Gold.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Grand Charm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Greater Healing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Greater Mana Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Gul Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Healing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Hel Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Herb.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Horadric Cube.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Horadric Scroll.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Hpf.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Hpo.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Io Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ist Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ith Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Jah Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Jewel.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Key to the Cairn Stones.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Key.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Khalim%27s Brain.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Khalim%27s Ear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Khalim%27s Eye.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Khalim%27s Heart.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ko Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Lam Esen%27s Tome.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Large Charm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Lem Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Light Healing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Light Mana Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Lo Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Lum Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Mal Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Malah%27s Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Mana Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Mephisto%27s Soulstone.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Minor Healing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Minor Mana Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Mpf.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Mpo.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Nef Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ohm Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ort Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Amethyst.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Diamond.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Emerald.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Ruby.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Sapphire.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Skull.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Perfect Topaz.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Potion of Life.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Pul Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ral Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Reiuvenation Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ring.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Rpl.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Rps.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Ruby.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Sapphire.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Identify.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Jnifuss.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Knowledge.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Resistance.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Town Portal.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Shael Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Brain.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Eye.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Fang.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Flag.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Heart.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Horn.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Quill.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Soul.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Spleen.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skeleton Tail.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Skull.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Small Charm.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Sol Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Stamina Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Super Healing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Super Mana Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Sur Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Tal Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Thawing Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\the Black Tower Key.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\the Golden Bird.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Thul Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Tir Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Token of Absolution.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Tome of Identify.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Tome of Town Portal.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Top of the Horadric Staff.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Topaz.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Torch.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Twisted Essence of Destruction.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Twisted Essence of Hatred.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Twisted Essence of Suffering.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Twisted Essence of Terror.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Um Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Vex Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Zod Rune.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\INVEMPTY.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Full Rejuvenation Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Player%27s Ear.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Rejuvenation Potion.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Scroll of Inifuss.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_armor.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_belt.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_boots.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_helm_glove__0__0.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_helm_glove__0__1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_ring_amulet__0__0.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_ring_amulet__0__1.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\inv_weapons.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\inv_armor.bmp">
@@ -1361,65 +569,1744 @@
     <Image Include="res\inv_weapons.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\gemsocket.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Armor\001 Quilted Armor.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Boots\01 Boots.bmp">
+      <Filter>Resource Files\Boots</Filter>
+    </Image>
+    <Image Include="res\Shield\01 Buckler.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Helm\01 Cap.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Armor\002 Leather Armor.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\003 Hard Leather Armor.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\004 Studded Leather.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\005 Ring Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\006 Scale Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\007 Chain Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\008 Breast Plate.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\009 Splint Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\010 Plate Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\011 Field Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\012 Gothic Plate.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\014 Ancient Armor.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\013 Full Plate Mail.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Armor\015 Light Plate.bmp">
+      <Filter>Resource Files\Armor</Filter>
+    </Image>
+    <Image Include="res\Belt\01 Sash.bmp">
+      <Filter>Resource Files\Belt</Filter>
+    </Image>
+    <Image Include="res\Belt\02 Light Belt.bmp">
+      <Filter>Resource Files\Belt</Filter>
+    </Image>
+    <Image Include="res\Belt\03 Belt.bmp">
+      <Filter>Resource Files\Belt</Filter>
+    </Image>
+    <Image Include="res\Belt\04 Heavy Belt.bmp">
+      <Filter>Resource Files\Belt</Filter>
+    </Image>
+    <Image Include="res\Belt\05 Plated Belt.bmp">
+      <Filter>Resource Files\Belt</Filter>
+    </Image>
+    <Image Include="res\Boots\02 Heavy Boots.bmp">
+      <Filter>Resource Files\Boots</Filter>
+    </Image>
+    <Image Include="res\Boots\03 Chain Boots.bmp">
+      <Filter>Resource Files\Boots</Filter>
+    </Image>
+    <Image Include="res\Boots\04 Light Plated Boots.bmp">
+      <Filter>Resource Files\Boots</Filter>
+    </Image>
+    <Image Include="res\Boots\05 Greaves.bmp">
+      <Filter>Resource Files\Boots</Filter>
+    </Image>
+    <Image Include="res\Gloves\01 Leather Gloves.bmp">
+      <Filter>Resource Files\Gloves</Filter>
+    </Image>
+    <Image Include="res\Gloves\02 Heavy Gloves.bmp">
+      <Filter>Resource Files\Gloves</Filter>
+    </Image>
+    <Image Include="res\Gloves\03 Chain Gloves.bmp">
+      <Filter>Resource Files\Gloves</Filter>
+    </Image>
+    <Image Include="res\Gloves\04 Light Gauntlets.bmp">
+      <Filter>Resource Files\Gloves</Filter>
+    </Image>
+    <Image Include="res\Gloves\05 Gauntlets.bmp">
+      <Filter>Resource Files\Gloves</Filter>
+    </Image>
+    <Image Include="res\Helm\02 Skull Cap.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\03 Helm.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\04 Full Helm.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\05 Great Helm.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\06 Crown.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\07 Mask.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\Barbarian\21 Jawbone Cap.bmp">
+      <Filter>Resource Files\Helm\Barbarian</Filter>
+    </Image>
+    <Image Include="res\Helm\Barbarian\22 Fanged Helm.bmp">
+      <Filter>Resource Files\Helm\Barbarian</Filter>
+    </Image>
+    <Image Include="res\Helm\Barbarian\23 Horned Helm.bmp">
+      <Filter>Resource Files\Helm\Barbarian</Filter>
+    </Image>
+    <Image Include="res\Helm\Barbarian\24 Assault Helmet.bmp">
+      <Filter>Resource Files\Helm\Barbarian</Filter>
+    </Image>
+    <Image Include="res\Helm\Barbarian\25 Avenger Guard.bmp">
+      <Filter>Resource Files\Helm\Barbarian</Filter>
+    </Image>
+    <Image Include="res\Helm\08 Grim Helm.bmp">
+      <Filter>Resource Files\Helm</Filter>
+    </Image>
+    <Image Include="res\Helm\Circlet\09 Circlet.bmp">
+      <Filter>Resource Files\Helm\Circlet</Filter>
+    </Image>
+    <Image Include="res\Helm\Circlet\10 Coronet.bmp">
+      <Filter>Resource Files\Helm\Circlet</Filter>
+    </Image>
+    <Image Include="res\Helm\Circlet\11 Tiara.bmp">
+      <Filter>Resource Files\Helm\Circlet</Filter>
+    </Image>
+    <Image Include="res\Helm\Circlet\12 Diadem.bmp">
+      <Filter>Resource Files\Helm\Circlet</Filter>
+    </Image>
+    <Image Include="res\Helm\Druid\16 Wolf Head.bmp">
+      <Filter>Resource Files\Helm\Druid</Filter>
+    </Image>
+    <Image Include="res\Helm\Druid\17 Hawk Helm.bmp">
+      <Filter>Resource Files\Helm\Druid</Filter>
+    </Image>
+    <Image Include="res\Helm\Druid\18 Antlers.bmp">
+      <Filter>Resource Files\Helm\Druid</Filter>
+    </Image>
+    <Image Include="res\Helm\Druid\19 Spirit Mask.bmp">
+      <Filter>Resource Files\Helm\Druid</Filter>
+    </Image>
+    <Image Include="res\Helm\Druid\20 Falcon Mask.bmp">
+      <Filter>Resource Files\Helm\Druid</Filter>
+    </Image>
+    <Image Include="res\Shield\02 Small Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\03 Large Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\04 Kite Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\06 Tower Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\07 Gothic Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\08 Bone Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\09 Spiked Shield.bmp">
+      <Filter>Resource Files\Shield</Filter>
+    </Image>
+    <Image Include="res\Shield\Necromancer\01 Preserved Head.bmp">
+      <Filter>Resource Files\Shield\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Shield\Necromancer\02 Zombie Head.bmp">
+      <Filter>Resource Files\Shield\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Shield\Necromancer\03 Unraveller Head.bmp">
+      <Filter>Resource Files\Shield\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Shield\Necromancer\04 Gargoyle Head.bmp">
+      <Filter>Resource Files\Shield\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Shield\Necromancer\05 Demon Head.bmp">
+      <Filter>Resource Files\Shield\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Shield\Paladin\10 Targe.bmp">
+      <Filter>Resource Files\Shield\Paladin</Filter>
+    </Image>
+    <Image Include="res\Shield\Paladin\11 Rondache.bmp">
+      <Filter>Resource Files\Shield\Paladin</Filter>
+    </Image>
+    <Image Include="res\Shield\Paladin\12 Heraldic Shield.bmp">
+      <Filter>Resource Files\Shield\Paladin</Filter>
+    </Image>
+    <Image Include="res\Shield\Paladin\13 Aerin Shield.bmp">
+      <Filter>Resource Files\Shield\Paladin</Filter>
+    </Image>
+    <Image Include="res\Shield\Paladin\14 Crown Shield.bmp">
+      <Filter>Resource Files\Shield\Paladin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\01 Club.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Amazon\1 Stag Bow.bmp">
+      <Filter>Resource Files\Weapons\Amazon</Filter>
+    </Image>
+    <Image Include="res\Weapons\Amazon\2 Reflex Bow.bmp">
+      <Filter>Resource Files\Weapons\Amazon</Filter>
+    </Image>
+    <Image Include="res\Weapons\Amazon\3 Maiden Spear.bmp">
+      <Filter>Resource Files\Weapons\Amazon</Filter>
+    </Image>
+    <Image Include="res\Weapons\Amazon\4 Maiden Pike.bmp">
+      <Filter>Resource Files\Weapons\Amazon</Filter>
+    </Image>
+    <Image Include="res\Weapons\Amazon\5 Maiden Javelin.bmp">
+      <Filter>Resource Files\Weapons\Amazon</Filter>
+    </Image>
+    <Image Include="res\Weapons\Assassin\01 Katar.bmp">
+      <Filter>Resource Files\Weapons\Assassin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Assassin\02 Hatchet Hands.bmp">
+      <Filter>Resource Files\Weapons\Assassin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Assassin\03 Claws.bmp">
+      <Filter>Resource Files\Weapons\Assassin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Assassin\04 Scissors Katar.bmp">
+      <Filter>Resource Files\Weapons\Assassin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\01 Hand Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\02 Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\03 Double Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\04 Military Pick.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\05 War Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\06 Large Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\07 Broad Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\08 Battle Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\10 Gaint Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Axe\09 Great Axe.bmp">
+      <Filter>Resource Files\Weapons\Axe</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\01 Short Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\02 Hunter%27s Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\03 Long Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\04 Composite Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\05 Short Battle Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\06 Long Battle Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\07 Short War Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\08 Long War Bow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\09 Light Crossbow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\10 Crossbow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\11 Heavy Crossbow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Bow\12 Repeating Crossbow.bmp">
+      <Filter>Resource Files\Weapons\Bow</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\02 Spiked Club.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\03 Mace.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\04 Morning Star.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\05 Flail.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\06 War Hammer.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\07 Maul.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Club\08 Great Maul.bmp">
+      <Filter>Resource Files\Weapons\Club</Filter>
+    </Image>
+    <Image Include="res\Weapons\Javelin\1 Javelin.bmp">
+      <Filter>Resource Files\Weapons\Javelin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Javelin\2 Pilum.bmp">
+      <Filter>Resource Files\Weapons\Javelin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Javelin\3 Short Spear.bmp">
+      <Filter>Resource Files\Weapons\Javelin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Javelin\4 Glaive.bmp">
+      <Filter>Resource Files\Weapons\Javelin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Javelin\5 Throwing Spear.bmp">
+      <Filter>Resource Files\Weapons\Javelin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Necromancer\01 Wand.bmp">
+      <Filter>Resource Files\Weapons\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Weapons\Necromancer\02 Yew Wand.bmp">
+      <Filter>Resource Files\Weapons\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Weapons\Necromancer\03 Bone Wand.bmp">
+      <Filter>Resource Files\Weapons\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Weapons\Necromancer\04 Grim Wand.bmp">
+      <Filter>Resource Files\Weapons\Necromancer</Filter>
+    </Image>
+    <Image Include="res\Weapons\Orb\1 Eagle Orb.bmp">
+      <Filter>Resource Files\Weapons\Orb</Filter>
+    </Image>
+    <Image Include="res\Weapons\Orb\2 Sacred Globe.bmp">
+      <Filter>Resource Files\Weapons\Orb</Filter>
+    </Image>
+    <Image Include="res\Weapons\Orb\3 Smoked Sphere.bmp">
+      <Filter>Resource Files\Weapons\Orb</Filter>
+    </Image>
+    <Image Include="res\Weapons\Orb\4 Clasped Orb.bmp">
+      <Filter>Resource Files\Weapons\Orb</Filter>
+    </Image>
+    <Image Include="res\Weapons\Orb\5 Jared%27s Stone.bmp">
+      <Filter>Resource Files\Weapons\Orb</Filter>
+    </Image>
+    <Image Include="res\Weapons\Paladin\01 Scepter.bmp">
+      <Filter>Resource Files\Weapons\Paladin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Paladin\02 Grand Scepter.bmp">
+      <Filter>Resource Files\Weapons\Paladin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Paladin\03 War Scepter.bmp">
+      <Filter>Resource Files\Weapons\Paladin</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\01 Rancid Gas Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\02 Oil Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\03 Choking Gas Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\04 Exploding Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\05 Strangling Gas Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Potion\06 Fulminating Potion.bmp">
+      <Filter>Resource Files\Weapons\Potion</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\01 Decoy Gidbinn.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\02 The Gidbinn.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\03 Wirt%27s Leg.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\04 Horadric Malus.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\05 Hell Forge Hammer.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\06 Horadric Staff.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\07 Staff Of Kings.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\08 Khalim%27s Flail.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Quest\09 Khalim%27s Will.bmp">
+      <Filter>Resource Files\Weapons\Quest</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\01 Spear.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\02 Trident.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\03 Brandistock.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\04 Spetum.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\05 Pike.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\06 Bardiche.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\07 Voulge.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\08 Scythe.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\09 Poleaxe.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\10 Halberd.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Spear\11 War Scythe.bmp">
+      <Filter>Resource Files\Weapons\Spear</Filter>
+    </Image>
+    <Image Include="res\Weapons\Staff\01 Short Staff.bmp">
+      <Filter>Resource Files\Weapons\Staff</Filter>
+    </Image>
+    <Image Include="res\Weapons\Staff\02 Long Staff.bmp">
+      <Filter>Resource Files\Weapons\Staff</Filter>
+    </Image>
+    <Image Include="res\Weapons\Staff\03 Ganrled Staff.bmp">
+      <Filter>Resource Files\Weapons\Staff</Filter>
+    </Image>
+    <Image Include="res\Weapons\Staff\04 Battle Staff.bmp">
+      <Filter>Resource Files\Weapons\Staff</Filter>
+    </Image>
+    <Image Include="res\Weapons\Staff\05 War Staff.bmp">
+      <Filter>Resource Files\Weapons\Staff</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\01 Short Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\02 Scimitar.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\03 Sabre.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\04 Falchion.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\05 Crystal Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\06 Broad Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\07 Long Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\08 War Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\09 Tow Handed Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\10 Claymore.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\11 Giant Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\12 Bastard Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\13 Flamberge.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\14 Great Sword.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\15 Dagger.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\16 Dirk.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\17 Kris.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Sword\18 Blade.bmp">
+      <Filter>Resource Files\Weapons\Sword</Filter>
+    </Image>
+    <Image Include="res\Weapons\Throwing\1 Throwing Knife.bmp">
+      <Filter>Resource Files\Weapons\Throwing</Filter>
+    </Image>
+    <Image Include="res\Weapons\Throwing\2 Throwing Axe.bmp">
+      <Filter>Resource Files\Weapons\Throwing</Filter>
+    </Image>
+    <Image Include="res\Weapons\Throwing\3 Balanced Knife.bmp">
+      <Filter>Resource Files\Weapons\Throwing</Filter>
+    </Image>
+    <Image Include="res\Weapons\Throwing\4 Balanced Axe.bmp">
+      <Filter>Resource Files\Weapons\Throwing</Filter>
+    </Image>
+    <Image Include="res\Misc\a Jade Figuring.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Amethyst.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Amn Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Amulet 2.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Amulet 3.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Ring 2.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Amulet.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Ring 3.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Antidote Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Ring 4.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Arrows.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Ring 5.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Ber Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Skeleton Jaw.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Bolts.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Book of Skill.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Bpl.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Bps.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Cham Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Amethyst.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Diamond.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Emerald.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Ruby.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Sapphire.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Skull.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Chipped Topaz.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Diamond.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Dol Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\El Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Eld Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Elixir.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Emerald.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Eth Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Fal Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Amethyst.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Diamond.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Emerald.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Saphire.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Skull.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawed Topaz.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawled Ruby.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Amethyst.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Diamond.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Emerald.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Ruby.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Sapphire.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Skull.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Flawless Topaz.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Full Reiuvenation Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Full Rejuvenation Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\gemsocket.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
-    <Image Include="res\Misc\Small Charm 2.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Small Charm 3.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Large Charm 2.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Misc\Large Charm 3.bmp">
-      <Filter>Resource Files</Filter>
+    <Image Include="res\Misc\Gold.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Grand Charm 2.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Grand Charm 3.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Grand Charm.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Greater Healing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Greater Mana Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Gul Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Healing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Hel Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Herb.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Horadric Cube.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Horadric Scroll.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Io Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ist Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ith Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Jah Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Jewel 2.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Jewel 3.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Jewel 4.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Jewel 5.bmp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Misc</Filter>
     </Image>
     <Image Include="res\Misc\Jewel 6.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Jewel.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Key to the Cairn Stones.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Key.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Khalim%27s Brain.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Khalim%27s Ear.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Khalim%27s Eye.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Khalim%27s Heart.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ko Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Lam Esen%27s Tome.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Large Charm 2.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Large Charm 3.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Large Charm.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Lem Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Light Healing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Light Mana Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Lo Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Lum Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Mal Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Malah%27s Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Mana Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Mephisto%27s Soulstone.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Minor Healing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Minor Mana Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Mpf.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Nef Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ohm Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ort Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Amethyst.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Diamond.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Emerald.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Ruby.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Sapphire.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Skull.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Perfect Topaz.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Player%27s Ear.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Potion of Life.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Pul Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ral Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Reiuvenation Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Rejuvenation Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 2.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 3.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 4.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring 5.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ring.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Zod Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Vex Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Um Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Twisted Essence of Terror.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Twisted Essence of Suffering.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Twisted Essence of Hatred.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Twisted Essence of Destruction.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Torch.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Topaz.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Top of the Horadric Staff.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Tome of Town Portal.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Tome of Identify.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Token of Absolution.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Tir Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Thul Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\the Golden Bird.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\the Black Tower Key.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Thawing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Tal Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Sur Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Super Mana Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Super Healing Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Stamina Potion.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Small Charm.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Small Charm 3.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Small Charm 2.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skull.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Tail.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Spleen.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Soul.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Quill.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Jaw.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Horn.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Heart.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Flag.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Fang.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Eye.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Skeleton Brain.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Shael Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Town Portal.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Resistance.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Knowledge.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Jnifuss.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Inifuss.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Scroll of Identify.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Sapphire.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Ruby.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Misc\Rpl.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\CharStats.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\Misc\Sol Rune.bmp">
+      <Filter>Resource Files\Misc</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\AMA58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\ASS58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\BAR58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\DRU58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\NEC58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\PAL58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR00.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR02.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR04.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR06.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR08.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR10.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR12.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR14.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR16.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR18.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR20.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR22.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR24.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR26.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR28.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR30.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR32.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR34.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR36.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR38.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR40.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR42.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR44.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR46.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR48.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR50.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR52.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR54.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR56.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\SOR58.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+    <Image Include="res\Skills\UNK.bmp">
+      <Filter>Resource Files\Skills</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\TXT\hireling.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Armor.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Belts.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\BodyLocs.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\CharStats.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\DifficultyLevels.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Experience.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Gems.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\HireDesc.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\ItemStatCost.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\ItemTypes.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\LowQualityItems.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\MagicPrefix.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\MagicSuffix.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Misc.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\PlayerClass.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Properties.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\QualityItems.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\RarePrefix.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\RareSuffix.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Runes.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\SetItems.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Sets.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\SkillDesc.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\Skills.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\UniqueItems.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\weapons.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
   </ItemGroup>
 </Project>

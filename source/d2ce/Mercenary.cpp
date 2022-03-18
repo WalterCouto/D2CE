@@ -23,144 +23,702 @@
 #include "Character.h"
 #include <sstream>
 #include <random>
+#include <rapidcsv/rapidcsv.h>
+#include <helpers/ItemHelpers.h>
 
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint16_t ROUGE_SCOUT_ATTRIBUTE_END = 5;
-    constexpr std::uint16_t DESERT_MERCENARY_ATTRIBUTE_END = 14;
-    constexpr std::uint16_t IRON_WOLF_ATTRIBUTE_END = 23;
-
-    struct MercStatSkillInfo
+    // must be in the form of "<string><number>"
+    bool ExtractPrefixAndNumber(const std::string& input, std::string& prefix, std::uint16_t& value)
     {
-        std::uint32_t Id = 0;
-        std::uint32_t Level = 1;
-        std::uint32_t LevelPerLvl = 0;
+        prefix.clear();
+        value = 0;
+        std::stringstream ss;
+        std::stringstream ssValue;
+        bool bFoundNumber = false;
+        for (auto& ch : input)
+        {
+            if (ch >= '0' && ch <= '9')
+            {
+                bFoundNumber = true;
+                ssValue << ch;
+            }
+            else if (bFoundNumber)
+            {
+                return false;
+            }
+            else
+            {
+                ss << ch;
+            }
+        }
+
+        prefix = ss.str();
+        std::string valueStr = ssValue.str();
+        if (valueStr.empty())
+        {
+            // no digits
+            return false;
+        }
+
+        value = static_cast<std::uint16_t>(std::stol(valueStr));
+        return true;
+    }
+
+    struct MercSkillInfo
+    {
+        std::string index;            // The ID pointer used to reference this skill
+        std::uint16_t id = MAXUINT16; // The actual ID number of the skill, this is what the pointer actually points at, this must be a unique number
+        std::uint16_t Level = 0;      // The sLvl of the Skill at Base lvl
+        std::uint16_t LvlPerLvl = 0;  // Factor in improving slvl at lvl up (0=no increment).
     };
 
     struct MercStatInfo
     {
-        std::uint32_t Level = 1;
-        std::vector<std::uint32_t> ExpPerLevel;
-        std::uint32_t Life = 0;
-        std::uint32_t LifePerLvl = 0;
-        std::uint16_t Defense = 0;
-        std::uint16_t DefPerLvl = 0;
-        std::uint32_t Strength = 0;
-        std::uint32_t StrPerLvl = 0;
-        std::uint32_t Dexterity = 0;
-        std::uint32_t DexPerLvl = 0;
-        std::uint16_t AttackRating = 0;
-        std::uint16_t ARPerLvl = 0;
-        BaseDamage Damage;
-        std::uint16_t DmgPerLvl = 0;
-        std::uint16_t Resist = 0;
-        std::uint16_t ResistPerLvl = 0;
+        std::uint32_t Level = 1;                             // rmlvl of the hireling (what level is required to 'upgrade' skills / stats)
+        std::uint32_t ExpPerLevel = 0;                       // Factor used in the calculation of Exp required between mlvls. The threshold for the next level (L+1) from the current level (L) is (exp/lvl)*L*L*(L+1).
+        std::uint32_t Life = 0;                              // Life at Base Lvl.
+        std::uint32_t LifePerLvl = 0;                        // Amount of additional Life given at Lvl up.
+        std::uint16_t Defense = 0;                           // DR (Defence Rating) at Base Lvl.
+        std::uint16_t DefPerLvl = 0;                         // Amount of additional DR given at Lvl up.
+        std::uint32_t Strength = 0;                          // Strength at Base Lvl.
+        std::uint32_t StrPerLvl = 0;                         // Amount (in 8ths) of additional Strength given at Lvl up.
+        std::uint32_t Dexterity = 0;                         // Dexterity at Base Lvl.
+        std::uint32_t DexPerLvl = 0;                         // Amount (in 8ths) of additional Dexterity given at Lvl up.
+        std::uint16_t AttackRating = 0;                      // Attack Rating at Base Lvl.
+        std::uint16_t ARPerLvl = 0;                          // Amount of additional AR given at Lvl up.
+        BaseDamage Damage;                                   // Range of Damage dealt at Base lvl.
+        std::uint16_t DmgPerLvl = 0;                         // Amount (in 8ths) of additional Damage given at Lvl up.
+        std::uint16_t Resist = 0;                            // All Resistance at Base Lvl.
+        std::uint16_t ResistPerLvl = 0;                      // Amount (in 8ths) of additional All Resist given at lvl up.
+        std::vector<MercSkillInfo> skills;                   // the skill properties
     };
 
-    const std::vector<MercStatInfo>& getMercStatInfo(d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass)
+    struct MercTypeInfo
     {
-        static std::vector<MercStatInfo> RoughScoutNormal = { { 3, { 100, 105 }, 45, 9, 15, 8, 35, 10, 45, 16, 10, 12, { 1, 3 }, 2, 0, 8 },
-            { 36, { 100, 105 }, 342, 18, 279, 15, 77, 10, 111, 16, 406, 24, { 9, 11 }, 4, 66, 7 },
-            { 67, { 100, 105 }, 900, 30, 744, 22, 116, 10, 173, 16, 1150, 36, { 25, 27 }, 6, 121, 5 }
-        };
-        static std::vector<MercStatInfo> RoughScoutNightmare = { { 36, { 110, 115 }, 308, 18, 251, 15, 74, 10, 106, 16, 365, 24, { 8, 10 }, 4, 63, 7 },
-            { 67, { 110, 115 }, 866, 30, 716, 22, 113, 10, 168, 16, 1109, 36, { 24, 26 }, 6, 118, 5 }
-        };
-        static std::vector<MercStatInfo> RoughScoutHell = { { 67, { 120, 125 }, 779, 30, 644, 22, 110, 10, 163, 16, 998, 36, { 23, 25 }, 6, 115, 5 } };
+        std::uint32_t Version = 0;                           // the version for this hireling
+        std::uint16_t Id = 0;                                // the type Id for this hireling
+        EnumMercenaryClass Class = EnumMercenaryClass::None; // the class for the hireling
+        std::string ClassName;                               // the class name as shown in-game for the hireling
+        EnumDifficulty Difficulty = EnumDifficulty::Normal;  // the difficulty level for the hireling
+        std::uint8_t AttributeId = 0;                        // the attribute index for the hireling
+        std::string AttributeName;                           // the attribute name as shown in-game for the hireling info
+        std::map<std::uint32_t, MercStatInfo> Levels;        // the stat attributes properties
+    };
 
-        static std::vector<MercStatInfo> DesertMercenaryNormal = { { 9, { 110 }, 120, 15, 45, 11, 57, 14, 40, 12, 20, 12, { 7, 14 }, 4, 18, 8 },
-            { 43, { 110 }, 630, 25, 419, 19, 117, 14, 91, 12, 428, 24, { 24, 31 }, 6, 86, 7 },
-            { 75, { 110 }, 1430, 40, 1027, 28, 173, 14, 139, 12, 1196, 36, { 48, 55 }, 8, 142, 4 }
-        };
-        static std::vector<MercStatInfo> DesertMercenaryNightmare = { { 43, { 120 }, 567, 25, 377, 19, 113, 14, 87, 12, 385, 24, { 22, 29 }, 6, 83, 7 },
-            { 75, { 120 }, 1367, 40, 985, 28, 169, 14, 135, 12, 1153, 36, { 46, 53 }, 8, 139, 4 }
-        };
-        static std::vector<MercStatInfo> DesertMercenaryHell = { { 75, { 130 }, 1230, 40, 887, 28, 165, 14, 131, 12, 1038, 36, { 44, 51 }, 8, 136, 4 } };
-
-        static std::vector<MercStatInfo> IronWolfNormal = { { 15, { 110, 120, 110 }, 160, 9, 80, 5, 49, 10, 40, 8, 15, 12, { 1, 7 }, 4, 25, 7 },
-            { 49, { 110, 120, 110 }, 466, 18, 250, 13, 92, 10, 74, 8, 423, 24, { 18, 24 }, 4, 85, 7 },
-            { 79, { 110, 120, 110 }, 1006, 27, 640, 25, 130, 10, 104, 8, 1143, 36, { 33, 39 }, 4, 138, 6 }
-        };
-        static std::vector<MercStatInfo> IronWolfNightmare = { { 49, { 120, 130, 120 }, 419, 18, 225, 13, 88, 10, 70, 8, 381, 24, { 16, 22 }, 4, 82, 7 },
-            { 79, { 120, 130, 120 }, 959, 27, 615, 25, 126, 10, 100, 8, 1101, 36, { 31, 37 }, 4, 135, 4 }
-        };
-        static std::vector<MercStatInfo> IronWolfHell = { { 79, { 130, 140, 130 }, 863, 27, 554, 25, 122, 10, 96, 8, 991, 36, { 29, 35 }, 4, 132, 4 } };
-
-        static std::vector<MercStatInfo> BarbarianNormal = { { 28, { 120 }, 288, 18, 180, 10, 101, 15, 63, 10, 150, 20, { 16, 20 }, 6, 56, 7 },
-            { 58, { 120 }, 828, 27, 480, 35, 158, 15, 101, 10, 750, 35, { 39, 43 }, 8, 109, 7 },
-            { 80, { 120 }, 1422, 45, 1250, 50, 200, 15, 129, 10, 1520, 45, { 61, 65 }, 8, 148, 4 }
-        };
-        static std::vector<MercStatInfo> BarbarianNightmare = { { 58, { 130 }, 745, 27, 432, 35, 155, 15, 96, 10, 675, 35, { 37, 41 }, 8, 106, 7 },
-            { 80, { 130 }, 1339, 45, 1202, 50, 197, 15, 124, 10, 1445, 45, { 59, 63 }, 8, 145, 4 }
-        };
-        static std::vector<MercStatInfo> BarbarianHell = { { 80, { 140 }, 1205, 45, 1082, 50, 194, 15, 119, 10, 1301, 45, { 57, 61 }, 8, 142, 4 } };
-
-        switch (mercClass)
+    typedef std::map<std::uint16_t, MercTypeInfo> MercTypeInfoMap;
+    std::map<std::uint32_t, MercTypeInfoMap> s_MercTypeInfo;
+    std::map<d2ce::EnumMercenaryClass, std::vector<std::string>> s_MercNamesMap;
+    std::map<d2ce::EnumMercenaryClass, std::vector<std::string>> s_MercAttributesMap;
+    std::vector<std::string> s_MercClassNames;
+    void InitMercData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_MercTypeInfo.empty())
         {
-        case d2ce::EnumMercenaryClass::RogueScout:
-            switch (diff)
+            if(pCurTextReader == &txtReader)
             {
-            case d2ce::EnumDifficulty::Normal:
-                return RoughScoutNormal;
-
-            case d2ce::EnumDifficulty::Nightmare:
-                return RoughScoutNightmare;
-
-            case d2ce::EnumDifficulty::Hell:
-                return RoughScoutHell;
+                // already initialized
+                return;
             }
-            break;
 
-        case d2ce::EnumMercenaryClass::DesertMercenary:
-            switch (diff)
-            {
-            case d2ce::EnumDifficulty::Normal:
-                return DesertMercenaryNormal;
-
-            case d2ce::EnumDifficulty::Nightmare:
-                return DesertMercenaryNightmare;
-
-            case d2ce::EnumDifficulty::Hell:
-                return DesertMercenaryHell;
-            }
-            break;
-
-        case EnumMercenaryClass::IronWolf:
-            switch (diff)
-            {
-            case d2ce::EnumDifficulty::Normal:
-                return IronWolfNormal;
-
-            case d2ce::EnumDifficulty::Nightmare:
-                return IronWolfNightmare;
-
-            case d2ce::EnumDifficulty::Hell:
-                return IronWolfHell;
-            }
-            break;
-
-        case d2ce::EnumMercenaryClass::Barbarian:
-            switch (diff)
-            {
-            case d2ce::EnumDifficulty::Normal:
-                return BarbarianNormal;
-
-            case d2ce::EnumDifficulty::Nightmare:
-                return BarbarianNightmare;
-
-            case d2ce::EnumDifficulty::Hell:
-                return BarbarianHell;
-            }
-            break;
+            s_MercNamesMap.clear();
+            s_MercTypeInfo.clear();
         }
 
-        // should not happend
-        static std::vector<MercStatInfo> badStatInfo;
-        return badStatInfo;
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetHirelingTxt());
+        auto& doc = *pDoc;
+
+        const std::array<std::string, 5> mercStringNames = { "", "Rogue Scout", "Desert Mercenary", "Eastern Sorceror", "Barbarian" };
+        const std::map<d2ce::EnumMercenaryClass, std::string> mercClassNameCode =
+          { { d2ce::EnumMercenaryClass::None, ""}, { d2ce::EnumMercenaryClass::RogueScout, "RogueScout"}, 
+            { d2ce::EnumMercenaryClass::DesertMercenary, "DesertMerc"}, { d2ce::EnumMercenaryClass::IronWolf, "Iron Wolf" },
+            { d2ce::EnumMercenaryClass::Barbarian, "Barbarian" } };
+
+        std::map<std::uint32_t, MercTypeInfoMap> mercTypeInfo;
+        std::map<d2ce::EnumMercenaryClass, std::vector<std::string>> mercNamesMap;
+        std::map<d2ce::EnumMercenaryClass, std::vector<std::string>> mercAttributesMap;
+        std::vector<std::string> mercClassNames;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T versionColumnIdx = doc.GetColumnIdx("Version");
+        const SSIZE_T hirelingColumnIdx = doc.GetColumnIdx("Hireling");
+        if (hirelingColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T idColumnIdx = doc.GetColumnIdx("Id");
+        if (idColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T difficultyColumnIdx = doc.GetColumnIdx("Difficulty");
+        if (difficultyColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T levelColumnIdx = doc.GetColumnIdx("Level");
+        if (levelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T expPerLevelColumnIdx = doc.GetColumnIdx("Exp/Lvl");
+        if (expPerLevelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T lifeColumnIdx = doc.GetColumnIdx("HP");
+        if (lifeColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T lifePerLvlColumnIdx = doc.GetColumnIdx("HP/Lvl");
+        if (lifePerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T defenseColumnIdx = doc.GetColumnIdx("Defense");
+        if (defenseColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T defPerLvlColumnIdx = doc.GetColumnIdx("Def/Lvl");
+        if (defPerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strengthColumnIdx = doc.GetColumnIdx("Str");
+        if (strengthColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strPerLvlColumnIdx = doc.GetColumnIdx("Str/Lvl");
+        if (strPerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T dexterityColumnIdx = doc.GetColumnIdx("Dex");
+        if (dexterityColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T dexPerLvlColumnIdx = doc.GetColumnIdx("Dex/Lvl");
+        if (dexPerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T attackRatingColumnIdx = doc.GetColumnIdx("AR");
+        if (attackRatingColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T arPerLvlColumnIdx = doc.GetColumnIdx("AR/Lvl");
+        if (arPerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T damageMinColumnIdx = doc.GetColumnIdx("Dmg-Min");
+        if (damageMinColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T damageMaxColumnIdx = doc.GetColumnIdx("Dmg-Max");
+        if (damageMaxColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T dmgPerLvlColumnIdx = doc.GetColumnIdx("Dmg/Lvl");
+        if (dmgPerLvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        SSIZE_T resistColumnIdx = doc.GetColumnIdx("ResistFire"); // all resits are equal so only fetch one
+        if (resistColumnIdx < 0)
+        {
+            resistColumnIdx = doc.GetColumnIdx("Resist"); // support the alternate version of this file format
+            if (resistColumnIdx < 0)
+            {
+                return;
+            }
+        }
+
+        SSIZE_T resistPerLvlColumnIdx = doc.GetColumnIdx("ResistFire/Lvl"); // all resits are equal so only fetch one
+        if (resistPerLvlColumnIdx < 0)
+        {
+            resistPerLvlColumnIdx = doc.GetColumnIdx("Resist/Lvl"); // support the alternate version of this file format
+            if (resistPerLvlColumnIdx < 0)
+            {
+                return;
+            }
+        }
+
+        const SSIZE_T nameFirstColumnIdx = doc.GetColumnIdx("NameFirst");
+        if (nameFirstColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T namelastColumnIdx = doc.GetColumnIdx("NameLast");
+        if (namelastColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T hireDescColumnIdx = doc.GetColumnIdx("HireDesc");
+        if (hireDescColumnIdx < 0)
+        {
+            return;
+        }
+
+        size_t skillsParamSize = 6;
+        std::vector<SSIZE_T> skillIndex(skillsParamSize, -1);
+        std::vector<SSIZE_T> skillLevel(skillsParamSize, -1);
+        std::vector<SSIZE_T> skillLvlPerLvl(skillsParamSize, -1);
+        for (size_t idx = 1; idx <= skillsParamSize; ++idx)
+        {
+            skillIndex[idx - 1] = doc.GetColumnIdx("Skill" + std::to_string(idx));
+            if (skillIndex[idx - 1] < 0)
+            {
+                skillsParamSize = idx - 1;
+                skillIndex.resize(skillsParamSize);
+                skillLevel.resize(skillsParamSize);
+                skillLvlPerLvl.resize(skillsParamSize);
+                break;
+            }
+
+            skillLevel[idx - 1] = doc.GetColumnIdx("Level" + std::to_string(idx));
+            if (skillLevel[idx - 1] < 0)
+            {
+                skillsParamSize = idx - 1;
+                skillIndex.resize(skillsParamSize);
+                skillLevel.resize(skillsParamSize);
+                skillLvlPerLvl.resize(skillsParamSize);
+                break;
+            }
+
+            skillLvlPerLvl[idx - 1] = doc.GetColumnIdx("LvlPerLvl" + std::to_string(idx));
+            if (skillLvlPerLvl[idx - 1] < 0)
+            {
+                skillsParamSize = idx - 1;
+                skillIndex.resize(skillsParamSize);
+                skillLevel.resize(skillsParamSize);
+                skillLvlPerLvl.resize(skillsParamSize);
+                break;
+            }
+        }
+
+        std::uint32_t version = 0;
+        std::uint16_t id = 0;
+        std::uint32_t level = 0;
+        std::string strValue;
+        std::string hireDesc;
+        std::string hireDescDefault;
+        std::string hireling;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            strValue = doc.GetCellString(idColumnIdx, i);
+            if (strValue.empty())
+            {
+                // should not happen
+                continue;
+            }
+            id = doc.GetCellUInt16(idColumnIdx, i);
+
+            strValue = doc.GetCellString(levelColumnIdx, i);
+            if (strValue.empty())
+            {
+                continue;
+            }
+            level = doc.GetCellUInt32(levelColumnIdx, i);
+
+            version = 0;
+            if (versionColumnIdx >= 0)
+            {
+                version = doc.GetCellUInt32(versionColumnIdx, i);
+            }
+
+            auto& mercTypeInfoMap = mercTypeInfo[version];
+            auto iterMerType = mercTypeInfoMap.find(id);
+            if (iterMerType == mercTypeInfoMap.end())
+            {
+                std::uint8_t mercClassIdx = 0;
+                d2ce::EnumMercenaryClass mercClass = d2ce::EnumMercenaryClass::None;
+                hireling = doc.GetCellString(hirelingColumnIdx, i);
+                for (auto mercClassName : mercStringNames)
+                {
+                    if (hireling.compare(mercClassName) == 0)
+                    {
+                        mercClass = static_cast<d2ce::EnumMercenaryClass>(mercClassIdx);
+                        break;
+                    }
+                    ++mercClassIdx;
+                }
+
+                if (mercClass == d2ce::EnumMercenaryClass::None)
+                {
+                    // should not happen
+                    continue;
+                }
+
+                // load merc names
+                if (mercNamesMap.find(mercClass) == mercNamesMap.end())
+                {
+                    std::string prefix;
+                    std::uint16_t startIdx = 0;
+                    if (ExtractPrefixAndNumber(doc.GetCellString(nameFirstColumnIdx, i), prefix, startIdx))
+                    {
+                        std::string endPrefix;
+                        std::uint16_t endIdx = 0;
+                        if (ExtractPrefixAndNumber(doc.GetCellString(namelastColumnIdx, i), endPrefix, endIdx) &&
+                            (endPrefix == prefix) && (endIdx >= startIdx))
+                        {
+                            auto& mercNames = mercNamesMap[mercClass];
+                            for (auto mercIdx = startIdx; mercIdx <= endIdx; ++mercIdx)
+                            {
+                                std::stringstream ss;
+                                ss << prefix;
+                                ss << std::setw(2) << std::setfill('0') << mercIdx;
+                                LocalizationHelpers::GetStringTxtValue(ss.str(), strValue);
+                                mercNames.push_back(strValue);
+                            }
+                        }
+                    }
+
+                    LocalizationHelpers::GetStringTxtValue(mercClassNameCode.at(mercClass), strValue, hireling.c_str());
+                    if (mercClassNames.size() <= mercClassIdx)
+                    {
+                        mercClassNames.resize(size_t(mercClassIdx) + 1);
+                    }
+
+                    mercClassNames[mercClassIdx] = strValue;
+                }
+
+                std::uint8_t attributeId = 0;
+                std::string attributeName;
+                hireDescDefault.clear();
+                hireDesc = doc.GetCellString(hireDescColumnIdx, i);
+                if (!hireDesc.empty())
+                {
+                    // support values from the alternative files
+                    if ((hireDesc == "farw") || (hireDesc == "strhirespecial1"))
+                    {
+                        hireDescDefault = "Fire Arrow";
+                        hireDesc = "strhirespecial1";
+                    }
+                    else if ((hireDesc == "carw") || (hireDesc == "strhirespecial2"))
+                    {
+                        hireDescDefault = "Cold Arrow";
+                        hireDesc = "strhirespecial2";
+                    }
+                    else if ((hireDesc == "comb") || (hireDesc == "skillname103") || (hireDesc == "skillname99"))
+                    {
+                        hireDescDefault = "Combat";
+                        hireDesc = "StrMercEx15";
+                    }
+                    else if ((hireDesc == "def") || (hireDesc == "skillname114") || (hireDesc == "skillname104"))
+                    {
+                        hireDescDefault = "Defensive";
+                        hireDesc = "StrMercEx12";
+                    }
+                    else if ((hireDesc == "off") || (hireDesc == "skillname98") || (hireDesc == "skillname108"))
+                    {
+                        hireDescDefault = "Offensive";
+                        hireDesc = "StrMercEx14";
+                    }
+                    else if ((hireDesc == "fire") || (hireDesc == "strhirespecial7"))
+                    {
+                        hireDescDefault = "Fire";
+                        hireDesc = "strhirespecial7";
+                    }
+                    else if ((hireDesc == "cold") || (hireDesc == "strhirespecial6"))
+                    {
+                        hireDescDefault = "Cold";
+                        hireDesc = "strhirespecial6";
+                    }
+                    else if ((hireDesc == "ltng") || (hireDesc == "strhirespecial5"))
+                    {
+                        hireDescDefault = "Lightning";
+                        hireDesc = "strhirespecial5";
+                    }
+
+                    LocalizationHelpers::GetStringTxtValue(hireDesc, attributeName, hireDesc.empty() ? nullptr : hireDesc.c_str());
+                    if (!attributeName.empty())
+                    {
+                        auto& attribs = mercAttributesMap[mercClass];
+                        auto iterAttrib = std::find(attribs.begin(), attribs.end(), attributeName);
+                        if (iterAttrib == attribs.end())
+                        {
+                            attributeId = std::uint8_t(attribs.size());
+                            attribs.push_back(attributeName);
+                        }
+                        else
+                        {
+                            attributeId = std::uint8_t(std::distance(std::begin(attribs), iterAttrib));
+                        }
+                    }
+                }
+
+                strValue = doc.GetCellString(difficultyColumnIdx, i);
+                if (strValue.empty())
+                {
+                    // should not happen
+                    continue;
+                }
+
+                d2ce::EnumDifficulty diff = d2ce::EnumDifficulty::Normal;
+                switch (doc.GetCellUInt16(difficultyColumnIdx, i))
+                {
+                case 1:
+                    diff = d2ce::EnumDifficulty::Normal;
+                    break;
+                case 2:
+                    diff = d2ce::EnumDifficulty::Nightmare;
+                    break;
+                case 3:
+                    diff = d2ce::EnumDifficulty::Hell;
+                    break;
+                default:
+                    // should not happen
+                    continue;
+                }
+
+                auto& mercType = mercTypeInfoMap[id];
+                mercType.Version = version;
+                mercType.Id = id;
+                mercType.Class = mercClass;
+                mercType.ClassName = mercClassNames[mercClassIdx];
+                mercType.Difficulty = diff;
+                mercType.AttributeId = attributeId;
+                mercType.AttributeName = attributeName;
+            }
+
+            auto& mercType = mercTypeInfoMap[id];
+            if (mercType.Levels.find(level) != mercType.Levels.end())
+            {
+                // duplicates should not happend
+                continue;
+            }
+
+            auto& mercLevel = mercType.Levels[level];
+            mercLevel.Level = level;
+
+            strValue = doc.GetCellString(expPerLevelColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.ExpPerLevel = doc.GetCellUInt32(expPerLevelColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(lifeColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Life = doc.GetCellUInt32(lifeColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(lifePerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.LifePerLvl = doc.GetCellUInt32(lifePerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(defenseColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Defense = doc.GetCellUInt16(defenseColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(defPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.DefPerLvl = doc.GetCellUInt16(defPerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(strengthColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Strength = doc.GetCellUInt32(strengthColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(strPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.StrPerLvl = doc.GetCellUInt32(strPerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(dexterityColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Dexterity = doc.GetCellUInt32(dexterityColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(dexPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.DexPerLvl = doc.GetCellUInt32(dexPerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(attackRatingColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.AttackRating = doc.GetCellUInt16(attackRatingColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(arPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.ARPerLvl = doc.GetCellUInt16(arPerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(damageMinColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Damage.Min = doc.GetCellUInt16(damageMinColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(damageMaxColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Damage.Max = doc.GetCellUInt16(damageMaxColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(dmgPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.DmgPerLvl = doc.GetCellUInt16(dmgPerLvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(resistColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.Resist = doc.GetCellUInt16(resistColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(resistPerLvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                mercLevel.ResistPerLvl = doc.GetCellUInt16(resistPerLvlColumnIdx, i);
+            }
+
+            for (size_t idx = 0; idx < skillsParamSize; ++idx)
+            {
+                strValue = doc.GetCellString(skillIndex[idx], i);
+                if (strValue.empty())
+                {
+                    break;
+                }
+
+                mercLevel.skills.resize(mercLevel.skills.size() + 1);
+                auto& skill = mercLevel.skills.back();
+                skill.index = strValue;
+                const auto& skillInfo = CharClassHelper::getSkillByIndex(skill.index);
+                skill.id = skillInfo.id;
+
+                strValue = doc.GetCellString(skillLevel[idx], i);
+                if (!strValue.empty())
+                {
+                    skill.Level = doc.GetCellUInt16(skillLevel[idx], i);
+                }
+
+                strValue = doc.GetCellString(skillLvlPerLvl[idx], i);
+                if (!strValue.empty())
+                {
+                    skill.LvlPerLvl = doc.GetCellUInt16(skillLvlPerLvl[idx], i);
+                }
+            }
+        }
+
+        s_MercTypeInfo.swap(mercTypeInfo);
+        s_MercNamesMap.swap(mercNamesMap);
+        s_MercClassNames.swap(mercClassNames);
+        s_MercAttributesMap.swap(mercAttributesMap);
     }
 
-    const MercStatInfo& getMercStatInfoForLevel(std::uint32_t level, const std::vector<MercStatInfo>& mercStats)
+    // Find first Merc Id that matches difficulty and class requirements
+    std::uint16_t getMercId(EnumCharVersion version, EnumDifficulty difficulty, d2ce::EnumMercenaryClass mercClass)
+    {
+        std::uint32_t fileVersion = 0;
+        if (version >= EnumCharVersion::v110)
+        {
+            fileVersion = 100;
+        }
+
+        auto typeMapIter = s_MercTypeInfo.find(fileVersion);
+        if (typeMapIter == s_MercTypeInfo.end())
+        {
+            // should not happend
+            typeMapIter = s_MercTypeInfo.begin();
+            if (typeMapIter == s_MercTypeInfo.end())
+            {
+                return 0;
+            }
+        }
+
+        for (const auto& mercType : typeMapIter->second)
+        {
+            if ((mercType.second.Class == mercClass) && (mercType.second.Difficulty == difficulty))
+            {
+                return mercType.second.Id;
+            }
+        }
+
+        return 0;
+    }
+    
+    const MercTypeInfo& getMercTypeInfo(std::uint16_t id, EnumCharVersion version)
+    {
+        std::uint32_t fileVersion = 0;
+        if (version >= EnumCharVersion::v110)
+        {
+            fileVersion = 100;
+        }
+
+        static MercTypeInfo badValue;
+        auto typeMapIter = s_MercTypeInfo.find(fileVersion);
+        if (typeMapIter == s_MercTypeInfo.end())
+        {
+            // should not happend
+            typeMapIter = s_MercTypeInfo.begin();
+            if (typeMapIter == s_MercTypeInfo.end())
+            {
+                return badValue;
+            }
+        }
+
+        auto iter = typeMapIter->second.find(id);
+        if (iter == typeMapIter->second.end())
+        {
+            // should not happend
+            return badValue;
+        }
+
+        return iter->second;
+    }
+
+    const std::map<std::uint32_t, MercStatInfo>& getMercStatInfo(std::uint16_t id, EnumCharVersion version)
+    {
+        const auto& mercTypeInfo = getMercTypeInfo(id, version);
+        return mercTypeInfo.Levels;
+    }
+
+    const MercStatInfo& getMercStatInfoForLevel(std::uint32_t level, const std::map<std::uint32_t, MercStatInfo>& mercStats)
     {
         static MercStatInfo badStatInfo;
         if (mercStats.size() == 0)
@@ -168,39 +726,49 @@ namespace d2ce
             return badStatInfo;
         }
 
-        if (mercStats.back().Level <= level)
+        auto rIter = mercStats.rbegin();
+        if (rIter != mercStats.rend())
         {
-            // last Merc level is lower then our level
-            return mercStats.back();
-        }
-
-        if (mercStats.front().Level >= level)
-        {
-            // first Merc Level is higher then our level
-            return mercStats.front();
-        }
-
-        // find appropriate Merc stat
-        MercStatInfo statInfo;
-        auto iter = mercStats.begin();
-        auto iter_end = mercStats.end();
-        auto prevIter = iter;
-
-        for (; iter != iter_end; prevIter = iter, ++iter)
-        {
-            if (iter->Level > level)
+            if (rIter->first <= level)
             {
-                // return previous value
-                return *prevIter;
+                // last Merc level is lower then our level
+                return rIter->second;
             }
         }
 
-        return mercStats.back();
+        auto iter = mercStats.begin();
+        if (iter != mercStats.end())
+        {
+            if (iter->first >= level)
+            {
+                // first Merc Level is higher then our level
+                return iter->second;
+            }
+        }
+
+        // find appropriate Merc stat
+        auto iter_end = mercStats.end();
+        auto prevIter = iter;
+        for (; iter != iter_end; prevIter = iter, ++iter)
+        {
+            if (iter->first > level)
+            {
+                // return previous value
+                return prevIter->second;
+            }
+        }
+
+        // should not happend as all cases covered above
+        if (rIter != mercStats.rend())
+        {
+            return rIter->second;
+        }
+        return badStatInfo;
     }
 
-    MercStatInfo getMercStatInfoForLevel(std::uint32_t level, d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass)
+    const MercStatInfo& getMercStatInfoForLevel(std::uint32_t level, std::uint16_t id, EnumCharVersion version)
     {
-        return getMercStatInfoForLevel(level, getMercStatInfo(diff, mercClass));
+        return getMercStatInfoForLevel(level, getMercStatInfo(id, version));
     }
 
     std::uint32_t getMinLevelForStrength(std::uint32_t strength, const MercStatInfo& statInfo)
@@ -222,45 +790,39 @@ namespace d2ce
         return (dexterity - statInfo.Dexterity + (statInfo.DexPerLvl - 1)) / statInfo.DexPerLvl;
     }
 
-    std::uint32_t getMerExpPerLevel(d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
+    std::uint32_t getMercExpPerLevel(std::uint16_t id, EnumCharVersion version)
     {
         // all levels have the same ExprPerLevel values, so get the first one
-        const auto& statInfo = getMercStatInfoForLevel(1, diff, mercClass);
-        if (statInfo.ExpPerLevel.empty())
+        const auto& statInfo = getMercStatInfoForLevel(1, id, version);
+        if (statInfo.ExpPerLevel == 0)
         {
-            // should not happen
+            // should not happend
             return 100;
         }
 
-        if (statInfo.ExpPerLevel.size() <= attributeId)
-        {
-            // this attribute must be the same value as the last item in the list
-            return statInfo.ExpPerLevel.back();
-        }
-
-        return statInfo.ExpPerLevel.at(attributeId);
+        return statInfo.ExpPerLevel;
     }
 
     std::uint32_t getMercExprForLevel(std::uint32_t level, std::uint32_t expPerLevel)
     {
         // Mercenary's max level is 98
-        level = std::max(std::uint32_t(1), std::min(level, NUM_OF_LEVELS - 1));
+        level = std::max(std::uint32_t(1), std::min(level, d2ce::MERC_NUM_OF_LEVELS));
         return expPerLevel * (level + 1) * level * level;
     }
 
-    std::uint32_t getMercExprForLevel(std::uint32_t level, d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
+    std::uint32_t getMercExprForLevel(std::uint32_t level, std::uint16_t id, EnumCharVersion version)
     {
-        return getMercExprForLevel(level, getMerExpPerLevel(diff, mercClass, attributeId));
+        return getMercExprForLevel(level, getMercExpPerLevel(id, version));
     }
 
-    std::uint32_t getMercLevelForExpr(std::uint32_t experience, d2ce::EnumDifficulty diff, d2ce::EnumMercenaryClass mercClass, std::uint8_t attributeId)
+    std::uint32_t getMercLevelForExpr(std::uint32_t experience, std::uint16_t id, EnumCharVersion version)
     {
         // Mercenary's max level is 98
-        auto expPerLevel = getMerExpPerLevel(diff, mercClass, attributeId);
-        const auto& mercStats = getMercStatInfo(diff, mercClass);
+        const auto& mercStats = getMercStatInfo(id, version);
         const auto& statInfo = getMercStatInfoForLevel(1, mercStats); // get bottom lowest level
         std::uint32_t level = statInfo.Level;
-        while (experience >= getMercExprForLevel(level + 1, expPerLevel) && level < d2ce::NUM_OF_LEVELS - 1)
+        auto expPerLevel = statInfo.ExpPerLevel;
+        while (experience >= getMercExprForLevel(level + 1, expPerLevel) && level < d2ce::MERC_NUM_OF_LEVELS)
         {
             ++level;
         }
@@ -365,6 +927,12 @@ bool d2ce::Mercenary::writeInfo(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
+void d2ce::Mercenary::setTxtReader()
+{
+    auto& txtReader = ItemHelpers::getTxtReader();
+    InitMercData(txtReader);
+}
+//---------------------------------------------------------------------------
 void d2ce::Mercenary::clear()
 {
     Merc.Dead = 0;
@@ -430,7 +998,7 @@ void d2ce::Mercenary::fillMercStats(CharStats& cs) const
     cs.Level = getLevel();
     cs.Experience = Merc.Experience;
 
-    const auto& statInfo = getMercStatInfoForLevel(cs.Level, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(cs.Level, Merc.Type, Version);
     cs.Strength = statInfo.Strength;
     cs.Dexterity = statInfo.Dexterity;
     cs.CurLife = statInfo.Life;
@@ -450,23 +1018,53 @@ void d2ce::Mercenary::fillMercStats(CharStats& cs) const
     {
         for (auto& attrib : magicalAttributes)
         {
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "strength")
             {
-            case 0:
-            case 220:
                 cs.Strength += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
-                break;
-
-            case 2:
-            case 221:
+            }
+            else if (stat.name == "dexterity")
+            {
                 cs.Dexterity += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
-                break;
-
-            case 7:
-            case 216:
+            }
+            else if (stat.name == "maxhp")
+            {
                 cs.CurLife += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
                 cs.MaxLife = cs.CurLife;
-                break;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "strength")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            cs.Strength += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "dexterity")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            cs.Dexterity += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "maxhp")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            cs.CurLife += std::uint32_t(Items::getMagicalAttributeValue(attrib, cs.Level, 0));
+                            cs.MaxLife = cs.CurLife;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -480,7 +1078,7 @@ std::uint32_t d2ce::Mercenary::getLevel() const
     }
 
     // Mercenary's max level is 98
-    return getMercLevelForExpr(Merc.Experience, getDifficulty(), getClass(), getAttributeId());
+    return getMercLevelForExpr(Merc.Experience, Merc.Type, Version);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getMinLevel() const
@@ -490,12 +1088,12 @@ std::uint32_t d2ce::Mercenary::getMinLevel() const
         return 1;
     }
 
-    const auto& statInfo = getMercStatInfoForLevel(1, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(1, Merc.Type, Version);
     ItemRequirements req;
     std::uint32_t level = statInfo.Level;
     for (const auto& item : getItems())
     {
-        item.getRequirements(req);
+        item.getDisplayedRequirements(req, CharInfo.getLevel());
         if (req.Level != 0)
         {
             level = std::max(level, std::uint32_t(req.Level));
@@ -513,7 +1111,7 @@ std::uint32_t d2ce::Mercenary::getMinLevel() const
     }
 
     // Mercenary's max level is 98
-    return std::min(level, NUM_OF_LEVELS - 1);
+    return std::min(level, d2ce::MERC_NUM_OF_LEVELS);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getMaxLevel() const
@@ -523,7 +1121,7 @@ std::uint32_t d2ce::Mercenary::getMaxLevel() const
         return 1;
     }
 
-    return std::min(CharInfo.getLevel(), NUM_OF_LEVELS - 1);
+    return std::min(CharInfo.getLevel(), d2ce::MERC_NUM_OF_LEVELS);
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::setLevel(std::uint32_t level)
@@ -540,7 +1138,7 @@ void d2ce::Mercenary::setLevel(std::uint32_t level)
         return;
     }
 
-    Merc.Experience = getMercExprForLevel(level, getDifficulty(), getClass(), getAttributeId());
+    Merc.Experience = getMercExprForLevel(level, Merc.Type, Version);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getExperience() const
@@ -560,7 +1158,7 @@ std::uint32_t d2ce::Mercenary::getMinExperience() const
         return 0;
     }
 
-    return getMercExprForLevel(getMinLevel(), getDifficulty(), getClass(), getAttributeId());
+    return getMercExprForLevel(getMinLevel(), Merc.Type, Version);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getMaxExperience() const
@@ -571,7 +1169,7 @@ std::uint32_t d2ce::Mercenary::getMaxExperience() const
     }
 
     // The max experience is the max for the current character's level
-    return getMercExprForLevel(std::min(CharInfo.getLevel() + 1, NUM_OF_LEVELS), getDifficulty(), getClass(), getAttributeId()) - 1;
+    return getMercExprForLevel(std::min(CharInfo.getLevel() + 1, CharInfo.getMaxLevel()), Merc.Type, Version) - 1;
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::setExperience(std::uint32_t experience)
@@ -592,22 +1190,20 @@ d2ce::EnumMercenaryClass d2ce::Mercenary::getClass() const
         return EnumMercenaryClass::None;
     }
 
-    if (Merc.Type <= ROUGE_SCOUT_ATTRIBUTE_END)
+    const auto& mercType = getMercTypeInfo(Merc.Type, Version);
+    return mercType.Class;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Mercenary::getClassName() const
+{
+    if (!isHired())
     {
-        return EnumMercenaryClass::RogueScout;
+        static std::string badValue;
+        return badValue;
     }
 
-    if (Merc.Type <= DESERT_MERCENARY_ATTRIBUTE_END)
-    {
-        return EnumMercenaryClass::DesertMercenary;
-    }
-
-    if (Merc.Type <= IRON_WOLF_ATTRIBUTE_END)
-    {
-        return EnumMercenaryClass::IronWolf;
-    }
-
-    return  EnumMercenaryClass::Barbarian;
+    const auto& mercType = getMercTypeInfo(Merc.Type, Version);
+    return mercType.ClassName;
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::setClass(EnumMercenaryClass mercClass)
@@ -622,30 +1218,24 @@ void d2ce::Mercenary::setClass(EnumMercenaryClass mercClass)
     fillMercInfo(oldMerc);
     auto oldDifficulty = getDifficulty();
 
-    switch (mercClass)
+    std::uint16_t maxMercId = 0;
+    if (mercClass != EnumMercenaryClass::None)
     {
-    case EnumMercenaryClass::None:
+        const auto& mercNames = s_MercNamesMap[mercClass];
+        if (!mercNames.empty())
+        {
+            maxMercId = std::uint16_t(mercNames.size() - 1);
+        }
+    }
+    
+    if (mercClass == EnumMercenaryClass::None)
+    {
         clear();
-        break;
-
-    case EnumMercenaryClass::RogueScout:
-        Merc.Type = 0;
-        Merc.NameId = std::min(Merc.NameId, std::uint16_t(std::size(RogueMercNames) - 1));
-        break;
-
-    case EnumMercenaryClass::DesertMercenary:
-        Merc.Type = ROUGE_SCOUT_ATTRIBUTE_END + 1;
-        Merc.NameId = std::min(Merc.NameId, std::uint16_t(std::size(DesertMercenaryNames) - 1));
-        break;
-
-    case EnumMercenaryClass::IronWolf:
-        Merc.Type = DESERT_MERCENARY_ATTRIBUTE_END + 1;
-        Merc.NameId = std::min(Merc.NameId, std::uint16_t(std::size(IronWolfNames) - 1));
-        break;
-
-    case EnumMercenaryClass::Barbarian:
-        Merc.Type = IRON_WOLF_ATTRIBUTE_END + 1;
-        break;
+    }
+    else
+    {
+        Merc.Type = getMercId(Version, oldDifficulty, mercClass);
+        Merc.NameId = std::min(Merc.NameId, maxMercId);
     }
 
     // restore difficulty level
@@ -668,89 +1258,8 @@ d2ce::EnumDifficulty d2ce::Mercenary::getDifficulty() const
         return EnumDifficulty::Normal;
     }
 
-    if (Merc.Type <= ROUGE_SCOUT_ATTRIBUTE_END)
-    {
-        switch (Merc.Type)
-        {
-        case 0:
-        case 1:
-            return EnumDifficulty::Normal;
-
-        case 2:
-        case 3:
-            return EnumDifficulty::Nightmare;
-
-        case 4:
-        case 5:
-            return EnumDifficulty::Hell;
-        }
-
-        // should not happen
-        return EnumDifficulty::Normal;
-    }
-
-    if (Merc.Type <= DESERT_MERCENARY_ATTRIBUTE_END)
-    {
-        switch (Merc.Type - (ROUGE_SCOUT_ATTRIBUTE_END + 1))
-        {
-        case 0:
-        case 1:
-        case 2:
-            return EnumDifficulty::Normal;
-
-        case 3:
-        case 4:
-        case 5:
-            return EnumDifficulty::Nightmare;
-
-        case 6:
-        case 7:
-        case 8:
-            return EnumDifficulty::Hell;
-        }
-
-        // should not happen
-        return EnumDifficulty::Normal;
-    }
-
-    if (Merc.Type <= IRON_WOLF_ATTRIBUTE_END)
-    {
-        switch (Merc.Type - (DESERT_MERCENARY_ATTRIBUTE_END + 1))
-        {
-        case 0:
-        case 1:
-        case 2:
-            return EnumDifficulty::Normal;
-
-        case 3:
-        case 4:
-        case 5:
-            return EnumDifficulty::Nightmare;
-
-        case 6:
-        case 7:
-        case 8:
-            return EnumDifficulty::Hell;
-        }
-
-        // should not happen
-        return EnumDifficulty::Normal;
-    }
-
-    switch (Merc.Type - (IRON_WOLF_ATTRIBUTE_END + 1))
-    {
-    case 0:
-        return EnumDifficulty::Normal;
-
-    case 1:
-        return EnumDifficulty::Nightmare;
-
-    case 2:
-        return EnumDifficulty::Hell;
-    }
-
-    // should not happen
-    return EnumDifficulty::Normal;
+    const auto& mercType = getMercTypeInfo(Merc.Type, Version);
+    return mercType.Difficulty;
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::setDifficulty(EnumDifficulty difficulty)
@@ -762,42 +1271,18 @@ void d2ce::Mercenary::setDifficulty(EnumDifficulty difficulty)
 
     d2ce::MercInfo oldMerc;
     fillMercInfo(oldMerc);
+
     auto oldDifficulty = static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(getDifficulty());
     auto newDifficulty = static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(difficulty);
-    switch (getClass())
+    const auto& attribs = Mercenary::getMercAttributes(getClass());
+    auto mult = attribs.empty() ? 1ui16 : std::uint16_t(attribs.size());
+    if (newDifficulty < oldDifficulty)
     {
-    case EnumMercenaryClass::RogueScout:
-        if (newDifficulty < oldDifficulty)
-        {
-            Merc.Type -= (oldDifficulty - newDifficulty) * 2;
-        }
-        else if (newDifficulty > oldDifficulty)
-        {
-            Merc.Type += (newDifficulty - oldDifficulty) * 2;
-        }
-        break;
-
-    case EnumMercenaryClass::DesertMercenary:
-    case EnumMercenaryClass::IronWolf:
-        if (newDifficulty < oldDifficulty)
-        {
-            Merc.Type -= (oldDifficulty - newDifficulty) * 3;
-        }
-        else if (newDifficulty > oldDifficulty)
-        {
-            Merc.Type += (newDifficulty - oldDifficulty) * 3;
-        }
-        break;
-
-    case EnumMercenaryClass::Barbarian:
-        if (newDifficulty < oldDifficulty)
-        {
-            Merc.Type -= (oldDifficulty - newDifficulty);
-        }
-        else if (newDifficulty > oldDifficulty)
-        {
-            Merc.Type += (newDifficulty - oldDifficulty);
-        }
+        Merc.Type -= (oldDifficulty - newDifficulty) * mult;
+    }
+    else if (newDifficulty > oldDifficulty)
+    {
+        Merc.Type += (newDifficulty - oldDifficulty) * mult;
     }
 
     // check experience
@@ -806,7 +1291,7 @@ void d2ce::Mercenary::setDifficulty(EnumDifficulty difficulty)
     // Make sure our level still makes sense
     if ((newDifficulty > oldDifficulty) && (getLevel() > CharInfo.getLevel()))
     {
-        // this difficuly's level is too high, go back oribinal difficulty
+        // this difficuly's level is too high, go back original difficulty
         updateMercInfo(oldMerc);
     }
 }
@@ -818,22 +1303,8 @@ std::uint8_t d2ce::Mercenary::getAttributeId() const
         return 0;
     }
 
-    if (Merc.Type <= ROUGE_SCOUT_ATTRIBUTE_END)
-    {
-        return std::uint8_t(Merc.Type % 2);
-    }
-
-    if (Merc.Type <= DESERT_MERCENARY_ATTRIBUTE_END)
-    {
-        return std::uint8_t((Merc.Type - (ROUGE_SCOUT_ATTRIBUTE_END + 1)) % 3);
-    }
-
-    if (Merc.Type <= IRON_WOLF_ATTRIBUTE_END)
-    {
-        return std::uint8_t((Merc.Type - (DESERT_MERCENARY_ATTRIBUTE_END + 1)) % 3);
-    }
-
-    return 0;
+    const auto& mercType = getMercTypeInfo(Merc.Type, Version);
+    return mercType.AttributeId;
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::setAttributeId(std::uint8_t attributeId)
@@ -843,24 +1314,9 @@ void d2ce::Mercenary::setAttributeId(std::uint8_t attributeId)
         return;
     }
 
-    switch (getClass())
-    {
-    case EnumMercenaryClass::RogueScout:
-        attributeId = std::min(attributeId, std::uint8_t(std::size(RogueMercAttributes) - 1));
-        break;
-
-    case EnumMercenaryClass::DesertMercenary:
-        attributeId = std::min(attributeId, std::uint8_t(std::size(DesertMercenaryAttributes) - 1));
-        break;
-
-    case EnumMercenaryClass::IronWolf:
-        attributeId = std::min(attributeId, std::uint8_t(std::size(IronWolfAttributes) - 1));
-        break;
-
-    case EnumMercenaryClass::Barbarian:
-        attributeId = 0;
-        break;
-    }
+    const auto& attribs = Mercenary::getMercAttributes(getClass());
+    auto maxAttrib = attribs.empty() ? 0ui8 : std::uint8_t(attribs.size() - 1);
+    attributeId = std::min(attributeId, maxAttrib);
 
     d2ce::MercInfo oldMerc;
     fillMercInfo(oldMerc);
@@ -891,19 +1347,15 @@ std::string d2ce::Mercenary::getAttributeName() const
         return "";
     }
 
-    switch (getClass())
+    auto attributeId = getAttributeId();
+
+    const auto& attribs = Mercenary::getMercAttributes(getClass());
+    if (attributeId >= attribs.size())
     {
-    case EnumMercenaryClass::RogueScout:
-        return RogueMercAttributes[getAttributeId()];
-
-    case EnumMercenaryClass::DesertMercenary:
-        return DesertMercenaryAttributes[getAttributeId()];
-
-    case EnumMercenaryClass::IronWolf:
-        return IronWolfAttributes[getAttributeId()];
+        return "";
     }
 
-    return "";
+    return attribs[attributeId];
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Mercenary::getNameId() const
@@ -923,24 +1375,18 @@ void d2ce::Mercenary::setNameId(std::uint16_t nameId)
         return;
     }
 
-    switch (getClass())
+    auto mercClass = getClass();
+    std::uint16_t maxMercId = 0;
+    if (mercClass != EnumMercenaryClass::None)
     {
-    case EnumMercenaryClass::RogueScout:
-        Merc.NameId = std::min(nameId, std::uint16_t(std::size(RogueMercNames) - 1));
-        break;
-
-    case EnumMercenaryClass::DesertMercenary:
-        Merc.NameId = std::min(nameId, std::uint16_t(std::size(DesertMercenaryNames) - 1));
-        break;
-
-    case EnumMercenaryClass::IronWolf:
-        Merc.NameId = std::min(nameId, std::uint16_t(std::size(IronWolfNames) - 1));
-        break;
-
-    case EnumMercenaryClass::Barbarian:
-        Merc.NameId = std::min(nameId, std::uint16_t(std::size(BarbarianMercNames) - 1));
-        break;
+        const auto& mercNames = s_MercNamesMap[mercClass];
+        if (!mercNames.empty())
+        {
+            maxMercId = std::uint16_t(mercNames.size() - 1);
+        }
     }
+
+    Merc.NameId = std::min(nameId, maxMercId);
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Mercenary::getName() const
@@ -950,35 +1396,17 @@ std::string d2ce::Mercenary::getName() const
         return "";
     }
 
-    switch (getClass())
+    auto mercClass = getClass();
+    if (mercClass == EnumMercenaryClass::None)
     {
-    case EnumMercenaryClass::RogueScout:
-        if (Merc.NameId < std::size(RogueMercNames))
-        {
-            return RogueMercNames[Merc.NameId];
-        }
-        break;
+        // should not happen
+        return "";
+    }
 
-    case EnumMercenaryClass::DesertMercenary:
-        if (Merc.NameId < std::size(DesertMercenaryNames))
-        {
-            return DesertMercenaryNames[Merc.NameId];
-        }
-        break;
-
-    case EnumMercenaryClass::IronWolf:
-        if (Merc.NameId < std::size(IronWolfNames))
-        {
-            return IronWolfNames[Merc.NameId];
-        }
-        break;
-
-    case EnumMercenaryClass::Barbarian:
-        if (Merc.NameId < std::size(BarbarianMercNames))
-        {
-            return BarbarianMercNames[Merc.NameId];
-        }
-        break;
+    const auto& mercNames = s_MercNamesMap[mercClass];
+    if (Merc.NameId < mercNames.size())
+    {
+        return mercNames[Merc.NameId];
     }
 
     return "";
@@ -994,7 +1422,7 @@ void d2ce::Mercenary::getDamage(BaseDamage& damage) const
 
     auto level = getLevel();
 
-    const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(level, Merc.Type, Version);
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
     std::uint16_t dmgDiff = std::uint16_t((levelDiff * statInfo.DmgPerLvl) / 8);
     damage.Min = statInfo.Damage.Min + dmgDiff;
@@ -1023,7 +1451,7 @@ std::uint16_t d2ce::Mercenary::getDefenseRating() const
 
     auto level = getLevel();
 
-    const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(level, Merc.Type, Version);
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
     std::uint16_t defenseRating = statInfo.Defense + levelDiff * statInfo.DefPerLvl;
 
@@ -1040,7 +1468,7 @@ std::uint16_t d2ce::Mercenary::getAttackRating() const
 
     auto level = getLevel();
 
-    const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(level, Merc.Type, Version);
     std::uint16_t levelDiff = std::uint16_t(level - statInfo.Level);
     std::uint16_t attackRating = statInfo.AttackRating + levelDiff * statInfo.ARPerLvl;
 
@@ -1052,17 +1480,38 @@ std::uint16_t d2ce::Mercenary::getAttackRating() const
         std::uint64_t ar = 0;
         for (auto& attrib : magicalAttributes)
         {
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "tohit")
             {
-            case 19:
-            case 224:
                 ar += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 119:
-            case 225:
+            }
+            else if (stat.name == "item_tohit_percent")
+            {
                 eAr += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "tohit")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            ar += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "item_tohit_percent")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            eAr += std::uint32_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                }
             }
 
             attackRating += std::uint16_t((attackRating * eAr) / 100 + ar);
@@ -1082,7 +1531,7 @@ void d2ce::Mercenary::getResistance(BaseResistance& resist) const
 
     auto level = getLevel();
 
-    const auto& statInfo = getMercStatInfoForLevel(level, getDifficulty(), getClass());
+    const auto& statInfo = getMercStatInfoForLevel(level, Merc.Type, Version);
     std::int16_t levelDiff = std::int16_t(level - statInfo.Level);
     std::int16_t baseResist = std::int16_t(statInfo.Resist + (levelDiff * statInfo.ResistPerLvl) / 4);
     resist.Cold = baseResist;
@@ -1101,43 +1550,80 @@ void d2ce::Mercenary::getResistance(BaseResistance& resist) const
     {
         for (auto& attrib : magicalAttributes)
         {
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "fireresist")
             {
-            case 39:
-            case 231:
                 resist.Fire += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 40:
+            }
+            else if (stat.name == "maxfireresist")
+            {
                 maxFireResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 41:
-            case 232:
+            }
+            else if (stat.name == "lightresist")
+            {
                 resist.Lightning += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 42:
+            }
+            else if (stat.name == "maxlightresist")
+            {
                 maxLightningResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 43:
-            case 230:
+            }
+            else if (stat.name == "coldresist")
+            {
                 resist.Cold += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 44:
+            }
+            else if (stat.name == "maxcoldresist")
+            {
                 maxColdResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 45:
-            case 233:
+            }
+            else if (stat.name == "poisonresist")
+            {
                 resist.Poison += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
-
-            case 46:
+            }
+            else if (stat.name == "maxpoisonresist")
+            {
                 maxPoisonResist += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
-                break;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "fireresist")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            resist.Fire += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "lightresist")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            resist.Lightning += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "coldresist")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            resist.Cold += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                    else if (opStat == "poisonresist")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 2:
+                            resist.Poison += std::int16_t(Items::getMagicalAttributeValue(attrib, level, 0));
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -1242,8 +1728,39 @@ void d2ce::Mercenary::asJson(Json::Value& parent, bool bSerializedFormat) const
         mercenary["IsDead"] = Merc.Dead;
         mercenary["Id"] = Merc.Id;
         mercenary["NameId"] = Merc.NameId;
+        if (Merc.Id != 0)
+        {
+            mercenary["Name"] = getName();
+        }
+
         mercenary["TypeId"] = Merc.Type;
+        if (Merc.Id != 0)
+        {
+            mercenary["Class"] = getClassName();
+            auto attribName = getAttributeName();
+            if (!attribName.empty())
+            {
+                parent["Attribute"] = attribName;
+            }
+            mercenary["Level"] = getLevel();
+        }
+
         mercenary["Experience"] = Merc.Experience;
+        if (Merc.Id != 0)
+        {
+            switch (getDifficulty())
+            {
+            case EnumDifficulty::Normal:
+                mercenary["Difficulty"] = "Normal";
+                break;
+            case EnumDifficulty::Nightmare:
+                mercenary["Difficulty"] = "Nightmare";
+                break;
+            case EnumDifficulty::Hell:
+                mercenary["Difficulty"] = "Hell";
+                break;
+            }
+        }
         parent["Mercenary"] = mercenary;
     }
     else
@@ -1255,8 +1772,78 @@ void d2ce::Mercenary::asJson(Json::Value& parent, bool bSerializedFormat) const
             parent["merc_id"] = ss.str();
         }
         parent["merc_name_id"] = Merc.NameId;
+        if (Merc.Id != 0)
+        {
+            parent["merc_name"] = getName();
+        }
+
         parent["merc_type"] = Merc.Type;
+        if (Merc.Id != 0)
+        {
+            parent["merc_class"] = getClassName();
+            auto attribName = getAttributeName();
+            if (!attribName.empty())
+            {
+                parent["merc_attribute"] = attribName;
+            }
+            parent["merc_level"] = getLevel();
+        }
+
         parent["merc_experience"] = Merc.Experience;
+        if (Merc.Id != 0)
+        {
+            switch (getDifficulty())
+            {
+            case EnumDifficulty::Normal:
+                parent["merc_difficulty"] = "Normal";
+                break;
+            case EnumDifficulty::Nightmare:
+                parent["merc_difficulty"] = "Nightmare";
+                break;
+            case EnumDifficulty::Hell:
+                parent["merc_difficulty"] = "Hell";
+                break;
+            }
+        }
     }
+}
+//---------------------------------------------------------------------------
+const std::vector<std::string>& d2ce::Mercenary::getMercNames(EnumMercenaryClass mercClass)
+{
+    if (mercClass == EnumMercenaryClass::None)
+    {
+        static std::vector<std::string> badValue;
+        return badValue;
+    }
+
+    return s_MercNamesMap[mercClass];
+}
+//---------------------------------------------------------------------------
+const std::vector<std::string>& d2ce::Mercenary::getMercClassNames()
+{
+    return s_MercClassNames;
+}
+//---------------------------------------------------------------------------
+const std::vector<std::string>& d2ce::Mercenary::getMercAttributes(EnumMercenaryClass mercClass)
+{
+    if (mercClass == EnumMercenaryClass::None)
+    {
+        static std::vector<std::string> badValue;
+        return badValue;
+    }
+
+    return s_MercAttributesMap[mercClass];
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Mercenary::getMercClassName(EnumMercenaryClass mercClass)
+{
+    auto idx = static_cast<std::underlying_type_t<d2ce::EnumMercenaryClass>>(mercClass);
+    if (idx >= s_MercClassNames.size())
+    {
+        static std::string badValue;
+        return badValue;
+    }
+
+    return s_MercClassNames[idx];
 }
 //---------------------------------------------------------------------------

@@ -19,11 +19,17 @@
 
 #include "pch.h"
 #include "CharacterStats.h"
+#include "Character.h"
 #include "SkillConstants.h"
 #include "ItemConstants.h"
+#include <helpers/ItemHelpers.h>
+
 //---------------------------------------------------------------------------
 namespace d2ce
 {
+    constexpr std::uint32_t MAX_EXPERIENCE = 3600000000ui32; // experience max value (game limit)
+    constexpr std::uint32_t MAX_NUM_LEVELS = 99ui32;         // level max value (game limit)
+
     constexpr std::array<std::uint8_t, 2> STATS_MARKER = { 0x67, 0x66 };              // alternatively "gf"
     constexpr std::uint16_t STAT_MAX = 16;
     constexpr std::uint16_t STAT_END_MARKER = 0x1FF;
@@ -34,48 +40,1071 @@ namespace d2ce
 
     constexpr std::array<std::uint8_t, 2> SKILLS_MARKER = { 0x69, 0x66 };             // alternatively "if"
 
-    constexpr std::uint32_t BARBARIAN_VITALITY_MIN = 25;
-    constexpr std::uint32_t PALADIN_VITALITY_MIN = 25;
-    constexpr std::uint32_t DRUID_VITALITY_MIN = 25;
-    constexpr std::uint32_t AMAZON_VITALITY_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_VITALITY_MIN = 20;
-    constexpr std::uint32_t NECROMANCER_VITALITY_MIN = 15;
-    constexpr std::uint32_t SORCERESS_VITALITY_MIN = 10;
+    std::map<d2ce::EnumCharClass, std::vector<std::uint32_t>> s_MinExpRequired;
+    void InitExperienceData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_MinExpRequired.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
 
-    constexpr std::uint32_t SORCERESS_ENERGY_MIN = 35;
-    constexpr std::uint32_t NECROMANCER_ENERGY_MIN = 25;
-    constexpr std::uint32_t ASSASSIN_ENERGY_MIN = 25;
-    constexpr std::uint32_t DRUID_ENERGY_MIN = 20;
-    constexpr std::uint32_t AMAZON_ENERGY_MIN = 15;
-    constexpr std::uint32_t PALADIN_ENERGY_MIN = 15;
-    constexpr std::uint32_t BARBARIAN_ENERGY_MIN = 10;
+            s_MinExpRequired.clear();
+        }
 
-    constexpr std::uint32_t AMAZON_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t NECROMANCER_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t SORCERESS_DEXTERITY_MIN = 25;
-    constexpr std::uint32_t BARBARIAN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t PALADIN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_DEXTERITY_MIN = 20;
-    constexpr std::uint32_t DRUID_DEXTERITY_MIN = 20;
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetExperienceTxt());
+        auto& doc = *pDoc;
+        std::map<d2ce::EnumCharClass, std::vector<std::uint32_t>> minExpRequired;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T levelColumnIdx = doc.GetColumnIdx("Level");
+        if (levelColumnIdx < 0)
+        {
+            return;
+        }
 
-    constexpr std::uint32_t BARBARIAN_STRENGTH_MIN = 30;
-    constexpr std::uint32_t AMAZON_STRENGTH_MIN = 20;
-    constexpr std::uint32_t ASSASSIN_STRENGTH_MIN = 20;
-    constexpr std::uint32_t PALADIN_STRENGTH_MIN = 25;
-    constexpr std::uint32_t NECROMANCER_STRENGTH_MIN = 15;
-    constexpr std::uint32_t DRUID_STRENGTH_MIN = 15;
-    constexpr std::uint32_t SORCERESS_STRENGTH_MIN = 10;
+        std::map<d2ce::EnumCharClass, SSIZE_T> classColumnIndex;
+        classColumnIndex[d2ce::EnumCharClass::Amazon] = doc.GetColumnIdx("Amazon");
+        if (classColumnIndex[d2ce::EnumCharClass::Amazon] < 0)
+        {
+            return;
+        }
 
-    // 98 skill points for leveling up 1-99. Additional 4 per difficulty from quests
-    constexpr std::uint32_t MAX_SKILL_CHOICES_EARNED = 110;
+        classColumnIndex[d2ce::EnumCharClass::Sorceress] = doc.GetColumnIdx("Sorceress");
+        if (classColumnIndex[d2ce::EnumCharClass::Sorceress] < 0)
+        {
+            return;
+        }
 
-    //  495 stat points for leveling up 1-99. Additional 5 per difficulty from quests
-    constexpr std::uint32_t MAX_STAT_POINTS = 510;
+        classColumnIndex[d2ce::EnumCharClass::Necromancer] = doc.GetColumnIdx("Necromancer");
+        if (classColumnIndex[d2ce::EnumCharClass::Necromancer] < 0)
+        {
+            return;
+        }
+
+        classColumnIndex[d2ce::EnumCharClass::Paladin] = doc.GetColumnIdx("Paladin");
+        if (classColumnIndex[d2ce::EnumCharClass::Paladin] < 0)
+        {
+            return;
+        }
+
+        classColumnIndex[d2ce::EnumCharClass::Barbarian] = doc.GetColumnIdx("Barbarian");
+        if (classColumnIndex[d2ce::EnumCharClass::Barbarian] < 0)
+        {
+            return;
+        }
+
+        classColumnIndex[d2ce::EnumCharClass::Druid] = doc.GetColumnIdx("Druid");
+        if (classColumnIndex[d2ce::EnumCharClass::Druid] < 0)
+        {
+            return;
+        }
+
+        classColumnIndex[d2ce::EnumCharClass::Assassin] = doc.GetColumnIdx("Assassin");
+        if (classColumnIndex[d2ce::EnumCharClass::Assassin] < 0)
+        {
+            return;
+        }
+
+        std::string strValue;
+        std::uint32_t exp = 0;
+        std::uint32_t level = 0;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            strValue = doc.GetCellString(levelColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+
+            if (strValue == "MaxLvl")
+            {
+                // first row is the MaxLvl row, so initialize vector to fit size
+                for (auto colIdx : classColumnIndex)
+                {
+                    level = 99ui32;
+                    strValue = doc.GetCellString(colIdx.second, i);
+                    if (!strValue.empty())
+                    {
+                        level = std::min(doc.GetCellUInt32(colIdx.second, i), 127ui32);
+                    }
+
+                    minExpRequired[colIdx.first].resize(level + 1, 0ui32);
+                }
+                continue;
+            }
+
+            for (auto colIdx : classColumnIndex)
+            {
+                exp = 0;
+                strValue = doc.GetCellString(colIdx.second, i);
+                if (!strValue.empty())
+                {
+                    exp = doc.GetCellUInt32(colIdx.second, i);
+                }
+
+                auto& expReqList = minExpRequired[colIdx.first];
+                if (expReqList.size() >= i)
+                {
+                    expReqList[i - 1] = exp;
+                }
+            }
+        }
+
+        s_MinExpRequired.swap(minExpRequired);
+    }
+
+    struct CharacterInfoType
+    {
+        std::string ClassIndex; // The character class this line refers to (this is just a reference field, you can't actually change this).
+        std::string ClassName;  // The localized name for the class
+        d2ce::EnumCharClass ClassEnum = d2ce::EnumCharClass::Amazon;
+        std::string Code;       // code used to reference this class in other files
+        std::uint32_t Version = 0;
+
+        std::uint32_t Strength = 0;   // The amount of strength this character class will start with.
+        std::uint32_t Dexterity = 0;  // The amount of dexterity this character class will start with.
+        std::uint32_t Energy = 0;     // The amount of energy this character class will start with.
+        std::uint32_t Vitality = 0;   // The amount of vitality this character class will start with.
+        std::uint32_t TotalStats = 0; // The total amount of the above starting stats
+        std::uint32_t Stamina = 0;    // The amount of stamina this character class will start with.
+
+        std::uint32_t HpAdd = 0;           // The amount of life added to the amount of life granted by the vit column.
+        std::uint32_t LifePerLevel = 0;    // Amount of life earned for each level up. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+        std::uint32_t StaminaPerLevel = 0; // Amount of stamina earned for each level up. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+        std::uint32_t ManaPerLevel = 0;    // Amount of mana earned for each level up. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+        std::uint32_t StatPerLevel = 0;    // Amount of stat points earned at each level up.
+
+        std::uint32_t LifePerVitality = 0;    // Amount of life earned for each point invested in vitality. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+        std::uint32_t StaminaPerVitality = 0; // Amount of stamina earned for each point invested in vitality. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+
+        std::uint32_t ManaPerMagic = 0; // Amount of mana earned for each point invested in energy. This value is in fourths, thus the lowest bonus possible is 64/256 (on quarter of one on-screen point, the fractional value is used by the game however).
+
+        std::string StrAllSkills; // This field tells the game what string to display for the bonus to all class skills (ex: +1 to all Amazon skills).
+        std::string StrSkillTab1; // This field tells the game what string to display for the bonus to all skills of the first skill tab (ex: +1 to all Bow and Crossbow skills).
+        std::string StrSkillTab2; // This field tells the game what string to display for the bonus to all skills of the second skill tab (ex: +1 to all Passive and Magic skills).
+        std::string StrSkillTab3; // This field tells the game what string to display for the bonus to all skills of the third skill tab (ex: +1 to all Javelin and Spear skills).
+        std::string StrClassOnly; // This field tells the game what string to display for class specific items (and class specific skill bonus) (ex: Amazon Only).
+
+        std::string StrSklTreeTab1; // The string to display for the first skill tab
+        std::string StrSklTreeTab2; // the string to display for the second skill tab
+        std::string StrSklTreeTab3; // the string to display for the third skill tab
+
+        std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>> SklTreeTab1; // The skill ids for the first skill tab, organized by row and column
+        std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>> SklTreeTab2; // The skill ids for the second skill tab, organized by row and column
+        std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>> SklTreeTab3; // The skill ids for the third skill tab, organized by row and column
+
+        std::vector<std::uint16_t> Skills; // skill ids in original array position as found in character file
+    };
+
+    std::map<std::string, d2ce::EnumCharClass> s_CharClassEnumNameMap = { {"Amazon", d2ce::EnumCharClass::Amazon},
+        {"Sorceress", d2ce::EnumCharClass::Sorceress}, {"Necromancer", d2ce::EnumCharClass::Necromancer},
+        {"Paladin", d2ce::EnumCharClass::Paladin}, {"Barbarian", d2ce::EnumCharClass::Barbarian},
+        {"Druid", d2ce::EnumCharClass::Druid}, {"Assassin", d2ce::EnumCharClass::Assassin} };
+    std::map<std::string, std::uint16_t> s_CharClassNameMap;
+    std::map<d2ce::EnumCharClass, std::uint16_t> s_CharClassEnumMap;
+    std::map<std::uint16_t, CharacterInfoType> s_CharClassInfo;
+    void InitCharStatsData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_CharClassInfo.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_CharClassNameMap.clear();
+            s_CharClassEnumMap.clear();
+            s_CharClassInfo.clear();
+        }
+
+        InitExperienceData(txtReader);
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetCharStatsTxt());
+        auto& doc = *pDoc;
+        std::map<std::string, std::uint16_t> charClassNameMap;
+        std::map<d2ce::EnumCharClass, std::uint16_t> charClassEnumMap;
+        std::map<std::uint16_t, CharacterInfoType> charClassInfo;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T classColumnIdx = doc.GetColumnIdx("class");
+        if (classColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strColumnIdx = doc.GetColumnIdx("str");
+        if (strColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T dexColumnIdx = doc.GetColumnIdx("dex");
+        if (dexColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T intColumnIdx = doc.GetColumnIdx("int");
+        if (intColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T vitColumnIdx = doc.GetColumnIdx("vit");
+        if (vitColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T staminaColumnIdx = doc.GetColumnIdx("stamina");
+        if (staminaColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T hpaddColumnIdx = doc.GetColumnIdx("hpadd");
+        if (hpaddColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T lifePerLevelColumnIdx = doc.GetColumnIdx("LifePerLevel");
+        if (lifePerLevelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T staminaPerLevelColumnIdx = doc.GetColumnIdx("StaminaPerLevel");
+        if (staminaPerLevelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T manaPerLevelColumnIdx = doc.GetColumnIdx("ManaPerLevel");
+        if (manaPerLevelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T lifePerVitalityColumnIdx = doc.GetColumnIdx("LifePerVitality");
+        if (lifePerVitalityColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T staminaPerVitalityColumnIdx = doc.GetColumnIdx("StaminaPerVitality");
+        if (staminaPerVitalityColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T manaPerMagicColumnIdx = doc.GetColumnIdx("ManaPerMagic");
+        if (manaPerMagicColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T statPerLevelColumnIdx = doc.GetColumnIdx("StatPerLevel");
+        if (statPerLevelColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strAllSkillsColumnIdx = doc.GetColumnIdx("StrAllSkills");
+        if (strAllSkillsColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strSkillTab1ColumnIdx = doc.GetColumnIdx("StrSkillTab1");
+        if (strSkillTab1ColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strSkillTab2ColumnIdx = doc.GetColumnIdx("StrSkillTab2");
+        if (strSkillTab2ColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strSkillTab3ColumnIdx = doc.GetColumnIdx("StrSkillTab3");
+        if (strSkillTab3ColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strClassOnlyColumnIdx = doc.GetColumnIdx("StrClassOnly");
+        if (strClassOnlyColumnIdx < 0)
+        {
+            return;
+        }
+
+        std::uint16_t version = 0;
+        std::string strValue;
+        std::string index;
+        std::uint16_t idx = 0;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            index = doc.GetCellString(classColumnIdx, i);
+            if (index.empty())
+            {
+                // skip
+                continue;
+            }
+
+            if (index == "Expansion")
+            {
+                // skip
+                version = 100;
+                continue;
+            }
+
+            auto iter = s_CharClassEnumNameMap.find(index);
+            if (iter != s_CharClassEnumNameMap.end())
+            {
+                charClassEnumMap[iter->second] = idx;
+            }
+
+            LocalizationHelpers::GetStringTxtValue(index, strValue);
+            charClassNameMap[strValue] = idx;
+            auto& item = charClassInfo[idx];
+            ++idx;
+            item.ClassIndex = index;
+            item.Version = version;
+            item.ClassEnum = iter->second;
+            item.ClassName = strValue;
+
+            strValue = doc.GetCellString(strColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.Strength = doc.GetCellUInt32(strColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(dexColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.Dexterity = doc.GetCellUInt32(dexColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(intColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.Energy = doc.GetCellUInt32(intColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(vitColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.Vitality = doc.GetCellUInt32(vitColumnIdx, i);
+            }
+            item.TotalStats = item.Strength + item.Dexterity + item.Energy + item.Vitality;
+
+            strValue = doc.GetCellString(staminaColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.Stamina = doc.GetCellUInt32(staminaColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(hpaddColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.HpAdd = doc.GetCellUInt32(hpaddColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(lifePerLevelColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.LifePerLevel = doc.GetCellUInt32(lifePerLevelColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(staminaPerLevelColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.StaminaPerLevel = doc.GetCellUInt32(staminaPerLevelColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(manaPerLevelColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.ManaPerLevel = doc.GetCellUInt32(manaPerLevelColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(lifePerVitalityColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.LifePerVitality = doc.GetCellUInt32(lifePerVitalityColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(staminaPerVitalityColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.StaminaPerVitality = doc.GetCellUInt32(staminaPerVitalityColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(manaPerMagicColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.ManaPerMagic = doc.GetCellUInt32(manaPerMagicColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(statPerLevelColumnIdx, i);
+            if (!strValue.empty())
+            {
+                item.StatPerLevel = doc.GetCellUInt32(statPerLevelColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(strAllSkillsColumnIdx, i);
+            if (!LocalizationHelpers::GetStringTxtValue(strValue, item.StrAllSkills))
+            {
+                std::stringstream ss;
+                ss << "%+d to ";
+                ss << item.ClassIndex;
+                ss << " Skill Levels";
+                item.StrAllSkills = ss.str();
+            }
+            
+            std::string strFind = "%+d";
+            auto strPos = item.StrAllSkills.find(strFind);
+            if (strPos != item.StrAllSkills.npos)
+            {
+                item.StrAllSkills.replace(strPos, strFind.size(), "+{1}");
+            }
+            else
+            {
+                // support classic txt files
+                item.StrAllSkills = "+{1} " + item.StrAllSkills;
+            }
+
+            strValue = doc.GetCellString(strSkillTab1ColumnIdx, i);
+            LocalizationHelpers::GetStringTxtValue(strValue, item.StrSkillTab1);
+            strFind = "%+d";
+            strPos = item.StrSkillTab1.find(strFind);
+            if (strPos != item.StrSkillTab1.npos)
+            {
+                item.StrSkillTab1.replace(strPos, strFind.size(), "{2}");
+            }
+            else
+            {
+                // support classic txt files
+                strFind = "%d";
+                if (strPos != item.StrSkillTab1.npos)
+                {
+                    item.StrSkillTab1.replace(strPos, strFind.size(), "{2}");
+                }
+            }
+
+            strValue = doc.GetCellString(strSkillTab2ColumnIdx, i);
+            LocalizationHelpers::GetStringTxtValue(strValue, item.StrSkillTab2);
+            strFind = "%+d";
+            strPos = item.StrSkillTab2.find(strFind);
+            if (strPos != item.StrSkillTab2.npos)
+            {
+                item.StrSkillTab2.replace(strPos, strFind.size(), "{2}");
+            }
+            else
+            {
+                // support classic txt files
+                strFind = "%d";
+                if (strPos != item.StrSkillTab2.npos)
+                {
+                    item.StrSkillTab2.replace(strPos, strFind.size(), "{2}");
+                }
+            }
+
+            strValue = doc.GetCellString(strSkillTab3ColumnIdx, i);
+            LocalizationHelpers::GetStringTxtValue(strValue, item.StrSkillTab3);
+            strFind = "%+d";
+            strPos = item.StrSkillTab3.find(strFind);
+            if (strPos != item.StrSkillTab3.npos)
+            {
+                item.StrSkillTab3.replace(strPos, strFind.size(), "{2}");
+            }
+            else
+            {
+                // support classic txt files
+                strFind = "%d";
+                if (strPos != item.StrSkillTab2.npos)
+                {
+                    item.StrSkillTab2.replace(strPos, strFind.size(), "{2}");
+                }
+            }
+
+            strValue = doc.GetCellString(strClassOnlyColumnIdx, i);
+            if (!LocalizationHelpers::GetStringTxtValue(strValue, item.StrClassOnly))
+            {
+                std::stringstream ss;
+                ss << "(";
+                ss << item.ClassIndex;
+                ss << " Only)";
+                item.StrClassOnly = ss.str();
+            }
+
+            switch (item.ClassEnum)
+            {
+            case EnumCharClass::Amazon:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAm1", item.StrSklTreeTab1, "Javelin and Spear");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAm2", item.StrSklTreeTab2, "Passive and Magic");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAm3", item.StrSklTreeTab3, "Bow and Crossbow");
+                break;
+
+            case EnumCharClass::Sorceress:
+                LocalizationHelpers::GetStringTxtValue("SkillCategorySo1", item.StrSklTreeTab1, "Cold Spells");
+                LocalizationHelpers::GetStringTxtValue("SkillCategorySo2", item.StrSklTreeTab2, "Lightning Spells");
+                LocalizationHelpers::GetStringTxtValue("SkillCategorySo3", item.StrSklTreeTab3, "Fire Spells");
+                break;
+
+            case EnumCharClass::Necromancer:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryNe1", item.StrSklTreeTab1, "Summoning");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryNe2", item.StrSklTreeTab2, "Poison and Bone");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryNe3", item.StrSklTreeTab3, "Curses");
+                break;
+
+            case EnumCharClass::Paladin:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryPa1", item.StrSklTreeTab1, "Defensive Auras");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryPa2", item.StrSklTreeTab2, "Offensive Auras");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryPa3", item.StrSklTreeTab3, "Combat Skills");
+                break;
+
+            case EnumCharClass::Barbarian:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryBa1", item.StrSklTreeTab1, "Warcries");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryBa2", item.StrSklTreeTab2, "Combat Masteries");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryBa3", item.StrSklTreeTab3, "Combat Skills");
+                break;
+
+            case EnumCharClass::Druid:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryDr1", item.StrSklTreeTab1, "Elemental");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryDr2", item.StrSklTreeTab2, "Shape Shifting");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryDr3", item.StrSklTreeTab3, "Summoning");
+                break;
+
+            case EnumCharClass::Assassin:
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAs1", item.StrSklTreeTab1, "Martial Arts");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAs2", item.StrSklTreeTab2, "Shadow Disciplines");
+                LocalizationHelpers::GetStringTxtValue("SkillCategoryAs3", item.StrSklTreeTab3, "Traps");
+                break;
+            }
+        }
+
+        s_CharClassNameMap.swap(charClassNameMap);
+        s_CharClassEnumMap.swap(charClassEnumMap);
+        s_CharClassInfo.swap(charClassInfo);
+    }
+
+    std::map<std::string, d2ce::EnumCharClass> s_CharClassCodeMap;
+    void InitPlayerClassData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_CharClassInfo.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_CharClassNameMap.clear();
+            s_CharClassEnumMap.clear();
+            s_CharClassInfo.clear();
+            s_CharClassCodeMap.clear();
+        }
+
+        InitCharStatsData(txtReader);
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetPlayerClassTxt());
+        auto& doc = *pDoc;
+        std::map<std::string, d2ce::EnumCharClass> charClassCodeMap;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T classColumnIdx = doc.GetColumnIdx("Player Class");
+        if (classColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T codeColumnIdx = doc.GetColumnIdx("Code");
+        if (codeColumnIdx < 0)
+        {
+            return;
+        }
+
+        std::string strValue;
+        std::string code;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            code = doc.GetCellString(codeColumnIdx, i);
+            if (code.empty())
+            {
+                // skip
+                continue;
+            }
+
+            strValue = doc.GetCellString(classColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+
+            if (strValue == "Expansion")
+            {
+                // skip
+                continue;
+            }
+
+            auto iterEnum = s_CharClassEnumNameMap.find(strValue);
+            if (iterEnum == s_CharClassEnumNameMap.end())
+            {
+                // skip
+                continue;
+            }
+
+            auto iterIdx = s_CharClassEnumMap.find(iterEnum->second);
+            if (iterIdx == s_CharClassEnumMap.end())
+            {
+                // skip
+                continue;
+            }
+
+            auto iter = s_CharClassInfo.find(iterIdx->second);
+            if (iter == s_CharClassInfo.end())
+            {
+                // skip
+                continue;
+            }
+
+            iter->second.Code = code;
+            charClassCodeMap[code] = iter->second.ClassEnum;
+        }
+
+        s_CharClassCodeMap.swap(charClassCodeMap);
+    }
+
+    const CharacterInfoType& GetCharClassInfo(std::int16_t idx)
+    {
+        auto iter = s_CharClassInfo.find(idx);
+        if (iter == s_CharClassInfo.end())
+        {
+            static CharacterInfoType badValue;
+            return badValue;
+        }
+
+        return iter->second;
+    }
+
+    EnumCharClass GetEnumCharClassByIndex(std::int16_t idx)
+    {
+        auto classInfo = GetCharClassInfo(idx);
+        return classInfo.ClassEnum;
+    }
+
+    const CharacterInfoType& GetCharClassInfo(EnumCharClass charClass)
+    {
+        auto iter = s_CharClassEnumMap.find(charClass);
+        if (iter == s_CharClassEnumMap.end())
+        {
+            static CharacterInfoType badValue;
+            return badValue;
+        }
+
+        return GetCharClassInfo(iter->second);
+    }
+
+    const CharacterInfoType& GetCharClassInfo(const std::string& charCode)
+    {
+        auto iter = s_CharClassCodeMap.find(charCode);
+        if (iter == s_CharClassCodeMap.end())
+        {
+            static CharacterInfoType badValue;
+            return badValue;
+        }
+
+        return GetCharClassInfo(iter->second);
+    }
+
+    struct SkillsInfoType
+    {
+        SkillType Skill;
+
+        std::string Desc;
+        std::uint16_t Tab = 0;
+        std::uint16_t Row = 0;
+        std::uint16_t Col = 0;
+    };
+
+    std::map<std::string, std::uint16_t> s_SkillDescMap;
+    std::map<std::string, std::uint16_t> s_SkillIndexMap;
+    std::map<std::uint16_t, SkillsInfoType> s_SkillInfoMap;
+    void InitSkillDescData(const ITxtReader& txtReader)
+    {
+        auto pDoc(txtReader.GetSkillDescTxt());
+        auto& doc = *pDoc;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T skilldescColumnIdx = doc.GetColumnIdx("skilldesc");
+        if (skilldescColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T skillPageColumnIdx = doc.GetColumnIdx("SkillPage");
+        if (skillPageColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T skillRowColumnIdx = doc.GetColumnIdx("SkillRow");
+        if (skillRowColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T skillColumnColumnIdx = doc.GetColumnIdx("SkillColumn");
+        if (skillColumnColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strnameColumnColumnIdx = doc.GetColumnIdx("str name");
+        if (strnameColumnColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T strlongColumnColumnIdx = doc.GetColumnIdx("str long");
+        if (strlongColumnColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T iconCelColumnIdx = doc.GetColumnIdx("IconCel");
+        if (iconCelColumnIdx < 0)
+        {
+            return;
+        }
+
+        std::string strValue;
+        auto iter = s_SkillDescMap.begin();
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            strValue = doc.GetCellString(skilldescColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+
+            iter = s_SkillDescMap.find(strValue);
+            if (iter == s_SkillDescMap.end())
+            {
+                // skip
+                continue;
+            }
+
+            auto& skillInfo = s_SkillInfoMap[iter->second];
+
+            strValue = doc.GetCellString(strnameColumnColumnIdx, i);
+            if (!strValue.empty())
+            {
+                LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.name, skillInfo.Skill.index.c_str());
+            }
+
+            strValue = doc.GetCellString(strlongColumnColumnIdx, i);
+            if (!strValue.empty())
+            {
+                LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.longName);
+            }
+
+            if (skillInfo.Skill.classInfo.has_value())
+            {
+                strValue = doc.GetCellString(iconCelColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    skillInfo.Skill.classInfo.value().iconIndex = doc.GetCellUInt16(iconCelColumnIdx, i);
+                }
+
+                strValue = doc.GetCellString(skillPageColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    skillInfo.Tab = doc.GetCellUInt16(skillPageColumnIdx, i);
+                }
+
+                strValue = doc.GetCellString(skillRowColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    skillInfo.Row = doc.GetCellUInt16(skillRowColumnIdx, i);
+                }
+
+                strValue = doc.GetCellString(skillColumnColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    skillInfo.Col = doc.GetCellUInt16(skillColumnColumnIdx, i);
+                }
+
+                if ((skillInfo.Tab > 0) && (skillInfo.Tab <= 3)  && (skillInfo.Row > 0) && (skillInfo.Col > 0))
+                {
+                    auto iterIdx = s_CharClassEnumMap.find(skillInfo.Skill.classInfo.value().charClass);
+                    if (iterIdx != s_CharClassEnumMap.end())
+                    {
+                        auto iterClass = s_CharClassInfo.find(iterIdx->second);
+                        if (iterClass != s_CharClassInfo.end())
+                        {
+                            switch (skillInfo.Tab)
+                            {
+                            case 1:
+                                skillInfo.Tab = 3;
+                                iterClass->second.SklTreeTab3[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                break;
+
+                            case 2:
+                                iterClass->second.SklTreeTab2[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                break;
+
+                            case 3:
+                                skillInfo.Tab = 1;
+                                iterClass->second.SklTreeTab1[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void InitSkillInfoData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_SkillInfoMap.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_SkillDescMap.clear();
+            s_SkillIndexMap.clear();
+            s_SkillInfoMap.clear();
+        }
+
+        InitPlayerClassData(txtReader);
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetSkillsTxt());
+        auto& doc = *pDoc;
+        std::map<std::string, std::uint16_t> skillDescMap;
+        std::map<std::string, std::uint16_t> skillIndexMap;
+        std::map<std::uint16_t, SkillsInfoType> skillInfoMap;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T skillColumnIdx = doc.GetColumnIdx("skill");
+        if (skillColumnIdx < 0)
+        {
+            return;
+        }
+
+        SSIZE_T idColumnIdx = doc.GetColumnIdx("*Id");
+        if (idColumnIdx < 0)
+        {
+            idColumnIdx = doc.GetColumnIdx("Id"); // support the alternate version of this file format
+            if (idColumnIdx < 0)
+            {
+                return;
+            }
+        }
+
+        const SSIZE_T classColumnIdx = doc.GetColumnIdx("charclass");
+        if (classColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T skilldescColumnIdx = doc.GetColumnIdx("skilldesc");
+        if (skilldescColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T reqlevelColumnColumnIdx = doc.GetColumnIdx("reqlevel");
+        if (reqlevelColumnColumnIdx < 0)
+        {
+            return;
+        }
+
+        size_t reqSkillsParamSize = 3;
+        std::vector<SSIZE_T> reqSkills(reqSkillsParamSize, -1);
+        for (size_t idx = 1; idx <= reqSkillsParamSize; ++idx)
+        {
+            reqSkills[idx - 1] = doc.GetColumnIdx("reqskill" + std::to_string(idx));
+            if (reqSkills[idx - 1] < 0)
+            {
+                reqSkillsParamSize = idx - 1;
+                reqSkills.resize(reqSkillsParamSize);
+                break;
+            }
+        }
+
+        std::string strValue;
+        std::string classCode;
+        std::uint16_t id = MAXUINT16;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            strValue = doc.GetCellString(idColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+            id = doc.GetCellUInt16(idColumnIdx, i);
+            classCode = doc.GetCellString(classColumnIdx, i);
+            strValue = doc.GetCellString(skillColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+
+            auto& skill = skillInfoMap[id];
+            skill.Skill.id = id;
+            skill.Skill.index = strValue;
+            skillIndexMap[skill.Skill.index] = skill.Skill.id;
+            skill.Skill.name = skill.Skill.index;
+            skill.Desc = doc.GetCellString(skilldescColumnIdx, i);
+            if (!skill.Desc.empty())
+            {
+                skillDescMap[skill.Desc] = id;
+            }
+
+            if (!classCode.empty())
+            {
+                EnumCharClass value;
+                if (d2ce::CharClassHelper::getEnumCharClassByCode(classCode, value))
+                {
+                    if (!skill.Skill.classInfo.has_value())
+                    {
+                        skill.Skill.classInfo = std::make_optional<ClassSkillType>();
+                    }
+                    skill.Skill.classInfo.value().charClass = value;
+
+                    auto iterIdx = s_CharClassEnumMap.find(value);
+                    if (iterIdx != s_CharClassEnumMap.end())
+                    {
+                        auto iter = s_CharClassInfo.find(iterIdx->second);
+                        if (iter != s_CharClassInfo.end())
+                        {
+                            skill.Skill.classInfo.value().index = std::uint16_t(iter->second.Skills.size());
+                            iter->second.Skills.push_back(id);
+                        }
+                    }
+                }
+            }
+
+            strValue = doc.GetCellString(reqlevelColumnColumnIdx, i);
+            if (!strValue.empty())
+            {
+                skill.Skill.reqLevel = doc.GetCellUInt16(reqlevelColumnColumnIdx, i);
+            }
+
+            for (const auto& reqSkill : reqSkills)
+            {
+                strValue = doc.GetCellString(reqSkill, i);
+                if (strValue.empty())
+                {
+                    continue;
+                }
+
+                skill.Skill.reqSkills.push_back(strValue);
+            }
+        }
+
+        s_SkillDescMap.swap(skillDescMap);
+        s_SkillIndexMap.swap(skillIndexMap);
+        s_SkillInfoMap.swap(skillInfoMap);
+
+        InitSkillDescData(txtReader);
+    }
+
+    const std::vector<std::uint32_t>& GetExperienceLevels(EnumCharClass charClass)
+    {
+        auto iter = s_MinExpRequired.find(charClass);
+        if (iter == s_MinExpRequired.end())
+        {
+            static std::vector<std::uint32_t> badValue;
+            return badValue;
+        }
+
+        return iter->second;
+    }
+
+    std::uint32_t GetMinExperienceLevel(std::uint32_t level, std::uint32_t maxLevel, EnumCharClass charClass)
+    {
+        std::uint32_t curLevel = std::min(level, maxLevel);
+        if (curLevel == 0ui32)
+        {
+            return 0ui32;
+        }
+
+        const auto& minExpRequired = GetExperienceLevels(charClass);
+        if (minExpRequired.empty())
+        {
+            return 0ui32;
+        }
+
+        if (minExpRequired.size() < curLevel)
+        {
+            return minExpRequired.back();
+        }
+
+        return minExpRequired[curLevel - 1];
+    }
+
+    std::uint32_t GetNextExperienceLevel(std::uint32_t level, std::uint32_t maxLevel, EnumCharClass charClass)
+    {
+        if (level == 0ui32)
+        {
+            return 0ui32;
+        }
+
+        if (level >= maxLevel)
+        {
+            return MAXUINT32;
+        }
+
+        const auto& minExpRequired = GetExperienceLevels(charClass);
+        return minExpRequired[level];
+    }
+
+    std::uint32_t GetMaxGoldInBelt(std::uint32_t curLevel)
+    {
+        return curLevel * 10000;
+    }
+
+    std::uint32_t GetMaxGoldInStash(std::uint32_t curLevel, EnumCharVersion version = APP_CHAR_VERSION)
+    {
+        if (version >= EnumCharVersion::v110) // 1.10+ character
+        {
+            return d2ce::GOLD_IN_STASH_LIMIT;
+        }
+
+        if (curLevel < 31) // 1.00 - 1.09 characters
+        {
+
+            return (curLevel / 10 + 1) * 50000;
+        }
+
+        if (version < EnumCharVersion::v107) // 1.00 - 1.06 character
+        {
+            return (std::min(curLevel, 90ui32) / 10 + 1) * 50000;
+        }
+
+        return (curLevel / 2 + 1) * 50000; // 1.07 - 1.09 characters
+    }
 }
 //---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
-d2ce::CharacterStats::CharacterStats()
+d2ce::CharacterStats::CharacterStats(Character& charInfo) : CharInfo(charInfo)
 {
     data.reserve(54); // reserve the maximum byte length to reduce allocations
 }
@@ -83,126 +1112,43 @@ d2ce::CharacterStats::CharacterStats()
 d2ce::CharacterStats::~CharacterStats()
 {
 }
-
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateMinStats()
 {
-    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
-    std::uint32_t curVitality = std::min(Cs.Vitality, MAX_BASICSTATS);
-    std::uint32_t curEnergy = std::min(Cs.Energy, MAX_BASICSTATS);
-    switch (Class)
-    {
-    case d2ce::EnumCharClass::Amazon:
-        curVitality = std::max(curVitality, AMAZON_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, AMAZON_ENERGY_MIN); // start stat
-        min_hit_points = 0x3200 + ((curLevel - 1) << 8) * 2 + (((curVitality - AMAZON_VITALITY_MIN) << 8) * 3);
-        min_stamina = 0x5400 + ((curLevel + curVitality - AMAZON_VITALITY_MIN - 1) << 8);
-        min_mana = 0x0F00 + std::uint32_t(((curLevel + curEnergy - AMAZON_ENERGY_MIN - 1) << 8) * 1.5);
-        break;
+    const auto& charClassInfo = GetCharClassInfo(CharInfo.getClass());
+    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), max_levels);
+    std::uint32_t curVitality = std::max(std::min(Cs.Vitality, MAX_BASICSTATS), charClassInfo.Vitality);
+    std::uint32_t curEnergy = std::max(std::min(Cs.Energy, MAX_BASICSTATS), charClassInfo.Energy);
+    std::uint32_t diffVitality = curVitality - charClassInfo.Vitality;
+    std::uint32_t diffEnergy = curEnergy - charClassInfo.Energy;
+    min_hit_points = ((charClassInfo.Vitality + charClassInfo.HpAdd) << 8) + (charClassInfo.LifePerLevel << 6) * (curLevel - 1) + (charClassInfo.LifePerVitality << 6) * diffVitality;
+    min_stamina = (charClassInfo.Stamina << 8) + (charClassInfo.StaminaPerLevel << 6) * (curLevel - 1) + (charClassInfo.StaminaPerVitality << 6) * diffVitality;
+    min_mana = (charClassInfo.Energy << 8) + (charClassInfo.ManaPerLevel << 6) * (curLevel - 1) + (charClassInfo.ManaPerMagic << 6) * diffEnergy;
 
-    case d2ce::EnumCharClass::Assassin:
-        curVitality = std::max(curVitality, d2ce::ASSASSIN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::ASSASSIN_ENERGY_MIN); // start stat
-        min_hit_points = 0x5400 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 3);
-        min_stamina = 0x5F00 + std::uint32_t(((curLevel - 1) << 8) * 1.25) + std::uint32_t((((curVitality - d2ce::ASSASSIN_VITALITY_MIN) << 8) * 1.75));
-        min_mana = 0x1900 + std::uint32_t(((curLevel - 1) << 8) * 1.5) + std::uint32_t((((curEnergy - d2ce::ASSASSIN_ENERGY_MIN) << 8) * 1.25));
-        break;
-
-    case d2ce::EnumCharClass::Sorceress:
-        curVitality = std::max(curVitality, d2ce::SORCERESS_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::SORCERESS_ENERGY_MIN); // start stat
-        min_hit_points = 0x2800 + ((curLevel - 1) << 8) + (((curVitality - d2ce::SORCERESS_VITALITY_MIN) << 8) * 2);
-        min_stamina = 0x4A00 + ((curLevel + curVitality - d2ce::SORCERESS_VITALITY_MIN - 1) << 8);
-        min_mana = 0x2300 + ((curLevel + curEnergy - d2ce::SORCERESS_ENERGY_MIN - 1) << 8) * 2;
-        break;
-
-    case d2ce::EnumCharClass::Barbarian:
-        curVitality = std::max(curVitality, d2ce::BARBARIAN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::BARBARIAN_ENERGY_MIN); // start stat
-        min_hit_points = 0x3700 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::BARBARIAN_VITALITY_MIN) << 8) * 4);
-        min_stamina = 0x5C00 + ((curLevel + curVitality - d2ce::BARBARIAN_VITALITY_MIN - 1) << 8);
-        min_mana = 0x0A00 + ((curLevel + curEnergy - d2ce::BARBARIAN_ENERGY_MIN - 1) << 8);
-        break;
-
-    case d2ce::EnumCharClass::Druid:
-        curVitality = std::max(curVitality, d2ce::DRUID_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::DRUID_ENERGY_MIN); // start stat
-        min_hit_points = 0x3700 + std::uint32_t((((curLevel - 1) << 8) * 1.5)) + (((curVitality - d2ce::DRUID_VITALITY_MIN) << 8) * 2);
-        min_stamina = 0x5400 + ((curLevel + curVitality - d2ce::DRUID_VITALITY_MIN - 1) << 8);
-        min_mana = 0x0A00 + ((curLevel - 1) << 8) + (((curEnergy - d2ce::DRUID_ENERGY_MIN) << 8) * 2);
-        break;
-
-    case d2ce::EnumCharClass::Necromancer:
-        curVitality = std::max(curVitality, d2ce::NECROMANCER_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::NECROMANCER_ENERGY_MIN); // start stat
-        min_hit_points = 0x2D00 + std::uint32_t((((curLevel - 1) << 8) * 1.5)) + (((curVitality - d2ce::NECROMANCER_VITALITY_MIN) << 8) * 2);
-        min_stamina = 0x4F00 + ((curLevel + curVitality - d2ce::NECROMANCER_VITALITY_MIN - 1) << 8);
-        min_mana = 0x1900 + ((curLevel + curEnergy - d2ce::NECROMANCER_ENERGY_MIN - 1) << 8) * 2;
-        break;
-
-    case d2ce::EnumCharClass::Paladin:
-        curVitality = std::max(curVitality, d2ce::PALADIN_VITALITY_MIN); // start stat
-        curEnergy = std::max(curEnergy, d2ce::PALADIN_ENERGY_MIN); // start stat
-        min_hit_points = 0x3700 + ((curLevel - 1) << 8) * 2 + (((curVitality - d2ce::PALADIN_VITALITY_MIN) << 8) * 3);
-        min_stamina = 0x5900 + ((curLevel + curVitality - d2ce::PALADIN_VITALITY_MIN - 1) << 8);
-        min_mana = 0x0F00 + std::uint32_t(((curLevel + curEnergy - d2ce::PALADIN_ENERGY_MIN - 1) << 8) * 1.5);
-        break;
-    }
+    Cs.MinExperienceLevel = GetMinExperienceLevel(curLevel, max_levels, CharInfo.getClass());
+    Cs.NextExperienceLevel = GetNextExperienceLevel(curLevel, max_levels, CharInfo.getClass());
+    Cs.MaxGoldInBelt = GetMaxGoldInBelt(curLevel);
+    Cs.MaxGoldInStash = GetMaxGoldInStash(curLevel, CharInfo.getVersion());
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateStartStats()
 {
-    switch (Class)
-    {
-    case d2ce::EnumCharClass::Amazon:
-        min_vitality = AMAZON_VITALITY_MIN;
-        min_energy = AMAZON_ENERGY_MIN;
-        min_dexterity = AMAZON_DEXTERITY_MIN;
-        min_strength = AMAZON_STRENGTH_MIN;
-        break;
+    const auto& minExpRequired = GetExperienceLevels(CharInfo.getClass());
+    max_levels = minExpRequired.empty() ? MAX_NUM_LEVELS : std::uint32_t(minExpRequired.size() - 1);
+    max_experience = minExpRequired.empty() ? MAX_EXPERIENCE : minExpRequired.back();
+    Cs.MaxLevel = max_levels;
+    Cs.MinExperienceLevel = 0ui32;
+    Cs.NextExperienceLevel = 500ui32;
+    Cs.MaxExperience = max_experience;
+    Cs.MaxGoldInBelt = 10000ui32;
+    Cs.MaxGoldInStash = (CharInfo.getVersion() >= EnumCharVersion::v110) ? d2ce::GOLD_IN_STASH_LIMIT : 50000ui32;
 
-    case d2ce::EnumCharClass::Assassin:
-        min_vitality = ASSASSIN_VITALITY_MIN;
-        min_energy = ASSASSIN_ENERGY_MIN;
-        min_dexterity = ASSASSIN_DEXTERITY_MIN;
-        min_strength = ASSASSIN_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Sorceress:
-        min_vitality = SORCERESS_VITALITY_MIN;
-        min_energy = SORCERESS_ENERGY_MIN;
-        min_dexterity = SORCERESS_DEXTERITY_MIN;
-        min_strength = SORCERESS_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Barbarian:
-        min_vitality = BARBARIAN_VITALITY_MIN;
-        min_energy = BARBARIAN_ENERGY_MIN;
-        min_dexterity = BARBARIAN_DEXTERITY_MIN;
-        min_strength = BARBARIAN_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Druid:
-        min_vitality = DRUID_VITALITY_MIN;
-        min_energy = DRUID_ENERGY_MIN;
-        min_dexterity = DRUID_DEXTERITY_MIN;
-        min_strength = DRUID_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Necromancer:
-        min_vitality = NECROMANCER_VITALITY_MIN;
-        min_energy = NECROMANCER_ENERGY_MIN;
-        min_dexterity = NECROMANCER_DEXTERITY_MIN;
-        min_strength = NECROMANCER_STRENGTH_MIN;
-        break;
-
-    case d2ce::EnumCharClass::Paladin:
-        min_vitality = PALADIN_VITALITY_MIN;
-        min_energy = PALADIN_ENERGY_MIN;
-        min_dexterity = PALADIN_DEXTERITY_MIN;
-        min_strength = PALADIN_STRENGTH_MIN;
-        break;
-    }
+    const auto& charClassInfo = GetCharClassInfo(CharInfo.getClass());
+    min_vitality = charClassInfo.Vitality;
+    min_energy = charClassInfo.Energy;
+    min_dexterity = charClassInfo.Dexterity;
+    min_strength = charClassInfo.Strength;
+    min_stat_points_used = charClassInfo.TotalStats;
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateSkillChoices(std::uint16_t skillPointsEarned)
@@ -213,8 +1159,8 @@ void d2ce::CharacterStats::updateSkillChoices(std::uint16_t skillPointsEarned)
     }
     else
     {
-        std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
-        std::uint32_t earnedPoints = std::min((curLevel - 1) + skillPointsEarned, MAX_SKILL_CHOICES_EARNED);
+        std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), max_levels);
+        std::uint32_t earnedPoints = (curLevel - 1) + skillPointsEarned;
         std::uint32_t curPoints = getSkillPointsUsed();
         if ((curPoints + Cs.SkillChoices) < earnedPoints)
         {
@@ -234,6 +1180,7 @@ void d2ce::CharacterStats::updateLifePointsEarned(std::uint16_t lifePointsEarned
 void d2ce::CharacterStats::updatePointsEarned(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned)
 {
     auto old_min_hit_points = min_hit_points;
+    auto old_min_stamina = min_stamina;
     updateLifePointsEarned(lifePointsEarned);
     if (min_hit_points != old_min_hit_points && Cs.MaxLife < min_hit_points)
     {
@@ -245,9 +1192,19 @@ void d2ce::CharacterStats::updatePointsEarned(std::uint16_t lifePointsEarned, st
         }
     }
 
-    std::uint32_t curStatPointsUsed = getStatPointsUsed();
-    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
-    std::uint32_t earnedStatPoints = std::min((curLevel - 1) * 5 + statPointEarned + getTotalStartStatPoints(), MAX_STAT_POINTS);
+    if (min_stamina != old_min_stamina && Cs.MaxStamina < min_stamina)
+    {
+        bool updateCur = Cs.CurStamina == Cs.MaxStamina ? true : false;
+        Cs.MaxStamina = min_stamina;
+        if (updateCur)
+        {
+            Cs.CurStamina = Cs.MaxStamina;
+        }
+    }
+
+    std::uint32_t curStatPointsUsed = getStatPointsUsed() - min_stat_points_used;
+    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), max_levels);
+    std::uint32_t earnedStatPoints = (curLevel - 1) * getStatPointsPerLevel() + statPointEarned;
     if ((curStatPointsUsed + Cs.StatsLeft) < earnedStatPoints)
     {
         Cs.StatsLeft = std::min(earnedStatPoints - curStatPointsUsed, MAX_BASICSTATS);
@@ -441,7 +1398,7 @@ size_t d2ce::CharacterStats::readStatBits(std::FILE* charfile, size_t& current_b
     return bits;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats(std::FILE* charfile)
+bool d2ce::CharacterStats::readAllStats(std::FILE* charfile)
 {
     if (update_locations)
     {
@@ -449,7 +1406,7 @@ bool d2ce::CharacterStats::readStats(std::FILE* charfile)
         stats_location = 0;
         std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
-        if (Version >= EnumCharVersion::v109)
+        if (CharInfo.getVersion() >= EnumCharVersion::v109)
         {
             if (cur_pos < (long)MIN_START_STATS_POS)
             {
@@ -511,10 +1468,16 @@ bool d2ce::CharacterStats::readStats(std::FILE* charfile)
     Cs.Experience = 0;
     Cs.GoldInBelt = 0;
     Cs.GoldInStash = 0;
+    Cs.MaxLevel = MAX_NUM_LEVELS;
+    Cs.MinExperienceLevel = 0ui32;
+    Cs.NextExperienceLevel = 500ui32;
+    Cs.MaxExperience = MAX_EXPERIENCE;
+    Cs.MaxGoldInBelt = 10000ui32;
+    Cs.MaxGoldInStash = (CharInfo.getVersion() >= EnumCharVersion::v110) ? d2ce::GOLD_IN_STASH_LIMIT : 50000ui32;
 
-    if (Version < EnumCharVersion::v110)
+    if (CharInfo.getVersion() < EnumCharVersion::v110)
     {
-        return readStats_109(charfile);
+        return readAllStats_109(charfile);
     }
 
     size_t current_bit_offset = 0;
@@ -538,14 +1501,14 @@ bool d2ce::CharacterStats::readStats(std::FILE* charfile)
     return totalBitsRead > 0 ? true : false;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats_109(std::FILE* charfile)
+bool d2ce::CharacterStats::readAllStats_109(std::FILE* charfile)
 {
     std::uint16_t value;
     std::fread(&value, sizeof(value), 1, charfile);
     StatInfo = static_cast<EnumCharStatInfo>(value);
 
     // skip null byte if character version is less than 1.09
-    if (Version < EnumCharVersion::v109)
+    if (CharInfo.getVersion() < EnumCharVersion::v109)
     {
         std::fread(&nullByte, sizeof(nullByte), 1, charfile);
     }
@@ -681,7 +1644,7 @@ void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSe
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::CharacterStats::readAllStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile)
 {
     updateStartStats();
 
@@ -690,7 +1653,7 @@ bool d2ce::CharacterStats::readStats(const Json::Value& statsRoot, bool bSeriali
     applyJsonStats(statsRoot, bSerializedFormat);
 
     checkStatInfo();
-    if (Version < EnumCharVersion::v110)
+    if (CharInfo.getVersion() < EnumCharVersion::v110)
     {
         return writeStats_109(charfile);
     }
@@ -765,7 +1728,7 @@ bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
 
     std::fread(Skills.data(), Skills.size(), 1, charfile);
 
-    if (update_locations && (Version == EnumCharVersion::v110))
+    if (update_locations && (CharInfo.getVersion() == EnumCharVersion::v110))
     {
         // Check for PD2 version
         std::uint8_t value = 0;
@@ -854,7 +1817,7 @@ void d2ce::CharacterStats::applyJsonSkills(const Json::Value& /*root*/, const Js
         }
 
         id = std::uint16_t(value.asInt64());
-        for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
+        for (std::uint16_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
         {
             if (id == getSkillId(skill))
             {
@@ -871,7 +1834,7 @@ void d2ce::CharacterStats::applyJsonSkills(const Json::Value& /*root*/, const Js
     pd2_skills_location = 0;
     has_pd2_skills = false;
     /*TODO:
-    if (Version == EnumCharVersion::v110)
+    if (CharInfo.getVersion() == EnumCharVersion::v110)
     {
         Json::Value pd2SkillsRoot = root[bSerializedFormat ? "ClassSkills" : "pd2_skills"];
         if (!pd2SkillsRoot.isNull() && bSerializedFormat)
@@ -1016,7 +1979,7 @@ bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile)
     std::fwrite(&value, sizeof(value), 1, charfile);
 
     // skip null byte if character version is less than 1.09
-    if (Version < EnumCharVersion::v109)
+    if (CharInfo.getVersion() < EnumCharVersion::v109)
     {
         std::fwrite(&nullByte, sizeof(nullByte), 1, charfile);
     }
@@ -1085,12 +2048,22 @@ bool d2ce::CharacterStats::writeSkills(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats(EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile)
+std::uint32_t d2ce::CharacterStats::getStatPointsPerLevel() const
 {
-    Version = version;
-    Class = charClass;
+    const auto& charClassInfo = GetCharClassInfo(CharInfo.getClass());
+    return charClassInfo.StatPerLevel == 0 ? 5 : charClassInfo.StatPerLevel;
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::setTxtReader()
+{
+    auto& txtReader = ItemHelpers::getTxtReader();
+    InitSkillInfoData(txtReader);
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharacterStats::readStats(std::FILE* charfile)
+{
     update_locations = stats_location == 0 ? true : false;
-    if (!readStats(charfile) || stats_location == 0)
+    if (!readAllStats(charfile) || stats_location == 0)
     {
         return false;
     }
@@ -1104,7 +2077,7 @@ bool d2ce::CharacterStats::readStats(EnumCharVersion version, EnumCharClass char
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile)
+bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
 {
     clear();
     Json::Value childRoot;
@@ -1117,10 +2090,8 @@ bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFo
         }
     }
 
-    Version = version;
-    Class = charClass;
     update_locations = true;
-    if (!readStats(childRoot, bSerializedFormat, charfile) || stats_location == 0)
+    if (!readAllStats(childRoot, bSerializedFormat, charfile) || stats_location == 0)
     {
         return false;
     }
@@ -1154,7 +2125,7 @@ bool d2ce::CharacterStats::writeStats(std::FILE* charfile)
 
     std::fseek(charfile, stats_location - std::uint32_t(STATS_MARKER.size()), SEEK_SET);
     std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
-    if (Version < EnumCharVersion::v110)
+    if (CharInfo.getVersion() < EnumCharVersion::v110)
     {
         if (!writeStats_109(charfile))
         {
@@ -1204,7 +2175,7 @@ void d2ce::CharacterStats::resetStats(std::uint16_t lifePointsEarned, std::uint1
     Cs.MaxMana = min_mana;
     Cs.CurMana = Cs.MaxMana;
 
-    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
+    std::uint32_t curLevel = std::min(std::max(Cs.Level, std::uint32_t(1)), max_levels);
     Cs.StatsLeft = (curLevel - 1) * 5 + statPointEarned;
 
     resetSkills(skillPointsEarned);
@@ -1227,15 +2198,8 @@ void d2ce::CharacterStats::resetSkills(std::uint16_t skillPointsEarned)
     updateSkillChoices(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::updateClass(EnumCharClass charClass)
+void d2ce::CharacterStats::updateClass()
 {
-    if (charClass == Class)
-    {
-        return;
-    }
-
-    Class = charClass;
-
     auto oldVitality = Cs.Vitality;
     auto oldEnergy = Cs.Energy;
     auto oldMaxLife = Cs.MaxLife;
@@ -1397,60 +2361,58 @@ void d2ce::CharacterStats::skillsAsJson(Json::Value& parent, bool bSerializedFor
         classSkills["Header"] = *((std::uint16_t*)SKILLS_MARKER.data());
 
         Json::Value skills(Json::arrayValue);
-        for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
+        for (std::uint16_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
         {
             Json::Value skillElement;
-            skillElement["Id"] = std::uint16_t(getSkillId(skill));
-            skillElement["Points"] = std::uint16_t(getSkillPoints(skill));
+            skillElement["Id"] = getSkillId(skill);
+            skillElement["Points"] = getSkillPoints(skill);
             skills.append(skillElement);
         }
         classSkills["Skills"] = skills;
 
-        /*TODO:
         if (isPD2Format())
         {
             Json::Value pd2Skills(Json::arrayValue);
-            for (std::uint32_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
+            for (std::uint16_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
             {
                 Json::Value skillElement;
-                skillElement["Id"] = std::uint16_t(getSkillId(skill));
-                skillElement["Points"] = std::uint16_t(getSkillPoints(skill));
+                skillElement["Id"] = getSkillId(skill);
+                skillElement["Points"] = getSkillPoints(skill);
                 pd2Skills.append(skillElement);
             }
             classSkills["PD2Skills"] = pd2Skills;
         }
-        */
 
         parent["ClassSkills"] = classSkills;
     }
     else
     {
         Json::Value skills(Json::arrayValue);
-        for (std::uint32_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
+        for (std::uint16_t skill = 0; skill < NUM_OF_SKILLS; ++skill)
         {
+            const auto& skillInfo = getSkill(skill);
             Json::Value skillElement;
-            skillElement["id"] = std::uint16_t(getSkillId(skill));
-            skillElement["points"] = std::uint16_t(getSkillPoints(skill));
-            skillElement["name"] = getSkillName(skill);
+            skillElement["id"] = skillInfo.id;
+            skillElement["points"] = getSkillPoints(skill);
+            skillElement["name"] = skillInfo.name;
             skills.append(skillElement);
         }
         parent["skills"] = skills;
 
-        /*TODO:
         if (isPD2Format())
         {
             Json::Value pd2Skills(Json::arrayValue);
-            for (std::uint32_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
+            for (std::uint16_t skill = NUM_OF_SKILLS; skill < NUM_OF_SKILLS + NUM_OF_PD2_SKILLS; ++skill)
             {
+                const auto& skillInfo = getSkill(skill);
                 Json::Value skillElement;
-                skillElement["id"] = std::uint16_t(getSkillId(skill));
-                skillElement["points"] = std::uint16_t(getSkillPoints(skill));
-                skillElement["name"] = getSkillName(skill);
+                skillElement["id"] = skillInfo.id;
+                skillElement["points"] = getSkillPoints(skill);
+                skillElement["name"] = skillInfo.name;
                 pd2Skills.append(skillElement);
             }
             parent["pd2_skills"] = pd2Skills;
         }
-        */
     }
 }
 //---------------------------------------------------------------------------
@@ -1462,7 +2424,6 @@ void d2ce::CharacterStats::asJson(Json::Value& parent, bool bSerializedFormat) c
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::clear()
 {
-    Class = EnumCharClass::Amazon;
     StatInfo = EnumCharStatInfo::All;
     Cs.Strength = 0;
     Cs.Energy = 0;
@@ -1480,6 +2441,12 @@ void d2ce::CharacterStats::clear()
     Cs.Experience = 0;
     Cs.GoldInBelt = 0;
     Cs.GoldInStash = 0;
+    Cs.MaxLevel = MAX_NUM_LEVELS;
+    Cs.MinExperienceLevel = 0ui32;
+    Cs.NextExperienceLevel = 500ui32;
+    Cs.MaxExperience = MAX_EXPERIENCE;
+    Cs.MaxGoldInBelt = 10000ui32;
+    Cs.MaxGoldInStash = (CharInfo.getVersion() >= EnumCharVersion::v110) ? d2ce::GOLD_IN_STASH_LIMIT : 50000ui32;
     data.clear();
     Skills.fill(0);
     stats_location = 0;
@@ -1492,11 +2459,144 @@ void d2ce::CharacterStats::clear()
     min_energy = 1;
     min_dexterity = 1;
     min_strength = 1;
+    min_stat_points_used = 80;
+    max_levels = MAX_NUM_LEVELS;
+    max_experience = MAX_EXPERIENCE;
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::clearSkillChoices()
 {
     Cs.SkillChoices = 0;
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharacterStats::getSkillBonusPoints(std::vector<std::uint16_t>& points) const
+{
+    points.clear();
+    points.resize(d2ce::NUM_OF_SKILLS, 0);
+    auto iterIdx = s_CharClassEnumMap.find(CharInfo.getClass());
+    if (iterIdx == s_CharClassEnumMap.end())
+    {
+        return false;
+    }
+
+    auto iter = s_CharClassInfo.find(iterIdx->second);
+    if (iter == s_CharClassInfo.end())
+    {
+        return false;
+    }
+
+    const auto& skills = iter->second.Skills;
+    if (skills.empty())
+    {
+        return false;
+    }
+    if (skills.size() > points.size())
+    {
+        points.resize(skills.size(), 0);
+    }
+
+    // find character items with skill bonuses
+    auto iterSkills = skills.begin();
+    std::uint16_t classIdx = 0;
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (!CharInfo.getItemBonuses(magicalAttributes) || magicalAttributes.empty())
+    {
+        // no bonuses
+        return true;
+    }
+
+    for (auto& attrib : magicalAttributes)
+    {
+        const auto& stat = ItemHelpers::getItemStat(attrib);
+        if (stat.name == "item_allskills")
+        {
+            auto addSkill = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat));
+            for (auto& point : points)
+            {
+                point += addSkill;
+            }
+        }
+        else
+        {
+            switch (stat.descFunc)
+            {
+            case 13: // +[value] to [class] Skill Levels
+                // first value is the class
+                classIdx = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat));
+                if (GetEnumCharClassByIndex(classIdx) == CharInfo.getClass())
+                {
+                    auto addSkill = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 1, stat));
+                    for (auto& point : points)
+                    {
+                        point += addSkill;
+                    }
+                }
+                break;
+
+            case 14: // +[value] to [skilltab] Skill Levels ([class] Only)
+                // second value is the class
+                classIdx = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 1, stat));
+                if (GetEnumCharClassByIndex(classIdx) == CharInfo.getClass())
+                {
+                    auto addSkill = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat));
+                    const auto& tabSkills = CharClassHelper::getSklTreeTab(std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat)), classIdx);
+                    for (const auto& skillRows : tabSkills)
+                    {
+                        if ((skillRows.first == 0) || (skillRows.first > 6))
+                        {
+                            // should not happend
+                            continue;
+                        }
+
+                        for (const auto& skillCols : skillRows.second)
+                        {
+                            if ((skillCols.first == 0) || (skillCols.first > 3))
+                            {
+                                // should not happend
+                                continue;
+                            }
+
+                            const auto& skillInfo = d2ce::CharClassHelper::getSkillById(skillCols.second);
+                            if (!skillInfo.classInfo.has_value())
+                            {
+                                // should not happend
+                                continue;
+                            }
+
+                            auto charSkillIdx = skillInfo.classInfo.value().index;
+                            if (points.size() > charSkillIdx)
+                            {
+                                auto& point = points[charSkillIdx];
+                                point += addSkill;
+                            }
+                        }
+                    }
+                }
+                break;
+
+            case 27: // +[value] to [skill] ([class] Only)
+            case 28: // +[value] to [skill]
+                iterSkills = std::find(skills.begin(), skills.end(), std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat)));
+                if (iterSkills != skills.end())
+                {
+                    const auto& skillInfo = getSkill(*iterSkills);
+                    if (skillInfo.classInfo.has_value())
+                    {
+                        auto charSkillIdx = skillInfo.classInfo.value().index;
+                        if (points.size() > charSkillIdx)
+                        {
+                            auto& point = points[charSkillIdx];
+                            auto addSkill = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, 1, 1, stat));
+                            point += addSkill;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::isPD2Format() const
@@ -1525,11 +2625,17 @@ void d2ce::CharacterStats::updateCharacterStats(const CharStats& cs)
     std::memcpy(&Cs, &cs, sizeof(CharStats));
 
     // make sure level is correct
-    Cs.Level = std::min(std::max(Cs.Level, std::uint32_t(1)), NUM_OF_LEVELS);
+    Cs.Level = std::min(std::max(Cs.Level, std::uint32_t(1)), max_levels);
+    Cs.MaxLevel = max_levels;
+    Cs.MinExperienceLevel = GetMinExperienceLevel(Cs.Level, max_levels, CharInfo.getClass());
+    Cs.NextExperienceLevel = GetNextExperienceLevel(Cs.Level, max_levels, CharInfo.getClass());
+    Cs.MaxExperience = max_experience;
+    Cs.MaxGoldInBelt = GetMaxGoldInBelt(Cs.Level);
+    Cs.MaxGoldInStash = GetMaxGoldInStash(Cs.Level, CharInfo.getVersion());
 
     // make sure gold is correct
-    Cs.GoldInBelt = std::min(Cs.GoldInBelt, Cs.getMaxGoldInBelt());
-    Cs.GoldInStash = std::min(Cs.GoldInStash, Cs.getMaxGoldInStash());
+    Cs.GoldInBelt = std::min(Cs.GoldInBelt, Cs.MaxGoldInBelt);
+    Cs.GoldInStash = std::min(Cs.GoldInStash, Cs.MaxGoldInStash);
 
     // Check min stats for chartacter
     updateStartStats();
@@ -1570,15 +2676,15 @@ void d2ce::CharacterStats::updateCharacterStats(const CharStats& cs)
     }
 
     // Check experiene level
+    Cs.Experience = std::min(Cs.Experience, max_experience);
     if (oldLevel < Cs.Level)
     {
-        Cs.Experience = std::max(Cs.Experience, getMinExperienceRequired());
+        Cs.Experience = std::max(Cs.Experience, Cs.MinExperienceLevel);
     }
     else if (oldLevel > Cs.Level)
     {
-        Cs.Experience = std::min(Cs.Experience, getNextExperienceLevel() - 1);
+        Cs.Experience = std::min(Cs.Experience, Cs.NextExperienceLevel - 1);
     }
-    Cs.Experience = std::min(Cs.Experience, MAX_EXPERIENCE);
 
     // Check Stat Points remaining makes sense
     if (Cs.StatsLeft > 0)
@@ -1615,29 +2721,66 @@ std::uint32_t d2ce::CharacterStats::getLevel() const
     return Cs.Level;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getLevelFromExperience() const
+{
+    return getLevelFromExperience(Cs.Experience);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getLevelFromExperience(std::uint32_t experience) const
+{
+    auto& minExpRequired = GetExperienceLevels(CharInfo.getClass());
+    std::uint32_t expLevel = Cs.MaxLevel;
+    while ((expLevel > 1) && (experience < minExpRequired[expLevel - 1]))
+    {
+        --expLevel;
+    }
+
+    return expLevel;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getMaxLevel() const
+{
+    return Cs.MaxLevel;
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getExperience() const
 {
     return Cs.Experience;
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::CharacterStats::getMaxGoldInBelt() const
+std::uint32_t d2ce::CharacterStats::getMaxExperience() const
 {
-    return Cs.getMaxGoldInBelt();
+    return Cs.MaxExperience;
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::CharacterStats::getMaxGoldInStash() const
+std::uint32_t d2ce::CharacterStats::getMinExperience(std::uint32_t level) const
 {
-    return Cs.getMaxGoldInStash(Version);
+    return GetMinExperienceLevel(level, max_levels, CharInfo.getClass());
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::CharacterStats::getMinExperienceRequired() const
+std::uint32_t d2ce::CharacterStats::getMinExperienceLevel() const
 {
-    return Cs.getMinExperienceRequired();
+    return Cs.MinExperienceLevel;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getNextExperience(std::uint32_t level) const
+{
+    return GetNextExperienceLevel(level, max_levels, CharInfo.getClass());
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getNextExperienceLevel() const
 {
-    return Cs.getNextExperienceLevel();
+    return Cs.NextExperienceLevel;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getMaxGoldInBelt() const
+{
+    return Cs.MaxGoldInBelt;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getMaxGoldInStash() const
+{
+    return Cs.MaxGoldInStash;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getMinStrength() const
@@ -1677,7 +2820,7 @@ std::uint32_t d2ce::CharacterStats::getMaxMana() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getTotalStartStatPoints() const
 {
-    return min_vitality + min_energy + min_dexterity + min_strength;
+    return min_stat_points_used;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getTotalStatPoints() const
@@ -1687,7 +2830,7 @@ std::uint32_t d2ce::CharacterStats::getTotalStatPoints() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getStatPointsUsed() const
 {
-    return Cs.Vitality + Cs.Energy + Cs.Dexterity + Cs.Strength;
+    return std::max(Cs.Vitality + Cs.Energy + Cs.Dexterity + Cs.Strength, min_stat_points_used);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getStatLeft() const
@@ -1695,100 +2838,18 @@ std::uint32_t d2ce::CharacterStats::getStatLeft() const
     return Cs.StatsLeft;
 }
 //---------------------------------------------------------------------------
-std::uint8_t d2ce::CharacterStats::getSkillId(std::uint32_t skill) const
+const d2ce::SkillType& d2ce::CharacterStats::getSkill(std::uint16_t skill) const
 {
-    if (skill > NUM_OF_SKILLS)
-    {
-        return 0;
-    }
-
-    size_t idx = START_SKILL_ID;
-    size_t class_idx = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
-    if (class_idx >= 5)
-    {
-        class_idx -= 5;
-        idx = EXPANSION_START_SKILL_ID;
-    }
-    idx += class_idx * NUM_OF_SKILLS + skill;
-    return (std::uint8_t)idx;
+    return CharClassHelper::getSkillByClass(CharInfo.getClass(), skill);
 }
 //---------------------------------------------------------------------------
-std::string d2ce::CharacterStats::getSkillNameById(std::uint32_t id) const
+std::uint16_t d2ce::CharacterStats::getSkillId(std::uint16_t skill) const
 {
-    if (id >= 0xFFFF)
-    {
-        return "";
-    }
-
-    auto iter = GenericSkillNames.find(id);
-    if (iter != GenericSkillNames.end())
-    {
-        return iter->second;
-    }
-
-    size_t classIdx = NUM_OF_CLASSES;
-    size_t skillIdx = NUM_OF_SKILLS;
-    if (id <= END_SKILL_ID)
-    {
-        classIdx = (id - START_SKILL_ID) / NUM_OF_SKILLS;
-        skillIdx = (id - START_SKILL_ID) % NUM_OF_SKILLS;
-    }
-    else if (id >= EXPANSION_START_SKILL_ID && id <= EXPANSION_END_SKILL_ID)
-    {
-        classIdx = 5 + (id - EXPANSION_START_SKILL_ID) / NUM_OF_SKILLS;
-        skillIdx = (id - EXPANSION_START_SKILL_ID) % NUM_OF_SKILLS;
-    }
-
-    size_t classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
-    if (classIdx != classNumber)
-    {
-        return "";
-    }
-
-    return SkillsNames[classIdx][skillIdx];
+    const auto& skillInfo = getSkill(skill);
+    return skillInfo.id;
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::CharacterStats::getSkillIdByName(const std::string& name)
-{
-    for (const auto& genericSkill : GenericSkillNames)
-    {
-        if (_stricmp(name.c_str(), genericSkill.second.c_str()) == 0)
-        {
-            return std::uint32_t(genericSkill.first);
-        }
-    }
-
-    for (std::uint32_t classIdx = 0; classIdx < NUM_OF_CLASSES; ++classIdx)
-    {
-        for (std::uint32_t skillIdx = 0; skillIdx < NUM_OF_SKILLS; ++skillIdx)
-        {
-            if (_stricmp(name.c_str(), SkillsNames[classIdx][skillIdx].c_str()) == 0)
-            {
-                if (classIdx < 5)
-                {
-                    return classIdx * NUM_OF_SKILLS + skillIdx + START_SKILL_ID;
-                }
-                
-                return (classIdx - 5) * NUM_OF_SKILLS + skillIdx + EXPANSION_START_SKILL_ID;
-            }
-        }
-    }
-
-    return 0xFFFF;
-}
-//---------------------------------------------------------------------------
-std::string d2ce::CharacterStats::getSkillName(std::uint32_t skill) const
-{
-    if (skill >= NUM_OF_SKILLS)
-    {
-        return "";
-    }
-
-    auto classNumber = static_cast<std::underlying_type_t<d2ce::EnumCharClass>>(Class);
-    return SkillsNames[classNumber][skill];
-}
-//---------------------------------------------------------------------------
-std::uint8_t d2ce::CharacterStats::getSkillPoints(std::uint32_t skill) const
+std::uint8_t d2ce::CharacterStats::getSkillPoints(std::uint16_t skill) const
 {
     if (skill >= NUM_OF_SKILLS)
     {
@@ -1875,5 +2936,264 @@ void d2ce::CharacterStats::maxSkills()
     {
         PD2Skills.fill(MAX_SKILL_VALUE);
     }
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getClassName(std::int16_t idx) // localized name
+{
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    return charClassInfo.ClassName;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getClassName(EnumCharClass charClass) // localized name
+{
+    const auto& charClassInfo = GetCharClassInfo(charClass);
+    return charClassInfo.ClassName;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getClassName(const std::string& classCode) // localized name
+{
+    const auto& charClassInfo = GetCharClassInfo(classCode);
+    return charClassInfo.ClassName;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getClassCode(std::int16_t idx)
+{
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    return charClassInfo.Code;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getClassCode(EnumCharClass charClass)
+{
+    const auto& charClassInfo = GetCharClassInfo(charClass);
+    return charClassInfo.Code;
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharClassHelper::getEnumCharClassByName(const std::string& name, d2ce::EnumCharClass& value) // localized name
+{
+    auto iter = s_CharClassNameMap.find(name);
+    if (iter == s_CharClassNameMap.end())
+    {
+        return false;
+    }
+
+    auto iter2 = s_CharClassInfo.find(iter->second);
+    if (iter2 == s_CharClassInfo.end())
+    {
+        return false;
+    }
+
+    return getEnumCharClassByCode(iter2->second.Code, value);
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharClassHelper::getEnumCharClassByIndex(const std::string& name, EnumCharClass& value) // non-localized name
+{
+    auto iter = s_CharClassEnumNameMap.find(name);
+    if (iter == s_CharClassEnumNameMap.end())
+    {
+        return false;
+    }
+
+    value = iter->second;
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::CharClassHelper::getEnumCharClassByCode(const std::string& classCode, EnumCharClass& value)
+{
+    auto iter = s_CharClassCodeMap.find(classCode);
+    if (iter == s_CharClassCodeMap.end())
+    {
+        return false;
+    }
+
+    value = iter->second;
+    return true;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrAllSkills(std::int16_t idx)
+{
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    return charClassInfo.StrAllSkills;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrAllSkills(EnumCharClass charClass)
+{
+    const auto& charClassInfo = GetCharClassInfo(charClass);
+    return charClassInfo.StrAllSkills;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrSkillTab(std::int16_t tab, std::int16_t idx)
+{
+    static std::string badValue;
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    switch (tab)
+    {
+    case 0:
+        return charClassInfo.StrSkillTab1;
+
+    case 1:
+        return charClassInfo.StrSkillTab2;
+
+    case 2:
+        return charClassInfo.StrSkillTab3;
+
+    default:
+        return badValue;
+    }
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrSkillTab(std::int16_t tab, EnumCharClass charClass)
+{
+    auto iter = s_CharClassEnumMap.find(charClass);
+    if (iter == s_CharClassEnumMap.end())
+    {
+        static std::string badValue;
+        return badValue;
+    }
+
+    return getStrSkillTab(tab, iter->second);
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrClassOnly(std::int16_t idx)
+{
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    return charClassInfo.StrClassOnly;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getStrClassOnly(EnumCharClass charClass)
+{
+    const auto& charClassInfo = GetCharClassInfo(charClass);
+    return charClassInfo.StrClassOnly;
+}
+//---------------------------------------------------------------------------
+const std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>>& d2ce::CharClassHelper::getSklTreeTab(std::int16_t tab, std::int16_t idx)
+{
+    static std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>> badValue;
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    switch (tab)
+    {
+    case 0:
+        return charClassInfo.SklTreeTab1;
+
+    case 1:
+        return charClassInfo.SklTreeTab2;
+
+    case 2:
+        return charClassInfo.SklTreeTab3;
+
+    default:
+        return badValue;
+    }
+}
+//---------------------------------------------------------------------------
+const std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>>& d2ce::CharClassHelper::getSklTreeTab(std::int16_t tab, EnumCharClass charClass)
+{
+    auto iter = s_CharClassEnumMap.find(charClass);
+    if (iter == s_CharClassEnumMap.end())
+    {
+        static std::map<std::uint16_t, std::map<std::uint16_t, std::uint16_t>> badValue;
+        return badValue;
+    }
+
+    return getSklTreeTab(tab, iter->second);
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getSkillTabName(std::int16_t tab, std::int16_t idx)
+{
+    static std::string badValue;
+    const auto& charClassInfo = GetCharClassInfo(idx);
+    switch (tab)
+    {
+    case 0:
+        return charClassInfo.StrSklTreeTab1;
+
+    case 1:
+        return charClassInfo.StrSklTreeTab2;
+
+    case 2:
+        return charClassInfo.StrSklTreeTab3;
+
+    default:
+        return badValue;
+    }
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::CharClassHelper::getSkillTabName(std::int16_t tab, EnumCharClass charClass)
+{
+    auto iter = s_CharClassEnumMap.find(charClass);
+    if (iter == s_CharClassEnumMap.end())
+    {
+        static std::string badValue;
+        return badValue;
+    }
+
+    return getSkillTabName(tab, iter->second);
+}
+//---------------------------------------------------------------------------
+const d2ce::SkillType& d2ce::CharClassHelper::getSkillById(std::uint16_t skill)
+{
+    auto iter = s_SkillInfoMap.find(skill);
+    if (iter != s_SkillInfoMap.end())
+    {
+        return iter->second.Skill;
+    }
+
+    static d2ce::SkillType badValue;
+    return badValue;
+}
+//---------------------------------------------------------------------------
+const d2ce::SkillType& d2ce::CharClassHelper::getSkillByClass(EnumCharClass charClass, std::uint16_t skill)
+{
+    static d2ce::SkillType badValue;
+    auto iterIdx = s_CharClassEnumMap.find(charClass);
+    if (iterIdx == s_CharClassEnumMap.end())
+    {
+        return badValue;
+    }
+
+    auto iter = s_CharClassInfo.find(iterIdx->second);
+    if (iter == s_CharClassInfo.end())
+    {
+        return badValue;
+    }
+
+    const auto& skills = iter->second.Skills;
+    if (skills.size() <= skill)
+    {
+        return badValue;
+    }
+
+    return getSkillById(std::uint16_t(skills[skill]));
+}
+//---------------------------------------------------------------------------
+std::string d2ce::CharClassHelper::getSkillIndexById(std::uint16_t id)
+{
+    const auto& skill = getSkillById(id);
+    return skill.index;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::CharClassHelper::getSkillNameById(std::uint16_t id)
+{
+    const auto& skill = getSkillById(id);
+    return skill.name;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::CharClassHelper::getSkillNameByClass(EnumCharClass charClass, std::uint16_t skill)
+{
+    const auto& skillInfo = getSkillByClass(charClass, skill);
+    return skillInfo.name;
+}
+//---------------------------------------------------------------------------
+const d2ce::SkillType& d2ce::CharClassHelper::getSkillByIndex(const std::string& index)
+{
+    auto iter = s_SkillIndexMap.find(index);
+    if (iter != s_SkillIndexMap.end())
+    {
+        return getSkillById(iter->second);
+    }
+
+    static d2ce::SkillType badValue;
+    return badValue;
 }
 //---------------------------------------------------------------------------

@@ -39,8 +39,7 @@ namespace d2ce
         bool update_locations = true;
         bool has_pd2_skills = false; // PD2 Skills
 
-        EnumCharVersion Version = APP_CHAR_VERSION;  // Version for Character file
-        EnumCharClass Class = EnumCharClass::Amazon; // Class for Character file
+        Character& CharInfo;
 
         /*
            The next short field is for character file version prior to 1.09.
@@ -75,6 +74,9 @@ namespace d2ce
         void updateMinStats();
 
         std::uint32_t min_vitality = 1, min_energy = 1, min_dexterity = 1, min_strength = 1;
+        std::uint32_t min_stat_points_used = 80;
+        std::uint32_t max_levels = 99ui32;
+        std::uint32_t max_experience = 3600000000ui32;
         void updateStartStats();
         
         void updateSkillChoices(std::uint16_t skillPointsEarned);
@@ -90,10 +92,10 @@ namespace d2ce
         bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
         size_t readNextStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t& stat);
         size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
-        bool readStats(std::FILE* charfile);
+        bool readAllStats(std::FILE* charfile);
         void applyJsonStats(const Json::Value& statsRoot, bool bSerializedFormat);
-        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
-        bool readStats_109(std::FILE* charfile);
+        bool readAllStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readAllStats_109(std::FILE* charfile);
         bool readSkills(std::FILE* charfile);
         void applyJsonSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat);
         bool readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
@@ -104,6 +106,8 @@ namespace d2ce
         size_t writeBufferBits(std::FILE* charfile);
         bool writeStats_109(std::FILE* charfile);
         bool writeSkills(std::FILE* charfile);
+
+        std::uint32_t getStatPointsPerLevel() const;
 
     protected:
         CharStats Cs;                 // Strength:  pos 565 (pre-1.09)
@@ -117,8 +121,10 @@ namespace d2ce
         std::array<std::uint8_t, NUM_OF_PD2_SKILLS> PD2Skills = { 0 };
 
     protected:
-        bool readStats(EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
-        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, EnumCharVersion version, EnumCharClass charClass, std::FILE* charfile);
+        void setTxtReader();
+
+        bool readStats(std::FILE* charfile);
+        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
         bool writeStats(std::FILE* charfile);
         std::uint32_t getHeaderLocation();
 
@@ -126,15 +132,18 @@ namespace d2ce
         void updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS> &updated_skills, std::uint16_t skillPointsEarned, std::uint32_t skillChoices);
         void resetSkills(std::uint16_t skillPointsEarned);
 
-        void updateClass(EnumCharClass charClass);
+        void updateClass();
 
         std::string getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat = false) const;
         void attributesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void skillsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const;
 
+
+    protected:
+        CharacterStats(Character& charInfo);
+
     public:
-        CharacterStats();
         ~CharacterStats();
 
         void clear();
@@ -143,11 +152,17 @@ namespace d2ce
         void updateCharacterStats(const CharStats& cs);
 
         std::uint32_t getLevel() const;
+        std::uint32_t getLevelFromExperience() const;
+        std::uint32_t getLevelFromExperience(std::uint32_t experience) const;
+        std::uint32_t getMaxLevel() const;
         std::uint32_t getExperience() const;
+        std::uint32_t getMaxExperience() const;
+        std::uint32_t getMinExperience(std::uint32_t level) const;
+        std::uint32_t getMinExperienceLevel() const;
+        std::uint32_t getNextExperience(std::uint32_t level) const;
+        std::uint32_t getNextExperienceLevel() const;
         std::uint32_t getMaxGoldInBelt() const;
         std::uint32_t getMaxGoldInStash() const;
-        std::uint32_t getMinExperienceRequired() const;
-        std::uint32_t getNextExperienceLevel() const;
         std::uint32_t getMinStrength() const;
         std::uint32_t getMinEnergy() const;
         std::uint32_t getMinDexterity() const;
@@ -162,12 +177,10 @@ namespace d2ce
         std::uint32_t getStatLeft() const;
 
         // Skills
-        std::uint8_t getSkillId(std::uint32_t skill) const;
-        std::string getSkillNameById(std::uint32_t id) const;
-        static std::uint32_t getSkillIdByName(const std::string& name);
-        std::string getSkillName(std::uint32_t skill) const;
-        std::uint8_t getSkillPoints(std::uint32_t skill) const;
-        std::array<std::uint8_t, NUM_OF_SKILLS>& getSkills();
+        const SkillType& getSkill(std::uint16_t skill) const;
+        std::uint16_t getSkillId(std::uint16_t skill) const;
+        std::uint8_t getSkillPoints(std::uint16_t skill) const;
+        std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& getSkills();
 
         std::uint32_t getTotalSkillPoints() const;
         std::uint32_t getSkillPointsUsed() const;
@@ -176,6 +189,8 @@ namespace d2ce
         bool areSkillsMaxed() const;
         void maxSkills();
         void clearSkillChoices();
+        
+        bool getSkillBonusPoints(std::vector<std::uint16_t>& points) const;
 
         // PD2 Skills
         bool isPD2Format() const;

@@ -28,6 +28,7 @@
 
 namespace d2ce
 {
+    struct ItemType;
     struct ItemFilter
     {
         EnumItemLocation LocationId = EnumItemLocation::BUFFER;
@@ -59,8 +60,8 @@ namespace d2ce
 
     private:
         mutable std::vector<std::uint8_t> data;
-        EnumCharVersion FileVersion = APP_CHAR_VERSION;
         EnumItemVersion ItemVersion = APP_ITEM_VERSION;
+        std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
         size_t start_bit_offset = 16;
         size_t location_bit_offset = 58;
         size_t equipped_id_offset = 61;
@@ -81,6 +82,7 @@ namespace d2ce
         size_t personalized_bit_offset = 0;
         size_t personalized_bit_offset_marker = 0; // offset where to put the personalization
         size_t tome_bit_offset = 0;
+        size_t body_part_bit_offset = 0;
         size_t realm_bit_offset = 0;
         size_t defense_rating_bit_offset = 0;
         size_t durability_bit_offset = 0;
@@ -126,8 +128,8 @@ namespace d2ce
         bool readItemv104(const Json::Value& itemRoot, bool bSerializedFormat);
 
     protected:
-        bool readItem(EnumCharVersion version, std::FILE* charfile);
-        bool readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumCharVersion version);
+        bool readItem(EnumItemVersion version, bool isExpansion, std::FILE* charfile);
+        bool readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumItemVersion version, bool isExpansion);
         bool writeItem(std::FILE* charfile);
 
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
@@ -136,8 +138,10 @@ namespace d2ce
 
         std::uint16_t getRawVersion() const;
 
-        Item(EnumCharVersion version, EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
+        Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
         bool setItemLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
+
+        bool isExpansionItem() const;
 
     public:
         Item();
@@ -160,7 +164,14 @@ namespace d2ce
         void push_back(const std::uint8_t& value);
 
         // Simple information
-        EnumItemVersion Version() const;
+        EnumItemVersion getVersion() const;
+
+        // refers to the "version" column in resource files used internally
+        //   0 = pre v1.08
+        //   1 - Non-Expansion (post v1.08) (classic and LoD).
+        // 100 - Expansion LoD
+        std::uint16_t getGameVersion() const;
+
         bool isIdentified() const;
         bool isDisabled() const; // item is broken
         bool isSocketed() const;
@@ -177,9 +188,11 @@ namespace d2ce
         std::uint8_t getPositionX() const;
         std::uint8_t getPositionY() const;
         EnumAltItemLocation getAltPositionId() const;
+        const ItemType& getItemTypeHelper() const;
         bool getItemCode(std::array<std::uint8_t, 4>& strcode) const;
-        EnumItemType getItemType() const;
-        std::string getItemTypeName() const;
+        const std::string& getItemTypeName() const;
+        const std::string& getRuneLetter() const;
+        std::uint8_t getGemApplyType() const;
         bool updateGem(const std::array<std::uint8_t, 4>& newgem);
         bool upgradeGem();
         bool upgradePotion();
@@ -191,7 +204,7 @@ namespace d2ce
         bool getCategories(std::vector<std::string>& categories) const;
         bool getDimensions(ItemDimensions& dimensions) const;
         std::uint32_t getTotalItemSlots() const; // non-zero for belts and Horadric Cube only
-        std::string getInvFile() const;
+        const std::string& getInvFile() const;
         std::string getTransformColor() const;
 
         // Extended information
@@ -218,6 +231,7 @@ namespace d2ce
         bool isWeapon() const;
         bool isMissileWeapon() const;
         bool isTome() const;
+        bool isBodyPart() const;
         bool isStackable() const;
         bool isPotion() const;
         bool isGem() const;
@@ -228,15 +242,19 @@ namespace d2ce
         bool isJewel() const;
         bool isCharm() const;
         bool isBelt() const;
+        bool isBeltable() const;
         bool isQuestItem() const;
         bool isHoradricCube() const;
         bool isIndestructible() const;
+        bool isUnusedItem() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
+        bool canPersonalize() const;
         std::uint8_t getDisplayedSocketCount() const;
         std::uint8_t socketCount() const;
         std::uint8_t getMaxSocketCount() const;
         std::uint32_t getQuantity() const;
+        std::uint32_t getMaxQuantity() const;
         bool setQuantity(std::uint32_t quantity);
         bool setMaxQuantity();
         std::uint16_t getDefenseRating() const;
@@ -261,6 +279,7 @@ namespace d2ce
         std::uint16_t getDisplayedDefenseRating(std::uint32_t charLevel) const;
         bool getDisplayedDurability(ItemDurability& durability, std::uint32_t charLevel) const;
         bool getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel) const;
+        bool getDisplayedRequirements(ItemRequirements& req, std::uint32_t charLevel) const;
         std::string getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const;
         bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
@@ -271,6 +290,7 @@ namespace d2ce
 
     protected:
         std::vector<MagicalAttribute> socketedMagicalAttributes;
+        mutable std::vector<MagicalAttribute> cachedCombinedMagicalAttributes;
     };
 
     //---------------------------------------------------------------------------
@@ -280,7 +300,8 @@ namespace d2ce
         friend class SharedStash;
 
     protected:
-        EnumCharVersion Version = APP_CHAR_VERSION;
+        EnumItemVersion Version = APP_ITEM_VERSION;
+        std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
 
         std::uint32_t items_location = 0,
             corpse_location = 0,
@@ -320,7 +341,6 @@ namespace d2ce
         Item GolemItem;                    // Item for the Golem
 
         bool update_locations = true;
-        bool isFileExpansionCharacter = false;
         bool isMercHired = false;
 
     private:
@@ -345,10 +365,9 @@ namespace d2ce
         bool writeMercItems(std::FILE* charfile);
         bool writeGolemItem(std::FILE* charfile);
 
-    protected:
-        bool readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
+        bool readItems(const Character& charInfo, std::FILE* charfile);
         bool readSharedStashPage(EnumCharVersion version, std::FILE* charfile);
-        bool readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion = false);
+        bool readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo, std::FILE* charfile);
         bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false);
         bool writeSharedStashPage(std::FILE* charfile);
 
@@ -358,6 +377,8 @@ namespace d2ce
         bool golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         bool itemBonusesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
+
+        bool isExpansionItems() const;
 
     public:
         Items();
@@ -371,7 +392,8 @@ namespace d2ce
 
         void clear();
 
-        EnumItemVersion getDefaultItemVersion();
+        EnumItemVersion getDefaultItemVersion() const;
+        std::uint16_t getDefaultGameVersion() const;
         bool getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
         bool getItemLocationDimensions(EnumItemLocation locationId, ItemDimensions& dimensions) const;
         bool getItemLocationDimensions(EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;

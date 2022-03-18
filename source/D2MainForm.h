@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "d2ce\Character.h"
+#include "d2ce/Character.h"
 #include "MainFormConstants.h"
 #include "resource.h"
 #include <memory>
@@ -34,6 +34,7 @@ public:
 
 public:
     virtual ~CCharNameEdit();
+    void SetASCIIOnly(BOOL bFlag);
 
     // Generated message map functions
 protected:
@@ -48,6 +49,8 @@ protected:
 
 protected:
     CString GetValidText(LPCTSTR value) const;
+    BOOL m_bASCII = FALSE;
+    UINT surrugate = 0;
 };
 
 class CStatsLeftImage : public CStatic
@@ -319,6 +322,7 @@ private:
     void UpdateAppTitle();
     void UpdateClassDisplay();
     void UpdateTitleDisplay();
+    void UpdateDifficultyDisplay();
     void UpdateStartingActDisplay();
     void WriteBackupFile();
     void SetupBasicStats();
@@ -327,11 +331,13 @@ private:
     bool CheckFileSize();
 
     void CheckStatsLeft();
-    std::string ToStdString(const CWnd* Sender) const;
-    CString ToText(const CWnd* Sender) const;
-    CStringA ToTextA(const CWnd* Sender) const;
-    void SetText(CWnd* Sender, const char* newValue);
-    void SetText(CWnd* Sender, const wchar_t* newValue);
+    std::string ToStdString(const CWnd* Sender) const; // UTF-8
+    CString ToText(const CWnd* Sender) const;          // UTF-16
+    CStringA ToTextA(const CWnd* Sender) const;        // ANSI
+    void SetText(CWnd* Sender, const std::string& newValue); // UTF-8
+    void SetUTF8Text(CWnd* Sender, const char* newValue);    // UTF-8
+    void SetText(CWnd* Sender, const char* newValue);        // ANSI
+    void SetText(CWnd* Sender, const wchar_t* newValue);     // UTF-16
     std::uint32_t ToInt(const CWnd* Sender) const;
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
@@ -349,10 +355,17 @@ public:
     d2ce::EnumDifficulty getDifficultyLastPlayed() const;
     d2ce::EnumAct getStartingAct() const;
     std::uint32_t getCharacterLevel() const;
+    std::uint32_t getCharacterMaxLevel() const;
+    std::uint32_t getCharacterMaxExperience() const;
+    std::uint32_t getCharacterMinExperience(std::uint32_t level) const;
+    std::uint32_t getCharacterNextExperience(std::uint32_t level) const;
+    std::uint32_t getCharacterLevelFromExperience() const;
+    std::uint32_t getCharacterLevelFromExperience(std::uint32_t experience) const;
 
     std::uint32_t getWeaponSet() const;
 
-    bool isExpansionCharacter() const;
+    bool isExpansionCharacter() const; 
+    bool isFemaleCharacter() const;
     d2ce::EnumAct getLastAct() const;
 
     uint32_t getSkillPointsEarned() const;
@@ -378,11 +391,14 @@ public:
     void setWaypoints(d2ce::EnumDifficulty difficulty, std::uint64_t newvalue);
 
     // Skills
+    bool getSkillBitmap(const d2ce::SkillType& skill, CBitmap& bitmap) const;
     std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& getSkills();
     void updateSkills(const std::array<std::uint8_t, d2ce::NUM_OF_SKILLS>& updated_skills, std::uint32_t skillChoices);
 
     std::uint32_t getSkillPointsUsed() const;
     std::uint32_t getSkillChoices() const;
+
+    bool getSkillBonusPoints(std::vector<std::uint16_t>& points) const;
 
     // Items
     const std::vector<std::reference_wrapper<d2ce::Item>>& getGPSs();

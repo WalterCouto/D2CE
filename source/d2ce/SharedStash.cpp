@@ -18,7 +18,6 @@
 //---------------------------------------------------------------------------
 
 #include "pch.h"
-#include <filesystem>
 #include "SharedStash.h"
 #include "Character.h"
 
@@ -36,10 +35,11 @@ d2ce::SharedStash::SharedStash()
 //---------------------------------------------------------------------------
 d2ce::SharedStash::SharedStash(const Character& charInfo)
 {
-    if (charInfo.getVersion() >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
+    CharVersion = charInfo.getVersion();
+    if (CharVersion >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
     {
-        std::filesystem::path p = charInfo.getPathName();
-        m_d2ifilename = p.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i").string();
+        m_d2ifilename = charInfo.getPath();
+        m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
         if (!std::filesystem::exists(m_d2ifilename))
         {
             m_d2ifilename.clear();
@@ -94,10 +94,11 @@ void d2ce::SharedStash::clear(bool bItemsOnly)
 void d2ce::SharedStash::reset(const Character& charInfo)
 {
     clear();
-    if (charInfo.getVersion() >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
+    CharVersion = charInfo.getVersion();
+    if (CharVersion >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
     {
-        std::filesystem::path p = charInfo.getPathName();
-        m_d2ifilename = p.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i").string();
+        m_d2ifilename = charInfo.getPath();
+        m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
         if (!std::filesystem::exists(m_d2ifilename))
         {
             m_d2ifilename.clear();
@@ -131,9 +132,9 @@ bool d2ce::SharedStash::refresh()
 
     std::FILE* charfile = nullptr;
 #ifdef _MSC_VER
-    charfile = _fsopen(m_d2ifilename.c_str(), "rb+", _SH_DENYNO);
+    charfile = _wfsopen(m_d2ifilename.wstring().c_str(), L"rb+", _SH_DENYNO);
 #else
-    errno_t err = fopen_s(&charfile, m_d2ifilename.c_str(), "rb+");
+    errno_t err = wfopen_s(&charfile, m_d2ifilename.wstring().c_str(), L"rb+");
     if (err != 0)
     {
         return false;
@@ -161,15 +162,16 @@ bool d2ce::SharedStash::save(bool saveBackup)
 
     if (saveBackup && std::filesystem::exists(m_d2ifilename))
     {
-        auto backupd2ifilename = m_d2ifilename + ".bak";
-        if (std::filesystem::exists(backupd2ifilename))
-        {
-            std::filesystem::copy_file(m_d2ifilename, backupd2ifilename, std::filesystem::copy_options::overwrite_existing);
-        }
+        auto now = std::chrono::system_clock::now();
+        auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        auto ext = "." + std::to_string(UTC) + ".bak";
+        auto backupd2ifilename = m_d2ifilename;
+        backupd2ifilename.replace_extension(ext);
+        std::filesystem::copy_file(m_d2ifilename, backupd2ifilename, std::filesystem::copy_options::overwrite_existing);
     }
 
     std::FILE* charfile = nullptr;
-    errno_t err = fopen_s(&charfile, m_d2ifilename.c_str(), "wb");
+    errno_t err = _wfopen_s(&charfile, m_d2ifilename.wstring().c_str(), L"wb");
     if (err != 0)
     {
         return false;
@@ -195,9 +197,9 @@ bool d2ce::SharedStash::save(bool saveBackup)
     return true;
 }
 //---------------------------------------------------------------------------
-const char* d2ce::SharedStash::getPathName() const
+const std::filesystem::path& d2ce::SharedStash::getPath() const
 {
-    return m_d2ifilename.c_str();
+    return m_d2ifilename;
 }
 //---------------------------------------------------------------------------
 bool d2ce::SharedStash::hasSharedStash() const
@@ -785,7 +787,7 @@ bool d2ce::SharedStash::refresh(std::FILE* charfile)
             return false;
         }
 
-        if (pageHeader.Version != static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v115))
+        if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v115))
         {
             // corrupt file
             Pages.pop_back();
@@ -793,7 +795,7 @@ bool d2ce::SharedStash::refresh(std::FILE* charfile)
         }
 
         auto& items = page.StashItems;
-        if (!items.readSharedStashPage(EnumCharVersion::v115, charfile))
+        if (!items.readSharedStashPage(CharVersion, charfile))
         {
             // corrupt file
             Pages.pop_back();

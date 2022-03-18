@@ -49,9 +49,11 @@ using std::min;
 #include <cstdio>
 #include <system_error>
 
-#include "d2ce\bitmask.hpp"
+#include "d2ce/bitmask.hpp"
+#include <gdiplus.h>
 
 #pragma comment(lib, "version.lib")
+#pragma comment(lib, "gdiplus.lib")
 
 const UINT WM_OPEN_DLG_FILE = WM_USER + 400;
 

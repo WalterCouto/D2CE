@@ -22,7 +22,7 @@
 
 //---------------------------------------------------------------------------
 #include "D2MainForm.h"
-#include "d2ce\ActsInfo.h"
+#include "d2ce/ActsInfo.h"
 
 //---------------------------------------------------------------------------
 class CD2QuestsForm : public CDialogEx

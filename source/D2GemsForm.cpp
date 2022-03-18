@@ -22,7 +22,7 @@
 #include "D2Editor.h"
 #include "D2GemsForm.h"
 #include "afxdialogex.h"
-#include "d2ce\helpers\ItemHelpers.h"
+#include "d2ce/helpers/ItemHelpers.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

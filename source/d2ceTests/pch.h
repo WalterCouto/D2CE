@@ -17,13 +17,13 @@ using std::min;
 #include <cstdint>
 #include <locale>
 #include <filesystem>
-#include "..\d2ce\bitmask.hpp"
+#include "../d2ce/bitmask.hpp"
 #include <system_error>
 #include <map>
 #include <bitset>
 #include <sstream>
 #include <string>
-#include "..\d2ce\Character.h"
+#include "../d2ce/Character.h"
 #include <fstream>
 
 #endif //PCH_H

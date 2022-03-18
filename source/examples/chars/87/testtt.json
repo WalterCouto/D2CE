@@ -11,6 +11,7 @@
     "progression": 0,
     "active_arms": 0,
     "class": "Barbarian",
+    "class_id": 4,
     "level": 1,
     "assigned_skills": [
       null,
@@ -1234,7 +1235,7 @@
     {
       "id": 127,
       "points": 0,
-      "name": "Sword Mastery"
+      "name": "Blade Mastery"
     },
     {
       "id": 128,
@@ -1269,7 +1270,7 @@
     {
       "id": 134,
       "points": 0,
-      "name": "Pole Arm Mastery"
+      "name": "Polearm Mastery"
     },
     {
       "id": 135,
@@ -1359,7 +1360,7 @@
     {
       "id": 152,
       "points": 0,
-      "name": "Beserk"
+      "name": "Berserk"
     },
     {
       "id": 153,
@@ -1722,7 +1723,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "type_name": "Town Portal Scroll",
+      "type_name": "Scroll of Town Portal",
       "inv_file": "invbsc",
       "inv_height": 1,
       "inv_width": 1
@@ -1791,7 +1792,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "type_name": "Identify Scroll",
+      "type_name": "Scroll of Identify",
       "inv_file": "invrsc",
       "inv_height": 1,
       "inv_width": 1

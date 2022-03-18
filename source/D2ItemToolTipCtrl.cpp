@@ -20,6 +20,8 @@
 #include "pch.h"
 #include "D2ItemToolTipCtrl.h"
 #include "resource.h"		// main symbols
+#include <utf8/utf8.h>
+#include "helpers/ItemHelpers.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -87,8 +89,9 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         return __super::OnDrawLabel(pDC, rect, bCalcOnly);
     }
 
-    static const COLORREF colors[] = { RGB(255,255,255), RGB(94,94,255), RGB(0,255,0), RGB(255,255,0), RGB(148,128,100), RGB(255,128,0), RGB(255, 0, 0), RGB(117, 117, 117) };
-    enum { WHITE = 0, BLUE, GREEN, RARE, UNIQUE, CRAFT, RED, GRAY };
+    // color codes as described in the text files
+    static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), RGB(94,94,255), RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
+    enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, UNIQUE = 4, GRAY = 5, CRAFT = 8, RARE = 9 };
 
     // Get color of top text
     COLORREF color = colors[WHITE];
@@ -137,13 +140,13 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     }
     pDC->SetTextColor(color);
 
-    CFont* pOldFont = (CFont*)pDC->SelectObject(&(GetGlobalData()->fontDefaultGUIBold));
-
-    CString strText(CurrItem->getDisplayedItemName().c_str());
+    std::u16string uText = utf8::utf8to16(CurrItem->getDisplayedItemName());
+    CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
     CSize sizeText(CalcTextSize(pDC, strText, rect, bCalcOnly));
 
     // draw possible rune name
-    strText = CurrItem->getDisplayedSocketedRunes().c_str();
+    uText = utf8::utf8to16(CurrItem->getDisplayedSocketedRunes());
+    strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
         CSize prevSizeText = sizeText;
@@ -155,7 +158,8 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // Other non-magical
     auto charLevel = IsMerc ? CharInfo.getMercenaryInfo().getLevel() : CharInfo.getLevel();
-    strText = CurrItem->getDisplayedItemAttributes(CharInfo.getClass(), charLevel).c_str();
+    uText = utf8::utf8to16(CurrItem->getDisplayedItemAttributes(CharInfo.getClass(), charLevel));
+    strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
         CSize prevSizeText = sizeText;
@@ -169,7 +173,9 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     if (CurrItem->getDurability(durability) && durability.Max == 0)
     {
         // Indestructible without the need for the magical attribute of indestructibility
-        strText = "Indestructible";
+        std::string u8Text;
+        uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetIndestructibleStringTxtValue(u8Text));
+        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
 
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
@@ -190,7 +196,8 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
                 continue;
             }
 
-            strText = attrib.Desc.c_str();
+            uText = utf8::utf8to16(attrib.Desc);
+            strText = reinterpret_cast<LPCWSTR>(uText.c_str());
             if (strText.IsEmpty())
             {
                 continue;
@@ -209,12 +216,18 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     {
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
-        strText = _T("Ethereal (Cannot be Repaired)");
+
+        std::string u8Text;
+        uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetEtherealStringTxtValue(u8Text));
+        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
         if (CurrItem->isSocketed())
         {
             // Socketed text
+            strText += _T(", ");
+            uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetSocketedStringTxtValue(u8Text));
+            CString socketedText(reinterpret_cast<LPCWSTR>(uText.c_str()));
             CString temp;
-            temp.Format(_T(", Socketed (%d)"), (int)CurrItem->getDisplayedSocketCount());
+            temp.Format(socketedText, (int)CurrItem->getDisplayedSocketCount());
             strText += temp;
         }
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
@@ -226,13 +239,19 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         // Socketed text
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
-        strText.Format(_T("Socketed (%d)"), (int)CurrItem->getDisplayedSocketCount());
+
+        std::string u8Text;
+        uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetSocketedStringTxtValue(u8Text));
+        CString socketedText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        CString temp;
+        temp.Format(socketedText, (int)CurrItem->getDisplayedSocketCount());
+        strText = temp;
+
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
 
-    pDC->SelectObject(pOldFont);
 
     return sizeText;
 }

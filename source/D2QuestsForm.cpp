@@ -21,6 +21,8 @@
 #include "pch.h"
 #include "D2Editor.h"
 #include "D2QuestsForm.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -169,13 +171,86 @@ BOOL CD2QuestsForm::OnInitDialog()
 
     EnableToolTips(TRUE);
 
+    std::string strValue;
+    d2ce::LocalizationHelpers::GetStringTxtValue("strpanel2", strValue, "Quests");
+    auto uText = utf8::utf8to16(strValue);
+    SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+
     CWnd* pWnd = nullptr;
-    for (auto i = MaxItemIndex + 1; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
+    for (auto i = 0; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
     {
         pWnd = GetDlgItem(IDC_RADIO_DIFFICULTY_NORMAL + i);
         if (pWnd != nullptr)
         {
-            pWnd->EnableWindow(FALSE);
+            d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(static_cast<d2ce::EnumDifficulty>(i), strValue);
+            uText = utf8::utf8to16(strValue);
+            pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            if (i >= MaxItemIndex + 1)
+            {
+                pWnd->EnableWindow(FALSE);
+            }
+        }
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("respec", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_CHECK_ACTI_RESET_STATS)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("Moo Moo Farm", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_CHECK_QUEST_FARM)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act1", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTI)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act2", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTII)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act3", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTIII)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act4", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTIV)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act5", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTV)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    // update non-Expansion Quests
+    std::uint32_t numQuests = IDC_CHECK_ACTIV_QUEST_3 - IDC_CHECK_ACTI_QUEST_1 + 1;
+    std::uint16_t actNumber = 0;
+    std::uint16_t questNumber = 0;
+    for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTI_QUEST_1; i < numQuests; ++i, ++nIDC)
+    {
+        actNumber = std::uint16_t(i / d2ce::NUM_OF_QUESTS) + 1;
+        questNumber = std::uint16_t(i % d2ce::NUM_OF_QUESTS) + 1;
+        std::stringstream ss;
+        ss << "qstsa";
+        ss << actNumber;
+        ss << "q";
+        ss << questNumber;
+        if (d2ce::LocalizationHelpers::GetStringTxtValue(ss.str(), strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(nIDC)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
         }
     }
 
@@ -196,6 +271,54 @@ BOOL CD2QuestsForm::OnInitDialog()
             {
                 pWnd->EnableWindow(FALSE);
                 pWnd->ShowWindow(SW_HIDE);
+            }
+        }
+    }
+    else
+    {
+        // update Expansion Quests
+        questNumber = 1;
+        for (std::uint32_t i = 0, nIDC = IDC_CHECK_ACTV_QUEST_1; i < d2ce::NUM_OF_QUESTS; ++i, ++nIDC)
+        {
+            std::stringstream ss;
+            ss << "qstsa5q";
+            ss << (i + 1);
+            if (d2ce::LocalizationHelpers::GetStringTxtValue(ss.str(), strValue))
+            {
+                uText = utf8::utf8to16(strValue);
+                GetDlgItem(nIDC)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+    }
+
+    CString text;
+    CStringA textA;
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("ok", strValue))
+    {
+        pWnd = GetDlgItem(IDOK);
+        if (pWnd != nullptr)
+        {
+            pWnd->GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("cancel", strValue))
+    {
+        pWnd = GetDlgItem(IDCANCEL);
+        if (pWnd != nullptr)
+        {
+            pWnd->GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
             }
         }
     }

@@ -13,6 +13,7 @@
     "progression": 0,
     "active_arms": 0,
     "class": "Sorceress",
+    "class_id": 1,
     "level": 20,
     "created": 0,
     "last_played": 1632451089,
@@ -96,8 +97,13 @@
     "dead_merc": 0,
     "merc_id": "4de1f091",
     "merc_name_id": 26,
+    "merc_name": "Liene",
     "merc_type": 1,
+    "merc_class": "Rogue Scout",
+    "merc_attribute": "Cold Arrow",
+    "merc_level": 16,
     "merc_experience": 524374,
+    "merc_difficulty": "Normal",
     "quests_normal": {
       "act_i": {
         "introduced": true,
@@ -1618,7 +1624,6 @@
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "cgrn",
       "displayed_magic_attributes": [
         {
           "id": 45,
@@ -1742,7 +1747,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -1762,7 +1767,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 9,
@@ -1790,7 +1795,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -1801,7 +1806,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 9,
@@ -2821,10 +2826,10 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 3,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "dred",
       "displayed_magic_attributes": [
         {
           "id": 39,
@@ -2953,11 +2958,11 @@
         }
       ],
       "type_name": "Sash",
+      "levelreq": 3,
       "inv_file": "invlbl",
       "inv_height": 1,
       "inv_width": 2,
       "inv_transform": 8,
-      "transform_color": "dred",
       "displayed_magic_attributes": [
         {
           "id": 39,
@@ -3087,6 +3092,7 @@
       "rare_name": "Beast",
       "rare_name_id2": 99,
       "rare_name2": "Knuckle",
+      "rare_index2": "knuckle",
       "magical_name_ids": [
         238,
         730,
@@ -3122,7 +3128,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 19,
@@ -3169,7 +3175,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+5 to Maximum Stamina"
+          "description": "+5 Maximum Stamina"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3196,7 +3202,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 19,
@@ -3238,7 +3244,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+5 to Maximum Stamina"
+          "description": "+5 Maximum Stamina"
         }
       ]
     },
@@ -3322,7 +3328,7 @@
               24
             ],
             "name": "item_armor_perlevel",
-            "description": "+{0} to Defense (Based on Character Level)"
+            "description": "+{0} Defense (Based on Character Level)"
           }
         ],
         [
@@ -4408,10 +4414,11 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 8,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -4423,7 +4430,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds 1-2 Fire Damage"
+          "description": "Adds 1-2 fire damage"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -4435,7 +4442,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4446,7 +4453,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds 1-2 Fire Damage"
+          "description": "Adds 1-2 fire damage"
         }
       ]
     },
@@ -5118,7 +5125,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 138,
@@ -5130,6 +5137,7 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 3,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -5140,7 +5148,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 138,
@@ -5159,7 +5167,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 138,
@@ -5177,7 +5185,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 138,
@@ -6921,10 +6929,11 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "type_name": "Cap",
+      "levelreq": 3,
       "inv_file": "invcap",
       "inv_height": 2,
       "inv_width": 2,
@@ -6936,7 +6945,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -6947,7 +6956,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6957,7 +6966,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         }
       ]
     },
@@ -7179,11 +7188,11 @@
           "values": [
             4
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 3,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -7211,7 +7220,6 @@
             4
           ],
           "name": "item_throw_maxdamage",
-          "description": "+4 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -7238,8 +7246,7 @@
           "values": [
             4
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7266,7 +7273,6 @@
             4
           ],
           "name": "item_throw_maxdamage",
-          "description": "+4 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -7356,6 +7362,7 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 3,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -7845,7 +7852,7 @@
             9
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "type_name": "Heavy Boots",
@@ -7861,7 +7868,7 @@
             9
           ],
           "name": "maxstamina",
-          "description": "+9 to Maximum Stamina"
+          "description": "+9 Maximum Stamina"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -7872,7 +7879,7 @@
             9
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7882,7 +7889,7 @@
             9
           ],
           "name": "maxstamina",
-          "description": "+9 to Maximum Stamina"
+          "description": "+9 Maximum Stamina"
         }
       ]
     },
@@ -7997,7 +8004,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8006,7 +8013,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -8014,6 +8021,7 @@
         "maxdam": 5
       },
       "type_name": "Eagle Orb",
+      "levelreq": 5,
       "inv_file": "invob1",
       "inv_height": 2,
       "inv_width": 1,
@@ -8026,7 +8034,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Frozen Armor (Sorceress Only)"
+          "description": "+1 to Frozen Armor (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8035,7 +8043,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 9,
@@ -8095,7 +8103,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8104,7 +8112,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8115,7 +8123,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Frozen Armor (Sorceress Only)"
+          "description": "+1 to Frozen Armor (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8124,7 +8132,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 9,
@@ -8419,8 +8427,10 @@
       "class_specific": 0,
       "rare_name_id": 160,
       "rare_name": "Ghoul",
+      "rare_index": "GhoulRI",
       "rare_name_id2": 54,
       "rare_name2": "Call",
+      "rare_index2": "call",
       "magical_name_ids": [
         545,
         167,
@@ -8448,7 +8458,7 @@
             50
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 50,
@@ -8457,7 +8467,7 @@
             71
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 60,
@@ -8465,7 +8475,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 93,
@@ -8473,7 +8483,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 107,
@@ -8482,7 +8492,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8491,7 +8501,7 @@
             2
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8500,7 +8510,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -8508,10 +8518,12 @@
         "twohandmaxdam": 5
       },
       "type_name": "Short Staff",
+      "levelreq": 18,
       "inv_file": "invsst",
       "inv_height": 3,
       "inv_width": 1,
       "inv_transform": 8,
+      "transform_color": "cred",
       "displayed_magic_attributes": [
         {
           "id": 93,
@@ -8519,7 +8531,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 48,
@@ -8528,7 +8540,7 @@
             50
           ],
           "name": "firemindam",
-          "description": "Adds 26-50 Fire Damage"
+          "description": "Adds 26-50 fire damage"
         },
         {
           "id": 50,
@@ -8537,7 +8549,7 @@
             71
           ],
           "name": "lightmindam",
-          "description": "Adds 1-71 Lightning Damage"
+          "description": "Adds 1-71 lightning damage"
         },
         {
           "id": 60,
@@ -8545,7 +8557,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "7% Life Stolen Per Hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 107,
@@ -8554,7 +8566,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Nova (Sorceress Only)"
+          "description": "+1 to Nova (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8563,7 +8575,7 @@
             2
           ],
           "name": "item_singleskill",
-          "description": "+2 To Blaze (Sorceress Only)"
+          "description": "+2 to Blaze (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8572,7 +8584,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
+          "description": "+1 to Inferno (Sorceress Only)"
         },
         {
           "id": 41,
@@ -8585,14 +8597,6 @@
       ],
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+{0}% Damage to Undead"
-        },
         {
           "id": 41,
           "values": [
@@ -8608,7 +8612,7 @@
             50
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 50,
@@ -8617,7 +8621,7 @@
             71
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 60,
@@ -8625,7 +8629,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 93,
@@ -8633,7 +8637,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 107,
@@ -8642,7 +8646,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8651,7 +8655,7 @@
             2
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8660,7 +8664,15 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8670,15 +8682,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
-        },
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+50% Damage to Undead"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 48,
@@ -8687,7 +8691,7 @@
             50
           ],
           "name": "firemindam",
-          "description": "Adds 26-50 Fire Damage"
+          "description": "Adds 26-50 fire damage"
         },
         {
           "id": 50,
@@ -8696,7 +8700,7 @@
             71
           ],
           "name": "lightmindam",
-          "description": "Adds 1-71 Lightning Damage"
+          "description": "Adds 1-71 lightning damage"
         },
         {
           "id": 60,
@@ -8704,7 +8708,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "7% Life Stolen Per Hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 107,
@@ -8713,7 +8717,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Nova (Sorceress Only)"
+          "description": "+1 to Nova (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8722,7 +8726,7 @@
             2
           ],
           "name": "item_singleskill",
-          "description": "+2 To Blaze (Sorceress Only)"
+          "description": "+2 to Blaze (Sorceress Only)"
         },
         {
           "id": 107,
@@ -8731,7 +8735,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
+          "description": "+1 to Inferno (Sorceress Only)"
         },
         {
           "id": 41,
@@ -8740,6 +8744,14 @@
           ],
           "name": "lightresist",
           "description": "Lightning Resist +6%"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         }
       ]
     },
@@ -8977,7 +8989,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8986,7 +8998,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -8995,7 +9007,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -9003,6 +9015,7 @@
         "maxdam": 5
       },
       "type_name": "Eagle Orb",
+      "levelreq": 6,
       "inv_file": "invob1",
       "inv_height": 2,
       "inv_width": 1,
@@ -9015,7 +9028,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Ice Blast (Sorceress Only)"
+          "description": "+1 to Ice Blast (Sorceress Only)"
         },
         {
           "id": 107,
@@ -9024,7 +9037,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
+          "description": "+1 to Inferno (Sorceress Only)"
         },
         {
           "id": 107,
@@ -9033,7 +9046,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 7,
@@ -9061,7 +9074,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -9070,7 +9083,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         },
         {
           "id": 107,
@@ -9079,7 +9092,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9090,7 +9103,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Ice Blast (Sorceress Only)"
+          "description": "+1 to Ice Blast (Sorceress Only)"
         },
         {
           "id": 107,
@@ -9099,7 +9112,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Inferno (Sorceress Only)"
+          "description": "+1 to Inferno (Sorceress Only)"
         },
         {
           "id": 107,
@@ -9108,7 +9121,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Warmth (Sorceress Only)"
+          "description": "+1 to Warmth (Sorceress Only)"
         },
         {
           "id": 7,
@@ -9205,11 +9218,12 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "type_name": "Buckler",
       "reqstr": 12,
+      "levelreq": 3,
       "inv_file": "invbuc",
       "inv_height": 2,
       "inv_width": 2,
@@ -9221,7 +9235,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -9232,7 +9246,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9242,7 +9256,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         }
       ]
     }
@@ -9533,6 +9547,7 @@
       "rare_name": "Havoc",
       "rare_name_id2": 47,
       "rare_name2": "Horn",
+      "rare_index2": "horn",
       "magical_name_ids": [
         186,
         240,
@@ -9568,7 +9583,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 54,
@@ -9578,7 +9593,7 @@
             50
           ],
           "name": "coldmindam",
-          "description": "Adds {0}-{1} Cold Damage"
+          "description": "Adds {0}-{1} cold damage"
         },
         {
           "id": 122,
@@ -9603,6 +9618,7 @@
       },
       "type_name": "Hunter's Bow",
       "reqdex": 28,
+      "levelreq": 3,
       "inv_file": "invhbw",
       "inv_height": 3,
       "inv_width": 2,
@@ -9639,7 +9655,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds 1-2 Fire Damage"
+          "description": "Adds 1-2 fire damage"
         },
         {
           "id": 54,
@@ -9649,7 +9665,7 @@
             50
           ],
           "name": "coldmindam",
-          "description": "+1 Cold Damage"
+          "description": "+1 cold damage"
         },
         {
           "id": 2,
@@ -9685,7 +9701,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 54,
@@ -9695,7 +9711,7 @@
             50
           ],
           "name": "coldmindam",
-          "description": "Adds {0}-{1} Cold Damage"
+          "description": "Adds {0}-{1} cold damage"
         },
         {
           "id": 122,
@@ -9746,7 +9762,7 @@
             2
           ],
           "name": "firemindam",
-          "description": "Adds 1-2 Fire Damage"
+          "description": "Adds 1-2 fire damage"
         },
         {
           "id": 54,
@@ -9756,7 +9772,7 @@
             50
           ],
           "name": "coldmindam",
-          "description": "+1 Cold Damage"
+          "description": "+1 cold damage"
         },
         {
           "id": 2,
@@ -9808,7 +9824,7 @@
         14
       ],
       "name": "maxstamina",
-      "description": "+{0} to Maximum Stamina"
+      "description": "+{0} Maximum Stamina"
     },
     {
       "id": 19,
@@ -9837,7 +9853,7 @@
     {
       "id": 43,
       "values": [
-        10
+        17
       ],
       "name": "coldresist",
       "description": "Cold Resist +{0}%"
@@ -9851,12 +9867,21 @@
       "description": "Poison Resist +{0}%"
     },
     {
+      "id": 48,
+      "values": [
+        27,
+        52
+      ],
+      "name": "firemindam",
+      "description": "Adds {0}-{1} fire damage"
+    },
+    {
       "id": 105,
       "values": [
         10
       ],
       "name": "item_fastercastrate",
-      "description": "{0}% Faster Cast Rate"
+      "description": "+{0}% Faster Cast Rate"
     },
     {
       "id": 138,
@@ -9872,24 +9897,7 @@
         20
       ],
       "name": "item_fastergethitrate",
-      "description": "{0}% Faster Hit Recovery"
-    },
-    {
-      "id": 122,
-      "values": [
-        50
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
-      "id": 48,
-      "values": [
-        26,
-        50
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} Fire Damage"
+      "description": "+{0}% Faster Hit Recovery"
     },
     {
       "id": 50,
@@ -9898,7 +9906,7 @@
         71
       ],
       "name": "lightmindam",
-      "description": "Adds {0}-{1} Lightning Damage"
+      "description": "Adds {0}-{1} lightning damage"
     },
     {
       "id": 60,
@@ -9906,7 +9914,7 @@
         7
       ],
       "name": "lifedrainmindam",
-      "description": "{0}% Life Stolen Per Hit"
+      "description": "{0}% Life stolen per hit"
     },
     {
       "id": 93,
@@ -9914,7 +9922,7 @@
         20
       ],
       "name": "item_fasterattackrate",
-      "description": "{0}% Increased Attack Speed"
+      "description": "+{0}% Increased Attack Speed"
     },
     {
       "id": 107,
@@ -9923,7 +9931,7 @@
         2
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
     },
     {
       "id": 107,
@@ -9932,7 +9940,7 @@
         2
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
     },
     {
       "id": 107,
@@ -9941,7 +9949,15 @@
         1
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 122,
+      "values": [
+        50
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 7,
@@ -9958,7 +9974,7 @@
         1
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
     },
     {
       "id": 107,
@@ -9967,7 +9983,7 @@
         1
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
     }
   ]
 }

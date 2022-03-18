@@ -11,6 +11,7 @@
     "progression": 0,
     "active_arms": 0,
     "class": "Sorceress",
+    "class_id": 1,
     "level": 1,
     "assigned_skills": [
       null,
@@ -1195,7 +1196,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1225,11 +1226,7 @@
       "type_name": "Minor Healing Potion",
       "inv_file": "invhp1",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {
@@ -1278,7 +1275,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1308,11 +1305,7 @@
       "type_name": "Minor Healing Potion",
       "inv_file": "invhp1",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {
@@ -1361,7 +1354,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1391,11 +1384,7 @@
       "type_name": "Minor Healing Potion",
       "inv_file": "invhp1",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {
@@ -1444,7 +1433,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1474,11 +1463,7 @@
       "type_name": "Minor Healing Potion",
       "inv_file": "invhp1",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {
@@ -1527,7 +1512,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1553,14 +1538,10 @@
       "class_specific": 0,
       "timestamp": 0,
       "magic_attributes": [],
-      "type_name": "Town Portal Scroll",
+      "type_name": "Scroll of Town Portal",
       "inv_file": "invbsc",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {
@@ -1609,7 +1590,7 @@
       "new": 1,
       "is_ear": 0,
       "starter_item": 1,
-      "simple_item": 0,
+      "simple_item": 1,
       "ethereal": 0,
       "personalized": 0,
       "given_runeword": 0,
@@ -1635,14 +1616,10 @@
       "class_specific": 0,
       "timestamp": 0,
       "magic_attributes": [],
-      "type_name": "Identify Scroll",
+      "type_name": "Scroll of Identify",
       "inv_file": "invrsc",
       "inv_height": 1,
-      "inv_width": 1,
-      "displayed_magic_attributes": [],
-      "displayed_runeword_attributes": [],
-      "combined_magic_attributes": [],
-      "displayed_combined_magic_attributes": []
+      "inv_width": 1
     },
     {
       "_unknown_data": {

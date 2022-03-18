@@ -27,148 +27,227 @@
 
 namespace d2ce
 {
-    class Item;
-
-    //---------------------------------------------------------------------------
-    struct OpAttributes
+    namespace ItemHelpers
     {
-        std::uint8_t op = 0;
-        std::uint8_t op_param = 0;
-        std::string op_base;
-        std::vector<std::string> op_stats;
-    };
+        void setTxtReader(const ITxtReader& txtReader);
+        const ITxtReader& getTxtReader();
+        bool isTxtReaderInitialized();
+        const std::string& getLanguage();
+        const std::string& setLanguage(const std::string& lang);
 
+        const d2ce::ItemStat& getItemStat(EnumItemVersion itemVersion, size_t idx);
+        const d2ce::ItemStat& getItemStat(EnumItemVersion itemVersion, const std::string& name); // by stat name
+        const d2ce::ItemStat& getItemStat(const MagicalAttribute& attrib);
+        const bool hasItemStat(EnumItemVersion itemVersion, size_t idx);
+        const bool hasItemStat(EnumItemVersion itemVersion, const std::string& name); // by stat name
+        const bool hasItemStat(const MagicalAttribute& attrib);
+
+        const ItemType& getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode);
+
+        void getValidGPSCodes(std::vector <std::string>& gpsCodes, bool isExpansion = true);
+        std::uint16_t getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode);
+
+        std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
+    }
     //---------------------------------------------------------------------------
-    struct ItemStat
+
+    namespace LocalizationHelpers
     {
-        std::uint16_t id = 0;
-        std::uint8_t encode = 0;
-        std::uint16_t saveBits = 0;
-        std::int16_t saveAdd = 0;
-        std::uint16_t saveParamBits = 0;
-        std::uint16_t nextInChain = 0;
-        std::uint16_t charSaveBits = 0;
-        std::string desc;
-        std::string name;
-        OpAttributes opAttribs;
-    };
+        class ArgBase
+        {
+        public:
+            ArgBase() {}
+            virtual ~ArgBase() {}
+            virtual void Format(std::ostringstream& ss, const std::string& fmt) = 0;
+        };
 
-    struct ItemType
-    {
-        std::string name;
-        ItemDamage dam;
-        ItemRequirements req;
-        ItemDimensions dimensions;
-        bool stackable = 0;
-        std::string inv_file;
-        std::uint16_t inv_transform = 0;
-        std::vector<std::string> categories;
+        template <class T>
+        class Arg : public ArgBase
+        {
+        public:
+            Arg(T arg) : m_arg(arg) {}
+            virtual ~Arg() {}
+            virtual void Format(std::ostringstream& ss, const std::string& /*fmt*/)
+            {
+                ss << m_arg;
+            }
+        private:
+            T m_arg;
+        };
 
-        // Maximumn Sockets for item given its levels:
-        // If vector is empty, then the item can't have sockets
-        // Index 0 is for levels 1 to 25 (if no other elements in then vector then value applies to all item levels)
-        // Index 1 is for levels 26 to 40 (if no other elements in the vector, then value applies to levels 26+)
-        // Index 2 is for levels 41+
-        std::vector<std::uint8_t> max_sockets;
+        class ArgArray : public std::vector<ArgBase*>
+        {
+        public:
+            ArgArray() {}
+            ~ArgArray()
+            {
+                std::for_each(begin(), end(), [](ArgBase* p) { delete p; });
+            }
+        };
 
-        bool isStackable() const;
-        bool isWeapon() const;
-        bool isMissileWeapon() const;
-        bool isTwoHandedWeapon() const;
-        bool isShield() const;
-        bool isArmor() const;
-        bool isHelm() const;
-        bool isBook() const;
-        bool isPotion() const;
-        bool isJewel() const;
-        bool isGem() const;
-        bool isQuestItem() const;
-        bool isGoldItem() const;
-        bool isRejuvenationPotion() const;
-        bool isHealingPotion() const;
-        bool isManaPotion() const;
-        bool isSocketFiller() const;
-        bool isUpgradableGem() const;
-        bool isUpgradableRejuvenationPotion() const;
-        bool isUpgradablePotion() const;
-        bool isRune() const;
-        bool isCharm() const;
-        bool isBelt() const;
-        bool isScroll() const;
-        bool isSimpleItem() const;
-        bool isUnusedItem() const;
+        static void FormatItem(std::ostringstream& ss, const std::string& item, const ArgArray& args)
+        {
+            int index = 0;
+            int alignment = 0;
+            std::string fmt;
 
-        bool hasUndeadBonus() const;
+            char* endptr = nullptr;
+            index = strtol(&item[0], &endptr, 10);
+            if (index < 0 || index >= args.size())
+            {
+                return;
+            }
 
-        EnumItemType getEnumItemType() const;
+            if (*endptr == ',')
+            {
+                alignment = strtol(endptr + 1, &endptr, 10);
+                if (alignment > 0)
+                {
+                    ss << std::right << std::setw(alignment);
+                }
+                else if (alignment < 0)
+                {
+                    ss << std::left << std::setw(-alignment);
+                }
+            }
 
-        bool canHaveSockets() const;
-        std::uint8_t getMaxSockets(std::uint8_t level) const;
+            if (*endptr == ':')
+            {
+                fmt = endptr + 1;
+            }
 
-        std::uint8_t getBaseType() const;
+            args[index]->Format(ss, fmt);
 
-        bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, EnumItemType parentItemType) const;
+            return;
+        }
 
-        std::uint16_t getPotionPoints(EnumCharClass charClass) const;
-    };
-    //---------------------------------------------------------------------------
-    
-    //---------------------------------------------------------------------------
-    class ItemHelpers
-    {
-    public:
-        static const d2ce::ItemStat& getItemStat(size_t idx);
-        static size_t getItemStatSize();
+        template <class T>
+        static void Transfer(ArgArray& argArray, T t)
+        {
+            argArray.push_back(new Arg<T>(t));
+        }
 
-        static std::uint16_t getTypeCodev100(const std::array<std::uint8_t, 4>& strcode);
-        static std::uint8_t getMaxSocketsv100(const std::array<std::uint8_t, 4>& strcode);
-        static bool getItemCodev100(std::uint16_t code, std::array<std::uint8_t, 4>& strcode);
-        static std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
-        static void d2ce::ItemHelpers::encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
-        static std::uint8_t HuffmanDecodeBitString(const std::string& bitstr);
-        static std::uint16_t getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode);
-        static void getValidGPSCodes(std::vector <std::string>& gpsCodes, bool isExpansion = true);
+        template <class T, typename... Args>
+        static void Transfer(ArgArray& argArray, T t, Args&&... args)
+        {
+            Transfer(argArray, t);
+            Transfer(argArray, args...);
+        }
 
-        static const ItemType& getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode);
-        static std::uint8_t getItemBase(const std::array<std::uint8_t, 4>& strcode);
-        static EnumItemType getEnumItemTypeFromCode(std::array<std::uint8_t, 4>& strcode);
+        template<typename ... Args>
+        std::string string_format(const std::string& format, Args ... args)
+        {
+            int size_s = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+            if (size_s <= 0) { throw std::runtime_error("Error during formatting."); }
+            auto size = static_cast<size_t>(size_s);
+            std::unique_ptr<char[]> buf(new char[size]);
+            std::snprintf(buf.get(), size, format.c_str(), args ...);
+            return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+        }
 
-        static std::string getRunewordNameFromId(std::uint16_t id);
-        static bool getSetMagicAttribsV100(std::uint16_t id, std::vector<MagicalAttribute>& attribs);
-        static bool getUniqueMagicAttribsV100(std::uint16_t id, std::vector<MagicalAttribute>& attribs);
-        static bool getUniqueQuestMagicAttribsV100(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs);
+        template<typename ... Args>
+        std::string string_formatDiablo(const std::string& format, Args ... args)
+        {
+            std::string result = format;
+            if (sizeof...(args) == 0)
+            {
+                return format;
+            }
 
-        static std::uint16_t getSetIDv100(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
-        static std::uint16_t getSetCodev100(std::uint16_t id);
-        static std::uint32_t generateSetDWBCodev100(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwb, std::uint16_t magicLevel);
-        static std::uint8_t generateInferiorQualityIdv100(std::uint32_t dwb, std::uint16_t magicLevel);
-        static bool generateMagicalAffixesv100(std::uint16_t typeCode, std::uint32_t dwb, std::uint16_t magicLevel, MagicalCachev100& cache);
-        static bool generateRareOrCraftedAffixesv100(std::uint16_t typeCode, std::uint32_t dwb, std::uint16_t magicLevel, RareOrCraftedCachev100& cache);
-        static std::uint8_t generateDefenseRatingv100(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa);
-        static std::uint32_t generateDWARandomOffsetv100(std::uint32_t dwa, std::uint16_t numRndCalls);
-        static std::uint32_t generarateRandomDW();
-        static std::uint32_t generarateRandomMagicLevel();
-        static std::string getSetNameFromId(std::uint16_t id);
-        static std::string getSetTCFromId(std::uint16_t id);
-        static std::uint16_t getSetLevelReqFromId(std::uint16_t id);
-        static std::string getRareNameFromId(std::uint16_t id);
-        static std::string getMagicalPrefixFromId(std::uint16_t id);
-        static std::string getMagicalSuffixFromId(std::uint16_t id);
-        static std::string getMagicalPrefixTCFromId(std::uint16_t id);
-        static std::string getMagicalSuffixTCFromId(std::uint16_t id);
-        static std::string getUniqueNameFromId(std::uint16_t id);
-        static std::uint16_t getIdFromRareName(const std::string& rareName);
-        static std::uint16_t getUniqueLevelReqFromId(std::uint16_t id);
-        static std::string getUniqueTCFromId(std::uint16_t id);
+            ArgArray argArray;
+            Transfer(argArray, args...);
+            size_t start = 0;
+            size_t pos = 0;
+            std::ostringstream ss;
+            size_t formatSize = format.size();
+            while (start < formatSize)
+            {
+                pos = format.find('%', start);
+                if (pos == std::string::npos)
+                {
+                    ss << format.substr(start);
+                    break;
+                }
 
-        static bool magicalAttributeSorter(const MagicalAttribute& left, const MagicalAttribute& right);
-        static void checkForRelatedMagicalAttributes(std::vector<MagicalAttribute>& attribs);
-        static std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
-        static std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
-        static bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
-        static void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
-        static bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
-    };
+                ss << format.substr(start, pos - start);
+                if (format[pos + 1] == '%')
+                {
+                    ss << '%';
+                    start = pos + 2;
+                    continue;
+                }
+
+                pos = pos + 1;
+                start = pos; // supports 0 - 9 only
+                FormatItem(ss, format.substr(start, pos - start + 1), argArray);
+                start = pos + 1;
+            }
+
+            return ss.str();
+        }
+
+        template <typename... Args>
+        std::string string_posformat(const std::string& format, Args&&... args)
+        {
+            if (sizeof...(args) == 0)
+            {
+                return format;
+            }
+
+            ArgArray argArray;
+            Transfer(argArray, args...);
+            size_t start = 0;
+            size_t pos = 0;
+            std::ostringstream ss;
+            size_t formatSize = format.size();
+            while (start < formatSize)
+            {
+                pos = format.find('{', start);
+                if (pos == std::string::npos)
+                {
+                    ss << format.substr(start);
+                    break;
+                }
+
+                ss << format.substr(start, pos - start);
+                if (format[pos + 1] == '{')
+                {
+                    ss << '{';
+                    start = pos + 2;
+                    continue;
+                }
+
+                start = pos + 1;
+                pos = format.find('}', start);
+                if (pos == std::string::npos)
+                {
+                    ss << format.substr(start - 1);
+                    break;
+                }
+
+                FormatItem(ss, format.substr(start, pos - start), argArray);
+                start = pos + 1;
+            }
+
+            return ss.str();
+        }
+
+        bool GetStringTxtValue(const std::string& str, std::string& outStr, std::string& gender, const char* defValue = nullptr);
+        bool GetStringTxtValue(const std::string& str, std::string& outStr, const char* defValue = nullptr);
+        bool GetStringTxtValue(size_t id, std::string& outStr, std::string& gender, const char* defValue = nullptr);
+        bool GetStringTxtValue(size_t id, std::string& outStr, const char* defValue = nullptr);
+        const std::string& GetIndestructibleStringTxtValue(std::string& outStr, std::string& gender);
+        const std::string& GetIndestructibleStringTxtValue(std::string& outStr);
+        const std::string& GetEtherealStringTxtValue(std::string& outStr, std::string& gender);
+        const std::string& GetEtherealStringTxtValue(std::string& outStr);
+        const std::string& GetSocketedStringTxtValue(std::string& outStr, std::string& gender);
+        const std::string& GetSocketedStringTxtValue(std::string& outStr);
+        const std::string& GetDifficultyStringTxtValue(EnumDifficulty diff, std::string& outStr);
+
+        const std::string& CheckCharName(std::string& curName, bool bASCII = false);
+        const std::vector<std::string> GetCharacterTitles(bool isFemale = false, bool isHardcore = false, bool isExpansion = true);
+        const std::vector<std::string> GetCharacterTypes(bool isExpansion = true);
+    }
     //---------------------------------------------------------------------------
 }
 //---------------------------------------------------------------------------

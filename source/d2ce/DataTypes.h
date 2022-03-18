@@ -23,6 +23,7 @@
 #include "CharacterConstants.h"
 #include "CharacterStatsConstants.h"
 #include "Constants.h"
+#include "ItemConstants.h"
 #include <json/json.h>
 
 namespace d2ce
@@ -30,7 +31,7 @@ namespace d2ce
     struct BasicStats
     {
         EnumCharVersion Version;                                            // Version for Character file
-        std::array<char, d2ce::NAME_LENGTH> Name = { 0 };                   // pos 20 (1.09+, otherwise pos 8),
+        std::array<char, d2ce::NAME_LENGTH> Name = { 0 };                   // pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8),
                                                                             // name includes terminating NULL
         bitmask::bitmask<EnumCharStatus> Status = EnumCharStatus::NoDeaths; // pos 36 (1.09+, otherwise, pos 24), determines character status
         std::uint8_t Title = 0;                                             // pos 37 (1.09+, otherwise pos 25), character's title
@@ -140,6 +141,21 @@ namespace d2ce
             }
         }
 
+        bool isFemaleCharacter() const
+        {
+            switch (Class)
+            {
+            case d2ce::EnumCharClass::Amazon:
+            case d2ce::EnumCharClass::Assassin:
+            case d2ce::EnumCharClass::Sorceress:
+                return true;
+                break;
+
+            default:
+                return false;
+            }
+        }
+
         std::uint8_t getNumActs() const
         {
             return std::uint8_t(isExpansionCharacter() ? 5 : 4);
@@ -229,6 +245,12 @@ namespace d2ce
         std::uint32_t Experience = 0;
         std::uint32_t GoldInBelt = 0;
         std::uint32_t GoldInStash = 0;
+        std::uint32_t MaxLevel = 99ui32;
+        std::uint32_t MinExperienceLevel = 0ui32;
+        std::uint32_t NextExperienceLevel = 500ui32;
+        std::uint32_t MaxExperience = 3600000000ui32;
+        std::uint32_t MaxGoldInBelt = 10000ui32;
+        std::uint32_t MaxGoldInStash = d2ce::GOLD_IN_STASH_LIMIT;
 
         void clear()
         {
@@ -248,56 +270,12 @@ namespace d2ce
             Experience = 0;
             GoldInBelt = 0;
             GoldInStash = 0;
-        }
-
-        std::uint32_t getMaxGoldInBelt() const
-        {
-            std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
-            return curLevel * 10000;
-        }
-
-        std::uint32_t getMaxGoldInStash(EnumCharVersion version = APP_CHAR_VERSION) const
-        {
-            if (version >= EnumCharVersion::v110) // 1.10+ character
-            {
-                return d2ce::GOLD_IN_STASH_LIMIT;
-            }
-
-            std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
-            if (curLevel < 31) // 1.00 - 1.09 characters
-            {
-
-                return (curLevel / 10 + 1) * 50000;
-            }
-
-            if (version < EnumCharVersion::v107) // 1.00 - 1.06 character
-            {
-                return (std::min(curLevel, 90ui32) / 10 + 1) * 50000;
-            }
-
-            return (curLevel / 2 + 1) * 50000; // 1.07 - 1.09 characters
-        }
-
-        std::uint32_t getMinExperienceRequired() const
-        {
-            std::uint32_t curLevel = std::max(1u, std::min(Level, NUM_OF_LEVELS));
-            if (curLevel <= d2ce::NUM_OF_LEVELS)
-            {
-                return MinExpRequired[curLevel - 1];
-            }
-
-            return std::uint32_t(-1);
-        }
-
-        std::uint32_t getNextExperienceLevel() const
-        {
-            std::uint32_t nextLevel = std::max(1u, std::min(Level + 1, NUM_OF_LEVELS));
-            if (nextLevel + 1 <= d2ce::NUM_OF_LEVELS)
-            {
-                return MinExpRequired[nextLevel];
-            }
-
-            return std::uint32_t(-1);
+            MaxLevel = 99ui32;
+            MinExperienceLevel = 0ui32;
+            NextExperienceLevel = 500ui32;
+            MaxExperience = 3600000000ui32;
+            MaxGoldInBelt = 10000ui32;
+            MaxGoldInStash = d2ce::GOLD_IN_STASH_LIMIT;
         }
     };
 
@@ -344,13 +322,7 @@ namespace d2ce
 
         std::string getClassName() const
         {
-            auto idx = (std::uint8_t)getClass();
-            if (idx < NUM_OF_CLASSES)
-            {
-                return ClassNames[idx];
-            }
-
-            return "";
+            return CharClassHelper::getClassName(getClass());
         }
 
         const std::array<char, NAME_LENGTH>& getName() const
@@ -362,6 +334,7 @@ namespace d2ce
         {
             Json::Value ear_attributes;
             ear_attributes["class"] = getClassName();
+            ear_attributes["class_id"] = std::uint16_t(getClass());
             ear_attributes["level"] = getLevel();
             ear_attributes["name"] = getName().data();
             parent["ear_attributes"] = ear_attributes;
@@ -377,6 +350,9 @@ namespace d2ce
         std::int64_t OpValue = 0;
         std::vector<std::string> OpStats;
         bool Visible = true;
+        EnumItemVersion Version = EnumItemVersion::v100;
+        std::uint16_t GameVersion = 0;
+        std::uint8_t DescPriority = 0;   // The higher this value is the further up in the item description this stat will be listed
 
         void clear()
         {
@@ -387,6 +363,8 @@ namespace d2ce
             OpValue = 0;
             OpStats.clear();
             Visible = true;
+            Version = EnumItemVersion::v100;
+            GameVersion = 0;
         }
 
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const
@@ -857,16 +835,20 @@ namespace d2ce
     {
         std::uint16_t Id = 0;
         std::string Name;
+        std::string Index;
         std::uint16_t Id2 = 0;
         std::string Name2;
+        std::string Index2;
         std::vector<MagicalAffixes> Affixes;
 
         void clear()
         {
             Id = 0;
             Name.clear();
+            Index.clear();
             Id2 = 0;
             Name2.clear();
+            Index2.clear();
             Affixes.clear();
         }
 
@@ -874,8 +856,19 @@ namespace d2ce
         {
             parent["rare_name_id"] = Id;
             parent["rare_name"] = Name;
+            if (Name != Index)
+            {
+                parent["rare_index"] = Index;
+
+            }
+
             parent["rare_name_id2"] = Id2;
             parent["rare_name2"] = Name2;
+            if (Name2 != Index2)
+            {
+                parent["rare_index2"] = Index2;
+
+            }
 
             Json::Value magicalNameIds(Json::arrayValue);
             for (const auto& val : Affixes)
@@ -941,11 +934,13 @@ namespace d2ce
     {
         std::uint16_t Current = 0;
         std::uint16_t Max = 0;
+        std::uint16_t Base = 0;
 
         void clear()
         {
             Current = 0;
             Max = 0;
+            Base = 0;
         }
     };
 
@@ -985,16 +980,18 @@ namespace d2ce
 
     struct ItemDamage
     {
-        BaseDamage OneHanded;
-        bool bOneOrTwoHanded = false;
-        bool bTwoHanded = false;
-        BaseDamage TwoHanded;
-        BaseDamage Missile;
+        BaseDamage OneHanded;         // Minimum/Maximum one-handed damage
+        bool bOneOrTwoHanded = false; // Can weopon be carried in 1 or 2 hands by Barbarian?
+        bool bTwoHanded = false;      // is this a two handed weapon?
+        BaseDamage TwoHanded;         // Minimum/Maximum two-handed damage
+        BaseDamage Missile;           // Minimum/Maximum ranged damage
 
         void clear()
         {
             OneHanded.clear();
             TwoHanded.clear();
+            bOneOrTwoHanded = false;
+            bTwoHanded = false;
             Missile.clear();
         }
 
@@ -1019,6 +1016,48 @@ namespace d2ce
                 baseDamage["maxmisdam"] = Missile.Max;
             }
             parent["base_damage"] = baseDamage;
+        }
+    };
+
+    struct ItemArmorClass
+    {
+        std::uint16_t Min = 0;
+        std::uint16_t Max = 0;
+
+        void clear()
+        {
+            Min = 0;
+            Max = 0;
+        }
+
+        void add(const BaseDamage& other)
+        {
+            Min += other.Min;
+            Max += other.Max;
+        }
+    };
+
+    struct ItemLevel
+    {
+        std::uint16_t Quality = 0; // Base Item Level (also known as Quality Level - qlvl)
+        std::uint16_t Magic = 0;   // Additional Magic Level (also known as mlvl)
+
+        void clear()
+        {
+            Quality = 0;
+            Magic = 0;
+        }
+    };
+
+    struct ItemStackable
+    {
+        std::uint32_t Min = 0;
+        std::uint32_t Max = 0;
+
+        void clear()
+        {
+            Min = 0;
+            Max = 0;
         }
     };
 
@@ -1098,8 +1137,10 @@ namespace d2ce
     {
         std::uint16_t Id = 0;
         std::string Name;
+        std::string Index;
         std::uint16_t Id2 = 0;
         std::string Name2;
+        std::string Index2;
         std::vector<MagicalCachev100> affixes;
 
         RareOrCraftedCachev100()
@@ -1112,10 +1153,197 @@ namespace d2ce
         {
             Id = MAXUINT16;
             Name.clear();
+            Index.clear();
             Id2 = MAXUINT16;
             Name2.clear();
+            Index2.clear();
             affixes.clear();
         }
+    };
+
+    //---------------------------------------------------------------------------
+    struct OpAttributes
+    {
+        std::uint8_t op = 0;
+        std::uint8_t op_param = 0;
+        std::string op_base;
+        std::vector<std::string> op_stats;
+    };
+
+    //---------------------------------------------------------------------------
+    struct ItemStat
+    {
+        std::uint16_t id = 0;            // internal ID
+        std::string name;                // An Id pointer used in other *.txt files (Properties.txt, Skills.txt, States.txt and also within ItemStatCost.txt) to refer to this stat, this field must be unique, otherwise you're looking into a world of glitches and bugs.
+        std::uint16_t charSaveBits = 0;  // How many bits of data are allocated to the value of this stat within the *.d2s file stat section when the stat is saved
+        std::uint8_t encode = 0;         // This field tells the game whenever to encode the stat (and in this case in what way to encode it) when it is saved to conserve space
+        std::uint16_t saveBits = 0;      // These fields control how many bits of data are allocated to the value of this stat within the *.d2s fil
+        std::int16_t saveAdd = 0;
+        std::uint16_t saveParamBits = 0; // This field controls how many bits of data are allocated to the parameter of this stat when it is saved on items
+        OpAttributes opAttribs;          // These fields control special forms of stat assignment used for example for stats that add a bonus depending on cLvl
+        std::uint8_t descPriority = 0;   // The higher this value is the further up in the item description this stat will be listed
+        std::uint8_t descFunc = 0;       // The function used for generating the description for this stat, this works like the descfuncs in SkillDesc.txt pretty much
+        std::uint8_t descVal = 0;        // Controls whenever and if so in what way the stat value is shown, 0 = doesn't show the value of the stat, 1 = shows the value of the stat infront of the description, 2 = shows the value of the stat after the description.
+        std::string desc;                // base description string
+        std::string descNeg;             // The string used for the description when the stat value is negative.
+        std::string descGrp;             // When all stats in this group are present on the same item and they all have the same value, replace their description with the associated group description.
+        std::string descGrpNeg;          // The string used for the description when the stat value is negative for the group
+        std::string descRange;           // The description used for range stats (i.e. fire damage)
+        std::string descNoRange;         // The description used for ragne stats when the min/max value is the same
+        std::uint16_t nextInChain = 0;   // stat that follows this one (i.e. firemaxdam follows firemindam)
+    };
+
+    //---------------------------------------------------------------------------
+    struct SpellDescStruct
+    {
+        // 0 = don't use any description or calculation.
+        // 1 = use description only
+        // 2 = use description and calculation.
+        std::uint8_t descFunc = 0;
+
+        std::string desc;            // description string
+        std::uint64_t descCalc = 0;  // value to use with description
+    };
+
+    //---------------------------------------------------------------------------
+    class Item;
+    struct ItemType
+    {
+        std::string name;
+
+        // 0 = Classic D2, 100 = Expansion
+        // An item set to 100 cannot be generated in Classic Diablo II.
+        std::uint16_t version = 0;
+
+        // This is related to the savegames. An item that is saved in a compact way takes less space
+        // in the save file, but in counter-part it has no stats : no quantity, no automagic, no
+        // affixes, no damage, no armor, no durability ...
+        // This is used by items that don't need any stats to be stored, like Healing Potions or Gems.
+        bool compactsave = false;
+
+        // Minimumand Maximum Armor Class(AC) this item can have.
+        ItemArmorClass ac;
+
+        // min/max damage the weapon can cause
+        ItemDamage dam;
+
+        // The minimum level, strength and/or dexterity the Player must be to use that item.
+        ItemRequirements req;
+
+        // Base Durability
+        // Max value of 0 means then item is indestructible, othewise same value as Base
+        ItemDurability durability;
+
+        // This is a 3-letter code
+        std::string code;
+
+        // v1.00 to 1.03 used an Id instad of a 3-letter code
+        std::uint16_t code_v100 = MAXUINT16;
+
+        // Base Item Level (also known as Quality Level - qlvl) and Additional Magic Level (also known as mlvl)
+        ItemLevel level;
+
+        // width and height in inventory cells
+        // For Belts and Cubes, also holds the width and height of those inventories
+        ItemDimensions dimensions;
+
+        // min/max amount of quantity (Max having value of 0 means the item is not stackable).
+        ItemStackable stackable;
+
+        // Maximumn Sockets for item mapped by item level threshold (default 1, 25 and 40)
+        std::map<std::uint16_t, std::uint8_t> max_sockets;
+
+        std::vector<std::string> categories;
+
+        // gem effect
+        // 0 = weapon
+        // 1 = armor/helm
+        // 2 = shield
+        // If you use another value, your item won't be able to have sockets.
+        std::uint8_t gemApplyType = 0;
+
+        // item in the inventory
+        std::string inv_file;
+
+        // colormap to use for the inventory version.
+        std::uint16_t inv_transform = 0;
+
+        // can item be personalized?
+        bool nameable = false;
+
+        // can item go in the belt?
+        bool beltable = false;
+
+        // if true, skip adding the item’s base name in its title
+        bool skipName = false;
+
+        SpellDescStruct spellDesc; // For potions, the description and points applied
+
+        bool hasCategory(const std::string category) const;
+        bool hasCategoryCode(const std::string code) const;
+        bool isStackable() const;
+        bool isWeapon() const;
+        bool isThrownWeapon() const;
+        bool isMissileWeapon() const;
+        bool isTwoHandedWeapon() const;
+        bool isShield() const;
+        bool isArmor() const;
+        bool isHelm() const;
+        bool isMiscellaneous() const;
+        bool isBook() const;
+        bool isPotion() const;
+        bool isJewel() const;
+        bool isGem() const;
+        bool isQuestItem() const;
+        bool isGoldItem() const;
+        bool isRejuvenationPotion() const;
+        bool isHealingPotion() const;
+        bool isManaPotion() const;
+        bool isSocketFiller() const;
+        bool isUpgradableGem() const;
+        bool isUpgradableRejuvenationPotion() const;
+        bool isUpgradablePotion() const;
+        bool isRune() const;
+        bool isCharm() const;
+        bool isBelt() const;
+        bool isBeltable() const;
+        bool isScroll() const;
+        bool isKey() const;
+        bool isHoradricCube() const;
+        bool isRing() const;
+        bool isAmulet() const;
+        bool isBodyPart() const;
+        bool isSimpleItem() const;
+        bool isUnusedItem() const;
+        bool isExpansionItem() const;
+
+        bool hasUndeadBonus() const;
+
+        bool canHaveSockets() const;
+        std::uint8_t getMaxSockets(std::uint8_t level) const;
+
+        bool canPersonalize() const;
+
+        bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, std::uint8_t parentGemApplyType = 0) const;
+
+        std::string getPotionDesc(EnumCharClass charClass) const;
+
+        const std::string& getRuneLetter() const;
+    };
+
+    struct RunewordType
+    {
+        std::uint16_t id = 0; // id of the runeword
+        std::string name;     // what string will be displayed in-game for this set item
+
+        bool serverOnly = false; // Is this runeword restricted to the realms
+
+        std::vector<std::string> included_categories; // what item types this runeword can appear on
+        std::vector<std::string> excluded_categories; // what item types this runeword will never appear on
+
+        std::vector<std::string> runeCodes; // What runes are required to make the runeword and in what order they are to be socketed.
+
+        std::vector<MagicalAttribute> attribs; // The modifiers this runeword will give to items
     };
 }
 //---------------------------------------------------------------------------

@@ -13,6 +13,7 @@
     "progression": 15,
     "active_arms": 0,
     "class": "Barbarian",
+    "class_id": 4,
     "level": 99,
     "created": 0,
     "last_played": 1388715080,
@@ -2007,7 +2008,7 @@
     {
       "id": 127,
       "points": 7,
-      "name": "Sword Mastery"
+      "name": "Blade Mastery"
     },
     {
       "id": 128,
@@ -2042,7 +2043,7 @@
     {
       "id": 134,
       "points": 0,
-      "name": "Pole Arm Mastery"
+      "name": "Polearm Mastery"
     },
     {
       "id": 135,
@@ -2132,7 +2133,7 @@
     {
       "id": 152,
       "points": 0,
-      "name": "Beserk"
+      "name": "Berserk"
     },
     {
       "id": 153,
@@ -2225,6 +2226,7 @@
       "rare_name": "Havoc",
       "rare_name_id2": 129,
       "rare_name2": "Band",
+      "rare_index2": "band",
       "magical_name_ids": [
         6,
         98,
@@ -2289,7 +2291,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 62,
@@ -2297,13 +2299,15 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         }
       ],
       "type_name": "Ring",
+      "levelreq": 55,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "dgld",
       "displayed_magic_attributes": [
         {
           "id": 62,
@@ -2311,7 +2315,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 60,
@@ -2319,7 +2323,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "10% Life Stolen Per Hit"
+          "description": "10% Life stolen per hit"
         },
         {
           "id": 0,
@@ -2426,7 +2430,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 62,
@@ -2434,7 +2438,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -2444,7 +2448,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 60,
@@ -2452,7 +2456,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "10% Life Stolen Per Hit"
+          "description": "10% Life stolen per hit"
         },
         {
           "id": 0,
@@ -2578,6 +2582,7 @@
       "rare_name": "Havoc",
       "rare_name_id2": 129,
       "rare_name2": "Band",
+      "rare_index2": "band",
       "magical_name_ids": [
         6,
         98,
@@ -2642,7 +2647,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 62,
@@ -2650,13 +2655,15 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         }
       ],
       "type_name": "Ring",
+      "levelreq": 55,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "dgld",
       "displayed_magic_attributes": [
         {
           "id": 62,
@@ -2664,7 +2671,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 60,
@@ -2672,7 +2679,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "10% Life Stolen Per Hit"
+          "description": "10% Life stolen per hit"
         },
         {
           "id": 0,
@@ -2779,7 +2786,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 62,
@@ -2787,7 +2794,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -2797,7 +2804,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 60,
@@ -2805,7 +2812,7 @@
             10
           ],
           "name": "lifedrainmindam",
-          "description": "10% Life Stolen Per Hit"
+          "description": "10% Life stolen per hit"
         },
         {
           "id": 0,
@@ -3002,7 +3009,7 @@
             10
           ],
           "name": "item_addexperience",
-          "description": "{0}% to Experience Gained"
+          "description": "+{0}% to Experience Gained"
         },
         {
           "id": 127,
@@ -3033,7 +3040,7 @@
             20
           ],
           "name": "strength",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3042,7 +3049,7 @@
             20
           ],
           "name": "dexterity",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3051,7 +3058,7 @@
             20
           ],
           "name": "vitality",
-          "description": "+20 to All Attributes"
+          "description": "+20 to all Attributes"
         },
         {
           "id": 1,
@@ -3059,7 +3066,7 @@
             20
           ],
           "name": "energy",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3103,7 +3110,7 @@
             10
           ],
           "name": "item_addexperience",
-          "description": "10% to Experience Gained"
+          "description": "+10% to Experience Gained"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3178,7 +3185,7 @@
             10
           ],
           "name": "item_addexperience",
-          "description": "{0}% to Experience Gained"
+          "description": "+{0}% to Experience Gained"
         },
         {
           "id": 127,
@@ -3204,7 +3211,7 @@
             20
           ],
           "name": "strength",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3213,7 +3220,7 @@
             20
           ],
           "name": "dexterity",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3222,7 +3229,7 @@
             20
           ],
           "name": "vitality",
-          "description": "+20 to All Attributes"
+          "description": "+20 to all Attributes"
         },
         {
           "id": 1,
@@ -3230,7 +3237,7 @@
             20
           ],
           "name": "energy",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3274,7 +3281,7 @@
             10
           ],
           "name": "item_addexperience",
-          "description": "10% to Experience Gained"
+          "description": "+10% to Experience Gained"
         }
       ]
     },
@@ -3424,7 +3431,7 @@
             3
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 89,
@@ -3470,7 +3477,7 @@
             25
           ],
           "name": "item_skillonhit",
-          "description": "25% Chance to cast level 10 197 on striking"
+          "description": "25% Chance to cast level 10 DiabWall on striking"
         },
         {
           "id": 83,
@@ -3487,7 +3494,7 @@
             20
           ],
           "name": "strength",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3496,7 +3503,7 @@
             20
           ],
           "name": "dexterity",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3505,7 +3512,7 @@
             20
           ],
           "name": "vitality",
-          "description": "+20 to All Attributes"
+          "description": "+20 to all Attributes"
         },
         {
           "id": 1,
@@ -3513,7 +3520,7 @@
             20
           ],
           "name": "energy",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3644,7 +3651,7 @@
             3
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 89,
@@ -3685,7 +3692,7 @@
             25
           ],
           "name": "item_skillonhit",
-          "description": "25% Chance to cast level 10 197 on striking"
+          "description": "25% Chance to cast level 10 DiabWall on striking"
         },
         {
           "id": 83,
@@ -3702,7 +3709,7 @@
             20
           ],
           "name": "strength",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3711,7 +3718,7 @@
             20
           ],
           "name": "dexterity",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3720,7 +3727,7 @@
             20
           ],
           "name": "vitality",
-          "description": "+20 to All Attributes"
+          "description": "+20 to all Attributes"
         },
         {
           "id": 1,
@@ -3728,7 +3735,7 @@
             20
           ],
           "name": "energy",
-          "description": "+20 to All Attributes",
+          "description": "+20 to all Attributes",
           "visible": false
         },
         {
@@ -3848,8 +3855,8 @@
       "categories": [
         "Primal Helm",
         "Helm",
-        "Any Armor",
         "Barbarian Item",
+        "Any Armor",
         "Class Specific"
       ],
       "type_id": 1,
@@ -3929,7 +3936,7 @@
             6
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 83,
@@ -3938,7 +3945,7 @@
             2
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 92,
@@ -3953,7 +3960,7 @@
             30
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         },
         {
           "id": 119,
@@ -3971,17 +3978,16 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "socketed_items": [],
       "type_name": "Guardian Crown",
       "reqstr": 196,
-      "levelreq": 42,
+      "levelreq": 49,
       "inv_file": "invba5",
       "inv_height": 2,
       "inv_width": 2,
-      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -3991,7 +3997,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+2 to Bash Skills (Barbarian Only)"
+          "description": "2 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 83,
@@ -4008,7 +4014,7 @@
             30
           ],
           "name": "item_fastergethitrate",
-          "description": "30% Faster Hit Recovery"
+          "description": "+30% Faster Hit Recovery"
         },
         {
           "id": 119,
@@ -4024,7 +4030,7 @@
             6
           ],
           "name": "lifedrainmindam",
-          "description": "6% Life Stolen Per Hit"
+          "description": "6% Life stolen per hit"
         },
         {
           "id": 16,
@@ -4157,7 +4163,7 @@
             6
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 83,
@@ -4166,7 +4172,7 @@
             2
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 92,
@@ -4181,7 +4187,7 @@
             30
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         },
         {
           "id": 119,
@@ -4199,7 +4205,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4211,7 +4217,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+2 to Bash Skills (Barbarian Only)"
+          "description": "2 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 83,
@@ -4228,7 +4234,7 @@
             30
           ],
           "name": "item_fastergethitrate",
-          "description": "30% Faster Hit Recovery"
+          "description": "+30% Faster Hit Recovery"
         },
         {
           "id": 119,
@@ -4244,7 +4250,7 @@
             6
           ],
           "name": "lifedrainmindam",
-          "description": "6% Life Stolen Per Hit"
+          "description": "6% Life stolen per hit"
         },
         {
           "id": 16,
@@ -4403,7 +4409,7 @@
             30
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 93,
@@ -4411,7 +4417,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 127,
@@ -4435,7 +4441,7 @@
             3
           ],
           "name": "item_deadlystrike_perlevel",
-          "description": "{0}% to Deadly Strike (Based on Character Level)"
+          "description": "+{0}% Deadly Strike (Based on Character Level)"
         }
       ],
       "type_name": "Amulet",
@@ -4459,7 +4465,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 50,
@@ -4468,7 +4474,7 @@
             30
           ],
           "name": "lightmindam",
-          "description": "Adds 1-30 Lightning Damage"
+          "description": "Adds 1-30 lightning damage"
         },
         {
           "id": 250,
@@ -4479,8 +4485,8 @@
           "op_stats": [
             "item_deadlystrike"
           ],
-          "op_value": 74,
-          "description": "74% to Deadly Strike (Based on Character Level)"
+          "op_value": 37,
+          "description": "+37% Deadly Strike (Based on Character Level)"
         },
         {
           "id": 41,
@@ -4516,7 +4522,7 @@
             30
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 93,
@@ -4524,7 +4530,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 127,
@@ -4548,7 +4554,7 @@
             3
           ],
           "name": "item_deadlystrike_perlevel",
-          "description": "{0}% to Deadly Strike (Based on Character Level)"
+          "description": "+{0}% Deadly Strike (Based on Character Level)"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4566,7 +4572,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 50,
@@ -4575,7 +4581,7 @@
             30
           ],
           "name": "lightmindam",
-          "description": "Adds 1-30 Lightning Damage"
+          "description": "Adds 1-30 lightning damage"
         },
         {
           "id": 250,
@@ -4586,8 +4592,8 @@
           "op_stats": [
             "item_deadlystrike"
           ],
-          "op_value": 74,
-          "description": "74% to Deadly Strike (Based on Character Level)"
+          "op_value": 37,
+          "description": "+37% Deadly Strike (Based on Character Level)"
         },
         {
           "id": 41,
@@ -4736,7 +4742,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -4744,7 +4750,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -4859,20 +4865,20 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 19,
-              "values": [
-                50
-              ],
-              "name": "tohit",
-              "description": "+{0} to Attack Rating"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             }
           ],
           "type_name": "El Rune",
@@ -4901,20 +4907,20 @@
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 19,
-              "values": [
-                50
-              ],
-              "name": "tohit",
-              "description": "+{0} to Attack Rating"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5120,7 +5126,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee {0}%"
+              "description": "Hit Causes Monster to Flee +{0}%"
             }
           ],
           "type_name": "Dol Rune",
@@ -5135,7 +5141,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee 25%"
+              "description": "Hit Causes Monster to Flee +25%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -5146,7 +5152,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee {0}%"
+              "description": "Hit Causes Monster to Flee +{0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5156,7 +5162,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee 25%"
+              "description": "Hit Causes Monster to Flee +25%"
             }
           ]
         },
@@ -5232,7 +5238,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "{0}% Deadly Strike"
+              "description": "+{0}% Deadly Strike"
             }
           ],
           "type_name": "Lo Rune",
@@ -5247,7 +5253,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "20% Deadly Strike"
+              "description": "+20% Deadly Strike"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -5258,7 +5264,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "{0}% Deadly Strike"
+              "description": "+{0}% Deadly Strike"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5268,7 +5274,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "20% Deadly Strike"
+              "description": "+20% Deadly Strike"
             }
           ]
         }
@@ -5276,7 +5282,7 @@
       "type_name": "Phase Blade",
       "reqstr": 25,
       "reqdex": 136,
-      "levelreq": 54,
+      "levelreq": 59,
       "inv_file": "invcrs",
       "inv_height": 3,
       "inv_width": 2,
@@ -5317,7 +5323,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -5345,8 +5351,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 297,
-          "description": "+297 to Life (Based on Character Level)"
+          "op_value": 148,
+          "description": "+148 to Life (Based on Character Level)"
         },
         {
           "id": 43,
@@ -5389,7 +5395,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         }
       ],
       "combined_magic_attributes": [
@@ -5456,7 +5462,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -5464,7 +5470,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -5485,20 +5491,20 @@
           "description": "+{0} to Life (Based on Character Level)"
         },
         {
-          "id": 19,
-          "values": [
-            50
-          ],
-          "name": "tohit",
-          "description": "+{0} to Attack Rating"
-        },
-        {
           "id": 89,
           "values": [
             1
           ],
           "name": "item_lightradius",
           "description": "+{0} to Light Radius"
+        },
+        {
+          "id": 19,
+          "values": [
+            50
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
         },
         {
           "id": 21,
@@ -5514,7 +5520,7 @@
             32
           ],
           "name": "item_howl",
-          "description": "Hit Causes Monsters to Flee {0}%"
+          "description": "Hit Causes Monster to Flee +{0}%"
         },
         {
           "id": 141,
@@ -5522,7 +5528,7 @@
             20
           ],
           "name": "item_deadlystrike",
-          "description": "{0}% Deadly Strike"
+          "description": "+{0}% Deadly Strike"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -5542,7 +5548,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -5575,7 +5581,7 @@
             20
           ],
           "name": "item_deadlystrike",
-          "description": "20% Deadly Strike"
+          "description": "+20% Deadly Strike"
         },
         {
           "id": 112,
@@ -5583,7 +5589,7 @@
             32
           ],
           "name": "item_howl",
-          "description": "Hit Causes Monsters to Flee 25%"
+          "description": "Hit Causes Monster to Flee +25%"
         },
         {
           "id": 16,
@@ -5602,8 +5608,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 297,
-          "description": "+297 to Life (Based on Character Level)"
+          "op_value": 148,
+          "description": "+148 to Life (Based on Character Level)"
         },
         {
           "id": 43,
@@ -5646,7 +5652,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         },
         {
           "id": 89,
@@ -5795,7 +5801,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -5803,7 +5809,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -5918,20 +5924,20 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 19,
-              "values": [
-                50
-              ],
-              "name": "tohit",
-              "description": "+{0} to Attack Rating"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             }
           ],
           "type_name": "El Rune",
@@ -5960,20 +5966,20 @@
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 19,
-              "values": [
-                50
-              ],
-              "name": "tohit",
-              "description": "+{0} to Attack Rating"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 19,
+              "values": [
+                50
+              ],
+              "name": "tohit",
+              "description": "+{0} to Attack Rating"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -6179,7 +6185,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee {0}%"
+              "description": "Hit Causes Monster to Flee +{0}%"
             }
           ],
           "type_name": "Dol Rune",
@@ -6194,7 +6200,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee 25%"
+              "description": "Hit Causes Monster to Flee +25%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -6205,7 +6211,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee {0}%"
+              "description": "Hit Causes Monster to Flee +{0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -6215,7 +6221,7 @@
                 32
               ],
               "name": "item_howl",
-              "description": "Hit Causes Monsters to Flee 25%"
+              "description": "Hit Causes Monster to Flee +25%"
             }
           ]
         },
@@ -6291,7 +6297,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "{0}% Deadly Strike"
+              "description": "+{0}% Deadly Strike"
             }
           ],
           "type_name": "Lo Rune",
@@ -6306,7 +6312,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "20% Deadly Strike"
+              "description": "+20% Deadly Strike"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -6317,7 +6323,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "{0}% Deadly Strike"
+              "description": "+{0}% Deadly Strike"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -6327,7 +6333,7 @@
                 20
               ],
               "name": "item_deadlystrike",
-              "description": "20% Deadly Strike"
+              "description": "+20% Deadly Strike"
             }
           ]
         }
@@ -6335,7 +6341,7 @@
       "type_name": "Phase Blade",
       "reqstr": 25,
       "reqdex": 136,
-      "levelreq": 54,
+      "levelreq": 59,
       "inv_file": "invcrs",
       "inv_height": 3,
       "inv_width": 2,
@@ -6376,7 +6382,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -6404,8 +6410,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 297,
-          "description": "+297 to Life (Based on Character Level)"
+          "op_value": 148,
+          "description": "+148 to Life (Based on Character Level)"
         },
         {
           "id": 43,
@@ -6448,7 +6454,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         }
       ],
       "combined_magic_attributes": [
@@ -6515,7 +6521,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -6523,7 +6529,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -6544,20 +6550,20 @@
           "description": "+{0} to Life (Based on Character Level)"
         },
         {
-          "id": 19,
-          "values": [
-            50
-          ],
-          "name": "tohit",
-          "description": "+{0} to Attack Rating"
-        },
-        {
           "id": 89,
           "values": [
             1
           ],
           "name": "item_lightradius",
           "description": "+{0} to Light Radius"
+        },
+        {
+          "id": 19,
+          "values": [
+            50
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
         },
         {
           "id": 21,
@@ -6573,7 +6579,7 @@
             32
           ],
           "name": "item_howl",
-          "description": "Hit Causes Monsters to Flee {0}%"
+          "description": "Hit Causes Monster to Flee +{0}%"
         },
         {
           "id": 141,
@@ -6581,7 +6587,7 @@
             20
           ],
           "name": "item_deadlystrike",
-          "description": "{0}% Deadly Strike"
+          "description": "+{0}% Deadly Strike"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6601,7 +6607,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -6634,7 +6640,7 @@
             20
           ],
           "name": "item_deadlystrike",
-          "description": "20% Deadly Strike"
+          "description": "+20% Deadly Strike"
         },
         {
           "id": 112,
@@ -6642,7 +6648,7 @@
             32
           ],
           "name": "item_howl",
-          "description": "Hit Causes Monsters to Flee 25%"
+          "description": "Hit Causes Monster to Flee +25%"
         },
         {
           "id": 16,
@@ -6661,8 +6667,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 297,
-          "description": "+297 to Life (Based on Character Level)"
+          "op_value": 148,
+          "description": "+148 to Life (Based on Character Level)"
         },
         {
           "id": 43,
@@ -6705,7 +6711,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         },
         {
           "id": 89,
@@ -6818,10 +6824,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -6834,7 +6841,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -6863,7 +6870,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6875,7 +6882,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -6980,10 +6987,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -6996,7 +7004,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7025,7 +7033,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7037,7 +7045,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7142,10 +7150,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -7158,7 +7167,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7187,7 +7196,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7199,7 +7208,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7304,10 +7313,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -7320,7 +7330,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7349,7 +7359,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7361,7 +7371,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7466,10 +7476,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -7482,7 +7493,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7511,7 +7522,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7523,7 +7534,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -7663,7 +7674,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -7671,7 +7682,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -7783,20 +7794,20 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 31,
-              "values": [
-                15
-              ],
-              "name": "armorclass",
-              "description": "+{0} Defense"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+{0} Defense"
             }
           ],
           "type_name": "El Rune",
@@ -7825,20 +7836,20 @@
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 31,
-              "values": [
-                15
-              ],
-              "name": "armorclass",
-              "description": "+{0} Defense"
-            },
-            {
               "id": 89,
               "values": [
                 1
               ],
               "name": "item_lightradius",
               "description": "+{0} to Light Radius"
+            },
+            {
+              "id": 31,
+              "values": [
+                15
+              ],
+              "name": "armorclass",
+              "description": "+{0} Defense"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -8198,7 +8209,7 @@
         }
       ],
       "type_name": "Archon Plate",
-      "reqstr": 103,
+      "reqstr": 93,
       "levelreq": 63,
       "inv_file": "invltp",
       "inv_height": 3,
@@ -8239,7 +8250,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -8267,8 +8278,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 396,
-          "description": "+396 to Life (Based on Character Level)"
+          "op_value": 198,
+          "description": "+198 to Life (Based on Character Level)"
         },
         {
           "id": 43,
@@ -8311,7 +8322,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         }
       ],
       "combined_magic_attributes": [
@@ -8378,7 +8389,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 114,
@@ -8386,7 +8397,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         },
         {
           "id": 201,
@@ -8407,20 +8418,20 @@
           "description": "+{0} to Life (Based on Character Level)"
         },
         {
-          "id": 31,
-          "values": [
-            15
-          ],
-          "name": "armorclass",
-          "description": "+{0} Defense"
-        },
-        {
           "id": 89,
           "values": [
             1
           ],
           "name": "item_lightradius",
           "description": "+{0} to Light Radius"
+        },
+        {
+          "id": 31,
+          "values": [
+            15
+          ],
+          "name": "armorclass",
+          "description": "+{0} Defense"
         },
         {
           "id": 34,
@@ -8464,7 +8475,7 @@
             25
           ],
           "name": "item_fastercastrate",
-          "description": "25% Faster Cast Rate"
+          "description": "+25% Faster Cast Rate"
         },
         {
           "id": 17,
@@ -8500,8 +8511,8 @@
           "op_stats": [
             "maxhp"
           ],
-          "op_value": 396,
-          "description": "+396 to Life (Based on Character Level)"
+          "op_value": 198,
+          "description": "+198 to Life (Based on Character Level)"
         },
         {
           "id": 74,
@@ -8568,7 +8579,7 @@
             12
           ],
           "name": "item_damagetomana",
-          "description": "12% Damage Taken Goes to Mana"
+          "description": "+12% Damage Taken Goes To Mana"
         },
         {
           "id": 89,
@@ -8702,7 +8713,7 @@
             20
           ],
           "name": "item_fastermovevelocity",
-          "description": "{0}% Faster Run/Walk"
+          "description": "+{0}% Faster Run/Walk"
         },
         {
           "id": 99,
@@ -8710,7 +8721,7 @@
             20
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         },
         {
           "id": 154,
@@ -8726,7 +8737,7 @@
             8
           ],
           "name": "item_stamina_perlevel",
-          "description": "+{0} Maxmium Stamina (Based on Character Level)"
+          "description": "+{0} Maximum Stamina (Based on Character Level)"
         },
         {
           "id": 252,
@@ -8734,11 +8745,11 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in {0} Seconds"
+          "description": "Repairs 1 durability in {0} seconds"
         }
       ],
       "type_name": "Scarabshell Boots",
-      "reqstr": 91,
+      "reqstr": 81,
       "levelreq": 64,
       "inv_file": "invvbt",
       "inv_height": 2,
@@ -8751,7 +8762,7 @@
             20
           ],
           "name": "item_fastermovevelocity",
-          "description": "20% Faster Run/Walk"
+          "description": "+20% Faster Run/Walk"
         },
         {
           "id": 99,
@@ -8759,7 +8770,7 @@
             20
           ],
           "name": "item_fastergethitrate",
-          "description": "20% Faster Hit Recovery"
+          "description": "+20% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -8794,8 +8805,8 @@
           "op_stats": [
             "maxstamina"
           ],
-          "op_value": 198,
-          "description": "+198 Maxmium Stamina (Based on Character Level)"
+          "op_value": 99,
+          "description": "+99 Maximum Stamina (Based on Character Level)"
         },
         {
           "id": 154,
@@ -8819,7 +8830,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in 20 Seconds"
+          "description": "Repairs 1 durability in 20 seconds"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -8862,7 +8873,7 @@
             20
           ],
           "name": "item_fastermovevelocity",
-          "description": "{0}% Faster Run/Walk"
+          "description": "+{0}% Faster Run/Walk"
         },
         {
           "id": 99,
@@ -8870,7 +8881,7 @@
             20
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         },
         {
           "id": 154,
@@ -8886,7 +8897,7 @@
             8
           ],
           "name": "item_stamina_perlevel",
-          "description": "+{0} Maxmium Stamina (Based on Character Level)"
+          "description": "+{0} Maximum Stamina (Based on Character Level)"
         },
         {
           "id": 252,
@@ -8894,7 +8905,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in {0} Seconds"
+          "description": "Repairs 1 durability in {0} seconds"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8904,7 +8915,7 @@
             20
           ],
           "name": "item_fastermovevelocity",
-          "description": "20% Faster Run/Walk"
+          "description": "+20% Faster Run/Walk"
         },
         {
           "id": 99,
@@ -8912,7 +8923,7 @@
             20
           ],
           "name": "item_fastergethitrate",
-          "description": "20% Faster Hit Recovery"
+          "description": "+20% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -8947,8 +8958,8 @@
           "op_stats": [
             "maxstamina"
           ],
-          "op_value": 198,
-          "description": "+198 Maxmium Stamina (Based on Character Level)"
+          "op_value": 99,
+          "description": "+99 Maximum Stamina (Based on Character Level)"
         },
         {
           "id": 154,
@@ -8972,7 +8983,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in 20 Seconds"
+          "description": "Repairs 1 durability in 20 seconds"
         }
       ]
     },
@@ -9046,7 +9057,7 @@
       "multiple_pictures": 0,
       "class_specific": 0,
       "unique_id": 376,
-      "unique_name": "Verdugo's Hearty Cord",
+      "unique_name": "Verdungo's Hearty Cord",
       "timestamp": 0,
       "defense_rating": 66,
       "max_durability": 16,
@@ -9066,7 +9077,7 @@
             120
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -9098,7 +9109,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "type_name": "Mithril Coil",
@@ -9116,7 +9127,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -9148,7 +9159,7 @@
             120
           ],
           "name": "maxstamina",
-          "description": "+120 to Maximum Stamina"
+          "description": "+120 Maximum Stamina"
         },
         {
           "id": 36,
@@ -9175,7 +9186,7 @@
             120
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -9207,7 +9218,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9217,7 +9228,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -9249,7 +9260,7 @@
             120
           ],
           "name": "maxstamina",
-          "description": "+120 to Maximum Stamina"
+          "description": "+120 Maximum Stamina"
         },
         {
           "id": 36,
@@ -9354,10 +9365,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -9370,7 +9382,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -9399,7 +9411,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9411,7 +9423,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -9516,10 +9528,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -9532,7 +9545,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -9561,7 +9574,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9573,7 +9586,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -9692,7 +9705,7 @@
             10
           ],
           "name": "item_crushingblow",
-          "description": "{0}% Chance of Crushing Blow"
+          "description": "+{0}% Chance of Crushing Blow"
         }
       ],
       "type_name": "Ogre Gauntlets",
@@ -9718,7 +9731,7 @@
             10
           ],
           "name": "item_crushingblow",
-          "description": "10% Chance of Crushing Blow"
+          "description": "+10% Chance of Crushing Blow"
         },
         {
           "id": 31,
@@ -9770,7 +9783,7 @@
             10
           ],
           "name": "item_crushingblow",
-          "description": "{0}% Chance of Crushing Blow"
+          "description": "+{0}% Chance of Crushing Blow"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9789,7 +9802,7 @@
             10
           ],
           "name": "item_crushingblow",
-          "description": "10% Chance of Crushing Blow"
+          "description": "+10% Chance of Crushing Blow"
         },
         {
           "id": 31,
@@ -9902,10 +9915,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -9918,7 +9932,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -9947,7 +9961,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9959,7 +9973,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10064,10 +10078,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10080,7 +10095,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10109,7 +10124,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10121,7 +10136,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10226,10 +10241,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10242,7 +10258,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10271,7 +10287,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10283,7 +10299,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10388,10 +10404,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10404,7 +10421,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10433,7 +10450,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10445,7 +10462,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10550,10 +10567,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10566,7 +10584,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10595,7 +10613,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10607,7 +10625,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10712,10 +10730,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10728,7 +10747,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10757,7 +10776,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10769,7 +10788,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10874,10 +10893,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -10890,7 +10910,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -10919,7 +10939,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10931,7 +10951,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11036,10 +11056,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -11052,7 +11073,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11081,7 +11102,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -11093,7 +11114,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Axe Mastery Skills (Barbarian Only)"
+          "description": "1 to Warcries (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11273,7 +11294,7 @@
             5
           ],
           "name": "strength",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11282,7 +11303,7 @@
             5
           ],
           "name": "dexterity",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11291,7 +11312,7 @@
             5
           ],
           "name": "vitality",
-          "description": "+5 to All Attributes"
+          "description": "+5 to all Attributes"
         },
         {
           "id": 1,
@@ -11299,7 +11320,7 @@
             5
           ],
           "name": "energy",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11428,7 +11449,7 @@
             5
           ],
           "name": "strength",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11437,7 +11458,7 @@
             5
           ],
           "name": "dexterity",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11446,7 +11467,7 @@
             5
           ],
           "name": "vitality",
-          "description": "+5 to All Attributes"
+          "description": "+5 to all Attributes"
         },
         {
           "id": 1,
@@ -11454,7 +11475,7 @@
             5
           ],
           "name": "energy",
-          "description": "+5 to All Attributes",
+          "description": "+5 to all Attributes",
           "visible": false
         },
         {
@@ -11587,10 +11608,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -11603,7 +11625,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11632,7 +11654,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -11644,7 +11666,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11749,10 +11771,11 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 69,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -11765,7 +11788,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11794,7 +11817,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -11806,7 +11829,7 @@
             1
           ],
           "name": "item_addskill_tab",
-          "description": "+1 to Bash Skills (Barbarian Only)"
+          "description": "1 to Combat Skills (Barbarian Only)"
         },
         {
           "id": 7,
@@ -11913,6 +11936,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12067,6 +12091,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12221,6 +12246,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12375,6 +12401,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12529,6 +12556,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12683,6 +12711,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12837,6 +12866,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -12991,6 +13021,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -13145,6 +13176,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -13299,6 +13331,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 40,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -13674,7 +13707,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "{0}% Life Stolen Per Hit"
+              "description": "{0}% Life stolen per hit"
             }
           ],
           "type_name": "Amn Rune",
@@ -13689,7 +13722,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "7% Life Stolen Per Hit"
+              "description": "7% Life stolen per hit"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -13700,7 +13733,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "{0}% Life Stolen Per Hit"
+              "description": "{0}% Life stolen per hit"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -13710,7 +13743,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "7% Life Stolen Per Hit"
+              "description": "7% Life stolen per hit"
             }
           ]
         },
@@ -13786,7 +13819,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "{0}% Chance of Crushing Blow"
+              "description": "+{0}% Chance of Crushing Blow"
             }
           ],
           "type_name": "Ber Rune",
@@ -13801,7 +13834,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "20% Chance of Crushing Blow"
+              "description": "+20% Chance of Crushing Blow"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -13812,7 +13845,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "{0}% Chance of Crushing Blow"
+              "description": "+{0}% Chance of Crushing Blow"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -13822,7 +13855,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "20% Chance of Crushing Blow"
+              "description": "+20% Chance of Crushing Blow"
             }
           ]
         },
@@ -14164,8 +14197,8 @@
         }
       ],
       "type_name": "Berserker Axe",
-      "reqstr": 138,
-      "reqdex": 59,
+      "reqstr": 128,
+      "reqdex": 49,
       "levelreq": 64,
       "inv_file": "invwax",
       "inv_height": 3,
@@ -14327,7 +14360,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 136,
@@ -14335,7 +14368,7 @@
             20
           ],
           "name": "item_crushingblow",
-          "description": "{0}% Chance of Crushing Blow"
+          "description": "+{0}% Chance of Crushing Blow"
         },
         {
           "id": 80,
@@ -14394,7 +14427,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "7% Life Stolen Per Hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 136,
@@ -14402,7 +14435,7 @@
             20
           ],
           "name": "item_crushingblow",
-          "description": "20% Chance of Crushing Blow"
+          "description": "+20% Chance of Crushing Blow"
         },
         {
           "id": 113,
@@ -14708,7 +14741,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "{0}% Life Stolen Per Hit"
+              "description": "{0}% Life stolen per hit"
             }
           ],
           "type_name": "Amn Rune",
@@ -14723,7 +14756,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "7% Life Stolen Per Hit"
+              "description": "7% Life stolen per hit"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -14734,7 +14767,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "{0}% Life Stolen Per Hit"
+              "description": "{0}% Life stolen per hit"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -14744,7 +14777,7 @@
                 7
               ],
               "name": "lifedrainmindam",
-              "description": "7% Life Stolen Per Hit"
+              "description": "7% Life stolen per hit"
             }
           ]
         },
@@ -14820,7 +14853,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "{0}% Chance of Crushing Blow"
+              "description": "+{0}% Chance of Crushing Blow"
             }
           ],
           "type_name": "Ber Rune",
@@ -14835,7 +14868,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "20% Chance of Crushing Blow"
+              "description": "+20% Chance of Crushing Blow"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -14846,7 +14879,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "{0}% Chance of Crushing Blow"
+              "description": "+{0}% Chance of Crushing Blow"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -14856,7 +14889,7 @@
                 20
               ],
               "name": "item_crushingblow",
-              "description": "20% Chance of Crushing Blow"
+              "description": "+20% Chance of Crushing Blow"
             }
           ]
         },
@@ -15198,8 +15231,8 @@
         }
       ],
       "type_name": "Berserker Axe",
-      "reqstr": 138,
-      "reqdex": 59,
+      "reqstr": 128,
+      "reqdex": 49,
       "levelreq": 64,
       "inv_file": "invwax",
       "inv_height": 3,
@@ -15361,7 +15394,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 136,
@@ -15369,7 +15402,7 @@
             20
           ],
           "name": "item_crushingblow",
-          "description": "{0}% Chance of Crushing Blow"
+          "description": "+{0}% Chance of Crushing Blow"
         },
         {
           "id": 80,
@@ -15428,7 +15461,7 @@
             7
           ],
           "name": "lifedrainmindam",
-          "description": "7% Life Stolen Per Hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 136,
@@ -15436,7 +15469,7 @@
             20
           ],
           "name": "item_crushingblow",
-          "description": "20% Chance of Crushing Blow"
+          "description": "+20% Chance of Crushing Blow"
         },
         {
           "id": 113,
@@ -15515,7 +15548,7 @@
     {
       "id": 0,
       "values": [
-        85
+        125
       ],
       "name": "strength",
       "description": "+{0} to Strength"
@@ -15523,7 +15556,7 @@
     {
       "id": 2,
       "values": [
-        60
+        100
       ],
       "name": "dexterity",
       "description": "+{0} to Dexterity"
@@ -15531,7 +15564,7 @@
     {
       "id": 7,
       "values": [
-        130
+        690
       ],
       "name": "maxhp",
       "description": "+{0} to Life"
@@ -15539,7 +15572,7 @@
     {
       "id": 39,
       "values": [
-        140
+        180
       ],
       "name": "fireresist",
       "description": "Fire Resist +{0}%"
@@ -15547,7 +15580,7 @@
     {
       "id": 41,
       "values": [
-        185
+        225
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
@@ -15555,7 +15588,7 @@
     {
       "id": 45,
       "values": [
-        240
+        280
       ],
       "name": "poisonresist",
       "description": "Poison Resist +{0}%"
@@ -15566,7 +15599,7 @@
         40
       ],
       "name": "lifedrainmindam",
-      "description": "{0}% Life Stolen Per Hit"
+      "description": "{0}% Life stolen per hit"
     },
     {
       "id": 62,
@@ -15574,7 +15607,85 @@
         12
       ],
       "name": "manadrainmindam",
-      "description": "{0}% Mana Stolen Per Hit"
+      "description": "{0}% Mana stolen per hit"
+    },
+    {
+      "id": 1,
+      "values": [
+        40
+      ],
+      "name": "energy",
+      "description": "+{0} to Energy"
+    },
+    {
+      "id": 3,
+      "values": [
+        95
+      ],
+      "name": "vitality",
+      "description": "+{0} to Vitality"
+    },
+    {
+      "id": 43,
+      "values": [
+        160
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
+      "id": 85,
+      "values": [
+        10
+      ],
+      "name": "item_addexperience",
+      "description": "+{0}% to Experience Gained"
+    },
+    {
+      "id": 127,
+      "values": [
+        2
+      ],
+      "name": "item_allskills",
+      "description": "+{0} to All Skills"
+    },
+    {
+      "id": 83,
+      "values": [
+        4,
+        5
+      ],
+      "name": "item_addclassskills",
+      "description": "{0}"
+    },
+    {
+      "id": 89,
+      "values": [
+        11
+      ],
+      "name": "item_lightradius",
+      "description": "+{0} to Light Radius"
+    },
+    {
+      "id": 198,
+      "values": [
+        10,
+        197,
+        25
+      ],
+      "name": "item_skillonhit",
+      "description": "{2}% Chance to cast level {0} {1} on striking"
+    },
+    {
+      "id": 204,
+      "values": [
+        30,
+        62,
+        9,
+        10
+      ],
+      "name": "item_charged_skill",
+      "description": "Level {0} {1} ({2}/{3} Charges)"
     },
     {
       "id": 16,
@@ -15583,23 +15694,6 @@
       ],
       "name": "item_armor_percent",
       "description": "+{0}% Enhanced Defense"
-    },
-    {
-      "id": 43,
-      "values": [
-        120
-      ],
-      "name": "coldresist",
-      "description": "Cold Resist +{0}%"
-    },
-    {
-      "id": 83,
-      "values": [
-        4,
-        2
-      ],
-      "name": "item_addclassskills",
-      "description": "+{1} to {0} Skill Levels"
     },
     {
       "id": 92,
@@ -15614,7 +15708,7 @@
         60
       ],
       "name": "item_fastergethitrate",
-      "description": "{0}% Faster Hit Recovery"
+      "description": "+{0}% Faster Hit Recovery"
     },
     {
       "id": 119,
@@ -15629,10 +15723,10 @@
       "values": [
         0,
         4,
-        2
+        5
       ],
       "name": "item_addskill_tab",
-      "description": "+{2} to {0} Skills ({1} Only)"
+      "description": "{0} {1}"
     },
     {
       "id": 50,
@@ -15641,7 +15735,7 @@
         30
       ],
       "name": "lightmindam",
-      "description": "Adds {0}-{1} Lightning Damage"
+      "description": "Adds {0}-{1} lightning damage"
     },
     {
       "id": 93,
@@ -15649,15 +15743,7 @@
         20
       ],
       "name": "item_fasterattackrate",
-      "description": "{0}% Increased Attack Speed"
-    },
-    {
-      "id": 127,
-      "values": [
-        1
-      ],
-      "name": "item_allskills",
-      "description": "+{0} to All Skills"
+      "description": "+{0}% Increased Attack Speed"
     },
     {
       "id": 128,
@@ -15673,7 +15759,7 @@
         3
       ],
       "name": "item_deadlystrike_perlevel",
-      "description": "{0}% to Deadly Strike (Based on Character Level)"
+      "description": "+{0}% Deadly Strike (Based on Character Level)"
     },
     {
       "id": 17,
@@ -15698,7 +15784,7 @@
         75
       ],
       "name": "item_fastercastrate",
-      "description": "{0}% Faster Cast Rate"
+      "description": "+{0}% Faster Cast Rate"
     },
     {
       "id": 114,
@@ -15706,7 +15792,7 @@
         36
       ],
       "name": "item_damagetomana",
-      "description": "{0}% Damage Taken Goes to Mana"
+      "description": "+{0}% Damage Taken Goes To Mana"
     },
     {
       "id": 201,
@@ -15735,14 +15821,6 @@
       "description": "+{0} to Attack Rating"
     },
     {
-      "id": 89,
-      "values": [
-        3
-      ],
-      "name": "item_lightradius",
-      "description": "+{0} to Light Radius"
-    },
-    {
       "id": 21,
       "values": [
         36
@@ -15756,7 +15834,7 @@
         64
       ],
       "name": "item_howl",
-      "description": "Hit Causes Monsters to Flee {0}%"
+      "description": "Hit Causes Monster to Flee +{0}%"
     },
     {
       "id": 141,
@@ -15764,7 +15842,17 @@
         40
       ],
       "name": "item_deadlystrike",
-      "description": "{0}% Deadly Strike"
+      "description": "+{0}% Deadly Strike"
+    },
+    {
+      "id": 188,
+      "values": [
+        2,
+        4,
+        6
+      ],
+      "name": "item_addskill_tab",
+      "description": "{0} {1}"
     },
     {
       "id": 31,
@@ -15799,20 +15887,12 @@
       "description": "+{0}% to Maximum Lightning Resist"
     },
     {
-      "id": 3,
-      "values": [
-        55
-      ],
-      "name": "vitality",
-      "description": "+{0} to Vitality"
-    },
-    {
       "id": 96,
       "values": [
         20
       ],
       "name": "item_fastermovevelocity",
-      "description": "{0}% Faster Run/Walk"
+      "description": "+{0}% Faster Run/Walk"
     },
     {
       "id": 154,
@@ -15828,7 +15908,7 @@
         8
       ],
       "name": "item_stamina_perlevel",
-      "description": "+{0} Maxmium Stamina (Based on Character Level)"
+      "description": "+{0} Maximum Stamina (Based on Character Level)"
     },
     {
       "id": 252,
@@ -15836,7 +15916,7 @@
         5
       ],
       "name": "item_replenish_durability",
-      "description": "Repairs 1 Durability in {0} Seconds"
+      "description": "Repairs 1 durability in {0} seconds"
     },
     {
       "id": 11,
@@ -15844,7 +15924,7 @@
         120
       ],
       "name": "maxstamina",
-      "description": "+{0} to Maximum Stamina"
+      "description": "+{0} Maximum Stamina"
     },
     {
       "id": 36,
@@ -15860,7 +15940,15 @@
         50
       ],
       "name": "item_crushingblow",
-      "description": "{0}% Chance of Crushing Blow"
+      "description": "+{0}% Chance of Crushing Blow"
+    },
+    {
+      "id": 9,
+      "values": [
+        170
+      ],
+      "name": "maxmana",
+      "description": "+{0} to Mana"
     },
     {
       "id": 27,

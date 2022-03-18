@@ -25,13 +25,14 @@
 #include "Item.h"
 #include "helpers/ItemHelpers.h"
 #include "SkillConstants.h"
+#include "Character.h"
 
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint32_t MAX_TOME_QUANTITY    =   20; // max # of scrolls in tome
+    constexpr std::uint32_t NUM_OF_LEVELS = 99; // max level (game limit)
+
     constexpr std::uint32_t MAX_KEY_QUANTITY_100 =    6; // max # of keys stacked (verion 1.06 and lower)
-    constexpr std::uint32_t MAX_KEY_QUANTITY     =   12; // max # of keys stacked
     constexpr std::uint32_t MAX_GLD_QUANTITY     = 4095; // max gld amount
     constexpr std::uint32_t MAX_STACKED_QUANTITY =  511; // max # of items in a stack
     constexpr std::uint16_t MAX_DURABILITY       = 0xFF; // max durability of an item (0 is Indestructible)
@@ -63,7 +64,8 @@ namespace d2ce
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101;
 
     constexpr std::uint16_t SOCKET_COUNT_NUM_BITS            =   4;
-    constexpr std::uint16_t REAL_DATA_NUM_BITS               =  96; //128 (one file had this at 128 TODO figure out how to know this section ends)
+    constexpr std::uint16_t REAL_DATA_NUM_BITS_110           =  96; // realm data prior to D2R
+    constexpr std::uint16_t REAL_DATA_NUM_BITS               = 128;
     constexpr std::uint16_t DEFENSE_RATING_NUM_BITS          =  11;
     constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108      =  10; // 1.09 or older
     constexpr std::uint16_t DURABILITY_MAX_NUM_BITS          =   8;
@@ -80,9 +82,10 @@ namespace d2ce
     constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS    =   3;
     constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS         =   8;
     constexpr std::uint16_t PROPERTY_ID_NUM_BITS             =   9;
+    constexpr std::uint16_t MONSTER_ID_NUM_BITS              =  10;
 
     constexpr std::uint16_t ITEM_V100_NUM_BITS           = 216;
-    constexpr std::uint16_t ITEN_V100_UNIQUE_ID_NUM_BITS =   8;
+    constexpr std::uint16_t ITEM_V100_UNIQUE_ID_NUM_BITS =   8;
     constexpr std::uint16_t ITEM_V104_EAR_NUM_BITS       = 208;
     constexpr std::uint16_t ITEM_V104_SM_NUM_BITS        = 120;
     constexpr std::uint16_t ITEM_V104_EX_NUM_BITS        = 248;
@@ -109,7 +112,7 @@ namespace d2ce
     constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET   =  80;
     constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET   =  82;
     constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET   =  82;
-    constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 145;
+    constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 137;
     constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET        = 171;
     constexpr std::uint32_t ITEM_V104_EX_DWB_BIT_OFFSET        = 203;
     
@@ -174,8 +177,79 @@ namespace d2ce
 
         return node.asInt64();
     }
-}
 
+    void AddUndeadBonusMagicalAttribute(EnumItemVersion version, std::uint16_t gameVersion, std::vector<MagicalAttribute>& attribs)
+    {
+        const auto& stat = ItemHelpers::getItemStat(version, "item_undeaddamage_percent");
+        bool bHasUndeadAttrib = false;
+        for (const auto& item : attribs)
+        {
+            if (item.Id == stat.id)
+            {
+                bHasUndeadAttrib = true;
+                break;
+            }
+        }
+
+        MagicalAttribute attrib;
+        attrib.Id = stat.id;
+        attrib.Desc = stat.desc;
+        attrib.Name = stat.name;
+        attrib.Version = version;
+        attrib.GameVersion = gameVersion;
+        attrib.DescPriority = bHasUndeadAttrib ? stat.descPriority : 0;
+        attrib.Values = { 50 };
+        attribs.push_back(attrib);
+    }
+
+    //---------------------------------------------------------------------------
+    namespace ItemHelpers
+    {
+        bool getItemCodev100(std::uint16_t code, std::array<std::uint8_t, 4>& strcode);
+        std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
+        void encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
+        std::uint8_t HuffmanDecodeBitString(const std::string& bitstr);
+
+        const ItemType& getInvalidItemTypeHelper();
+
+        std::string getRunewordNameFromId(std::uint16_t id);
+        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+
+        std::uint16_t getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
+        std::uint32_t getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
+        std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
+        bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
+        std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
+        std::uint32_t generarateRandomDW();
+        std::string getSetNameFromId(std::uint16_t id);
+        std::string getSetTCFromId(std::uint16_t id);
+        std::uint16_t getSetLevelReqFromId(std::uint16_t id);
+        const std::string& getRareNameFromId(std::uint16_t id);
+        const std::string& getRareIndexFromId(std::uint16_t id);
+        const std::string& getMagicalPrefixFromId(std::uint16_t id);
+        const std::string& getMagicalSuffixFromId(std::uint16_t id);
+        const std::string& getMagicalPrefixTCFromId(std::uint16_t id);
+        const std::string& getMagicalSuffixTCFromId(std::uint16_t id);
+        const std::string& getUniqueNameFromId(std::uint16_t id);
+        std::uint16_t getIdFromRareIndex(const std::string& rareIndex);
+        std::uint16_t getIdFromRareName(const std::string& rareName);
+        std::uint16_t getUniqueLevelReqFromId(std::uint16_t id);
+        std::string getUniqueTCFromId(std::uint16_t id);
+        std::uint16_t getMagicalPrefixLevelReqFromId(std::uint16_t id);
+        std::uint16_t getMagicalSuffixLevelReqFromId(std::uint16_t id);
+
+        bool magicalAttributeSorter(const MagicalAttribute& left, const MagicalAttribute& right);
+        void checkForRelatedMagicalAttributes(std::vector<MagicalAttribute>& attribs);
+        std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
+        bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
+        void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
+        bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
+    }
+}
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -190,12 +264,17 @@ d2ce::Item::Item(const Item& other)
 {
     *this = other;
 }
-d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion)
+d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion)
 {
     static Item invalidItem;
-
     start_bit_offset = 0;
-    FileVersion = version;
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        break;
+    }
 
     // We only support simple items
     const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
@@ -205,29 +284,64 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
         return;
     }
 
+    if (!isExpansion && itemType.isExpansionItem())
+    {
+        // unsupported item
+        *this = invalidItem;
+        return;
+    }
+
     // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80
     data.reserve(80);
 
+    std::uint64_t itemCode = 0;
+    std::uint8_t itemCodeBitsSet = 0;
     ItemVersion = itemVersion;
     std::uint16_t rawVersion = 5;
     switch (ItemVersion)
     {
     case EnumItemVersion::v100:
-    case EnumItemVersion::v104:
-    case EnumItemVersion::v107:
+        itemCodeBitsSet = 10;
+        itemCode = itemType.code_v100;
         rawVersion = 0;
+        GameVersion = 0;
+        break;
+
+    case EnumItemVersion::v104:
+        itemCodeBitsSet = 30;
+        itemCode = *((std::uint32_t*)strcode.data());
+        rawVersion = 0;
+        GameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        itemCodeBitsSet = 32;
+        itemCode = *((std::uint32_t*)strcode.data());
+        rawVersion = 0;
+        GameVersion = isExpansion ? 100 : 0;
         break;
 
     case EnumItemVersion::v108:
+    case EnumItemVersion::v109:
+        itemCodeBitsSet = 32;
+        itemCode = *((std::uint32_t*)strcode.data());
         rawVersion = isExpansion ? 100 : 1;
+        GameVersion = isExpansion ? 100 : 1;
         break;
 
     case EnumItemVersion::v110:
+        itemCodeBitsSet = 32;
+        itemCode = *((std::uint32_t*)strcode.data());
         rawVersion = isExpansion ? 101 : 2;
+        GameVersion = isExpansion ? 100 : 1;
         break;
 
     case EnumItemVersion::v115:
+    case EnumItemVersion::v116:
+    default:
+        ItemHelpers::encodeItemCodev115(strcode, itemCode, itemCodeBitsSet);
         rawVersion = isExpansion ? 5 : 4;
+        GameVersion = isExpansion ? 100 : 1;
         break;
     }
 
@@ -237,7 +351,7 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
     size_t current_bit_offset = start_bit_offset;
     size_t max_bit_offset = current_bit_offset;
 
-    if (version < EnumCharVersion::v115)
+    if (ItemVersion < EnumItemVersion::v115)
     {
         value = *((std::uint16_t*)ITEM_MARKER.data());
         setBits(current_bit_offset, ITEM_MARKER.size() * 8, value);
@@ -254,7 +368,7 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
         flags[IS_SIMPLE_FLAG_OFFSET] = 1;
     }
 
-    if (FileVersion >= EnumCharVersion::v107)
+    if (ItemVersion >= EnumItemVersion::v107)
     {
         flags[23] = 1; // unknown but always one as far as I have noticed
     }
@@ -273,7 +387,6 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-    std::uint32_t itemCode = 0;
     size_t bitSize = 0;
     if (ItemVersion < EnumItemVersion::v107)
     {
@@ -297,17 +410,14 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
             item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
             dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
             dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
-            
-            itemCode = ItemHelpers::getTypeCodev100(strcode);
-            if (itemCode >= UINT16_MAX)
+            if (itemCode >= MAXUINT16)
             {
                 *this = invalidItem;
                 return;
             }
 
-            bitSize = 10;
             current_bit_offset = type_code_offset;
-            if (!setBits(current_bit_offset, bitSize, itemCode))
+            if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
             {
                 *this = invalidItem;
                 return;
@@ -365,11 +475,9 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
             nr_of_items_in_sockets_offset = 0;
             quality_attrib_bit_offset = 0;
             item_level_bit_offset = 0;
-            
-            itemCode = *((std::uint32_t*)strcode.data());
-            bitSize = 30;
+
             current_bit_offset = type_code_offset;
-            if (!setBits(current_bit_offset, bitSize, itemCode))
+            if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
             {
                 *this = invalidItem;
                 return;
@@ -389,7 +497,7 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
     }
 
     value = rawVersion;
-    bitSize = (FileVersion < EnumCharVersion::v115 ? 10 : 3);
+    bitSize = (ItemVersion < EnumItemVersion::v115 ? 10 : 3);
     if (!setBits(current_bit_offset, bitSize, value))
     {
         *this = invalidItem;
@@ -450,31 +558,31 @@ d2ce::Item::Item(EnumCharVersion version, EnumItemVersion itemVersion, std::arra
 
     // type code
     type_code_offset = current_bit_offset;
-    bitSize = 32; 
     
     std::uint8_t numBitsSet = 0;
     switch (ItemVersion)
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.0.6
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         *this = invalidItem; // should not get here
         return; 
 
-    case EnumItemVersion::v107: // v1.07
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10
-        value = *((std::uint32_t*)strcode.data());
-        if (!setBits(current_bit_offset, bitSize, value))
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+        if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
         {
             *this = invalidItem;
             return;
         }
         break;
 
-    default: // v1.15+
+    case EnumItemVersion::v115: // v1.15 Diablo II Resurrected item
+    case EnumItemVersion::v116: // v1.15 Diablo II Resurrected Patch 2.4 item
+    default: 
         ItemHelpers::encodeItemCodev115(strcode, value64, numBitsSet);
-        bitSize = numBitsSet;
-        if (!setBits64(current_bit_offset, bitSize, value64))
+        if (!setBits64(current_bit_offset, itemCodeBitsSet, itemCode))
         {
             *this = invalidItem;
             return;
@@ -540,9 +648,10 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
 
     data = other.data;
     SocketedItems = other.SocketedItems;
+    cachedCombinedMagicalAttributes = other.cachedCombinedMagicalAttributes;
 
-    FileVersion = other.FileVersion;
     ItemVersion = other.ItemVersion;
+    GameVersion = other.GameVersion;
     start_bit_offset = other.start_bit_offset;
     location_bit_offset = other.location_bit_offset;
     equipped_id_offset = other.equipped_id_offset;
@@ -563,6 +672,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     personalized_bit_offset_marker = other.personalized_bit_offset_marker;
     personalized_bit_offset = other.personalized_bit_offset;
     tome_bit_offset = other.tome_bit_offset;
+    body_part_bit_offset = other.body_part_bit_offset;
     realm_bit_offset = other.realm_bit_offset;
     defense_rating_bit_offset = other.defense_rating_bit_offset;
     durability_bit_offset = other.durability_bit_offset;
@@ -594,8 +704,10 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     other.data.clear();
     SocketedItems.swap(other.SocketedItems);
     other.SocketedItems.clear();
-    FileVersion = std::exchange(other.FileVersion, APP_CHAR_VERSION);
+    cachedCombinedMagicalAttributes.swap(other.cachedCombinedMagicalAttributes);
+    other.cachedCombinedMagicalAttributes.clear();
     ItemVersion = std::exchange(other.ItemVersion, APP_ITEM_VERSION);
+    GameVersion = std::exchange(other.GameVersion, APP_ITEM_GAME_VERSION);
     start_bit_offset = std::exchange(other.start_bit_offset, 16);
     location_bit_offset = std::exchange(other.location_bit_offset, ITEM_V115_LOCATION_BIT_OFFSET + ITEM_V107_START_BIT_OFFSET);
     equipped_id_offset = std::exchange(other.equipped_id_offset, ITEM_V115_EQUIPPED_ID_BIT_OFFSET + ITEM_V107_START_BIT_OFFSET);
@@ -616,6 +728,7 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     personalized_bit_offset_marker = std::exchange(other.personalized_bit_offset_marker, 0);
     personalized_bit_offset = std::exchange(other.personalized_bit_offset, 0);
     tome_bit_offset = std::exchange(other.tome_bit_offset, 0);
+    body_part_bit_offset = std::exchange(other.body_part_bit_offset, 0);
     realm_bit_offset = std::exchange(other.realm_bit_offset, 0);
     defense_rating_bit_offset = std::exchange(other.defense_rating_bit_offset, 0);
     durability_bit_offset = std::exchange(other.durability_bit_offset, 0);
@@ -686,19 +799,29 @@ void d2ce::Item::push_back(const std::uint8_t& value)
     data.push_back(value);
 }
 //---------------------------------------------------------------------------
-d2ce::EnumItemVersion d2ce::Item::Version() const
+d2ce::EnumItemVersion d2ce::Item::getVersion() const
 {
     return ItemVersion;
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::Item::getRawVersion() const
+std::uint16_t d2ce::Item::getGameVersion() const
 {
-    if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
-        return 0; // pre-1.08
+        return 0; // pre-1.08 normal
     }
 
-    return (std::uint16_t)read_uint32_bits(start_bit_offset + 32, (FileVersion < EnumCharVersion::v115 ? 8 : 3));
+    return GameVersion;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getRawVersion() const
+{
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
+    {
+        return 0; // pre-1.08 normal
+    }
+
+    return (std::uint16_t)read_uint32_bits(start_bit_offset + 32, (ItemVersion < EnumItemVersion::v115 ? 8 : 3));
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY)
@@ -846,7 +969,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             break;
 
         case EnumItemLocation::BELT:
-            if (!isPotion())
+            if (!isBeltable())
             {
                 return false;
             }
@@ -1038,6 +1161,11 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
                 return true;
 
             case EnumItemLocation::BELT:
+                if (!isBeltable())
+                {
+                    return false;
+                }
+
                 current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
                 value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
@@ -1291,6 +1419,11 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
         break;
 
     default:
+        if ((locationId == EnumItemLocation::BELT) && !isBeltable())
+        {
+            return false;
+        }
+
         current_bit_offset = location_bit_offset;
         value = static_cast<std::underlying_type_t<EnumItemLocation>>(locationId);
         bitSize = 3;
@@ -1347,6 +1480,11 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isExpansionItem() const
+{
+    return getGameVersion() == 100 ? true : false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isIdentified() const
 {
     return read_uint32_bits(start_bit_offset + IS_IDENTIFIED_FLAG_OFFSET, 1) != 0 ? true : false;
@@ -1359,7 +1497,7 @@ bool d2ce::Item::isDisabled() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isSocketed() const
 {
-    if (isSimpleItem() && (Version() != EnumItemVersion::v100))
+    if (isSimpleItem() && (getVersion() != EnumItemVersion::v100))
     {
         return false;
     }
@@ -1392,10 +1530,21 @@ bool d2ce::Item::isStarterItem() const
 */
 bool d2ce::Item::isSimpleItem() const
 {
-    if (Version() == EnumItemVersion::v100)
+    if (getVersion() == EnumItemVersion::v100)
     {
-        // v1.00 - v1.03
-        return isEar() ? true : false;
+        // v1.00 - v1.03 item
+        if (isEar())
+        {
+            return true;
+        }
+
+        const auto& result = getItemTypeHelper();
+        if (&result != &ItemHelpers::getInvalidItemTypeHelper())
+        {
+            return result.isSimpleItem();
+        }
+
+        return false;
     }
 
     return read_uint32_bits(start_bit_offset + IS_SIMPLE_FLAG_OFFSET, 1) != 0 ? true : false;
@@ -1408,9 +1557,9 @@ bool d2ce::Item::isEthereal() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isPersonalized() const
 {
-    if(FileVersion < EnumCharVersion::v107)
+    if(ItemVersion < EnumItemVersion::v107)
     {
-        // v1.00 - v1.06
+        // v1.00 - v1.06 item
         return false;
     }
 
@@ -1419,9 +1568,9 @@ bool d2ce::Item::isPersonalized() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRuneword() const
 {
-    if (FileVersion < EnumCharVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107)
     {
-        // v1.00 - v1.06
+        // v1.00 - v1.06 item
         return false;
     }
 
@@ -1432,9 +1581,9 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
 {
     std::uint8_t loc = 0;
     std::uint16_t loc16 = 0;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
         if (isEar())
         {
             return EnumItemLocation::STORED;
@@ -1465,7 +1614,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
 
         return EnumItemLocation::BUFFER;
 
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         if (isEar())
         {
             return EnumItemLocation::STORED;
@@ -1518,9 +1667,12 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
         return EnumItemLocation::BUFFER;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         loc = (std::uint8_t)read_uint32_bits(location_bit_offset, 3);
 
         if (loc > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
@@ -1530,8 +1682,6 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
 
         return static_cast<EnumItemLocation>(loc);
     }
-
-    return EnumItemLocation::BUFFER;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumEquippedId d2ce::Item::getEquippedId() const
@@ -1552,10 +1702,10 @@ d2ce::EnumEquippedId d2ce::Item::getEquippedId() const
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getPositionX() const
 {
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
@@ -1570,21 +1720,22 @@ std::uint8_t d2ce::Item::getPositionX() const
         break;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         return (std::uint8_t)read_uint32_bits(position_offset, 4);
     }
-
-    return 0;
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getPositionY() const
 {
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
@@ -1599,20 +1750,21 @@ std::uint8_t d2ce::Item::getPositionY() const
         break;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         return (std::uint8_t)read_uint32_bits(position_offset + 4, 4);
     }
-
-    return 0;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
 {
     std::uint8_t loc = 0;
     std::uint16_t loc16 = 0;
-    switch (Version())
+    switch (getVersion())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03
         if (getLocation() != EnumItemLocation::STORED)
@@ -1721,9 +1873,12 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
         break;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         loc = (std::uint8_t)read_uint32_bits(alt_position_id_offset, 3); 
         if (loc > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
         {
@@ -1732,8 +1887,23 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
 
         return static_cast<EnumAltItemLocation>(loc);
     }
+}
+//---------------------------------------------------------------------------
+const d2ce::ItemType& d2ce::Item::getItemTypeHelper() const
+{
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (getItemCode(strcode))
+    {
+        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
+        if (result.isExpansionItem() && !isExpansionItem())
+        {
+            return ItemHelpers::getInvalidItemTypeHelper();
+        }
 
-    return EnumAltItemLocation::UNKNOWN;
+        return result;
+    }
+
+    return ItemHelpers::getInvalidItemTypeHelper();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
@@ -1744,51 +1914,64 @@ bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
         return ItemHelpers::getItemCodev100(std::uint16_t(read_uint32_bits(type_code_offset, 10)), strcode);
 
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
         strcode[0] = std::uint8_t(read_uint32_bits(type_code_offset, 8));
         strcode[1] = std::uint8_t(read_uint32_bits(type_code_offset + 8, 8));
         strcode[2] = std::uint8_t(read_uint32_bits(type_code_offset + 16, 8));
         strcode[3] = std::uint8_t(read_uint32_bits(type_code_offset + 24, 6));
         return true;
 
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         ItemHelpers::getItemCodev115(data, type_code_offset, strcode);
         return true;
     }
-
-    return false;
 }
 //---------------------------------------------------------------------------
-d2ce::EnumItemType d2ce::Item::getItemType() const
+const std::string& d2ce::Item::getItemTypeName() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result != &ItemHelpers::getInvalidItemTypeHelper())
     {
-        return ItemHelpers::getEnumItemTypeFromCode(strcode);
-    }
-
-    return EnumItemType::Other;
-
-}
-//---------------------------------------------------------------------------
-std::string d2ce::Item::getItemTypeName() const
-{
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
-    {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
         return result.name;
     }
 
-    return "";
+    static std::string badValue;
+    return badValue;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Item::getRuneLetter() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result != &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        return result.getRuneLetter();
+    }
+
+    static std::string badValue;
+    return badValue;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getGemApplyType() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return 0;
+    }
+
+    return result.gemApplyType;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
@@ -1798,14 +1981,13 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (!getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
         // should not happen
         return false;
     }
 
-    const auto& result = ItemHelpers::getItemTypeHelper(strcode);
     if (!result.isGem() && !result.isPotion() && !result.isRune())
     {
         // we can only upgrade GPS
@@ -1819,6 +2001,12 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
     }
 
     const auto& newResult = ItemHelpers::getItemTypeHelper(newgem);
+    if (newResult.isExpansionItem() && !isExpansionItem())
+    {
+        // should not happen
+        return false;
+    }
+
     if (!newResult.isGem() && !newResult.isPotion() && !newResult.isRune())
     {
         // we can only upgrade GPS
@@ -1833,36 +2021,54 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
 
     std::uint64_t code = 0;
     std::uint8_t numBitsSet = 0;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-        code = ItemHelpers::getTypeCodev100(newgem);
-        if (code >= UINT16_MAX)
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+        numBitsSet = 10;
+        code = newResult.code_v100;
+        if (code >= MAXUINT16)
         {
             return false;
         }
-        updateBits64(type_code_offset, 10, code);
-        return true;
+        break;
 
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        numBitsSet = 30;
         code = *((std::uint32_t*)newgem.data());
-        updateBits64(type_code_offset, 30, code);
-        return true;
+        break;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+        numBitsSet = 32;
         code = *((std::uint32_t*)newgem.data());
-        updateBits64(type_code_offset, 32, code);
+        break;
+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
+        ItemHelpers::encodeItemCodev115(newgem, code, numBitsSet);
+        break;
+    }
+
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+        updateBits64(type_code_offset, numBitsSet, code);
         return true;
 
-    case EnumItemVersion::v115: // v1.15 normal or expansion
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         ItemHelpers::encodeItemCodev115(newgem, code, numBitsSet);
         updateItemCodev115(code, numBitsSet);
         return true;
     }
-
-    return false;
 }
 //---------------------------------------------------------------------------
 /*
@@ -2110,10 +2316,10 @@ std::uint8_t d2ce::Item::socketedItemCount() const
 {
     if (nr_of_items_in_sockets_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-            if (isEar())
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isSimpleItem() || isEar())
             {
                 return 0;
             }
@@ -2122,7 +2328,7 @@ std::uint8_t d2ce::Item::socketedItemCount() const
             nr_of_items_in_sockets_bits = 2;
             break;
 
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             if (isSimpleItem() || isEar())
             {
                 return 0;
@@ -2133,9 +2339,12 @@ std::uint8_t d2ce::Item::socketedItemCount() const
             break;
 
         case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-        case EnumItemVersion::v110: // v1.10 normal or expansion
-        case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
             nr_of_items_in_sockets_offset = extended_data_offset;
             nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
             break;
@@ -2158,10 +2367,10 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     currentOffset += 3;
 
     size_t levelBits = 7;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         levelBits = 8;
         break;
     }
@@ -2169,18 +2378,19 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     attrib.Level = std::uint32_t(read_uint32_bits(currentOffset, levelBits));
     currentOffset += levelBits;
 
-    // up to 15 7 bit characters
+    // up to 15 7/8 bit characters
+    size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
     attrib.Name.fill(0);
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(currentOffset, 7);
+        c = (char)read_uint32_bits(currentOffset, bitSize);
         if (c == 0)
         {
             break;
         }
         attrib.Name[idx] = c;
-        currentOffset += 7;
+        currentOffset += bitSize;
     }
 
     return true;
@@ -2189,50 +2399,172 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
 bool d2ce::Item::getRequirements(ItemRequirements& req) const
 {
     req.clear();
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        req = result.req;
+        // should not happen
+        return false;
+    }
+    req = result.req;
 
-        d2ce::SetAttributes setAttrib;
-        d2ce::UniqueAttributes uniqueAttrib;
-        switch (getQuality())
+    d2ce::SetAttributes setAttrib;
+    d2ce::UniqueAttributes uniqueAttrib;
+    d2ce::MagicalAffixes magicalAffixes;
+    d2ce::RareAttributes rareAttrib;
+    switch (getQuality())
+    {
+    case EnumItemQuality::MAGIC:
+        if (getMagicalAffixes(magicalAffixes))
         {
-        case EnumItemQuality::SET:
-            getSetAttributes(setAttrib);
-            if (setAttrib.ReqLevel != 0)
+            std::uint16_t levelReq = 0;
+            if (magicalAffixes.PrefixId != 0)
+            {
+                levelReq = ItemHelpers::getMagicalPrefixLevelReqFromId(magicalAffixes.PrefixId);
+                if (levelReq > 1)
+                {
+                    req.Level = std::max(req.Level, levelReq);
+                }
+            }
+
+            if (magicalAffixes.SuffixId != 0)
+            {
+                levelReq = ItemHelpers::getMagicalSuffixLevelReqFromId(magicalAffixes.SuffixId);
+                if (levelReq > 1)
+                {
+                    req.Level = std::max(req.Level, levelReq);
+                }
+            }
+        }
+        break;
+
+    case EnumItemQuality::SET:
+        if (getSetAttributes(setAttrib))
+        {
+            if (setAttrib.ReqLevel > 1)
             {
                 req.Level = setAttrib.ReqLevel;
             }
-            break;
+        }
+        break;
 
-        case EnumItemQuality::UNIQUE:
-            getUniqueAttributes(uniqueAttrib);
-            if (uniqueAttrib.ReqLevel != 0)
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::TEMPERED:
+        if (getRareOrCraftedAttributes(rareAttrib))
+        {
+            std::uint16_t levelReq = 0;
+            for (auto affix : rareAttrib.Affixes)
+            {
+                if (affix.PrefixId != 0)
+                {
+                    levelReq = ItemHelpers::getMagicalPrefixLevelReqFromId(affix.PrefixId);
+                    if (levelReq > 1)
+                    {
+                        req.Level = std::max(req.Level, levelReq);
+                    }
+                }
+
+                if (affix.SuffixId != 0)
+                {
+                    levelReq = ItemHelpers::getMagicalSuffixLevelReqFromId(affix.SuffixId);
+                    if (levelReq > 1)
+                    {
+                        req.Level = std::max(req.Level, levelReq);
+                    }
+                }
+            }
+        }
+        break;
+
+    case EnumItemQuality::UNIQUE:
+        if (getUniqueAttributes(uniqueAttrib))
+        {
+            if (uniqueAttrib.ReqLevel > 1)
             {
                 req.Level = uniqueAttrib.ReqLevel;
             }
-            break;
         }
-        return true;
+        break;
+
+    case EnumItemQuality::CRAFT:
+        if (getRareOrCraftedAttributes(rareAttrib))
+        {
+            std::uint16_t levelReq = 0;
+            std::uint16_t affixCount = 0;
+            for (auto affix : rareAttrib.Affixes)
+            {
+                if (affix.PrefixId != 0)
+                {
+                    ++affixCount;
+                    levelReq = ItemHelpers::getMagicalPrefixLevelReqFromId(affix.PrefixId);
+                    if (levelReq > 1)
+                    {
+                        req.Level = std::max(req.Level, levelReq);
+                    }
+                }
+
+                if (affix.SuffixId != 0)
+                {
+                    ++affixCount;
+                    levelReq = ItemHelpers::getMagicalSuffixLevelReqFromId(affix.SuffixId);
+                    if (levelReq > 1)
+                    {
+                        req.Level = std::max(req.Level, levelReq);
+                    }
+                }
+            }
+
+            req.Level = req.Level + 10 + (3 * affixCount);
+        }
+        break;
     }
 
-    return false;
+    ItemRequirements socketedReq;
+    for (const auto& item : SocketedItems)
+    {
+        if (item.getRequirements(socketedReq))
+        {
+            if (socketedReq.Level > 1)
+            {
+                req.Level = std::max(req.Level, socketedReq.Level);
+            }
+        }
+    }
+
+    if (isEthereal())
+    {
+        if (req.Strength >= 10)
+        {
+            req.Strength -= 10;
+        }
+        else
+        {
+            req.Strength = 0;
+        }
+
+        if (req.Dexterity >= 10)
+        {
+            req.Dexterity -= 10;
+        }
+        else
+        {
+            req.Dexterity = 0;
+        }
+    }
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getCategories(std::vector<std::string>& categories) const
 {
     categories.clear();
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        categories = result.categories;
-        return true;
+        // should not happen
+        return false;
     }
 
-    return false;
+    categories = result.categories;
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDimensions(ItemDimensions& dimensions) const
@@ -2244,15 +2576,15 @@ bool d2ce::Item::getDimensions(ItemDimensions& dimensions) const
         return true;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        dimensions = result.dimensions;
-        return true;
+        // should not happen
+        return false;
     }
 
-    return false;
+    dimensions = result.dimensions;
+    return true;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getTotalItemSlots() const
@@ -2266,21 +2598,23 @@ std::uint32_t d2ce::Item::getTotalItemSlots() const
     return dimensions.InvHeight * dimensions.InvWidth;
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Item::getInvFile() const
+const std::string& d2ce::Item::getInvFile() const
 {
     if (isEar())
     {
-        return "invear";
+        static std::string ear("invear");
+        return ear;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.inv_file;
+        // should not happen
+        static std::string badValue;
+        return badValue;
     }
 
-    return "";
+    return result.inv_file;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getTransformColor() const
@@ -2328,18 +2662,18 @@ std::string d2ce::Item::getTransformColor() const
     {
         for (auto affix : rareAttrib.Affixes)
         {
-            if (magicalAffixes.PrefixId != 0)
+            if (affix.PrefixId != 0)
             {
-                tc = ItemHelpers::getMagicalPrefixTCFromId(magicalAffixes.PrefixId);
+                tc = ItemHelpers::getMagicalPrefixTCFromId(affix.PrefixId);
                 if (!tc.empty())
                 {
                     result = tc;
                 }
             }
 
-            if (magicalAffixes.SuffixId != 0)
+            if (affix.SuffixId != 0)
             {
-                tc = ItemHelpers::getMagicalSuffixTCFromId(magicalAffixes.SuffixId);
+                tc = ItemHelpers::getMagicalSuffixTCFromId(affix.SuffixId);
                 if (!tc.empty())
                 {
                     result = tc;
@@ -2368,16 +2702,19 @@ std::uint32_t d2ce::Item::getId() const
 
     if (item_id_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             return 0;
 
         case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-        case EnumItemVersion::v110: // v1.10 normal or expansion
-        case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
             item_id_bit_offset = start_bit_offset + 95;
             break;
         }
@@ -2390,35 +2727,45 @@ std::uint8_t d2ce::Item::getLevel() const
 {
     if (isSimpleItem())
     {
-        return 0;
+        switch (getVersion())
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            break;
+
+        default:
+            return 0;
+        }
     }
 
     if (item_level_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
             item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
             break;
 
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
             break;
 
         case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-        case EnumItemVersion::v110: // v1.10 normal or expansion
-        case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
             item_level_bit_offset = start_bit_offset + 127;
             break;
         }
     }
 
     size_t numBits = 7;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         numBits = 8;
         break;
     }
@@ -2430,9 +2777,9 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
 {
     size_t numBits = 4;
     std::uint32_t value;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
         if (isEar())
         {
             return EnumItemQuality::UNKNOWN;
@@ -2446,7 +2793,7 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
         numBits = 3;
         break;
 
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         if (isSimpleItem())
         {
             return EnumItemQuality::UNKNOWN;
@@ -2461,9 +2808,12 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
         break;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         if (isSimpleItem())
         {
             return EnumItemQuality::UNKNOWN;
@@ -2476,9 +2826,6 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
 
         numBits = 4;
         break;
-
-    default:
-        return EnumItemQuality::UNKNOWN;
     }
 
     value = read_uint32_bits(quality_bit_offset, numBits);
@@ -2507,10 +2854,10 @@ bool d2ce::Item::getMagicalAffixes(MagicalAffixes& affixes) const
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getMagicalAffixesv100(affixes);
     }
 
@@ -2552,20 +2899,21 @@ std::string d2ce::Item::getPersonalizedName() const
         return std::string();
     }
 
-    // up to 15 7 bit characters
+    // up to 15 7/8 bit characters
+    size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
     size_t currentOffset = personalized_bit_offset;
     std::array<char, NAME_LENGTH> name;
     name.fill(0);
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(currentOffset, 7);
+        c = (char)read_uint32_bits(currentOffset, bitSize);
         if (c == 0)
         {
             break;
         }
         name[idx] = c;
-        currentOffset += 7;
+        currentOffset += bitSize;
     }
 
     return name.data();
@@ -2598,10 +2946,10 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getSetAttributesv100(attrib);
     }
 
@@ -2657,10 +3005,10 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getRareOrCraftedAttributesv100(attrib);
     }
 
@@ -2668,10 +3016,12 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     attrib.Id = (std::uint16_t)read_uint32_bits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
     attrib.Name = ItemHelpers::getRareNameFromId(attrib.Id);
+    attrib.Index = ItemHelpers::getRareIndexFromId(attrib.Id);
 
     attrib.Id2 = (std::uint16_t)read_uint32_bits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
     attrib.Name2 = ItemHelpers::getRareNameFromId(attrib.Id2);
+    attrib.Index2 = ItemHelpers::getRareIndexFromId(attrib.Id2);
 
     // Following the name IDs, we got 6 possible magical affixes, the pattern
     // is 1 bit id, 11 bit value... But the value will only exist if the prefix
@@ -2714,13 +3064,13 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
             return false;
         }
 
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
             quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
             break;
 
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
             break;
 
@@ -2739,11 +3089,11 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
     }
 
     size_t numBits = SET_UNIQUE_ID_NUM_BITS;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
-        numBits = ITEN_V100_UNIQUE_ID_NUM_BITS;
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        numBits = ITEM_V100_UNIQUE_ID_NUM_BITS;
         break;
     }
 
@@ -2758,10 +3108,10 @@ bool d2ce::Item::getMagicalAttributes(std::vector<MagicalAttribute>& attribs) co
     attribs.clear();
     d2ce::UniqueAttributes uniqueAttrib;
     d2ce::SetAttributes setAttrib;
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getMagicalAttributesv100(attribs);
     }
 
@@ -2788,21 +3138,21 @@ bool d2ce::Item::getMagicalAttributes(std::vector<MagicalAttribute>& attribs) co
 bool d2ce::Item::getCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs) const
 {
     attribs.clear();
-    if (hasUndeadBonus())
+    if (!cachedCombinedMagicalAttributes.empty())
     {
-        // Push back special class attribute
-        static const auto& stat = ItemHelpers::getItemStat(122);
-        MagicalAttribute attrib;
-        attrib.Id = stat.id;
-        attrib.Desc = stat.desc;
-        attrib.Name = stat.name;
-        attrib.Values = { 50 };
-        attribs.push_back(attrib);
+        attribs = cachedCombinedMagicalAttributes;
+        return true;
     }
-
+  
     std::vector<MagicalAttribute> tempAttribs;
     if (!getMagicalAttributes(tempAttribs))
     {
+        if (hasUndeadBonus())
+        {
+            AddUndeadBonusMagicalAttribute(getVersion(), getGameVersion(), attribs);
+        }
+
+        cachedCombinedMagicalAttributes = attribs;
         return !attribs.empty();
     }
 
@@ -2823,6 +3173,12 @@ bool d2ce::Item::getCombinedMagicalAttributes(std::vector<MagicalAttribute>& att
         }
     }
 
+    if (hasUndeadBonus())
+    {
+        AddUndeadBonusMagicalAttribute(getVersion(), getGameVersion(), attribs);
+    }
+
+    cachedCombinedMagicalAttributes = attribs;
     return true;
 }
 //---------------------------------------------------------------------------
@@ -2835,16 +3191,19 @@ bool d2ce::Item::hasMultipleGraphics() const
 
     if (multi_graphic_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             return hasMultipleGraphicsv100();
 
         case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-        case EnumItemVersion::v110: // v1.10 normal or expansion
-        case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
             multi_graphic_bit_offset = start_bit_offset + 138;
             break;
         }
@@ -2860,10 +3219,10 @@ std::uint8_t d2ce::Item::getPictureId() const
         return 0;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getPictureIdv100();
     }
 
@@ -2879,16 +3238,19 @@ bool d2ce::Item::isAutoAffix() const
 
     if (autoAffix_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             return false;
 
         case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-        case EnumItemVersion::v110: // v1.10 normal or expansion
-        case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
             autoAffix_bit_offset = start_bit_offset + 139;
             if (hasMultipleGraphics())
             {
@@ -2924,10 +3286,10 @@ std::uint8_t d2ce::Item::getInferiorQualityId() const
 
     if (quality_attrib_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             return getInferiorQualityIdv100();
         }
         return false;
@@ -2960,6 +3322,11 @@ std::uint16_t d2ce::Item::getFileIndex() const
         return (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
     }
 
+    if (isBodyPart())
+    {
+        return (std::uint16_t)read_uint32_bits(body_part_bit_offset, MONSTER_ID_NUM_BITS);
+    }
+
     return 0;
 }
 //---------------------------------------------------------------------------
@@ -2989,14 +3356,14 @@ bool d2ce::Item::isArmor() const
         return false;
     }
 
-    std::uint8_t base = 0;
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        base = ItemHelpers::getItemBase(strcode);
+        // should not happen
+        return false;
     }
 
-    return (base & 4) != 0 ? true : false;
+    return result.isArmor();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isWeapon() const
@@ -3006,14 +3373,14 @@ bool d2ce::Item::isWeapon() const
         return false;
     }
 
-    std::uint8_t base = 0;
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        base = ItemHelpers::getItemBase(strcode);
+        // should not happen
+        return false;
     }
 
-    return (base & 2) != 0 ? true : false;
+    return result.isWeapon();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isMissileWeapon() const
@@ -3023,14 +3390,14 @@ bool d2ce::Item::isMissileWeapon() const
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isMissileWeapon();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isMissileWeapon();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isTome() const
@@ -3040,14 +3407,26 @@ bool d2ce::Item::isTome() const
         return false;
     }
 
-    std::uint8_t base = 0;
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        base = ItemHelpers::getItemBase(strcode);
+        // should not happen
+        return false;
     }
 
-    return (base & 8) != 0 ? true : false;
+    return result.isBook();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isBodyPart() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isBodyPart();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isStackable() const
@@ -3057,148 +3436,158 @@ bool d2ce::Item::isStackable() const
         return false;
     }
 
-    std::uint8_t base = 0;
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        base = ItemHelpers::getItemBase(strcode);
+        // should not happen
+        return false;
     }
 
-    return (base & 1) != 0 ? true : false;
+    return result.isStackable();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isPotion() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isPotion();
+        // should not happen
+        return false;
     }
-    
-    return true;
+
+    return result.isPotion();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isGem() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isGem();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isGem();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradableGem() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isUpgradableGem();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isUpgradableGem();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradablePotion() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isUpgradablePotion();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isUpgradablePotion();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradableToFullRejuvenationPotion() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isUpgradableRejuvenationPotion() || (result.isPotion() && !result.isRejuvenationPotion());
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isUpgradableRejuvenationPotion() || (result.isPotion() && !result.isRejuvenationPotion());
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRune() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isRune();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isRune();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isJewel() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isJewel();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isJewel();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isCharm() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isCharm();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isCharm();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isBelt() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isBelt();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isBelt();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isBeltable() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isBeltable();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isQuestItem() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.isQuestItem();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isQuestItem();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isHoradricCube() const
 {
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        if (strcode[0] == 'b' && strcode[1] == 'o' && strcode[2] == 'x')
-        {
-            return true;
-        }
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.isHoradricCube();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isIndestructible() const
@@ -3229,6 +3618,18 @@ bool d2ce::Item::isIndestructible() const
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isUnusedItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isUnusedItem();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
 {
     if (isSimpleItem())
@@ -3236,14 +3637,14 @@ bool d2ce::Item::hasUndeadBonus() const
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.hasUndeadBonus();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.hasUndeadBonus();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::canHaveSockets() const
@@ -3258,14 +3659,36 @@ bool d2ce::Item::canHaveSockets() const
         return true;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        return result.canHaveSockets();
+        // should not happen
+        return false;
     }
 
-    return false;
+    return result.canHaveSockets();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canPersonalize() const
+{
+    if (isSimpleItem() || (personalized_bit_offset_marker == 0) || !isExpansionItem())
+    {
+        return false;
+    }
+
+    if (isPersonalized())
+    {
+        return true;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.canPersonalize();
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::socketCount() const
@@ -3275,16 +3698,19 @@ std::uint8_t d2ce::Item::socketCount() const
         return 0;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return getMaxSocketCount();
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         if (socket_count_bit_offset == 0)
         {
             return 0;
@@ -3292,8 +3718,6 @@ std::uint8_t d2ce::Item::socketCount() const
 
         return (std::uint8_t)read_uint32_bits(socket_count_bit_offset, SOCKET_COUNT_NUM_BITS);
     }
-
-    return 0;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getQuantity() const
@@ -3305,9 +3729,9 @@ std::uint32_t d2ce::Item::getQuantity() const
 
     if (gld_stackable_bit_offset != 0)
     {
-        if (FileVersion < EnumCharVersion::v107)
+        if (ItemVersion < EnumItemVersion::v107)
         {
-            return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
+            return read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
         }
 
         if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
@@ -3315,68 +3739,89 @@ std::uint32_t d2ce::Item::getQuantity() const
             return (std::uint32_t)read_uint64_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS);
         }
 
-        return (std::uint8_t)read_uint32_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS);
+        return read_uint32_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS);
     }
 
-    return (std::uint8_t)read_uint32_bits(stackable_bit_offset, STACKABLE_NUM_BITS);
+    return read_uint32_bits(stackable_bit_offset, STACKABLE_NUM_BITS);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Item::getMaxQuantity() const
+{
+    const auto& itemType = getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return 0ui32;
+    }
+
+    if (!itemType.isStackable())
+    {
+        return 0ui32;
+    }
+
+    if (itemType.isKey())
+    {
+        // we need at lease one key
+        if (ItemVersion < EnumItemVersion::v107)
+        {
+            return MAX_KEY_QUANTITY_100;
+        }
+    }
+
+    return itemType.stackable.Max;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setQuantity(std::uint32_t quantity)
 {
-    if (!isStackable() || (stackable_bit_offset == 0 && gld_stackable_bit_offset == 0))
+    if (stackable_bit_offset == 0 && gld_stackable_bit_offset == 0)
     {
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    std::uint8_t& gem = strcode[0];
-    std::uint8_t& gemcondition = strcode[1];
-    std::uint8_t& gemcolour = strcode[2];
-    getItemCode(strcode);
-    switch (gem)
+    const auto& itemType = getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
-    case 't': // Town portal book
-    case 'i': // Identify scroll book
-        if (gemcondition == 'b' && gemcolour == 'k')
+        // should not happen
+        return false;
+    }
+
+    if (!itemType.isStackable())
+    {
+        return false;
+    }
+
+    quantity = std::min(quantity, itemType.stackable.Max);
+    if (itemType.isKey())
+    {
+        // we need at lease one key
+        if (ItemVersion < EnumItemVersion::v107)
         {
-            // can hold up to 20 scrolls
-            quantity = std::min(quantity, MAX_TOME_QUANTITY);
+            // TODO: should be handled by loading of file
+            quantity = std::min(quantity, MAX_KEY_QUANTITY_100);
         }
-        break;
-    case 'k':
-        if (gemcondition == 'e' && gemcolour == 'y')
+        quantity = std::max(1ui32, quantity);
+    }
+
+    if (itemType.isGoldItem())
+    {
+        if (gld_stackable_bit_offset != 0)
         {
-            // only 12 keys can be stacked ajd need at least 1
-            auto maxKeys = FileVersion < EnumCharVersion::v107 ? MAX_KEY_QUANTITY_100 : MAX_KEY_QUANTITY;
-            quantity = std::max(1ui32, std::min(quantity, maxKeys));
-        }
-        break;
-    case 'g':
-        if (gemcondition == 'l' && gemcolour == 'd')
-        {
-            if (gld_stackable_bit_offset != 0)
+            if (ItemVersion < EnumItemVersion::v107)
             {
-                if (FileVersion < EnumCharVersion::v107)
-                {
-                    return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
-                }
-
-                if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
-                {
-                    return updateBits64(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS, quantity);
-                }
-
-                quantity = std::min(quantity, MAX_GLD_QUANTITY);
-                return updateBits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS, quantity);
+                return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
             }
+
+            if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
+            {
+                return updateBits64(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS, quantity);
+            }
+
+            quantity = std::min(quantity, MAX_GLD_QUANTITY);
+            return updateBits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS, quantity);
         }
-        break;
 
-    default:
-        quantity = std::min(quantity, MAX_STACKED_QUANTITY);
-        break;
-
-    }  // end switch
+        return false;
+    }
 
     if (getQuantity() == quantity)
     {
@@ -3402,18 +3847,18 @@ std::uint16_t d2ce::Item::getDefenseRating() const
 {
     if (defense_rating_bit_offset == 0)
     {
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             return getDefenseRatingv100();
         }
 
         return 0;
     }
 
-    static const auto& stat = ItemHelpers::getItemStat(31);
-    return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)) - stat.saveAdd);
+    const auto& stat = ItemHelpers::getItemStat(getVersion(), "armorclass");
+    return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, ((ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)) - stat.saveAdd);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDurability(ItemDurability& durability) const
@@ -3424,30 +3869,27 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         return false;
     }
 
-    switch (Version())
+    const auto& itemType = getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+        // should not happen
+        return false;
+    }
+
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        if (!(itemType.isArmor() || itemType.isWeapon()) || itemType.isMissileWeapon())
+        {
+            return false;
+        }
+
         durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset, DURABILITY_CURRENT_NUM_BITS_108);
         durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108, DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
             durability.Current = 0;
-
-            std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-            if (!getItemCode(strcode))
-            {
-                return false;
-            }
-
-            const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-            std::uint8_t base = itemType.getBaseType();
-            bool isArmor = (base & 4) != 0 ? true : false;
-            bool isWeapon = (base & 2) != 0 ? true : false;
-            if (!(isArmor || isWeapon) || itemType.isMissileWeapon())
-            {
-                return false;
-            }
 
             // Indestructible without the need for the magical attribute of indestructibility
         }
@@ -3455,19 +3897,15 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         return true;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
-            std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-            if (!getItemCode(strcode))
-            {
-                return false;
-            }
-
-            const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
             if (itemType.isMissileWeapon())
             {
                 return false;
@@ -3480,8 +3918,6 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
         return true;
     }
-
-    return false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setDurability(const ItemDurability& attrib)
@@ -3505,10 +3941,10 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         if (!updateBits(durability_bit_offset, DURABILITY_CURRENT_NUM_BITS_108, attrib.Current))
         {
             return false;
@@ -3524,9 +3960,12 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
         return true;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         if (!updateBits(durability_bit_offset, DURABILITY_MAX_NUM_BITS, attrib.Max))
         {
             return false;
@@ -3541,8 +3980,6 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
         updateBits(start_bit_offset + IS_DISABLED_FLAG_OFFSET, 1, 0);
         return true;
     }
-
-    return false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::fixDurability()
@@ -3574,20 +4011,20 @@ bool d2ce::Item::getDamage(ItemDamage& damage) const
 {
     damage.clear();
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        if (!result.isWeapon())
-        {
-            return false;
-        }
-
-        damage = result.dam;
-        return true;
+        // should not happen
+        return false;
     }
 
-    return false;
+    if (!result.isWeapon())
+    {
+        return false;
+    }
+
+    damage = result.dam;
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getRealmDataFlag() const
@@ -3614,19 +4051,28 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
         return maxSockets;
     }
 
-    switch (Version())
+    const auto& result = ItemHelpers::getItemTypeHelper(strcode);
+    if (result.isExpansionItem() && !isExpansionItem())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
-        return ItemHelpers::getMaxSocketsv100(strcode);
+        // should not happen
+        return false;
     }
 
-    const auto& result = ItemHelpers::getItemTypeHelper(strcode);
     if (!result.canHaveSockets())
     {
         return maxSockets;
     }
-    return result.getMaxSockets(getLevel());
+
+    auto level = getLevel();
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        level = 1;
+        break;
+    }
+
+    return result.getMaxSockets(level);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::addMaxSocketCount()
@@ -3697,10 +4143,10 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         return false;
     }
 
-    switch (Version())
+    switch (getVersion())
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.06
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         // number of sockets is always the max number possible
         if (isSocketed())
         {
@@ -3726,9 +4172,12 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         return true;
 
     case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10 normal or expansion
-    case EnumItemVersion::v115: // v1.15 Diable II: Resurrected
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
         if (socket_count_bit_offset_marker == 0)
         {
             return false;
@@ -3890,40 +4339,22 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
 //---------------------------------------------------------------------------
 bool d2ce::Item::addPersonalization(const std::string& name)
 {
-    if (isPersonalized() || isSimpleItem() || name.empty() || (personalized_bit_offset_marker == 0))
+    if (!canPersonalize() || name.empty())
     {
         return false;
     }
 
     // Remove any invalid characters from the name
-    std::string strNewText;
-    for (size_t iPos = 0, numberOfUnderscores = 0, nLen = name.size(); iPos < nLen && strNewText.size() < NAME_LENGTH; ++iPos)
-    {
-        char c = name[iPos];
-        if (std::isalpha(c))
-        {
-            strNewText += c;
-        }
-        else if ((c == '_' || c == '-') && !strNewText.empty() && numberOfUnderscores < 1)
-        {
-            strNewText += c;
-            ++numberOfUnderscores;
-        }
-    } 
-    
-    // trim bad characters
-    strNewText.erase(strNewText.find_last_not_of("_-") + 1);
-    if (strNewText.size() < 2)
-    {
-        return false;
-    }
+    std::string curName = name;
+    LocalizationHelpers::CheckCharName(curName);
 
-    // up to 15 7 bit characters
-    size_t numberOfBitsToAdd = (strNewText.size() + 1) * 7;
+    // up to 15 7/8 bit characters
+    size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+    size_t numberOfBitsToAdd = (curName.size() + 1) * bitSize;
 
     std::array<char, NAME_LENGTH> playerName;
     playerName.fill(0);
-    strcpy_s(playerName.data(), strNewText.length() + 1, strNewText.c_str());
+    strcpy_s(playerName.data(), curName.length() + 1, curName.c_str());
     playerName[15] = 0; // must be zero
 
     // make a copy first
@@ -3944,15 +4375,15 @@ bool d2ce::Item::addPersonalization(const std::string& name)
     updateBits(start_bit_offset + IS_PERSONALIZED_FLAG_OFFSET, 1, 1);
     personalized_bit_offset = current_bit_offset;
 
-    // up to 15 7 bit characters
-    for (size_t idx = 0; idx < 15; ++idx)
+    // up to 15 7/8 bit characters
+    for (size_t idx = 0; idx <= 15; ++idx)
     {
-        if (!updateBits(current_bit_offset, 7, std::uint32_t(playerName[idx])))
+        if (!updateBits(current_bit_offset, bitSize, std::uint32_t(playerName[idx])))
         {
             return false;
         }
 
-        current_bit_offset += 7;
+        current_bit_offset += bitSize;
         if (playerName[idx] == 0)
         {
             break;
@@ -3983,6 +4414,11 @@ bool d2ce::Item::addPersonalization(const std::string& name)
     if (tome_bit_offset != 0)
     {
         tome_bit_offset += numberOfBitsToAdd;
+    }
+
+    if (body_part_bit_offset != 0)
+    {
+        body_part_bit_offset += numberOfBitsToAdd;
     }
 
     if (realm_bit_offset != 0)
@@ -4050,7 +4486,8 @@ bool d2ce::Item::removePersonalization()
         return false;
     }
 
-    // up to 15 7 bit characters
+    // up to 15 7/8 bit characters
+    size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
     size_t current_bit_offset = personalized_bit_offset_marker;
     size_t old_current_bit_offset = current_bit_offset;
     std::array<char, NAME_LENGTH> name;
@@ -4058,8 +4495,8 @@ bool d2ce::Item::removePersonalization()
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(old_current_bit_offset, 7);
-        old_current_bit_offset += 7;
+        c = (char)read_uint32_bits(old_current_bit_offset, bitSize);
+        old_current_bit_offset += bitSize;
         if (c == 0)
         {
             break;
@@ -4103,6 +4540,11 @@ bool d2ce::Item::removePersonalization()
     if (tome_bit_offset != 0)
     {
         tome_bit_offset -= numberOfBitsToRemove;
+    }
+
+    if (body_part_bit_offset != 0)
+    {
+        body_part_bit_offset -= numberOfBitsToRemove;
     }
 
     if (realm_bit_offset != 0)
@@ -4173,10 +4615,14 @@ bool d2ce::Item::setIndestructible()
 
     size_t current_bit_offset = magical_props_bit_offset;
     std::vector<MagicalAttribute> attribs;
-    if (!readPropertyList(current_bit_offset, attribs))
+    if (isExpansionItem())
     {
-        // coruption
-        return false;
+        // Indestructible magical property only exists for Expansion
+        if (!readPropertyList(current_bit_offset, attribs))
+        {
+            // coruption
+            return false;
+        }
     }
 
     if (attribs.empty())
@@ -4192,7 +4638,7 @@ bool d2ce::Item::setIndestructible()
         updateBits(current_bit_offset, DURABILITY_MAX_NUM_BITS, 0);
         current_bit_offset += DURABILITY_MAX_NUM_BITS;
 
-        size_t old_current_bit_offset = current_bit_offset + ((FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108);
+        size_t old_current_bit_offset = current_bit_offset + ((ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108);
         auto old_item_end_bit_offset = item_end_bit_offset;
         size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
         size_t numberOfBitsToRemove = old_current_bit_offset - current_bit_offset;
@@ -4267,13 +4713,20 @@ bool d2ce::Item::setIndestructible()
     }
 
     // go back before end of list
+    cachedCombinedMagicalAttributes.clear();
     current_bit_offset -= PROPERTY_ID_NUM_BITS;
     size_t old_current_bit_offset = current_bit_offset;
     size_t numberOfBitsToAdd = PROPERTY_ID_NUM_BITS + 1;
 
     std::uint16_t id = ATTRIBUTE_ID_INDESTRUCTIBLE;
-    const ItemStat* stat = &ItemHelpers::getItemStat(id);
-    if (stat->saveBits != 1 || stat->saveParamBits != 0 || stat->encode != 0)
+    const auto& stat = ItemHelpers::getItemStat(getVersion(), id);
+    if (id != stat.id)
+    {
+        // corrupt file
+        return false;
+    }
+
+    if (stat.saveBits != 1 || stat.saveParamBits != 0 || stat.encode != 0)
     {
         // corrupt file
         return false;
@@ -4331,17 +4784,37 @@ bool d2ce::Item::setIndestructible()
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedItemName() const
 {
+    std::string strValue;
+    std::string strFormat;
     std::stringstream ss;
     EarAttributes earAttrib;
     if (getEarAttributes(earAttrib))
     {
-        ss << earAttrib.getName().data() << "'s Ear\n" << earAttrib.getClassName() << "\nLevel " << std::dec << earAttrib.getLevel();
+        strValue = earAttrib.getName().data();
+        if (strValue.back() != 's')
+        {
+            LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstring", strFormat, "%s's");
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstringX", strFormat, "%s'");
+        }
+        strValue = d2ce::LocalizationHelpers::string_format(strFormat, strValue.c_str());
+
+        LocalizationHelpers::GetStringTxtValue("PlayerBodyPartFormat", strFormat, "%0 %1");
+        ss << d2ce::LocalizationHelpers::string_formatDiablo(strFormat, strValue, LocalizationHelpers::GetStringTxtValue("ear", strFormat, "Ear"));
+        ss << "\n";
+        LocalizationHelpers::GetStringTxtValue("strChatLevel", strFormat, "Level %d");
+        ss << d2ce::LocalizationHelpers::string_format(strFormat, earAttrib.getLevel());
         return ss.str();
     }
 
+    const auto& itemType = getItemTypeHelper();
     if (!isIdentified())
     {
-        ss << getItemTypeName() << "\nUnidentified";
+        ss << itemType.name << "\n";
+        LocalizationHelpers::GetStringTxtValue("ItemStats1b", strValue, "Unidentified");
+        ss << strValue;
         return ss.str();
     }
 
@@ -4354,19 +4827,22 @@ std::string d2ce::Item::getDisplayedItemName() const
     std::string personalizedName = getPersonalizedName();
     if (!personalizedName.empty())
     {
-        
-        ss << personalizedName << "'";
         if (personalizedName.back() != 's')
         {
-            ss << "s";
+            LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstring", strFormat, "%s's");
         }
-        ss << " ";
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstringX", strFormat, "%s'");
+        }
+        personalizedName = d2ce::LocalizationHelpers::string_format(strFormat, personalizedName.c_str());
     }
 
     MagicalAffixes affixes;
     d2ce::RareAttributes rareAttrib;
     d2ce::UniqueAttributes uniqueAttrib;
     d2ce::SetAttributes setAttrib;
+    strValue.clear();
     auto quality = getQuality();
     switch (quality)
     {
@@ -4374,67 +4850,150 @@ std::string d2ce::Item::getDisplayedItemName() const
         switch (getInferiorQualityId())
         {
         case 0:
-            ss << "Crude ";
+            LocalizationHelpers::GetStringTxtValue("Crude", strValue);
             break;
 
         case 1:
-            ss << "Cracked ";
+            LocalizationHelpers::GetStringTxtValue("Cracked", strValue);
             break;
 
         case 2:
-            ss << "Damaged ";
+            LocalizationHelpers::GetStringTxtValue("Damaged", strValue);
             break;
 
         case 3:
-            ss << "Low Quality ";
+            LocalizationHelpers::GetStringTxtValue("Low Quality", strValue);
             break;
         }
-        ss << getItemTypeName();
+
+        if (!strValue.empty())
+        {
+            LocalizationHelpers::GetStringTxtValue("LowqualityFormat", strFormat, "%0 %1");
+            strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+        }
+        else
+        {
+            strValue = itemType.name;
+        }
+
+        if (personalizedName.empty())
+        {
+            ss << strValue;
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+            ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, strValue);
+        }
         break;
 
     case EnumItemQuality::NORMAL:
         if (socketedItemCount() > 0)
         {
-            ss << "Gemmed ";
+            LocalizationHelpers::GetStringTxtValue("GemmedNormalName", strFormat, "%0 %1");
+            LocalizationHelpers::GetStringTxtValue("Gemmed", strValue);
+            strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
         }
-        ss << getItemTypeName();
+        else
+        {
+            strValue = itemType.name;
+        }
+
+        if (personalizedName.empty())
+        {
+            ss << strValue;
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+            ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, strValue);
+        }
         break;
 
     case EnumItemQuality::SUPERIOR:
-        ss << "Superior " << getItemTypeName();
+        LocalizationHelpers::GetStringTxtValue("HiqualityFormat", strFormat, "%0 %1");
+        LocalizationHelpers::GetStringTxtValue("Hiquality", strValue, "Superior");
+        strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+        if (personalizedName.empty())
+        {
+            ss << strValue;
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+            ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, strValue);
+        }
         break;
 
     case EnumItemQuality::MAGIC:
         if (getMagicalAffixes(affixes))
         {
-            if (!affixes.PrefixName.empty())
+            if (affixes.PrefixName.empty())
             {
-                ss << affixes.PrefixName << " ";
+                if (affixes.SuffixName.empty())
+                {
+                    strValue = itemType.name;
+                }
+                else
+                {
+                    LocalizationHelpers::GetStringTxtValue("ItemNameMagicFormatSuffixOnly", strFormat, "%0 %1");
+                    strValue = LocalizationHelpers::string_formatDiablo(strFormat, itemType.name, affixes.SuffixName);
+                }
             }
-
-            ss << getItemTypeName();
-
-            if (!affixes.SuffixName.empty())
+            else if (affixes.SuffixName.empty())
             {
-                ss << " " << affixes.SuffixName;
+                LocalizationHelpers::GetStringTxtValue("ItemNameMagicFormatPrefixOnly", strFormat, "%0 %1");
+                strValue = LocalizationHelpers::string_formatDiablo(strFormat, affixes.PrefixName, itemType.name);
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("MagicFormat", strFormat, "%0 %1 %2");
+                strValue = LocalizationHelpers::string_formatDiablo(strFormat, affixes.PrefixName, itemType.name, affixes.SuffixName);
             }
         }
         else
         {
             // should not happen
-            ss << getItemTypeName();
+            strValue = itemType.name;
+        }
+
+        if (personalizedName.empty())
+        {
+            ss << strValue;
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+            ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, strValue);
         }
         break;
 
     case EnumItemQuality::SET:
         if (getSetAttributes(setAttrib) && !setAttrib.Name.empty())
         {
-            ss << setAttrib.Name << '\n' << getItemTypeName();
+            if (personalizedName.empty())
+            {
+                ss << setAttrib.Name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, setAttrib.Name);
+            }
+
+            ss << '\n' << itemType.name;
         }
         else
         {
-            // should not happen
-            ss << getItemTypeName();
+            if (personalizedName.empty())
+            {
+                ss << itemType.name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+            }
         }
         break;
 
@@ -4443,45 +5002,123 @@ std::string d2ce::Item::getDisplayedItemName() const
     case EnumItemQuality::TEMPERED:
         if (getRareOrCraftedAttributes(rareAttrib))
         {
-            if (!rareAttrib.Name.empty())
+            if (rareAttrib.Name.empty())
             {
-                ss << rareAttrib.Name << " ";
+                if (rareAttrib.Name2.empty())
+                {
+                    if (personalizedName.empty())
+                    {
+                        ss << itemType.name;
+                    }
+                    else
+                    {
+                        LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                        ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+                    }
+                }
+                else
+                {
+                    if (personalizedName.empty())
+                    {
+                        ss << rareAttrib.Name2;
+                    }
+                    else
+                    {
+                        LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                        ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, rareAttrib.Name2);
+                    }
+                    ss << '\n' << itemType.name;
+                }
             }
-
-            if (!rareAttrib.Name2.empty())
+            else if (rareAttrib.Name2.empty())
             {
-                ss << rareAttrib.Name2;
+                if (personalizedName.empty())
+                {
+                    ss << rareAttrib.Name;
+                }
+                else
+                {
+                    LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                    ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, rareAttrib.Name);
+                }
+                ss << '\n' << itemType.name;
             }
-
-            ss << '\n' << getItemTypeName();
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("RareFormat", strFormat, "%0 %1");
+                strValue = LocalizationHelpers::string_formatDiablo(strFormat, rareAttrib.Name, rareAttrib.Name2);
+                if (personalizedName.empty())
+                {
+                    ss << strValue;
+                }
+                else
+                {
+                    LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                    ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, strValue);
+                }
+                ss << '\n' << itemType.name;
+            }
         }
         else
         {
             // should not happen
-            ss << getItemTypeName();
+            if (personalizedName.empty())
+            {
+                ss << itemType.name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+            }
         }
         break;
 
     case EnumItemQuality::UNIQUE:
         if (getUniqueAttributes(uniqueAttrib) && !uniqueAttrib.Name.empty())
         {
-            ss << uniqueAttrib.Name;
-            auto typeName = getItemTypeName();
-            if (typeName != uniqueAttrib.Name)
+            if (personalizedName.empty())
             {
-                ss << '\n' << typeName;
+                ss << uniqueAttrib.Name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, uniqueAttrib.Name);
+            }
+
+            if (!itemType.skipName)
+            {
+                ss << '\n' << itemType.name;
             }
         }
         else
         {
             // should not happen
-            ss << getItemTypeName();
+            ss << itemType.name;
+            if (personalizedName.empty())
+            {
+                ss << itemType.name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+            }
         }
         break;
 
     default:
         // should not happen
-        ss << getItemTypeName();
+        if (personalizedName.empty())
+        {
+            ss << itemType.name;
+        }
+        else
+        {
+            LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
+            ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+        }
         break;
     }
 
@@ -4504,12 +5141,10 @@ std::uint8_t d2ce::Item::getDisplayedSocketCount() const
         ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
         for (auto& attrib : magicalAttributes)
         {
-            const auto& stat = ItemHelpers::getItemStat(attrib.Id);
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if(stat.name == "item_numsockets")
             {
-            case 194:
                 eCount += ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat);
-                break;
             }
         }
 
@@ -4524,24 +5159,26 @@ std::string d2ce::Item::getDisplayedSocketedRunes() const
     std::string name;
     std::stringstream ss;
     bool bFirstItem = true;
+
+    std::string quoteStr;
+    LocalizationHelpers::GetStringTxtValue("RuneQuote", quoteStr, "'");
     for (const auto& item : SocketedItems)
     {
         if (item.isRune())
         {
             if (bFirstItem)
             {
-                ss << "'";
+                ss << quoteStr;
                 bFirstItem = false;
             }
 
-            name = item.getItemTypeName();
-            ss << name.substr(0, name.find(" "));
+            ss << item.getRuneLetter();
         }
     }
 
     if (!bFirstItem)
     {
-        ss << "'";
+        ss << quoteStr;
     }
 
     return ss.str();
@@ -4565,18 +5202,30 @@ std::uint16_t d2ce::Item::getDisplayedDefenseRating(std::uint32_t charLevel) con
         std::uint64_t def = 0;
         for (auto& attrib : magicalAttributes)
         {
-            const auto& stat = ItemHelpers::getItemStat(attrib.Id);
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "armorclass")
             {
-            case 16:
-            case 215:
-                eDef += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 31:
-            case 214:
                 def += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "armorclass")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDef += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+
+                        case 4:
+                            def += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -4606,25 +5255,36 @@ bool d2ce::Item::getDisplayedDurability(ItemDurability& durability, std::uint32_
     std::vector<MagicalAttribute> magicalAttributes;
     if (getCombinedMagicalAttributes(magicalAttributes))
     {
+
         ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
         for (auto& attrib : magicalAttributes)
         {
-            const auto& stat = ItemHelpers::getItemStat(attrib.Id);
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "maxdurability")
             {
-            case 73:
                 dur += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 75:
-                eDur += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case ATTRIBUTE_ID_INDESTRUCTIBLE:
+            }
+            else if (stat.name == "item_indesctructible")
+            {
                 // Indestructible
                 durability.Max = 0;
                 durability.Current = 0;
                 return true;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "maxdurability")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                            eDur += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -4650,6 +5310,10 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
         // Calculate item bonus
         std::uint64_t eDmg = 0;
         std::uint64_t eDmgMax = 0;
+        std::uint64_t eDmg2 = 0;
+        std::uint64_t eDmgMax2 = 0;
+        std::uint64_t eDmgThrow = 0;
+        std::uint64_t eDmgMaxThrow = 0;
         std::uint64_t dmgMin = 0;
         std::uint64_t dmgMax = 0;
         std::uint64_t dmgMin2 = 0;
@@ -4658,40 +5322,120 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
         std::uint64_t dmgMaxThrow = 0;
         for (auto& attrib : magicalAttributes)
         {
-            const auto& stat = ItemHelpers::getItemStat(attrib.Id);
-            switch (attrib.Id)
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "mindamage")
             {
-            case 17:
-                eDmg += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 21:
                 dmgMin += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 22:
+            }
+            else if (stat.name == "maxdamage")
+            {
                 dmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 23:
+            }
+            else if (stat.name == "secondary_mindamage")
+            {
                 dmgMin2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
-                break;
-
-            case 24:
+            }
+            else if (stat.name == "secondary_maxdamage")
+            {
                 dmgMax2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
-                break;
-
-            case 219:
-                eDmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                break;
-
-            case 159:
+            }
+            else if (stat.name == "item_throw_mindamage")
+            {
                 dmgMinThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
-                break;
-
-            case 160:
+            }
+            else if (stat.name == "item_throw_maxdamage")
+            {
                 dmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
-                break;
+            }
+            else
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if (opStat == "mindamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmg += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+
+                        case 4:
+                            dmgMin += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+                        }
+                    }
+                    else if (opStat == "maxdamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+
+                        case 4:
+                            dmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            break;
+                        }
+                    }
+                    else if (opStat == "secondary_mindamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmg2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                            break;
+
+                        case 4:
+                            dmgMin2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
+                            break;
+                        }
+                    }
+                    else if (opStat == "secondary_maxdamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmgMax2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            break;
+
+                        case 4:
+                            dmgMax2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
+                            break;
+                        }
+                    }
+                    else if (opStat == "item_throw_mindamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmgThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                            break;
+
+                        case 4:
+                            dmgMinThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMin
+                            break;
+                        }
+                    }
+                    else if (opStat == "item_throw_maxdamage")
+                    {
+                        switch (stat.opAttribs.op)
+                        {
+                        case 13:
+                        case 5:
+                            eDmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            break;
+
+                        case 4:
+                            dmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -4699,10 +5443,20 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
         {
             dmgMin = std::max(dmgMinThrow, dmgMin2);
         }
+        
+        if (eDmg == 0)
+        {
+            eDmg = std::max(eDmgThrow, eDmg2);
+        }
 
         if (dmgMax == 0)
         {
             dmgMax = std::max(dmgMaxThrow, dmgMax2);
+        }
+
+        if (eDmgMax == 0)
+        {
+            eDmgMax = std::max(eDmgMaxThrow, eDmgMax2);
         }
 
         if (isEthereal())
@@ -4760,6 +5514,52 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedRequirements(ItemRequirements& req, std::uint32_t charLevel) const
+{
+    req.clear();
+    if (!getRequirements(req))
+    {
+        return false;
+    }
+
+    // Calculate item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (getCombinedMagicalAttributes(magicalAttributes))
+    {
+        ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
+
+        std::uint64_t eReq = 0;
+        for (auto& attrib : magicalAttributes)
+        {
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.name == "item_req_percent")
+            {
+                eReq += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+            }
+            else if (stat.name == "item_levelreq")
+            {
+                req.Level += std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat));
+            }
+            else if ((stat.name == "item_nonclassskill") || (stat.name == "item_singleskill"))
+            {
+                auto skillId = std::uint16_t(ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat));
+                const auto& skillInfo = d2ce::CharClassHelper::getSkillById(skillId);
+                if (skillInfo.reqLevel > 1)
+                {
+                    req.Level = std::max(req.Level, skillInfo.reqLevel);
+                }
+            }
+        }
+
+        if (eReq > 0)
+        {
+            req.Dexterity += std::uint16_t((req.Dexterity * eReq) / 100);
+            req.Strength += std::uint16_t((req.Strength * eReq) / 100);
+        }
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const
 {
     if (isEar())
@@ -4767,28 +5567,17 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         return "";
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    getItemCode(strcode);
-    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    std::string temp;
+    const auto& itemType = getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return "";
+    }
+
     if (itemType.isPotion())
     {
-        auto points = itemType.getPotionPoints(charClass);
-        if (points == 0)
-        {
-            return "";
-        }
-
-        std::stringstream ss;
-        if (itemType.isRejuvenationPotion())
-        {
-            ss << "Heals " << std::dec << points << "% Life and Mana";
-        }
-        else
-        {
-            ss << "Points: " << std::dec << points;
-        }
-
-        return ss.str();
+        return itemType.getPotionDesc(charClass);
     }
 
     bool bFirst = true;
@@ -4803,20 +5592,25 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Can be Inserted into Socketed Items";
+
+        LocalizationHelpers::GetStringTxtValue("ExInsertSockets", temp, "Can be Inserted into Socketed Items");
+        ss << temp;
 
         if (!itemType.isJewel())
         {
             std::string attribSep = (itemType.isRune() ? ",\n" : ", ");
             ss << "\n";
             std::vector<MagicalAttribute> attribs;
-            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Weapon))
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, 0))
             {
                 // check for the "all" cases
                 ItemHelpers::checkForRelatedMagicalAttributes(attribs);
 
                 bool bFirstAttrib = true;
-                ss << "\nWeapons: ";
+                LocalizationHelpers::GetStringTxtValue("GemXp3", temp, "Weapons:");
+                ss << "\n";
+                ss << temp;
+                ss << " ";
                 for (auto& attrib : attribs)
                 {
                     if (!attrib.Visible)
@@ -4842,13 +5636,16 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                 }
             }
 
-            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Armor))
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, 1))
             {
                 // check for the "all" cases
                 ItemHelpers::checkForRelatedMagicalAttributes(attribs);
 
                 bool bFirstAttrib = true;
-                ss << "\nArmor: ";
+                LocalizationHelpers::GetStringTxtValue("GemXp4", temp, "Armor:");
+                ss << "\n";
+                ss << temp;
+                ss << " ";
                 std::stringstream ss2;
                 for (auto& attrib : attribs)
                 {
@@ -4875,17 +5672,25 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                 }
                 auto commonText = ss2.str();
                 ss << commonText;
-                ss << "\nHelms: ";
+
+                LocalizationHelpers::GetStringTxtValue("GemXp1", temp, "Helms:");
+                ss << "\n";
+                ss << temp;
+                ss << " ";
                 ss << commonText;
             }
 
-            if (itemType.getSocketedMagicalAttributes(*this, attribs, d2ce::EnumItemType::Shield))
+            if (itemType.getSocketedMagicalAttributes(*this, attribs, 2))
             {
                 // check for the "all" cases
                 ItemHelpers::checkForRelatedMagicalAttributes(attribs);
 
                 bool bFirstAttrib = true;
-                ss << "\nShields: ";
+
+                LocalizationHelpers::GetStringTxtValue("GemXp2", temp, "Shields:");
+                ss << "\n";
+                ss << temp;
+                ss << " ";
 
                 for (auto& attrib : attribs)
                 {
@@ -4927,7 +5732,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
             ss << "\n";
         }
 
-        ss << "Defense: " << std::dec << defenseRating;
+        LocalizationHelpers::GetStringTxtValue("ItemStats1h", temp, "Defense: %d");
+        ss << d2ce::LocalizationHelpers::string_format(temp, defenseRating);
     }
 
     if (itemType.isBelt())
@@ -4947,7 +5753,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                     ss << "\n";
                 }
 
-                ss << "Belt Size: +" << std::dec << numSlots << " Slots";
+                LocalizationHelpers::GetStringTxtValue("BeltStorageModifierInfo", temp, "Belt Size: %+d Slots");
+                ss << d2ce::LocalizationHelpers::string_format(temp, numSlots);
             }
         }
     }
@@ -4967,13 +5774,16 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                 ss << "\n";
             }
 
-            ss << "Throw Damage: ";
             if (dam.Missile.Min != dam.Missile.Max)
             {
-                ss << std::dec << dam.Missile.Min << " to ";
+                LocalizationHelpers::GetStringTxtValue("strItemStatThrowDamageRange", temp, "Throw Damage: %d to %d");
+                ss << d2ce::LocalizationHelpers::string_format(temp, dam.Missile.Min, dam.Missile.Max);
             }
-
-            ss << std::dec << dam.Missile.Max;
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("ItemStats1n", temp, "Throw Damage: %d");
+                ss << d2ce::LocalizationHelpers::string_format(temp, dam.Missile.Max);
+            }
         }
 
         if (dam.OneHanded.Max != 0 && dam.OneHanded.Min != 0)
@@ -4987,13 +5797,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                 ss << "\n";
             }
 
-            ss << "One-Hand Damage: ";
-            if (dam.OneHanded.Min != dam.OneHanded.Max)
-            {
-                ss << std::dec << dam.OneHanded.Min << " to ";
-            }
-
-            ss << std::dec << dam.OneHanded.Max;
+            LocalizationHelpers::GetStringTxtValue("ItemStats1l", temp, "One-Hand Damage: %d to %d");
+            ss << d2ce::LocalizationHelpers::string_format(temp, dam.OneHanded.Min, dam.OneHanded.Max);
         }
 
         if (dam.bTwoHanded && dam.TwoHanded.Max != 0 && dam.TwoHanded.Min != 0)
@@ -5007,13 +5812,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
                 ss << "\n";
             }
 
-            ss << "Two-Hand Damage: ";
-            if (dam.TwoHanded.Min != dam.TwoHanded.Max)
-            {
-                ss << std::dec << dam.TwoHanded.Min << " to ";
-            }
-
-            ss << std::dec << dam.TwoHanded.Max;
+            LocalizationHelpers::GetStringTxtValue("ItemStats1m", temp, "Two-Hand Damage: %d to %d");
+            ss << d2ce::LocalizationHelpers::string_format(temp, dam.TwoHanded.Min, dam.TwoHanded.Max);
         }
     }
 
@@ -5029,7 +5829,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
             ss << "\n";
         }
 
-        ss << "Durability: " << std::dec << durability.Current << " of " << std::dec << durability.Max;
+        LocalizationHelpers::GetStringTxtValue("ItemStats1d", temp, "Durability: %i of %i");
+        ss << d2ce::LocalizationHelpers::string_format(temp, durability.Current, durability.Max);
     }
 
     if (itemType.isStackable())
@@ -5042,11 +5843,13 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Quantity: " << std::dec << getQuantity();
+
+        LocalizationHelpers::GetStringTxtValue("ItemStats1i", temp, "Quantity: %d of %d");
+        ss << d2ce::LocalizationHelpers::string_format(temp, getQuantity(), getMaxQuantity());
     }
 
     ItemRequirements req;
-    if (!getRequirements(req))
+    if (!getDisplayedRequirements(req, charLevel))
     {
         req = itemType.req;
     }
@@ -5061,7 +5864,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Required Dexterity: " << std::dec << req.Dexterity;
+
+        LocalizationHelpers::GetStringTxtValue("ItemStats1f", temp, "Required Dexterity: %d");
+        ss << d2ce::LocalizationHelpers::string_format(temp, req.Dexterity);
     }
 
     if (req.Strength > 0)
@@ -5074,7 +5879,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Required Strength: " << std::dec << req.Strength;
+
+        LocalizationHelpers::GetStringTxtValue("ItemStats1e", temp, "Required Strength: %d");
+        ss << d2ce::LocalizationHelpers::string_format(temp, req.Strength);
     }
 
     if (req.Level > 0)
@@ -5087,7 +5894,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         {
             ss << "\n";
         }
-        ss << "Required Level: " << std::dec << req.Level;
+
+        LocalizationHelpers::GetStringTxtValue("ItemStats1p", temp, "Required Level: %d");
+        ss << d2ce::LocalizationHelpers::string_format(temp, req.Level);
     }
 
     return ss.str();
@@ -5106,13 +5915,7 @@ bool d2ce::Item::getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& at
     if (hasUndeadBonus())
     {
         // Push back special class attribute
-        static const auto& stat = ItemHelpers::getItemStat(122);
-        MagicalAttribute attrib;
-        attrib.Id = stat.id;
-        attrib.Desc = stat.desc;
-        attrib.Name = stat.name;
-        attrib.Values = { 50 };
-        attribs.push_back(attrib);
+        AddUndeadBonusMagicalAttribute(getVersion(), getGameVersion(), attribs);
     }
 
     // check for the "all" cases
@@ -5251,11 +6054,19 @@ bool d2ce::Item::setBits64(size_t& current_bit_offset, size_t bits, std::uint64_
     return updateBits64(readOffset, bits, value);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
+bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* charfile)
 {
-    FileVersion = version;
+    switch (version)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        break;
+    }
+
     data.clear();
     SocketedItems.clear();
+    cachedCombinedMagicalAttributes.clear();
 
     item_current_socket_idx = 0;
     dwa_bit_offset = 0;
@@ -5268,7 +6079,24 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
 
     start_bit_offset = 0;
     size_t current_bit_offset = start_bit_offset;
-    if (FileVersion < EnumCharVersion::v115) // pre-1.15 character file
+    ItemVersion = version;
+    switch (ItemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        GameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        GameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        GameVersion = isExpansion ? 100 : 1;
+    }
+
+    if (ItemVersion < EnumItemVersion::v115) // pre-1.15 character file
     {
         std::uint8_t value = (std::uint8_t)readBits(charfile, current_bit_offset, 8);
         if (value != ITEM_MARKER[0])
@@ -5292,41 +6120,21 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             return false;
         }
 
-        ItemVersion = EnumItemVersion::v110;
-        switch (getRawVersion())
+        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
         {
-        case 0: // pre-1.08
-            if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
+            if (read_uint32_bits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
             {
-                if (read_uint32_bits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
-                {
-                    ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
-                }
-                else
-                {
-                    ItemVersion = EnumItemVersion::v100; // v1.00 - v1.03
-                }
+                ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
             }
             else
             {
-                ItemVersion = EnumItemVersion::v107;     // v1.07 item
+                ItemVersion = EnumItemVersion::v100; // v1.00 - v1.03 item
             }
-            break;
-
-        case 1:
-        case 100:
-            ItemVersion = EnumItemVersion::v108;         // v1.08/1.09 normal or expansion
-            break;
-
-        case 2:
-        case 101:
-            ItemVersion = EnumItemVersion::v110;         // v1.10 normal or expansion
-            break;
         }
 
-        switch (Version())
+        switch (getVersion())
         {
-        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
             location_bit_offset = 0;
             equipped_id_offset = 0;
             alt_position_id_offset = 0;
@@ -5365,6 +6173,12 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
                 getItemCode(strcode);
                 const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+                if (itemType.version != 0)
+                {
+                    // should not happen
+                    return false;
+                }
+
                 if (itemType.isGoldItem())
                 {
                     gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
@@ -5378,7 +6192,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             extended_data_offset = current_bit_offset;
             break;
 
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             location_bit_offset = 0;
             equipped_id_offset = 0;
             alt_position_id_offset = 0;
@@ -5421,8 +6235,8 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_104;
                 quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
                 item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
-                dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
-                dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
+                dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
+                dwb_bit_offset = ITEM_V104_EX_DWB_BIT_OFFSET;
 
                 // 31 bytes total
                 if (!skipBits(charfile, current_bit_offset, (ITEM_V104_EX_NUM_BITS - current_bit_offset)))
@@ -5435,6 +6249,12 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
                 getItemCode(strcode);
                 const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+                if (itemType.version != 0)
+                {
+                    // should not happen
+                    return false;
+                }
+
                 if (itemType.isGoldItem())
                 {
                     gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_104;
@@ -5448,7 +6268,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             extended_data_offset = current_bit_offset;
             break;
 
-        default: // v1.07 - v1.14d
+        default: // v1.07 - v1.14d item
             location_bit_offset = ITEM_V115_LOCATION_BIT_OFFSET + ITEM_V107_START_BIT_OFFSET;
             equipped_id_offset = ITEM_V115_EQUIPPED_ID_BIT_OFFSET + ITEM_V107_START_BIT_OFFSET;
             position_offset = ITEM_V115_POSITION_BIT_OFFSET + ITEM_V107_START_BIT_OFFSET;
@@ -5466,8 +6286,6 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         alt_position_id_offset = ITEM_V115_ALT_POSITION_ID_BIT_OFFSET;
         type_code_offset = ITEM_V115_TYPE_CODE_BIT_OFFSET;
 
-        ItemVersion = EnumItemVersion::v115; // v1.15 Diable II: Resurrected
-
         // skip up to type code
         if (!skipBits(charfile, current_bit_offset, type_code_offset))
         {
@@ -5481,8 +6299,9 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 return false;
             }
 
-            // up to 15 7 bit characters
-            for (std::uint8_t idx = 0; !feof(charfile) && idx < 15 && readBits(charfile, current_bit_offset, 7) != 0; ++idx);
+            // up to 15 7/8 bit characters
+            size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+            for (std::uint8_t idx = 0; !feof(charfile) && idx <= 15 && readBits(charfile, current_bit_offset, bitSize) != 0; ++idx);
             extended_data_offset = current_bit_offset;
             item_end_bit_offset = current_bit_offset;
             return true;
@@ -5504,7 +6323,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
     }
 
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (Version() >= EnumItemVersion::v107) // pre-1.15 character file
+    if (getVersion() >= EnumItemVersion::v107) // pre-1.15 character file
     {
         quest_difficulty_offset = 0;
         gld_stackable_bit_offset = 0;
@@ -5695,15 +6514,15 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         {
             personalized_bit_offset = current_bit_offset;
 
-            // up to 15 7 bit characters
-            for (std::uint8_t idx = 0; !feof(charfile) && idx < 15 && readBits(charfile, current_bit_offset, 7) != 0; ++idx);
+            // up to 15 7/8 bit characters
+            size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+            for (std::uint8_t idx = 0; !feof(charfile) && idx <= 15 && readBits(charfile, current_bit_offset, bitSize) != 0; ++idx);
         }
 
-        std::uint8_t base = itemType.getBaseType();
-        bool isArmor = (base & 4) != 0 ? true : false;
-        bool isWeapon = (base & 2) != 0 ? true : false;
-        bool isTome = (base & 8) != 0 ? true : false;
-        bool isStackable = (base & 1) != 0 ? true : false;
+        bool isArmor = itemType.isArmor();
+        bool isWeapon = itemType.isWeapon();
+        bool isTome = itemType.isBook();
+        bool isStackable = itemType.isStackable();
 
         if (isTome)
         {
@@ -5716,14 +6535,38 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
                 return false;
             }
         }
-
-        // Realm Data Flag
-        realm_bit_offset = current_bit_offset;
-        if (readBits(charfile, current_bit_offset, 1) != 0)
+        else if (itemType.isBodyPart())
         {
-            if (!skipBits(charfile, current_bit_offset, REAL_DATA_NUM_BITS))
+            // If the item is a body part, it will contain 10 extra bits, we're not
+            // interested in these bits, the value is usually 0, but not sure
+            // what it is.
+            body_part_bit_offset = current_bit_offset;
+            if (!skipBits(charfile, current_bit_offset, MONSTER_ID_NUM_BITS))
             {
                 return false;
+            }
+        }
+
+         
+        realm_bit_offset = current_bit_offset;
+        auto realmBits = (ItemVersion >= EnumItemVersion::v115) ? REAL_DATA_NUM_BITS : REAL_DATA_NUM_BITS_110;
+        std::vector<std::uint32_t> test(realmBits / 32, 0);
+        if (readBits(charfile, current_bit_offset, 1) != 0)
+        {
+            if (!itemType.isMiscellaneous() || itemType.isGem() || itemType.isRing() ||
+                itemType.isAmulet() || itemType.isCharm() || itemType.isRune())
+            {
+                if (!skipBits(charfile, current_bit_offset, realmBits))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!skipBits(charfile, current_bit_offset, 3))
+                {
+                    return false;
+                }
             }
         }
 
@@ -5738,7 +6581,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             {
                 // Defense rating
                 defense_rating_bit_offset = current_bit_offset;
-                if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)))
+                if (!skipBits(charfile, current_bit_offset, ((ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)))
                 {
                     return false;
                 }
@@ -5749,7 +6592,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             if (readBits(charfile, current_bit_offset, DURABILITY_MAX_NUM_BITS) > 0)
             {
                 // current durability value (8 bits + unknown single bit)
-                if (!skipBits(charfile, current_bit_offset, ((FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108)))
+                if (!skipBits(charfile, current_bit_offset, ((ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108)))
                 {
                     return false;
                 }
@@ -5839,7 +6682,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
         {
             SocketedItems.resize(SocketedItems.size() + 1);
             auto& childItem = SocketedItems.back();
-            if (!childItem.readItem(FileVersion, charfile))
+            if (!childItem.readItem(version, isExpansion, charfile))
             {
                 return false;
             }
@@ -5854,7 +6697,7 @@ bool d2ce::Item::readItem(EnumCharVersion version, std::FILE* charfile)
             childItem.getItemCode(strcode);
             const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
             std::vector<MagicalAttribute> attribs;
-            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getItemType());
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
         }
     }
 
@@ -5904,40 +6747,36 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         EarAttributes earAttrib;
-        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class_id"];
         if (node.isNull())
         {
-            return false;
-        }
+            if (bSerializedFormat)
+            {
+                return false;
+            }
 
-        if (bSerializedFormat)
+            node = earRoot["class"];
+            if (node.isNull())
+            {
+                return false;
+            }
+
+            std::string className = node.asString();
+            if (!CharClassHelper::getEnumCharClassByName(className, earAttrib.Class))
+            {
+                if (!CharClassHelper::getEnumCharClassByIndex(className, earAttrib.Class))
+                {
+                    return false;
+                }
+            }
+        }
+        else
         {
             value = std::uint32_t(node.asInt64());
             if (value > std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION))
             {
                 return false;
             }
-            earAttrib.Class = static_cast<EnumCharClass>(value);
-        }
-        else
-        {
-            bool bFound = false;
-            std::string className = node.asString();
-            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION); ++idx)
-            {
-                if (ClassNames[idx].compare(className) == 0)
-                {
-                    bFound = true;
-                    value = idx;
-                    break;
-                }
-            }
-
-            if (!bFound)
-            {
-                return false;
-            }
-
             earAttrib.Class = static_cast<EnumCharClass>(value);
         }
 
@@ -5975,9 +6814,9 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             return false;
         }
 
-        // up to 15 7 bit characters
-        bitSize = 7;
-        for (size_t idx = 0; idx < 15; ++idx)
+        // up to 15 7/8 bit characters
+        bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+        for (size_t idx = 0; idx <= 15; ++idx)
         {
             if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
             {
@@ -6144,15 +6983,15 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
     std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
     std::memcpy(strcode.data(), sValue.c_str(), 3);
-    std::uint16_t itemCode = ItemHelpers::getTypeCodev100(strcode);
-    if (itemCode >= UINT16_MAX)
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    if (itemType.code_v100 == UINT16_MAX)
     {
         return false;
     }
 
     size_t bitSize = 10;
     current_bit_offset = type_code_offset;
-    if (!setBits(current_bit_offset, bitSize, itemCode))
+    if (!setBits(current_bit_offset, bitSize, itemType.code_v100))
     {
         return false;
     }
@@ -6189,10 +7028,10 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         {
             return false;
         }
-        value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
+        value = std::uint16_t(node.asInt64());
 
         current_bit_offset = quality_attrib_bit_offset;
-        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -6208,7 +7047,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         value = std::uint16_t(node.asInt64());
 
         current_bit_offset = quality_attrib_bit_offset;
-        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -6249,7 +7088,6 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
     stackable_bit_offset = 0;
     gld_stackable_bit_offset = 0;
-    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
     if (itemType.isGoldItem())
     {
         gld_stackable_bit_offset = start_bit_offset + QUANTITY_BIT_OFFSET_100;
@@ -6309,8 +7147,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
     if (node.isNull())
     {
-        // generate new one
-        value = ItemHelpers::generarateRandomMagicLevel();
+        value = itemType.level.Quality;
     }
     else
     {
@@ -6630,11 +7467,14 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     if (node.isNull())
     {
         // generate new one
-        value = ItemHelpers::generarateRandomDW();
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
+            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+        }
+        else
+        {
+            value = ItemHelpers::generarateRandomDW();
         }
     }
     else
@@ -6688,40 +7528,36 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         EarAttributes earAttrib;
-        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class_id"];
         if (node.isNull())
         {
-            return false;
-        }
+            if (bSerializedFormat)
+            {
+                return false;
+            }
 
-        if (bSerializedFormat)
+            node = earRoot["class"];
+            if (node.isNull())
+            {
+                return false;
+            }
+
+            std::string className = node.asString();
+            if (!CharClassHelper::getEnumCharClassByName(className, earAttrib.Class))
+            {
+                if (!CharClassHelper::getEnumCharClassByIndex(className, earAttrib.Class))
+                {
+                    return false;
+                }
+            }
+        }
+        else
         {
             value = std::uint32_t(node.asInt64());
             if (value > std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION))
             {
                 return false;
             }
-            earAttrib.Class = static_cast<EnumCharClass>(value);
-        }
-        else
-        {
-            bool bFound = false;
-            std::string className = node.asString();
-            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION); ++idx)
-            {
-                if (ClassNames[idx].compare(className) == 0)
-                {
-                    bFound = true;
-                    value = idx;
-                    break;
-                }
-            }
-
-            if (!bFound)
-            {
-                return false;
-            }
-
             earAttrib.Class = static_cast<EnumCharClass>(value);
         }
 
@@ -6759,9 +7595,9 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             return false;
         }
 
-        // up to 15 7 bit characters
-        bitSize = 7;
-        for (size_t idx = 0; idx < 15; ++idx)
+        // up to 15 7/8 bit characters
+        bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+        for (size_t idx = 0; idx <= 15; ++idx)
         {
             if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
             {
@@ -7216,10 +8052,10 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         {
             return false;
         }
-        value = ItemHelpers::getSetCodev100(std::uint16_t(node.asInt64()));
+        value = std::uint32_t(node.asInt64());
 
         current_bit_offset = quality_attrib_bit_offset;
-        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7235,7 +8071,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         value = std::uint16_t(node.asInt64());
 
         current_bit_offset = quality_attrib_bit_offset;
-        bitSize = ITEN_V100_UNIQUE_ID_NUM_BITS;
+        bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7317,8 +8153,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
     if (node.isNull())
     {
-        // generate new one
-        value = ItemHelpers::generarateRandomMagicLevel();
+        value = itemType.level.Quality;
     }
     else
     {
@@ -7610,11 +8445,14 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     if (node.isNull())
     {
         // generate new one
-        value = ItemHelpers::generarateRandomDW();
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::generateSetDWBCodev100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode, value, getLevel());
+            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+        }
+        else
+        {
+            value = ItemHelpers::generarateRandomDW();
         }
     }
     else
@@ -7632,16 +8470,16 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumCharVersion version)
+bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumItemVersion version, bool isExpansion)
 {
     if (itemRoot.isNull())
     {
         return false;
     }
 
-    FileVersion = version;
     data.clear();
     SocketedItems.clear();
+    cachedCombinedMagicalAttributes.clear();
 
     item_current_socket_idx = 0;
     dwa_bit_offset = 0;
@@ -7688,92 +8526,70 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
     }
 
-    if (FileVersion < EnumCharVersion::v115)
+    ItemVersion = version;
+    switch (ItemVersion)
+    {
+    case EnumItemVersion::v100:
+        isExpansion = false;
+        GameVersion = 0;
+        ItemVersion = EnumItemVersion::v100; // v1.00 - v1.03 item
+        node = itemRoot["IsV104"];
+        if (!node.isNull() && (node.asInt64() != 0))
+        {
+            ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
+        }
+        break;
+
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        GameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        GameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        GameVersion = isExpansion ? 100 : 1;
+    }
+
+    if (ItemVersion < EnumItemVersion::v115)
     {
         value = *((std::uint16_t*)ITEM_MARKER.data());
         setBits(current_bit_offset, ITEM_MARKER.size()*8, value);
         start_bit_offset = current_bit_offset;
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-        ItemVersion = EnumItemVersion::v110;
         node = itemRoot[bSerializedFormat ? "Version" : "version"];
         if (node.isNull())
         {
-            if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
+            if (ItemVersion <= EnumItemVersion::v107) // pre-1.07 character file
             {
                 rawVersion = 0;
-                if (bIsCompact)
-                {
-                    ItemVersion = EnumItemVersion::v100; // v1.00 - v1.03
-                }
-                else
-                {
-                    ItemVersion = EnumItemVersion::v104;     // v1.04 - v1.06 item
-                }
             }
-            else if (FileVersion == EnumCharVersion::v107) // pre-1.07 character file
-            {
-                rawVersion = 0;
-                ItemVersion = EnumItemVersion::v107;         // v1.07 item
-            }
-            else if (FileVersion < EnumCharVersion::v110) // pre-1.10 character file
+            else if (version < EnumItemVersion::v110) // pre-1.10 character file
             {
                 rawVersion = 100;
-                ItemVersion = EnumItemVersion::v108; // v1.08/1.09 normal or expansion
             }
             else
             {
                 rawVersion = 2;
-                ItemVersion = EnumItemVersion::v110; // v1.10 normal or expansion
             }
         }
         else
         {
             rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 10)) : std::uint16_t(node.asInt64());
-            switch (rawVersion)
-            {
-            case 0:
-                if (FileVersion < EnumCharVersion::v107) // pre-1.07 character file
-                {
-                    if (bIsCompact)
-                    {
-                        ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
-                    }
-                    else
-                    {
-                        ItemVersion = EnumItemVersion::v100; // v1.00 - v1.03
-                    }
-                }
-                else
-                {
-                    ItemVersion = EnumItemVersion::v107;     // v1.07 item
-                }
-                break;
-
-            case 1:
-            case 100:
-                ItemVersion = EnumItemVersion::v108;         // v1.08/1.09 normal or expansion
-                break;
-
-            case 2:
-            case 101:
-                ItemVersion = EnumItemVersion::v110;         // v1.10 normal or expansion
-                break;
-
-            default:
-                return false;
-            }
         }
     }
     else
     {
-        rawVersion = 5;
+        GameVersion = isExpansion ? 100 : 1;
+        rawVersion = isExpansion ? 5 : 4;
         node = itemRoot[bSerializedFormat ? "Version" : "version"];
         if (!node.isNull())
         {
             rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 2)) : std::uint16_t(node.asInt64());
         }
-        ItemVersion = EnumItemVersion::v115;  // v1.15 Diable II: Resurrected
     }
 
     // flags
@@ -7799,7 +8615,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     node = itemRoot[bSerializedFormat ? "IsEthereal" : "ethereal"];
     SetFlagBit(node, IS_ETHEREAL_FLAG_OFFSET, flags);
 
-    if (FileVersion >= EnumCharVersion::v107)
+    if (ItemVersion >= EnumItemVersion::v107)
     {
         flags[23] = 1; // unknown but always one as far as I have noticed
 
@@ -7891,6 +8707,14 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 }
             }
         }
+        else if (ItemVersion == EnumItemVersion::v104)
+        {
+            auto tempOffset = start_bit_offset + ITEM_TYPE_BIT_OFFSET;
+            if (!setBits(tempOffset, 2, 0x3))
+            {
+                return false;
+            }
+        }
 
         value = 0;
         node = itemRoot[bSerializedFormat ? "NumberOfSocketedItems" : "nr_of_items_in_sockets"];
@@ -7902,19 +8726,19 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
         switch (ItemVersion)
         {
-        case EnumItemVersion::v100:
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
             if (!readItemv100(itemRoot, bSerializedFormat))
             {
                 return 0;
             }
 
-            if (isEar())
+            if (isEar() || isSimpleItem())
             {
                 numSocketed = 0;
             }
             break;
 
-        case EnumItemVersion::v104: // v1.04 - v1.06
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
             if (!readItemv104(itemRoot, bSerializedFormat))
             {
                 return 0;
@@ -7942,7 +8766,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             {
                 SocketedItems.resize(SocketedItems.size() + 1);
                 auto& childItem = SocketedItems.back();
-                if (!childItem.readItem(*iter, bSerializedFormat, FileVersion))
+                if (!childItem.readItem(*iter, bSerializedFormat, version, isExpansion))
                 {
                     return false;
                 }
@@ -7957,7 +8781,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 childItem.getItemCode(strcode);
                 const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
                 std::vector<MagicalAttribute> attribs;
-                childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getItemType());
+                childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
             }
         }
 
@@ -7965,7 +8789,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     }
 
     value = rawVersion;
-    size_t bitSize = (FileVersion < EnumCharVersion::v115 ? 10 : 3);
+    size_t bitSize = (ItemVersion < EnumItemVersion::v115 ? 10 : 3);
     if (!setBits(current_bit_offset, bitSize, value))
     {
         return false;
@@ -8067,40 +8891,36 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
 
         EarAttributes earAttrib;
-        node = earRoot[bSerializedFormat ? "FileIndex" : "class"];
+        node = earRoot[bSerializedFormat ? "FileIndex" : "class_id"];
         if (node.isNull())
         {
-            return false;
-        }
-
-        if (bSerializedFormat)
-        {
-            value = std::uint32_t(node.asInt64());
-            if (value > std::uint8_t(NUM_OF_CLASSES))
+            if (bSerializedFormat)
             {
                 return false;
             }
-            earAttrib.Class = static_cast<EnumCharClass>(value);
+
+            node = earRoot["class"];
+            if (node.isNull())
+            {
+                return false;
+            }
+
+            std::string className = node.asString();
+            if (!CharClassHelper::getEnumCharClassByName(className, earAttrib.Class))
+            {
+                if (!CharClassHelper::getEnumCharClassByIndex(className, earAttrib.Class))
+                {
+                    return false;
+                }
+            }
         }
         else
         {
-            bool bFound = false;
-            std::string className = node.asString();
-            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES); ++idx)
-            {
-                if (ClassNames[idx].compare(className) == 0)
-                {
-                    bFound = true;
-                    value = idx;
-                    break;
-                }
-            }
-
-            if (!bFound)
+            value = std::uint32_t(node.asInt64());
+            if (value > std::uint8_t(NUM_OF_CLASSES_NO_EXPANSION))
             {
                 return false;
             }
-
             earAttrib.Class = static_cast<EnumCharClass>(value);
         }
 
@@ -8136,10 +8956,11 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             return false;
         }
 
-        // up to 15 7 bit characters
-        for (size_t idx = 0; idx < 15; ++idx)
+        // up to 15 7/8 bit characters
+        bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+        for (size_t idx = 0; idx <= 15; ++idx)
         {
-            if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
+            if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
             {
                 return false;
             }
@@ -8173,13 +8994,14 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     current_bit_offset = type_code_offset;
     switch (ItemVersion)
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03
-    case EnumItemVersion::v104: // v1.04 - v1.0.6
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
         return false; // should not get here
 
-    case EnumItemVersion::v107: // v1.07
-    case EnumItemVersion::v108: // v1.08/1.09 normal or expansion
-    case EnumItemVersion::v110: // v1.10
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
         value = *((std::uint32_t*)strcode.data());
         if (!setBits(current_bit_offset, bitSize, value))
         {
@@ -8187,7 +9009,9 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
         break;
 
-    default: // v1.15+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default: 
         ItemHelpers::encodeItemCodev115(strcode, value64, numBitsSet);
         bitSize = numBitsSet;
         if (!setBits64(current_bit_offset, bitSize, value64))
@@ -8555,13 +9379,22 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             }
             else
             {
-                node = itemRoot["rare_name"];
+                node = itemRoot["rare_index"];
                 if (node.isNull())
                 {
-                    return false;
+                    node = itemRoot["rare_name"];
+                    if (node.isNull())
+                    {
+                        return false;
+                    }
+
+                    value = ItemHelpers::getIdFromRareName(node.asString());
+                }
+                else
+                {
+                    value = ItemHelpers::getIdFromRareIndex(node.asString());
                 }
 
-                value = ItemHelpers::getIdFromRareName(node.asString());
                 if (value == 0)
                 {
                     return false;
@@ -8589,13 +9422,22 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             }
             else
             {
-                node = itemRoot["rare_name2"];
+                node = itemRoot["rare_index2"];
                 if (node.isNull())
                 {
-                    return false;
+                    node = itemRoot["rare_name2"];
+                    if (node.isNull())
+                    {
+                        return false;
+                    }
+
+                    value = ItemHelpers::getIdFromRareName(node.asString());
+                }
+                else
+                {
+                    value = ItemHelpers::getIdFromRareIndex(node.asString());
                 }
 
-                value = ItemHelpers::getIdFromRareName(node.asString());
                 if (value == 0)
                 {
                     return false;
@@ -8819,10 +9661,11 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             return false;
         }
 
-        // up to 15 7 bit characters
-        for (size_t idx = 0; idx < 15; ++idx)
+        // up to 15 7/8 bit characters
+        bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
+        for (size_t idx = 0; idx <= 15; ++idx)
         {
-            if (!setBits(current_bit_offset, 7, std::uint32_t(playerName[idx])))
+            if (!setBits(current_bit_offset, bitSize, std::uint32_t(playerName[idx])))
             {
                 return false;
             }
@@ -8835,11 +9678,10 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
     }
 
-    std::uint8_t base = itemType.getBaseType();
-    bool isArmor = (base & 4) != 0 ? true : false;
-    bool isWeapon = (base & 2) != 0 ? true : false;
-    bool isTome = (base & 8) != 0 ? true : false;
-    bool isStackable = (base & 1) != 0 ? true : false;
+    bool isArmor = itemType.isArmor();
+    bool isWeapon = itemType.isWeapon();
+    bool isTome = itemType.isBook();
+    bool isStackable = itemType.isStackable();
 
     if (isTome)
     {
@@ -8872,6 +9714,28 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
     }
+    else if (itemType.isBodyPart())
+    {
+        // If the item is a body part, it will contain 10 extra bits, we're not
+        // interested in these bits, the value is usually 0, but not sure
+        // what it is.
+        body_part_bit_offset = current_bit_offset;
+        value = 0;
+
+        value = 0;
+        node = itemRoot[bSerializedFormat ? "FileIndex" : "file_index"];
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+
+        bitSize = MONSTER_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
 
     // Realm Data Flag
     // TODO: should we add information to the json export (always 0 it seems)
@@ -8889,10 +9753,10 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         if (isArmor)
         {
             // Defense rating
-            static const auto& stat = ItemHelpers::getItemStat(31);
+            const auto& stat = ItemHelpers::getItemStat(getVersion(), "armorclass");
             defense_rating_bit_offset = current_bit_offset;
             value = stat.saveAdd;
-            bitSize = (FileVersion >= EnumCharVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108;
+            bitSize = (ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108;
             node = itemRoot[bSerializedFormat ? "Armor" : "defense_rating"];
             if (!node.isNull())
             {
@@ -8926,7 +9790,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         if(value > 0)
         {
             // current durability value (8 bits + unknown single bit)
-            bitSize = (FileVersion >= EnumCharVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108;
+            bitSize = (ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108;
             value = 0;
             node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
             if (!node.isNull())
@@ -9191,7 +10055,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         {
             SocketedItems.resize(SocketedItems.size() + 1);
             auto& childItem = SocketedItems.back();
-            if (!childItem.readItem(*iter, bSerializedFormat, FileVersion))
+            if (!childItem.readItem(*iter, bSerializedFormat, version, isExpansion))
             {
                 return false;
             }
@@ -9206,7 +10070,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             childItem.getItemCode(strcode);
             const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
             std::vector<MagicalAttribute> attribs;
-            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getItemType());
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
         }
     }
 
@@ -9221,7 +10085,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
     Json::Value item;
     if (bSerializedFormat)
     {
-        if (FileVersion < EnumCharVersion::v115)
+        if (ItemVersion < EnumItemVersion::v115)
         {
             item["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
 
@@ -9484,14 +10348,31 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         }
         item["categories"] = categories;
 
-        item["type_id"] = std::uint16_t(itemType.getEnumItemType());
+        // For compatibility with other Json exports we add type_id
+        if (itemType.isWeapon())
+        {
+            item["type_id"] = 3; 
+        }
+        else if (itemType.isShield())
+        {
+            item["type_id"] = 2;
+        }
+        else if (itemType.isArmor())
+        {
+            item["type_id"] = 1;
+        }
+        else
+        {
+            item["type_id"] = 4;
+        }
+
         if (itemType.isQuestItem())
         {
             item["quest_difficulty"] = std::uint16_t(getQuestDifficulty());
         }
         item["nr_of_items_in_sockets"] = std::uint16_t(socketedItemCount());
 
-        if (isSimpleItem())
+        if (isSimpleItem() && (ItemVersion != EnumItemVersion::v100))
         {
             getMagicalAttributes(magicalAttributes);
             if (!magicalAttributes.empty())
@@ -9641,7 +10522,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         item["type_name"] = itemType.name;
 
         ItemRequirements req;
-        if (!getRequirements(req))
+        if (!getDisplayedRequirements(req, charLevel))
         {
             req = itemType.req;
         }
@@ -9809,33 +10690,33 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
         return false;
     }
 
+    std::uint16_t nextInChain = 0;
     while (id != 0x1FF)
     {
-        if (id >= ItemHelpers::getItemStatSize())
+        const auto& stat = ItemHelpers::getItemStat(getVersion(), id);
+        if (id != stat.id)
         {
             // corrupt file
             return false;
         }
 
-        const ItemStat* stat = &ItemHelpers::getItemStat(id);
-
         // saveBits being zero or >= 64 is unrecoverably bad, and
-        if (stat->saveBits == 0 || stat->saveBits >= 64)
+        if (stat.saveBits == 0 || stat.saveBits >= 64)
         {
             // corrupt file
             return false;
         }
 
         size_t numParms = 0;
-        if (stat->encode == 2)
+        if (stat.encode == 2)
         {
-            if (stat->saveBits != 7 || stat->saveParamBits != 16)
+            if (stat.saveBits != 7 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
             }
 
-            if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
+            if (!skipBits(charfile, current_bit_offset, size_t(stat.saveBits) + size_t(stat.saveParamBits)))
             {
                 // corrupt file
                 return false;
@@ -9843,15 +10724,15 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
 
             numParms = 3;
         }
-        else if (stat->encode == 3)
+        else if (stat.encode == 3)
         {
-            if (stat->saveBits != 16 || stat->saveParamBits != 16)
+            if (stat.saveBits != 16 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
             }
 
-            if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
+            if (!skipBits(charfile, current_bit_offset, size_t(stat.saveBits) + size_t(stat.saveParamBits)))
             {
                 // corrupt file
                 return false;
@@ -9859,38 +10740,42 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
 
             numParms = 4;
         }
-        else if (stat->encode == 4)
+        else if (stat.encode == 4)
         {
+            // time-based stats were never implemented, but we handle them
             numParms = 3;
-            if (stat->saveBits != 3 || stat->saveParamBits != 16)
+            if (stat.saveBits != 22 || stat.saveParamBits != 0)
             {
-                // time-based stats were never implemented, but we handle them
-                if (stat->saveBits != 22 || stat->saveParamBits != 0)
-                {
-                    // corrupt file
-                    return false;
-                }
+                // corrupt file
+                return false;
             }
 
-            if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
+            if (!skipBits(charfile, current_bit_offset, size_t(stat.saveBits) + size_t(stat.saveParamBits)))
             {
                 // corrupt file
                 return false;
             }
         }
-        else if (stat->saveParamBits > 0)
+        else if (stat.saveParamBits > 0)
         {
-            if (!skipBits(charfile, current_bit_offset, size_t(stat->saveBits) + size_t(stat->saveParamBits)))
+            if (!skipBits(charfile, current_bit_offset, size_t(stat.saveBits) + size_t(stat.saveParamBits)))
             {
                 // corrupt file
                 return false;
             }
 
-            numParms = 2;
+            if (stat.name.compare("item_addskill_tab") == 0)
+            {
+                numParms = 3;
+            }
+            else
+            {
+                numParms = 2;
+            }
         }
         else
         {
-            if (!skipBits(charfile, current_bit_offset, stat->saveBits))
+            if (!skipBits(charfile, current_bit_offset, stat.saveBits))
             {
                 // corrupt file
                 return false;
@@ -9899,26 +10784,28 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
             numParms = 1;
         }
 
-        while (stat->nextInChain && numParms < 4)
+        nextInChain = stat.nextInChain;
+        while (nextInChain && numParms < 4)
         {
-            if (stat->nextInChain >= ItemHelpers::getItemStatSize())
+            const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
+            if (statNext.id != nextInChain)
             {
                 // corrupt file
                 return false;
             }
 
-            stat = &ItemHelpers::getItemStat(stat->nextInChain);
-            if (stat->saveParamBits != 0)
+            if (statNext.saveParamBits != 0)
             {
                 // corrupt file
                 return false;
             }
 
-            if (!skipBits(charfile, current_bit_offset, stat->saveBits))
+            if (!skipBits(charfile, current_bit_offset, statNext.saveBits))
             {
                 // corrupt file
                 return false;
             }
+            nextInChain = statNext.nextInChain;
             ++numParms;
         }
 
@@ -9941,6 +10828,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
         return setBits(current_bit_offset, PROPERTY_ID_NUM_BITS, id);
     }
 
+    std::uint16_t nextInChain = 0;
     Json::Value node;
     auto iter_end = propListRoot.end();
     for (auto iter = propListRoot.begin(); iter != iter_end; ++iter)
@@ -9959,7 +10847,8 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
         }
 
         id = std::uint16_t(node.asInt64());
-        if (id >= ItemHelpers::getItemStatSize())
+        const auto& stat = ItemHelpers::getItemStat(getVersion(), id);
+        if (id != stat.id)
         {
             return false;
         }
@@ -9969,11 +10858,9 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             return false;
         }
 
-        const ItemStat* stat = &ItemHelpers::getItemStat(id);
-
         // saveBits being zero or >= 64 is unrecoverably bad, and
         // encode type 4 is only used by stats that were never implemented (time-based stats)
-        if (stat->saveBits == 0 || stat->saveBits >= 64)
+        if (stat.saveBits == 0 || stat.saveBits >= 64)
         {
             // corrupt file
             return false;
@@ -10004,7 +10891,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
 
                 nextId = id + 1;
                 id = std::uint16_t(node.asInt64());
-                if (id >= ItemHelpers::getItemStatSize() || id != nextId)
+                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
                 {
                     return false;
                 }
@@ -10032,7 +10919,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
 
                 nextId = id + 1;
                 id = std::uint16_t(node.asInt64());
-                if (id >= ItemHelpers::getItemStatSize() || id != nextId)
+                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
                 {
                     return false;
                 }
@@ -10054,7 +10941,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 
                 nextId = id + 1;
                 id = std::uint16_t(node.asInt64());
-                if (id >= ItemHelpers::getItemStatSize() || id != nextId)
+                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
                 {
                     return false;
                 }
@@ -10107,7 +10994,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 break;
 
             default:
-                if (stat->saveParamBits > 0)
+                if (stat.saveParamBits > 0)
                 {
                     node = iter->operator[]("Param");
                     values.push_back(SaveGetNodeValue(node));
@@ -10133,9 +11020,9 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             }
         }
 
-        if (stat->encode == 2)
+        if (stat.encode == 2)
         {
-            if (stat->saveBits != 7 || stat->saveParamBits != 16)
+            if (stat.saveBits != 7 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
@@ -10146,7 +11033,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 return false;
             }
 
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 6, value))
             {
@@ -10157,7 +11044,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             {
                 return false;
             }
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 10, value))
             {
@@ -10168,16 +11055,16 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             {
                 return false;
             }
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            if (!setBits64(current_bit_offset, stat.saveBits, value))
             {
                 return false;
             }
         }
-        else if (stat->encode == 3)
+        else if (stat.encode == 3)
         {
-            if (stat->saveBits != 16 || stat->saveParamBits != 16)
+            if (stat.saveBits != 16 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
@@ -10188,7 +11075,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 return false;
             }
 
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 6, value))
             {
@@ -10199,7 +11086,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             {
                 return false;
             }
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 10, value))
             {
@@ -10210,7 +11097,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             {
                 return false;
             }
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 8, value))
             {
@@ -10221,82 +11108,82 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             {
                 return false;
             }
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
             if (!setBits64(current_bit_offset, 8, value))
             {
                 return false;
             }
         }
-        else if (stat->encode == 4)
+        else if (stat.encode == 4)
         {
-            if (stat->saveBits != 3 || stat->saveParamBits != 16)
+            // time-based stats were never implemented, but we handle them
+            if (stat.saveBits != 22 || stat.saveParamBits != 0)
             {
-                // time-based stats were never implemented, but we handle them
-                if (stat->saveBits != 22 || stat->saveParamBits != 0)
+                // corrupt file
+                return false;
+            }
+
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            if (values.size() == 1)
+            {
+                // all 22 bits stored in one value (old format that we should still support)
+                value = values[valueIdx];
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, stat.saveBits, value))
                 {
-                    // corrupt file
                     return false;
-                }
-
-                if (valueIdx >= values.size())
-                {
-                    return false;
-                }
-
-                if (values.size() == 1)
-                {
-                    // all 22 bits stored in one value (old format that we should still support)
-                    value = values[valueIdx];
-                    ++valueIdx;
-                    if (!setBits64(current_bit_offset, stat->saveBits, value))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    auto saveBits = stat->saveBits;
-                    value = values[valueIdx];
-                    ++valueIdx;
-                    saveBits -= 2;
-                    if (!setBits64(current_bit_offset, 2, value))
-                    {
-                        return false;
-                    }
-
-                    if (valueIdx >= values.size())
-                    {
-                        return false;
-                    }
-                    value = values[valueIdx];
-                    ++valueIdx;
-                    saveBits -= 10;
-                    if (!setBits64(current_bit_offset, 10, value))
-                    {
-                        return false;
-                    }
-
-                    if (valueIdx >= values.size())
-                    {
-                        return false;
-                    }
-                    value = values[valueIdx];
-                    ++valueIdx;
-                    if (!setBits64(current_bit_offset, saveBits, value))
-                    {
-                        return false;
-                    }
                 }
             }
             else
             {
-                if (valueIdx >= values.size())
+                auto saveBits = stat.saveBits;
+                value = values[valueIdx];
+                ++valueIdx;
+                saveBits -= 2;
+                if (!setBits64(current_bit_offset, 2, value))
                 {
                     return false;
                 }
 
-                value = values[valueIdx] + stat->saveAdd;
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
+                value = values[valueIdx];
+                ++valueIdx;
+                saveBits -= 10;
+                if (!setBits64(current_bit_offset, 10, value))
+                {
+                    return false;
+                }
+
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
+                value = values[valueIdx];
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, saveBits, value))
+                {
+                    return false;
+                }
+            }
+        }
+        else if (stat.saveParamBits > 0)
+        {
+            if (valueIdx >= values.size())
+            {
+                return false;
+            }
+
+            if (stat.name.compare("item_addskill_tab") == 0)
+            {
+                value = values[valueIdx] + stat.saveAdd;
                 ++valueIdx;
                 if (!setBits64(current_bit_offset, 3, value))
                 {
@@ -10307,7 +11194,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 {
                     return false;
                 }
-                value = values[valueIdx] + stat->saveAdd;
+                value = values[valueIdx] + stat.saveAdd;
                 ++valueIdx;
                 if (!setBits64(current_bit_offset, 13, value))
                 {
@@ -10318,38 +11205,33 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 {
                     return false;
                 }
-                value = values[valueIdx] + stat->saveAdd;
+                value = values[valueIdx] + stat.saveAdd;
                 ++valueIdx;
-                if (!setBits64(current_bit_offset, stat->saveBits, value))
+                if (!setBits64(current_bit_offset, stat.saveBits, value))
                 {
                     return false;
                 }
             }
-        }
-        else if (stat->saveParamBits > 0)
-        {
-            if (valueIdx >= values.size())
+            else
             {
-                return false;
-            }
+                value = values[valueIdx] + stat.saveAdd;
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, stat.saveParamBits, value))
+                {
+                    return false;
+                }
 
-            value = values[valueIdx] + stat->saveAdd;
-            ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveParamBits, value))
-            {
-                return false;
-            }
+                if (valueIdx >= values.size())
+                {
+                    return false;
+                }
 
-            if (valueIdx >= values.size())
-            {
-                return false;
-            }
-
-            value = values[valueIdx] + stat->saveAdd;
-            ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveBits, value))
-            {
-                return false;
+                value = values[valueIdx] + stat.saveAdd;
+                ++valueIdx;
+                if (!setBits64(current_bit_offset, stat.saveBits, value))
+                {
+                    return false;
+                }
             }
         }
         else
@@ -10359,24 +11241,25 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 return false;
             }
 
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + stat.saveAdd;
             ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            if (!setBits64(current_bit_offset, stat.saveBits, value))
             {
                 return false;
             }
         }
 
-        while (stat->nextInChain && valueIdx < 4)
+        nextInChain = stat.nextInChain;
+        while (nextInChain && valueIdx < 4)
         {
-            if (stat->nextInChain >= ItemHelpers::getItemStatSize())
+            const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
+            if(statNext.id != nextInChain)
             {
                 // corrupt file
                 return false;
             }
 
-            stat = &ItemHelpers::getItemStat(stat->nextInChain);
-            if (stat->saveParamBits != 0)
+            if (statNext.saveParamBits != 0)
             {
                 // corrupt file
                 return false;
@@ -10387,12 +11270,13 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 return false;
             }
 
-            value = values[valueIdx] + stat->saveAdd;
+            value = values[valueIdx] + statNext.saveAdd;
             ++valueIdx;
-            if (!setBits64(current_bit_offset, stat->saveBits, value))
+            if (!setBits64(current_bit_offset, statNext.saveBits, value))
             {
                 return false;
             }
+            nextInChain = statNext.nextInChain;
         }
     }
 
@@ -10414,130 +11298,136 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
 
     std::uint16_t id = (std::uint16_t)read_uint32_bits(current_bit_offset, PROPERTY_ID_NUM_BITS);
     current_bit_offset += PROPERTY_ID_NUM_BITS;
-
+    std::uint16_t nextInChain = 0;
+    auto itemVersion = getVersion();
+    auto gameVersion = getGameVersion();
     while (id != 0x1FF)
     {
         MagicalAttribute magicalAttrib;
-        if (id >= ItemHelpers::getItemStatSize())
+        const auto& stat = ItemHelpers::getItemStat(itemVersion, id);
+        if (id != stat.id)
         {
             // corrupt file
             return false;
         }
 
-        magicalAttrib.Id = id;
-
-        const ItemStat* stat = &ItemHelpers::getItemStat(id);
-        magicalAttrib.Name = stat->name;
-        magicalAttrib.Desc = stat->desc;
+        magicalAttrib.Id = stat.id;
+        magicalAttrib.Name = stat.name;
+        magicalAttrib.Desc = stat.nextInChain != 0 ? stat.descRange : stat.desc;
+        magicalAttrib.Version = itemVersion;
+        magicalAttrib.GameVersion = gameVersion;
+        magicalAttrib.DescPriority = stat.descPriority;
 
         // saveBits being zero or >= 64 is unrecoverably bad, and
         // encode type 4 is only used by stats that were never implemented (time-based stats)
-        if (stat->saveBits == 0 || stat->saveBits >= 64)
+        if (stat.saveBits == 0 || stat.saveBits >= 64)
         {
             // corrupt file
             return false;
         }
 
-        if (stat->encode == 2)
+        if (stat.encode == 2)
         {
-            if (stat->saveBits != 7 || stat->saveParamBits != 16)
+            if (stat.saveBits != 7 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat.saveAdd);
             current_bit_offset += 6;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat.saveAdd);
             current_bit_offset += 10;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-            current_bit_offset += stat->saveBits;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+            current_bit_offset += stat.saveBits;
         }
-        else if (stat->encode == 3)
+        else if (stat.encode == 3)
         {
-            if (stat->saveBits != 16 || stat->saveParamBits != 16)
+            if (stat.saveBits != 16 || stat.saveParamBits != 16)
             {
                 // corrupt file
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat.saveAdd);
             current_bit_offset += 6;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat.saveAdd);
             current_bit_offset += 10;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat.saveAdd);
             current_bit_offset += 8;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat->saveAdd);
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat.saveAdd);
             current_bit_offset += 8;
         }
-        else if (stat->encode == 4)
+        else if (stat.encode == 4)
         {
-            if (stat->saveBits != 3 || stat->saveParamBits != 16)
+            // time-based stats were never implemented, but we handle them
+            if (stat.saveBits != 22 || stat.saveParamBits != 0)
             {
-                // time-based stats were never implemented, but we handle them
-                if (stat->saveBits != 22 || stat->saveParamBits != 0)
-                {
-                    // corrupt file
-                    return false;
-                }
+                // corrupt file
+                return false;
+            }
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 2));
-                current_bit_offset += 2;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 2));
+            current_bit_offset += 2;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
-                current_bit_offset += 10;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+            current_bit_offset += 10;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
-                current_bit_offset += 10;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+            current_bit_offset += 10;
+        }
+        else if (stat.saveParamBits > 0)
+        {
+            if (stat.name.compare("item_addskill_tab") == 0)
+            {
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat.saveAdd);
+                current_bit_offset += 3;
+
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat.saveAdd);
+                current_bit_offset += 13;
+
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+                current_bit_offset += stat.saveBits;
             }
             else
             {
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat->saveAdd);
-                current_bit_offset += 3;
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveParamBits) - stat.saveAdd);
+                current_bit_offset += stat.saveParamBits;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat->saveAdd);
-                current_bit_offset += 13;
-
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-                current_bit_offset += stat->saveBits;
+                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+                current_bit_offset += stat.saveBits;
             }
-        }
-        else if (stat->saveParamBits > 0)
-        {
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveParamBits) - stat->saveAdd);
-            current_bit_offset += stat->saveParamBits;
-
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-            current_bit_offset += stat->saveBits;
         }
         else
         {
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-            current_bit_offset += stat->saveBits;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+            current_bit_offset += stat.saveBits;
         }
 
-        while (stat->nextInChain && magicalAttrib.Values.size() < 4)
+        nextInChain = stat.nextInChain;
+        while (nextInChain && magicalAttrib.Values.size() < 4)
         {
-            if (stat->nextInChain >= ItemHelpers::getItemStatSize())
+            const auto& statNext = ItemHelpers::getItemStat(itemVersion, nextInChain);
+            if (statNext.id != nextInChain)
             {
                 // corrupt file
                 return false;
             }
 
-            stat = &ItemHelpers::getItemStat(stat->nextInChain);
-            if (stat->saveParamBits != 0)
+            if (statNext.saveParamBits != 0)
             {
                 // corrupt file
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat->saveBits) - stat->saveAdd);
-            current_bit_offset += stat->saveBits;
+            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, statNext.saveBits) - statNext.saveAdd);
+            current_bit_offset += statNext.saveBits;
+            nextInChain = statNext.nextInChain;
         }
 
         attrib.push_back(magicalAttrib);
@@ -10734,6 +11624,11 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
             tome_bit_offset += diff;
         }
 
+        if (body_part_bit_offset != 0)
+        {
+            body_part_bit_offset += diff;
+        }
+
         if (realm_bit_offset != 0)
         {
             realm_bit_offset += diff;
@@ -10814,7 +11709,7 @@ std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
         dwb_bit_offset = dwa_bit_offset + 32;
     }
 
-    return ItemHelpers::generateInferiorQualityIdv100((std::uint32_t)read_uint64_bits(dwb_bit_offset, 32), getLevel());
+    return ItemHelpers::generateInferiorQualityId(getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
@@ -10845,7 +11740,14 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
         dwb_bit_offset = dwa_bit_offset + 32;
     }
 
-    if (!ItemHelpers::generateMagicalAffixesv100(std::uint16_t(read_uint32_bits(type_code_offset, 10)), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32), getLevel(), magic_affixes_v100) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!ItemHelpers::generateMagicalAffixes(strcode, magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -10878,8 +11780,8 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
         return false;
     }
 
-    attrib.Id = ItemHelpers::getSetIDv100((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEN_V100_UNIQUE_ID_NUM_BITS), strcode);
-    if (attrib.Id >= UINT16_MAX)
+    attrib.Id = ItemHelpers::getSetItemId((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+    if (attrib.Id >= MAXUINT16)
     {
         attrib.Id = 0;
         return false;
@@ -10901,14 +11803,24 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
     case EnumItemQuality::SET:
         if (getSetAttributes(setAttrib))
         {
-            return ItemHelpers::getSetMagicAttribsV100(setAttrib.Id, attribs);
+            if (dwb_bit_offset == 0)
+            {
+                dwb_bit_offset = dwa_bit_offset + 32;
+            }
+
+            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
         }
         break;
        
     case EnumItemQuality::UNIQUE:
         if (getUniqueAttributes(uniqueAttrib) && !uniqueAttrib.Name.empty())
         {
-            return ItemHelpers::getUniqueMagicAttribsV100(uniqueAttrib.Id, attribs);
+            if (dwb_bit_offset == 0)
+            {
+                dwb_bit_offset = dwa_bit_offset + 32;
+            }
+
+            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
         }
         break;
 
@@ -10926,7 +11838,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
             std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
             if (getItemCode(strcode))
             {
-                return ItemHelpers::getUniqueQuestMagicAttribsV100(strcode, attribs);
+                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
             }
 
         }
@@ -10959,8 +11871,10 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
     {
         attrib.Id = rare_affixes_v100.Id;
         attrib.Name = rare_affixes_v100.Name;
+        attrib.Index = rare_affixes_v100.Index;
         attrib.Id2 = rare_affixes_v100.Id2;
         attrib.Name2 = rare_affixes_v100.Name2;
+        attrib.Index2 = rare_affixes_v100.Index2;
         for (auto& item : rare_affixes_v100.affixes)
         {
             attrib.Affixes.push_back(item.Affixes);
@@ -10973,15 +11887,24 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         dwb_bit_offset = dwa_bit_offset + 32;
     }
 
-    if (!ItemHelpers::generateRareOrCraftedAffixesv100(std::uint16_t(read_uint32_bits(type_code_offset, 10)), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32), getLevel(), rare_affixes_v100) || (rare_affixes_v100.Id == MAXUINT16))
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    if (!getItemCode(strcode))
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!ItemHelpers::generateRareOrCraftedAffixes(strcode, rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32)) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }
 
     attrib.Id = rare_affixes_v100.Id;
     attrib.Name = rare_affixes_v100.Name;
+    attrib.Index = rare_affixes_v100.Name;
     attrib.Id2 = rare_affixes_v100.Id2;
     attrib.Name2 = rare_affixes_v100.Name2;
+    attrib.Index2 = rare_affixes_v100.Name;
     for (auto& item : rare_affixes_v100.affixes)
     {
         attrib.Affixes.push_back(item.Affixes);
@@ -10998,8 +11921,8 @@ bool d2ce::Item::hasMultipleGraphicsv100() const
         return false;
     }
 
-    auto code = ItemHelpers::getTypeCodev100(strcode);
-    switch (code)
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    switch (itemType.code_v100)
     {
     case 0x117: // amulet
     case 0x119: // rings
@@ -11018,8 +11941,8 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
     }
 
     std::uint32_t modulo = 3;
-    auto code = ItemHelpers::getTypeCodev100(strcode);
-    switch (code)
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    switch (itemType.code_v100)
     {
     case 0x117: // amulet
         modulo = 3;
@@ -11033,7 +11956,7 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
         return 0;
     }
 
-    return std::uint8_t(ItemHelpers::generateDWARandomOffsetv100((std::uint32_t)read_uint64_bits(dwa_bit_offset, 32), 1) % modulo);
+    return std::uint8_t(ItemHelpers::generateDWARandomOffset((std::uint32_t)read_uint64_bits(dwa_bit_offset, 32), 1) % modulo);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getDefenseRatingv100() const
@@ -11049,7 +11972,7 @@ std::uint16_t d2ce::Item::getDefenseRatingv100() const
         return false;
     }
 
-    return ItemHelpers::generateDefenseRatingv100(strcode, (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32));
+    return ItemHelpers::generateDefenseRating(strcode, (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32));
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::findItems()
@@ -11444,11 +12367,17 @@ bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, st
 
         items.resize(items.size() + 1);
         auto& item = items.back();
-        if (!item.readItem(Version, charfile))
+        if (!item.readItem(Version, isExpansionItems(), charfile))
         {
             // corrupt file
             items.pop_back();
             return false;
+        }
+
+        if (Version == EnumItemVersion::v100)
+        {
+            // Update version to v1.04 if any items are v1.04
+            Version = item.getVersion();
         }
     }  // end while
 
@@ -11551,7 +12480,7 @@ bool d2ce::Items::fillItemsArray(const Json::Value& itemsRoot, bool bSerializedF
 
         items.resize(items.size() + 1);
         auto& item = items.back();
-        if (!item.readItem(*iter, bSerializedFormat, Version))
+        if (!item.readItem(*iter, bSerializedFormat, Version, isExpansionItems()))
         {
             // corrupt file
             items.pop_back();
@@ -11798,9 +12727,9 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
 //---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(std::FILE* charfile)
 {
-    if (!isFileExpansionCharacter)
+    if (!isExpansionItems())
     {
-        if (Version < EnumCharVersion::v109)
+        if (Version < EnumItemVersion::v109)
         {
             MercId_v100 = 0;
             if (feof(charfile))
@@ -11892,9 +12821,9 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
 {
-    if (!isFileExpansionCharacter)
+    if (!isExpansionItems())
     {
-        if (Version < EnumCharVersion::v109)
+        if (Version < EnumItemVersion::v109)
         {
             MercId_v100 = 0;
             Json::Value jsonValue = root[bSerializedFormat ? "MercId" : "merc_id"];
@@ -12052,7 +12981,7 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
 
     if (HasGolem != 0)
     {
-        if (!GolemItem.readItem(Version, charfile))
+        if (!GolemItem.readItem(Version, isExpansionItems(), charfile))
         {
             // Corrupt file
             if (update_locations)
@@ -12073,7 +13002,7 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
     GolemItem.clear();
 
     Json::Value golemItemRoot;
-    if (root.isNull())
+    if (!root.isNull())
     {
         golemItemRoot = root[bSerializedFormat ? "Golem" : "golem_item"];
         if (!golemItemRoot.isNull() && bSerializedFormat)
@@ -12111,12 +13040,12 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
         }
     }
 
-    if (!GolemItem.readItem(golemItemRoot, bSerializedFormat, Version))
+    if (!golemItemRoot.isNull())
     {
-        // Corrupt file
-        golem_location = 0;
-        GolemItem.clear();
-        HasGolem = false;
+        if (!GolemItem.readItem(golemItemRoot, bSerializedFormat, Version, isExpansionItems()))
+        {
+            GolemItem.clear();
+        }
     }
 
     std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
@@ -12126,7 +13055,6 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
     if (!GolemItem.writeItem(charfile))
     {
         golem_location = 0;
-        return;
     }
 }
 //---------------------------------------------------------------------------
@@ -12169,9 +13097,9 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::Items::writeMercItems(std::FILE* charfile)
 {
-    if (!isFileExpansionCharacter)
+    if (!isExpansionItems())
     {
-        if (Version < EnumCharVersion::v109)
+        if (Version < EnumItemVersion::v109)
         {
             std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
             std::fwrite(&MercId_v100, 6, 1, charfile);
@@ -12212,11 +13140,49 @@ bool d2ce::Items::writeGolemItem(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool isExpansion)
+bool d2ce::Items::readItems(const Character& charInfo, std::FILE* charfile)
 {
-    Version = version;
+    bool isExpansion = charInfo.isExpansionCharacter();
+    switch (charInfo.getVersion())
+    {
+    case EnumCharVersion::v100: // v1.00 - v1.06
+        Version = EnumItemVersion::v100;
+        GameVersion = 0;
+        break;
+
+    case EnumCharVersion::v107: // v1.07
+        Version = EnumItemVersion::v107;
+        GameVersion = isExpansion ? 100 : 0;
+        break;
+
+    case EnumCharVersion::v108: // v1.08
+        Version = EnumItemVersion::v108;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v109: // v1.09
+        Version = EnumItemVersion::v109;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v110: // v1.10 - v1.14d
+        Version = EnumItemVersion::v110;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v115: // Diablo II Resurrected
+        Version = EnumItemVersion::v115;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v116: // Diablo II Resurrected Patch 2.4
+    default:
+        Version = EnumItemVersion::v116;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+    }
+
     update_locations = items_location == 0 ? true : false;
-    isFileExpansionCharacter = isExpansion;
     isMercHired = false;
     GPSs.clear();
     Stackables.clear();
@@ -12241,9 +13207,46 @@ bool d2ce::Items::readItems(EnumCharVersion version, std::FILE* charfile, bool i
 //---------------------------------------------------------------------------
 bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfile)
 {
-    Version = version;
+    switch (version)
+    {
+    case EnumCharVersion::v100: // v1.00 - v1.06
+        Version = EnumItemVersion::v100;
+        GameVersion = 0;
+        break;
+
+    case EnumCharVersion::v107: // v1.07
+        Version = EnumItemVersion::v107;
+        GameVersion = 0;
+        break;
+
+    case EnumCharVersion::v108: // v1.08
+        Version = EnumItemVersion::v108;
+        GameVersion = 1;
+        break;
+
+    case EnumCharVersion::v109: // v1.09
+        Version = EnumItemVersion::v109;
+        GameVersion = 1;
+        break;
+
+    case EnumCharVersion::v110: // v1.10 - v1.14d
+        Version = EnumItemVersion::v110;
+        GameVersion = 1;
+        break;
+
+    case EnumCharVersion::v115: // Diablo II Resurrected
+        Version = EnumItemVersion::v115;
+        GameVersion = 1;
+        break;
+
+    case EnumCharVersion::v116: // Diablo II Resurrected Patch 2.4
+    default:
+        Version = EnumItemVersion::v116;
+        GameVersion = 1;
+        break;
+    }
+
     update_locations = items_location == 0 ? true : false;
-    isFileExpansionCharacter = false;
     isMercHired = false;
     GPSs.clear();
     Stackables.clear();
@@ -12259,12 +13262,50 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile, bool isExpansion)
+bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo, std::FILE* charfile)
 {
     clear();
-    Version = version;
+    bool isExpansion = charInfo.isExpansionCharacter();
+    switch (charInfo.getVersion())
+    {
+    case EnumCharVersion::v100: // v1.00 - v1.06
+        Version = EnumItemVersion::v100;
+        GameVersion = 0;
+        break;
+
+    case EnumCharVersion::v107: // v1.07
+        Version = EnumItemVersion::v107;
+        GameVersion = isExpansion ? 100 : 0;
+        break;
+
+    case EnumCharVersion::v108: // v1.08
+        Version = EnumItemVersion::v108;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v109: // v1.09
+        Version = EnumItemVersion::v109;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v110: // v1.10 - v1.14d
+        Version = EnumItemVersion::v110;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v115: // Diablo II Resurrected
+        Version = EnumItemVersion::v115;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v116: // Diablo II Resurrected Patch 2.4
+    default:
+        Version = EnumItemVersion::v116;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+    }
+
     update_locations = true;
-    isFileExpansionCharacter = isExpansion;
     isMercHired = false;
     if (!readItems(root, bSerializedFormat, charfile, items_location, NumOfItems, Inventory) || items_location == 0)
     {
@@ -12286,7 +13327,27 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, Enu
 // write items in place at offset saved from reasding
 bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMercID)
 {
-    isFileExpansionCharacter = isExpansion;
+    switch (getDefaultItemVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        GameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107: // v1.07 item
+        GameVersion = isExpansion ? 100 : 0;
+        break;
+
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+    }
+
     isMercHired = !MercItems.empty() | hasMercID;
 
     // Write Items
@@ -12403,9 +13464,9 @@ void d2ce::Items::corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel
 //---------------------------------------------------------------------------
 bool d2ce::Items::mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    if (!isFileExpansionCharacter)
+    if (!isExpansionItems())
     {
-        if ((Version < EnumCharVersion::v109) && MercId_v100 > 0)
+        if ((Version < EnumItemVersion::v109) && MercId_v100 > 0)
         {
             std::stringstream ss;
             ss << std::hex << MercId_v100;
@@ -12450,7 +13511,7 @@ bool d2ce::Items::mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, 
 //---------------------------------------------------------------------------
 bool d2ce::Items::golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
-    if (!isFileExpansionCharacter)
+    if (!isExpansionItems())
     {
         return false;
     }
@@ -12513,6 +13574,11 @@ void d2ce::Items::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSer
     itemBonusesAsJson(parent, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Items::isExpansionItems() const
+{
+    return getDefaultGameVersion() == 100 ? true : false;
+}
+//---------------------------------------------------------------------------
 d2ce::Items::Items()
 {
 }
@@ -12535,6 +13601,7 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
     }
 
     Version = other.Version;
+    GameVersion = other.GameVersion;
 
     items_location = other.items_location;
     corpse_location = other.corpse_location;
@@ -12556,7 +13623,6 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
     GolemItem = other.GolemItem;
 
     update_locations = other.update_locations;
-    isFileExpansionCharacter = other.isFileExpansionCharacter;
     isMercHired = other.isMercHired;
 
     // refetch references to items
@@ -12575,7 +13641,8 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
         return *this;
     }
 
-    Version = std::exchange(other.Version, APP_CHAR_VERSION);
+    Version = std::exchange(other.Version, APP_ITEM_VERSION);
+    GameVersion = std::exchange(other.GameVersion, APP_ITEM_GAME_VERSION);
 
     items_location = std::exchange(other.items_location, 0);
     corpse_location = std::exchange(other.corpse_location, 0);
@@ -12611,7 +13678,6 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
     other.GolemItem.clear();
 
     update_locations = std::exchange(other.update_locations, true);
-    isFileExpansionCharacter = std::exchange(other.isFileExpansionCharacter, false);
     isMercHired = std::exchange(other.isMercHired, false);
     return *this;
 }
@@ -12712,33 +13778,14 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getEquippedI
     return ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED];
 }
 //---------------------------------------------------------------------------
-d2ce::EnumItemVersion d2ce::Items::getDefaultItemVersion()
+d2ce::EnumItemVersion d2ce::Items::getDefaultItemVersion() const
 {
-    switch (Version)
-    {
-    case EnumCharVersion::v100:
-        if (!Inventory.empty())
-        {
-            return Inventory.front().Version(); // v1.00 - v1.06 item
-        }
-
-        return EnumItemVersion::v104; // v1.04 - v1.06 item
-
-    case EnumCharVersion::v107:
-        return EnumItemVersion::v107; // v1.07 item
-
-    case EnumCharVersion::v108:
-        return EnumItemVersion::v108; // v1.08/1.09 normal or expansion
-
-    case EnumCharVersion::v110:
-        return EnumItemVersion::v110; // v1.10 normal or expansion
-
-    case EnumCharVersion::v115:
-        return EnumItemVersion::v115; // v1.15 Diable II Resurrected
-    }
-
-    // should not happen
-    return EnumItemVersion::v115;
+    return Version;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Items::getDefaultGameVersion() const
+{
+    return GameVersion;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const
@@ -12756,11 +13803,11 @@ bool d2ce::Items::getItemLocationDimensions(EnumItemLocation locationId, EnumAlt
             return true;
 
         case EnumAltItemLocation::STASH:
-            if ((Version < d2ce::EnumCharVersion::v115) || !isFileExpansionCharacter)
+            if ((Version < d2ce::EnumItemVersion::v115) || !isExpansionItems())
             {
                 // STASH is a 6 x 4/8 grid
                 dimensions.Width = dimensions.InvWidth = 6;
-                dimensions.Height = dimensions.InvHeight = !isFileExpansionCharacter ? 4 : 8;
+                dimensions.Height = dimensions.InvHeight = !isExpansionItems() ? 4 : 8;
             }
             else
             {
@@ -13829,7 +14876,7 @@ size_t d2ce::Items::setIndestructibleAllItems(ItemFilter filter)
 //---------------------------------------------------------------------------
 bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
-    Item newItem(Version, getDefaultItemVersion(), strcode, isFileExpansionCharacter);
+    Item newItem(getDefaultItemVersion(), strcode, isExpansionItems());
     if (newItem.data.empty())
     {
         // invalid item
@@ -13858,6 +14905,11 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         break;
 
     case EnumItemLocation::BELT:
+        if (!newItem.isBeltable())
+        {
+            return false;
+        }
+
         pEmptySlots = &ItemLocationEmptySpots[locationId];
         pLocationReference = &ItemLocationReference[locationId];
         break;
@@ -14013,6 +15065,16 @@ bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
             if (item.getCombinedMagicalAttributes(tempAttribs))
             {
                 ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
+            }
+        }
+        else if (location_id == EnumItemLocation::STORED)
+        {
+            if ((item.getAltPositionId() == EnumAltItemLocation::INVENTORY) && item.isCharm())
+            {
+                if (item.getCombinedMagicalAttributes(tempAttribs))
+                {
+                    ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
+                }
             }
         }
     }
@@ -14217,7 +15279,12 @@ bool d2ce::Items::getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel)
 //---------------------------------------------------------------------------
 std::int64_t d2ce::Items::getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx)
 {
-    const auto& stat = ItemHelpers::getItemStat(attrib.Id);
+    const auto& stat = ItemHelpers::getItemStat(attrib);
+    if (stat.id != attrib.Id)
+    {
+        return 0;
+    }
+
     return ItemHelpers::getMagicalAttributeValue(attrib, charLevel, idx, stat);
 }
 //---------------------------------------------------------------------------

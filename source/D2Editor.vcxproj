@@ -95,7 +95,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce\thirdparty\rapidcsv\include;$(SolutionDir)d2ce\thirdparty\utf8\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,7 +121,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce\thirdparty\rapidcsv\include;$(SolutionDir)d2ce\thirdparty\utf8\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,7 +149,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce\thirdparty\rapidcsv\include;$(SolutionDir)d2ce\thirdparty\utf8\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,7 +185,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)d2ce\thirdparty\jsoncpp\include;$(SolutionDir)d2ce\thirdparty\rapidcsv\include;$(SolutionDir)d2ce\thirdparty\utf8\include;$(SolutionDir)d2ce</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,6 +219,7 @@
     <ClInclude Include="d2ce\CharacterStats.h" />
     <ClInclude Include="d2ce\CharacterStatsConstants.h" />
     <ClInclude Include="d2ce\Constants.h" />
+    <ClInclude Include="d2ce\helpers\DefaultTxtReader.h" />
     <ClInclude Include="d2ce\helpers\ItemHelpers.h" />
     <ClInclude Include="d2ce\Mercenary.h" />
     <ClInclude Include="d2ce\MercenaryConstants.h" />
@@ -232,6 +237,11 @@
     <ClInclude Include="d2ce\thirdparty\jsoncpp\include\json\writer.h" />
     <ClInclude Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_tool.h" />
     <ClInclude Include="d2ce\thirdparty\rapidcsv\include\rapidcsv\rapidcsv.h" />
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8.h" />
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\checked.h" />
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\core.h" />
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\cpp17.h" />
+    <ClInclude Include="d2ce\thirdparty\utf8\include\utf8\utf8\unchecked.h" />
     <ClInclude Include="D2Editor.h" />
     <ClInclude Include="D2GemsForm.h" />
     <ClInclude Include="D2ItemsForm.h" />
@@ -260,7 +270,41 @@
     <ClCompile Include="d2ce\ActsInfo.cpp" />
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
+    <ClCompile Include="d2ce\helpers\ArmorTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\BeltsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\CharStatsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\DefaultTxtReader.cpp" />
+    <ClCompile Include="d2ce\helpers\ExperienceTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\GemsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\HirelingTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemGemsJson.cpp" />
     <ClCompile Include="d2ce\helpers\ItemHelpers.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemModifiersJson.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemNameAffixesJson.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemNamesJson.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemRunesJson.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemStatCostTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\ItemTypesTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\LevelsJson.cpp" />
+    <ClCompile Include="d2ce\helpers\MagicPrefixTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\MagicSuffixTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\MercenariesJson.cpp" />
+    <ClCompile Include="d2ce\helpers\MiscTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\MonstersJson.cpp" />
+    <ClCompile Include="d2ce\helpers\PlayerClassTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\PropertiesTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\QuestsJson.cpp" />
+    <ClCompile Include="d2ce\helpers\RarePrefixTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\RareSuffixTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\RunesTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\SetItemsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\SetsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\SkillDescTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\SkillsJson.cpp" />
+    <ClCompile Include="d2ce\helpers\SkillsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\UIJson.cpp" />
+    <ClCompile Include="d2ce\helpers\UniqueItemsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\WeaponsTxt.cpp" />
     <ClCompile Include="d2ce\Mercenary.cpp" />
     <ClCompile Include="d2ce\SharedStash.cpp" />
     <ClCompile Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_reader.cpp">
@@ -307,7 +351,19 @@
     <None Include="d2ce\thirdparty\jsoncpp\LICENSE" />
     <None Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl" />
     <None Include="d2ce\thirdparty\rapidcsv\LICENSE" />
+    <None Include="d2ce\thirdparty\utf8\include\utf8\LICENSE" />
     <None Include="res\D2Editor.rc2" />
+    <None Include="res\TXT\LNG\item-gems.json" />
+    <None Include="res\TXT\LNG\item-modifiers.json" />
+    <None Include="res\TXT\LNG\item-nameaffixes.json" />
+    <None Include="res\TXT\LNG\item-names.json" />
+    <None Include="res\TXT\LNG\item-runes.json" />
+    <None Include="res\TXT\LNG\levels.json" />
+    <None Include="res\TXT\LNG\mercenaries.json" />
+    <None Include="res\TXT\LNG\monsters.json" />
+    <None Include="res\TXT\LNG\quests.json" />
+    <None Include="res\TXT\LNG\skills.json" />
+    <None Include="res\TXT\LNG\ui.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Armor\001 Quilted Armor.bmp" />
@@ -330,7 +386,6 @@
     <Image Include="res\Belt\03 Belt.bmp" />
     <Image Include="res\Belt\04 Heavy Belt.bmp" />
     <Image Include="res\Belt\05 Plated Belt.bmp" />
-    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\Boots\01 Boots.bmp" />
     <Image Include="res\Boots\02 Heavy Boots.bmp" />
     <Image Include="res\Boots\03 Chain Boots.bmp" />
@@ -339,17 +394,11 @@
     <Image Include="res\CharStats.bmp" />
     <Image Include="res\D2Editor.ico" />
     <Image Include="res\exit.bmp" />
-    <Image Include="res\gemsocket.png" />
     <Image Include="res\Gloves\01 Leather Gloves.bmp" />
     <Image Include="res\Gloves\02 Heavy Gloves.bmp" />
     <Image Include="res\Gloves\03 Chain Gloves.bmp" />
     <Image Include="res\Gloves\04 Light Gauntlets.bmp" />
     <Image Include="res\Gloves\05 Gauntlets.bmp" />
-    <Image Include="res\Glove\01 Leather Gloves.bmp" />
-    <Image Include="res\Glove\02 Heavy Gloves.bmp" />
-    <Image Include="res\Glove\03 Chain Gloves.bmp" />
-    <Image Include="res\Glove\04 Light Gauntlets.bmp" />
-    <Image Include="res\Glove\05 Gauntlets.bmp" />
     <Image Include="res\Helm\01 Cap.bmp" />
     <Image Include="res\Helm\02 Skull Cap.bmp" />
     <Image Include="res\Helm\03 Helm.bmp" />
@@ -367,10 +416,6 @@
     <Image Include="res\Helm\Circlet\10 Coronet.bmp" />
     <Image Include="res\Helm\Circlet\11 Tiara.bmp" />
     <Image Include="res\Helm\Circlet\12 Diadem.bmp" />
-    <Image Include="res\Helm\Crown\09 Circlet.bmp" />
-    <Image Include="res\Helm\Crown\10 Coronet.bmp" />
-    <Image Include="res\Helm\Crown\11 Tiara.bmp" />
-    <Image Include="res\Helm\Crown\12 Diadem.bmp" />
     <Image Include="res\Helm\Druid\16 Wolf Head.bmp" />
     <Image Include="res\Helm\Druid\17 Hawk Helm.bmp" />
     <Image Include="res\Helm\Druid\18 Antlers.bmp" />
@@ -378,21 +423,13 @@
     <Image Include="res\Helm\Druid\20 Falcon Mask.bmp" />
     <Image Include="res\INVEMPTY.bmp" />
     <Image Include="res\inv_armor.bmp" />
-    <Image Include="res\inv_armor.png" />
     <Image Include="res\inv_belt.bmp" />
-    <Image Include="res\inv_belt.png" />
     <Image Include="res\inv_boots.bmp" />
-    <Image Include="res\inv_boots.png" />
     <Image Include="res\inv_helm_glove__0__0.bmp" />
-    <Image Include="res\inv_helm_glove__0__0.png" />
     <Image Include="res\inv_helm_glove__0__1.bmp" />
-    <Image Include="res\inv_helm_glove__0__1.png" />
     <Image Include="res\inv_ring_amulet__0__0.bmp" />
-    <Image Include="res\inv_ring_amulet__0__0.png" />
     <Image Include="res\inv_ring_amulet__0__1.bmp" />
-    <Image Include="res\inv_ring_amulet__0__1.png" />
     <Image Include="res\inv_weapons.bmp" />
-    <Image Include="res\inv_weapons.png" />
     <Image Include="res\maxStats.bmp" />
     <Image Include="res\Misc\a Jade Figuring.bmp" />
     <Image Include="res\Misc\Amethyst.bmp" />
@@ -452,8 +489,6 @@
     <Image Include="res\Misc\Herb.bmp" />
     <Image Include="res\Misc\Horadric Cube.bmp" />
     <Image Include="res\Misc\Horadric Scroll.bmp" />
-    <Image Include="res\Misc\Hpf.bmp" />
-    <Image Include="res\Misc\Hpo.bmp" />
     <Image Include="res\Misc\Io Rune.bmp" />
     <Image Include="res\Misc\Ist Rune.bmp" />
     <Image Include="res\Misc\Ith Rune.bmp" />
@@ -487,7 +522,6 @@
     <Image Include="res\Misc\Minor Healing Potion.bmp" />
     <Image Include="res\Misc\Minor Mana Potion.bmp" />
     <Image Include="res\Misc\Mpf.bmp" />
-    <Image Include="res\Misc\Mpo.bmp" />
     <Image Include="res\Misc\Nef Rune.bmp" />
     <Image Include="res\Misc\Ohm Rune.bmp" />
     <Image Include="res\Misc\Ort Rune.bmp" />
@@ -510,7 +544,6 @@
     <Image Include="res\Misc\Ring 5.bmp" />
     <Image Include="res\Misc\Ring.bmp" />
     <Image Include="res\Misc\Rpl.bmp" />
-    <Image Include="res\Misc\Rps.bmp" />
     <Image Include="res\Misc\Ruby.bmp" />
     <Image Include="res\Misc\Sapphire.bmp" />
     <Image Include="res\Misc\Scroll of Identify.bmp" />
@@ -560,11 +593,6 @@
     <Image Include="res\Misc\Vex Rune.bmp" />
     <Image Include="res\Misc\Zod Rune.bmp" />
     <Image Include="res\quest.bmp" />
-    <Image Include="res\Sash\01 Sash.bmp" />
-    <Image Include="res\Sash\02 Light Belt.bmp" />
-    <Image Include="res\Sash\03 Belt.bmp" />
-    <Image Include="res\Sash\04 Heavy Belt.bmp" />
-    <Image Include="res\Sash\05 Plated Belt.bmp" />
     <Image Include="res\Shield\01 Buckler.bmp" />
     <Image Include="res\Shield\02 Small Shield.bmp" />
     <Image Include="res\Shield\03 Large Shield.bmp" />
@@ -584,6 +612,217 @@
     <Image Include="res\Shield\Paladin\13 Aerin Shield.bmp" />
     <Image Include="res\Shield\Paladin\14 Crown Shield.bmp" />
     <Image Include="res\skill.bmp" />
+    <Image Include="res\Skills\AMA00.bmp" />
+    <Image Include="res\Skills\AMA02.bmp" />
+    <Image Include="res\Skills\AMA04.bmp" />
+    <Image Include="res\Skills\AMA06.bmp" />
+    <Image Include="res\Skills\AMA08.bmp" />
+    <Image Include="res\Skills\AMA10.bmp" />
+    <Image Include="res\Skills\AMA12.bmp" />
+    <Image Include="res\Skills\AMA14.bmp" />
+    <Image Include="res\Skills\AMA16.bmp" />
+    <Image Include="res\Skills\AMA18.bmp" />
+    <Image Include="res\Skills\AMA20.bmp" />
+    <Image Include="res\Skills\AMA22.bmp" />
+    <Image Include="res\Skills\AMA24.bmp" />
+    <Image Include="res\Skills\AMA26.bmp" />
+    <Image Include="res\Skills\AMA28.bmp" />
+    <Image Include="res\Skills\AMA30.bmp" />
+    <Image Include="res\Skills\AMA32.bmp" />
+    <Image Include="res\Skills\AMA34.bmp" />
+    <Image Include="res\Skills\AMA36.bmp" />
+    <Image Include="res\Skills\AMA38.bmp" />
+    <Image Include="res\Skills\AMA40.bmp" />
+    <Image Include="res\Skills\AMA42.bmp" />
+    <Image Include="res\Skills\AMA44.bmp" />
+    <Image Include="res\Skills\AMA46.bmp" />
+    <Image Include="res\Skills\AMA48.bmp" />
+    <Image Include="res\Skills\AMA50.bmp" />
+    <Image Include="res\Skills\AMA52.bmp" />
+    <Image Include="res\Skills\AMA54.bmp" />
+    <Image Include="res\Skills\AMA56.bmp" />
+    <Image Include="res\Skills\AMA58.bmp" />
+    <Image Include="res\Skills\ASS00.bmp" />
+    <Image Include="res\Skills\ASS02.bmp" />
+    <Image Include="res\Skills\ASS04.bmp" />
+    <Image Include="res\Skills\ASS06.bmp" />
+    <Image Include="res\Skills\ASS08.bmp" />
+    <Image Include="res\Skills\ASS10.bmp" />
+    <Image Include="res\Skills\ASS12.bmp" />
+    <Image Include="res\Skills\ASS14.bmp" />
+    <Image Include="res\Skills\ASS16.bmp" />
+    <Image Include="res\Skills\ASS18.bmp" />
+    <Image Include="res\Skills\ASS20.bmp" />
+    <Image Include="res\Skills\ASS22.bmp" />
+    <Image Include="res\Skills\ASS24.bmp" />
+    <Image Include="res\Skills\ASS26.bmp" />
+    <Image Include="res\Skills\ASS28.bmp" />
+    <Image Include="res\Skills\ASS30.bmp" />
+    <Image Include="res\Skills\ASS32.bmp" />
+    <Image Include="res\Skills\ASS34.bmp" />
+    <Image Include="res\Skills\ASS36.bmp" />
+    <Image Include="res\Skills\ASS38.bmp" />
+    <Image Include="res\Skills\ASS40.bmp" />
+    <Image Include="res\Skills\ASS42.bmp" />
+    <Image Include="res\Skills\ASS44.bmp" />
+    <Image Include="res\Skills\ASS46.bmp" />
+    <Image Include="res\Skills\ASS48.bmp" />
+    <Image Include="res\Skills\ASS50.bmp" />
+    <Image Include="res\Skills\ASS52.bmp" />
+    <Image Include="res\Skills\ASS54.bmp" />
+    <Image Include="res\Skills\ASS56.bmp" />
+    <Image Include="res\Skills\ASS58.bmp" />
+    <Image Include="res\Skills\BAR00.bmp" />
+    <Image Include="res\Skills\BAR02.bmp" />
+    <Image Include="res\Skills\BAR04.bmp" />
+    <Image Include="res\Skills\BAR06.bmp" />
+    <Image Include="res\Skills\BAR08.bmp" />
+    <Image Include="res\Skills\BAR10.bmp" />
+    <Image Include="res\Skills\BAR12.bmp" />
+    <Image Include="res\Skills\BAR14.bmp" />
+    <Image Include="res\Skills\BAR16.bmp" />
+    <Image Include="res\Skills\BAR18.bmp" />
+    <Image Include="res\Skills\BAR20.bmp" />
+    <Image Include="res\Skills\BAR22.bmp" />
+    <Image Include="res\Skills\BAR24.bmp" />
+    <Image Include="res\Skills\BAR26.bmp" />
+    <Image Include="res\Skills\BAR28.bmp" />
+    <Image Include="res\Skills\BAR30.bmp" />
+    <Image Include="res\Skills\BAR32.bmp" />
+    <Image Include="res\Skills\BAR34.bmp" />
+    <Image Include="res\Skills\BAR36.bmp" />
+    <Image Include="res\Skills\BAR38.bmp" />
+    <Image Include="res\Skills\BAR40.bmp" />
+    <Image Include="res\Skills\BAR42.bmp" />
+    <Image Include="res\Skills\BAR44.bmp" />
+    <Image Include="res\Skills\BAR46.bmp" />
+    <Image Include="res\Skills\BAR48.bmp" />
+    <Image Include="res\Skills\BAR50.bmp" />
+    <Image Include="res\Skills\BAR52.bmp" />
+    <Image Include="res\Skills\BAR54.bmp" />
+    <Image Include="res\Skills\BAR56.bmp" />
+    <Image Include="res\Skills\BAR58.bmp" />
+    <Image Include="res\Skills\DRU00.bmp" />
+    <Image Include="res\Skills\DRU02.bmp" />
+    <Image Include="res\Skills\DRU04.bmp" />
+    <Image Include="res\Skills\DRU06.bmp" />
+    <Image Include="res\Skills\DRU08.bmp" />
+    <Image Include="res\Skills\DRU10.bmp" />
+    <Image Include="res\Skills\DRU12.bmp" />
+    <Image Include="res\Skills\DRU14.bmp" />
+    <Image Include="res\Skills\DRU16.bmp" />
+    <Image Include="res\Skills\DRU18.bmp" />
+    <Image Include="res\Skills\DRU20.bmp" />
+    <Image Include="res\Skills\DRU22.bmp" />
+    <Image Include="res\Skills\DRU24.bmp" />
+    <Image Include="res\Skills\DRU26.bmp" />
+    <Image Include="res\Skills\DRU28.bmp" />
+    <Image Include="res\Skills\DRU30.bmp" />
+    <Image Include="res\Skills\DRU32.bmp" />
+    <Image Include="res\Skills\DRU34.bmp" />
+    <Image Include="res\Skills\DRU36.bmp" />
+    <Image Include="res\Skills\DRU38.bmp" />
+    <Image Include="res\Skills\DRU40.bmp" />
+    <Image Include="res\Skills\DRU42.bmp" />
+    <Image Include="res\Skills\DRU44.bmp" />
+    <Image Include="res\Skills\DRU46.bmp" />
+    <Image Include="res\Skills\DRU48.bmp" />
+    <Image Include="res\Skills\DRU50.bmp" />
+    <Image Include="res\Skills\DRU52.bmp" />
+    <Image Include="res\Skills\DRU54.bmp" />
+    <Image Include="res\Skills\DRU56.bmp" />
+    <Image Include="res\Skills\DRU58.bmp" />
+    <Image Include="res\Skills\NEC00.bmp" />
+    <Image Include="res\Skills\NEC02.bmp" />
+    <Image Include="res\Skills\NEC04.bmp" />
+    <Image Include="res\Skills\NEC06.bmp" />
+    <Image Include="res\Skills\NEC08.bmp" />
+    <Image Include="res\Skills\NEC10.bmp" />
+    <Image Include="res\Skills\NEC12.bmp" />
+    <Image Include="res\Skills\NEC14.bmp" />
+    <Image Include="res\Skills\NEC16.bmp" />
+    <Image Include="res\Skills\NEC18.bmp" />
+    <Image Include="res\Skills\NEC20.bmp" />
+    <Image Include="res\Skills\NEC22.bmp" />
+    <Image Include="res\Skills\NEC24.bmp" />
+    <Image Include="res\Skills\NEC26.bmp" />
+    <Image Include="res\Skills\NEC28.bmp" />
+    <Image Include="res\Skills\NEC30.bmp" />
+    <Image Include="res\Skills\NEC32.bmp" />
+    <Image Include="res\Skills\NEC34.bmp" />
+    <Image Include="res\Skills\NEC36.bmp" />
+    <Image Include="res\Skills\NEC38.bmp" />
+    <Image Include="res\Skills\NEC40.bmp" />
+    <Image Include="res\Skills\NEC42.bmp" />
+    <Image Include="res\Skills\NEC44.bmp" />
+    <Image Include="res\Skills\NEC46.bmp" />
+    <Image Include="res\Skills\NEC48.bmp" />
+    <Image Include="res\Skills\NEC50.bmp" />
+    <Image Include="res\Skills\NEC52.bmp" />
+    <Image Include="res\Skills\NEC54.bmp" />
+    <Image Include="res\Skills\NEC56.bmp" />
+    <Image Include="res\Skills\NEC58.bmp" />
+    <Image Include="res\Skills\PAL00.bmp" />
+    <Image Include="res\Skills\PAL02.bmp" />
+    <Image Include="res\Skills\PAL04.bmp" />
+    <Image Include="res\Skills\PAL06.bmp" />
+    <Image Include="res\Skills\PAL08.bmp" />
+    <Image Include="res\Skills\PAL10.bmp" />
+    <Image Include="res\Skills\PAL12.bmp" />
+    <Image Include="res\Skills\PAL14.bmp" />
+    <Image Include="res\Skills\PAL16.bmp" />
+    <Image Include="res\Skills\PAL18.bmp" />
+    <Image Include="res\Skills\PAL20.bmp" />
+    <Image Include="res\Skills\PAL22.bmp" />
+    <Image Include="res\Skills\PAL24.bmp" />
+    <Image Include="res\Skills\PAL26.bmp" />
+    <Image Include="res\Skills\PAL28.bmp" />
+    <Image Include="res\Skills\PAL30.bmp" />
+    <Image Include="res\Skills\PAL32.bmp" />
+    <Image Include="res\Skills\PAL34.bmp" />
+    <Image Include="res\Skills\PAL36.bmp" />
+    <Image Include="res\Skills\PAL38.bmp" />
+    <Image Include="res\Skills\PAL40.bmp" />
+    <Image Include="res\Skills\PAL42.bmp" />
+    <Image Include="res\Skills\PAL44.bmp" />
+    <Image Include="res\Skills\PAL46.bmp" />
+    <Image Include="res\Skills\PAL48.bmp" />
+    <Image Include="res\Skills\PAL50.bmp" />
+    <Image Include="res\Skills\PAL52.bmp" />
+    <Image Include="res\Skills\PAL54.bmp" />
+    <Image Include="res\Skills\PAL56.bmp" />
+    <Image Include="res\Skills\PAL58.bmp" />
+    <Image Include="res\Skills\SOR00.bmp" />
+    <Image Include="res\Skills\SOR02.bmp" />
+    <Image Include="res\Skills\SOR04.bmp" />
+    <Image Include="res\Skills\SOR06.bmp" />
+    <Image Include="res\Skills\SOR08.bmp" />
+    <Image Include="res\Skills\SOR10.bmp" />
+    <Image Include="res\Skills\SOR12.bmp" />
+    <Image Include="res\Skills\SOR14.bmp" />
+    <Image Include="res\Skills\SOR16.bmp" />
+    <Image Include="res\Skills\SOR18.bmp" />
+    <Image Include="res\Skills\SOR20.bmp" />
+    <Image Include="res\Skills\SOR22.bmp" />
+    <Image Include="res\Skills\SOR24.bmp" />
+    <Image Include="res\Skills\SOR26.bmp" />
+    <Image Include="res\Skills\SOR28.bmp" />
+    <Image Include="res\Skills\SOR30.bmp" />
+    <Image Include="res\Skills\SOR32.bmp" />
+    <Image Include="res\Skills\SOR34.bmp" />
+    <Image Include="res\Skills\SOR36.bmp" />
+    <Image Include="res\Skills\SOR38.bmp" />
+    <Image Include="res\Skills\SOR40.bmp" />
+    <Image Include="res\Skills\SOR42.bmp" />
+    <Image Include="res\Skills\SOR44.bmp" />
+    <Image Include="res\Skills\SOR46.bmp" />
+    <Image Include="res\Skills\SOR48.bmp" />
+    <Image Include="res\Skills\SOR50.bmp" />
+    <Image Include="res\Skills\SOR52.bmp" />
+    <Image Include="res\Skills\SOR54.bmp" />
+    <Image Include="res\Skills\SOR56.bmp" />
+    <Image Include="res\Skills\SOR58.bmp" />
+    <Image Include="res\Skills\UNK.bmp" />
     <Image Include="res\stasLeft.bmp" />
     <Image Include="res\waypoint.bmp" />
     <Image Include="res\Weapons\Amazon\1 Stag Bow.bmp" />
@@ -691,11 +930,39 @@
     <Image Include="res\Weapons\Sword\16 Dirk.bmp" />
     <Image Include="res\Weapons\Sword\17 Kris.bmp" />
     <Image Include="res\Weapons\Sword\18 Blade.bmp" />
-    <Image Include="res\weapons\sword\bitmap1.bmp" />
     <Image Include="res\Weapons\Throwing\1 Throwing Knife.bmp" />
     <Image Include="res\Weapons\Throwing\2 Throwing Axe.bmp" />
     <Image Include="res\Weapons\Throwing\3 Balanced Knife.bmp" />
     <Image Include="res\Weapons\Throwing\4 Balanced Axe.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\TXT\Armor.txt" />
+    <Text Include="res\TXT\Belts.txt" />
+    <Text Include="res\TXT\BodyLocs.txt" />
+    <Text Include="res\TXT\CharStats.txt" />
+    <Text Include="res\TXT\DifficultyLevels.txt" />
+    <Text Include="res\TXT\Experience.txt" />
+    <Text Include="res\TXT\Gems.txt" />
+    <Text Include="res\TXT\HireDesc.txt" />
+    <Text Include="res\TXT\hireling.txt" />
+    <Text Include="res\TXT\ItemStatCost.txt" />
+    <Text Include="res\TXT\ItemTypes.txt" />
+    <Text Include="res\TXT\LowQualityItems.txt" />
+    <Text Include="res\TXT\MagicPrefix.txt" />
+    <Text Include="res\TXT\MagicSuffix.txt" />
+    <Text Include="res\TXT\Misc.txt" />
+    <Text Include="res\TXT\PlayerClass.txt" />
+    <Text Include="res\TXT\Properties.txt" />
+    <Text Include="res\TXT\QualityItems.txt" />
+    <Text Include="res\TXT\RarePrefix.txt" />
+    <Text Include="res\TXT\RareSuffix.txt" />
+    <Text Include="res\TXT\Runes.txt" />
+    <Text Include="res\TXT\SetItems.txt" />
+    <Text Include="res\TXT\Sets.txt" />
+    <Text Include="res\TXT\SkillDesc.txt" />
+    <Text Include="res\TXT\Skills.txt" />
+    <Text Include="res\TXT\UniqueItems.txt" />
+    <Text Include="res\TXT\weapons.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -46,9 +46,13 @@ public:
 
 protected:
     HACCEL m_haccel = NULL;
+
+    Gdiplus::GdiplusStartupInput m_gdiplusStartupInput;
+    ULONG_PTR m_gdiplusToken = 0;
 public:
     virtual BOOL ProcessMessageFilter(int code, LPMSG lpMsg);
     virtual CDocument* OpenDocumentFile(LPCTSTR lpszFileName);
+    virtual int ExitInstance();
 };
 //---------------------------------------------------------------------------
 extern CD2EditorApp theApp;

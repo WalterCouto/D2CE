@@ -26,7 +26,9 @@
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include "D2SharedStashForm.h"
+#include "d2ce/helpers/ItemHelpers.h"
 #include <deque>
+#include <utf8/utf8.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1169,7 +1171,14 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
     CSize itemPos = CSize(cx, cy);
     if (GetDlgCtrlID() == IDC_INV_BELT_GRID) // Belt
     {
-        itemPos = CSize(cx % 4, GridBoxSize.cy - cx / 4 - 1);
+        LONG row = cx / 4 + 1;
+        if( row > GridBoxSize.cy )
+        {
+            // out of bounds
+            return rect;
+        }
+
+        itemPos = CSize(cx % 4, GridBoxSize.cy - row);
     }
 
     if (((itemPos.cx + dimension.Width) > GridBoxSize.cx) || ((itemPos.cy + dimension.Height) > GridBoxSize.cy))
@@ -1491,11 +1500,16 @@ void CD2ItemsForm::LoadCorpseItemImages()
 {
     InvCorpseHandRightBox.SetUseAltImage(IsWeaponII);
     InvCorpseHandLeftBox.SetUseAltImage(IsWeaponII);
+    std::string strValue;
+    std::string gender = MainForm.isFemaleCharacter() ? "[fs]" : "[ms]";
+    d2ce::LocalizationHelpers::GetStringTxtValue("Corpse", strValue, gender, "Corpse");
+    auto uName = utf8::utf8to16(strValue);
+    CString windowText(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    CorpseGroupBox.SetWindowText(windowText);
 
     const auto& corpseItems = MainForm.getCorpseItems();
     if (corpseItems.empty())
     {
-        CorpseGroupBox.SetWindowText(_T("No Corpse"));
         InvCorpseHeadBox.ShowWindow(SW_HIDE);
         InvCorpseNeckBox.ShowWindow(SW_HIDE);
         InvCorpseHandRightBox.ShowWindow(SW_HIDE);
@@ -1509,7 +1523,6 @@ void CD2ItemsForm::LoadCorpseItemImages()
         return;
     }
 
-    CorpseGroupBox.SetWindowText(_T("Corpse"));
     InvCorpseHeadBox.ShowWindow(SW_SHOW);
     InvCorpseNeckBox.ShowWindow(SW_SHOW);
     InvCorpseHandRightBox.ShowWindow(SW_SHOW);
@@ -1639,9 +1652,9 @@ void CD2ItemsForm::LoadCorpseItemImages()
 //---------------------------------------------------------------------------
 void CD2ItemsForm::LoadMercItemImages()
 {
-    if (!MainForm.isExpansionCharacter() || !Merc.isHired())
+    if (!MainForm.isExpansionCharacter())
     {
-        MercGroupBox.SetWindowText(_T("Mercenary Not Hired"));
+        MercGroupBox.ShowWindow(SW_HIDE);
         InvMercHeadBox.ShowWindow(SW_HIDE);
         InvMercHandRightBox.ShowWindow(SW_HIDE);
         InvMercTorsoBox.ShowWindow(SW_HIDE);
@@ -1649,27 +1662,41 @@ void CD2ItemsForm::LoadMercItemImages()
         return;
     }
 
-    InvMercHeadBox.ShowWindow(SW_SHOW);
-    InvMercHandRightBox.ShowWindow(SW_SHOW);
-    InvMercTorsoBox.ShowWindow(SW_SHOW);
-    InvMercHandLeftBox.ShowWindow(SW_SHOW);
-
-    auto sMercClass = d2ce::MercClassNames[static_cast<std::underlying_type_t<d2ce::EnumMercenaryClass>>(Merc.getClass())];
-    CString groupStr(sMercClass.c_str());
-    if (groupStr.IsEmpty())
+    if (!Merc.isHired())
     {
-        groupStr = _T("Mercenary Not Hired");
+        InvMercHeadBox.ShowWindow(SW_HIDE);
+        InvMercHandRightBox.ShowWindow(SW_HIDE);
+        InvMercTorsoBox.ShowWindow(SW_HIDE);
+        InvMercHandLeftBox.ShowWindow(SW_HIDE);
     }
     else
     {
-        CString attribName(Merc.getAttributeName().c_str());
-        if (!attribName.IsEmpty())
-        {
-            groupStr += _T(" - ") + attribName;
-        }
+        InvMercHeadBox.ShowWindow(SW_SHOW);
+        InvMercHandRightBox.ShowWindow(SW_SHOW);
+        InvMercTorsoBox.ShowWindow(SW_SHOW);
+        InvMercHandLeftBox.ShowWindow(SW_SHOW);
     }
 
-    MercGroupBox.SetWindowText(groupStr);
+    auto uName = utf8::utf8to16(Merc.getClassName());
+    CString windowText(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    if (!windowText.IsEmpty())
+    {
+        uName = utf8::utf8to16(Merc.getAttributeName());
+        CString attribName(reinterpret_cast<LPCWSTR>(uName.c_str()));
+        if (!attribName.IsEmpty())
+        {
+            windowText += _T(" - ") + attribName;
+        }
+    }
+    else
+    {
+        std::string strValue;
+        d2ce::LocalizationHelpers::GetStringTxtValue("MiniPanelHire", strValue, "Mercenary");
+        uName = utf8::utf8to16(strValue);
+        windowText = reinterpret_cast<LPCWSTR>(uName.c_str());
+    }
+
+    MercGroupBox.SetWindowText(windowText);
 
     for (const auto& item : Merc.getItems())
     {
@@ -1719,13 +1746,17 @@ void CD2ItemsForm::LoadGolemItemImages()
 {
     if (!MainForm.isExpansionCharacter() || (MainForm.getCharacterClass() != d2ce::EnumCharClass::Necromancer))
     {
-        GolemGroupBox.SetWindowText(_T("No Golem"));
+        GolemGroupBox.ShowWindow(SW_HIDE);
         InvGolemBox.ShowWindow(SW_HIDE);
         return;
     }
-    InvGolemBox.ShowWindow(SW_SHOW);
-    GolemGroupBox.SetWindowText(_T("Iron Golem"));
 
+    InvGolemBox.ShowWindow(SW_SHOW);
+    std::string strValue;
+    d2ce::LocalizationHelpers::GetStringTxtValue("IronGolem", strValue, "Iron Golem");
+    auto uText = utf8::utf8to16(strValue);
+    CString windowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    GolemGroupBox.SetWindowText(windowText);
     if (!MainForm.hasGolem())
     {
         return;
@@ -1747,15 +1778,24 @@ void CD2ItemsForm::LoadGridItemImages()
     InvBeltGrid.LoadItemImages();
     InvStashGrid.LoadItemImages();
 
+    std::string strValue;
+    d2ce::LocalizationHelpers::GetStringTxtValue("StrHelp21", strValue, "Belt");
+    auto uName = utf8::utf8to16(strValue);
+    CString windowText(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    BeltGroupBox.SetWindowText(windowText);
+
+    d2ce::LocalizationHelpers::GetStringTxtValue("box", strValue, "Horadric Cube");
+    uName = utf8::utf8to16(strValue);
+    windowText = reinterpret_cast<LPCWSTR>(uName.c_str());
+    CubeGroupBox.SetWindowText(windowText);
     if (getHasHoradricCube())
     {
-        CubeGroupBox.SetWindowText(_T("Cube"));
         InvCubeGrid.LoadItemImages();
         InvCubeGrid.ShowWindow(SW_SHOW);
     }
     else
     {
-        CubeGroupBox.SetWindowText(_T("No Cube"));
+        CubeGroupBox.ShowWindow(SW_HIDE);
         InvCubeGrid.ShowWindow(SW_HIDE);
     }
 }
@@ -2652,6 +2692,12 @@ BOOL CD2ItemsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
+    std::string strValue;
+    d2ce::LocalizationHelpers::GetStringTxtValue("strpanel4", strValue, "Inventory");
+    auto uText = utf8::utf8to16(strValue);
+    CString windowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    SetWindowText(windowText);
+
     EnableToolTips(TRUE);
     CheckToolTipCtrl();
 
@@ -2669,6 +2715,13 @@ BOOL CD2ItemsForm::OnInitDialog()
         auto* pWnd = GetDlgItem(IDC_SHARED_STASH_BUTTON);
         if (pWnd != nullptr)
         {
+            d2ce::LocalizationHelpers::GetStringTxtValue("stash", strValue, "Stash");
+            uText = utf8::utf8to16(strValue);
+            windowText = reinterpret_cast<LPCWSTR>(uText.c_str());
+            d2ce::LocalizationHelpers::GetStringTxtValue("ConcatenatedStringEnding", strValue, "...");
+            uText = utf8::utf8to16(strValue);
+            windowText += reinterpret_cast<LPCWSTR>(uText.c_str());
+            pWnd->SetWindowText(windowText);
             pWnd->EnableWindow(FALSE);
         }
     }
@@ -2863,6 +2916,8 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
     bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
     bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
+    bool canHaveSockets = CurrItem->canHaveSockets();
+    bool canPersonalize = CurrItem->canPersonalize();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -2876,47 +2931,34 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!isArmor && !isWeapon)
+        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+        }
+
+        if (!canPersonalize)
+        {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
         }
         else
         {
-            if (CurrItem->isIndestructible())
-            {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
-            }
-
-            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
-            {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
-            }
-
-            if (getCharacterVersion() < d2ce::EnumCharVersion::v109)
+            if (CurrItem->isPersonalized())
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
             else
             {
-                if (CurrItem->isPersonalized())
-                {
-                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-                }
-                else
-                {
-                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
-                }
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
+        }
+
+        if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);

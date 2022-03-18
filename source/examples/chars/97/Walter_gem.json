@@ -13,6 +13,7 @@
     "progression": 6,
     "active_arms": 0,
     "class": "Paladin",
+    "class_id": 3,
     "level": 45,
     "created": 0,
     "last_played": 1644181063,
@@ -96,8 +97,13 @@
     "dead_merc": 0,
     "merc_id": "7c3ec43d",
     "merc_name_id": 4,
+    "merc_name": "Raldin",
     "merc_type": 16,
+    "merc_class": "Iron Wolf",
+    "merc_attribute": "Cold",
+    "merc_level": 45,
     "merc_experience": 11185580,
+    "merc_difficulty": "Normal",
     "quests_normal": {
       "act_i": {
         "introduced": true,
@@ -1433,7 +1439,7 @@
     {
       "id": 121,
       "points": 3,
-      "name": "Fist Of The Heavens"
+      "name": "Fist of the Heavens"
     },
     {
       "id": 122,
@@ -2500,10 +2506,10 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 19,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "lred",
       "displayed_magic_attributes": [
         {
           "id": 39,
@@ -3737,6 +3743,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 18,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -3902,11 +3909,11 @@
           "values": [
             3
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "type_name": "Ring",
+      "levelreq": 22,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -3943,7 +3950,6 @@
             3
           ],
           "name": "item_throw_mindamage",
-          "description": "+3 to Minimum Throw Damage",
           "visible": false
         }
       ],
@@ -3978,8 +3984,7 @@
           "values": [
             3
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4014,7 +4019,6 @@
             3
           ],
           "name": "item_throw_mindamage",
-          "description": "+3 to Minimum Throw Damage",
           "visible": false
         }
       ]
@@ -4175,6 +4179,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 22,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -4731,6 +4736,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 18,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -4876,6 +4882,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 22,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -5160,6 +5167,7 @@
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 13,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -5290,8 +5298,10 @@
       "class_specific": 0,
       "rare_name_id": 160,
       "rare_name": "Ghoul",
+      "rare_index": "GhoulRI",
       "rare_name_id2": 47,
       "rare_name2": "Horn",
+      "rare_index2": "horn",
       "magical_name_ids": [
         144,
         327,
@@ -5356,6 +5366,7 @@
       ],
       "type_name": "Mask",
       "reqstr": 23,
+      "levelreq": 9,
       "inv_file": "invmsk",
       "inv_height": 2,
       "inv_width": 2,
@@ -5597,6 +5608,7 @@
         }
       ],
       "type_name": "Amulet",
+      "levelreq": 12,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
@@ -5734,7 +5746,7 @@
             20
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 128,
@@ -5815,20 +5827,20 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 27,
-              "values": [
-                19
-              ],
-              "name": "manarecoverybonus",
-              "description": "Regenerate Mana {0}%"
-            },
-            {
               "id": 74,
               "values": [
                 5
               ],
               "name": "hpregen",
               "description": "Replenish Life +{0}"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
             }
           ],
           "type_name": "Perfect Skull",
@@ -5857,20 +5869,20 @@
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 27,
-              "values": [
-                19
-              ],
-              "name": "manarecoverybonus",
-              "description": "Regenerate Mana {0}%"
-            },
-            {
               "id": 74,
               "values": [
                 5
               ],
               "name": "hpregen",
               "description": "Replenish Life +{0}"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5961,20 +5973,20 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 27,
-              "values": [
-                19
-              ],
-              "name": "manarecoverybonus",
-              "description": "Regenerate Mana {0}%"
-            },
-            {
               "id": 74,
               "values": [
                 5
               ],
               "name": "hpregen",
               "description": "Replenish Life +{0}"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
             }
           ],
           "type_name": "Perfect Skull",
@@ -6003,20 +6015,20 @@
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 27,
-              "values": [
-                19
-              ],
-              "name": "manarecoverybonus",
-              "description": "Regenerate Mana {0}%"
-            },
-            {
               "id": 74,
               "values": [
                 5
               ],
               "name": "hpregen",
               "description": "Replenish Life +{0}"
+            },
+            {
+              "id": 27,
+              "values": [
+                19
+              ],
+              "name": "manarecoverybonus",
+              "description": "Regenerate Mana {0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -6041,7 +6053,7 @@
       ],
       "type_name": "Chain Mail",
       "reqstr": 48,
-      "levelreq": 17,
+      "levelreq": 18,
       "inv_file": "invchn",
       "inv_height": 3,
       "inv_width": 2,
@@ -6055,7 +6067,7 @@
             20
           ],
           "name": "lightmindam",
-          "description": "Adds 1-20 Lightning Damage"
+          "description": "Adds 1-20 lightning damage"
         },
         {
           "id": 16,
@@ -6107,7 +6119,7 @@
             20
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 128,
@@ -6118,20 +6130,20 @@
           "description": "Attacker Takes Lightning Damage of {0}"
         },
         {
-          "id": 27,
-          "values": [
-            38
-          ],
-          "name": "manarecoverybonus",
-          "description": "Regenerate Mana {0}%"
-        },
-        {
           "id": 74,
           "values": [
             10
           ],
           "name": "hpregen",
           "description": "Replenish Life +{0}"
+        },
+        {
+          "id": 27,
+          "values": [
+            38
+          ],
+          "name": "manarecoverybonus",
+          "description": "Regenerate Mana {0}%"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6142,7 +6154,7 @@
             20
           ],
           "name": "lightmindam",
-          "description": "Adds 1-20 Lightning Damage"
+          "description": "Adds 1-20 lightning damage"
         },
         {
           "id": 16,
@@ -6260,6 +6272,7 @@
       "rare_name": "Shadow",
       "rare_name_id2": 146,
       "rare_name2": "Master",
+      "rare_index2": "master",
       "magical_name_ids": [
         409,
         269,
@@ -6316,18 +6329,18 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 160,
           "values": [
             1
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Ring",
+      "levelreq": 13,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -6338,7 +6351,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 22,
@@ -6387,7 +6400,6 @@
             1
           ],
           "name": "item_throw_maxdamage",
-          "description": "+1 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -6439,15 +6451,14 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 160,
           "values": [
             1
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6457,7 +6468,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 22,
@@ -6506,7 +6517,6 @@
             1
           ],
           "name": "item_throw_maxdamage",
-          "description": "+1 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -6584,6 +6594,7 @@
       "rare_name": "Brimstone",
       "rare_name_id2": 119,
       "rare_name2": "Lash",
+      "rare_index2": "lash",
       "magical_name_ids": [
         350,
         372,
@@ -6683,11 +6694,12 @@
             50
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "type_name": "Belt",
       "reqstr": 25,
+      "levelreq": 3,
       "inv_file": "invmbl",
       "inv_height": 1,
       "inv_width": 2,
@@ -6699,7 +6711,7 @@
             50
           ],
           "name": "item_fastergethitrate",
-          "description": "50% Faster Hit Recovery"
+          "description": "+50% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -6715,7 +6727,7 @@
             10
           ],
           "name": "strength",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -6724,7 +6736,7 @@
             10
           ],
           "name": "dexterity",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -6733,7 +6745,7 @@
             10
           ],
           "name": "vitality",
-          "description": "+10 to All Attributes"
+          "description": "+10 to all Attributes"
         },
         {
           "id": 1,
@@ -6741,7 +6753,7 @@
             10
           ],
           "name": "energy",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -6876,7 +6888,7 @@
             50
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6886,7 +6898,7 @@
             50
           ],
           "name": "item_fastergethitrate",
-          "description": "50% Faster Hit Recovery"
+          "description": "+50% Faster Hit Recovery"
         },
         {
           "id": 16,
@@ -6902,7 +6914,7 @@
             10
           ],
           "name": "strength",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -6911,7 +6923,7 @@
             10
           ],
           "name": "dexterity",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -6920,7 +6932,7 @@
             10
           ],
           "name": "vitality",
-          "description": "+10 to All Attributes"
+          "description": "+10 to all Attributes"
         },
         {
           "id": 1,
@@ -6928,7 +6940,7 @@
             10
           ],
           "name": "energy",
-          "description": "+10 to All Attributes",
+          "description": "+10 to all Attributes",
           "visible": false
         },
         {
@@ -7047,6 +7059,7 @@
       "class_specific": 0,
       "rare_name_id": 160,
       "rare_name": "Ghoul",
+      "rare_index": "GhoulRI",
       "rare_name_id2": 108,
       "rare_name2": "Brogues",
       "magical_name_ids": [
@@ -7076,7 +7089,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -7116,11 +7129,12 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "type_name": "Heavy Boots",
       "reqstr": 18,
+      "levelreq": 4,
       "inv_file": "invvbt",
       "inv_height": 2,
       "inv_width": 2,
@@ -7132,7 +7146,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         },
         {
           "id": 19,
@@ -7164,7 +7178,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+5 to Maximum Stamina"
+          "description": "+5 Maximum Stamina"
         },
         {
           "id": 41,
@@ -7199,7 +7213,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -7239,7 +7253,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "{0}% Faster Hit Recovery"
+          "description": "+{0}% Faster Hit Recovery"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7249,7 +7263,7 @@
             10
           ],
           "name": "item_fastergethitrate",
-          "description": "10% Faster Hit Recovery"
+          "description": "+10% Faster Hit Recovery"
         },
         {
           "id": 19,
@@ -7281,7 +7295,7 @@
             5
           ],
           "name": "maxstamina",
-          "description": "+5 to Maximum Stamina"
+          "description": "+5 Maximum Stamina"
         },
         {
           "id": 41,
@@ -7374,6 +7388,7 @@
       "rare_name": "Storm",
       "rare_name_id2": 96,
       "rare_name2": "Hold",
+      "rare_index2": "hold",
       "magical_name_ids": [
         409,
         287,
@@ -7425,15 +7440,17 @@
             10
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         }
       ],
       "type_name": "Chain Gloves",
       "reqstr": 25,
+      "levelreq": 15,
       "inv_file": "invmgl",
       "inv_height": 2,
       "inv_width": 2,
       "inv_transform": 8,
+      "transform_color": "lgld",
       "displayed_magic_attributes": [
         {
           "id": 93,
@@ -7441,7 +7458,7 @@
             10
           ],
           "name": "item_fasterattackrate",
-          "description": "10% Increased Attack Speed"
+          "description": "+10% Increased Attack Speed"
         },
         {
           "id": 16,
@@ -7516,7 +7533,7 @@
             10
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7526,7 +7543,7 @@
             10
           ],
           "name": "item_fasterattackrate",
-          "description": "10% Increased Attack Speed"
+          "description": "+10% Increased Attack Speed"
         },
         {
           "id": 16,
@@ -8364,10 +8381,11 @@
             5
           ],
           "name": "item_fastermovevelocity",
-          "description": "{0}% Faster Run/Walk"
+          "description": "+{0}% Faster Run/Walk"
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 18,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -8378,7 +8396,7 @@
             5
           ],
           "name": "item_fastermovevelocity",
-          "description": "5% Faster Run/Walk"
+          "description": "+5% Faster Run/Walk"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -8389,7 +8407,7 @@
             5
           ],
           "name": "item_fastermovevelocity",
-          "description": "{0}% Faster Run/Walk"
+          "description": "+{0}% Faster Run/Walk"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8399,7 +8417,7 @@
             5
           ],
           "name": "item_fastermovevelocity",
-          "description": "5% Faster Run/Walk"
+          "description": "+5% Faster Run/Walk"
         }
       ]
     },
@@ -8489,6 +8507,7 @@
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 12,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -8700,6 +8719,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 5,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -8842,10 +8862,11 @@
             5
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 5,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -8857,7 +8878,7 @@
             5
           ],
           "name": "lightmindam",
-          "description": "Adds 1-5 Lightning Damage"
+          "description": "Adds 1-5 lightning damage"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -8869,7 +8890,7 @@
             5
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8880,7 +8901,7 @@
             5
           ],
           "name": "lightmindam",
-          "description": "Adds 1-5 Lightning Damage"
+          "description": "Adds 1-5 lightning damage"
         }
       ]
     },
@@ -8967,10 +8988,11 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 10,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
@@ -8983,7 +9005,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds 3-5 Fire Damage"
+          "description": "Adds 3-5 fire damage"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -8995,7 +9017,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9006,7 +9028,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds 3-5 Fire Damage"
+          "description": "Adds 3-5 fire damage"
         }
       ]
     },
@@ -9085,6 +9107,7 @@
       "rare_name": "Raven",
       "rare_name_id2": 128,
       "rare_name2": "Gyre",
+      "rare_index2": "gyre",
       "magical_name_ids": [
         376,
         670,
@@ -9121,9 +9144,11 @@
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 28,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "lred",
       "displayed_magic_attributes": [
         {
           "id": 0,
@@ -9383,19 +9408,19 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 356,
+          "values": [
+            1
+          ],
+          "name": "questitemdifficulty"
+        },
+        {
           "id": 122,
           "values": [
             50
           ],
           "name": "item_undeaddamage_percent",
           "description": "+{0}% Damage to Undead"
-        },
-        {
-          "id": 356,
-          "values": [
-            1
-          ],
-          "name": "questitemdifficulty"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9490,6 +9515,7 @@
       "rare_name": "Storm",
       "rare_name_id2": 97,
       "rare_name2": "Touch",
+      "rare_index2": "touch",
       "magical_name_ids": [
         372,
         328,
@@ -9530,7 +9556,7 @@
             4
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 201,
@@ -9544,9 +9570,11 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 13,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "cblu",
       "displayed_magic_attributes": [
         {
           "id": 201,
@@ -9564,7 +9592,7 @@
             4
           ],
           "name": "lifedrainmindam",
-          "description": "4% Life Stolen Per Hit"
+          "description": "4% Life stolen per hit"
         },
         {
           "id": 7,
@@ -9623,7 +9651,7 @@
             4
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 201,
@@ -9653,7 +9681,7 @@
             4
           ],
           "name": "lifedrainmindam",
-          "description": "4% Life Stolen Per Hit"
+          "description": "4% Life stolen per hit"
         },
         {
           "id": 7,
@@ -9755,6 +9783,7 @@
       "rare_name": "Bitter",
       "rare_name_id2": 128,
       "rare_name2": "Gyre",
+      "rare_index2": "gyre",
       "magical_name_ids": [
         417,
         125,
@@ -9787,7 +9816,7 @@
             3
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 80,
@@ -9807,9 +9836,11 @@
         }
       ],
       "type_name": "Ring",
+      "levelreq": 16,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "lgld",
       "displayed_magic_attributes": [
         {
           "id": 19,
@@ -9825,7 +9856,7 @@
             3
           ],
           "name": "lifedrainmindam",
-          "description": "3% Life Stolen Per Hit"
+          "description": "3% Life stolen per hit"
         },
         {
           "id": 35,
@@ -9876,7 +9907,7 @@
             3
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 80,
@@ -9910,7 +9941,7 @@
             3
           ],
           "name": "lifedrainmindam",
-          "description": "3% Life Stolen Per Hit"
+          "description": "3% Life stolen per hit"
         },
         {
           "id": 35,
@@ -12640,6 +12671,7 @@
       ],
       "type_name": "Kite Shield",
       "reqstr": 47,
+      "levelreq": 18,
       "inv_file": "invkit",
       "inv_height": 3,
       "inv_width": 2,
@@ -12779,7 +12811,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -12788,9 +12820,10 @@
       },
       "type_name": "War Scepter",
       "reqstr": 55,
+      "levelreq": 18,
       "inv_file": "invwsp",
       "inv_height": 3,
-      "inv_width": 1,
+      "inv_width": 2,
       "inv_transform": 2,
       "displayed_magic_attributes": [
         {
@@ -12825,19 +12858,11 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Holy Freeze (Paladin Only)"
+          "description": "+1 to Holy Freeze (Paladin Only)"
         }
       ],
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+{0}% Damage to Undead"
-        },
         {
           "id": 17,
           "values": [
@@ -12870,7 +12895,15 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -12900,21 +12933,21 @@
           "description": "+12 to Attack Rating"
         },
         {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+50% Damage to Undead"
-        },
-        {
           "id": 107,
           "values": [
             114,
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Holy Freeze (Paladin Only)"
+          "description": "+1 to Holy Freeze (Paladin Only)"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
         }
       ]
     },
@@ -13011,10 +13044,11 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 19,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -13027,7 +13061,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "+6 Poison Damage over 3 Seconds"
+          "description": "+6 poison damage over 3 seconds"
         },
         {
           "id": 31,
@@ -13056,7 +13090,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -13068,7 +13102,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "+6 Poison Damage over 3 Seconds"
+          "description": "+6 poison damage over 3 seconds"
         },
         {
           "id": 31,
@@ -13166,6 +13200,7 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 16,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
@@ -13860,14 +13895,6 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+{0}% Damage to Undead"
-        },
-        {
           "id": 19,
           "values": [
             75
@@ -13890,6 +13917,14 @@
           ],
           "name": "item_maxdamage_perlevel",
           "description": "+{0} to Maximum Damage (Based on Character Level)"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -13994,9 +14029,9 @@
       "categories": [
         "Auric Shields",
         "Any Shield",
+        "Paladin Item",
         "Any Armor",
         "Second Hand",
-        "Paladin Item",
         "Class Specific"
       ],
       "type_id": 2,
@@ -14011,6 +14046,7 @@
       "rare_name": "Grim",
       "rare_name_id2": 151,
       "rare_name2": "Shell",
+      "rare_index2": "shell",
       "magical_name_ids": [
         145,
         403,
@@ -14070,7 +14106,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in {0} Seconds"
+          "description": "Repairs 1 durability in {0} seconds"
         }
       ],
       "type_name": "Crown Shield",
@@ -14126,7 +14162,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in 20 Seconds"
+          "description": "Repairs 1 durability in 20 seconds"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -14177,7 +14213,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in {0} Seconds"
+          "description": "Repairs 1 durability in {0} seconds"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -14227,7 +14263,7 @@
             5
           ],
           "name": "item_replenish_durability",
-          "description": "Repairs 1 Durability in 20 Seconds"
+          "description": "Repairs 1 durability in 20 seconds"
         }
       ]
     }
@@ -14323,6 +14359,7 @@
       ],
       "type_name": "Crown",
       "reqstr": 55,
+      "levelreq": 5,
       "inv_file": "invcrn",
       "inv_height": 2,
       "inv_width": 2,
@@ -14447,6 +14484,7 @@
       ],
       "type_name": "Gothic Plate",
       "reqstr": 70,
+      "levelreq": 5,
       "inv_file": "invgth",
       "inv_height": 3,
       "inv_width": 2,
@@ -14703,6 +14741,7 @@
       ],
       "type_name": "Gothic Shield",
       "reqstr": 60,
+      "levelreq": 4,
       "inv_file": "invgts",
       "inv_height": 4,
       "inv_width": 2,
@@ -14748,6 +14787,22 @@
   ],
   "item_bonuses": [
     {
+      "id": 0,
+      "values": [
+        19
+      ],
+      "name": "strength",
+      "description": "+{0} to Strength"
+    },
+    {
+      "id": 19,
+      "values": [
+        127
+      ],
+      "name": "tohit",
+      "description": "+{0} to Attack Rating"
+    },
+    {
       "id": 7,
       "values": [
         11
@@ -14764,17 +14819,9 @@
       "description": "+{0}% Enhanced Defense"
     },
     {
-      "id": 19,
-      "values": [
-        117
-      ],
-      "name": "tohit",
-      "description": "+{0} to Attack Rating"
-    },
-    {
       "id": 41,
       "values": [
-        300
+        310
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
@@ -14806,11 +14853,11 @@
     {
       "id": 50,
       "values": [
-        1,
-        20
+        2,
+        25
       ],
       "name": "lightmindam",
-      "description": "Adds {0}-{1} Lightning Damage"
+      "description": "Adds {0}-{1} lightning damage"
     },
     {
       "id": 128,
@@ -14850,23 +14897,14 @@
         10
       ],
       "name": "item_fastercastrate",
-      "description": "{0}% Faster Cast Rate"
+      "description": "+{0}% Faster Cast Rate"
     },
     {
       "id": 160,
       "values": [
         1
       ],
-      "name": "item_throw_maxdamage",
-      "description": "+{0} to Maximum Throw Damage"
-    },
-    {
-      "id": 0,
-      "values": [
-        11
-      ],
-      "name": "strength",
-      "description": "+{0} to Strength"
+      "name": "item_throw_maxdamage"
     },
     {
       "id": 1,
@@ -14922,7 +14960,7 @@
         60
       ],
       "name": "item_fastergethitrate",
-      "description": "{0}% Faster Hit Recovery"
+      "description": "+{0}% Faster Hit Recovery"
     },
     {
       "id": 11,
@@ -14930,7 +14968,7 @@
         5
       ],
       "name": "maxstamina",
-      "description": "+{0} to Maximum Stamina"
+      "description": "+{0} Maximum Stamina"
     },
     {
       "id": 80,
@@ -14946,7 +14984,24 @@
         10
       ],
       "name": "item_fasterattackrate",
-      "description": "{0}% Increased Attack Speed"
+      "description": "+{0}% Increased Attack Speed"
+    },
+    {
+      "id": 96,
+      "values": [
+        5
+      ],
+      "name": "item_fastermovevelocity",
+      "description": "+{0}% Faster Run/Walk"
+    },
+    {
+      "id": 48,
+      "values": [
+        3,
+        5
+      ],
+      "name": "firemindam",
+      "description": "Adds {0}-{1} fire damage"
     },
     {
       "id": 60,
@@ -14954,7 +15009,7 @@
         4
       ],
       "name": "lifedrainmindam",
-      "description": "{0}% Life Stolen Per Hit"
+      "description": "{0}% Life stolen per hit"
     },
     {
       "id": 201,
@@ -14965,14 +15020,6 @@
       ],
       "name": "item_skillongethit",
       "description": "{2}% Chance to cast level {0} {1} when struck"
-    },
-    {
-      "id": 122,
-      "values": [
-        100
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 17,
@@ -14998,7 +15045,33 @@
         1
       ],
       "name": "item_singleskill",
-      "description": "+{1} To {0}"
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 122,
+      "values": [
+        100
+      ],
+      "name": "item_undeaddamage_percent",
+      "description": "+{0}% Damage to Undead"
+    },
+    {
+      "id": 31,
+      "values": [
+        13
+      ],
+      "name": "armorclass",
+      "description": "+{0} Defense"
+    },
+    {
+      "id": 57,
+      "values": [
+        21,
+        21,
+        75
+      ],
+      "name": "poisonmindam",
+      "description": "Adds {0}-{1} poison damage over {2} seconds"
     },
     {
       "id": 218,
@@ -15014,7 +15087,7 @@
         5
       ],
       "name": "item_replenish_durability",
-      "description": "Repairs 1 Durability in {0} Seconds"
+      "description": "Repairs 1 durability in {0} seconds"
     }
   ]
 }

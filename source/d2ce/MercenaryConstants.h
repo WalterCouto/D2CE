@@ -20,36 +20,12 @@
 #pragma once
 
 #include "Constants.h"
-#include <string>
-#include <array>
 
 namespace d2ce
 {
+    constexpr std::uint32_t MERC_MAX_EXPERIENCE = 3600000000ui32; // experience max value (game limit)
+    constexpr std::uint32_t MERC_NUM_OF_LEVELS = 98ui32;          // max merc level (game limit)
+
     enum class EnumMercenaryClass : std::uint8_t { None = 0, RogueScout, DesertMercenary, IronWolf, Barbarian};
-
-    const std::array<std::string, 5> MercClassNames = { "", "Rogue Scout", "Desert Mercenary", "Iron Wolf", "Barbarian" };
-
-    const std::array<std::string, 41> RogueMercNames = { "Aliza", "Amplisa", "Annor", "Abhaya", "Elly", "Paige", "Basanti", "Blaise", "Kyoko", "Klaudia", "Kundri",
-        "Kyle", "Visala", "Elexa", "Floria", "Fiona", "Gwinni", "Gaile", "Hannah", "Heather", "Iantha", "Diane",
-        "Isolde", "Divo", "Ithera", "Itonya", "Liene", "Maeko", "Mahala", "Liaza", "Meghan", "Olena", "Oriana",
-        "Ryann", "Rozene", "Raissa", "Sharyn", "Shikha", "Debi", "Tylena", "Wendy" };
-
-    const std::array<std::string, 2> RogueMercAttributes = { "Fire Arrow", "Cold Arrow" };
-
-    const std::array<std::string, 21> DesertMercenaryNames = { "Hazade", "Alhizeer", "Azrael", "Ahsab", "Chalan", "Haseen", "Razan", "Emilio", "Pratham", "Fazel",
-        "Jemali", "Kasim",  "Gulzar", "Mizan", "Leharas", "Durga", "Neeraj", "Ilzan", "Zanarhi", "Waheed", "Vikhyat" };
-
-    const std::array<std::string, 3> DesertMercenaryAttributes = { "Combat", "Defense", "Offense" };
-
-    const std::array<std::string, 20> IronWolfNames = { "Jelani", "Barani", "Jabari", "Devak", "Raldin", "Telash", "Ajheed", "Narphet", "Khaleel", "Phaet", "Geshef",
-        "Vanji", "Haphet", "Thadar", "Yatiraj", "Rhadge", "Yashied", "Lharhad", "Flux", "Scorch" };
-
-    const std::array<std::string, 3> IronWolfAttributes = { "Fire Spells", "Cold Spells", "Lightning Spells" };
-
-    const std::array<std::string, 67> BarbarianMercNames = { "Vardhaka", "Khan", "Klisk", "Bors", "Brom", "Wiglaf", "Hrothgar", "Scyld", "Healfdane", "Heorogar",
-        "Halgaunt", "Hygelac", "Egtheow", "Bohdan", "Wulfgar", "Hild", "Heatholaf", "Weder", "Vikhyat", "Unferth", "Sigemund", "Heremod", "Hengest",
-        "Folcwald", "Frisian", "Hnaef", "Guthlaf", "Oslaf", "Yrmenlaf", "Garmund", "Freawaru", "Eadgils", "Onela", "Damien", "Tryneus", "Klar", "Wulf",
-        "Bulwye", "Lief", "Magnus", "Klatu", "Drus", "Hoku", "Kord", "Uther", "Ip", "Ulf", "Tharr", "Kaelim", "Ulric", "Alaric", "Ethelred", "Caden",
-        "Elgifu", "Tostig", "Alcuin", "Emund", "Sigurd", "Gorm", "Hollis", "Ragnar", "Torkel", "Wulfstan", "Alban", "Barloc", "Bill", "Theodoric" };
 }
 //---------------------------------------------------------------------------

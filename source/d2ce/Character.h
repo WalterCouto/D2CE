@@ -30,6 +30,7 @@
 #include "Item.h"
 #include "SharedStash.h"
 #include <json/json.h>
+#include <filesystem>
 
 namespace d2ce
 {
@@ -45,7 +46,7 @@ namespace d2ce
         std::uint32_t FileSize = 0;                                     // pos 8 (1.09+ only), file's size
         long Checksum = 0;                                              // pos 12 (1.09+ only), stores (possible) checksum
         std::uint32_t WeaponSet = 0;                                    // pos 16 (1.09+, otherwise pos 26 uint16_t)
-        BasicStats Bs;                                                  // Name:   pos 20 (1.09+, otherwise pos 8),
+        BasicStats Bs;                                                  // Name:   pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8),
                                                                         //         name includes terminating NULL
                                                                         // Status: pos 36 (1.09+, otherwise, pos 24), determines character status
                                                                         // Title:  pos 37 (1.09+, otherwise pos 25), character's title
@@ -87,11 +88,12 @@ namespace d2ce
 
         // the following variables are not part of the character file format
         std::FILE* m_charfile = nullptr;
-        std::string m_d2sfilename, m_jsonfilename, m_tempfilename;
+        std::filesystem::path m_d2sfilename, m_jsonfilename, m_tempfilename;
         std::error_code m_error_code;
         std::uint32_t m_filesize_location,
             m_checksum_location,
             m_name_location = 0,
+            m_status_location = 0,
             m_class_location = 0,
             m_level_location = 0,
             m_starting_location = 0,
@@ -108,8 +110,8 @@ namespace d2ce
         void calculateChecksum();
 
         void initialize();
-        bool openD2S(const char* filename, bool validateChecksum = true);
-        bool openJson(const char* filename);
+        bool openD2S(const std::filesystem::path& path, bool validateChecksum = true);
+        bool openJson(const std::filesystem::path& path);
         void readHeader();
         void readHeader(const Json::Value& root);
         bool isValidHeader() const;
@@ -137,13 +139,20 @@ namespace d2ce
         ~Character();
 
         // File operations
-        bool open(const char* filename, bool validateChecksum = true);
+        bool open(const std::filesystem::path& path, bool validateChecksum = true);
         bool refresh();
         bool save();
         bool saveAsD2s();
         void close();
-        const char *getPathName() const;
-        std::string asJson(bool bSerializedFormat = false) const;
+        const std::filesystem::path& getPath() const;
+        std::string asJson(bool bSerializedFormat = false) const; // utf-8
+
+        void setDefaultTxtReader();
+        void setTxtReader(const ITxtReader& txtReader);
+        const ITxtReader& getTxtReader() const;
+
+        const std::string& getLanguage() const;
+        const std::string& setLanguage(const std::string& lang) const;
 
         bool is_open() const;
         bool is_json() const;
@@ -185,7 +194,8 @@ namespace d2ce
         EnumAct getTitleAct() const;
         void ensureTitleAct(EnumAct act);
         EnumCharClass getClass() const;
-        std::string getClassName() const;
+        const std::string& getClassName() const;
+        const std::string& getClassCode() const;
         EnumDifficulty getDifficultyLastPlayed() const;
         EnumAct getStartingAct() const;
         EnumAct getLastAct() const;
@@ -202,6 +212,7 @@ namespace d2ce
         void setIsResurrectedCharacter(bool flag);
         bool isDeadCharacter() const;
         void setIsDeadCharacter(bool flag);
+        bool isFemaleCharacter() const;
         bool isGameComplete() const;
         void setGameComplete();
         bool isDifficultyComplete(d2ce::EnumDifficulty diff) const;
@@ -209,7 +220,13 @@ namespace d2ce
         void setNoDifficultyComplete();
 
         std::uint32_t getLevel() const;
+        std::uint32_t getMaxLevel() const;
         std::uint32_t getExperience() const;
+        std::uint32_t getMaxExperience() const;
+        std::uint32_t getMinExperience(std::uint32_t level) const;
+        std::uint32_t getMinExperienceLevel() const;
+        std::uint32_t getNextExperience(std::uint32_t level) const;
+        std::uint32_t getNextExperienceLevel() const;
         std::uint32_t getMaxGoldInBelt() const;
         std::uint32_t getMaxGoldInStash() const;
         std::uint32_t getMinStrength() const;
@@ -231,7 +248,8 @@ namespace d2ce
         std::uint32_t getStatPointsEarned(std::uint32_t level) const;
         std::uint32_t getLevelFromTotalStatPoints() const;
         std::uint32_t getLevelFromStatPointsEarned(std::uint32_t earned) const;
-
+        std::uint32_t getLevelFromExperience() const;
+        std::uint32_t getLevelFromExperience(std::uint32_t experience) const;
         // Quests
         const ActsInfo& getQuests();
         void updateQuests(const ActsInfo& qi);
@@ -252,6 +270,8 @@ namespace d2ce
         void maxSkills();
         void resetSkills();
         void clearSkillChoices();
+
+        bool getSkillBonusPoints(std::vector<std::uint16_t>& points) const;
 
         // Items
         size_t getNumberOfItems() const;

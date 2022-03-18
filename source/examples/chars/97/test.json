@@ -13,6 +13,7 @@
     "progression": 0,
     "active_arms": 0,
     "class": "Sorceress",
+    "class_id": 1,
     "level": 1,
     "created": 0,
     "last_played": 1636420038,
@@ -1719,7 +1720,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "type_name": "Town Portal Scroll",
+      "type_name": "Scroll of Town Portal",
       "inv_file": "invbsc",
       "inv_height": 1,
       "inv_width": 1
@@ -1788,7 +1789,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "type_name": "Identify Scroll",
+      "type_name": "Scroll of Identify",
       "inv_file": "invrsc",
       "inv_height": 1,
       "inv_width": 1
@@ -1878,7 +1879,7 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
+          "description": "+{1} to {0} {2}"
         }
       ],
       "base_damage": {
@@ -1898,11 +1899,20 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+1 To Fire Bolt (Sorceress Only)"
+          "description": "+1 to Fire Bolt (Sorceress Only)"
         }
       ],
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
+        {
+          "id": 107,
+          "values": [
+            36,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
         {
           "id": 122,
           "values": [
@@ -1910,7 +1920,9 @@
           ],
           "name": "item_undeaddamage_percent",
           "description": "+{0}% Damage to Undead"
-        },
+        }
+      ],
+      "displayed_combined_magic_attributes": [
         {
           "id": 107,
           "values": [
@@ -1918,10 +1930,8 @@
             1
           ],
           "name": "item_singleskill",
-          "description": "+{1} To {0}"
-        }
-      ],
-      "displayed_combined_magic_attributes": [
+          "description": "+1 to Fire Bolt (Sorceress Only)"
+        },
         {
           "id": 122,
           "values": [
@@ -1929,15 +1939,6 @@
           ],
           "name": "item_undeaddamage_percent",
           "description": "+50% Damage to Undead"
-        },
-        {
-          "id": 107,
-          "values": [
-            36,
-            1
-          ],
-          "name": "item_singleskill",
-          "description": "+1 To Fire Bolt (Sorceress Only)"
         }
       ]
     }

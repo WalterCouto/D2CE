@@ -1,4 +1,4 @@
-/*
+﻿/*
     Diablo II Character Editor
     Copyright (C) 2021-2022 Walter Couto
 
@@ -20,6 +20,8 @@
 #include "pch.h"
 #include "D2Editor.h"
 #include "D2MercenaryForm.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -378,7 +380,7 @@ void CD2MercenaryForm::DisplayMercInfo()
     Merc.getDamage(damage);
     if (damage.Max != 0)
     {
-        sDamage.Format(_T("%ld-%d"), damage.Min, damage.Max);
+        sDamage.Format(DamageFmt, damage.Min, damage.Max);
     }
     MercDamage.SetWindowText(sDamage);
 
@@ -464,37 +466,13 @@ void CD2MercenaryForm::UpdateMercNames()
         return;
     }
 
+    std::u16string uText;
     MercName.ResetContent();
     CurMercNameClass = curClass;
-    switch (CurMercNameClass)
+    for (const auto& name : d2ce::Mercenary::getMercNames(CurMercNameClass))
     {
-    case d2ce::EnumMercenaryClass::RogueScout:
-        for (const auto& name : d2ce::RogueMercNames)
-        {
-            MercName.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::DesertMercenary:
-        for (const auto& name : d2ce::DesertMercenaryNames)
-        {
-            MercName.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::IronWolf:
-        for (const auto& name : d2ce::IronWolfNames)
-        {
-            MercName.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::Barbarian:
-        for (const auto& name : d2ce::BarbarianMercNames)
-        {
-            MercName.AddString(CString(name.c_str()));
-        }
-        break;
+        uText = utf8::utf8to16(name.c_str());
+        MercName.AddString(reinterpret_cast<LPCWSTR>(uText.c_str()));
     }
 
     MercName.SetCurSel(Merc.getNameId());
@@ -520,33 +498,14 @@ void CD2MercenaryForm::UpdateAttributes()
         return;
     }
 
+    std::u16string uText;
     Attribute.ResetContent();
     CurAttributeClass = curClass;
-    switch (CurAttributeClass)
+    const auto& attribs = d2ce::Mercenary::getMercAttributes(CurAttributeClass);
+    for (const auto& name : attribs)
     {
-    case d2ce::EnumMercenaryClass::RogueScout:
-        for (const auto& name : d2ce::RogueMercAttributes)
-        {
-            Attribute.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::DesertMercenary:
-        for (const auto& name : d2ce::DesertMercenaryAttributes)
-        {
-            Attribute.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::IronWolf:
-        for (const auto& name : d2ce::IronWolfAttributes)
-        {
-            Attribute.AddString(CString(name.c_str()));
-        }
-        break;
-
-    case d2ce::EnumMercenaryClass::Barbarian:
-        break;
+        uText = utf8::utf8to16(name.c_str());
+        Attribute.AddString(reinterpret_cast<LPCWSTR>(uText.c_str()));
     }
 
     if (Attribute.GetCount() <= 0)
@@ -772,6 +731,17 @@ CStringA CD2MercenaryForm::ToTextA(const CWnd* Sender) const
     return CStringA(ToText(Sender));
 }
 //---------------------------------------------------------------------------
+void CD2MercenaryForm::SetText(CWnd* Sender, const std::string& newValue)
+{
+    SetUTF8Text(Sender, newValue.c_str());
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::SetUTF8Text(CWnd* Sender, const char* newValue)
+{
+    auto uText = utf8::utf8to16(newValue);
+    SetText(Sender, reinterpret_cast<LPCWSTR>(uText.c_str()));
+}
+//---------------------------------------------------------------------------
 void CD2MercenaryForm::SetText(CWnd* Sender, const char* newValue)
 {
     if (Sender->IsKindOf(RUNTIME_CLASS(CEdit)) || Sender->IsKindOf(RUNTIME_CLASS(CStatic)))
@@ -972,7 +942,168 @@ BOOL CD2MercenaryForm::OnInitDialog()
     Experience.SetLimitText(10);
 
     {
+        std::string strValue;
         CWaitCursor wait;
+        d2ce::LocalizationHelpers::GetStringTxtValue("MiniPanelHire", strValue, "Mercenary");
+        auto uText = utf8::utf8to16(strValue);
+        SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+
+        if(d2ce::LocalizationHelpers::GetStringTxtValue("ItemStats1l", strValue))
+        {
+            auto pos = strValue.find(":");
+            if (pos != strValue.npos)
+            {
+                strValue = strValue.substr(pos + 1);
+                uText = utf8::utf8to16(strValue);
+                DamageFmt = reinterpret_cast<LPCWSTR>(uText.c_str());
+            }
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("VerifyTransaction6", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_MERC_HIRED)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("sysmsg9", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            CStringW tmp(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            tmp.Trim();
+            tmp.TrimRight(L".。");
+            GetDlgItem(IDC_RESURRECTED_CHECK)->SetWindowText(tmp);
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strName", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_NAME)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strClass", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_CLASS)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrlvl", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_LEVEL)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrexp", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_EXPERIENCE)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrlif", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CUR_LIFE)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrstr", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_STRENGTH)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrdex", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_DEXTERITY)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrskm", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_DAMAGE)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrdef", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_DEFENSE)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrfir", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_RESIST_FIRE)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrcol", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_RESIST_COLD)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrlit", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_RESIST_LIGHTNING)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrpos", strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            GetDlgItem(IDC_STATIC_CHAR_RESIST_POISON)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
+        CString text;
+        CStringA textA;
+        CWnd* pWnd = nullptr;
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("ok", strValue))
+        {
+            pWnd = GetDlgItem(IDOK);
+            if (pWnd != nullptr)
+            {
+                pWnd->GetWindowText(text);
+                textA = text;
+                if (textA.CompareNoCase(strValue.c_str()) != 0)
+                {
+                    uText = utf8::utf8to16(strValue);
+                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                }
+            }
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("cancel", strValue))
+        {
+            pWnd = GetDlgItem(IDCANCEL);
+            if (pWnd != nullptr)
+            {
+                pWnd->GetWindowText(text);
+                textA = text;
+                if (textA.CompareNoCase(strValue.c_str()) != 0)
+                {
+                    uText = utf8::utf8to16(strValue);
+                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                }
+            }
+        }
+
+        MercClass.ResetContent();
+        for (const auto& name : d2ce::Mercenary::getMercClassNames())
+        {
+            if (!name.empty()) // skip none
+            {
+                uText = utf8::utf8to16(name.c_str());
+                MercClass.AddString(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+
+        static std::initializer_list<d2ce::EnumDifficulty> all_diff = { d2ce::EnumDifficulty::Normal, d2ce::EnumDifficulty::Nightmare, d2ce::EnumDifficulty::Hell };
+        Difficulty.ResetContent();
+        for (auto diff : all_diff)
+        {
+            d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(diff, strValue);
+            uText = utf8::utf8to16(strValue);
+            Difficulty.AddString(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+
         DisplayMercInfo();
         LoadMercItemImages();
     }
@@ -987,7 +1118,7 @@ void CD2MercenaryForm::OnEnChangeMercLevel()
 }
 void CD2MercenaryForm::OnEnKillfocusMercLevel()
 {
-    std::uint32_t level = std::min(std::max(ToInt(&MercLevel), std::uint32_t(1)), std::min(MainForm.getCharacterLevel(), d2ce::NUM_OF_LEVELS - 1));
+    std::uint32_t level = std::min(std::max(ToInt(&MercLevel), std::uint32_t(1)), std::min(MainForm.getCharacterLevel(), d2ce::MERC_NUM_OF_LEVELS));
     if (level != Merc.getLevel())
     {
         Merc.setLevel(level);
@@ -1002,7 +1133,7 @@ void CD2MercenaryForm::OnEnChangeMercExperience()
 }
 void CD2MercenaryForm::OnEnKillfocusMercExperience()
 {
-    std::uint32_t experience = std::min(std::max(ToInt(&Experience), std::uint32_t(1)), d2ce::MAX_EXPERIENCE);
+    std::uint32_t experience = std::min(std::max(ToInt(&Experience), std::uint32_t(1)), d2ce::MERC_MAX_EXPERIENCE);
     if (experience != Merc.getExperience())
     {
         Merc.setExperience(experience);
@@ -1264,6 +1395,8 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isStackable = CurrItem->isStackable();
     bool isArmor = !isStackable && CurrItem->isArmor();
     bool isWeapon = !isArmor && CurrItem->isWeapon();
+    bool canHaveSockets = CurrItem->canHaveSockets();
+    bool canPersonalize = CurrItem->canPersonalize();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1289,48 +1422,36 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!isArmor && !isWeapon)
+        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+        }
+
+        if (!canPersonalize)
+        {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
         }
         else
         {
-            if (CurrItem->isIndestructible())
-            {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
-            }
-
-            if (!CurrItem->canHaveSockets() || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
-            {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
-            }
-
-            if (MainForm.getCharacterInfo().getVersion() < d2ce::EnumCharVersion::v109)
+            if (CurrItem->isPersonalized())
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
             else
             {
-                if (CurrItem->isPersonalized())
-                {
-                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-                }
-                else
-                {
-                    pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
-                }
+                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
         }
+
+        if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+        }
+
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
 }   

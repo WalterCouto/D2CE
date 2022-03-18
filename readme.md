@@ -9,7 +9,7 @@ ______________________________________________
 ### How To Use
 
 1. Run the D2Editor.exe file<br>
-2. Open a Diablo II character file (press CTRL-O or click on File, Open) which is located in the "save" directory of where you installed Diablo II.<br>
+2. Open a Diablo II character file (press CTRL-O or click on File, Open) which is located in the "save" directory of where you installed Diablo II Resurrected.<br>
 3. Make changes (type in a value if editing level, gold, experience, etc. or use the mouse if changing title, class, or state)<br>
 4. Save changes (press CTRL-S or click on File, Save)<br>
 5. Play Diablo II.<br>
@@ -48,7 +48,7 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II Resurrected v1.1.67554 and Diablo II Classic v1.14d (It has unit test confirming it supports the older versions from v1.00 through to v1.09 as well but the files used in testing have not been tested in a real game)**
+- Tested with Diablo II Resurrected v1.2.68992 (PTR 2.4) and Diablo II Classic v1.14d (It has unit test confirming it supports the all versions from v1.00 and up as well but the files used in testing have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Ressurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - You must close the character file before playing Diablo II. This is because there are no options to enable file sharing for the read and write functions I'm using in ANSI C++.
 
@@ -65,15 +65,27 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 ### Useful Links
 
 * https://github.com/zhaoleimxd/JamellaD2E<br>
+* https://github.com/daidodo/diablo_edit<br>
 * https://github.com/dschu012/D2SLib<br>
 * https://github.com/squeek502/d2itemreader<br>
 * https://github.com/nokka/d2s<br>
 * https://github.com/krisives/d2s-format<br>
 * https://tristram-archives.github.io/diablo2_infodump//2013/just%20hosting%20these,%20Downloaded%20from%20Internet/documentation/d2s_save_file_format_1.13d.html<br>
+* https://github.com/andersgong/d2bin2txt/<br>
 * https://diablo.antikrist.org/item-codes/<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.15 (April 26, 2022)**
+- Updated: Reorganize resources and add txt file to allow for future localization and customizations.<br>
+- Updated: Create GPS Dialog now chooses a beltable item by default when launched from the belt inventory.<br>
+- Updated: Fixed some bugs related to item tooltip strings<br>
+- Updated: Fixed bugs retrieving skill names for magical attributes for non-character specific skills<br>
+- Updated: Fixed D2R items with realm GUID. D2R now stores 128 bits instead of the 96 bits for realm GUID<br>
+- Updated: Properly calculate the displayed requirements for items. (level, dexterity and Strength)<br>
+- Updated: Fixed player name reading for PTR2.4 and allow use of UTF-8 characters in player name<br>
+<br>
+
 **Version 2.14 (Mar 11, 2022)**
 - Updated: Updated jewel alternate images.<br>
 - Updated: Updated item context menus across forms showing items.<br>

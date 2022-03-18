@@ -21,6 +21,7 @@
 
 #include "Item.h"
 #include <vector>
+#include <filesystem>
 
 namespace d2ce
 {
@@ -34,7 +35,7 @@ namespace d2ce
         {
             std::array<std::uint8_t, HEADER_LENGTH> Header = { 0x55, 0xAA, 0x55, 0xAA }; // page start header (4 bytes)
             std::uint32_t Unk_0x04 = 0;                 // pos 0x04 relative to page start (4 bytes) unknown, all 0x00
-            std::uint32_t Version = 97;                 // pos 0x08 relative to page start (4 bytes) currently only 97 valid
+            std::uint32_t Version = 97;                 // pos 0x08 relative to page start (4 bytes) 97 or higher valid
             std::uint32_t Gold = 0;                     // pos 0x0C relative to page start (4 bytes)
             std::uint32_t PageLength = 0;               // pos 0x0F relative to page start (4 bytes) is the lengh of the page including the header
             std::array<std::uint8_t, 44> Unk_0x13 = {}; // pos 0x13 relative to page start(44 bytes) unknown.all 0x00
@@ -47,7 +48,8 @@ namespace d2ce
         };
 
         std::vector<SharedStashPage> Pages;
-        std::string m_d2ifilename;
+        std::filesystem::path m_d2ifilename;
+        EnumCharVersion CharVersion = APP_CHAR_VERSION;
 
     public:
         SharedStash();
@@ -64,7 +66,7 @@ namespace d2ce
         bool load();
         bool refresh();
         bool save(bool saveBackup = true);
-        const char *getPathName() const;
+        const std::filesystem::path& getPath() const;
 
         bool hasSharedStash() const;
         bool isLoaded() const;

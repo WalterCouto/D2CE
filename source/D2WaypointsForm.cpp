@@ -22,6 +22,8 @@
 #include "D2Editor.h"
 #include "D2WaypointsForm.h"
 #include "MainFormConstants.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -146,13 +148,100 @@ BOOL CD2WaypointsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
+    std::string strValue;
+    std::u16string uText;
     CWnd* pWnd = nullptr;
-    for (auto i = MaxItemIndex + 1; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
+    for (auto i = 0; i <= (int)static_cast<std::underlying_type_t<d2ce::EnumDifficulty>>(d2ce::EnumDifficulty::Hell); ++i)
     {
         pWnd = GetDlgItem(IDC_RADIO_DIFFICULTY_NORMAL + i);
         if (pWnd != nullptr)
         {
-            pWnd->EnableWindow(FALSE);
+            d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(static_cast<d2ce::EnumDifficulty>(i), strValue);
+            uText = utf8::utf8to16(strValue);
+            pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            if (i >= MaxItemIndex + 1)
+            {
+                pWnd->EnableWindow(FALSE);
+            }
+        }
+    }
+
+    CString text;
+    CStringA textA;
+    for (UINT i = 0, nIDC = IDC_CHECK_ACTI_1; i < TotalNumWaypoints; ++i, ++nIDC)
+    {
+        pWnd = GetDlgItem(nIDC);
+        if (pWnd == nullptr)
+        {
+            continue;
+        }
+
+        pWnd->GetWindowText(text);
+        textA = text;
+        if (d2ce::LocalizationHelpers::GetStringTxtValue(textA.GetString(), strValue))
+        {
+            uText = utf8::utf8to16(strValue);
+            pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+        }
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act1", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTI)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act2", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTII)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act3", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTIII)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act4", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTIV)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("act5", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        GetDlgItem(IDC_STATIC_ACTV)->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("ok", strValue))
+    {
+        pWnd = GetDlgItem(IDOK);
+        if (pWnd != nullptr)
+        {
+            pWnd->GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("cancel", strValue))
+    {
+        pWnd = GetDlgItem(IDCANCEL);
+        if (pWnd != nullptr)
+        {
+            pWnd->GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
         }
     }
 

@@ -110,6 +110,8 @@ private:
     d2ce::MercInfo OrigMerc;
     d2ce::Item* CurrItem = nullptr;
 
+    CString DamageFmt = _T("%d to %d");
+
     void DisplayMercInfo();
     void EnableMercInfoBox();
     void UpdateMercNames();
@@ -118,11 +120,13 @@ private:
     void LoadMercItemImages();
     void refreshEquipped(const d2ce::Item& item);
 
-    std::string ToStdString(const CWnd* Sender) const;
-    CString ToText(const CWnd* Sender) const;
-    CStringA ToTextA(const CWnd* Sender) const;
-    void SetText(CWnd* Sender, const char* newValue);
-    void SetText(CWnd* Sender, const wchar_t* newValue);
+    std::string ToStdString(const CWnd* Sender) const; // UTF-8
+    CString ToText(const CWnd* Sender) const;          // UTF-16
+    CStringA ToTextA(const CWnd* Sender) const;        // ANSI
+    void SetText(CWnd* Sender, const std::string& newValue); // UTF-8
+    void SetUTF8Text(CWnd* Sender, const char* newValue);    // UTF-8
+    void SetText(CWnd* Sender, const char* newValue);        // ANSI
+    void SetText(CWnd* Sender, const wchar_t* newValue);     // UTF-16
     std::uint32_t ToInt(const CWnd* Sender) const;
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 

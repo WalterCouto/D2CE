@@ -18,6 +18,21 @@
 
 Revision History
 ================
+Version 2.15 (April 26, 2022)
+   - Updated: Reorganize resources and add txt file to allow for 
+              future localization and customizations.
+   - Updated: Create GPS Dialog now chooses a beltable item by
+              default when launched from the belt inventory.
+   - Updated: Fixed some bugs related to item tooltip strings
+   - Updated: Fixed bugs retrieving skill names for magical
+              attributes for non-character specific skills
+   - Updated: Fixed D2R items with realm GUID. D2R now stores
+              128 bits instead of the 96 bits for realm GUID
+   - Updated: Properly calculate the displayed requirements
+              for items. (level, dexterity and Strength)
+   - Updated: Fixed player name reading for PTR2.4 and allow
+              use of UTF-8 characters in player name
+
 Version 2.14 (Mar 11, 2022)
    - Updated: Updated jewel alternate images.
    - Updated: Updated item context menus across forms showing
@@ -173,7 +188,7 @@ Version 2.00 (June 18, 2021)
    - Updated: The original Diablo II icon with transparant backgroud is used.
    - Updated: Level Requirements will show requirments using the version of
               from the character file. V1.10 is assumed to have the latest
-              Level Requirements from Diable II 1.14b, while versions
+              Level Requirements from Diablo II 1.14b, while versions
               1.07-1.09 will level requirements for those versions and any
               version below 1.07 will show the level requirements tha
               existed since 1.00. When loading the Level Requirements dialog
@@ -343,6 +358,8 @@ CD2EditorApp theApp;
 // CD2EditorApp initialization
 BOOL CD2EditorApp::InitInstance()
 {
+    Gdiplus::GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, NULL);
+
     // InitCommonControlsEx() is required on Windows XP if an application
     // manifest specifies use of ComCtl32.dll version 6 or later to enable
     // visual styles.  Otherwise, any window creation will fail.
@@ -424,5 +441,11 @@ CDocument* CD2EditorApp::OpenDocumentFile(LPCTSTR lpszFileName)
     return a bogus value.
     */
     return((CDocument*)1); // CWinApp::OpenDocumentFile(lpszFileName);
+}
+//---------------------------------------------------------------------------
+int CD2EditorApp::ExitInstance()
+{
+    Gdiplus::GdiplusShutdown(m_gdiplusToken);
+    return __super::ExitInstance();
 }
 //---------------------------------------------------------------------------

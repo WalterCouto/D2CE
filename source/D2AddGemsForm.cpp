@@ -21,7 +21,8 @@
 #include "D2Editor.h"
 #include "D2AddGemsForm.h"
 #include "afxdialogex.h"
-#include "d2ce\helpers\ItemHelpers.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,7 +39,14 @@ namespace
             return _T("");
         }
 
-        return CString(itemType.name.c_str());
+        auto uName = utf8::utf8to16(itemType.name);
+        return CString(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    }
+    
+    bool IsBeltableFromCode(const std::array<std::uint8_t, 4>& gemCode)
+    {
+        const auto& itemType = d2ce::ItemHelpers::getItemTypeHelper(gemCode);
+        return itemType.isBeltable();
     }
 }
 
@@ -83,8 +91,18 @@ BOOL CD2AddGemsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
-    // Fill in to from combo
-    bool isPotionSelected = false;
+    // Fill in from combo
+    bool isBeltable = false;
+    bool mustBeBeltable = false;
+    if (ItemsFormPtr != nullptr)
+    {
+        auto itemLocation = static_cast<d2ce::EnumItemLocation>(ItemsFormPtr->CurrItemLocation[0]);
+        if (itemLocation == d2ce::EnumItemLocation::BELT)
+        {
+            mustBeBeltable = true;
+        }
+    }
+
     CComboBox* pFromCombo = (CComboBox*)GetDlgItem(IDC_FROM_COMBO);
     if (pFromCombo != nullptr)
     {
@@ -94,13 +112,15 @@ BOOL CD2AddGemsForm::OnInitDialog()
             std::array<std::uint8_t, 4> selectedGemCode;
             if (ItemPtr->getItemCode(selectedGemCode))
             {
-                selectedItemData = *reinterpret_cast<std::uint32_t*>(selectedGemCode.data());
-                isPotionSelected = ItemPtr->isPotion();
+                if (!mustBeBeltable || ItemPtr->isBeltable())
+                {
+                    selectedItemData = *reinterpret_cast<std::uint32_t*>(selectedGemCode.data());
+                }
             }
-            
         }
-        int selectedIdx = 0;
 
+        bool hasSelectedBeltable = false;
+        int selectedIdx = 0;
         std::array< std::uint8_t, 4> gemCode = { 0x20, 0x20, 0x20, 0x20 };
         std::uint32_t& itemData = *reinterpret_cast<std::uint32_t*>(gemCode.data());
         std::vector<std::string> gpsCodes;
@@ -121,6 +141,20 @@ BOOL CD2AddGemsForm::OnInitDialog()
             if (itemData == selectedItemData)
             {
                 selectedIdx = insertedIdx;
+                isBeltable = IsBeltableFromCode(gemCode);
+            }
+            else if (mustBeBeltable && !hasSelectedBeltable)
+            {
+                if (IsBeltableFromCode(gemCode))
+                {
+                    hasSelectedBeltable = true;
+                    selectedIdx = insertedIdx;
+                    isBeltable = true;
+                }
+            }
+            else if (insertedIdx == selectedIdx)
+            {
+                isBeltable = IsBeltableFromCode(gemCode);
             }
         }
 
@@ -134,7 +168,7 @@ BOOL CD2AddGemsForm::OnInitDialog()
         if (SharedStashFormPtr != nullptr)
         {
             CString str;
-            str.Format(_T("Shared Stash %ld"), SharedStashFormPtr->getCurrentPage() + 1);
+            str.Format(_T("Shared Stash %ld"), (int)SharedStashFormPtr->getCurrentPage() + 1);
             auto insertedIdx = pLocationCombo->AddString(str);
             pLocationCombo->SetItemData(insertedIdx, std::uint64_t(SharedStashFormPtr->getCurrentPage()));
             pLocationCombo->SetCurSel(0);
@@ -149,9 +183,12 @@ BOOL CD2AddGemsForm::OnInitDialog()
             std::uint16_t selectedItemData = 0;
             if (ItemsFormPtr != nullptr)
             {
-                selectedItemData = *reinterpret_cast<std::uint16_t*>(ItemsFormPtr->CurrItemLocation.data());
+                if (!mustBeBeltable || isBeltable)
+                {
+                    selectedItemData = *reinterpret_cast<std::uint16_t*>(ItemsFormPtr->CurrItemLocation.data());
+                }
             }
-            int selectedIdx = isPotionSelected ? 0 : 1;
+            int selectedIdx = isBeltable ? 0 : 1;
 
             locationID = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::BELT);
             altLocationId = static_cast<std::underlying_type_t<d2ce::EnumAltItemLocation>>(d2ce::EnumAltItemLocation::UNKNOWN);
@@ -226,7 +263,7 @@ void CD2AddGemsForm::OnBnClickedAdd()
             CString temp;
             pFromCombo->GetLBText(fromIdx, temp);
             msg += temp;
-            msg += _T(" was added to ");
+            msg += _T(" could not be added to ");
             pLocationCombo->GetLBText(toIdx, temp);
             msg += temp;
             AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
@@ -248,10 +285,10 @@ void CD2AddGemsForm::OnBnClickedAdd()
                 CString temp;
                 pFromCombo->GetLBText(fromIdx, temp);
                 msg += temp;
-                msg += _T(" was added to ");
+                msg += _T(" could not be added to ");
                 pLocationCombo->GetLBText(toIdx, temp);
                 msg += temp;
-                AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+                AfxMessageBox(msg, MB_ICONEXCLAMATION | MB_OK);
             }
         }
         else if (!MainForm.addItem(static_cast<d2ce::EnumItemLocation>(locationID), static_cast<d2ce::EnumAltItemLocation>(altLocationId), gemCode))

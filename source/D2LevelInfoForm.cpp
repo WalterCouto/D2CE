@@ -23,7 +23,9 @@
 #include "D2LevelInfoForm.h"
 #include "afxdialogex.h"
 #include "D2MainForm.h"
-#include "d2ce\ExperienceConstants.h"
+#include "d2ce/ExperienceConstants.h"
+#include "d2ce/helpers/ItemHelpers.h"
+#include <utf8/utf8.h>
 
 namespace
 {
@@ -79,15 +81,10 @@ namespace
 IMPLEMENT_DYNAMIC(CD2LevelInfoForm, CDialogEx)
 
 //---------------------------------------------------------------------------
-CD2LevelInfoForm::CD2LevelInfoForm(CWnd* pParent /*=nullptr*/)
-    : CDialogEx(CD2LevelInfoForm::IDD, pParent)
+CD2LevelInfoForm::CD2LevelInfoForm(CD2MainForm& form)
+    : CDialogEx(CD2LevelInfoForm::IDD, (CWnd*)&form), MainForm(form)
 {
     Modal = FALSE;
-    Version = d2ce::APP_CHAR_VERSION;
-    if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
-    {
-        Version = ((CD2MainForm*)pParent)->getCharacterVersion();
-    }
 }
 //---------------------------------------------------------------------------
 CD2LevelInfoForm::~CD2LevelInfoForm()
@@ -112,10 +109,24 @@ BOOL CD2LevelInfoForm::OnInitDialog()
 
     // setup the paths selection list
     LevelInfoGrid.SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
-    LevelInfoGrid.InsertColumn(0, _T("LEVEL"), LVCFMT_RIGHT, 46);
-    LevelInfoGrid.InsertColumn(1, _T("MIN EXP REQ"), LVCFMT_RIGHT, 90);
-    LevelInfoGrid.InsertColumn(2, _T("BELT MAX GOLD"), LVCFMT_RIGHT, 110);
-    LevelInfoGrid.InsertColumn(3, _T("STASH MAX GOLD"), LVCFMT_RIGHT, 122);
+    std::string strValue;
+    std::u16string uText;
+    d2ce::LocalizationHelpers::GetStringTxtValue("strchrlvl", strValue, "Level");
+    uText = utf8::utf8to16(strValue);
+    LevelInfoGrid.InsertColumn(0, reinterpret_cast<LPCWSTR>(uText.c_str()), LVCFMT_RIGHT, 46);
+    
+    d2ce::LocalizationHelpers::GetStringTxtValue("strExpGained", strValue, "Exp Gained");
+    uText = utf8::utf8to16(strValue);
+    LevelInfoGrid.InsertColumn(1, reinterpret_cast<LPCWSTR>(uText.c_str()), LVCFMT_RIGHT, 90);
+
+    d2ce::LocalizationHelpers::GetStringTxtValue("strGoldLabel", strValue, "Gold");
+    uText = utf8::utf8to16(strValue);
+    LevelInfoGrid.InsertColumn(2, reinterpret_cast<LPCWSTR>(uText.c_str()), LVCFMT_RIGHT, 110);
+
+    d2ce::LocalizationHelpers::GetStringTxtValue("strGoldInStash", strValue, "Gold in Stash");
+    uText = utf8::utf8to16(strValue);
+    LevelInfoGrid.InsertColumn(3, reinterpret_cast<LPCWSTR>(uText.c_str()), LVCFMT_RIGHT, 122);
+    
     FillCells();
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -124,23 +135,93 @@ BOOL CD2LevelInfoForm::OnInitDialog()
 //---------------------------------------------------------------------------
 void CD2LevelInfoForm::FillCells()
 {
+    auto version = MainForm.getCharacterVersion();
+    auto maxLevel = MainForm.getCharacterMaxLevel();
+
+    std::string strValue;
+    std::u16string uText;
+    TCHAR name[255];
+    LVCOLUMN col;
+    col.mask = LVCF_TEXT;
+    col.pszText = name;
+    col.cchTextMax = sizeof(name) / sizeof(TCHAR);
+    CString localizedString;
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("strchrlvl", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        LevelInfoGrid.GetColumn(0, &col);
+        localizedString = reinterpret_cast<LPCWSTR>(uText.c_str());
+        _tcscpy_s(name, sizeof(name) / sizeof(TCHAR), localizedString.GetString());
+        LevelInfoGrid.SetColumn(0, &col);
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("strExpGained", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        LevelInfoGrid.GetColumn(1, &col);
+        localizedString = reinterpret_cast<LPCWSTR>(uText.c_str());
+        _tcscpy_s(name, sizeof(name) / sizeof(TCHAR), localizedString.GetString());
+        LevelInfoGrid.SetColumn(1, &col);
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("strGoldLabel", strValue))
+    {
+        uText = utf8::utf8to16(strValue);
+        LevelInfoGrid.GetColumn(2, &col);
+        localizedString = reinterpret_cast<LPCWSTR>(uText.c_str());
+        _tcscpy_s(name, sizeof(name) / sizeof(TCHAR), localizedString.GetString());
+        LevelInfoGrid.SetColumn(2, &col);
+    }
+
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("strGoldInStash", strValue))
+    {
+        auto pos = strValue.find(":");
+        if (pos != strValue.npos)
+        {
+            strValue = strValue.erase(pos);
+        }
+        uText = utf8::utf8to16(strValue);
+        LevelInfoGrid.GetColumn(3, &col);
+        localizedString = reinterpret_cast<LPCWSTR>(uText.c_str());
+        _tcscpy_s(name, sizeof(name) / sizeof(TCHAR), localizedString.GetString());
+        LevelInfoGrid.SetColumn(3, &col);
+    }
+
+    CString text;
+    CStringA textA;
+    CWnd* pWnd = nullptr;
+    if (d2ce::LocalizationHelpers::GetStringTxtValue("ok", strValue))
+    {
+        pWnd = GetDlgItem(IDOK);
+        if (pWnd != nullptr)
+        {
+            pWnd->GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+    }
+        
     LevelInfoGrid.DeleteAllItems();
     std::uint32_t goldValue = d2ce::GOLD_IN_STASH_LIMIT;
-    for (std::uint32_t i = 1; i <= d2ce::NUM_OF_LEVELS; ++i)
+    for (std::uint32_t i = 1; i <= maxLevel; ++i)
     {
         AddListColData(LevelInfoGrid, i - 1, 0, i);
-        AddListColData(LevelInfoGrid, i - 1, 1, d2ce::MinExpRequired[i - 1]);
-        AddListColData(LevelInfoGrid, i - 1, 2, i * 10000);
+        AddListColData(LevelInfoGrid, i - 1, 1, MainForm.getCharacterMinExperience(i));
+        AddListColData(LevelInfoGrid, i - 1, 2, std::min(i, 99ui32) * 10000);
 
-        if (Version < d2ce::EnumCharVersion::v110) // 1.00 - 1.09 character
+        if (version < d2ce::EnumCharVersion::v110) // 1.00 - 1.09 character
         {
             if (i < 31) // 1.00 - 1.09 character
             {
                 goldValue = (i / 10 + 1) * 50000;
             }
-            else if (Version >= d2ce::EnumCharVersion::v107) // 1.07 - 1.09 character
+            else if (version >= d2ce::EnumCharVersion::v107) // 1.07 - 1.09 character
             {
-                goldValue = (i / 2 + 1) * 50000;
+                goldValue = (std::min(i, 99ui32) / 2 + 1) * 50000;
             }
             else // 1.00 - 1.06 character
             {
@@ -154,9 +235,9 @@ void CD2LevelInfoForm::FillCells()
 //---------------------------------------------------------------------------
 INT_PTR CD2LevelInfoForm::DoModal()
 {
-    Modal = true;
+    Modal = TRUE;
     auto ret = __super::DoModal();
-    Modal = false;
+    Modal = FALSE;
     return ret;
 }
 //---------------------------------------------------------------------------
@@ -186,12 +267,6 @@ BOOL CD2LevelInfoForm::Show(CWnd* pParent)
 {
     if (!::IsWindow(GetSafeHwnd()))
     {
-        Version = d2ce::APP_CHAR_VERSION;
-        if (pParent != nullptr && pParent->IsKindOf(RUNTIME_CLASS(CD2MainForm)))
-        {
-            Version = ((CD2MainForm*)pParent)->getCharacterVersion();
-        }
-
         Modal = FALSE;
         BOOL bCreated = __super::Create(CD2LevelInfoForm::IDD, pParent);
         if (!bCreated)
@@ -204,17 +279,13 @@ BOOL CD2LevelInfoForm::Show(CWnd* pParent)
     return TRUE;
 }
 //---------------------------------------------------------------------------
-void CD2LevelInfoForm::ResetVersion(d2ce::EnumCharVersion version)
+void CD2LevelInfoForm::ResetView()
 {
     if (!::IsWindow(GetSafeHwnd()))
     {
         return;
     }
 
-    if (version != Version)
-    {
-        Version = version;
-        FillCells();
-    }
+    FillCells();
 }
 //---------------------------------------------------------------------------

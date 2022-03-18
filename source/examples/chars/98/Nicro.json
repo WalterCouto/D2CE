@@ -1,0 +1,8232 @@
+{
+  "header": {
+    "identifier": "aa55aa55",
+    "version": 98,
+    "filesize": 1812,
+    "checksum": "2c63d786",
+    "name": "Nicro",
+    "status": {
+      "hardcore": false,
+      "died": false,
+      "expansion": true
+    },
+    "progression": 15,
+    "active_arms": 1,
+    "class": "Necromancer",
+    "class_id": 2,
+    "level": 99,
+    "created": 0,
+    "last_played": 1650212551,
+    "assigned_skills": [],
+    "left_skill": "Teeth",
+    "right_skill": "Revive",
+    "left_swap_skill": "Teeth",
+    "right_swap_skill": "Raise Skeleton",
+    "menu_appearance": {
+      "head": {
+        "graphic": 83,
+        "tint": 255
+      },
+      "torso": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "legs": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "right_arm": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "left_arm": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "right_hand": {
+        "graphic": 35,
+        "tint": 79
+      },
+      "left_hand": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "shield": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special1": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "special2": {
+        "graphic": 3,
+        "tint": 1
+      },
+      "special3": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special4": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special5": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special6": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special7": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special8": {
+        "graphic": 255,
+        "tint": 255
+      }
+    },
+    "difficulty": {
+      "Normal": 0,
+      "Nightmare": 128,
+      "Hell": 0
+    },
+    "map_id": 1153678812,
+    "dead_merc": 0,
+    "merc_id": "3795fc5d",
+    "merc_name_id": 19,
+    "merc_name": "Heather",
+    "merc_type": 3,
+    "merc_class": "Rogue Scout",
+    "merc_attribute": "Cold Arrow",
+    "merc_level": 83,
+    "merc_experience": 66642646,
+    "merc_difficulty": "Nightmare",
+    "quests_normal": {
+      "act_i": {
+        "introduced": true,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk4": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_ii": {
+        "introduced": true,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk5": true,
+          "unk9": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iii": {
+        "introduced": true,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iv": {
+        "introduced": true,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_v": {
+        "introduced": true,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk5": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "consumed_scroll": true,
+          "unk9": true,
+          "unk10": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "quests_nm": {
+      "act_i": {
+        "introduced": true,
+        "den_of_evil": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": true,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_ii": {
+        "introduced": true,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk5": true,
+          "unk9": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iii": {
+        "introduced": true,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iv": {
+        "introduced": true,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_v": {
+        "introduced": true,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk5": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "consumed_scroll": true,
+          "unk9": true,
+          "unk10": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "quests_hell": {
+      "act_i": {
+        "introduced": true,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_ii": {
+        "introduced": true,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk5": true,
+          "unk9": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iii": {
+        "introduced": true,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iv": {
+        "introduced": true,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_v": {
+        "introduced": true,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk5": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "consumed_scroll": true,
+          "unk9": true,
+          "unk10": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "waypoints": {
+      "normal": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": true,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": true,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": true,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": true,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      },
+      "nm": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": true,
+          "stony_field": true,
+          "dark_woods": true,
+          "black_marsh": true,
+          "outer_cloister": true,
+          "jail_lvl_1": true,
+          "inner_cloiste": true,
+          "catacombs_lvl_2": true
+        },
+        "act_ii": {
+          "lut_gholein": true,
+          "sewers_lvl_2": true,
+          "dry_hills": true,
+          "halls_of_the_dead_lvl_2": true,
+          "far_oasis": true,
+          "lost_city": true,
+          "palace_cellar_lvl_1": true,
+          "arcane_sanctuary": true,
+          "canyon_of_the_magi": true
+        },
+        "act_iii": {
+          "kurast_docks": true,
+          "spider_forest": true,
+          "great_marsh": true,
+          "flayer_jungle": true,
+          "lower_kurast": true,
+          "kurast_bazaar": true,
+          "upper_kurast": true,
+          "travincal": true,
+          "durance_of_hate_lvl_2": true
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": true,
+          "city_of_the_damned": true,
+          "river_of_flame": true
+        },
+        "act_v": {
+          "harrogath": true,
+          "frigid_highlands": true,
+          "arreat_plateau": true,
+          "crystalline_passage": true,
+          "halls_of_pain": true,
+          "glacial_trail": true,
+          "frozen_tundra": true,
+          "the_ancients_way": true,
+          "worldstone_keep_lvl_2": true
+        }
+      },
+      "hell": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": true,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": true,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": true,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": true,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      }
+    },
+    "npcs": {
+      "normal": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": true,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": true,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "nm": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": true,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": true,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": true,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": true,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": true,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "hell": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": false,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": false,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": true,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": true,
+          "congrats": false
+        },
+        "malah": {
+          "intro": true,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      }
+    }
+  },
+  "attributes": {
+    "strength": 1023,
+    "energy": 1023,
+    "dexterity": 1023,
+    "vitality": 1023,
+    "current_hp": 2125,
+    "max_hp": 2208,
+    "current_mana": 2220,
+    "max_mana": 2217,
+    "current_stamina": 1185,
+    "max_stamina": 1185,
+    "level": 99,
+    "experience": 3520485254,
+    "gold": 3235,
+    "stashed_gold": 13289
+  },
+  "skills": [
+    {
+      "id": 66,
+      "points": 20,
+      "name": "Amplify Damage"
+    },
+    {
+      "id": 67,
+      "points": 20,
+      "name": "Teeth"
+    },
+    {
+      "id": 68,
+      "points": 20,
+      "name": "Bone Armor"
+    },
+    {
+      "id": 69,
+      "points": 20,
+      "name": "Skeleton Mastery"
+    },
+    {
+      "id": 70,
+      "points": 20,
+      "name": "Raise Skeleton"
+    },
+    {
+      "id": 71,
+      "points": 20,
+      "name": "Dim Vision"
+    },
+    {
+      "id": 72,
+      "points": 20,
+      "name": "Weaken"
+    },
+    {
+      "id": 73,
+      "points": 20,
+      "name": "Poison Dagger"
+    },
+    {
+      "id": 74,
+      "points": 20,
+      "name": "Corpse Explosion"
+    },
+    {
+      "id": 75,
+      "points": 20,
+      "name": "Clay Golem"
+    },
+    {
+      "id": 76,
+      "points": 20,
+      "name": "Iron Maiden"
+    },
+    {
+      "id": 77,
+      "points": 20,
+      "name": "Terror"
+    },
+    {
+      "id": 78,
+      "points": 20,
+      "name": "Bone Wall"
+    },
+    {
+      "id": 79,
+      "points": 20,
+      "name": "Golem Mastery"
+    },
+    {
+      "id": 80,
+      "points": 20,
+      "name": "Raise Skeletal Mage"
+    },
+    {
+      "id": 81,
+      "points": 20,
+      "name": "Confuse"
+    },
+    {
+      "id": 82,
+      "points": 20,
+      "name": "Life Tap"
+    },
+    {
+      "id": 83,
+      "points": 20,
+      "name": "Poison Explosion"
+    },
+    {
+      "id": 84,
+      "points": 20,
+      "name": "Bone Spear"
+    },
+    {
+      "id": 85,
+      "points": 20,
+      "name": "Blood Golem"
+    },
+    {
+      "id": 86,
+      "points": 20,
+      "name": "Attract"
+    },
+    {
+      "id": 87,
+      "points": 20,
+      "name": "Decrepify"
+    },
+    {
+      "id": 88,
+      "points": 20,
+      "name": "Bone Prison"
+    },
+    {
+      "id": 89,
+      "points": 20,
+      "name": "Summon Resist"
+    },
+    {
+      "id": 90,
+      "points": 20,
+      "name": "Iron Golem"
+    },
+    {
+      "id": 91,
+      "points": 20,
+      "name": "Lower Resist"
+    },
+    {
+      "id": 92,
+      "points": 20,
+      "name": "Poison Nova"
+    },
+    {
+      "id": 93,
+      "points": 20,
+      "name": "Bone Spirit"
+    },
+    {
+      "id": 94,
+      "points": 20,
+      "name": "Fire Golem"
+    },
+    {
+      "id": 95,
+      "points": 20,
+      "name": "Revive"
+    }
+  ],
+  "items": [
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 1,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 6,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rin",
+      "categories": [
+        "Ring",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 3017569906,
+      "level": 8,
+      "quality": 4,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 378,
+      "magic_suffix_name": "of Strength",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            1
+          ],
+          "name": "strength",
+          "description": "+{0} to Strength"
+        }
+      ],
+      "type_name": "Ring",
+      "levelreq": 3,
+      "inv_file": "invrin",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            1
+          ],
+          "name": "strength",
+          "description": "+1 to Strength"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            1
+          ],
+          "name": "strength",
+          "description": "+{0} to Strength"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            1
+          ],
+          "name": "strength",
+          "description": "+1 to Strength"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 8,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hbl",
+      "categories": [
+        "Belt",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 593128543,
+      "level": 96,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 409,
+      "magic_prefix_name": "Beryl",
+      "magic_suffix": 0,
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 10,
+      "max_durability": 255,
+      "current_durability": 255,
+      "magic_attributes": [
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "type_name": "Plated Belt",
+      "reqstr": 60,
+      "levelreq": 3,
+      "inv_file": "invhbl",
+      "inv_height": 1,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +6%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +6%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 5,
+      "type": "gts",
+      "categories": [
+        "Shield",
+        "Any Shield",
+        "Any Armor",
+        "Second Hand"
+      ],
+      "type_id": 2,
+      "nr_of_items_in_sockets": 0,
+      "id": 1128153171,
+      "level": 99,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 668,
+      "magic_prefix_name": "Godly",
+      "magic_suffix": 0,
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 36,
+      "max_durability": 255,
+      "current_durability": 255,
+      "total_nr_of_sockets": 3,
+      "magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            111
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "socketed_items": [],
+      "type_name": "Gothic Shield",
+      "reqstr": 60,
+      "levelreq": 43,
+      "inv_file": "invgts",
+      "inv_height": 4,
+      "inv_width": 2,
+      "inv_transform": 2,
+      "transform_color": "dgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 16,
+          "values": [
+            111
+          ],
+          "name": "item_armor_percent",
+          "description": "+111% Enhanced Defense"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            111
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 16,
+          "values": [
+            111
+          ],
+          "name": "item_armor_percent",
+          "description": "+111% Enhanced Defense"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 10,
+      "position_x": 10,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hgl",
+      "categories": [
+        "Gloves",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1736374684,
+      "level": 82,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 149,
+      "magic_prefix_name": "Holy",
+      "magic_suffix": 248,
+      "magic_suffix_name": "of Accuracy",
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 16,
+      "max_durability": 255,
+      "current_durability": 255,
+      "magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            7
+          ],
+          "name": "dexterity",
+          "description": "+{0} to Dexterity"
+        },
+        {
+          "id": 16,
+          "values": [
+            91
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "type_name": "Gauntlets",
+      "reqstr": 60,
+      "levelreq": 31,
+      "inv_file": "invhgl",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "dgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 16,
+          "values": [
+            91
+          ],
+          "name": "item_armor_percent",
+          "description": "+91% Enhanced Defense"
+        },
+        {
+          "id": 2,
+          "values": [
+            7
+          ],
+          "name": "dexterity",
+          "description": "+7 to Dexterity"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            7
+          ],
+          "name": "dexterity",
+          "description": "+{0} to Dexterity"
+        },
+        {
+          "id": 16,
+          "values": [
+            91
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 16,
+          "values": [
+            91
+          ],
+          "name": "item_armor_percent",
+          "description": "+91% Enhanced Defense"
+        },
+        {
+          "id": 2,
+          "values": [
+            7
+          ],
+          "name": "dexterity",
+          "description": "+7 to Dexterity"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cqv",
+      "categories": [
+        "Crossbow Quiver",
+        "Missile",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1033301992,
+      "level": 50,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 511,
+      "magic_attributes": [],
+      "type_name": "Bolts",
+      "inv_file": "invcqv",
+      "inv_height": 3,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 12,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 7,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rin",
+      "categories": [
+        "Ring",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 409727103,
+      "level": 52,
+      "quality": 6,
+      "multiple_pictures": 1,
+      "picture_id": 3,
+      "class_specific": 0,
+      "rare_name_id": 159,
+      "rare_name": "Viper",
+      "rare_name_id2": 129,
+      "rare_name2": "Band",
+      "rare_index2": "band",
+      "magical_name_ids": [
+        240,
+        187,
+        409,
+        195,
+        0,
+        0
+      ],
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            57
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            1
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 48,
+          "values": [
+            1,
+            3
+          ],
+          "name": "firemindam",
+          "description": "Adds {0}-{1} fire damage"
+        },
+        {
+          "id": 160,
+          "values": [
+            1
+          ],
+          "name": "item_throw_maxdamage"
+        }
+      ],
+      "type_name": "Ring",
+      "levelreq": 30,
+      "inv_file": "invrin",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+1 to Maximum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            1
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+1 to Maximum Damage",
+          "visible": false
+        },
+        {
+          "id": 19,
+          "values": [
+            57
+          ],
+          "name": "tohit",
+          "description": "+57 to Attack Rating"
+        },
+        {
+          "id": 48,
+          "values": [
+            1,
+            3
+          ],
+          "name": "firemindam",
+          "description": "Adds 1-3 fire damage"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +6%"
+        },
+        {
+          "id": 160,
+          "values": [
+            1
+          ],
+          "name": "item_throw_maxdamage",
+          "visible": false
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            57
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            1
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 48,
+          "values": [
+            1,
+            3
+          ],
+          "name": "firemindam",
+          "description": "Adds {0}-{1} fire damage"
+        },
+        {
+          "id": 160,
+          "values": [
+            1
+          ],
+          "name": "item_throw_maxdamage"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+1 to Maximum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            1
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+1 to Maximum Damage",
+          "visible": false
+        },
+        {
+          "id": 19,
+          "values": [
+            57
+          ],
+          "name": "tohit",
+          "description": "+57 to Attack Rating"
+        },
+        {
+          "id": 48,
+          "values": [
+            1,
+            3
+          ],
+          "name": "firemindam",
+          "description": "Adds 1-3 fire damage"
+        },
+        {
+          "id": 45,
+          "values": [
+            6
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +6%"
+        },
+        {
+          "id": 160,
+          "values": [
+            1
+          ],
+          "name": "item_throw_maxdamage",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 4,
+      "alt_position_id": 5,
+      "type": "jew",
+      "categories": [
+        "Jewel",
+        "Socket Filler",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 3782363831,
+      "level": 36,
+      "quality": 4,
+      "multiple_pictures": 1,
+      "picture_id": 5,
+      "class_specific": 0,
+      "magic_prefix": 283,
+      "magic_prefix_name": "Emerald",
+      "magic_suffix": 261,
+      "magic_suffix_name": "of Daring",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            2
+          ],
+          "name": "dexterity",
+          "description": "+{0} to Dexterity"
+        },
+        {
+          "id": 80,
+          "values": [
+            3
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "type_name": "Jewel",
+      "levelreq": 12,
+      "inv_file": "invjew",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            2
+          ],
+          "name": "dexterity",
+          "description": "+2 to Dexterity"
+        },
+        {
+          "id": 80,
+          "values": [
+            3
+          ],
+          "name": "item_magicbonus",
+          "description": "3% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            2
+          ],
+          "name": "dexterity",
+          "description": "+{0} to Dexterity"
+        },
+        {
+          "id": 80,
+          "values": [
+            3
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 2,
+          "values": [
+            2
+          ],
+          "name": "dexterity",
+          "description": "+2 to Dexterity"
+        },
+        {
+          "id": 80,
+          "values": [
+            3
+          ],
+          "name": "item_magicbonus",
+          "description": "3% Better Chance of Getting Magic Items"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm2",
+      "categories": [
+        "Medium Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 2371598359,
+      "level": 43,
+      "quality": 4,
+      "multiple_pictures": 1,
+      "picture_id": 1,
+      "class_specific": 0,
+      "magic_prefix": 365,
+      "magic_prefix_name": "Ruby",
+      "magic_suffix": 0,
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            13
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        }
+      ],
+      "type_name": "Large Charm",
+      "levelreq": 27,
+      "inv_file": "invchm2",
+      "inv_height": 2,
+      "inv_width": 1,
+      "transform_color": "lred",
+      "displayed_magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            13
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +13%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            13
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            13
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +13%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 1,
+      "alt_position_id": 5,
+      "type": "xlt",
+      "categories": [
+        "Armor",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1803137595,
+      "level": 79,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 379,
+      "magic_suffix_name": "of Might",
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 260,
+      "max_durability": 255,
+      "current_durability": 255,
+      "total_nr_of_sockets": 3,
+      "magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            4
+          ],
+          "name": "strength",
+          "description": "+{0} to Strength"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "socketed_items": [],
+      "type_name": "Templar Coat",
+      "reqstr": 118,
+      "levelreq": 25,
+      "inv_file": "invplt",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 0,
+          "values": [
+            4
+          ],
+          "name": "strength",
+          "description": "+4 to Strength"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 0,
+          "values": [
+            4
+          ],
+          "name": "strength",
+          "description": "+{0} to Strength"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 0,
+          "values": [
+            4
+          ],
+          "name": "strength",
+          "description": "+4 to Strength"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 9,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "xtb",
+      "categories": [
+        "Boots",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1518662369,
+      "level": 96,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 397,
+      "magic_suffix_name": "of Transportation",
+      "timestamp": 0,
+      "defense_rating": 39,
+      "max_durability": 255,
+      "current_durability": 255,
+      "magic_attributes": [
+        {
+          "id": 96,
+          "values": [
+            30
+          ],
+          "name": "item_fastermovevelocity",
+          "description": "+{0}% Faster Run/Walk"
+        },
+        {
+          "id": 154,
+          "values": [
+            85
+          ],
+          "name": "item_staminadrainpct",
+          "description": "{0}% Slower Stamina Drain"
+        }
+      ],
+      "type_name": "Battle Boots",
+      "reqstr": 95,
+      "levelreq": 57,
+      "inv_file": "invtbt",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 96,
+          "values": [
+            30
+          ],
+          "name": "item_fastermovevelocity",
+          "description": "+30% Faster Run/Walk"
+        },
+        {
+          "id": 154,
+          "values": [
+            85
+          ],
+          "name": "item_staminadrainpct",
+          "description": "85% Slower Stamina Drain"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 96,
+          "values": [
+            30
+          ],
+          "name": "item_fastermovevelocity",
+          "description": "+{0}% Faster Run/Walk"
+        },
+        {
+          "id": 154,
+          "values": [
+            85
+          ],
+          "name": "item_staminadrainpct",
+          "description": "{0}% Slower Stamina Drain"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 96,
+          "values": [
+            30
+          ],
+          "name": "item_fastermovevelocity",
+          "description": "+30% Faster Run/Walk"
+        },
+        {
+          "id": 154,
+          "values": [
+            85
+          ],
+          "name": "item_staminadrainpct",
+          "description": "85% Slower Stamina Drain"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "wst",
+      "categories": [
+        "Staff",
+        "Staves And Rods",
+        "Blunt",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3734252934,
+      "level": 99,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 553,
+      "magic_prefix_name": "Arcing",
+      "magic_suffix": 354,
+      "magic_suffix_name": "of the Lamprey",
+      "timestamp": 0,
+      "max_durability": 50,
+      "current_durability": 50,
+      "magic_attributes": [
+        {
+          "id": 50,
+          "values": [
+            1,
+            341
+          ],
+          "name": "lightmindam",
+          "description": "Adds {0}-{1} lightning damage"
+        },
+        {
+          "id": 60,
+          "values": [
+            9
+          ],
+          "name": "lifedrainmindam",
+          "description": "{0}% Life stolen per hit"
+        }
+      ],
+      "base_damage": {
+        "twohandmindam": 12,
+        "twohandmaxdam": 28
+      },
+      "type_name": "War Staff",
+      "levelreq": 50,
+      "inv_file": "invwst",
+      "inv_height": 4,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "cred",
+      "displayed_magic_attributes": [
+        {
+          "id": 50,
+          "values": [
+            1,
+            341
+          ],
+          "name": "lightmindam",
+          "description": "Adds 1-341 lightning damage"
+        },
+        {
+          "id": 60,
+          "values": [
+            9
+          ],
+          "name": "lifedrainmindam",
+          "description": "9% Life stolen per hit"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 50,
+          "values": [
+            1,
+            341
+          ],
+          "name": "lightmindam",
+          "description": "Adds {0}-{1} lightning damage"
+        },
+        {
+          "id": 60,
+          "values": [
+            9
+          ],
+          "name": "lifedrainmindam",
+          "description": "{0}% Life stolen per hit"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 50,
+          "values": [
+            1,
+            341
+          ],
+          "name": "lightmindam",
+          "description": "Adds 1-341 lightning damage"
+        },
+        {
+          "id": 60,
+          "values": [
+            9
+          ],
+          "name": "lifedrainmindam",
+          "description": "9% Life stolen per hit"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 13,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvs",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Rejuvenation Potion",
+      "inv_file": "invvps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 2,
+      "alt_position_id": 1,
+      "type": "tsc",
+      "categories": [
+        "Scroll",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Scroll of Town Portal",
+      "inv_file": "invbsc",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "cm1",
+      "categories": [
+        "Small Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1488717877,
+      "level": 40,
+      "quality": 4,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 702,
+      "magic_suffix_name": "of Frost",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            25
+          ],
+          "name": "coldmindam",
+          "description": "Adds {0}-{1} cold damage"
+        }
+      ],
+      "type_name": "Small Charm",
+      "levelreq": 10,
+      "inv_file": "invchm1",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            25
+          ],
+          "name": "coldmindam",
+          "description": "Adds 1-2 cold damage"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            25
+          ],
+          "name": "coldmindam",
+          "description": "Adds {0}-{1} cold damage"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            25
+          ],
+          "name": "coldmindam",
+          "description": "Adds 1-2 cold damage"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm2",
+      "categories": [
+        "Medium Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 3668481067,
+      "level": 39,
+      "quality": 4,
+      "multiple_pictures": 1,
+      "picture_id": 1,
+      "class_specific": 0,
+      "magic_prefix": 207,
+      "magic_prefix_name": "Rugged",
+      "magic_suffix": 0,
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 11,
+          "values": [
+            9
+          ],
+          "name": "maxstamina",
+          "description": "+{0} Maximum Stamina"
+        }
+      ],
+      "type_name": "Large Charm",
+      "inv_file": "invchm2",
+      "inv_height": 2,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 11,
+          "values": [
+            9
+          ],
+          "name": "maxstamina",
+          "description": "+9 Maximum Stamina"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 11,
+          "values": [
+            9
+          ],
+          "name": "maxstamina",
+          "description": "+{0} Maximum Stamina"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 11,
+          "values": [
+            9
+          ],
+          "name": "maxstamina",
+          "description": "+9 Maximum Stamina"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 1,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "bhm",
+      "categories": [
+        "Helm",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 2324198870,
+      "level": 99,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 189,
+      "rare_name": "Brimstone",
+      "rare_name_id2": 69,
+      "rare_name2": "Cowl",
+      "rare_index2": "cowl",
+      "magical_name_ids": [
+        601,
+        423,
+        390,
+        0,
+        304,
+        0
+      ],
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 34,
+      "max_durability": 255,
+      "current_durability": 255,
+      "total_nr_of_sockets": 2,
+      "magic_attributes": [
+        {
+          "id": 9,
+          "values": [
+            3
+          ],
+          "name": "maxmana",
+          "description": "+{0} to Mana"
+        },
+        {
+          "id": 39,
+          "values": [
+            5
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 41,
+          "values": [
+            12
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 201,
+          "values": [
+            5,
+            38,
+            14
+          ],
+          "name": "item_skillongethit",
+          "description": "{2}% Chance to cast level {0} {1} when struck"
+        }
+      ],
+      "socketed_items": [],
+      "type_name": "Bone Helm",
+      "reqstr": 25,
+      "levelreq": 19,
+      "inv_file": "invbhm",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 201,
+          "values": [
+            5,
+            38,
+            14
+          ],
+          "name": "item_skillongethit",
+          "description": "14% Chance to cast level 5 Charged Bolt when struck"
+        },
+        {
+          "id": 9,
+          "values": [
+            3
+          ],
+          "name": "maxmana",
+          "description": "+3 to Mana"
+        },
+        {
+          "id": 41,
+          "values": [
+            12
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +12%"
+        },
+        {
+          "id": 39,
+          "values": [
+            5
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +5%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 9,
+          "values": [
+            3
+          ],
+          "name": "maxmana",
+          "description": "+{0} to Mana"
+        },
+        {
+          "id": 39,
+          "values": [
+            5
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 41,
+          "values": [
+            12
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 201,
+          "values": [
+            5,
+            38,
+            14
+          ],
+          "name": "item_skillongethit",
+          "description": "{2}% Chance to cast level {0} {1} when struck"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 201,
+          "values": [
+            5,
+            38,
+            14
+          ],
+          "name": "item_skillongethit",
+          "description": "14% Chance to cast level 5 Charged Bolt when struck"
+        },
+        {
+          "id": 9,
+          "values": [
+            3
+          ],
+          "name": "maxmana",
+          "description": "+3 to Mana"
+        },
+        {
+          "id": 41,
+          "values": [
+            12
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +12%"
+        },
+        {
+          "id": 39,
+          "values": [
+            5
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +5%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 1,
+      "alt_position_id": 1,
+      "type": "bsd",
+      "categories": [
+        "Sword",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3894881025,
+      "level": 43,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 161,
+      "rare_name": "Skull",
+      "rare_name_id2": 8,
+      "rare_name2": "Scythe",
+      "rare_index2": "scythe",
+      "magical_name_ids": [
+        239,
+        224,
+        555,
+        195,
+        0,
+        166
+      ],
+      "timestamp": 0,
+      "max_durability": 32,
+      "current_durability": 31,
+      "magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            36
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 21,
+          "values": [
+            3
+          ],
+          "name": "mindamage",
+          "description": "+{0} to Minimum Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 57,
+          "values": [
+            31,
+            31,
+            50
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 93,
+          "values": [
+            10
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+{0}% Increased Attack Speed"
+        }
+      ],
+      "base_damage": {
+        "mindam": 7,
+        "maxdam": 14
+      },
+      "type_name": "Broad Sword",
+      "reqstr": 48,
+      "levelreq": 9,
+      "inv_file": "invbsd",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 2,
+      "transform_color": "dgrn",
+      "displayed_magic_attributes": [
+        {
+          "id": 93,
+          "values": [
+            10
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+10% Increased Attack Speed"
+        },
+        {
+          "id": 21,
+          "values": [
+            3
+          ],
+          "name": "mindamage",
+          "description": "+3 to Minimum Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+1 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            36
+          ],
+          "name": "tohit",
+          "description": "+36 to Attack Rating"
+        },
+        {
+          "id": 57,
+          "values": [
+            31,
+            31,
+            50
+          ],
+          "name": "poisonmindam",
+          "description": "+6 poison damage over 2 seconds"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            36
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 21,
+          "values": [
+            3
+          ],
+          "name": "mindamage",
+          "description": "+{0} to Minimum Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 57,
+          "values": [
+            31,
+            31,
+            50
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 93,
+          "values": [
+            10
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+{0}% Increased Attack Speed"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 93,
+          "values": [
+            10
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+10% Increased Attack Speed"
+        },
+        {
+          "id": 21,
+          "values": [
+            3
+          ],
+          "name": "mindamage",
+          "description": "+3 to Minimum Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            1
+          ],
+          "name": "maxdamage",
+          "description": "+1 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            36
+          ],
+          "name": "tohit",
+          "description": "+36 to Attack Rating"
+        },
+        {
+          "id": 57,
+          "values": [
+            31,
+            31,
+            50
+          ],
+          "name": "poisonmindam",
+          "description": "+6 poison damage over 2 seconds"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 12,
+      "position_x": 12,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "xsh",
+      "categories": [
+        "Shield",
+        "Any Shield",
+        "Any Armor",
+        "Second Hand"
+      ],
+      "type_id": 2,
+      "nr_of_items_in_sockets": 2,
+      "id": 1984809996,
+      "level": 95,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 144,
+      "magic_prefix_name": "Sturdy",
+      "magic_suffix": 262,
+      "magic_suffix_name": "of Balance",
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "defense_rating": 151,
+      "max_durability": 255,
+      "current_durability": 255,
+      "total_nr_of_sockets": 2,
+      "magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            29
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 99,
+          "values": [
+            10
+          ],
+          "name": "item_fastergethitrate",
+          "description": "+{0}% Faster Hit Recovery"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "socketed_items": [
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of {0}"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of 20"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of {0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of 20"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of {0}"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of 20"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of {0}"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 78,
+              "values": [
+                20
+              ],
+              "name": "item_attackertakesdamage",
+              "description": "Attacker Takes Damage of 20"
+            }
+          ]
+        }
+      ],
+      "type_name": "Grim Shield",
+      "reqstr": 58,
+      "levelreq": 25,
+      "inv_file": "invbsh",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 99,
+          "values": [
+            10
+          ],
+          "name": "item_fastergethitrate",
+          "description": "+10% Faster Hit Recovery"
+        },
+        {
+          "id": 16,
+          "values": [
+            29
+          ],
+          "name": "item_armor_percent",
+          "description": "+29% Enhanced Defense"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            29
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 99,
+          "values": [
+            10
+          ],
+          "name": "item_fastergethitrate",
+          "description": "+{0}% Faster Hit Recovery"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 78,
+          "values": [
+            40
+          ],
+          "name": "item_attackertakesdamage",
+          "description": "Attacker Takes Damage of {0}"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 99,
+          "values": [
+            10
+          ],
+          "name": "item_fastergethitrate",
+          "description": "+10% Faster Hit Recovery"
+        },
+        {
+          "id": 16,
+          "values": [
+            29
+          ],
+          "name": "item_armor_percent",
+          "description": "+29% Enhanced Defense"
+        },
+        {
+          "id": 78,
+          "values": [
+            40
+          ],
+          "name": "item_attackertakesdamage",
+          "description": "Attacker Takes Damage of 40"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 1,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 11,
+      "position_x": 11,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "7mp",
+      "categories": [
+        "Axe",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 6,
+      "id": 2337017628,
+      "level": 99,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 173,
+      "rare_name": "Wraith",
+      "rare_index": "Wraithra",
+      "rare_name_id2": 20,
+      "rare_name2": "Gnash",
+      "rare_index2": "gnash",
+      "magical_name_ids": [
+        245,
+        199,
+        186,
+        359,
+        352,
+        0
+      ],
+      "personalized_name": "Nicro",
+      "timestamp": 0,
+      "max_durability": 255,
+      "current_durability": 255,
+      "total_nr_of_sockets": 6,
+      "magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            15,
+            15
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            243
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 22,
+          "values": [
+            8
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 43,
+          "values": [
+            20
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 62,
+          "values": [
+            5
+          ],
+          "name": "manadrainmindam",
+          "description": "{0}% Mana stolen per hit"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        }
+      ],
+      "base_damage": {
+        "mindam": 30,
+        "maxdam": 48
+      },
+      "socketed_items": [
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 0,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 1,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 2,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 3,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "skz",
+          "categories": [
+            "Skull",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "type_name": "Perfect Skull",
+          "levelreq": 18,
+          "inv_file": "invskz",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "{0}% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "{0}% Life stolen per hit"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 62,
+              "values": [
+                3
+              ],
+              "name": "manadrainmindam",
+              "description": "3% Mana stolen per hit"
+            },
+            {
+              "id": 60,
+              "values": [
+                4
+              ],
+              "name": "lifedrainmindam",
+              "description": "4% Life stolen per hit"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 4,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpg",
+          "categories": [
+            "Emerald",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "Adds {0}-{1} poison damage over {2} seconds"
+            }
+          ],
+          "type_name": "Perfect Emerald",
+          "levelreq": 18,
+          "inv_file": "invgsge",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "+100 poison damage over 7 seconds"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "Adds {0}-{1} poison damage over {2} seconds"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "+100 poison damage over 7 seconds"
+            }
+          ]
+        },
+        {
+          "_unknown_data": {
+            "b0_3": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0
+            },
+            "b5_10": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "b12": {
+              "0": 0
+            },
+            "b14_15": {
+              "0": 0,
+              "1": 0
+            },
+            "b18_20": {
+              "0": 0,
+              "1": 0,
+              "2": 0
+            },
+            "b23": {
+              "0": 1
+            },
+            "b25": {
+              "0": 0
+            },
+            "b27_31": {
+              "0": 0,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0
+            }
+          },
+          "identified": 1,
+          "socketed": 0,
+          "new": 0,
+          "is_ear": 0,
+          "starter_item": 0,
+          "simple_item": 1,
+          "ethereal": 0,
+          "personalized": 0,
+          "given_runeword": 0,
+          "version": 5,
+          "location_id": 6,
+          "equipped_id": 0,
+          "position_x": 5,
+          "position_y": 0,
+          "alt_position_id": 0,
+          "type": "gpg",
+          "categories": [
+            "Emerald",
+            "Gem",
+            "Socket Filler",
+            "Miscellaneous",
+            "Perfect Gem"
+          ],
+          "type_id": 4,
+          "nr_of_items_in_sockets": 0,
+          "magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "Adds {0}-{1} poison damage over {2} seconds"
+            }
+          ],
+          "type_name": "Perfect Emerald",
+          "levelreq": 18,
+          "inv_file": "invgsge",
+          "inv_height": 1,
+          "inv_width": 1,
+          "displayed_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "+100 poison damage over 7 seconds"
+            }
+          ],
+          "displayed_runeword_attributes": [],
+          "combined_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "Adds {0}-{1} poison damage over {2} seconds"
+            }
+          ],
+          "displayed_combined_magic_attributes": [
+            {
+              "id": 57,
+              "values": [
+                143,
+                143,
+                179
+              ],
+              "name": "poisonmindam",
+              "description": "+100 poison damage over 7 seconds"
+            }
+          ]
+        }
+      ],
+      "type_name": "War Spike",
+      "reqstr": 133,
+      "reqdex": 54,
+      "levelreq": 59,
+      "inv_file": "invmpi",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 2,
+      "transform_color": "lgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 17,
+          "values": [
+            15,
+            15
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+15% Enhanced Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            8
+          ],
+          "name": "maxdamage",
+          "description": "+8 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            243
+          ],
+          "name": "tohit",
+          "description": "+243 to Attack Rating"
+        },
+        {
+          "id": 62,
+          "values": [
+            5
+          ],
+          "name": "manadrainmindam",
+          "description": "5% Mana stolen per hit"
+        },
+        {
+          "id": 43,
+          "values": [
+            20
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +20%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            15,
+            15
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            243
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 22,
+          "values": [
+            8
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 43,
+          "values": [
+            20
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 62,
+          "values": [
+            17
+          ],
+          "name": "manadrainmindam",
+          "description": "{0}% Mana stolen per hit"
+        },
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 60,
+          "values": [
+            16
+          ],
+          "name": "lifedrainmindam",
+          "description": "{0}% Life stolen per hit"
+        },
+        {
+          "id": 57,
+          "values": [
+            286,
+            286,
+            179
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 152,
+          "values": [
+            1
+          ],
+          "name": "item_indesctructible",
+          "description": "Indestructible"
+        },
+        {
+          "id": 17,
+          "values": [
+            15,
+            15
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+15% Enhanced Damage"
+        },
+        {
+          "id": 22,
+          "values": [
+            8
+          ],
+          "name": "maxdamage",
+          "description": "+8 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            243
+          ],
+          "name": "tohit",
+          "description": "+243 to Attack Rating"
+        },
+        {
+          "id": 57,
+          "values": [
+            286,
+            286,
+            179
+          ],
+          "name": "poisonmindam",
+          "description": "+200 poison damage over 7 seconds"
+        },
+        {
+          "id": 62,
+          "values": [
+            17
+          ],
+          "name": "manadrainmindam",
+          "description": "17% Mana stolen per hit"
+        },
+        {
+          "id": 60,
+          "values": [
+            16
+          ],
+          "name": "lifedrainmindam",
+          "description": "16% Life stolen per hit"
+        },
+        {
+          "id": 43,
+          "values": [
+            20
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +20%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "bsw",
+      "categories": [
+        "Sword",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 2593021833,
+      "level": 39,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 158,
+      "rare_name": "Raven",
+      "rare_name_id2": 148,
+      "rare_name2": "Hew",
+      "rare_index2": "hew",
+      "magical_name_ids": [
+        417,
+        167,
+        257,
+        352,
+        186,
+        0
+      ],
+      "timestamp": 0,
+      "max_durability": 40,
+      "current_durability": 27,
+      "magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            34,
+            34
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            16
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 60,
+          "values": [
+            5
+          ],
+          "name": "lifedrainmindam",
+          "description": "{0}% Life stolen per hit"
+        },
+        {
+          "id": 93,
+          "values": [
+            20
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+{0}% Increased Attack Speed"
+        },
+        {
+          "id": 138,
+          "values": [
+            1
+          ],
+          "name": "item_manaafterkill",
+          "description": "+{0} to Mana after each Kill"
+        }
+      ],
+      "base_damage": {
+        "mindam": 7,
+        "maxdam": 19,
+        "twohandmindam": 20,
+        "twohandmaxdam": 28
+      },
+      "type_name": "Bastard Sword",
+      "reqstr": 62,
+      "levelreq": 17,
+      "inv_file": "invbsw",
+      "inv_height": 4,
+      "inv_width": 1,
+      "inv_transform": 2,
+      "displayed_magic_attributes": [
+        {
+          "id": 93,
+          "values": [
+            20
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+20% Increased Attack Speed"
+        },
+        {
+          "id": 17,
+          "values": [
+            34,
+            34
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+34% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            16
+          ],
+          "name": "tohit",
+          "description": "+16 to Attack Rating"
+        },
+        {
+          "id": 60,
+          "values": [
+            5
+          ],
+          "name": "lifedrainmindam",
+          "description": "5% Life stolen per hit"
+        },
+        {
+          "id": 138,
+          "values": [
+            1
+          ],
+          "name": "item_manaafterkill",
+          "description": "+1 to Mana after each Kill"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            34,
+            34
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            16
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 60,
+          "values": [
+            5
+          ],
+          "name": "lifedrainmindam",
+          "description": "{0}% Life stolen per hit"
+        },
+        {
+          "id": 93,
+          "values": [
+            20
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+{0}% Increased Attack Speed"
+        },
+        {
+          "id": 138,
+          "values": [
+            1
+          ],
+          "name": "item_manaafterkill",
+          "description": "+{0} to Mana after each Kill"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 93,
+          "values": [
+            20
+          ],
+          "name": "item_fasterattackrate",
+          "description": "+20% Increased Attack Speed"
+        },
+        {
+          "id": 17,
+          "values": [
+            34,
+            34
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+34% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            16
+          ],
+          "name": "tohit",
+          "description": "+16 to Attack Rating"
+        },
+        {
+          "id": 60,
+          "values": [
+            5
+          ],
+          "name": "lifedrainmindam",
+          "description": "5% Life stolen per hit"
+        },
+        {
+          "id": 138,
+          "values": [
+            1
+          ],
+          "name": "item_manaafterkill",
+          "description": "+1 to Mana after each Kill"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 3,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "ful",
+      "categories": [
+        "Armor",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 3670224457,
+      "level": 99,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 520,
+      "magic_prefix_name": "Faithful",
+      "magic_suffix": 0,
+      "timestamp": 0,
+      "defense_rating": 159,
+      "max_durability": 255,
+      "current_durability": 255,
+      "magic_attributes": [
+        {
+          "id": 214,
+          "values": [
+            24
+          ],
+          "name": "item_armor_perlevel",
+          "description": "+{0} Defense (Based on Character Level)"
+        }
+      ],
+      "type_name": "Full Plate Mail",
+      "reqstr": 80,
+      "levelreq": 22,
+      "inv_file": "invful",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "whit",
+      "displayed_magic_attributes": [
+        {
+          "id": 214,
+          "values": [
+            24
+          ],
+          "name": "item_armor_perlevel",
+          "op_stats": [
+            "armorclass"
+          ],
+          "op_value": 297,
+          "description": "+297 Defense (Based on Character Level)"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 214,
+          "values": [
+            24
+          ],
+          "name": "item_armor_perlevel",
+          "description": "+{0} Defense (Based on Character Level)"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 214,
+          "values": [
+            24
+          ],
+          "name": "item_armor_perlevel",
+          "op_stats": [
+            "armorclass"
+          ],
+          "op_value": 297,
+          "description": "+297 Defense (Based on Character Level)"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 4,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "9s8",
+      "categories": [
+        "Polearm",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3334210444,
+      "level": 94,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 169,
+      "rare_name": "Storm",
+      "rare_name_id2": 152,
+      "rare_name2": "Stake",
+      "rare_index2": "stake",
+      "magical_name_ids": [
+        192,
+        192,
+        258,
+        198,
+        0,
+        176
+      ],
+      "timestamp": 0,
+      "max_durability": 65,
+      "current_durability": 65,
+      "magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            118,
+            118
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            39
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 24,
+          "values": [
+            6
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 50,
+          "values": [
+            4,
+            62
+          ],
+          "name": "lightmindam",
+          "description": "Adds {0}-{1} lightning damage"
+        },
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            50
+          ],
+          "name": "coldmindam",
+          "description": "Adds {0}-{1} cold damage"
+        }
+      ],
+      "base_damage": {
+        "twohandmindam": 18,
+        "twohandmaxdam": 45
+      },
+      "type_name": "Battle Scythe",
+      "reqstr": 82,
+      "reqdex": 82,
+      "levelreq": 26,
+      "inv_file": "invscy",
+      "inv_height": 4,
+      "inv_width": 2,
+      "inv_transform": 2,
+      "transform_color": "dyel",
+      "displayed_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            118,
+            118
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+118% Enhanced Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            6
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+6 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            39
+          ],
+          "name": "tohit",
+          "description": "+39 to Attack Rating"
+        },
+        {
+          "id": 50,
+          "values": [
+            4,
+            62
+          ],
+          "name": "lightmindam",
+          "description": "Adds 4-62 lightning damage"
+        },
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            50
+          ],
+          "name": "coldmindam",
+          "description": "Adds 1-2 cold damage"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            118,
+            118
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            39
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 24,
+          "values": [
+            6
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 50,
+          "values": [
+            4,
+            62
+          ],
+          "name": "lightmindam",
+          "description": "Adds {0}-{1} lightning damage"
+        },
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            50
+          ],
+          "name": "coldmindam",
+          "description": "Adds {0}-{1} cold damage"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            118,
+            118
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+118% Enhanced Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            6
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+6 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            39
+          ],
+          "name": "tohit",
+          "description": "+39 to Attack Rating"
+        },
+        {
+          "id": 50,
+          "values": [
+            4,
+            62
+          ],
+          "name": "lightmindam",
+          "description": "Adds 4-62 lightning damage"
+        },
+        {
+          "id": 54,
+          "values": [
+            1,
+            2,
+            50
+          ],
+          "name": "coldmindam",
+          "description": "Adds 1-2 cold damage"
+        }
+      ]
+    }
+  ],
+  "corpse_items": [],
+  "is_dead": 0,
+  "merc_items": [
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 3,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "ful",
+      "categories": [
+        "Armor",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1132420245,
+      "level": 99,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 170,
+      "rare_name": "Rune",
+      "rare_name_id2": 155,
+      "rare_name2": "Flange",
+      "rare_index2": "flange",
+      "magical_name_ids": [
+        420,
+        366,
+        148,
+        122,
+        0,
+        271
+      ],
+      "timestamp": 0,
+      "defense_rating": 162,
+      "max_durability": 70,
+      "current_durability": 70,
+      "total_nr_of_sockets": 2,
+      "magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            73
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            6
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 74,
+          "values": [
+            3
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +{0}"
+        },
+        {
+          "id": 110,
+          "values": [
+            75
+          ],
+          "name": "item_poisonlengthresist",
+          "description": "Poison Length Reduced by {0}%"
+        }
+      ],
+      "socketed_items": [],
+      "type_name": "Full Plate Mail",
+      "reqstr": 80,
+      "levelreq": 52,
+      "inv_file": "invful",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "dgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            73
+          ],
+          "name": "item_armor_percent",
+          "description": "+73% Enhanced Defense"
+        },
+        {
+          "id": 74,
+          "values": [
+            3
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +3"
+        },
+        {
+          "id": 34,
+          "values": [
+            6
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 6"
+        },
+        {
+          "id": 110,
+          "values": [
+            75
+          ],
+          "name": "item_poisonlengthresist",
+          "description": "Poison Length Reduced by 75%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            73
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            6
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 74,
+          "values": [
+            3
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +{0}"
+        },
+        {
+          "id": 110,
+          "values": [
+            75
+          ],
+          "name": "item_poisonlengthresist",
+          "description": "Poison Length Reduced by {0}%"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            73
+          ],
+          "name": "item_armor_percent",
+          "description": "+73% Enhanced Defense"
+        },
+        {
+          "id": 74,
+          "values": [
+            3
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +3"
+        },
+        {
+          "id": 34,
+          "values": [
+            6
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 6"
+        },
+        {
+          "id": 110,
+          "values": [
+            75
+          ],
+          "name": "item_poisonlengthresist",
+          "description": "Poison Length Reduced by 75%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 1,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "ci0",
+      "categories": [
+        "Circlet",
+        "Helm",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 3163198276,
+      "level": 97,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 174,
+      "rare_name": "Spirit",
+      "rare_name_id2": 66,
+      "rare_name2": "Brow",
+      "rare_index2": "brow",
+      "magical_name_ids": [
+        560,
+        235,
+        240,
+        121,
+        418,
+        434
+      ],
+      "timestamp": 0,
+      "defense_rating": 24,
+      "max_durability": 35,
+      "current_durability": 35,
+      "magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 34,
+          "values": [
+            3
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 57,
+          "values": [
+            54,
+            54,
+            100
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 83,
+          "values": [
+            0,
+            1
+          ],
+          "name": "item_addclassskills",
+          "description": "{0}"
+        },
+        {
+          "id": 138,
+          "values": [
+            3
+          ],
+          "name": "item_manaafterkill",
+          "description": "+{0} to Mana after each Kill"
+        },
+        {
+          "id": 201,
+          "values": [
+            3,
+            48,
+            10
+          ],
+          "name": "item_skillongethit",
+          "description": "{2}% Chance to cast level {0} {1} when struck"
+        }
+      ],
+      "type_name": "Circlet",
+      "levelreq": 27,
+      "inv_file": "invci0",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 2,
+      "transform_color": "cblu",
+      "displayed_magic_attributes": [
+        {
+          "id": 201,
+          "values": [
+            3,
+            48,
+            10
+          ],
+          "name": "item_skillongethit",
+          "description": "10% Chance to cast level 3 Nova when struck"
+        },
+        {
+          "id": 83,
+          "values": [
+            0,
+            1
+          ],
+          "name": "item_addclassskills",
+          "description": "+1 to Amazon Skill Levels"
+        },
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+43 to Attack Rating"
+        },
+        {
+          "id": 57,
+          "values": [
+            54,
+            54,
+            100
+          ],
+          "name": "poisonmindam",
+          "description": "+21 poison damage over 4 seconds"
+        },
+        {
+          "id": 34,
+          "values": [
+            3
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 3"
+        },
+        {
+          "id": 138,
+          "values": [
+            3
+          ],
+          "name": "item_manaafterkill",
+          "description": "+3 to Mana after each Kill"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 34,
+          "values": [
+            3
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 57,
+          "values": [
+            54,
+            54,
+            100
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 83,
+          "values": [
+            0,
+            1
+          ],
+          "name": "item_addclassskills",
+          "description": "{0}"
+        },
+        {
+          "id": 138,
+          "values": [
+            3
+          ],
+          "name": "item_manaafterkill",
+          "description": "+{0} to Mana after each Kill"
+        },
+        {
+          "id": 201,
+          "values": [
+            3,
+            48,
+            10
+          ],
+          "name": "item_skillongethit",
+          "description": "{2}% Chance to cast level {0} {1} when struck"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 201,
+          "values": [
+            3,
+            48,
+            10
+          ],
+          "name": "item_skillongethit",
+          "description": "10% Chance to cast level 3 Nova when struck"
+        },
+        {
+          "id": 83,
+          "values": [
+            0,
+            1
+          ],
+          "name": "item_addclassskills",
+          "description": "+1 to Amazon Skill Levels"
+        },
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+43 to Attack Rating"
+        },
+        {
+          "id": 57,
+          "values": [
+            54,
+            54,
+            100
+          ],
+          "name": "poisonmindam",
+          "description": "+21 poison damage over 4 seconds"
+        },
+        {
+          "id": 34,
+          "values": [
+            3
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 3"
+        },
+        {
+          "id": 138,
+          "values": [
+            3
+          ],
+          "name": "item_manaafterkill",
+          "description": "+3 to Mana after each Kill"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 4,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "cbw",
+      "categories": [
+        "Bow",
+        "Missile Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3202927348,
+      "level": 99,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 189,
+      "rare_name": "Brimstone",
+      "rare_name_id2": 51,
+      "rare_name2": "Branch",
+      "rare_index2": "branch",
+      "magical_name_ids": [
+        545,
+        225,
+        257,
+        201,
+        190,
+        0
+      ],
+      "timestamp": 0,
+      "max_durability": 36,
+      "current_durability": 32,
+      "magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            69,
+            69
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            14
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 23,
+          "values": [
+            5
+          ],
+          "name": "secondary_mindamage",
+          "description": "+{0} to Minimum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            15
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 48,
+          "values": [
+            24,
+            57
+          ],
+          "name": "firemindam",
+          "description": "Adds {0}-{1} fire damage"
+        }
+      ],
+      "base_damage": {
+        "twohandmindam": 4,
+        "twohandmaxdam": 8
+      },
+      "type_name": "Composite Bow",
+      "reqstr": 25,
+      "reqdex": 35,
+      "levelreq": 18,
+      "inv_file": "invcbw",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "dgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            69,
+            69
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+69% Enhanced Damage"
+        },
+        {
+          "id": 23,
+          "values": [
+            5
+          ],
+          "name": "secondary_mindamage",
+          "description": "+5 to Minimum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            15
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+15 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            14
+          ],
+          "name": "tohit",
+          "description": "+14 to Attack Rating"
+        },
+        {
+          "id": 48,
+          "values": [
+            24,
+            57
+          ],
+          "name": "firemindam",
+          "description": "Adds 24-57 fire damage"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            69,
+            69
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+{0}% Enhanced Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            14
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 23,
+          "values": [
+            5
+          ],
+          "name": "secondary_mindamage",
+          "description": "+{0} to Minimum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            15
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+{0} to Maximum Damage"
+        },
+        {
+          "id": 48,
+          "values": [
+            24,
+            57
+          ],
+          "name": "firemindam",
+          "description": "Adds {0}-{1} fire damage"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 17,
+          "values": [
+            69,
+            69
+          ],
+          "name": "item_maxdamage_percent",
+          "description": "+69% Enhanced Damage"
+        },
+        {
+          "id": 23,
+          "values": [
+            5
+          ],
+          "name": "secondary_mindamage",
+          "description": "+5 to Minimum Damage"
+        },
+        {
+          "id": 24,
+          "values": [
+            15
+          ],
+          "name": "secondary_maxdamage",
+          "description": "+15 to Maximum Damage"
+        },
+        {
+          "id": 19,
+          "values": [
+            14
+          ],
+          "name": "tohit",
+          "description": "+14 to Attack Rating"
+        },
+        {
+          "id": 48,
+          "values": [
+            24,
+            57
+          ],
+          "name": "firemindam",
+          "description": "Adds 24-57 fire damage"
+        }
+      ]
+    }
+  ],
+  "item_bonuses": [
+    {
+      "id": 0,
+      "values": [
+        1
+      ],
+      "name": "strength",
+      "description": "+{0} to Strength"
+    },
+    {
+      "id": 45,
+      "values": [
+        12
+      ],
+      "name": "poisonresist",
+      "description": "Poison Resist +{0}%"
+    },
+    {
+      "id": 152,
+      "values": [
+        5
+      ],
+      "name": "item_indesctructible",
+      "description": "Indestructible"
+    },
+    {
+      "id": 2,
+      "values": [
+        7
+      ],
+      "name": "dexterity",
+      "description": "+{0} to Dexterity"
+    },
+    {
+      "id": 16,
+      "values": [
+        120
+      ],
+      "name": "item_armor_percent",
+      "description": "+{0}% Enhanced Defense"
+    },
+    {
+      "id": 19,
+      "values": [
+        339
+      ],
+      "name": "tohit",
+      "description": "+{0} to Attack Rating"
+    },
+    {
+      "id": 22,
+      "values": [
+        9
+      ],
+      "name": "maxdamage",
+      "description": "+{0} to Maximum Damage"
+    },
+    {
+      "id": 24,
+      "values": [
+        7
+      ],
+      "name": "secondary_maxdamage",
+      "description": "+{0} to Maximum Damage"
+    },
+    {
+      "id": 48,
+      "values": [
+        1,
+        3
+      ],
+      "name": "firemindam",
+      "description": "Adds {0}-{1} fire damage"
+    },
+    {
+      "id": 160,
+      "values": [
+        1
+      ],
+      "name": "item_throw_maxdamage"
+    },
+    {
+      "id": 39,
+      "values": [
+        18
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
+      "id": 96,
+      "values": [
+        30
+      ],
+      "name": "item_fastermovevelocity",
+      "description": "+{0}% Faster Run/Walk"
+    },
+    {
+      "id": 154,
+      "values": [
+        85
+      ],
+      "name": "item_staminadrainpct",
+      "description": "{0}% Slower Stamina Drain"
+    },
+    {
+      "id": 54,
+      "values": [
+        2,
+        4,
+        25
+      ],
+      "name": "coldmindam",
+      "description": "Adds {0}-{1} cold damage"
+    },
+    {
+      "id": 11,
+      "values": [
+        9
+      ],
+      "name": "maxstamina",
+      "description": "+{0} Maximum Stamina"
+    },
+    {
+      "id": 9,
+      "values": [
+        3
+      ],
+      "name": "maxmana",
+      "description": "+{0} to Mana"
+    },
+    {
+      "id": 41,
+      "values": [
+        12
+      ],
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
+    },
+    {
+      "id": 201,
+      "values": [
+        5,
+        38,
+        14
+      ],
+      "name": "item_skillongethit",
+      "description": "{2}% Chance to cast level {0} {1} when struck"
+    },
+    {
+      "id": 99,
+      "values": [
+        10
+      ],
+      "name": "item_fastergethitrate",
+      "description": "+{0}% Faster Hit Recovery"
+    },
+    {
+      "id": 78,
+      "values": [
+        40
+      ],
+      "name": "item_attackertakesdamage",
+      "description": "Attacker Takes Damage of {0}"
+    },
+    {
+      "id": 17,
+      "values": [
+        133,
+        133
+      ],
+      "name": "item_maxdamage_percent",
+      "description": "+{0}% Enhanced Damage"
+    },
+    {
+      "id": 43,
+      "values": [
+        20
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
+      "id": 62,
+      "values": [
+        17
+      ],
+      "name": "manadrainmindam",
+      "description": "{0}% Mana stolen per hit"
+    },
+    {
+      "id": 60,
+      "values": [
+        16
+      ],
+      "name": "lifedrainmindam",
+      "description": "{0}% Life stolen per hit"
+    },
+    {
+      "id": 57,
+      "values": [
+        286,
+        286,
+        179
+      ],
+      "name": "poisonmindam",
+      "description": "Adds {0}-{1} poison damage over {2} seconds"
+    },
+    {
+      "id": 214,
+      "values": [
+        24
+      ],
+      "name": "item_armor_perlevel",
+      "description": "+{0} Defense (Based on Character Level)"
+    },
+    {
+      "id": 50,
+      "values": [
+        4,
+        62
+      ],
+      "name": "lightmindam",
+      "description": "Adds {0}-{1} lightning damage"
+    }
+  ]
+}

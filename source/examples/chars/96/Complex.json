@@ -550,7 +550,7 @@
                 },
                 {
                     "id": 105,
-                    "name": "{0}% Faster Cast Rate",
+                    "name": "+{0}% Faster Cast Rate",
                     "values": [
                         20
                     ]
@@ -566,7 +566,7 @@
                 },
                 {
                     "id": 332,
-                    "name": "{0}% To Poison Skill Damage",
+                    "name": "{0}% to Poison Skill Damage",
                     "values": [
                         25
                     ]
@@ -627,7 +627,7 @@
                 [
                     {
                         "id": 105,
-                        "name": "{0}% Faster Cast Rate",
+                        "name": "+{0}% Faster Cast Rate",
                         "values": [
                             10
                         ]
@@ -728,7 +728,7 @@
                 },
                 {
                     "id": 198,
-                    "name": "{2}% Chance to Cast Level {0} {1} On Striking",
+                    "name": "{2}% Chance to cast level {0} {1} on striking",
                     "values": [
                         16,
                         49,
@@ -1006,7 +1006,7 @@
                 },
                 {
                     "id": 105,
-                    "name": "{0}% Faster Cast Rate",
+                    "name": "+{0}% Faster Cast Rate",
                     "values": [
                         10
                     ]
@@ -1439,7 +1439,7 @@
                 },
                 {
                     "id": 83,
-                    "name": "+{1} to {0} Skill Levels",
+                    "name": "+{1} {0}",
                     "values": [
                         1,
                         3
@@ -1454,7 +1454,7 @@
                 },
                 {
                     "id": 198,
-                    "name": "{2}% Chance to Cast Level {0} {1} On Striking",
+                    "name": "{2}% Chance to cast level {0} {1} on striking",
                     "values": [
                         10,
                         197,
@@ -1570,7 +1570,7 @@
                 },
                 {
                     "id": 85,
-                    "name": "{0}% To Experience Gained",
+                    "name": "{0}% to Experience Gained",
                     "values": [
                         10
                     ]
@@ -2172,7 +2172,7 @@
                 [
                     {
                         "id": 105,
-                        "name": "{0}% Faster Cast Rate",
+                        "name": "+{0}% Faster Cast Rate",
                         "values": [
                             10
                         ]
@@ -2211,7 +2211,7 @@
                 },
                 {
                     "id": 83,
-                    "name": "+{1} to {0} Skill Levels",
+                    "name": "+{1} {0}",
                     "values": [
                         1,
                         2
@@ -2702,7 +2702,7 @@
                         },
                         {
                             "id": 197,
-                            "name": "{2}% Chance to Cast Level {0} {1} When you die",
+                            "name": "{2}% Chance to cast level {0} {1} when you Die",
                             "values": [
                                 37,
                                 59,
@@ -2711,14 +2711,14 @@
                         },
                         {
                             "id": 331,
-                            "name": "{0}% To Cold Skill Damage",
+                            "name": "{0}% to Cold Skill Damage",
                             "values": [
                                 5
                             ]
                         },
                         {
                             "id": 335,
-                            "name": "-{0}% To Enemy Cold Resistance",
+                            "name": "-{0}% to Enemy Cold Resistance",
                             "values": [
                                 3
                             ]
@@ -2772,7 +2772,7 @@
                 [
                     {
                         "id": 105,
-                        "name": "{0}% Faster Cast Rate",
+                        "name": "+{0}% Faster Cast Rate",
                         "values": [
                             10
                         ]
@@ -4185,7 +4185,7 @@
                 },
                 {
                     "id": 83,
-                    "name": "+{1} to {0} Skill Levels",
+                    "name": "+{1} {0}",
                     "values": [
                         3,
                         1
@@ -4728,7 +4728,7 @@
                 [
                     {
                         "id": 83,
-                        "name": "+{1} to {0} Skill Levels",
+                        "name": "+{1} {0}",
                         "values": [
                             1,
                             1
@@ -4738,7 +4738,7 @@
                 [
                     {
                         "id": 333,
-                        "name": "-{0}% To Enemy Fire Resistance",
+                        "name": "-{0}% to Enemy Fire Resistance",
                         "values": [
                             15
                         ]
@@ -4747,7 +4747,7 @@
                 [
                     {
                         "id": 334,
-                        "name": "-{0}% To Enemy Lightning Resistance",
+                        "name": "-{0}% to Enemy Lightning Resistance",
                         "values": [
                             15
                         ]
@@ -4756,7 +4756,7 @@
                 [
                     {
                         "id": 331,
-                        "name": "{0}% To Cold Skill Damage",
+                        "name": "{0}% to Cold Skill Damage",
                         "values": [
                             15
                         ]
@@ -4787,14 +4787,14 @@
                 },
                 {
                     "id": 105,
-                    "name": "{0}% Faster Cast Rate",
+                    "name": "+{0}% Faster Cast Rate",
                     "values": [
                         20
                     ]
                 },
                 {
                     "id": 107,
-                    "name": "+{1} To {0}",
+                    "name": "+{1} {0}",
                     "values": [
                         61,
                         2
@@ -4802,7 +4802,7 @@
                 },
                 {
                     "id": 107,
-                    "name": "+{1} To {0}",
+                    "name": "+{1} {0}",
                     "values": [
                         63,
                         2
@@ -4810,7 +4810,7 @@
                 },
                 {
                     "id": 107,
-                    "name": "+{1} To {0}",
+                    "name": "+{1} {0}",
                     "values": [
                         65,
                         2
@@ -4867,7 +4867,7 @@
                         },
                         {
                             "id": 199,
-                            "name": "{2}% Chance to Cast Level {0} {1} On Striking",
+                            "name": "{2}% Chance to cast level {0} {1} on striking",
                             "values": [
                                 43,
                                 44,
@@ -4876,14 +4876,14 @@
                         },
                         {
                             "id": 331,
-                            "name": "{0}% To Cold Skill Damage",
+                            "name": "{0}% to Cold Skill Damage",
                             "values": [
                                 5
                             ]
                         },
                         {
                             "id": 335,
-                            "name": "-{0}% To Enemy Cold Resistance",
+                            "name": "-{0}% to Enemy Cold Resistance",
                             "values": [
                                 5
                             ]
@@ -4966,7 +4966,7 @@
                 },
                 {
                     "id": 105,
-                    "name": "{0}% Faster Cast Rate",
+                    "name": "+{0}% Faster Cast Rate",
                     "values": [
                         35
                     ]
@@ -5323,7 +5323,7 @@
                         },
                         {
                             "id": 93,
-                            "name": "{0}% Increased Attack Speed",
+                            "name": "+{0}% Increased Attack Speed",
                             "values": [
                                 15
                             ]
@@ -5374,7 +5374,7 @@
             "runeword_attributes": [
                 {
                     "id": 83,
-                    "name": "+{1} to {0} Skill Levels",
+                    "name": "+{1} {0}",
                     "values": [
                         6,
                         2
@@ -5382,14 +5382,14 @@
                 },
                 {
                     "id": 93,
-                    "name": "{0}% Increased Attack Speed",
+                    "name": "+{0}% Increased Attack Speed",
                     "values": [
                         45
                     ]
                 },
                 {
                     "id": 198,
-                    "name": "{2}% Chance to Cast Level {0} {1} On Striking",
+                    "name": "{2}% Chance to cast level {0} {1} on striking",
                     "values": [
                         15,
                         278,
@@ -5398,7 +5398,7 @@
                 },
                 {
                     "id": 201,
-                    "name": "{2}% Chance to Cast Level {0} {1} When Struck",
+                    "name": "{2}% Chance to cast level {0} {1} when struck",
                     "values": [
                         15,
                         267,
@@ -5647,7 +5647,7 @@
                 },
                 {
                     "id": 196,
-                    "name": "{2}% Chance to Cast Level {0} {1} When you die",
+                    "name": "{2}% Chance to cast level {0} {1} when you Die",
                     "values": [
                         21,
                         52,
@@ -5656,7 +5656,7 @@
                 },
                 {
                     "id": 333,
-                    "name": "-{0}% To Enemy Fire Resistance",
+                    "name": "-{0}% to Enemy Fire Resistance",
                     "values": [
                         25
                     ]

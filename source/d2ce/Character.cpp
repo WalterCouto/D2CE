@@ -19,20 +19,25 @@
 //---------------------------------------------------------------------------
 
 #include "pch.h"
-#include <filesystem>
 #include "Character.h"
 #include "CharacterConstants.h"
 #include "ExperienceConstants.h"
 #include "ItemConstants.h"
 #include "SkillConstants.h"
 #include "SharedStash.h"
+#include "helpers/DefaultTxtReader.h"
+#include "helpers/ItemHelpers.h"
 #include <fstream>
+#include <utf8/utf8.h>
 
 //---------------------------------------------------------------------------
 namespace d2ce
 {
     constexpr std::array<std::uint8_t, 4> HEADER = { 0x55, 0xAA, 0x55, 0xAA };
 
+    constexpr std::array<std::uint8_t, 16> UNKNOWN_014_v116 = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
     constexpr std::array<std::uint8_t, 6> UNKNOWN_01C_v100 = { 0xDD, 0x00, 0x10, 0x00, 0x82, 0x00 };
     constexpr std::array<std::uint8_t, 6> UNKNOWN_01C_v107 = { 0x3F, 0x01, 0x10, 0x00, 0x82, 0x00 };
     constexpr std::array<std::uint8_t, 2> UNKNOWN_026 = { 0x00, 0x00 };
@@ -59,8 +64,25 @@ namespace d2ce
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    constexpr std::array<std::uint16_t, 4> UNKOWN_14B_v109 = { 0x01, 0x00, 0x00, 0x00 };
-    constexpr std::array<std::uint16_t, 4> UNKOWN_14B_v115 = { 0x00, 0x00, 0x00, 0x00 };
+    constexpr std::array<std::uint8_t, 76> UNKNOWN_0BF_v116 = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    constexpr std::array<std::uint8_t, 48> UNKNOWN_11B_v116 = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v109 = { 0x01, 0x00, 0x00, 0x00 };
+    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v115 = { 0x00, 0x00, 0x00, 0x00 };
 
     void ApplyJsonAppearnces(const Json::Value& appearances, std::array<std::uint8_t, APPEARANCES_LENGTH> &appearancesValue)
     {
@@ -163,11 +185,11 @@ namespace d2ce
         }
     }
 
-    std::uint32_t ApplyJsonSkill(const Json::Value& skill)
+    std::uint16_t ApplyJsonSkill(const Json::Value& skill)
     {
         if (skill.isNull())
         {
-            return 0xFFFF;
+            return MAXUINT16;
         }
 
         if (skill.isObject())
@@ -175,13 +197,14 @@ namespace d2ce
             Json::Value value = skill["Id"];
             if (value.isNull())
             {
-                return 0xFFFF;
+                return MAXUINT16;
             }
 
-            return std::min(std::uint32_t(value.asInt()), std::uint32_t(0xFFFF));
+            return std::uint16_t(value.asInt());
         }
 
-        return std::min(CharacterStats::getSkillIdByName(skill.asString()), std::uint32_t(0xFFFF));
+        const auto& skillInfo = CharClassHelper::getSkillByIndex(skill.asString());
+        return skillInfo.id;
     }
 
     void ApplyJsonAssignedSkills(const Json::Value& assignedSkills, std::array<std::uint32_t, NUM_OF_SKILL_HOTKEYS>& assignedSkillsValue)
@@ -189,16 +212,11 @@ namespace d2ce
         Json::Value value;
         if (!assignedSkills.isNull())
         {
-            std::uint32_t id = 0xFFFF;
             size_t idx = 0;
             auto iter_end = assignedSkills.end();
             for (auto iter = assignedSkills.begin(); iter != iter_end && idx < NUM_OF_SKILL_HOTKEYS; ++iter, ++idx)
             {
-                id = ApplyJsonSkill(*iter);
-                if (id < 0xFFFF)
-                {
-                    assignedSkillsValue[idx] = id;
-                }
+                assignedSkillsValue[idx] = ApplyJsonSkill(*iter);
             }
         }
     }
@@ -275,6 +293,10 @@ namespace d2ce
 }
 //---------------------------------------------------------------------------
 
+
+//---------------------------------------------------------------------------
+
+
 //---------------------------------------------------------------------------
 const char* d2ce::CharacterErrCategory::name() const noexcept
 {
@@ -329,7 +351,7 @@ namespace std
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-d2ce::Character::Character() : Merc(*this), Acts(*this)
+d2ce::Character::Character() : Cs(*this), Merc(*this), Acts(*this)
 {
     initialize();
 }
@@ -378,6 +400,7 @@ void d2ce::Character::initialize()
     m_filesize_location = 0;
     m_checksum_location = 0;
     m_name_location = 0;
+    m_status_location = 0;
     m_class_location = 0;
     m_level_location = 0;
     m_starting_location = 0;
@@ -394,12 +417,17 @@ void d2ce::Character::initialize()
     {
         std::rewind(m_charfile);
     }
+
+    if (!ItemHelpers::isTxtReaderInitialized())
+    {
+        setDefaultTxtReader();
+    }
 }
 //---------------------------------------------------------------------------
 /*
    Returns false if file was not opened or there was an error.
 */
-bool d2ce::Character::openD2S(const char* szfilename, bool validateChecksum)
+bool d2ce::Character::openD2S(const std::filesystem::path& path, bool validateChecksum)
 {
     if (is_open())
     {
@@ -407,10 +435,11 @@ bool d2ce::Character::openD2S(const char* szfilename, bool validateChecksum)
     }
 
     m_error_code.clear();
+
 #ifdef _MSC_VER
-    m_charfile = _fsopen(szfilename, "rb+", _SH_DENYNO);
+    m_charfile = _wfsopen(path.wstring().c_str(), L"rb+", _SH_DENYNO);
 #else
-    errno_t err = fopen_s(&m_charfile, szfilename, "rb+");
+    errno_t err = _wfopen_s(&m_charfile, path.wstring().c_str(), L"rb+");
     if (err != 0)
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
@@ -418,12 +447,13 @@ bool d2ce::Character::openD2S(const char* szfilename, bool validateChecksum)
     }
 #endif
 
-    m_d2sfilename = szfilename;
     if (m_charfile == nullptr)
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
         return false;
     }
+
+    m_d2sfilename = path;
 
     readHeader();
     if (!isValidHeader())
@@ -459,7 +489,7 @@ bool d2ce::Character::openD2S(const char* szfilename, bool validateChecksum)
 /*
    Returns false if file was not opened or there was an error.
 */
-bool d2ce::Character::openJson(const char* szjsonfilename)
+bool d2ce::Character::openJson(const std::filesystem::path& path)
 {
     if (is_open())
     {
@@ -467,13 +497,13 @@ bool d2ce::Character::openJson(const char* szjsonfilename)
     }
 
     std::ifstream ifs;
-    ifs.open(szjsonfilename);
+    ifs.open(path.wstring().c_str());
     if (!ifs.is_open())
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
         return false;
     }
-    m_jsonfilename = szjsonfilename;
+    m_jsonfilename = path;
 
     Json::Value root;
     Json::CharReaderBuilder builder;
@@ -494,8 +524,8 @@ bool d2ce::Character::openJson(const char* szjsonfilename)
     }
 
     m_d2sfilename.clear();
-    char name1[L_tmpnam_s];
-    errno_t err = tmpnam_s(name1, L_tmpnam_s);
+    wchar_t name1[L_tmpnam_s];
+    errno_t err = _wtmpnam_s(name1, L_tmpnam_s);
     if (err != 0)
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
@@ -503,14 +533,15 @@ bool d2ce::Character::openJson(const char* szjsonfilename)
     }
 
     m_charfile = NULL;
-    fopen_s(&m_charfile, name1, "wb+");
+    std::wstring utempfilename = name1;
+    _wfopen_s(&m_charfile, utempfilename.c_str(), L"wb+");
     if (m_charfile == nullptr)
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
         return false;
     }
 
-    m_d2sfilename = name1;
+    m_d2sfilename = utempfilename;
     std::fwrite(Header.data(), Header.size(), 1, m_charfile);
 
     if (!refresh(root))
@@ -525,7 +556,7 @@ bool d2ce::Character::openJson(const char* szjsonfilename)
 /*
    Returns false if file was not opened or there was an error.
 */
-bool d2ce::Character::open(const char* szfilename, bool validateChecksum)
+bool d2ce::Character::open(const std::filesystem::path& path, bool validateChecksum)
 {
     if (is_open())
     {
@@ -533,18 +564,13 @@ bool d2ce::Character::open(const char* szfilename, bool validateChecksum)
     }
 
     m_error_code.clear();
-
-    if (szfilename != nullptr)
+    std::wstring ext = path.extension().wstring();
+    if (_wcsicmp(ext.c_str(), L".json") == 0)
     {
-        std::filesystem::path p = szfilename;
-        std::string ext = p.extension().string();
-        if (_stricmp(ext.c_str(), ".json") == 0)
-        {
-            return openJson(szfilename);
-        }
+        return openJson(path);
     }
 
-    return openD2S(szfilename, validateChecksum);
+    return openD2S(path, validateChecksum);
 }
 //---------------------------------------------------------------------------
 /*
@@ -775,7 +801,6 @@ void d2ce::Character::readBasicInfo()
     std::fread(&Version, sizeof(Version), 1, m_charfile);
 
     Bs.Version = getVersion();
-    Cs.Version = Bs.Version;
 
     m_filesize_location = 0;
     m_checksum_location = 0;
@@ -788,9 +813,19 @@ void d2ce::Character::readBasicInfo()
         std::fread(&WeaponSet, sizeof(WeaponSet), 1, m_charfile);
     }
 
-    m_name_location = std::ftell(m_charfile);
-    std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
-    Bs.Name[15] = 0; // must be zero
+    if (Bs.Version <= EnumCharVersion::v115)
+    {
+        m_name_location = std::ftell(m_charfile);
+        std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
+        Bs.Name[15] = 0; // must be zero
+    }
+    else
+    {
+        // skip old name, should be all zero now
+        std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_014_v116.size(), SEEK_SET);
+    }
+
+    m_status_location = std::ftell(m_charfile);
     std::uint8_t value = 0;
     std::fread(&value, sizeof(value), 1, m_charfile);
     Bs.Status = static_cast<EnumCharStatus>(value);
@@ -922,6 +957,13 @@ void d2ce::Character::readBasicInfo()
         std::fread(&MapID, sizeof(MapID), 1, m_charfile);
 
         Merc.readInfo(Bs.Version, m_charfile);
+        if (Bs.Version > EnumCharVersion::v115)
+        {
+            std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_0BF_v116.size(), SEEK_SET);
+            m_name_location = std::ftell(m_charfile);
+            std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
+            Bs.Name[15] = 0; // must be zero
+        }
     }
 
     if (Bs.getStartingActTitle() > Bs.Title)
@@ -954,7 +996,6 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     std::fwrite(&Version, sizeof(Version), 1, m_charfile);
 
     Bs.Version = getVersion();
-    Cs.Version = Bs.Version;
 
     m_filesize_location = 0;
     m_checksum_location = 0;
@@ -969,7 +1010,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         std::fwrite(&FileSize, sizeof(FileSize), 1, m_charfile);
 
         m_checksum_location = std::ftell(m_charfile);
-        jsonValue = header[m_bJsonSerializedFormat ? "Checksum": "checksum"];
+        jsonValue = header[m_bJsonSerializedFormat ? "Checksum" : "checksum"];
         if (!jsonValue.isNull())
         {
             Checksum = m_bJsonSerializedFormat ? long(jsonValue.asInt64()) : long(std::stoul(jsonValue.asString(), nullptr, 16));
@@ -984,89 +1025,70 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         std::fwrite(&WeaponSet, sizeof(WeaponSet), 1, m_charfile);
     }
 
-    m_name_location = std::ftell(m_charfile);
-    jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
-    if (jsonValue.isNull())
+    if (Bs.Version <= EnumCharVersion::v115)
     {
-        return false;
-    }
-
-    {
-        // Check Name
-        // Remove any invalid characters from the number
-        std::string curName(jsonValue.asString());
-        std::string strNewText;
-        for (size_t iPos = 0, numberOfUnderscores = 0, nLen = curName.size(); iPos < nLen; ++iPos)
-        {
-            char c = curName[iPos];
-            if (std::isalpha(c))
-            {
-                strNewText += c;
-            }
-            else if ((c == '_' || c == '-') && strNewText.size() != 0 && numberOfUnderscores < 1)
-            {
-                strNewText += c;
-                ++numberOfUnderscores;
-            }
-        }
-
-        // trim bad characters
-        if (strNewText.size() > 15)
-        {
-            strNewText.resize(15);
-        }
-        strNewText.erase(strNewText.find_last_not_of("_-") + 1);
-        if (strNewText.size() < 2)
+        m_name_location = std::ftell(m_charfile);
+        jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
+        if (jsonValue.isNull())
         {
             return false;
         }
 
+        // Check Name
+        // Remove any invalid characters from the name
+        std::string curName(jsonValue.asString());
+        LocalizationHelpers::CheckCharName(curName, true);
         Bs.Name.fill(0);
-        strcpy_s(Bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+        strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
         Bs.Name[15] = 0; // must be zero
         std::fwrite(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
     }
+    else
+    {
+        std::fwrite(UNKNOWN_014_v116.data(), UNKNOWN_014_v116.size(), 1, m_charfile);
+    }
 
     std::uint8_t value = 0;
-    jsonValue = m_bJsonSerializedFormat ? root["ClassId"] : header["class"];
-    if (!jsonValue.isNull())
+    jsonValue = m_bJsonSerializedFormat ? root["ClassId"] : header["class_id"];
+    if (jsonValue.isNull())
     {
         if (m_bJsonSerializedFormat)
         {
-            value = std::uint8_t(jsonValue.asInt());
-            if (value > std::uint8_t(NUM_OF_CLASSES))
-            {
-                return false;
-            }
+            return false;
         }
-        else
-        {
-            bool bFound = false;
-            std::string className = jsonValue.asString();
-            for (std::uint8_t idx = 0; idx < std::uint8_t(NUM_OF_CLASSES); ++idx)
-            {
-                if (ClassNames[idx].compare(className) == 0)
-                {
-                    bFound = true;
-                    value = idx;
-                    break;
-                }
-            }
 
-            if (!bFound)
+        jsonValue = header["class"];
+        if (jsonValue.isNull())
+        {
+            return false;
+        }
+
+        std::string className = jsonValue.asString();
+        if (!CharClassHelper::getEnumCharClassByName(className, Bs.Class))
+        {
+            if (!CharClassHelper::getEnumCharClassByIndex(className, Bs.Class))
             {
                 return false;
             }
         }
     }
-    Bs.Class = static_cast<EnumCharClass>(value);
+    else
+    {
+        value = std::uint8_t(jsonValue.asInt());
+        if (value > std::uint8_t(NUM_OF_CLASSES))
+        {
+            return false;
+        }
+        Bs.Class = static_cast<EnumCharClass>(value);
+    }
+
     Bs.Status = EnumCharStatus::NoDeaths;
     switch (Bs.Class)
     {
     case EnumCharClass::Druid:
     case EnumCharClass::Assassin:
         Bs.Status |= EnumCharStatus::Expansion;
-        return false;
+        break;
     }
 
     jsonValue = m_bJsonSerializedFormat ? root["Location"] : header["difficulty"];
@@ -1151,6 +1173,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         }
     }
 
+    m_status_location = std::ftell(m_charfile);
     value = Bs.Status.bits();
     std::fwrite(&value, sizeof(value), 1, m_charfile);
 
@@ -1318,15 +1341,43 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
             return false;
         }
 
-        // Realm data
-        std::fwrite(UNKNOWN_0BF.data(), UNKNOWN_0BF.size(), 1, m_charfile);
-        if (Bs.Version < EnumCharVersion::v115)
+        if (Bs.Version > EnumCharVersion::v115)
         {
-            std::fwrite(UNKOWN_14B_v109.data(), UNKOWN_14B_v109.size(), 1, m_charfile);
+            // Realm data?
+            std::fwrite(UNKNOWN_0BF_v116.data(), UNKNOWN_0BF_v116.size(), 1, m_charfile);
+
+            m_name_location = std::ftell(m_charfile);
+            jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
+            if (jsonValue.isNull())
+            {
+                return false;
+            }
+
+            // Check Name
+            // Remove any invalid characters from the name
+            std::string curName(jsonValue.asString());
+            LocalizationHelpers::CheckCharName(curName);
+            Bs.Name.fill(0);
+            strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
+            Bs.Name[15] = 0; // must be zero
+            std::fwrite(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
+
+            // Realm data?
+            std::fwrite(UNKNOWN_11B_v116.data(), UNKNOWN_11B_v116.size(), 1, m_charfile);
+            std::fwrite(UNKNOWN_14B_v115.data(), UNKNOWN_14B_v115.size(), 1, m_charfile);
         }
         else
         {
-            std::fwrite(UNKOWN_14B_v115.data(), UNKOWN_14B_v115.size(), 1, m_charfile);
+            // Realm data?
+            std::fwrite(UNKNOWN_0BF.data(), UNKNOWN_0BF.size(), 1, m_charfile);
+            if (Bs.Version < EnumCharVersion::v115)
+            {
+                std::fwrite(UNKNOWN_14B_v109.data(), UNKNOWN_14B_v109.size(), 1, m_charfile);
+            }
+            else
+            {
+                std::fwrite(UNKNOWN_14B_v115.data(), UNKNOWN_14B_v115.size(), 1, m_charfile);
+            }
         }
     }
 
@@ -1362,7 +1413,7 @@ bool d2ce::Character::readActs(const Json::Value& root)
 //---------------------------------------------------------------------------
 bool d2ce::Character::readStats()
 {
-    if (Cs.readStats(Bs.Version, Bs.Class, m_charfile))
+    if (Cs.readStats(m_charfile))
     {
         m_stats_header_location = Cs.getHeaderLocation();
         DisplayLevel = (std::uint8_t)Cs.Cs.Level; // updates character's display level
@@ -1375,7 +1426,7 @@ bool d2ce::Character::readStats()
 //---------------------------------------------------------------------------
 bool d2ce::Character::readStats(const Json::Value& root)
 {
-    if (Cs.readStats(root, m_bJsonSerializedFormat, Bs.Version, Bs.Class, m_charfile))
+    if (Cs.readStats(root, m_bJsonSerializedFormat, m_charfile))
     {
         m_stats_header_location = Cs.getHeaderLocation();
         DisplayLevel = (std::uint8_t)Cs.Cs.Level; // updates character's display level
@@ -1388,12 +1439,12 @@ bool d2ce::Character::readStats(const Json::Value& root)
 //---------------------------------------------------------------------------
 bool d2ce::Character::readItems()
 {
-    return m_items.readItems(Bs.Version, m_charfile, isExpansionCharacter());
+    return m_items.readItems(*this, m_charfile);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::readItems(const Json::Value& root)
 {
-    return m_items.readItems(root, m_bJsonSerializedFormat, Bs.Version, m_charfile, isExpansionCharacter());
+    return m_items.readItems(root, m_bJsonSerializedFormat, *this, m_charfile);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::save()
@@ -1420,7 +1471,13 @@ bool d2ce::Character::save()
         // prepare to update the character file
         std::fclose(m_charfile);
         m_charfile = nullptr;
-        std::remove(m_d2sfilename.c_str());
+        try
+        {
+            std::filesystem::remove(m_d2sfilename);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
 
         // Don't modify the name of a temporary file
         if (m_jsonfilename.empty())
@@ -1429,23 +1486,28 @@ bool d2ce::Character::save()
             // to match the character's name
             std::filesystem::path p = m_d2sfilename;
             p.replace_extension();
-            std::string tempname = p.filename().string();
+            std::string tempname = utf8::utf16to8(p.filename().wstring());
 
             // compare m_d2sfilename (w/o extension) to character's name
             if (tempname.compare(0, tempname.length(), Bs.Name.data()) != 0)
             {
-                m_d2sfilename = p.replace_filename(Bs.Name.data()).string();
+                p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+                m_d2sfilename = p;
             }
         }
 
-        // rename temp file to character file
-        if (std::rename(m_tempfilename.c_str(), m_d2sfilename.c_str()))
+        try
+        {
+            // rename temp file to character file
+            std::filesystem::rename(m_tempfilename, m_d2sfilename);
+        }
+        catch (std::filesystem::filesystem_error const&)
         {
             m_error_code = std::make_error_code(CharacterErrc::FileRenameError);
             return false;
         }
 
-        if (!open(m_d2sfilename.c_str(), false)) // checksum is calulated and written below
+        if (!open(m_d2sfilename, false)) // checksum is calulated and written below
         {
             return false;
         }
@@ -1457,85 +1519,133 @@ bool d2ce::Character::save()
         m_tempfilename = m_d2sfilename;
         std::filesystem::path p = m_d2sfilename;
         p.replace_extension();
-        std::string origFileNameBase = p.string();
-        std::string tempname = p.filename().string();
+        std::filesystem::path origFileNameBase = p;
+        std::string tempname = utf8::utf16to8(p.filename().wstring());
 
         // compare m_d2sfilename (w/o extension) to character's name
         if (_stricmp(tempname.c_str(), Bs.Name.data()) != 0)
         {
-            std::string fileNameBase = p.replace_filename(Bs.Name.data()).string();
-            m_d2sfilename = fileNameBase + ".d2s";
+            std::filesystem::path fileNameBase = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+            m_d2sfilename = fileNameBase;
+            m_d2sfilename.replace_extension(".d2s");
             std::fclose(m_charfile);
             m_charfile = nullptr;
-            if (std::rename(m_tempfilename.c_str(), m_d2sfilename.c_str()))
+            try
+            {
+                // rename temp file to character file
+                std::filesystem::rename(m_tempfilename, m_d2sfilename);
+            }
+            catch (std::filesystem::filesystem_error const&)
             {
                 m_error_code = std::make_error_code(CharacterErrc::FileRenameError);
                 return false;
             }
 
-            if (!open(m_d2sfilename.c_str(), false)) // checksum is calulated and written below
+            if (!open(m_d2sfilename, false)) // checksum is calulated and written below
             {
                 return false;
             }
 
             // rename other files (don't error out if it fails)
-            m_tempfilename = origFileNameBase + ".key";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".key");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".key";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".key");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
 
-            m_tempfilename = origFileNameBase + ".ma0";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".ma0");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".ma0";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".ma0");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
 
-            m_tempfilename = origFileNameBase + ".ma1";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".ma1");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".ma1";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".ma1");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
 
-            m_tempfilename = origFileNameBase + ".ma2";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".ma2");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".ma2";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".ma2");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
 
-            m_tempfilename = origFileNameBase + ".ma3";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".ma3");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".ma3";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".ma3");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
 
-            m_tempfilename = origFileNameBase + ".map";
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".map");
             if (std::filesystem::exists(m_tempfilename))
             {
-                tempname = fileNameBase + ".map";
-                if (std::rename(m_tempfilename.c_str(), tempname.c_str()))
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".map");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
                 {
                     m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
                 }
             }
         }
@@ -1575,7 +1685,7 @@ bool d2ce::Character::save()
         if (!json.empty())
         {
             std::FILE* jsonFile = NULL;
-            fopen_s(&jsonFile, m_jsonfilename.c_str(), "wb");
+            _wfopen_s(&jsonFile, m_jsonfilename.wstring().c_str(), L"wb");
             std::rewind(jsonFile);
             std::fwrite(json.c_str(), json.size(), 1, jsonFile);
             std::fclose(jsonFile);
@@ -1607,19 +1717,36 @@ bool d2ce::Character::saveAsD2s()
     m_jsonfilename.clear();
 
     p.replace_extension();
-    m_d2sfilename = p.replace_filename(Bs.Name.data()).string() + ".d2s";
+    m_d2sfilename = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+    m_d2sfilename.replace_extension(".d2s");
     p = m_d2sfilename;
     if (std::filesystem::exists(p))
     {
         // remove exist file, back would be down prior to call this
-        std::remove(m_d2sfilename.c_str());
+        try
+        {
+            std::filesystem::remove(m_d2sfilename);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
     }
 
-    // rename temp file to character file
-    if (std::rename(oldFileName.c_str(), m_d2sfilename.c_str()))
+    try
+    {
+        // rename temp file to character file
+        std::filesystem::rename(oldFileName, m_d2sfilename);
+    }
+    catch (std::filesystem::filesystem_error const&)
     {
         // this is a temporary d2s file created from a json input file
-        std::remove(oldFileName.c_str());
+        try
+        {
+            std::filesystem::remove(oldFileName);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
 
         m_d2sfilename.clear();
         initialize();
@@ -1628,7 +1755,7 @@ bool d2ce::Character::saveAsD2s()
     }
 
     initialize();
-    if (!open(m_d2sfilename.c_str(), false)) // checksum is calulated and written below
+    if (!open(m_d2sfilename, false)) // checksum is calulated and written below
     {
         return false;
     }
@@ -1652,6 +1779,7 @@ void d2ce::Character::writeBasicInfo()
         Bs.Status &= ~EnumCharStatus::Died; // can't be resurrected
     }
 
+    std::fseek(m_charfile, m_status_location, SEEK_SET);
     std::uint8_t value = Bs.Status.bits();
     std::fwrite(&value, sizeof(value), 1, m_charfile);
 
@@ -1737,15 +1865,17 @@ bool d2ce::Character::writeItems()
 void d2ce::Character::writeTempFile()
 {
     m_tempfilename.clear();
-    char name1[L_tmpnam_s];
-    errno_t err = tmpnam_s(name1, L_tmpnam_s);
+    wchar_t name1[L_tmpnam_s];
+    std::wstring utempfilename;
+    errno_t err = _wtmpnam_s(name1, L_tmpnam_s);
     if (err == 0)
     {
-        m_tempfilename = name1;
+        utempfilename = name1;
+        m_tempfilename = utempfilename;
     }
 
     std::FILE* tempfile = NULL;
-    fopen_s(&tempfile, m_tempfilename.c_str(), "wb");
+    _wfopen_s(&tempfile, utempfilename.c_str(), L"wb");
 
     std::rewind(m_charfile);
 
@@ -1922,6 +2052,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         header["progression"] = std::uint16_t(getTitle());
         header["active_arms"] = WeaponSet;
         header["class"] = getClassName();
+        header["class_id"] = std::uint16_t(getClass());
         header["level"] = std::uint16_t(DisplayLevel);
         if (Bs.Version >= EnumCharVersion::v109)
         {
@@ -1935,7 +2066,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         Json::Value assignedSkills(Json::arrayValue);
         for (auto& skillId : AssignedSkills)
         {
-            if (skillId == 0xFFFF)
+            if (skillId >= MAXUINT16)
             {
                 ++nullCount;
                 continue;
@@ -1947,15 +2078,15 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
                 --nullCount;
             }
 
-            assignedSkills.append(Cs.getSkillNameById(skillId));
+            assignedSkills.append(CharClassHelper::getSkillIndexById(std::uint16_t(skillId)));
         }
         header["assigned_skills"] = assignedSkills;
-        header["left_skill"] = Cs.getSkillNameById(LeftSkill);
-        header["right_skill"] = Cs.getSkillNameById(RightSkill);
+        header["left_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(LeftSkill));
+        header["right_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(RightSkill));
         if (Bs.Version >= EnumCharVersion::v109)
         {
-            header["left_swap_skill"] = Cs.getSkillNameById(LeftSwapSkill);
-            header["right_swap_skill"] = Cs.getSkillNameById(RightSwapSkill);
+            header["left_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(LeftSwapSkill));
+            header["right_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(RightSwapSkill));
         }
 
         // Appearances
@@ -2046,7 +2177,13 @@ void d2ce::Character::close()
     if (!m_jsonfilename.empty())
     {
         // this is a temporary d2s file created from a json input file
-        std::remove(m_d2sfilename.c_str());
+        try
+        {
+            std::filesystem::remove(m_d2sfilename);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
     }
 
     m_d2sfilename.clear();
@@ -2055,9 +2192,9 @@ void d2ce::Character::close()
     initialize();
 }
 //---------------------------------------------------------------------------
-const char* d2ce::Character::getPathName() const
+const std::filesystem::path& d2ce::Character::getPath() const
 {
-    return m_jsonfilename.empty() ? m_d2sfilename.c_str() : m_jsonfilename.c_str();
+    return m_jsonfilename.empty() ? m_d2sfilename : m_jsonfilename;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Character::asJson(bool bSerializedFormat) const
@@ -2071,6 +2208,36 @@ std::string d2ce::Character::asJson(bool bSerializedFormat) const
     builder["indentation"] = jsonIndentStr;
     builder["enableYAMLCompatibility"] = true;
     return Json::writeString(builder, root);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::setDefaultTxtReader()
+{
+    setTxtReader(getDefaultTxtReader());
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::setTxtReader(const d2ce::ITxtReader& txtReader)
+{
+    if (!ItemHelpers::isTxtReaderInitialized() || (&txtReader != &ItemHelpers::getTxtReader()))
+    {
+        ItemHelpers::setTxtReader(txtReader);
+        Cs.setTxtReader();
+        Merc.setTxtReader();
+    }
+}
+//---------------------------------------------------------------------------
+const d2ce::ITxtReader& d2ce::Character::getTxtReader() const
+{
+    return ItemHelpers::getTxtReader();
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Character::getLanguage() const
+{
+    return ItemHelpers::getLanguage();
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Character::setLanguage(const std::string& lang) const
+{
+    return ItemHelpers::setLanguage(lang);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::is_open() const
@@ -2208,30 +2375,9 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     // Remove any invalid characters from the name
     bs.Name[15] = 0; // must be zero
     std::string curName(bs.Name.data());
-    std::string strNewText;
-    for (size_t iPos = 0, numberOfUnderscores = 0, nLen = curName.size(); iPos < nLen; ++iPos)
-    {
-        char c = curName[iPos];
-        if (std::isalpha(c))
-        {
-            strNewText += c;
-        }
-        else if ((c == '_' || c == '-') && !strNewText.empty() && numberOfUnderscores < 1)
-        {
-            strNewText += c;
-            ++numberOfUnderscores;
-        }
-    }
-
-    // trim bad characters
-    strNewText.erase(strNewText.find_last_not_of("_-") + 1);
-    if (strNewText.size() < 2)
-    {
-        strNewText = std::string(Bs.Name.data());
-    }
-
+    LocalizationHelpers::CheckCharName(curName, ((bs.Version <= EnumCharVersion::v115) ? true : false));
     bs.Name.fill(0);
-    strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
+    strcpy_s(bs.Name.data(), curName.length() + 1, curName.c_str());
     bs.Name[15] = 0; // must be zero
 
     // Check Title
@@ -2274,7 +2420,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     if (oldClass != Bs.Class)
     {
         // classed changed
-        Cs.updateClass(Bs.Class);
+        Cs.updateClass();
     }
 
     Acts.validateActs();
@@ -2322,7 +2468,12 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
         return EnumCharVersion::v110;
     }
 
-    return EnumCharVersion::v115;
+    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v116))
+    {
+        return EnumCharVersion::v115;
+    }
+
+    return EnumCharVersion::v116;
 }
 //---------------------------------------------------------------------------
 const std::array<char, d2ce::NAME_LENGTH>& d2ce::Character::getName() const
@@ -2374,6 +2525,10 @@ void d2ce::Character::ensureTitleAct(d2ce::EnumAct act)
     {
         if (!Acts.getActYetToStart(progression, act))
         {
+            if (progression < EnumDifficulty::Hell && (act == EnumAct::V) && Acts.getActCompleted(progression, act))
+            {
+                progression = static_cast<EnumDifficulty>(static_cast<std::underlying_type_t<EnumDifficulty>>(progression) + 1);
+            }
             break;
         }
 
@@ -2400,15 +2555,14 @@ d2ce::EnumCharClass d2ce::Character::getClass() const
     return Bs.Class;
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Character::getClassName() const
+const std::string& d2ce::Character::getClassName() const
 {
-    auto idx = (std::uint8_t)getClass();
-    if (idx < NUM_OF_CLASSES)
-    {
-        return ClassNames[idx];
-    }
-
-    return "";
+    return CharClassHelper::getClassName(getClass());
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::Character::getClassCode() const
+{
+    return CharClassHelper::getClassCode(getClass());
 }
 //---------------------------------------------------------------------------
 /*
@@ -2492,14 +2646,49 @@ void d2ce::Character::setIsDeadCharacter(bool flag)
     Bs.setIsDeadCharacter(flag);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::isFemaleCharacter() const
+{
+    return Bs.isFemaleCharacter();
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevel() const
 {
     return Cs.getLevel();
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxLevel() const
+{
+    return Cs.getMaxLevel();
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getExperience() const
 {
     return Cs.getExperience();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMaxExperience() const
+{
+    return Cs.getMaxExperience();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinExperience(std::uint32_t level) const
+{
+    return Cs.getMinExperience(level);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getMinExperienceLevel() const
+{
+    return Cs.getMinExperienceLevel();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getNextExperience(std::uint32_t level) const
+{
+    return Cs.getNextExperience(level);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getNextExperienceLevel() const
+{
+    return Cs.getNextExperienceLevel();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMaxGoldInBelt() const
@@ -2543,6 +2732,8 @@ void d2ce::Character::setDifficultyComplete(d2ce::EnumDifficulty diff)
     {
         Bs.DifficultyLastPlayed = Bs.getTitleDifficulty();
         Bs.StartingAct = Bs.getTitleAct();
+        StartingAct.fill(0);
+        StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
     }
 
     Acts.validateActs();
@@ -2564,6 +2755,8 @@ void d2ce::Character::setNoDifficultyComplete()
     {
         Bs.DifficultyLastPlayed = Bs.getTitleDifficulty();
         Bs.StartingAct = Bs.getTitleAct();
+        StartingAct.fill(0);
+        StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
     }
 
     Acts.validateActs();
@@ -2611,7 +2804,7 @@ std::uint32_t d2ce::Character::getSkillPointsEarned() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getSkillPointsEarned(std::uint32_t level) const
 {
-    return (std::min(d2ce::NUM_OF_LEVELS, level) - 1) + Acts.getSkillPointsEarned();
+    return (std::min(Cs.getMaxLevel(), level) - 1) + Acts.getSkillPointsEarned();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromTotalSkillPoints() const
@@ -2621,7 +2814,7 @@ std::uint32_t d2ce::Character::getLevelFromTotalSkillPoints() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromSkillPointsEarned(std::uint32_t earned) const
 {
-    return std::min(d2ce::NUM_OF_LEVELS + 1, earned - Acts.getSkillPointsEarned() + 1);
+    return std::min(Cs.getMaxLevel() + 1, earned - Acts.getSkillPointsEarned() + 1);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getTotalStartStatPoints() const
@@ -2646,7 +2839,7 @@ std::uint32_t d2ce::Character::getStatPointsEarned() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getStatPointsEarned(std::uint32_t level) const
 {
-    return std::uint16_t(std::min(d2ce::NUM_OF_LEVELS, level) - 1) * 5 + Acts.getStatPointsEarned();
+    return std::uint16_t(std::min(Cs.getMaxLevel(), level) - 1) * Cs.getStatPointsPerLevel() + Acts.getStatPointsEarned();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromTotalStatPoints() const
@@ -2661,7 +2854,17 @@ std::uint32_t d2ce::Character::getLevelFromTotalStatPoints() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLevelFromStatPointsEarned(std::uint32_t earned) const
 {
-    return std::min(d2ce::NUM_OF_LEVELS + 1, (earned - Acts.getStatPointsEarned()) / 5 + 1);
+    return std::min(Cs.getMaxLevel() + 1, (earned - Acts.getStatPointsEarned()) / Cs.getStatPointsPerLevel() + 1);
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getLevelFromExperience() const
+{
+    return Cs.getLevelFromExperience();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getLevelFromExperience(std::uint32_t experience) const
+{
+    return Cs.getLevelFromExperience(experience);
 }
 //---------------------------------------------------------------------------
 const d2ce::ActsInfo& d2ce::Character::getQuests()
@@ -2728,6 +2931,11 @@ void d2ce::Character::resetSkills()
 void d2ce::Character::clearSkillChoices()
 {
     Cs.clearSkillChoices();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::getSkillBonusPoints(std::vector<std::uint16_t>& points) const
+{
+    return Cs.getSkillBonusPoints(points);
 }
 //---------------------------------------------------------------------------
 /*

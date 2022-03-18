@@ -21,8 +21,8 @@
 #pragma once
 
 //---------------------------------------------------------------------------
-#include "d2ce\Constants.h"
-#include "d2ce\WaypointConstants.h"
+#include "d2ce/Constants.h"
+#include "d2ce/WaypointConstants.h"
 #include "D2MainForm.h"
 
 //---------------------------------------------------------------------------

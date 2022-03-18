@@ -30,20 +30,21 @@ namespace d2ce
         v100, // v1.00 - v1.03 item
         v104, // v1.04 - v1.06 item
         v107, // v1.07 item
-        v108, // v1.08/1.09 normal or expansion
-        v110, // v1.10 normal or expansion
-        v115, // v1.15 Diable II: Resurrected
+        v108, // v1.08 item
+        v109, // v1.09 item
+        v110, // v1.10 - v1.14d item
+        v115, // v1.15 Diablo II: Resurrected item
+        v116, // v1.16 Diablo II: Resurrected Patch 2.4 item
     };
 
-    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v115; // default version used by application
+    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v116; // default item version used by application
 
-    enum class EnumItemType : std::uint8_t
-    {
-        Armor = 1,
-        Shield,
-        Weapon,
-        Other
-    };
+    // default game version used by application
+    // refers to the "version" column in resource files used internally
+    //   0 = pre v1.08
+    //   1 - Non-Expansion (post v1.08) (classic and LoD).
+    // 100 - Expansion LoD
+    constexpr std::uint16_t APP_ITEM_GAME_VERSION = 100; 
 
     enum class EnumItemQuality : std::uint8_t
     {

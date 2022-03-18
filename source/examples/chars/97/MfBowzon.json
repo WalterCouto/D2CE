@@ -13,6 +13,7 @@
     "progression": 9,
     "active_arms": 0,
     "class": "Amazon",
+    "class_id": 0,
     "level": 56,
     "created": 0,
     "last_played": 1635546891,
@@ -102,8 +103,13 @@
     "dead_merc": 0,
     "merc_id": "b4e75cf8",
     "merc_name_id": 20,
+    "merc_name": "Vikhyat",
     "merc_type": 11,
+    "merc_class": "Desert Mercenary",
+    "merc_attribute": "Offensive",
+    "merc_level": 56,
     "merc_experience": 21456796,
+    "merc_difficulty": "Nightmare",
     "quests_normal": {
       "act_i": {
         "introduced": true,
@@ -1751,15 +1757,14 @@
           "values": [
             3
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 12,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "lgrn",
       "displayed_magic_attributes": [
         {
           "id": 22,
@@ -1792,7 +1797,6 @@
             3
           ],
           "name": "item_throw_maxdamage",
-          "description": "+3 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -1827,8 +1831,7 @@
           "values": [
             3
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -1863,7 +1866,6 @@
             3
           ],
           "name": "item_throw_maxdamage",
-          "description": "+3 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -1963,10 +1965,10 @@
         }
       ],
       "type_name": "Small Charm",
+      "levelreq": 15,
       "inv_file": "invchm1",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "dred",
       "displayed_magic_attributes": [
         {
           "id": 39,
@@ -2118,10 +2120,11 @@
         }
       ],
       "type_name": "Grand Charm",
+      "levelreq": 22,
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
-      "transform_color": "dblu",
+      "transform_color": "lred",
       "displayed_magic_attributes": [
         {
           "id": 7,
@@ -2333,7 +2336,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Perfect Ruby",
@@ -2349,7 +2352,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -2361,7 +2364,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -2372,7 +2375,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ]
         },
@@ -2451,7 +2454,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Perfect Ruby",
@@ -2467,7 +2470,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -2479,7 +2482,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -2490,7 +2493,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ]
         },
@@ -2569,7 +2572,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Perfect Ruby",
@@ -2585,7 +2588,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -2597,7 +2600,7 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -2608,13 +2611,14 @@
                 20
               ],
               "name": "firemindam",
-              "description": "Adds 15-20 Fire Damage"
+              "description": "Adds 15-20 fire damage"
             }
           ]
         }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
+      "levelreq": 18,
       "inv_file": "invhbw",
       "inv_height": 3,
       "inv_width": 2,
@@ -2629,7 +2633,7 @@
             60
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -2640,7 +2644,7 @@
             60
           ],
           "name": "firemindam",
-          "description": "Adds 45-60 Fire Damage"
+          "description": "Adds 45-60 fire damage"
         }
       ]
     },
@@ -2799,7 +2803,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Flawless Ruby",
@@ -2815,7 +2819,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -2827,7 +2831,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -2838,7 +2842,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ]
         },
@@ -2917,7 +2921,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Flawless Ruby",
@@ -2933,7 +2937,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -2945,7 +2949,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -2956,7 +2960,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ]
         },
@@ -3035,7 +3039,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Flawless Ruby",
@@ -3051,7 +3055,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -3063,7 +3067,7 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -3074,13 +3078,14 @@
                 16
               ],
               "name": "firemindam",
-              "description": "Adds 10-16 Fire Damage"
+              "description": "Adds 10-16 fire damage"
             }
           ]
         }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
+      "levelreq": 15,
       "inv_file": "invhbw",
       "inv_height": 3,
       "inv_width": 2,
@@ -3095,7 +3100,7 @@
             48
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -3106,7 +3111,7 @@
             48
           ],
           "name": "firemindam",
-          "description": "Adds 30-48 Fire Damage"
+          "description": "Adds 30-48 fire damage"
         }
       ]
     },
@@ -3265,7 +3270,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Ruby",
@@ -3281,7 +3286,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -3293,7 +3298,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -3304,7 +3309,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ]
         },
@@ -3383,7 +3388,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Ruby",
@@ -3399,7 +3404,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -3411,7 +3416,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -3422,7 +3427,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ]
         },
@@ -3501,7 +3506,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "type_name": "Ruby",
@@ -3517,7 +3522,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -3529,7 +3534,7 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds {0}-{1} Fire Damage"
+              "description": "Adds {0}-{1} fire damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -3540,13 +3545,14 @@
                 12
               ],
               "name": "firemindam",
-              "description": "Adds 8-12 Fire Damage"
+              "description": "Adds 8-12 fire damage"
             }
           ]
         }
       ],
       "type_name": "Hunter's Bow",
       "reqdex": 28,
+      "levelreq": 12,
       "inv_file": "invhbw",
       "inv_height": 3,
       "inv_width": 2,
@@ -3561,7 +3567,7 @@
             36
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -3572,7 +3578,7 @@
             36
           ],
           "name": "firemindam",
-          "description": "Adds 24-36 Fire Damage"
+          "description": "Adds 24-36 fire damage"
         }
       ]
     },
@@ -3673,11 +3679,11 @@
           "values": [
             3
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 3,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -3706,7 +3712,6 @@
             3
           ],
           "name": "item_throw_mindamage",
-          "description": "+3 to Minimum Throw Damage",
           "visible": false
         }
       ],
@@ -3733,8 +3738,7 @@
           "values": [
             3
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -3761,7 +3765,6 @@
             3
           ],
           "name": "item_throw_mindamage",
-          "description": "+3 to Minimum Throw Damage",
           "visible": false
         }
       ]
@@ -3870,19 +3873,19 @@
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 356,
+          "values": [
+            1
+          ],
+          "name": "questitemdifficulty"
+        },
+        {
           "id": 122,
           "values": [
             50
           ],
           "name": "item_undeaddamage_percent",
           "description": "+{0}% Damage to Undead"
-        },
-        {
-          "id": 356,
-          "values": [
-            1
-          ],
-          "name": "questitemdifficulty"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -3998,6 +4001,7 @@
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 24,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -4155,11 +4159,11 @@
           "values": [
             8
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 27,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -4188,7 +4192,6 @@
             8
           ],
           "name": "item_throw_maxdamage",
-          "description": "+8 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -4215,8 +4218,7 @@
           "values": [
             8
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4243,7 +4245,6 @@
             8
           ],
           "name": "item_throw_maxdamage",
-          "description": "+8 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -4343,6 +4344,7 @@
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 33,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -4500,11 +4502,11 @@
           "values": [
             5
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 3,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -4532,7 +4534,6 @@
             5
           ],
           "name": "item_throw_maxdamage",
-          "description": "+5 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -4559,8 +4560,7 @@
           "values": [
             5
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4587,7 +4587,6 @@
             5
           ],
           "name": "item_throw_maxdamage",
-          "description": "+5 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -4796,13 +4795,15 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 28,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "dyel",
       "displayed_magic_attributes": [
         {
           "id": 50,
@@ -4811,7 +4812,7 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds 1-27 Lightning Damage"
+          "description": "Adds 1-27 lightning damage"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -4823,7 +4824,7 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4834,7 +4835,7 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds 1-27 Lightning Damage"
+          "description": "Adds 1-27 lightning damage"
         }
       ]
     },
@@ -4929,10 +4930,11 @@
             10
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 25,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -4951,7 +4953,7 @@
             10
           ],
           "name": "maxstamina",
-          "description": "+10 to Maximum Stamina"
+          "description": "+10 Maximum Stamina"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -4970,7 +4972,7 @@
             10
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4988,7 +4990,7 @@
             10
           ],
           "name": "maxstamina",
-          "description": "+10 to Maximum Stamina"
+          "description": "+10 Maximum Stamina"
         }
       ]
     },
@@ -5087,6 +5089,7 @@
         }
       ],
       "type_name": "Large Charm",
+      "levelreq": 19,
       "inv_file": "invchm2",
       "inv_height": 2,
       "inv_width": 1,
@@ -5687,11 +5690,11 @@
           "values": [
             5
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 30,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -5728,7 +5731,6 @@
             5
           ],
           "name": "item_throw_mindamage",
-          "description": "+5 to Minimum Throw Damage",
           "visible": false
         }
       ],
@@ -5763,8 +5765,7 @@
           "values": [
             5
           ],
-          "name": "item_throw_mindamage",
-          "description": "+{0} to Minimum Throw Damage"
+          "name": "item_throw_mindamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -5799,7 +5800,6 @@
             5
           ],
           "name": "item_throw_mindamage",
-          "description": "+5 to Minimum Throw Damage",
           "visible": false
         }
       ]
@@ -5926,7 +5926,7 @@
             9
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 79,
@@ -5952,7 +5952,7 @@
             9
           ],
           "name": "lifedrainmindam",
-          "description": "9% Life Stolen Per Hit"
+          "description": "9% Life stolen per hit"
         },
         {
           "id": 16,
@@ -6051,7 +6051,7 @@
             9
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 79,
@@ -6069,7 +6069,7 @@
             9
           ],
           "name": "lifedrainmindam",
-          "description": "9% Life Stolen Per Hit"
+          "description": "9% Life stolen per hit"
         },
         {
           "id": 16,
@@ -6232,7 +6232,7 @@
             20
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         }
       ],
       "type_name": "Amulet",
@@ -6248,7 +6248,7 @@
             20
           ],
           "name": "item_damagetomana",
-          "description": "20% Damage Taken Goes to Mana"
+          "description": "+20% Damage Taken Goes To Mana"
         },
         {
           "id": 89,
@@ -6275,7 +6275,7 @@
             20
           ],
           "name": "item_damagetomana",
-          "description": "{0}% Damage Taken Goes to Mana"
+          "description": "+{0}% Damage Taken Goes To Mana"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -6285,7 +6285,7 @@
             20
           ],
           "name": "item_damagetomana",
-          "description": "20% Damage Taken Goes to Mana"
+          "description": "+20% Damage Taken Goes To Mana"
         },
         {
           "id": 89,
@@ -6427,7 +6427,7 @@
             30
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 127,
@@ -6461,7 +6461,7 @@
             30
           ],
           "name": "item_fastercastrate",
-          "description": "30% Faster Cast Rate"
+          "description": "+30% Faster Cast Rate"
         },
         {
           "id": 16,
@@ -6571,7 +6571,7 @@
             30
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 127,
@@ -6597,7 +6597,7 @@
             30
           ],
           "name": "item_fastercastrate",
-          "description": "30% Faster Cast Rate"
+          "description": "+30% Faster Cast Rate"
         },
         {
           "id": 16,
@@ -6902,6 +6902,7 @@
       "rare_name": "Order",
       "rare_name_id2": 126,
       "rare_name2": "Spiral",
+      "rare_index2": "spiral",
       "magical_name_ids": [
         412,
         378,
@@ -6966,18 +6967,18 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 160,
           "values": [
             1
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Ring",
+      "levelreq": 13,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -6988,7 +6989,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 22,
@@ -7045,7 +7046,6 @@
             1
           ],
           "name": "item_throw_maxdamage",
-          "description": "+1 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -7105,15 +7105,14 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "{0}% Faster Cast Rate"
+          "description": "+{0}% Faster Cast Rate"
         },
         {
           "id": 160,
           "values": [
             1
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -7123,7 +7122,7 @@
             10
           ],
           "name": "item_fastercastrate",
-          "description": "10% Faster Cast Rate"
+          "description": "+10% Faster Cast Rate"
         },
         {
           "id": 22,
@@ -7180,7 +7179,6 @@
             1
           ],
           "name": "item_throw_maxdamage",
-          "description": "+1 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -7307,15 +7305,14 @@
             33
           ],
           "name": "item_pierce",
-          "description": "Piercing Attack"
+          "description": "+{0}% Piercing Attack"
         },
         {
           "id": 160,
           "values": [
             10
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         },
         {
           "id": 238,
@@ -7340,7 +7337,7 @@
             33
           ],
           "name": "item_pierce",
-          "description": "Piercing Attack"
+          "description": "+33% Piercing Attack"
         },
         {
           "id": 22,
@@ -7392,8 +7389,8 @@
           "op_stats": [
             "item_attackertakesdamage"
           ],
-          "op_value": 112,
-          "description": "Attacker Takes Damage of 112 (Based on Character Level)"
+          "op_value": 56,
+          "description": "Attacker Takes Damage of 56 (Based on Character Level)"
         },
         {
           "id": 160,
@@ -7401,7 +7398,6 @@
             10
           ],
           "name": "item_throw_maxdamage",
-          "description": "+10 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -7453,15 +7449,14 @@
             33
           ],
           "name": "item_pierce",
-          "description": "Piercing Attack"
+          "description": "+{0}% Piercing Attack"
         },
         {
           "id": 160,
           "values": [
             10
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         },
         {
           "id": 238,
@@ -7479,7 +7474,7 @@
             33
           ],
           "name": "item_pierce",
-          "description": "Piercing Attack"
+          "description": "+33% Piercing Attack"
         },
         {
           "id": 22,
@@ -7531,8 +7526,8 @@
           "op_stats": [
             "item_attackertakesdamage"
           ],
-          "op_value": 112,
-          "description": "Attacker Takes Damage of 112 (Based on Character Level)"
+          "op_value": 56,
+          "description": "Attacker Takes Damage of 56 (Based on Character Level)"
         },
         {
           "id": 160,
@@ -7540,7 +7535,6 @@
             10
           ],
           "name": "item_throw_maxdamage",
-          "description": "+10 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -7618,6 +7612,7 @@
       "rare_name": "Spirit",
       "rare_name_id2": 105,
       "rare_name2": "Blazer",
+      "rare_index2": "blazer",
       "magical_name_ids": [
         212,
         287,
@@ -7645,7 +7640,7 @@
             6
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -7682,10 +7677,12 @@
       ],
       "type_name": "Chain Boots",
       "reqstr": 30,
+      "levelreq": 12,
       "inv_file": "invmbt",
       "inv_height": 2,
       "inv_width": 2,
       "inv_transform": 8,
+      "transform_color": "lgld",
       "displayed_magic_attributes": [
         {
           "id": 16,
@@ -7709,7 +7706,7 @@
             6
           ],
           "name": "maxstamina",
-          "description": "+6 to Maximum Stamina"
+          "description": "+6 Maximum Stamina"
         },
         {
           "id": 41,
@@ -7752,7 +7749,7 @@
             6
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         },
         {
           "id": 16,
@@ -7810,7 +7807,7 @@
             6
           ],
           "name": "maxstamina",
-          "description": "+6 to Maximum Stamina"
+          "description": "+6 Maximum Stamina"
         },
         {
           "id": 41,
@@ -8415,10 +8412,11 @@
             24
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 12,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
@@ -8429,7 +8427,7 @@
             24
           ],
           "name": "maxstamina",
-          "description": "+24 to Maximum Stamina"
+          "description": "+24 Maximum Stamina"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -8440,7 +8438,7 @@
             24
           ],
           "name": "maxstamina",
-          "description": "+{0} to Maximum Stamina"
+          "description": "+{0} Maximum Stamina"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -8450,7 +8448,7 @@
             24
           ],
           "name": "maxstamina",
-          "description": "+24 to Maximum Stamina"
+          "description": "+24 Maximum Stamina"
         }
       ]
     },
@@ -9466,22 +9464,22 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 160,
           "values": [
             5
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "type_name": "Jewel",
+      "levelreq": 28,
       "inv_file": "invjew",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "dred",
+      "transform_color": "dyel",
       "displayed_magic_attributes": [
         {
           "id": 22,
@@ -9507,7 +9505,7 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds 1-27 Lightning Damage"
+          "description": "Adds 1-27 lightning damage"
         },
         {
           "id": 160,
@@ -9515,7 +9513,6 @@
             5
           ],
           "name": "item_throw_maxdamage",
-          "description": "+5 to Maximum Throw Damage",
           "visible": false
         }
       ],
@@ -9544,15 +9541,14 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds {0}-{1} Lightning Damage"
+          "description": "Adds {0}-{1} lightning damage"
         },
         {
           "id": 160,
           "values": [
             5
           ],
-          "name": "item_throw_maxdamage",
-          "description": "+{0} to Maximum Throw Damage"
+          "name": "item_throw_maxdamage"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -9580,7 +9576,7 @@
             27
           ],
           "name": "lightmindam",
-          "description": "Adds 1-27 Lightning Damage"
+          "description": "Adds 1-27 lightning damage"
         },
         {
           "id": 160,
@@ -9588,7 +9584,6 @@
             5
           ],
           "name": "item_throw_maxdamage",
-          "description": "+5 to Maximum Throw Damage",
           "visible": false
         }
       ]
@@ -9875,10 +9870,10 @@
       "categories": [
         "Amazon Bow",
         "Bow",
-        "Missile Weapon",
-        "Weapon",
         "Amazon Item",
-        "Class Specific"
+        "Missile Weapon",
+        "Class Specific",
+        "Weapon"
       ],
       "type_id": 3,
       "nr_of_items_in_sockets": 0,
@@ -9948,7 +9943,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         },
         {
           "id": 83,
@@ -9957,7 +9952,7 @@
             2
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 93,
@@ -9965,7 +9960,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 188,
@@ -9975,7 +9970,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "base_damage": {
@@ -9999,7 +9994,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+2 to Magic Arrow Skills (Amazon Only)"
+          "description": "2 to Bow and Crossbow Skills (Amazon Only)"
         },
         {
           "id": 83,
@@ -10016,7 +10011,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 17,
@@ -10049,7 +10044,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 16,
@@ -10133,7 +10128,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "{0}% Mana Stolen Per Hit"
+          "description": "{0}% Mana stolen per hit"
         },
         {
           "id": 83,
@@ -10142,7 +10137,7 @@
             2
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         },
         {
           "id": 93,
@@ -10150,7 +10145,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "{0}% Increased Attack Speed"
+          "description": "+{0}% Increased Attack Speed"
         },
         {
           "id": 188,
@@ -10160,7 +10155,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+{2} to {0} Skills ({1} Only)"
+          "description": "{0} {1}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10172,7 +10167,7 @@
             2
           ],
           "name": "item_addskill_tab",
-          "description": "+2 to Magic Arrow Skills (Amazon Only)"
+          "description": "2 to Bow and Crossbow Skills (Amazon Only)"
         },
         {
           "id": 83,
@@ -10189,7 +10184,7 @@
             20
           ],
           "name": "item_fasterattackrate",
-          "description": "20% Increased Attack Speed"
+          "description": "+20% Increased Attack Speed"
         },
         {
           "id": 17,
@@ -10222,7 +10217,7 @@
             6
           ],
           "name": "manadrainmindam",
-          "description": "6% Mana Stolen Per Hit"
+          "description": "6% Mana stolen per hit"
         },
         {
           "id": 16,
@@ -10450,7 +10445,7 @@
             1
           ],
           "name": "item_freeze",
-          "description": "Freezes Target +{0}"
+          "description": "Freezes target +{0}"
         }
       ],
       "type_name": "Splint Mail",
@@ -10468,7 +10463,7 @@
             1
           ],
           "name": "item_freeze",
-          "description": "Freezes Target +1"
+          "description": "Freezes target +1"
         },
         {
           "id": 16,
@@ -10543,7 +10538,7 @@
             1
           ],
           "name": "item_freeze",
-          "description": "Freezes Target +{0}"
+          "description": "Freezes target +{0}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10553,7 +10548,7 @@
             1
           ],
           "name": "item_freeze",
-          "description": "Freezes Target +1"
+          "description": "Freezes target +1"
         },
         {
           "id": 16,
@@ -10689,7 +10684,7 @@
             200
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         },
         {
           "id": 60,
@@ -10697,7 +10692,7 @@
             5
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 83,
@@ -10706,7 +10701,7 @@
             1
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         }
       ],
       "type_name": "Bone Helm",
@@ -10734,7 +10729,7 @@
             200
           ],
           "name": "poisonmindam",
-          "description": "+80 Poison Damage over 8 Seconds"
+          "description": "+80 poison damage over 8 seconds"
         },
         {
           "id": 60,
@@ -10742,7 +10737,7 @@
             5
           ],
           "name": "lifedrainmindam",
-          "description": "5% Life Stolen Per Hit"
+          "description": "5% Life stolen per hit"
         },
         {
           "id": 9,
@@ -10787,7 +10782,7 @@
             200
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         },
         {
           "id": 60,
@@ -10795,7 +10790,7 @@
             5
           ],
           "name": "lifedrainmindam",
-          "description": "{0}% Life Stolen Per Hit"
+          "description": "{0}% Life stolen per hit"
         },
         {
           "id": 83,
@@ -10804,7 +10799,7 @@
             1
           ],
           "name": "item_addclassskills",
-          "description": "+{1} to {0} Skill Levels"
+          "description": "{0}"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -10825,7 +10820,7 @@
             200
           ],
           "name": "poisonmindam",
-          "description": "+80 Poison Damage over 8 Seconds"
+          "description": "+80 poison damage over 8 seconds"
         },
         {
           "id": 60,
@@ -10833,7 +10828,7 @@
             5
           ],
           "name": "lifedrainmindam",
-          "description": "5% Life Stolen Per Hit"
+          "description": "5% Life stolen per hit"
         },
         {
           "id": 9,
@@ -10927,6 +10922,7 @@
       "rare_name": "Blood",
       "rare_name_id2": 140,
       "rare_name2": "Wood",
+      "rare_index2": "wood",
       "magical_name_ids": [
         238,
         177,
@@ -10971,7 +10967,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 54,
@@ -10981,7 +10977,7 @@
             75
           ],
           "name": "coldmindam",
-          "description": "Adds {0}-{1} Cold Damage"
+          "description": "Adds {0}-{1} cold damage"
         },
         {
           "id": 57,
@@ -10991,7 +10987,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         }
       ],
       "base_damage": {
@@ -11001,10 +10997,12 @@
       "type_name": "Halberd",
       "reqstr": 75,
       "reqdex": 47,
+      "levelreq": 9,
       "inv_file": "invhal",
       "inv_height": 4,
       "inv_width": 2,
       "inv_transform": 2,
+      "transform_color": "dgrn",
       "displayed_magic_attributes": [
         {
           "id": 17,
@@ -11038,7 +11036,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds 1-5 Fire Damage"
+          "description": "Adds 1-5 fire damage"
         },
         {
           "id": 54,
@@ -11048,7 +11046,7 @@
             75
           ],
           "name": "coldmindam",
-          "description": "Adds 1-4 Cold Damage"
+          "description": "Adds 1-4 cold damage"
         },
         {
           "id": 57,
@@ -11058,7 +11056,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "+12 Poison Damage over 3 Seconds"
+          "description": "+12 poison damage over 3 seconds"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -11095,7 +11093,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds {0}-{1} Fire Damage"
+          "description": "Adds {0}-{1} fire damage"
         },
         {
           "id": 54,
@@ -11105,7 +11103,7 @@
             75
           ],
           "name": "coldmindam",
-          "description": "Adds {0}-{1} Cold Damage"
+          "description": "Adds {0}-{1} cold damage"
         },
         {
           "id": 57,
@@ -11115,7 +11113,7 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "Adds {0}-{1} Poison Damage over {2} Seconds"
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -11151,7 +11149,7 @@
             5
           ],
           "name": "firemindam",
-          "description": "Adds 1-5 Fire Damage"
+          "description": "Adds 1-5 fire damage"
         },
         {
           "id": 54,
@@ -11161,7 +11159,7 @@
             75
           ],
           "name": "coldmindam",
-          "description": "Adds 1-4 Cold Damage"
+          "description": "Adds 1-4 cold damage"
         },
         {
           "id": 57,
@@ -11171,12 +11169,44 @@
             75
           ],
           "name": "poisonmindam",
-          "description": "+12 Poison Damage over 3 Seconds"
+          "description": "+12 poison damage over 3 seconds"
         }
       ]
     }
   ],
   "item_bonuses": [
+    {
+      "id": 39,
+      "values": [
+        86
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
+      "id": 79,
+      "values": [
+        303
+      ],
+      "name": "item_goldbonus",
+      "description": "{0}% Extra Gold from Monsters"
+    },
+    {
+      "id": 7,
+      "values": [
+        97
+      ],
+      "name": "maxhp",
+      "description": "+{0} to Life"
+    },
+    {
+      "id": 43,
+      "values": [
+        27
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
     {
       "id": 2,
       "values": [
@@ -11184,14 +11214,6 @@
       ],
       "name": "dexterity",
       "description": "+{0} to Dexterity"
-    },
-    {
-      "id": 7,
-      "values": [
-        70
-      ],
-      "name": "maxhp",
-      "description": "+{0} to Life"
     },
     {
       "id": 9,
@@ -11210,28 +11232,12 @@
       "description": "+{0}% Enhanced Defense"
     },
     {
-      "id": 39,
-      "values": [
-        55
-      ],
-      "name": "fireresist",
-      "description": "Fire Resist +{0}%"
-    },
-    {
       "id": 60,
       "values": [
         9
       ],
       "name": "lifedrainmindam",
-      "description": "{0}% Life Stolen Per Hit"
-    },
-    {
-      "id": 79,
-      "values": [
-        297
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
+      "description": "{0}% Life stolen per hit"
     },
     {
       "id": 89,
@@ -11247,7 +11253,7 @@
         20
       ],
       "name": "item_damagetomana",
-      "description": "{0}% Damage Taken Goes to Mana"
+      "description": "+{0}% Damage Taken Goes To Mana"
     },
     {
       "id": 35,
@@ -11266,14 +11272,6 @@
       "description": "Lightning Resist +{0}%"
     },
     {
-      "id": 43,
-      "values": [
-        22
-      ],
-      "name": "coldresist",
-      "description": "Cold Resist +{0}%"
-    },
-    {
       "id": 45,
       "values": [
         45
@@ -11287,7 +11285,7 @@
         40
       ],
       "name": "item_fastercastrate",
-      "description": "{0}% Faster Cast Rate"
+      "description": "+{0}% Faster Cast Rate"
     },
     {
       "id": 127,
@@ -11342,8 +11340,7 @@
       "values": [
         11
       ],
-      "name": "item_throw_maxdamage",
-      "description": "+{0} to Maximum Throw Damage"
+      "name": "item_throw_maxdamage"
     },
     {
       "id": 31,
@@ -11359,7 +11356,7 @@
         33
       ],
       "name": "item_pierce",
-      "description": "Piercing Attack"
+      "description": "+{0}% Piercing Attack"
     },
     {
       "id": 238,
@@ -11375,7 +11372,7 @@
         6
       ],
       "name": "maxstamina",
-      "description": "+{0} to Maximum Stamina"
+      "description": "+{0} Maximum Stamina"
     },
     {
       "id": 80,
@@ -11424,7 +11421,7 @@
         6
       ],
       "name": "manadrainmindam",
-      "description": "{0}% Mana Stolen Per Hit"
+      "description": "{0}% Mana stolen per hit"
     },
     {
       "id": 83,
@@ -11433,7 +11430,7 @@
         2
       ],
       "name": "item_addclassskills",
-      "description": "+{1} to {0} Skill Levels"
+      "description": "{0}"
     },
     {
       "id": 93,
@@ -11441,7 +11438,7 @@
         20
       ],
       "name": "item_fasterattackrate",
-      "description": "{0}% Increased Attack Speed"
+      "description": "+{0}% Increased Attack Speed"
     },
     {
       "id": 188,
@@ -11451,7 +11448,7 @@
         2
       ],
       "name": "item_addskill_tab",
-      "description": "+{2} to {0} Skills ({1} Only)"
+      "description": "{0} {1}"
     }
   ]
 }
