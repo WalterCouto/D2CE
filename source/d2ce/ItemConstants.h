@@ -66,15 +66,15 @@ namespace d2ce
         HEAD,
         NECK,
         TORSO,
-        HAND_RIGHT,
-        HAND_LEFT,
-        RIGHT_FINGER,
-        LEFT_FINGER,
-        WAIST,
+        RIGHT_ARM,
+        LEFT_ARM,
+        RIGHT_RING,
+        LEFT_RING,
+        BELT,
         FEET,
-        HANDS,
-        ALT_HAND_RIGHT,
-        ALT_HAND_LEFT,
+        GLOVES,
+        ALT_RIGHT_ARM,
+        ALT_LEFT_ARM,
     };
 
     enum class EnumItemLocation : std::uint8_t
@@ -92,6 +92,17 @@ namespace d2ce
         INVENTORY = 0x01,
         HORADRIC_CUBE = 0x04,
         STASH = 0x05
+    };
+
+    enum class EnumItemInventory : std::uint8_t
+    {
+        UNKNOWN = 0,
+        PLAYER,
+        CORPSE,
+        MERCENARY,
+        GOLEM,
+        SHARED_STASH,
+        BUFFER
     };
 }
 //---------------------------------------------------------------------------

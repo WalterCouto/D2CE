@@ -252,7 +252,6 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
 
-
     return sizeText;
 }
 //---------------------------------------------------------------------------
@@ -285,9 +284,9 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     switch (currID)
     {
     case IDC_INV_MERC_HEAD:
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
     case IDC_INV_MERC_TORSO:
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         IsMerc = true;
         isInvItem = true;
         break;
@@ -296,22 +295,22 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     case IDC_INV_CORPSE_HEAD:
     case IDC_INV_NECK:
     case IDC_INV_CORPSE_NECK:
-    case IDC_INV_HAND_RIGHT:
-    case IDC_INV_CORPSE_HAND_RIGHT:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
     case IDC_INV_TORSO:
     case IDC_INV_CORPSE_TORSO:
-    case IDC_INV_HAND_LEFT:
-    case IDC_INV_CORPSE_HAND_LEFT:
-    case IDC_INV_GLOVE:
-    case IDC_INV_CORPSE_GLOVE:
-    case IDC_INV_RING_RIGHT:
-    case IDC_INV_CORPSE_RING_RIGHT:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_GLOVES:
+    case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_RIGHT_RING:
+    case IDC_INV_CORPSE_RIGHT_RING:
     case IDC_INV_BELT:
     case IDC_INV_CORPSE_BELT:
-    case IDC_INV_RING_LEFT:
-    case IDC_INV_CORPSE_RING_LEFT:
-    case IDC_INV_BOOTS:
-    case IDC_INV_CORPSE_BOOTS:
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_FEET:
+    case IDC_INV_CORPSE_FEET:
     case IDC_INV_GOLEM:
     case IDC_INV_GRID:
     case IDC_INV_STASH_GRID:

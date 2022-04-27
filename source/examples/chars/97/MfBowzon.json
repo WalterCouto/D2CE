@@ -10306,6 +10306,7 @@
       "categories": [
         "Bow Quiver",
         "Missile",
+        "Second Hand",
         "Miscellaneous"
       ],
       "type_id": 4,
@@ -10908,6 +10909,7 @@
       "type": "hal",
       "categories": [
         "Polearm",
+        "Spears and Polearms",
         "Melee Weapon",
         "Weapon"
       ],
@@ -11176,20 +11178,12 @@
   ],
   "item_bonuses": [
     {
-      "id": 39,
+      "id": 2,
       "values": [
-        86
+        63
       ],
-      "name": "fireresist",
-      "description": "Fire Resist +{0}%"
-    },
-    {
-      "id": 79,
-      "values": [
-        303
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
+      "name": "dexterity",
+      "description": "+{0} to Dexterity"
     },
     {
       "id": 7,
@@ -11198,22 +11192,6 @@
       ],
       "name": "maxhp",
       "description": "+{0} to Life"
-    },
-    {
-      "id": 43,
-      "values": [
-        27
-      ],
-      "name": "coldresist",
-      "description": "Cold Resist +{0}%"
-    },
-    {
-      "id": 2,
-      "values": [
-        63
-      ],
-      "name": "dexterity",
-      "description": "+{0} to Dexterity"
     },
     {
       "id": 9,
@@ -11232,12 +11210,12 @@
       "description": "+{0}% Enhanced Defense"
     },
     {
-      "id": 60,
+      "id": 39,
       "values": [
-        9
+        86
       ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
     },
     {
       "id": 89,
@@ -11246,14 +11224,6 @@
       ],
       "name": "item_lightradius",
       "description": "+{0} to Light Radius"
-    },
-    {
-      "id": 114,
-      "values": [
-        20
-      ],
-      "name": "item_damagetomana",
-      "description": "+{0}% Damage Taken Goes To Mana"
     },
     {
       "id": 35,
@@ -11270,6 +11240,14 @@
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
+    },
+    {
+      "id": 43,
+      "values": [
+        27
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
     },
     {
       "id": 45,
@@ -11351,22 +11329,6 @@
       "description": "+{0} Defense"
     },
     {
-      "id": 156,
-      "values": [
-        33
-      ],
-      "name": "item_pierce",
-      "description": "+{0}% Piercing Attack"
-    },
-    {
-      "id": 238,
-      "values": [
-        8
-      ],
-      "name": "item_thorns_perlevel",
-      "description": "Attacker Takes Damage of {0} (Based on Character Level)"
-    },
-    {
       "id": 11,
       "values": [
         6
@@ -11381,14 +11343,6 @@
       ],
       "name": "item_magicbonus",
       "description": "{0}% Better Chance of Getting Magic Items"
-    },
-    {
-      "id": 118,
-      "values": [
-        1
-      ],
-      "name": "item_halffreezeduration",
-      "description": "Half Freeze Duration"
     },
     {
       "id": 1,
@@ -11416,14 +11370,6 @@
       "description": "+{0} to Minimum Damage"
     },
     {
-      "id": 62,
-      "values": [
-        6
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
-    },
-    {
       "id": 83,
       "values": [
         0,
@@ -11439,16 +11385,6 @@
       ],
       "name": "item_fasterattackrate",
       "description": "+{0}% Increased Attack Speed"
-    },
-    {
-      "id": 188,
-      "values": [
-        0,
-        0,
-        2
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
     }
   ]
 }

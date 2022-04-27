@@ -179,6 +179,24 @@ namespace
         AlphaMergeImage(pDC, image, overlay, rect, center, 0);
     }
 
+    HCURSOR CreateItemCursor(CBitmap& xOrMask)
+    {
+        // Create the "XOr" mask
+        BITMAP bmp;
+        xOrMask.GetBitmap(&bmp);
+        CBitmap andMask;
+        andMask.CreateBitmap(bmp.bmWidth, bmp.bmHeight, 1, 1, NULL);
+
+        // Create an icon
+        ICONINFO iconInfo;
+        iconInfo.fIcon = TRUE;
+        iconInfo.xHotspot = 0;
+        iconInfo.yHotspot = 0;
+        iconInfo.hbmMask = andMask;
+        iconInfo.hbmColor = xOrMask;
+        return ::CreateIconIndirect(&iconInfo);
+    }
+
     bool CalcSocketRects(const d2ce::Item& item, CBitmap& itemImage, std::deque<CRect>& slotRectMap)
     {
         slotRectMap.clear();
@@ -388,31 +406,31 @@ namespace
         case IDC_INV_HEAD:
         case IDC_INV_CORPSE_HEAD:
         case IDC_INV_MERC_HEAD:
-        case IDC_INV_GLOVE:
-        case IDC_INV_CORPSE_GLOVE:
-        case IDC_INV_BOOTS:
-        case IDC_INV_CORPSE_BOOTS:
+        case IDC_INV_GLOVES:
+        case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_FEET:
+        case IDC_INV_CORPSE_FEET:
             slots = CSize(2, 2);
             break;
 
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
-        case IDC_INV_RING_RIGHT:
-        case IDC_INV_CORPSE_RING_RIGHT:
-        case IDC_INV_RING_LEFT:
-        case IDC_INV_CORPSE_RING_LEFT:
+        case IDC_INV_RIGHT_RING:
+        case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_LEFT_RING:
+        case IDC_INV_CORPSE_LEFT_RING:
             slots = CSize(1, 1);
             break;
 
-        case IDC_INV_HAND_RIGHT:
-        case IDC_INV_CORPSE_HAND_RIGHT:
-        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_RIGHT_ARM:
+        case IDC_INV_CORPSE_RIGHT_ARM:
+        case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_TORSO:
         case IDC_INV_CORPSE_TORSO:
         case IDC_INV_MERC_TORSO:
-        case IDC_INV_HAND_LEFT:
-        case IDC_INV_CORPSE_HAND_LEFT:
-        case IDC_INV_MERC_HAND_LEFT:
+        case IDC_INV_LEFT_ARM:
+        case IDC_INV_CORPSE_LEFT_ARM:
+        case IDC_INV_MERC_LEFT_ARM:
         case IDC_INV_GOLEM:
             slots = CSize(2, 4);
             break;
@@ -526,13 +544,15 @@ BOOL CD2SharedStashForm::PreTranslateMessage(MSG* pMsg)
     return __super::PreTranslateMessage(pMsg);
 }
 
-
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_BN_CLICKED(IDOK, &CD2SharedStashForm::OnBnClickedOk)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
     ON_WM_CONTEXTMENU()
+    ON_WM_LBUTTONDOWN()
+    ON_WM_MOUSEMOVE()
+    ON_WM_SETCURSOR()
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2SharedStashForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_FIXALLITEMS, &CD2SharedStashForm::OnItemContextFixallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2SharedStashForm::OnItemContextLoad)
@@ -543,9 +563,12 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, &CD2SharedStashForm::OnItemContextIndestructibleforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2SharedStashForm::OnItemContextAddsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2SharedStashForm::OnItemContextMaxsockets)
-    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2SharedStashForm::OnItemContextMaxsockets)
+    ON_COMMAND(ID_ITEM_CONTEXT_UNSOCKET, &CD2SharedStashForm::OnItemContextUnsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2SharedStashForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2SharedStashForm::OnItemContextRemovePersonalization)
+    ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2SharedStashForm::OnItemContextApplyruneword)
+    ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2SharedStashForm::OnItemContextImportitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2SharedStashForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2SharedStashForm::OnItemContextMaxsocketsforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2SharedStashForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2SharedStashForm::OnItemContextUpgradeGems)
@@ -884,6 +907,11 @@ bool CD2SharedStashForm::setItemMaxSocketCount(d2ce::Item& item)
     return item.addMaxSocketCount();
 }
 //---------------------------------------------------------------------------
+bool CD2SharedStashForm::removeSocketedItems(d2ce::Item& item)
+{
+    return Stash.removeSocketedItems(item);
+}
+//---------------------------------------------------------------------------
 bool CD2SharedStashForm::personalizeItem(d2ce::Item& item)
 {
     return item.addPersonalization(MainForm.getCharacterName());
@@ -980,6 +1008,61 @@ void CD2SharedStashForm::ClearCurrItemInfo()
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------
+void CD2SharedStashForm::ResetCursor()
+{
+    if (ItemCursor != NULL)
+    {
+        ::DestroyIcon(ItemCursor);
+        ItemCursor = NULL;
+        CurrCursor = NULL;
+        ::SetCursor(LoadCursor(NULL, IDC_ARROW));
+        CurrDragItem = nullptr;
+        CurrDragPage = 0;
+    }
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO* pTI) const
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.GetInvBitmap(image, point, pTI);
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point)
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.CanPlaceItem(item, point);
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2SharedStashForm::PlaceItem(UINT id, d2ce::Item& item, CPoint point, CBitmap& bitmap)
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.PlaceItem(item, point, bitmap);
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2SharedStashForm::GetInvItem(UINT id, UINT offset) const
 {
     // Make sure we have hit an item
@@ -1006,34 +1089,119 @@ const d2ce::Item* CD2SharedStashForm::InvHitTest(UINT id, CPoint point, TOOLINFO
     return nullptr;
 }
 //---------------------------------------------------------------------------
-CSize CD2SharedStashForm::getInvGridSize(UINT id) const
+std::optional<d2ce::EnumCharClass> CD2SharedStashForm::getCharClass() const
+{
+    return std::optional<d2ce::EnumCharClass>();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::CharStats> CD2SharedStashForm::getDisplayedCharStats() const
+{
+    return std::optional<d2ce::CharStats>();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::Mercenary*> CD2SharedStashForm::getMercInfo() const
+{
+    return std::optional<d2ce::Mercenary*>();
+}
+//---------------------------------------------------------------------------
+CSize CD2SharedStashForm::getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
 {
     d2ce::ItemDimensions dimensions;
-    switch (id)
+    switch (locationId)
     {
-    case IDC_INV_STASH_GRID:
-        getDimensions(dimensions);
-        break;
+    case d2ce::EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case d2ce::EnumAltItemLocation::STASH:
+            getDimensions(dimensions);
+            break;
+        }
     }
 
     return CSize(dimensions.InvWidth, dimensions.InvHeight);
 }
 //---------------------------------------------------------------------------
-const std::vector<std::reference_wrapper<d2ce::Item>>& CD2SharedStashForm::getInvGridItems(UINT id) const
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2SharedStashForm::getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
 {
     static std::vector<std::reference_wrapper<d2ce::Item>> s_empty;
-    switch (id)
+    switch (locationId)
     {
-    case IDC_INV_STASH_GRID:
-        return getItems(getCurrentPage());
+    case d2ce::EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case d2ce::EnumAltItemLocation::STASH:
+            return getItems(getCurrentPage());
+        }
     }
 
     return s_empty;
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2SharedStashForm::getInvEquippedItem(d2ce::EnumEquippedId /*equippedId*/, d2ce::EnumItemInventory /*invType*/) const
+{
+    return nullptr;
+}
+//---------------------------------------------------------------------------
 bool CD2SharedStashForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
     return MainForm.getItemBitmap(item, bitmap);
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    if ((locationId != d2ce::EnumItemLocation::STORED) ||
+        (altPositionId != d2ce::EnumAltItemLocation::STASH))
+    {
+        return false;
+    }
+
+    return setItemLocation(item, altPositionId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    if (locationId != d2ce::EnumItemLocation::STORED)
+    {
+        return false;
+    }
+
+    return setItemLocation(item, d2ce::EnumAltItemLocation::STASH, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    if (altPositionId != d2ce::EnumAltItemLocation::STASH)
+    {
+        return false;
+    }
+
+    auto currPage = getCurrentPage();
+    auto itemPage = currPage;
+    if (CurrDragItem == &item)
+    {
+        itemPage = CurrDragPage;
+    }
+
+    if (Stash.setItemLocation(item, itemPage, positionX, positionY, getCurrentPage(), pRemovedItem))
+    {
+        if (itemPage != currPage)
+        {
+            CurrDragPage = currPage; // would have moved pages after the above call
+        }
+
+        refreshGrid();
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumEquippedId /*equippedId*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    return false;
 }
 //---------------------------------------------------------------------------
 BOOL CD2SharedStashForm::OnInitDialog()
@@ -1066,6 +1234,12 @@ BOOL CD2SharedStashForm::OnInitDialog()
 //---------------------------------------------------------------------------
 BOOL CD2SharedStashForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
+    if (ItemCursor != NULL)
+    {
+        *pResult = 0;
+        return FALSE;
+    }
+
     ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
 
     TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
@@ -1169,6 +1343,9 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
     bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
     bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
+    bool canHaveSockets = CurrItem->canHaveSockets();
+    bool canPersonalize = CurrItem->canPersonalize();
+    bool isSocketed = CurrItem->isSocketed();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1177,30 +1354,34 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu* pPopup = FindPopup(menu, 0);
         ENSURE(pPopup != NULL);
 
-        if (!isStackable)
+        if(!isStackable)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!isArmor && !isWeapon)
+        if (!canHaveSockets || (isSocketed && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+        }
+
+        if (!isSocketed || CurrItem->getSocketedItemCount() == 0)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+        }
+
+        if (!canHaveSockets || CurrItem->getPossibleRunewords().empty())
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+        }
+
+        if (!canPersonalize)
+        {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
         }
         else
         {
-            if (CurrItem->isIndestructible())
-            {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
-            }
-
             if (CurrItem->isPersonalized())
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
@@ -1209,6 +1390,13 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
             }
+        }
+
+        if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -1239,8 +1427,6 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         else
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
-
-
             if (!CurrItem->isUpgradablePotion())
             {
                 pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_POTION, MF_BYCOMMAND);
@@ -1254,6 +1440,166 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
+    else
+    {
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+
+        CMenu* pPopup = FindPopup(menu, 3);
+        ENSURE(pPopup != NULL);
+
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    TOOLINFO ti = { 0 };
+    INT_PTR nHit = __super::OnToolHitTest(point, &ti);
+    if (nHit == -1)
+    {
+        __super::OnLButtonDown(nFlags, point);
+        return;
+    }
+
+    switch (nHit)
+    {
+    case IDC_INV_STASH_GRID:
+        break;
+
+    default:
+        __super::OnLButtonDown(nFlags, point);
+        return;
+    }
+
+    if (ItemCursor == NULL)
+    {
+        // Make sure we have hit an item
+        auto pt = point;
+        ClientToScreen(&pt);
+        CurrDragItem = const_cast<d2ce::Item*>(InvHitTest((UINT)nHit, pt, &ti));
+        if (CurrDragItem == nullptr)
+        {
+            __super::OnLButtonDown(nFlags, point);
+            return;
+        }
+
+        CBitmap image;
+        if (!GetInvBitmap((UINT)nHit, image, pt, &ti))
+        {
+            CurrDragItem = nullptr;
+            __super::OnLButtonDown(nFlags, point);
+            return;
+        }
+
+        CurrDragPage = getCurrentPage();
+        ItemCursor = CreateItemCursor(image);
+        CurrCursor = ItemCursor;
+        ::SetCursor(CurrCursor);
+    }
+    else
+    {
+        // Make sure we have hit an item
+        auto pt = point;
+        ClientToScreen(&pt);
+
+        CBitmap image;
+        auto pItem = PlaceItem((UINT)nHit, *CurrDragItem, pt, image);
+        if (pItem == nullptr || (pItem != CurrDragItem))
+        {
+            // placed it
+            ResetCursor();
+
+            if (pItem != nullptr)
+            {
+                // swap for new drag item
+                CurrDragItem = const_cast<d2ce::Item*>(pItem);
+                ItemCursor = CreateItemCursor(image);
+                CurrCursor = ItemCursor;
+                ::SetCursor(CurrCursor);
+            }
+        }
+    }
+
+    __super::OnLButtonDown(nFlags, point);
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnMouseMove(UINT nFlags, CPoint point)
+{
+    if (ItemCursor != NULL)
+    {
+        if (CurrDragItem == nullptr)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        TOOLINFO ti = { 0 };
+        INT_PTR nHit = __super::OnToolHitTest(point, &ti);
+        if (nHit == -1)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        switch (nHit)
+        {
+        case IDC_INV_GRID:
+        case IDC_INV_BELT_GRID:
+        case IDC_INV_STASH_GRID:
+        case IDC_INV_CUBE_GRID:
+            break;
+
+        default:
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        // Make sure we have place the item
+        auto pt = point;
+        ClientToScreen(&pt);
+        if (CanPlaceItem((UINT)nHit, *CurrDragItem, pt))
+        {
+            if (CurrCursor == NULL)
+            {
+                CurrCursor = ItemCursor;
+                ::SetCursor(CurrCursor);
+            }
+        }
+        else if (CurrCursor != NULL)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+        }
+    }
+
+    __super::OnMouseMove(nFlags, point);
+}
+//---------------------------------------------------------------------------
+BOOL CD2SharedStashForm::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+    if (nHitTest == HTCLIENT)
+    {
+        if (CurrCursor != NULL)
+        {
+            ::SetCursor(CurrCursor);
+            return TRUE;
+        }
+
+        if (ItemCursor != NULL)
+        {
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            return TRUE;
+        }
+    }
+
+    return __super::OnSetCursor(pWnd, nHitTest, message);
 }
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextFix()
@@ -1368,6 +1714,20 @@ void CD2SharedStashForm::OnItemContextMaxsockets()
     ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextUnsocket()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (removeSocketedItems(*CurrItem))
+    {
+        refreshGrid();
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextMaxsocketsforallitems()
 {
     auto numChanged = maxSocketCountAllItems(getCurrentPage());
@@ -1398,6 +1758,80 @@ void CD2SharedStashForm::OnItemContextRemovePersonalization()
 
     removeItemPersonalization(*CurrItem);
     ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextApplyruneword()
+{
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextImportitem()
+{
+    CFileDialog fileDialog(TRUE, _T("d2i"), NULL,
+        OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
+        _T("Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*||"), this, 0, TRUE);
+    const int check_id = 101;
+    fileDialog.AddCheckButton(check_id, L"Randomize Item Id", TRUE);
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    BOOL check = TRUE;
+    fileDialog.GetCheckButtonState(check_id, check);
+    bool bRandomizeId = check ? true : false;
+
+    const d2ce::Item* pImportedItem = nullptr;
+    {
+        CWaitCursor wait;
+        if (!Stash.importItem(fileDialog.GetPathName().GetString(), pImportedItem, bRandomizeId) || (pImportedItem == nullptr))
+        {
+            return;
+        }
+    }
+
+    CBitmap image;
+    InvStashGrid.GetScaledItemBitmap(*pImportedItem, image);
+
+    // swap for new drag item
+    ResetCursor();
+    CurrDragItem = const_cast<d2ce::Item*>(pImportedItem);
+    ItemCursor = CreateItemCursor(image);
+    CurrCursor = ItemCursor;
+    ::SetCursor(CurrCursor);
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextExportitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    auto uName = utf8::utf8to16(CurrItem->getDisplayedItemName());
+    CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    filename.Replace(_T("\n"), _T("-"));
+    filename += _T(".d2i");
+
+    CFileDialog fileDialog(FALSE, _T("d2i"), filename,
+        OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+        _T("Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*||"), this);
+
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    {
+        CWaitCursor wait;
+        if (!CurrItem->exportItem(fileDialog.GetPathName().GetString()))
+        {
+            CString msg(_T("Item export failed"));
+            AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+        }
+    }
+
+    CString msg(_T("Item exported successfully"));
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
 }
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextUpgradeGem()

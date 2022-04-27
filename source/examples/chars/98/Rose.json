@@ -100,6 +100,7 @@
     "merc_name": "Heremod",
     "merc_type": 26,
     "merc_class": "Barbarian",
+    "merc_attribute": "Bash",
     "merc_level": 96,
     "merc_experience": 116215586,
     "merc_difficulty": "Nightmare",
@@ -3501,6 +3502,7 @@
         "Spear",
         "Melee Weapon",
         "Thrown Weapon",
+        "Spears and Polearms",
         "Weapon"
       ],
       "type_id": 3,
@@ -5506,6 +5508,7 @@
       "type": "9cr",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -6337,6 +6340,7 @@
       "type": "wsd",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -6601,74 +6605,12 @@
       "description": "{0}% Better Chance of Getting Magic Items"
     },
     {
-      "id": 118,
-      "values": [
-        1
-      ],
-      "name": "item_halffreezeduration",
-      "description": "Half Freeze Duration"
-    },
-    {
-      "id": 152,
-      "values": [
-        3
-      ],
-      "name": "item_indesctructible",
-      "description": "Indestructible"
-    },
-    {
-      "id": 252,
-      "values": [
-        5
-      ],
-      "name": "item_replenish_durability",
-      "description": "Repairs 1 durability in {0} seconds"
-    },
-    {
-      "id": 57,
-      "values": [
-        308,
-        308,
-        125
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
-      "id": 188,
-      "values": [
-        2,
-        1,
-        1
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
-    },
-    {
-      "id": 28,
-      "values": [
-        25
-      ],
-      "name": "staminarecoverybonus",
-      "description": "Heal Stamina Plus {0}%"
-    },
-    {
       "id": 41,
       "values": [
         50
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
-    },
-    {
-      "id": 201,
-      "values": [
-        5,
-        38,
-        28
-      ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
     },
     {
       "id": 21,
@@ -6726,23 +6668,6 @@
       "description": "Replenish Life +{0}"
     },
     {
-      "id": 50,
-      "values": [
-        1,
-        8
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
-      "id": 122,
-      "values": [
-        119
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
       "id": 22,
       "values": [
         6
@@ -6751,38 +6676,12 @@
       "description": "+{0} to Maximum Damage"
     },
     {
-      "id": 54,
-      "values": [
-        12,
-        42,
-        50
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
-    },
-    {
       "id": 93,
       "values": [
         30
       ],
       "name": "item_fasterattackrate",
       "description": "+{0}% Increased Attack Speed"
-    },
-    {
-      "id": 124,
-      "values": [
-        66
-      ],
-      "name": "item_undead_tohit",
-      "description": "+{0} to Attack Rating against Undead"
-    },
-    {
-      "id": 34,
-      "values": [
-        5
-      ],
-      "name": "normal_damage_reduction",
-      "description": "Damage Reduced by {0}"
     },
     {
       "id": 39,

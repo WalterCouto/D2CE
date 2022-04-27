@@ -1734,14 +1734,5 @@
   ],
   "corpse_items": [],
   "is_dead": 0,
-  "item_bonuses": [
-    {
-      "id": 122,
-      "values": [
-        50
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    }
-  ]
+  "item_bonuses": []
 }

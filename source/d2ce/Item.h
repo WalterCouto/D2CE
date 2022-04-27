@@ -28,6 +28,7 @@
 
 namespace d2ce
 {
+    class Character;
     struct ItemType;
     struct ItemFilter
     {
@@ -78,6 +79,7 @@ namespace d2ce
         mutable size_t multi_graphic_bit_offset = 0;
         mutable size_t autoAffix_bit_offset = 0;
         mutable size_t quality_attrib_bit_offset = 0;
+        size_t runeword_id_bit_offset_marker = 0; // offset where to put the runeword id
         size_t runeword_id_bit_offset = 0;
         size_t personalized_bit_offset = 0;
         size_t personalized_bit_offset_marker = 0; // offset where to put the personalization
@@ -93,9 +95,10 @@ namespace d2ce
         size_t bonus_bits_bit_offset = 0;
         size_t magical_props_bit_offset = 0;
         size_t set_bonus_props_bit_offset = 0;
+        size_t runeword_props_bit_offset_marker = 0; // offset where to put the runeword bonus properties
         size_t runeword_props_bit_offset = 0;
         size_t item_end_bit_offset = 0;
-        size_t item_current_socket_idx = 0; // temp varaible for v1.04 - 1.06 socketed gems
+        size_t item_current_socket_idx = 0; // temp variable for socketed gem ordering
         size_t dwa_bit_offset = 0;
         mutable size_t dwb_bit_offset = 0;
         mutable MagicalCachev100 magic_affixes_v100;
@@ -109,8 +112,11 @@ namespace d2ce
         bool parsePropertyList(std::FILE* charfile, size_t& current_bit_offset);
         bool parsePropertyList(const Json::Value& propListRoot, bool bSerializedFormat, size_t& current_bit_offset);
         bool readPropertyList(size_t& current_bit_offset, std::vector<MagicalAttribute>& attrib) const;
+        bool updatePropertyList(size_t& current_bit_offset, const std::vector<MagicalAttribute>& attribs);
         std::uint8_t getEncodedChar(std::FILE* charfile, size_t& current_bit_offset);
 
+        std::uint32_t readBits(size_t start, size_t size) const;
+        std::uint64_t readBits64(size_t start, size_t size) const;
         bool updateBits(size_t start, size_t size, std::uint32_t value);
         bool updateBits64(size_t start, size_t size, std::uint64_t value);
         bool updateItemCodev115(std::uint64_t code, size_t numBitsSet);
@@ -127,10 +133,12 @@ namespace d2ce
         bool readItemv100(const Json::Value& itemRoot, bool bSerializedFormat);
         bool readItemv104(const Json::Value& itemRoot, bool bSerializedFormat);
 
+        bool verifyItemConsistency() const;
+
     protected:
         bool readItem(EnumItemVersion version, bool isExpansion, std::FILE* charfile);
         bool readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumItemVersion version, bool isExpansion);
-        bool writeItem(std::FILE* charfile);
+        bool writeItem(std::FILE* charfile) const;
 
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void unknownAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
@@ -139,9 +147,19 @@ namespace d2ce
         std::uint16_t getRawVersion() const;
 
         Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
-        bool setItemLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
+        Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path); // read D2I item
 
         bool isExpansionItem() const;
+
+        bool setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
+        bool setLocation(EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY);
+        bool setLocation(EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
+        bool setLocation(EnumEquippedId equippedId);
+        bool setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, EnumEquippedId equippedId, std::uint16_t positionX, std::uint16_t positionY);
+
+        void verifyRuneword();
+        void updateSocketedItemCount();
+        void updateOffset(size_t& startOffset, ptrdiff_t diff);
 
     public:
         Item();
@@ -198,7 +216,6 @@ namespace d2ce
         bool upgradePotion();
         bool upgradeToFullRejuvenationPotion();
         std::uint8_t getQuestDifficulty() const;
-        std::uint8_t socketedItemCount() const;
         bool getEarAttributes(EarAttributes& attrib) const;
         bool getRequirements(ItemRequirements& req) const;
         bool getCategories(std::vector<std::string>& categories) const;
@@ -209,6 +226,7 @@ namespace d2ce
 
         // Extended information
         std::uint32_t getId() const;
+        bool randomizeId();
         std::uint8_t getLevel() const;
         EnumItemQuality getQuality() const;
         bool getMagicalAffixes(MagicalAffixes& affixes) const;
@@ -229,7 +247,11 @@ namespace d2ce
         std::uint16_t getSetItemMask() const; // used in serialization
         bool isArmor() const;
         bool isWeapon() const;
+        bool isTwoHandedWeapon() const;
+        bool isOneOrTwoHandedWeapon() const; // Can weapon be carried in 1 or 2 hands by Barbarian?
+        bool isShield() const;
         bool isMissileWeapon() const;
+        bool isMissile() const;
         bool isTome() const;
         bool isBodyPart() const;
         bool isStackable() const;
@@ -247,12 +269,22 @@ namespace d2ce
         bool isHoradricCube() const;
         bool isIndestructible() const;
         bool isUnusedItem() const;
+        bool isSecondHand() const;
+        bool isSocketFiller() const;
+        bool isClassSpecific() const;
+        std::optional<d2ce::EnumCharClass> getClass() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         bool canPersonalize() const;
+        bool canEquip(EnumEquippedId equipId) const;
+        bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
+        bool canEquip(EnumEquippedId equipId, EnumCharClass charClass, const CharStats& cs) const;
         std::uint8_t getDisplayedSocketCount() const;
-        std::uint8_t socketCount() const;
+        std::uint8_t getSocketCountBonus() const;
+        std::uint8_t getSocketCount() const;
+        std::uint8_t getSocketedItemCount() const;
         std::uint8_t getMaxSocketCount() const;
+        std::uint8_t getMaxSocketedCount() const;
         std::uint32_t getQuantity() const;
         std::uint32_t getMaxQuantity() const;
         bool setQuantity(std::uint32_t quantity);
@@ -272,6 +304,15 @@ namespace d2ce
         bool addPersonalization(const std::string& name);
         bool removePersonalization();
         bool setIndestructible();
+        bool canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass) const;
+        bool canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass, const CharStats& cs) const;
+        bool canSocketItem(const d2ce::Item& socketFiller) const;
+        bool canSocketItem(const d2ce::Item& socketFiller, std::uint32_t level) const;
+        bool removeSocketedItems();
+        std::vector<d2ce::RunewordType> getPossibleRunewords(bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
+        std::vector<d2ce::RunewordType> getPossibleRunewords(std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
+        bool setRuneword(std::uint16_t id);
+        bool exportItem(const std::filesystem::path& path) const;
 
         // Helper methods that return the text displayed on tooltips
         std::string getDisplayedItemName() const;
@@ -297,51 +338,57 @@ namespace d2ce
     class Items
     {
         friend class Character;
+        friend class Mercenary;
         friend class SharedStash;
 
     protected:
         EnumItemVersion Version = APP_ITEM_VERSION;
-        std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
+        mutable std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
 
-        std::uint32_t items_location = 0,
+        mutable std::uint32_t items_location = 0,
             corpse_location = 0,
             corpse_item_location = 0,
             merc_location = 0,   // Expansion character only
             golem_location = 0;  // Expansion character only
 
-        std::uint16_t NumOfItems = 0;      // # of items (according to file) in inventory excluding 
-                                           // gems in socketed items
-        std::list<Item> Inventory;         // items in inventory
+        mutable std::uint16_t NumOfItems = 0; // # of items (according to file) in inventory excluding 
+                                              // gems in socketed items
+        std::list<Item> Inventory;            // items in inventory
 
         std::vector<std::reference_wrapper<Item>> GPSs;       // inventory of all Gems, Potions or Skulls
         std::vector<std::reference_wrapper<Item>> Stackables; // inventory of all Stackable (includes some weapons)
         std::vector<std::reference_wrapper<Item>> Armor;      // inventory of all Armor
         std::vector<std::reference_wrapper<Item>> Weapons;    // inventory of all Weapons (includes stackable weapons)
 
-        mutable std::map<d2ce::EnumItemLocation, std::vector<std::reference_wrapper<Item>>> ItemLocationReference;       // Iventory of items equipped or stored in the belt
-        mutable std::map<d2ce::EnumAltItemLocation, std::vector<std::reference_wrapper<Item>>> ItemAltLocationReference; // Iventory of items not equipped or stored in the belt
-
-        mutable std::map < d2ce::EnumItemLocation, std::set<std::uint16_t>> ItemLocationEmptySpots;  // a set of empty spots on body or belt
-        mutable std::map<d2ce::EnumAltItemLocation, std::set<std::uint16_t>> ItemAltLocationEmptySpots; // a set of empty spots in storage
+        mutable std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, std::vector<std::reference_wrapper<Item>>>> ItemLocationReference; // Iventory of items equipped or stored in the belt
+        mutable std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, std::set<std::uint16_t>>> ItemLocationEmptySpots; // a set of empty spots on body or belt
 
         bool HasHoradricCube = false;
         bool HasBeltEquipped = false;
         size_t EquippedBeltSlots = 0;
+        bool IsSharedStash = false;
 
-        CorpseHeader CorpseInfo;
-        std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non-zero if you are currently dead
-        std::list<Item> CorpseItems;      // items on our Corpse
+        mutable CorpseHeader CorpseInfo;
+        mutable std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non-zero if you are currently dead
+        mutable std::list<Item> CorpseItems;      // items on our Corpse
 
         // Expansion Character data
-        std::uint16_t NumOfMercItems = 0;  // # of Mercenary items (according to file)
-        std::list<Item> MercItems;         // items mercenary is currently wearing.
-        std::uint64_t MercId_v100 = 0;     // 1.00 - 1.08
+        mutable std::uint16_t NumOfMercItems = 0;  // # of Mercenary items (according to file)
+        mutable std::list<Item> MercItems;         // items mercenary is currently wearing.
+        mutable std::uint64_t MercId_v100 = 0;     // 1.00 - 1.08
 
-        std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
-        Item GolemItem;                    // Item for the Golem
+        mutable std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
+        mutable std::list<Item> GolemItem;         // Item for the Golem (only one item, but a list to keep memory stable)
+
+        std::list<Item>& BufferItems;       // Buffer for items not in any inventory yet
 
         bool update_locations = true;
-        bool isMercHired = false;
+        mutable bool isMercHired = false;
+
+    private:
+        std::list<Item> Buffer;
+        const Item* LastItemMoved = nullptr;
+        size_t LastItemIdx = MAXSIZE_T;
 
     private:
         void findItems();
@@ -361,15 +408,15 @@ namespace d2ce
         void readGolemItem(std::FILE* charfile);
         void readGolemItem(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
 
-        bool writeCorpseItems(std::FILE* charfile);
-        bool writeMercItems(std::FILE* charfile);
-        bool writeGolemItem(std::FILE* charfile);
+        bool writeCorpseItems(std::FILE* charfile) const;
+        bool writeMercItems(std::FILE* charfile) const;
+        bool writeGolemItem(std::FILE* charfile) const;
 
         bool readItems(const Character& charInfo, std::FILE* charfile);
         bool readSharedStashPage(EnumCharVersion version, std::FILE* charfile);
         bool readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo, std::FILE* charfile);
-        bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false);
-        bool writeSharedStashPage(std::FILE* charfile);
+        bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false) const;
+        bool writeSharedStashPage(std::FILE* charfile) const;
 
         void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
@@ -380,8 +427,12 @@ namespace d2ce
 
         bool isExpansionItems() const;
 
+        void verifyBeltSlots();
+        void verifyHoradricCube();
+
     public:
         Items();
+        Items(std::list<Item>& bufferItems);
         Items(const Items& other);
         ~Items();
 
@@ -461,9 +512,18 @@ namespace d2ce
         size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
+        bool exportItem(d2ce::Item& item, const std::filesystem::path& path) const;
+
+        bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, const d2ce::Character& charInfo, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem);
+
+        bool removeSocketedItems(d2ce::Item& item);
+        bool setRuneword(d2ce::Item& item, std::uint16_t id);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
-        bool getCharmBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         std::uint16_t getCombinedDefenseRating(std::uint32_t charLevel) const;
         bool getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel) const;
@@ -481,9 +541,13 @@ namespace d2ce
 
         // Golem Info
         bool hasGolem() const;
-        const d2ce::Item& getGolemItem() const;
+        const std::list<Item>& getGolemItem() const;
 
-    public:
+        d2ce::Item removeItem(const d2ce::Item& item);
+
+        bool canEquipItem(const d2ce::Item& item, EnumEquippedId equipId) const;
+        bool canEquipItem(const d2ce::Item& item, EnumEquippedId equipId, EnumCharClass charClass, const CharStats& cs) const;
+
         static std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx);
     };
     //---------------------------------------------------------------------------

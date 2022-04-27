@@ -1685,6 +1685,7 @@
         "Spear",
         "Melee Weapon",
         "Thrown Weapon",
+        "Spears and Polearms",
         "Weapon"
       ],
       "type_id": 3,
@@ -1698,8 +1699,6 @@
       "class_specific": 0,
       "timestamp": 0,
       "quantity": 57,
-      "max_durability": 14,
-      "current_durability": 14,
       "magic_attributes": [],
       "base_damage": {
         "mindam": 1,

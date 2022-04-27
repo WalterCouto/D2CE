@@ -51,6 +51,9 @@ protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
     afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextFixallitems();
     afx_msg void OnItemContextLoad();
@@ -61,9 +64,13 @@ protected:
     afx_msg void OnItemContextIndestructibleforallitems();
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
+    afx_msg void OnItemContextUnsocket();
     afx_msg void OnItemContextMaxsocketsforallitems();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
+    afx_msg void OnItemContextApplyruneword();
+    afx_msg void OnItemContextImportitem();
+    afx_msg void OnItemContextExportitem();
     afx_msg void OnItemContextUpgradeGem();
     afx_msg void OnItemContextUpgradeGems();
     afx_msg void OnItemContextUpgradePotion();
@@ -88,6 +95,10 @@ protected:
     CD2MainForm& MainForm;
     d2ce::SharedStash& Stash;
     d2ce::Item* CurrItem = nullptr;
+    HCURSOR CurrCursor = NULL;
+    HCURSOR ItemCursor = NULL;
+    d2ce::Item* CurrDragItem = nullptr;
+    size_t CurrDragPage = 0;
     void LoadGridItemImages();
 
     void CheckToolTipCtrl();
@@ -122,6 +133,7 @@ protected:
     bool setItemMaxDurability(d2ce::Item& item);
     bool addItemSocket(d2ce::Item& item);
     bool setItemMaxSocketCount(d2ce::Item& item);
+    bool removeSocketedItems(d2ce::Item& item);
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
     bool setItemIndestructible(d2ce::Item& item);
@@ -142,14 +154,27 @@ protected:
     void SetCurrItemInfo(CPoint point);
     void ClearCurrItemInfo();
 
+    void ResetCursor();
+    bool GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO* pTI) const;
+    bool CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point);
+    const d2ce::Item* PlaceItem(UINT id, d2ce::Item& item, CPoint point, CBitmap& bitmap);
+
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;
     const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 
     // Inherited via CD2ItemsGridCallback
-    CSize getInvGridSize(UINT id) const override;
-    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const override;
+    std::optional<d2ce::EnumCharClass> getCharClass() const override;
+    std::optional<d2ce::CharStats> getDisplayedCharStats() const override;
+    std::optional<d2ce::Mercenary*> getMercInfo() const override;
+    CSize getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const d2ce::Item* getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const override;
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
 
 private:
     std::string ToStdString(const CWnd* Sender) const;

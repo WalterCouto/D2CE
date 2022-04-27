@@ -24043,6 +24043,7 @@
       "type": "7cr",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -38027,170 +38028,12 @@
   "merc_items": [],
   "item_bonuses": [
     {
-      "id": 7,
-      "values": [
-        20597
-      ],
-      "name": "maxhp",
-      "description": "+{0} to Life"
-    },
-    {
-      "id": 37,
-      "values": [
-        5100
-      ],
-      "name": "magicresist",
-      "description": "Magic Resist +{0}%"
-    },
-    {
-      "id": 38,
-      "values": [
-        620
-      ],
-      "name": "maxmagicresist",
-      "description": "+{0}% to Maximum Magic Resist"
-    },
-    {
-      "id": 39,
-      "values": [
-        4510
-      ],
-      "name": "fireresist",
-      "description": "Fire Resist +{0}%"
-    },
-    {
-      "id": 40,
-      "values": [
-        620
-      ],
-      "name": "maxfireresist",
-      "description": "+{0}% to Maximum Fire Resist"
-    },
-    {
-      "id": 41,
-      "values": [
-        4510
-      ],
-      "name": "lightresist",
-      "description": "Lightning Resist +{0}%"
-    },
-    {
-      "id": 42,
-      "values": [
-        620
-      ],
-      "name": "maxlightresist",
-      "description": "+{0}% to Maximum Lightning Resist"
-    },
-    {
-      "id": 43,
-      "values": [
-        4510
-      ],
-      "name": "coldresist",
-      "description": "Cold Resist +{0}%"
-    },
-    {
-      "id": 44,
-      "values": [
-        620
-      ],
-      "name": "maxcoldresist",
-      "description": "+{0}% to Maximum Cold Resist"
-    },
-    {
-      "id": 45,
-      "values": [
-        4510
-      ],
-      "name": "poisonresist",
-      "description": "Poison Resist +{0}%"
-    },
-    {
-      "id": 46,
-      "values": [
-        620
-      ],
-      "name": "maxpoisonresist",
-      "description": "+{0}% to Maximum Poison Resist"
-    },
-    {
-      "id": 76,
-      "values": [
-        2332
-      ],
-      "name": "item_maxhp_percent",
-      "description": "Increase Maximum Life {0}%"
-    },
-    {
-      "id": 80,
-      "values": [
-        3875
-      ],
-      "name": "item_magicbonus",
-      "description": "{0}% Better Chance of Getting Magic Items"
-    },
-    {
-      "id": 144,
-      "values": [
-        2540
-      ],
-      "name": "item_absorblight_percent",
-      "description": "Lightning Absorb +{0}%"
-    },
-    {
-      "id": 307,
-      "values": [
-        9430
-      ],
-      "name": "item_pierce_ltng",
-      "description": "-{0}% to Enemy Lightning Resistance"
-    },
-    {
-      "id": 330,
-      "values": [
-        20745
-      ],
-      "name": "passive_ltng_mastery",
-      "description": "+{0}% to Lightning Skill Damage"
-    },
-    {
-      "id": 334,
-      "values": [
-        11730
-      ],
-      "name": "passive_ltng_pierce",
-      "description": "-{0}% to Enemy Lightning Resistance"
-    },
-    {
-      "id": 357,
-      "values": [
-        20745
-      ],
-      "name": "passive_mag_mastery"
-    },
-    {
-      "id": 358,
-      "values": [
-        11475
-      ],
-      "name": "passive_mag_pierce"
-    },
-    {
       "id": 16,
       "values": [
         2044
       ],
       "name": "item_armor_percent",
       "description": "+{0}% Enhanced Defense"
-    },
-    {
-      "id": 20,
-      "values": [
-        63
-      ],
-      "name": "toblock",
-      "description": "{0}% Increased Chance of Blocking"
     },
     {
       "id": 31,
@@ -38201,139 +38044,12 @@
       "description": "+{0} Defense"
     },
     {
-      "id": 90,
+      "id": 7,
       "values": [
-        16776961
+        20597
       ],
-      "name": "item_lightcolor"
-    },
-    {
-      "id": 113,
-      "values": [
-        127
-      ],
-      "name": "item_stupidity",
-      "description": "Hit Blinds Target +{0}"
-    },
-    {
-      "id": 115,
-      "values": [
-        1
-      ],
-      "name": "item_ignoretargetac",
-      "description": "Ignore Target's Defense"
-    },
-    {
-      "id": 117,
-      "values": [
-        127
-      ],
-      "name": "item_preventheal",
-      "description": "Prevent Monster Heal"
-    },
-    {
-      "id": 134,
-      "values": [
-        31
-      ],
-      "name": "item_freeze",
-      "description": "Freezes target +{0}"
-    },
-    {
-      "id": 150,
-      "values": [
-        127
-      ],
-      "name": "item_slow",
-      "description": "Slows Target by {0}%"
-    },
-    {
-      "id": 153,
-      "values": [
-        1
-      ],
-      "name": "item_cannotbefrozen",
-      "description": "Cannot Be Frozen"
-    },
-    {
-      "id": 154,
-      "values": [
-        107
-      ],
-      "name": "item_staminadrainpct",
-      "description": "{0}% Slower Stamina Drain"
-    },
-    {
-      "id": 155,
-      "values": [
-        156,
-        5
-      ],
-      "name": "item_reanimate"
-    },
-    {
-      "id": 156,
-      "values": [
-        254
-      ],
-      "name": "item_pierce",
-      "description": "+{0}% Piercing Attack"
-    },
-    {
-      "id": 240,
-      "values": [
-        63
-      ],
-      "name": "item_find_magic_perlevel",
-      "description": "{0}% Better Chance of Getting Magic Items (Based on Character Level)"
-    },
-    {
-      "id": 329,
-      "values": [
-        461
-      ],
-      "name": "passive_fire_mastery",
-      "description": "+{0}% to Fire Skill Damage"
-    },
-    {
-      "id": 331,
-      "values": [
-        461
-      ],
-      "name": "passive_cold_mastery",
-      "description": "+{0}% to Cold Skill Damage"
-    },
-    {
-      "id": 332,
-      "values": [
-        461
-      ],
-      "name": "passive_pois_mastery",
-      "description": "+{0}% to Poison Skill Damage"
-    },
-    {
-      "id": 333,
-      "values": [
-        255
-      ],
-      "name": "passive_fire_pierce",
-      "description": "-{0}% to Enemy Fire Resistance"
-    },
-    {
-      "id": 335,
-      "values": [
-        255
-      ],
-      "name": "passive_cold_pierce",
-      "description": "-{0}% to Enemy Cold Resistance"
-    },
-    {
-      "id": 336,
-      "values": [
-        510
-      ],
-      "name": "passive_pois_pierce",
-      "description": "-{0}% to Enemy Poison Resistance"
+      "name": "maxhp",
+      "description": "+{0} to Life"
     },
     {
       "id": 25,
@@ -38341,27 +38057,6 @@
         5610
       ],
       "name": "damagepercent"
-    },
-    {
-      "id": 26,
-      "values": [
-        5355
-      ],
-      "name": "manarecovery"
-    },
-    {
-      "id": 67,
-      "values": [
-        2231
-      ],
-      "name": "velocitypercent"
-    },
-    {
-      "id": 68,
-      "values": [
-        2037
-      ],
-      "name": "attackrate"
     },
     {
       "id": 93,
@@ -38412,13 +38107,6 @@
       "description": "+{0} to All Skills"
     },
     {
-      "id": 341,
-      "values": [
-        5355
-      ],
-      "name": "passive_warmth"
-    },
-    {
       "id": 17,
       "values": [
         1022,
@@ -38444,60 +38132,12 @@
       "description": "Attacker Takes Damage of {0}"
     },
     {
-      "id": 121,
-      "values": [
-        491
-      ],
-      "name": "item_demondamage_percent",
-      "description": "+{0}% Damage to Demons"
-    },
-    {
-      "id": 123,
-      "values": [
-        895
-      ],
-      "name": "item_demon_tohit",
-      "description": "+{0} to Attack Rating against Demons"
-    },
-    {
-      "id": 124,
-      "values": [
-        895
-      ],
-      "name": "item_undead_tohit",
-      "description": "+{0} to Attack Rating against Undead"
-    },
-    {
-      "id": 158,
-      "values": [
-        127
-      ],
-      "name": "item_explosivearrow",
-      "description": "Fires Explosive Arrows or Bolts"
-    },
-    {
-      "id": 180,
-      "values": [
-        543,
-        511
-      ],
-      "name": "damage_vs_montype"
-    },
-    {
       "id": 146,
       "values": [
         227
       ],
       "name": "item_absorbmagic_percent",
       "description": "Magic Absorb +{0}%"
-    },
-    {
-      "id": 155,
-      "values": [
-        211,
-        5
-      ],
-      "name": "item_reanimate"
     },
     {
       "id": 0,
@@ -38532,22 +38172,6 @@
       "description": "+{0} to Vitality"
     },
     {
-      "id": 32,
-      "values": [
-        511
-      ],
-      "name": "armorclass_vs_missile",
-      "description": "+{0} Defense vs. Missile"
-    },
-    {
-      "id": 33,
-      "values": [
-        255
-      ],
-      "name": "armorclass_vs_hth",
-      "description": "+{0} Defense vs. Melee"
-    },
-    {
       "id": 97,
       "values": [
         69,
@@ -38557,29 +38181,12 @@
       "description": "+{1} to {0}"
     },
     {
-      "id": 120,
+      "id": 80,
       "values": [
-        -128
+        3875
       ],
-      "name": "item_damagetargetac",
-      "description": "{0} to Monster Defense Per Hit"
-    },
-    {
-      "id": 151,
-      "values": [
-        89,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 155,
-      "values": [
-        243,
-        5
-      ],
-      "name": "item_reanimate"
+      "name": "item_magicbonus",
+      "description": "{0}% Better Chance of Getting Magic Items"
     },
     {
       "id": 36,
@@ -38590,33 +38197,36 @@
       "description": "Damage Reduced by {0}%"
     },
     {
-      "id": 48,
+      "id": 39,
       "values": [
-        255,
-        511
+        4510
       ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
     },
     {
-      "id": 54,
+      "id": 41,
       "values": [
-        255,
-        511,
-        255
+        4510
       ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
     },
     {
-      "id": 57,
+      "id": 43,
       "values": [
-        1023,
-        1023,
-        511
+        4510
       ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
+      "id": 45,
+      "values": [
+        4510
+      ],
+      "name": "poisonresist",
+      "description": "Poison Resist +{0}%"
     },
     {
       "id": 83,
@@ -38628,52 +38238,12 @@
       "description": "{0}"
     },
     {
-      "id": 85,
-      "values": [
-        461
-      ],
-      "name": "item_addexperience",
-      "description": "+{0}% to Experience Gained"
-    },
-    {
-      "id": 111,
-      "values": [
-        982
-      ],
-      "name": "item_normaldamage",
-      "description": "Damage +{0}"
-    },
-    {
       "id": 128,
       "values": [
         31
       ],
       "name": "item_attackertakeslightdamage",
       "description": "Attacker Takes Lightning Damage of {0}"
-    },
-    {
-      "id": 135,
-      "values": [
-        127
-      ],
-      "name": "item_openwounds",
-      "description": "+{0}% Chance of Open Wounds"
-    },
-    {
-      "id": 136,
-      "values": [
-        127
-      ],
-      "name": "item_crushingblow",
-      "description": "+{0}% Chance of Crushing Blow"
-    },
-    {
-      "id": 141,
-      "values": [
-        127
-      ],
-      "name": "item_deadlystrike",
-      "description": "+{0}% Deadly Strike"
     },
     {
       "id": 142,
@@ -38698,33 +38268,6 @@
       ],
       "name": "item_absorbcold_percent",
       "description": "Cold Absorb +{0}%"
-    },
-    {
-      "id": 151,
-      "values": [
-        100,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        105,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        110,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
     },
     {
       "id": 97,
@@ -38754,90 +38297,12 @@
       "description": "+{1} to {0}"
     },
     {
-      "id": 151,
-      "values": [
-        96,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        113,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        114,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        115,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        119,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        123,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 122,
-      "values": [
-        50
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
       "id": 35,
       "values": [
         63
       ],
       "name": "magic_damage_reduction",
       "description": "Magic Damage Reduced by {0}"
-    },
-    {
-      "id": 77,
-      "values": [
-        53
-      ],
-      "name": "item_maxmana_percent",
-      "description": "Increase Maximum Mana {0}%"
-    },
-    {
-      "id": 79,
-      "values": [
-        411
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
     },
     {
       "id": 97,
@@ -38855,6 +38320,62 @@
       ],
       "name": "item_poisonlengthresist",
       "description": "Poison Length Reduced by {0}%"
+    },
+    {
+      "id": 37,
+      "values": [
+        5100
+      ],
+      "name": "magicresist",
+      "description": "Magic Resist +{0}%"
+    },
+    {
+      "id": 38,
+      "values": [
+        620
+      ],
+      "name": "maxmagicresist",
+      "description": "+{0}% to Maximum Magic Resist"
+    },
+    {
+      "id": 40,
+      "values": [
+        620
+      ],
+      "name": "maxfireresist",
+      "description": "+{0}% to Maximum Fire Resist"
+    },
+    {
+      "id": 42,
+      "values": [
+        620
+      ],
+      "name": "maxlightresist",
+      "description": "+{0}% to Maximum Lightning Resist"
+    },
+    {
+      "id": 44,
+      "values": [
+        620
+      ],
+      "name": "maxcoldresist",
+      "description": "+{0}% to Maximum Cold Resist"
+    },
+    {
+      "id": 46,
+      "values": [
+        620
+      ],
+      "name": "maxpoisonresist",
+      "description": "+{0}% to Maximum Poison Resist"
+    },
+    {
+      "id": 144,
+      "values": [
+        2540
+      ],
+      "name": "item_absorblight_percent",
+      "description": "Lightning Absorb +{0}%"
     }
   ]
 }

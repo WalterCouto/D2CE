@@ -275,7 +275,7 @@ namespace
 
         std::filesystem::path p = fullPath;
         auto fileExt = p.extension().wstring();
-        if (fileExt == L"d2s")
+        if (fileExt == L".d2s")
         {
             p.replace_extension();
         }
@@ -2179,6 +2179,7 @@ void CD2MainForm::DisplayCharInfo()
 
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
 
     SetInt(&CharLevel, cs.Level);
 
@@ -3050,6 +3051,7 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
 
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
     CtrlEditted.clear();
     StatusBar.SetWindowText(_T("Character stats have been refreshed"));
@@ -3137,6 +3139,7 @@ void CD2MainForm::OnFileSave()
 
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
 
     Initialize();
     CheckStatsLeft();
@@ -3203,6 +3206,7 @@ void CD2MainForm::OnFileSaveAs()
     hasBackupFile = HasBackupFile(CurPathName);
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
     CtrlEditted.clear();
     UpdateAppTitle();
@@ -3300,6 +3304,7 @@ void CD2MainForm::OnViewRefresh()
     CharInfo.refresh();
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
 
     CtrlEditted.clear();
@@ -4385,6 +4390,7 @@ void CD2MainForm::OnOptionsRestoreChar()
     CString backupname = GetLastBackupFile(CurPathName);
     if (backupname.IsEmpty())
     {
+        hasBackupFile = false;
         return;
     }
 
@@ -4631,6 +4637,11 @@ d2ce::Character& CD2MainForm::getCharacterInfo()
     return CharInfo;
 }
 //---------------------------------------------------------------------------
+const d2ce::CharStats& CD2MainForm::getDisplayedCharStats() const
+{
+    return DisplayedCs;
+}
+//---------------------------------------------------------------------------
 std::string CD2MainForm::getCharacterName()
 {
     return std::string(CharInfo.getName().data());
@@ -4802,7 +4813,7 @@ bool CD2MainForm::hasGolem() const
     return CharInfo.hasGolem();
 }
 //---------------------------------------------------------------------------
-const d2ce::Item& CD2MainForm::getGolemItem() const
+const std::list<d2ce::Item>& CD2MainForm::getGolemItem() const
 {
     return CharInfo.getGolemItem();
 }
@@ -5211,6 +5222,18 @@ bool CD2MainForm::setItemMaxSocketCount(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::removeSocketedItems(d2ce::Item& item)
+{
+    bool ret = CharInfo.removeSocketedItems(item);
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::personalizeItem(d2ce::Item& item)
 {
     bool ret = item.addPersonalization(getCharacterName());
@@ -5255,6 +5278,7 @@ bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLo
     }
 
     ItemsChanged = true;
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     StatsChanged();
     return true;
 }
@@ -5267,6 +5291,7 @@ bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, std::array<std::uin
     }
 
     ItemsChanged = true;
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     StatsChanged();
     return true;
 }
@@ -5279,8 +5304,14 @@ bool CD2MainForm::addItem(d2ce::EnumAltItemLocation altPositionId, std::array<st
     }
 
     ItemsChanged = true;
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     StatsChanged();
     return true;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    return CharInfo.importItem(path, pImportedItem, bRandomizeId);
 }
 //---------------------------------------------------------------------------
 size_t CD2MainForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
@@ -5290,6 +5321,7 @@ size_t CD2MainForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::Enum
     {
 
         ItemsChanged = true;
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
         StatsChanged();
     }
 
@@ -5303,6 +5335,7 @@ size_t CD2MainForm::fillEmptySlots(d2ce::EnumItemLocation locationId, std::array
     {
 
         ItemsChanged = true;
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
         StatsChanged();
     }
 
@@ -5315,6 +5348,7 @@ size_t CD2MainForm::fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std:
     if (numAdded > 0)
     {
         ItemsChanged = true;
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
         StatsChanged();
     }
 
@@ -5379,6 +5413,94 @@ size_t CD2MainForm::maxSocketCountAllItems(d2ce::ItemFilter filter)
     }
 
     return numChanged;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    if (CharInfo.setItemLocation(item, locationId, altPositionId, positionX, positionY, invType, pRemovedItem))
+    {
+        ItemsChanged = true;
+        switch (invType)
+        {
+        case d2ce::EnumItemInventory::PLAYER:
+            switch (locationId)
+            {
+            case d2ce::EnumItemLocation::STORED:
+                switch (altPositionId)
+                {
+                case d2ce::EnumAltItemLocation::INVENTORY:
+                    if (item.isCharm() || (pRemovedItem != nullptr && pRemovedItem->isCharm()))
+                    {
+                        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+                    }
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+        StatsChanged();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    if (CharInfo.setItemLocation(item, locationId, positionX, positionY, invType, pRemovedItem))
+    {
+        ItemsChanged = true;
+        StatsChanged();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    if (CharInfo.setItemLocation(item, altPositionId, positionX, positionY, invType, pRemovedItem))
+    {
+        ItemsChanged = true;
+        switch (invType)
+        {
+        case d2ce::EnumItemInventory::PLAYER:
+            switch (altPositionId)
+            {
+            case d2ce::EnumAltItemLocation::INVENTORY:
+                if (item.isCharm() || (pRemovedItem != nullptr && pRemovedItem->isCharm()))
+                {
+                    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+                }
+                break;
+            }
+            break;
+        }
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+        StatsChanged();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    if (CharInfo.setItemLocation(item, equippedId, invType, pRemovedItem))
+    {
+        ItemsChanged = true;
+        switch (invType)
+        {
+        case d2ce::EnumItemInventory::PLAYER:
+            CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+            break;
+        }
+        StatsChanged();
+        return true;
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 size_t CD2MainForm::getNumberOfEquippedItems() const

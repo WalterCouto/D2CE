@@ -577,6 +577,96 @@
     <CustomBuild Include="..\examples\chars\98\任务完成信.json">
       <Filter>examples\char\98</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Blizzard.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Blizzard.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\BowAma.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\BowAma.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Element.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Element.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Traps.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Traps.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\TollWut.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\TollWut.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Summon.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Summon.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Smiter.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Smiter.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Poison.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Poison.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Orb.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Orb.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Lightning.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Lightning.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\JavaZone.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\JavaZone.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Hammer.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Hammer.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Frenzy.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Frenzy.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\FireClaw.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\FireClaw.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Fire.json">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\96\Fire.d2s">
+      <Filter>examples\char\96</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl">

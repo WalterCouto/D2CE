@@ -108,6 +108,7 @@ private:
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;
     d2ce::MercInfo OrigMerc;
+    d2ce::CharStats Cs;
     d2ce::Item* CurrItem = nullptr;
 
     CString DamageFmt = _T("%d to %d");
@@ -119,6 +120,7 @@ private:
     void UpdateModified();
     void LoadMercItemImages();
     void refreshEquipped(const d2ce::Item& item);
+    void refreshEquipped(d2ce::EnumEquippedId id);
 
     std::string ToStdString(const CWnd* Sender) const; // UTF-8
     CString ToText(const CWnd* Sender) const;          // UTF-16
@@ -137,8 +139,16 @@ private:
     virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 
     // Inherited via CD2ItemsGridCallback
-    CSize getInvGridSize(UINT id) const override;
-    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const override;
+    std::optional<d2ce::EnumCharClass> getCharClass() const override;
+    std::optional<d2ce::CharStats> getDisplayedCharStats() const override;
+    std::optional<d2ce::Mercenary*> getMercInfo() const override;
+    CSize getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const d2ce::Item* getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const override;
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
 };
 //---------------------------------------------------------------------------

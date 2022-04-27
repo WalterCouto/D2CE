@@ -44,13 +44,14 @@ You can edit the following stats:<br>
 - Upgrade Durability of all weapons and armor to the max value<br>
 - Upgrade Quantity of all stackable items to the max value<br>
 - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull<br>
-- Add Sockets to items<br>
+- Modify number of Sockets or what is socketed<br>
+- Import and Export of items<br>
 
 ### Known Issues
 
 - Tested with Diablo II Resurrected v1.2.68992 (PTR 2.4) and Diablo II Classic v1.14d (It has unit test confirming it supports the all versions from v1.00 and up as well but the files used in testing have not been tested in a real game)**
-- Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on yoru character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Ressurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
-- You must close the character file before playing Diablo II. This is because there are no options to enable file sharing for the read and write functions I'm using in ANSI C++.
+- Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
+- For changed to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
 
 ### Distribution
 
@@ -76,6 +77,15 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.16 (May 15, 2022)**
+- Updated: fix up mercenary for PTR 2.4 changes to Barbarian<br>
+<br>
+
+- Added: add support for dragging and dropping items.<br>
+- Added: add d2i item files and support for import/export of items. The application supports the standard d2i files that exists today but if the item being exported is a D2R PTR 2.4 ear or personalized item that contains utf-8 characters outside the ASCII range, it will export the d2i file as a v1.16 item  which is not the same as the format of existing d2i files.<br>
+- Added: add ability to socket and unsocket items<br>
+<br>
+
 **Version 2.15 (April 26, 2022)**
 - Updated: Reorganize resources and add txt file to allow for future localization and customizations.<br>
 - Updated: Create GPS Dialog now chooses a beltable item by default when launched from the belt inventory.<br>

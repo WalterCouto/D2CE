@@ -37914,7 +37914,7 @@
         {
           "id": 122,
           "values": [
-            100
+            150
           ],
           "name": "item_undeaddamage_percent",
           "description": "+{0}% Damage to Undead"
@@ -37982,14 +37982,6 @@
           ],
           "name": "item_slow",
           "description": "Slows Target by {0}%"
-        },
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+{0}% Damage to Undead"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -38111,18 +38103,10 @@
         {
           "id": 122,
           "values": [
-            100
+            150
           ],
           "name": "item_undeaddamage_percent",
-          "description": "+100% Damage to Undead"
-        },
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+50% Damage to Undead"
+          "description": "+150% Damage to Undead"
         },
         {
           "id": 244,
@@ -47771,86 +47755,6 @@
   ],
   "item_bonuses": [
     {
-      "id": 39,
-      "values": [
-        175
-      ],
-      "name": "fireresist",
-      "description": "Fire Resist +{0}%"
-    },
-    {
-      "id": 41,
-      "values": [
-        175
-      ],
-      "name": "lightresist",
-      "description": "Lightning Resist +{0}%"
-    },
-    {
-      "id": 43,
-      "values": [
-        175
-      ],
-      "name": "coldresist",
-      "description": "Cold Resist +{0}%"
-    },
-    {
-      "id": 45,
-      "values": [
-        275
-      ],
-      "name": "poisonresist",
-      "description": "Poison Resist +{0}%"
-    },
-    {
-      "id": 76,
-      "values": [
-        25
-      ],
-      "name": "item_maxhp_percent",
-      "description": "Increase Maximum Life {0}%"
-    },
-    {
-      "id": 77,
-      "values": [
-        25
-      ],
-      "name": "item_maxmana_percent",
-      "description": "Increase Maximum Mana {0}%"
-    },
-    {
-      "id": 142,
-      "values": [
-        25
-      ],
-      "name": "item_absorbfire_percent",
-      "description": "Fire Absorb +{0}%"
-    },
-    {
-      "id": 144,
-      "values": [
-        25
-      ],
-      "name": "item_absorblight_percent",
-      "description": "Lightning Absorb +{0}%"
-    },
-    {
-      "id": 146,
-      "values": [
-        75
-      ],
-      "name": "item_absorbmagic_percent",
-      "description": "Magic Absorb +{0}%"
-    },
-    {
-      "id": 148,
-      "values": [
-        25
-      ],
-      "name": "item_absorbcold_percent",
-      "description": "Cold Absorb +{0}%"
-    },
-    {
       "id": 0,
       "values": [
         225
@@ -47907,20 +47811,20 @@
       "description": "+{0}% to Maximum Cold Resist"
     },
     {
-      "id": 79,
-      "values": [
-        100
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
-    },
-    {
       "id": 93,
       "values": [
         100
       ],
       "name": "item_fasterattackrate",
       "description": "+{0}% Increased Attack Speed"
+    },
+    {
+      "id": 45,
+      "values": [
+        275
+      ],
+      "name": "poisonresist",
+      "description": "Poison Resist +{0}%"
     },
     {
       "id": 80,
@@ -47939,6 +47843,30 @@
       "description": "Regenerate Mana {0}%"
     },
     {
+      "id": 39,
+      "values": [
+        175
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
+      "id": 41,
+      "values": [
+        175
+      ],
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
+    },
+    {
+      "id": 43,
+      "values": [
+        175
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
       "id": 110,
       "values": [
         175
@@ -47953,22 +47881,6 @@
       ],
       "name": "item_armor_percent",
       "description": "+{0}% Enhanced Defense"
-    },
-    {
-      "id": 60,
-      "values": [
-        25
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
-      "id": 62,
-      "values": [
-        17
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
     },
     {
       "id": 96,
@@ -47995,92 +47907,6 @@
       "description": "+{0}% to Maximum Poison Resist"
     },
     {
-      "id": 48,
-      "values": [
-        400,
-        1020
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
-      "id": 50,
-      "values": [
-        150,
-        765
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
-      "id": 52,
-      "values": [
-        100,
-        255
-      ],
-      "name": "magicmindam",
-      "description": "Adds {0}-{1} magic damage"
-    },
-    {
-      "id": 54,
-      "values": [
-        300,
-        765,
-        250
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
-    },
-    {
-      "id": 57,
-      "values": [
-        1364,
-        2728,
-        250
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
-      "id": 89,
-      "values": [
-        20
-      ],
-      "name": "item_lightradius",
-      "description": "+{0} to Light Radius"
-    },
-    {
-      "id": 32,
-      "values": [
-        255
-      ],
-      "name": "armorclass_vs_missile",
-      "description": "+{0} Defense vs. Missile"
-    },
-    {
-      "id": 33,
-      "values": [
-        255
-      ],
-      "name": "armorclass_vs_hth",
-      "description": "+{0} Defense vs. Melee"
-    },
-    {
-      "id": 153,
-      "values": [
-        1
-      ],
-      "name": "item_cannotbefrozen",
-      "description": "Cannot Be Frozen"
-    },
-    {
-      "id": 194,
-      "values": [
-        9
-      ],
-      "name": "item_numsockets"
-    },
-    {
       "id": 36,
       "values": [
         15
@@ -48097,6 +47923,14 @@
       "description": "Replenish Life +{0}"
     },
     {
+      "id": 146,
+      "values": [
+        75
+      ],
+      "name": "item_absorbmagic_percent",
+      "description": "Magic Absorb +{0}%"
+    },
+    {
       "id": 233,
       "values": [
         12
@@ -48105,20 +47939,12 @@
       "description": "Poison Resist +{0}% (Based on Character Level)"
     },
     {
-      "id": 243,
+      "id": 89,
       "values": [
-        65
+        20
       ],
-      "name": "item_damage_demon_perlevel",
-      "description": "+{0}% Damage to Demons (Based on Character Level)"
-    },
-    {
-      "id": 244,
-      "values": [
-        65
-      ],
-      "name": "item_damage_undead_perlevel",
-      "description": "+{0}% Damage to Undead (Based on Character Level)"
+      "name": "item_lightradius",
+      "description": "+{0} to Light Radius"
     },
     {
       "id": 214,
@@ -48185,96 +48011,12 @@
       "description": "Attacker Takes Damage of {0}"
     },
     {
-      "id": 81,
-      "values": [
-        4
-      ],
-      "name": "item_knockback",
-      "description": "Knockback"
-    },
-    {
-      "id": 86,
-      "values": [
-        100
-      ],
-      "name": "item_healafterkill",
-      "description": "+{0} Life after each Kill"
-    },
-    {
-      "id": 115,
-      "values": [
-        4
-      ],
-      "name": "item_ignoretargetac",
-      "description": "Ignore Target's Defense"
-    },
-    {
-      "id": 120,
-      "values": [
-        -400
-      ],
-      "name": "item_damagetargetac",
-      "description": "{0} to Monster Defense Per Hit"
-    },
-    {
       "id": 128,
       "values": [
         40
       ],
       "name": "item_attackertakeslightdamage",
       "description": "Attacker Takes Lightning Damage of {0}"
-    },
-    {
-      "id": 150,
-      "values": [
-        100
-      ],
-      "name": "item_slow",
-      "description": "Slows Target by {0}%"
-    },
-    {
-      "id": 17,
-      "values": [
-        300,
-        600
-      ],
-      "name": "item_maxdamage_percent",
-      "description": "+{0}% Enhanced Damage"
-    },
-    {
-      "id": 204,
-      "values": [
-        20,
-        54,
-        255,
-        255
-      ],
-      "name": "item_charged_skill",
-      "description": "Level {0} {1} ({2}/{3} Charges)"
-    },
-    {
-      "id": 240,
-      "values": [
-        4
-      ],
-      "name": "item_find_magic_perlevel",
-      "description": "{0}% Better Chance of Getting Magic Items (Based on Character Level)"
-    },
-    {
-      "id": 138,
-      "values": [
-        5
-      ],
-      "name": "item_manaafterkill",
-      "description": "+{0} to Mana after each Kill"
-    },
-    {
-      "id": 139,
-      "values": [
-        5
-      ],
-      "name": "item_healafterdemonkill",
-      "description": "+{0} Life after each Demon Kill"
     },
     {
       "id": 83,
@@ -48284,16 +48026,6 @@
       ],
       "name": "item_addclassskills",
       "description": "{0}"
-    },
-    {
-      "id": 188,
-      "values": [
-        0,
-        4,
-        10
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
     },
     {
       "id": 23,
@@ -48312,12 +48044,13 @@
       "description": "+{0} to Maximum Damage"
     },
     {
-      "id": 225,
+      "id": 17,
       "values": [
-        16
+        300,
+        600
       ],
-      "name": "item_tohitpercent_perlevel",
-      "description": "{0}% Bonus to Attack Rating (Based on Character Level)"
+      "name": "item_maxdamage_percent",
+      "description": "+{0}% Enhanced Damage"
     },
     {
       "id": 219,
@@ -48326,58 +48059,6 @@
       ],
       "name": "item_maxdamage_percent_perlevel",
       "description": "+{0}% Enhanced Maximum Damage (Based on Character Level)"
-    },
-    {
-      "id": 247,
-      "values": [
-        26
-      ],
-      "name": "item_crushingblow_perlevel",
-      "description": "+{0}% Chance of Crushing Blow (Based on Character Level)"
-    },
-    {
-      "id": 248,
-      "values": [
-        26
-      ],
-      "name": "item_openwounds_perlevel",
-      "description": "+{0}% Chance of Open Wounds (Based on Character Level)"
-    },
-    {
-      "id": 250,
-      "values": [
-        26
-      ],
-      "name": "item_deadlystrike_perlevel",
-      "description": "+{0}% Deadly Strike (Based on Character Level)"
-    },
-    {
-      "id": 122,
-      "values": [
-        50
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
-      "id": 188,
-      "values": [
-        2,
-        4,
-        5
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
-    },
-    {
-      "id": 196,
-      "values": [
-        20,
-        131,
-        25
-      ],
-      "name": "item_skillonkill",
-      "description": "{2}% Chance to cast level {0} {1} when you Kill an Enemy"
     },
     {
       "id": 21,
@@ -48396,36 +48077,36 @@
       "description": "+{0} to Maximum Damage"
     },
     {
-      "id": 119,
-      "values": [
-        100
-      ],
-      "name": "item_tohit_percent",
-      "description": "{0}% Bonus to Attack Rating"
-    },
-    {
-      "id": 135,
+      "id": 142,
       "values": [
         25
       ],
-      "name": "item_openwounds",
-      "description": "+{0}% Chance of Open Wounds"
+      "name": "item_absorbfire_percent",
+      "description": "Fire Absorb +{0}%"
     },
     {
-      "id": 136,
+      "id": 144,
       "values": [
         25
       ],
-      "name": "item_crushingblow",
-      "description": "+{0}% Chance of Crushing Blow"
+      "name": "item_absorblight_percent",
+      "description": "Lightning Absorb +{0}%"
     },
     {
-      "id": 141,
+      "id": 148,
       "values": [
         25
       ],
-      "name": "item_deadlystrike",
-      "description": "+{0}% Deadly Strike"
+      "name": "item_absorbcold_percent",
+      "description": "Cold Absorb +{0}%"
+    },
+    {
+      "id": 138,
+      "values": [
+        5
+      ],
+      "name": "item_manaafterkill",
+      "description": "+{0} to Mana after each Kill"
     }
   ]
 }

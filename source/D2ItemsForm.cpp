@@ -230,6 +230,24 @@ namespace
         AlphaMergeImage(pDC, image, overlay, rect, center, 0);
     }
 
+    HCURSOR CreateItemCursor(CBitmap& xOrMask)
+    {
+        // Create the "XOr" mask
+        BITMAP bmp;
+        xOrMask.GetBitmap(&bmp);
+        CBitmap andMask;
+        andMask.CreateBitmap(bmp.bmWidth, bmp.bmHeight, 1, 1, NULL);
+
+        // Create an icon
+        ICONINFO iconInfo;
+        iconInfo.fIcon = TRUE;
+        iconInfo.xHotspot = 0;
+        iconInfo.yHotspot = 0;
+        iconInfo.hbmMask = andMask;
+        iconInfo.hbmColor = xOrMask;
+        return ::CreateIconIndirect(&iconInfo);
+    }
+
     bool CalcSocketRects(const d2ce::Item& item, CBitmap& itemImage, std::deque<CRect>& slotRectMap)
     {
         slotRectMap.clear();
@@ -289,6 +307,35 @@ namespace
             }
         }
 
+        // add rects in order of insertion
+        std::vector<size_t> socketOrder;
+        switch (numSlots)
+        {
+        case 1:
+            socketOrder = { 0 };
+            break;
+
+        case 2:
+            socketOrder = { 0, 1 };
+            break;
+
+        case 3:
+            socketOrder = { 0, 1, 2 };
+            break;
+
+        case 4:
+            socketOrder = { 0, 3, 2, 1 };
+            break;
+
+        case 5:
+            socketOrder = { 2, 0, 4, 3, 1 };
+            break;
+
+        case 6:
+            socketOrder = { 0, 2, 4, 1, 3, 5 };
+            break;
+        }
+
         if (numSlots <= 4)
         {
             if (dimension.Height >= numSlots)
@@ -307,23 +354,38 @@ namespace
             }
             else // 3 or 4 slots with item being 2 or 3 slots high
             {
-                CSize slotGridSize((dimension.Width * slotSize.cx)/2, (dimension.Height * slotSize.cy) / 2);
+                std::uint16_t div = std::uint16_t((numSlots + 1) / 2);
+                CSize slotGridSize((dimension.Width * slotSize.cx) / 2, (dimension.Height * slotSize.cy) / div);
                 CSize slotGridOffset((slotGridSize.cx - slotSize.cx) / 2, (slotGridSize.cy - slotSize.cy) / 2);
                 CRect slotRect;
-                slotRect.top = slotGridOffset.cy;
-                slotRect.bottom = slotRect.top + slotSize.cy;
-                for (size_t i = 0; i < numSlots - 1; ++i)
+                size_t idx = 0;
+                size_t idy = 0;
+
+                for (auto& i : socketOrder)
                 {
-                    slotRect.left = LONG(slotGridSize.cx * i + slotGridOffset.cx);
+                    idx = i % 2;
+                    idy = i / 2;
+                    if (numSlots == 3 && i >= 2)
+                    {
+                        idx = (i + 1) % 2;
+                        idy = (i + 1) / 2;
+                        if (i == 2)
+                        {
+                            slotRect.top = LONG(slotGridSize.cy * idy + slotGridOffset.cy);
+                            slotRect.bottom = slotRect.top + slotSize.cy;
+                            slotRect.left = ((dimension.Width - 1) * slotSize.cx) / 2;
+                            slotRect.right = slotRect.left + slotSize.cx;
+                            slotRectMap.push_back(slotRect);
+                            continue;
+                        }
+                    }
+
+                    slotRect.top = LONG(slotGridSize.cy * idy + slotGridOffset.cy);
+                    slotRect.bottom = slotRect.top + slotSize.cy;
+                    slotRect.left = LONG(slotGridSize.cx * idx + slotGridOffset.cx);
                     slotRect.right = slotRect.left + slotSize.cx;
                     slotRectMap.push_back(slotRect);
                 }
-
-                slotRect.top = slotGridSize.cy + slotGridOffset.cy;
-                slotRect.bottom = slotRect.top + slotSize.cy;
-                slotRect.left = ((dimension.Width - 1) * slotSize.cx) / 2;
-                slotRect.right = slotRect.left + slotSize.cx;
-                slotRectMap.push_back(slotRect);
             }
         }
         else if (numSlots <= 6 && dimension.Height >= (numSlots + 1) / 2)
@@ -334,7 +396,8 @@ namespace
             CRect slotRect;
             size_t idx = 0;
             size_t idy = 0;
-            for (size_t i = 0; i < numSlots; ++i)
+
+            for (auto& i : socketOrder)
             {
                 idx = i % 2;
                 idy = i / 2;
@@ -431,7 +494,7 @@ namespace
         return true;
     }
    
-    bool CalcItemRect(const d2ce::Item& item, CStatic& invBox, CRect& rect, CSize& slotSize, UINT id)
+    bool CalcItemRect(const d2ce::Item& item, const CStatic& invBox, CRect& rect, CSize& slotSize, UINT id)
     {
         CSize slots;
         switch (id)
@@ -439,31 +502,31 @@ namespace
         case IDC_INV_HEAD:
         case IDC_INV_CORPSE_HEAD:
         case IDC_INV_MERC_HEAD:
-        case IDC_INV_GLOVE:
-        case IDC_INV_CORPSE_GLOVE:
-        case IDC_INV_BOOTS:
-        case IDC_INV_CORPSE_BOOTS:
+        case IDC_INV_GLOVES:
+        case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_FEET:
+        case IDC_INV_CORPSE_FEET:
             slots = CSize(2, 2);
             break;
 
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
-        case IDC_INV_RING_RIGHT:
-        case IDC_INV_CORPSE_RING_RIGHT:
-        case IDC_INV_RING_LEFT:
-        case IDC_INV_CORPSE_RING_LEFT:
+        case IDC_INV_RIGHT_RING:
+        case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_LEFT_RING:
+        case IDC_INV_CORPSE_LEFT_RING:
             slots = CSize(1, 1);
             break;
 
-        case IDC_INV_HAND_RIGHT:
-        case IDC_INV_CORPSE_HAND_RIGHT:
-        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_RIGHT_ARM:
+        case IDC_INV_CORPSE_RIGHT_ARM:
+        case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_TORSO:
         case IDC_INV_CORPSE_TORSO:
         case IDC_INV_MERC_TORSO:
-        case IDC_INV_HAND_LEFT:
-        case IDC_INV_CORPSE_HAND_LEFT:
-        case IDC_INV_MERC_HAND_LEFT:
+        case IDC_INV_LEFT_ARM:
+        case IDC_INV_CORPSE_LEFT_ARM:
+        case IDC_INV_MERC_LEFT_ARM:
         case IDC_INV_GOLEM:
             slots = CSize(2, 4);
             break;
@@ -522,6 +585,160 @@ CD2EquippedItemStatic::CD2EquippedItemStatic()
 //---------------------------------------------------------------------------
 CD2EquippedItemStatic::~CD2EquippedItemStatic()
 {
+}
+//---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::CanPlaceItem(const d2ce::Item& item, CPoint /*point*/)
+{
+    std::optional<d2ce::Mercenary*> mercInfo;
+    switch (GetItemInventory())
+    {
+    case d2ce::EnumItemInventory::MERCENARY:
+        mercInfo = GetMercInfo();
+        if (mercInfo.has_value())
+        {
+            if (!mercInfo.value()->canEquipItem(item, GetEquippedId()))
+            {
+                auto pExistingItem = GetInvItem();
+                if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item, mercInfo.value()->getLevel()))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        return false; // wrong method called
+
+    case d2ce::EnumItemInventory::CORPSE: // only allowed to drag items out
+    case d2ce::EnumItemInventory::GOLEM:
+        return (GetInvItem() == &item) ? true : false;
+    }
+
+    auto charStats = GetDisplayedCharStats();
+    if (charStats.has_value() && !item.canEquip(GetEquippedId()))
+    {
+        auto pExistingItem = GetInvItem();
+        if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item, charStats.value().Level))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    return CanPlaceItemWith(item);
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2EquippedItemStatic::PlaceItem(d2ce::Item& item, CPoint /*point*/, CBitmap& bitmap)
+{
+    if (GetInvItem() == &item)
+    {
+        // we haven't moved!
+        return nullptr;
+    }
+
+    std::optional<d2ce::Mercenary*> mercInfo;
+    auto equippId = GetEquippedId();
+    switch (GetItemInventory())
+    {
+    case d2ce::EnumItemInventory::MERCENARY:
+        mercInfo = GetMercInfo();
+        if (mercInfo.has_value())
+        {
+            if (!mercInfo.value()->canEquipItem(item, equippId))
+            {
+                auto pExistingItem = GetInvItem();
+                if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item, mercInfo.value()->getLevel()))
+                {
+                    return &item; // failed to place item
+                }
+            }
+            else
+            {
+                equippId = mercInfo.value()->verifyEquippedId(item, equippId);
+                if (equippId == d2ce::EnumEquippedId::NONE)
+                {
+                    // should not happend
+                    return &item; // failed to place item
+                }
+            }
+
+            const d2ce::Item* pRemovedItem = nullptr;
+            if (!SetItemLocation(item, pRemovedItem))
+            {
+                return &item; // did not place
+            }
+
+            if (pRemovedItem != nullptr)
+            {
+                GetScaledItemBitmap(*pRemovedItem, bitmap);
+            }
+
+            return pRemovedItem;
+        }
+        return nullptr;
+
+    case d2ce::EnumItemInventory::CORPSE: // only allowed to drag items out
+    case d2ce::EnumItemInventory::GOLEM:
+        return &item; // did not place
+    }
+
+    auto charClass = GetCharClass();
+    if (charClass.has_value())
+    {
+        auto charStats = GetDisplayedCharStats();
+        if (charStats.has_value())
+        {
+            if (!item.canEquip(equippId, charClass.value(), charStats.value()))
+            {
+                auto pExistingItem = GetInvItem();
+                if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item, charStats.value().Level))
+                {
+                    return &item; // failed to place item
+                }
+            }
+        }
+        else if(!item.canEquip(equippId, charClass.value()))
+        {
+            auto pExistingItem = GetInvItem();
+            if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item))
+            {
+                return &item; // failed to place item
+            }
+        }
+    }
+    else if (!item.canEquip(equippId))
+    {
+        auto pExistingItem = GetInvItem();
+        if ((pExistingItem == nullptr) || !pExistingItem->canSocketItem(item))
+        {
+            return &item; // failed to place item
+        }
+    }
+
+    const d2ce::Item* pRemovedItem = nullptr;
+    if (!SetItemLocation(item, pRemovedItem))
+    {
+        return &item; // did not place
+    }
+
+    if (pRemovedItem != nullptr)
+    {
+        GetScaledItemBitmap(*pRemovedItem, bitmap);
+    }
+
+    return pRemovedItem;
+}
+//---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::GetInvBitmap(CBitmap& image, CPoint point, TOOLINFO* pTI) const
+{
+    auto pItem = InvHitTest(point, pTI);
+    if (pItem == nullptr)
+    {
+        return false;
+    }
+
+    return GetScaledItemBitmap(*pItem, image);
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2EquippedItemStatic::GetInvItem() const
@@ -587,12 +804,6 @@ void CD2EquippedItemStatic::SetUseAltImage(BOOL flag)
     UseAltImage = flag;
     Invalidate();
 }
-//---------------------------------------------------------------------------
-void CD2EquippedItemStatic::Redraw()
-{
-    InitBackgroundImage();
-    RedrawWindow();
-}
 
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2EquippedItemStatic, CStatic)
@@ -616,40 +827,39 @@ void CD2EquippedItemStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 //---------------------------------------------------------------------------
 BOOL CD2EquippedItemStatic::InitBackgroundImage()
 {
-    if (!LoadBackgroundImage())
+    if (!LoadBackgroundImage(FALSE))
     {
         return FALSE;
     }
 
-    if (InvItemPtr != nullptr)
+    switch (GetDlgCtrlID())
     {
-        CBitmap bitmap;
-        if (GetItemBitmap(*InvItemPtr, bitmap))
-        {
-            LoadItemImage(*InvItemPtr, bitmap);
-        }
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
+        break;
+
+    default:
+        return TRUE;
     }
 
-    LoadBackgroundImage(TRUE);
-    if (InvAltItemPtr != nullptr)
-    {
-        CBitmap bitmap;
-        if (GetItemBitmap(*InvAltItemPtr, bitmap))
-        {
-            LoadItemImage(*InvAltItemPtr, bitmap, TRUE);
-        }
-    }
-    return TRUE;
+    return LoadBackgroundImage(TRUE);
+}
+//---------------------------------------------------------------------------
+BOOL CD2EquippedItemStatic::LoadBackgroundImage()
+{
+    return LoadBackgroundImage(UseAltImage);
 }
 //---------------------------------------------------------------------------
 BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
 {
     switch (GetDlgCtrlID())
     {
-    case IDC_INV_HAND_RIGHT:
-    case IDC_INV_CORPSE_HAND_RIGHT:
-    case IDC_INV_HAND_LEFT:
-    case IDC_INV_CORPSE_HAND_LEFT:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
         break;
 
     default:
@@ -672,17 +882,17 @@ BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
     case IDC_INV_HEAD:
     case IDC_INV_CORPSE_HEAD:
     case IDC_INV_MERC_HEAD:
-        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVE_0_1)));
+        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVES_0_1)));
         break;
 
-    case IDC_INV_GLOVE:
-    case IDC_INV_CORPSE_GLOVE:
-        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVE_0_0)));
+    case IDC_INV_GLOVES:
+    case IDC_INV_CORPSE_GLOVES:
+        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVES_0_0)));
         break;
 
-    case IDC_INV_BOOTS:
-    case IDC_INV_CORPSE_BOOTS:
-        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_BOOTS)));
+    case IDC_INV_FEET:
+    case IDC_INV_CORPSE_FEET:
+        invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_FEET)));
         break;
 
     case IDC_INV_NECK:
@@ -690,19 +900,19 @@ BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_RING_AMULET_0_0)));
         break;
 
-    case IDC_INV_RING_RIGHT:
-    case IDC_INV_CORPSE_RING_RIGHT:
-    case IDC_INV_RING_LEFT:
-    case IDC_INV_CORPSE_RING_LEFT:
+    case IDC_INV_RIGHT_RING:
+    case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_CORPSE_LEFT_RING:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_RING_AMULET_0_1)));
         break;
 
-    case IDC_INV_HAND_RIGHT:
-    case IDC_INV_CORPSE_HAND_RIGHT:
-    case IDC_INV_HAND_LEFT:
-    case IDC_INV_CORPSE_HAND_LEFT:
-    case IDC_INV_MERC_HAND_RIGHT:
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_MERC_RIGHT_ARM:
+    case IDC_INV_MERC_LEFT_ARM:
     case IDC_INV_GOLEM:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_WEAPONS)));
         break;
@@ -730,56 +940,112 @@ BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
     return (invImage.GetSafeHandle() != 0) ? TRUE : FALSE;
 }
 //---------------------------------------------------------------------------
-BOOL CD2EquippedItemStatic::LoadItemImage(const d2ce::Item& item, CBitmap& bitmap, BOOL isAltImage)
+BOOL CD2EquippedItemStatic::LoadItemImage()
 {
+    InvItemPtr = nullptr;
+    if (InvImage.GetSafeHandle() != 0)
+    {
+        InvImage.DeleteObject();
+    }
+
+    InvAltItemPtr = nullptr;
+    if (InvAltImage.GetSafeHandle() != 0)
+    {
+        InvAltImage.DeleteObject();
+    }
+
+    if (!LoadBackgroundImage(FALSE))
+    {
+        return FALSE;
+    }
+
+    InvItemPtr = GetInvEquippedItem(FALSE);
+    if (InvItemPtr != nullptr)
+    {
+        CBitmap bitmap;
+        if (GetItemBitmap(*InvItemPtr, bitmap))
+        {
+            CRect rect;
+            CSize slotSize;
+            if (!CalcItemRect(*InvItemPtr, *this, rect, slotSize, GetDlgCtrlID()))
+            {
+                Invalidate();
+                return FALSE;
+            }
+
+            auto pDC = GetParent()->GetDC();
+            ScaleImage(pDC, bitmap, rect);
+            AddSocketsToImage(pDC, *InvItemPtr, bitmap, GetCallback());
+
+            MergeImage(pDC, InvImage, bitmap, rect, true);
+        }
+    }
+
     switch (GetDlgCtrlID())
     {
-    case IDC_INV_HAND_RIGHT:
-    case IDC_INV_CORPSE_HAND_RIGHT:
-    case IDC_INV_HAND_LEFT:
-    case IDC_INV_CORPSE_HAND_LEFT:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
         break;
 
     default:
-        if (isAltImage)
-        {
-            // does not support Alternative image
-            InvAltItemPtr = nullptr;
-        }
-        break;
+        Invalidate();
+        return TRUE;
     }
 
-    auto& invItemPtr = isAltImage ? InvAltItemPtr : InvItemPtr;
-    auto& invImage = isAltImage ? InvAltImage : InvImage;
-
-    invItemPtr = nullptr;
-    if (invImage.GetSafeHandle() == 0)
+    // load alternate image
+    if (!LoadBackgroundImage(TRUE))
     {
-        if (!LoadBackgroundImage(isAltImage))
-        {
-            return FALSE;
-        }
-    }
-
-    if (bitmap.GetSafeHandle() == 0)
-    {
+        Invalidate();
         return FALSE;
     }
 
-    CRect rect;
-    CSize slotSize;
-    if (!CalcItemRect(item, *this, rect, slotSize, GetDlgCtrlID()))
+    InvAltItemPtr = GetInvEquippedItem(TRUE);
+    if (InvAltItemPtr != nullptr)
     {
-        return FALSE;
+        CBitmap bitmap;
+        if (GetItemBitmap(*InvAltItemPtr, bitmap))
+        {
+            CRect rect;
+            CSize slotSize;
+            if (!CalcItemRect(*InvAltItemPtr, *this, rect, slotSize, GetDlgCtrlID()))
+            {
+                Invalidate();
+                return FALSE;
+            }
+
+            auto pDC = GetParent()->GetDC();
+            ScaleImage(pDC, bitmap, rect);
+            AddSocketsToImage(pDC, *InvAltItemPtr, bitmap, GetCallback());
+
+            MergeImage(pDC, InvAltImage, bitmap, rect, true);
+        }
     }
 
-    invItemPtr = &item;
-    auto pDC = GetParent()->GetDC();
-    ScaleImage(pDC, bitmap, rect);
-    AddSocketsToImage(pDC, item, bitmap, GetCallback());
-
-    MergeImage(pDC, invImage, bitmap, rect, true);
+    Invalidate();
     return TRUE;
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2EquippedItemStatic::GetInvEquippedItem() const
+{
+    return GetInvEquippedItem(UseAltImage);
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2EquippedItemStatic::GetInvEquippedItem(BOOL isAltImage) const
+{
+    return GetInvEquippedItem(GetEquippedId(isAltImage));
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2EquippedItemStatic::GetInvEquippedItem(d2ce::EnumEquippedId equippedId) const
+{
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return false;
+    }
+
+    return pCallback->getInvEquippedItem(equippedId, GetItemInventory());
 }
 //---------------------------------------------------------------------------
 bool CD2EquippedItemStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
@@ -793,6 +1059,37 @@ bool CD2EquippedItemStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitma
     return pCallback->getItemBitmap(item, bitmap);
 }
 //---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::GetScaledItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
+{
+    if (!GetItemBitmap(item, bitmap))
+    {
+        return false;
+    }
+
+    CRect rect;
+    CSize slotSize;
+    if (!CalcItemRect(item, *this, rect, slotSize, GetDlgCtrlID()))
+    {
+        return false;
+    }
+
+    auto pDC = GetParent()->GetDC();
+    ScaleImage(pDC, bitmap, rect);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::SetItemLocation(d2ce::Item& item, const d2ce::Item* &pRemovedItem) const
+{
+    pRemovedItem = nullptr;
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return false;
+    }
+
+    return pCallback->setItemLocation(item, GetEquippedId(), GetItemInventory(), pRemovedItem);
+}
+//---------------------------------------------------------------------------
 CD2ItemsGridCallback* CD2EquippedItemStatic::GetCallback() const
 {
     CD2ItemsGridCallback* pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
@@ -802,6 +1099,222 @@ CD2ItemsGridCallback* CD2EquippedItemStatic::GetCallback() const
     }
 
     return pCallback;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumEquippedId CD2EquippedItemStatic::GetEquippedId() const
+{
+    return GetEquippedId(UseAltImage);
+}
+//---------------------------------------------------------------------------
+d2ce::EnumEquippedId CD2EquippedItemStatic::GetEquippedId(BOOL isAltImage) const
+{
+    switch (GetDlgCtrlID())
+    {
+    case IDC_INV_HEAD:
+    case IDC_INV_CORPSE_HEAD:
+    case IDC_INV_MERC_HEAD:
+        return d2ce::EnumEquippedId::HEAD;
+
+    case IDC_INV_NECK:
+    case IDC_INV_CORPSE_NECK:
+        return d2ce::EnumEquippedId::NECK;
+
+    case IDC_INV_RIGHT_ARM:
+        return isAltImage ? d2ce::EnumEquippedId::ALT_RIGHT_ARM : d2ce::EnumEquippedId::RIGHT_ARM;
+        
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_MERC_RIGHT_ARM:
+        return d2ce::EnumEquippedId::RIGHT_ARM;
+
+    case IDC_INV_TORSO:
+    case IDC_INV_CORPSE_TORSO:
+    case IDC_INV_MERC_TORSO:
+        return d2ce::EnumEquippedId::TORSO;
+
+    case IDC_INV_LEFT_ARM:
+        return isAltImage ? d2ce::EnumEquippedId::ALT_LEFT_ARM : d2ce::EnumEquippedId::LEFT_ARM;
+
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_MERC_LEFT_ARM:
+        return d2ce::EnumEquippedId::LEFT_ARM;
+
+    case IDC_INV_GLOVES:
+    case IDC_INV_CORPSE_GLOVES:
+        return d2ce::EnumEquippedId::GLOVES;
+
+    case IDC_INV_RIGHT_RING:
+    case IDC_INV_CORPSE_RIGHT_RING:
+        return d2ce::EnumEquippedId::RIGHT_RING;
+
+    case IDC_INV_BELT:
+    case IDC_INV_CORPSE_BELT:
+        return d2ce::EnumEquippedId::BELT;
+
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_CORPSE_LEFT_RING:
+        return d2ce::EnumEquippedId::LEFT_RING;
+
+    case IDC_INV_FEET:
+    case IDC_INV_CORPSE_FEET:
+        return d2ce::EnumEquippedId::FEET;
+    }
+
+    return d2ce::EnumEquippedId::NONE;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumItemInventory CD2EquippedItemStatic::GetItemInventory() const
+{
+    switch (GetDlgCtrlID())
+    {
+    case IDC_INV_CORPSE_HEAD:
+    case IDC_INV_CORPSE_NECK:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_CORPSE_TORSO:
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_CORPSE_BELT:
+    case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_CORPSE_FEET:
+        return d2ce::EnumItemInventory::CORPSE;
+
+    case IDC_INV_MERC_HEAD:
+    case IDC_INV_MERC_RIGHT_ARM:
+    case IDC_INV_MERC_TORSO:
+    case IDC_INV_MERC_LEFT_ARM:
+        return d2ce::EnumItemInventory::MERCENARY;
+
+    case IDC_INV_GOLEM:
+        return d2ce::EnumItemInventory::GOLEM;
+
+    case IDC_INV_HEAD:
+    case IDC_INV_NECK:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_TORSO:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_GLOVES:
+    case IDC_INV_RIGHT_RING:
+    case IDC_INV_BELT:
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_FEET:
+        return d2ce::EnumItemInventory::PLAYER;
+    }
+
+    return d2ce::EnumItemInventory::UNKNOWN;
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::CharStats> CD2EquippedItemStatic::GetDisplayedCharStats() const
+{
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return std::optional<d2ce::CharStats>();
+    }
+
+    return pCallback->getDisplayedCharStats();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::Mercenary*> CD2EquippedItemStatic::GetMercInfo() const
+{
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return std::optional<d2ce::Mercenary*>();
+    }
+
+    return pCallback->getMercInfo();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::EnumCharClass> CD2EquippedItemStatic::GetCharClass() const
+{
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    std::optional<d2ce::Mercenary*> mercInfo;
+    switch (GetItemInventory())
+    {
+    case d2ce::EnumItemInventory::MERCENARY:
+        mercInfo = GetMercInfo();
+        if (mercInfo.has_value())
+        {
+            return mercInfo.value()->getEquivClass();
+        }
+        break;
+
+    case d2ce::EnumItemInventory::PLAYER:
+        if (pCallback != nullptr)
+        {
+            return pCallback->getCharClass();
+        }
+        break;
+    }
+
+    return std::optional<d2ce::EnumCharClass>();
+}
+//---------------------------------------------------------------------------
+bool CD2EquippedItemStatic::CanPlaceItemWith(const d2ce::Item& item) const
+{
+    auto equippedId = GetEquippedId();
+    auto charClass = GetCharClass();
+    if (charClass.has_value())
+    {
+        auto charStats = GetDisplayedCharStats();
+        if (charStats.has_value())
+        {
+            if (!item.canEquip(equippedId, charClass.value(), charStats.value()))
+            {
+                return false;
+            }
+        }
+        else if (!item.canEquip(equippedId, charClass.value()))
+        {
+            return false;
+        }
+    }
+    else if (!item.canEquip(equippedId))
+    {
+        return false;
+    }
+
+    auto otherEquippedId = equippedId;
+    switch (equippedId)
+    {
+    case d2ce::EnumEquippedId::LEFT_ARM:
+        otherEquippedId = d2ce::EnumEquippedId::RIGHT_ARM;
+        break;
+
+    case d2ce::EnumEquippedId::ALT_LEFT_ARM:
+        otherEquippedId = d2ce::EnumEquippedId::ALT_RIGHT_ARM;
+        break;
+
+    case d2ce::EnumEquippedId::RIGHT_ARM:
+        otherEquippedId = d2ce::EnumEquippedId::LEFT_ARM;
+        break;
+
+    case d2ce::EnumEquippedId::ALT_RIGHT_ARM:
+        otherEquippedId = d2ce::EnumEquippedId::ALT_LEFT_ARM;
+        break;
+
+    default:
+        return true;
+    }
+
+    if (charClass.has_value())
+    {
+        return true;
+    }
+
+    auto pItem = GetInvEquippedItem(otherEquippedId);
+    if ((pItem == nullptr) || (pItem == &item))
+    {
+        return true;
+    }
+
+    auto charStats = GetDisplayedCharStats();
+    if (charStats.has_value())
+    {
+        return item.canEquipWith(*pItem, charClass.value(), charStats.value());
+    }
+
+    return item.canEquipWith(*pItem, charClass.value());
 }
 //---------------------------------------------------------------------------
 BOOL CD2EquippedItemStatic::OnEraseBkgnd(CDC* pDC)
@@ -854,9 +1367,255 @@ CD2ItemsGridStatic::~CD2ItemsGridStatic()
 {
 }
 //---------------------------------------------------------------------------
+bool CD2ItemsGridStatic::CanPlaceItem(const d2ce::Item& item, CPoint point)
+{
+    d2ce::ItemDimensions dimension;
+    if (!item.getDimensions(dimension))
+    {
+        return false;
+    }
+
+    auto id = GetDlgCtrlID();
+    switch (id)
+    {
+    case IDC_INV_BELT_GRID:
+        if (!item.isBeltable())
+        {
+            return false;
+        }
+        break;
+
+    case IDC_INV_CUBE_GRID:
+        if (item.isHoradricCube())
+        {
+            return false;
+        }
+        break;
+    }
+
+    auto pItem = InvHitTest(point);
+    if (pItem != nullptr)
+    {
+        if (pItem == &item)
+        {
+            return true;
+        }
+
+        d2ce::ItemDimensions otherDimension;
+        if (!pItem->getDimensions(otherDimension))
+        {
+            return false;
+        }
+
+        if ((otherDimension.Width >= dimension.Width) && (otherDimension.Height >= dimension.Height))
+        {
+            return true;
+        }
+    }
+
+    CRect invBox;
+    GetWindowRect(&invBox);
+    GetParent()->ScreenToClient(&invBox);
+    if (!PtInRect(&invBox, point))
+    {
+        return false;
+    }
+
+    // check boundaries
+    auto xStart = point.x - invBox.left;
+    if ((xStart < 0) || (xStart > invBox.Width()))
+    {
+        return false;
+    }
+
+    auto yStart = point.y - invBox.top;
+    if ((yStart < 0) || (yStart > invBox.Height()))
+    {
+        return false;
+    }
+
+    // the point of the cursor is the middle of the item, so move the edge to the closest slot
+    xStart -= (SlotSize.cx * (dimension.Width - 1)) / 2;
+    if (xStart < 0)
+    {
+        return false;
+    }
+    point.x = xStart / SlotSize.cx;
+
+    yStart -= (SlotSize.cy * (dimension.Height - 1)) / 2;
+    if (yStart < 0)
+    {
+        return false;
+    }
+
+    point.y = yStart / SlotSize.cy;
+    auto rect = GetItemRectAtGridPos(item, point);
+    if (rect.IsRectEmpty())
+    {
+        return false;
+    }
+
+    // Convert to a grid position rect
+    rect.top /= SlotSize.cy;
+    rect.bottom /= SlotSize.cy;
+    rect.left /= SlotSize.cx;
+    rect.right /= SlotSize.cx;
+
+    size_t row = 0;
+    const d2ce::Item* pItem2 = nullptr;
+    for (size_t y = rect.top; y < rect.bottom; ++y)
+    {
+        row = y * (size_t)GridBoxSize.cx;
+        for (size_t x = rect.left; x < rect.right; ++x)
+        {
+            pItem = InvGridItemIndex[row + x];
+            if (pItem != nullptr && pItem != &item)
+            {
+                if (pItem2 != nullptr)
+                {
+                    if (pItem != pItem2)
+                    {
+                        // allowed to swap with one item only
+                        return false;
+                    }
+                }
+                else
+                {
+                    pItem2 = pItem;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemsGridStatic::PlaceItem(d2ce::Item& item, CPoint point, CBitmap& bitmap)
+{
+    auto* existingItem = const_cast<d2ce::Item*>(InvHitTest(point));
+    d2ce::ItemDimensions dimension;
+    if (!item.getDimensions(dimension))
+    {
+        return &item; // did not place
+    }
+
+    auto id = GetDlgCtrlID();
+    switch (id)
+    {
+    case IDC_INV_BELT_GRID:
+        if (!item.isBeltable())
+        {
+            return &item; // did not place
+        }
+        break;
+
+    case IDC_INV_CUBE_GRID:
+        if (item.isHoradricCube())
+        {
+            return &item; // did not place
+        }
+        break;
+    }
+
+    CRect invBox;
+    GetWindowRect(&invBox);
+    GetParent()->ScreenToClient(&invBox);
+    if (!PtInRect(&invBox, point))
+    {
+        return false;
+    }
+
+    // check boundaries
+    auto xStart = point.x - invBox.left;
+    if ((xStart < 0) || (xStart > invBox.Width()))
+    {
+        return false;
+    }
+
+    auto yStart = point.y - invBox.top;
+    if ((yStart < 0) || (yStart > invBox.Height()))
+    {
+        return false;
+    }
+
+    // the point of the cursor is the middle of the item, so move the edge to the closest slot
+    xStart -= (SlotSize.cx * (dimension.Width - 1)) / 2;
+    if (xStart < 0)
+    {
+        return false;
+    }
+    point.x = xStart / SlotSize.cx;
+
+    yStart -= (SlotSize.cy * (dimension.Height - 1)) / 2;
+    if (yStart < 0)
+    {
+        return false;
+    }
+
+    point.y = yStart / SlotSize.cy;
+
+    d2ce::EnumItemLocation location = d2ce::EnumItemLocation::STORED;
+    d2ce::EnumAltItemLocation altLocation = d2ce::EnumAltItemLocation::UNKNOWN;
+    switch (id)
+    {
+    case IDC_INV_GRID:
+        altLocation = d2ce::EnumAltItemLocation::INVENTORY;
+        break;
+
+    case IDC_INV_BELT_GRID:
+        location = d2ce::EnumItemLocation::BELT;
+        break;
+
+    case IDC_INV_STASH_GRID:
+        altLocation = d2ce::EnumAltItemLocation::STASH;
+        break;
+
+    case IDC_INV_CUBE_GRID:
+        altLocation = d2ce::EnumAltItemLocation::HORADRIC_CUBE;
+        break;
+
+    default:
+        return &item; // did not place
+    }
+
+    if (existingItem == &item)
+    {
+        if ((item.getPositionX() == std::uint16_t(point.x)) &&
+            (item.getPositionY() == std::uint16_t(point.y)))
+        {
+            // nothing to do
+            return nullptr;
+        }
+    }
+
+    const d2ce::Item* pRemovedItem = nullptr;
+    if (!SetItemLocation(item, location, altLocation, std::uint16_t(point.x), std::uint16_t(point.y), d2ce::EnumItemInventory::PLAYER, pRemovedItem))
+    {
+        return &item; // did not place
+    }
+
+    if (pRemovedItem != nullptr)
+    {
+        GetScaledItemBitmap(*pRemovedItem, bitmap);
+    }
+
+    return pRemovedItem;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsGridStatic::GetInvBitmap(CBitmap& image, CPoint point, TOOLINFO* pTI) const
+{
+    auto pItem = InvHitTest(point, pTI);
+    if (pItem == nullptr)
+    {
+        return false;
+    }
+
+    return GetScaledItemBitmap(*pItem, image);
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsGridStatic::GetInvItem(UINT offset) const
 {
-    if ((InvImage.GetSafeHandle() == 0) || (offset >= UINT(GridBoxSize.cx * GridBoxSize.cy)))
+    if ((InvImage.GetSafeHandle() == 0) || (offset >= InvGridItemIndex.size()))
     {
         return nullptr;
     }
@@ -879,19 +1638,20 @@ const d2ce::Item* CD2ItemsGridStatic::InvHitTest(CPoint point, TOOLINFO* pTI) co
         return nullptr;
     }
 
-    point.x = (point.x - invBox.left) / SlotSize.cx;
-    if (point.x < 0 || point.x > GridBoxSize.cx)
+    CPoint hitTestPoint = point;
+    hitTestPoint.x = (point.x - invBox.left) / SlotSize.cx;
+    if (hitTestPoint.x < 0 || hitTestPoint.x > GridBoxSize.cx)
     {
         return nullptr;
     }
 
-    point.y = (point.y - invBox.top) / SlotSize.cy;
-    if (point.y < 0 || point.y > GridBoxSize.cy)
+    hitTestPoint.y = (point.y - invBox.top) / SlotSize.cy;
+    if (hitTestPoint.y < 0 || hitTestPoint.y > GridBoxSize.cy)
     {
         return nullptr;
     }
 
-    UINT offset = (UINT)point.y * (UINT)GridBoxSize.cx + (UINT)point.x;
+    UINT offset = (UINT)hitTestPoint.y * (UINT)GridBoxSize.cx + (UINT)hitTestPoint.x;
     auto pItem = GetInvItem(offset);
     if (pItem != nullptr && pTI != nullptr)
     {
@@ -1048,6 +1808,14 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
 BOOL CD2ItemsGridStatic::LoadItemImages()
 {
     InvGridItemIndex.clear();
+    if (GetDlgCtrlID() == IDC_INV_BELT_GRID) // Belt
+    {
+        if (InvGridImage.GetSafeHandle() != 0)
+        {
+            InvGridImage.DeleteObject();
+        }
+    }
+
     if (InvGridImage.GetSafeHandle() == 0)
     {
         if (!LoadBackgroundImage())
@@ -1084,6 +1852,12 @@ BOOL CD2ItemsGridStatic::LoadItemImages()
     CRect rect;
     for (const auto& item : GetInvGridItems())
     {
+        if (item.get().getLocation() == d2ce::EnumItemLocation::BUFFER)
+        {
+            // don't draw items in the buffer
+            continue;
+        }
+
         CBitmap bitmap;
         if (!GetItemBitmap(item.get(), bitmap))
         {
@@ -1131,7 +1905,7 @@ CSize CD2ItemsGridStatic::GetInvGridSize() const
         return CSize(0, 0);
     }
 
-    return pCallback->getInvGridSize(GetDlgCtrlID());
+    return pCallback->getInvGridSize(GetLocation(), GetAltPositionId());
 }
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsGridStatic::GetInvGridItems() const
@@ -1143,7 +1917,7 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsGridStatic::GetIn
         return s_empty;
     }
 
-    return pCallback->getInvGridItems(GetDlgCtrlID());
+    return pCallback->getInvGridItems(GetLocation(), GetAltPositionId());
 }
 //---------------------------------------------------------------------------
 bool CD2ItemsGridStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
@@ -1157,7 +1931,45 @@ bool CD2ItemsGridStatic::GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) 
     return pCallback->getItemBitmap(item, bitmap);
 }
 //---------------------------------------------------------------------------
+bool CD2ItemsGridStatic::GetScaledItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
+{
+    if (!GetItemBitmap(item, bitmap))
+    {
+        return false;
+    }
+
+    auto rect = GetInvRect(item);
+    if (rect.IsRectEmpty())
+    {
+        return false;
+    }
+
+    auto pDC = GetParent()->GetDC();
+    ScaleImage(pDC, bitmap, rect);
+    return true;
+}
+//---------------------------------------------------------------------------
 CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
+{
+    auto cx = item.getPositionX();
+    auto cy = item.getPositionY();
+    CPoint itemPos(cx, cy);
+    if (GetDlgCtrlID() == IDC_INV_BELT_GRID) // Belt
+    {
+        LONG row = cx / 4;
+        if (row >= GridBoxSize.cy)
+        {
+            // out of bounds
+            return CRect();
+        }
+
+        itemPos = CPoint(cx % 4, GridBoxSize.cy - (row + 1));
+    }
+
+    return GetItemRectAtGridPos(item, itemPos);
+}
+//---------------------------------------------------------------------------
+CRect CD2ItemsGridStatic::GetItemRectAtGridPos(const d2ce::Item& item, CPoint position) const
 {
     CRect rect;
     d2ce::ItemDimensions dimension;
@@ -1166,21 +1978,7 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
         return rect;
     }
 
-    auto cx = item.getPositionX();
-    auto cy = item.getPositionY();
-    CSize itemPos = CSize(cx, cy);
-    if (GetDlgCtrlID() == IDC_INV_BELT_GRID) // Belt
-    {
-        LONG row = cx / 4 + 1;
-        if( row > GridBoxSize.cy )
-        {
-            // out of bounds
-            return rect;
-        }
-
-        itemPos = CSize(cx % 4, GridBoxSize.cy - row);
-    }
-
+    CSize itemPos = CSize(position.x, position.y);
     if (((itemPos.cx + dimension.Width) > GridBoxSize.cx) || ((itemPos.cy + dimension.Height) > GridBoxSize.cy))
     {
         // out of bounds
@@ -1194,6 +1992,31 @@ CRect CD2ItemsGridStatic::GetInvRect(const d2ce::Item& item) const
     return rect;
 }
 //---------------------------------------------------------------------------
+bool CD2ItemsGridStatic::SetItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem) const
+{
+    pRemovedItem = nullptr;
+    CD2ItemsGridCallback* pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return false;
+    }
+
+    if (locationId == d2ce::EnumItemLocation::BELT)
+    {
+        if (positionY >= GridBoxSize.cy)
+        {
+            // out of bounds
+            return false;
+        }
+
+        auto cy = std::uint16_t(GridBoxSize.cy - (positionY + 1));
+        positionX += cy * 4;
+        positionY = 0;
+    }
+
+    return pCallback->setItemLocation(item, locationId, altPositionId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
 CD2ItemsGridCallback* CD2ItemsGridStatic::GetCallback() const
 {
     auto pCallback = dynamic_cast<CD2ItemsGridCallback*>(DYNAMIC_DOWNCAST(CD2ItemsForm, GetParent()));
@@ -1203,6 +2026,39 @@ CD2ItemsGridCallback* CD2ItemsGridStatic::GetCallback() const
     }
 
     return pCallback;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumItemLocation CD2ItemsGridStatic::GetLocation() const
+{
+    switch (GetDlgCtrlID())
+    {
+    case IDC_INV_GRID:
+    case IDC_INV_STASH_GRID:
+    case IDC_INV_CUBE_GRID:
+        return d2ce::EnumItemLocation::STORED;
+
+    case IDC_INV_BELT_GRID:
+        return d2ce::EnumItemLocation::BELT;
+    }
+
+    return d2ce::EnumItemLocation::BUFFER;
+}
+//---------------------------------------------------------------------------
+d2ce::EnumAltItemLocation CD2ItemsGridStatic::GetAltPositionId() const
+{
+    switch (GetDlgCtrlID())
+    {
+    case IDC_INV_GRID:
+        return d2ce::EnumAltItemLocation::INVENTORY;
+
+    case IDC_INV_STASH_GRID:
+        return d2ce::EnumAltItemLocation::STASH;
+
+    case IDC_INV_CUBE_GRID:
+        return d2ce::EnumAltItemLocation::HORADRIC_CUBE;
+    }
+
+    return d2ce::EnumAltItemLocation::UNKNOWN;
 }
 //---------------------------------------------------------------------------
 BOOL CD2ItemsGridStatic::OnEraseBkgnd(CDC* pDC)
@@ -1250,7 +2106,6 @@ CD2ItemsForm::CD2ItemsForm(CD2MainForm& form)
     : CDialogEx(CD2ItemsForm::IDD, (CWnd*)&form),
     MainForm(form), Merc(form.getMercenaryInfo()), IsWeaponII(form.getWeaponSet() != 0)
 {
-
 }
 //---------------------------------------------------------------------------
 CD2ItemsForm::~CD2ItemsForm()
@@ -1263,32 +2118,32 @@ void CD2ItemsForm::DoDataExchange(CDataExchange* pDX)
 
     DDX_Control(pDX, IDC_INV_HEAD, InvHeadBox);
     DDX_Control(pDX, IDC_INV_NECK, InvNeckBox);
-    DDX_Control(pDX, IDC_INV_HAND_RIGHT, InvHandRightBox);
+    DDX_Control(pDX, IDC_INV_RIGHT_ARM, InvHandRightBox);
     DDX_Control(pDX, IDC_INV_TORSO, InvTorsoBox);
-    DDX_Control(pDX, IDC_INV_HAND_LEFT, InvHandLeftBox);
-    DDX_Control(pDX, IDC_INV_GLOVE, InvGloveBox);
-    DDX_Control(pDX, IDC_INV_RING_RIGHT, InvRingRightBox);
+    DDX_Control(pDX, IDC_INV_LEFT_ARM, InvHandLeftBox);
+    DDX_Control(pDX, IDC_INV_GLOVES, InvGloveBox);
+    DDX_Control(pDX, IDC_INV_RIGHT_RING, InvRingRightBox);
     DDX_Control(pDX, IDC_INV_BELT, InvBeltBox);
-    DDX_Control(pDX, IDC_INV_RING_LEFT, InvRingLeftBox);
-    DDX_Control(pDX, IDC_INV_BOOTS, InvBootsBox);
+    DDX_Control(pDX, IDC_INV_LEFT_RING, InvRingLeftBox);
+    DDX_Control(pDX, IDC_INV_FEET, InvBootsBox);
 
     DDX_Control(pDX, IDC_CORPSE_GROUP, CorpseGroupBox);
     DDX_Control(pDX, IDC_INV_CORPSE_HEAD, InvCorpseHeadBox);
     DDX_Control(pDX, IDC_INV_CORPSE_NECK, InvCorpseNeckBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_HAND_RIGHT, InvCorpseHandRightBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_RIGHT_ARM, InvCorpseHandRightBox);
     DDX_Control(pDX, IDC_INV_CORPSE_TORSO, InvCorpseTorsoBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_HAND_LEFT, InvCorpseHandLeftBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_GLOVE, InvCorpseGloveBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_RING_RIGHT, InvCorpseRingRightBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_LEFT_ARM, InvCorpseHandLeftBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_GLOVES, InvCorpseGloveBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_RIGHT_RING, InvCorpseRingRightBox);
     DDX_Control(pDX, IDC_INV_CORPSE_BELT, InvCorpseBeltBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_RING_LEFT, InvCorpseRingLeftBox);
-    DDX_Control(pDX, IDC_INV_CORPSE_BOOTS, InvCorpseBootsBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_LEFT_RING, InvCorpseRingLeftBox);
+    DDX_Control(pDX, IDC_INV_CORPSE_FEET, InvCorpseBootsBox);
 
     DDX_Control(pDX, IDC_MERC_GROUP, MercGroupBox);
     DDX_Control(pDX, IDC_INV_MERC_HEAD, InvMercHeadBox);
-    DDX_Control(pDX, IDC_INV_MERC_HAND_RIGHT, InvMercHandRightBox);
+    DDX_Control(pDX, IDC_INV_MERC_RIGHT_ARM, InvMercHandRightBox);
     DDX_Control(pDX, IDC_INV_MERC_TORSO, InvMercTorsoBox);
-    DDX_Control(pDX, IDC_INV_MERC_HAND_LEFT, InvMercHandLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_LEFT_ARM, InvMercHandLeftBox);
 
     DDX_Control(pDX, IDC_GOLEM_GROUP, GolemGroupBox);
     DDX_Control(pDX, IDC_INV_GOLEM, InvGolemBox);
@@ -1340,10 +2195,14 @@ BOOL CD2ItemsForm::PreTranslateMessage(MSG* pMsg)
 
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
+    ON_WM_DESTROY()
     ON_BN_CLICKED(IDOK, &CD2ItemsForm::OnBnClickedOk)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
     ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
     ON_WM_CONTEXTMENU()
+    ON_WM_LBUTTONDOWN()
+    ON_WM_MOUSEMOVE()
+    ON_WM_SETCURSOR()
     ON_COMMAND(ID_ITEM_CONTEXT_FIX, &CD2ItemsForm::OnItemContextFix)
     ON_COMMAND(ID_ITEM_CONTEXT_FIXALLITEMS, &CD2ItemsForm::OnItemContextFixallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_LOAD, &CD2ItemsForm::OnItemContextLoad)
@@ -1354,9 +2213,12 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, &CD2ItemsForm::OnItemContextIndestructibleforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2ItemsForm::OnItemContextAddsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
-    ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
+    ON_COMMAND(ID_ITEM_CONTEXT_UNSOCKET, &CD2ItemsForm::OnItemContextUnsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2ItemsForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
+    ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2ItemsForm::OnItemContextApplyruneword)
+    ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2ItemsForm::OnItemContextImportitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2ItemsForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2ItemsForm::OnItemContextMaxsocketsforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2ItemsForm::OnItemContextUpgradeGems)
@@ -1378,122 +2240,16 @@ void CD2ItemsForm::LoadEquippedItemImages()
 {
     InvHandRightBox.SetUseAltImage(IsWeaponII);
     InvHandLeftBox.SetUseAltImage(IsWeaponII);
-
-    CSize invSlotSize;
-    for (const auto& item : MainForm.getEquippedItems())
-    {
-        CBitmap bitmap;
-        switch (item.get().getEquippedId())
-        {
-        case d2ce::EnumEquippedId::HEAD:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvHeadBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::NECK:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvNeckBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvHandRightBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::ALT_HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvHandRightBox.LoadItemImage(item.get(), bitmap, TRUE);
-            break;
-
-        case d2ce::EnumEquippedId::TORSO:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvTorsoBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_LEFT:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvHandLeftBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::ALT_HAND_LEFT:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvHandLeftBox.LoadItemImage(item.get(), bitmap, TRUE);
-            break;
-
-        case d2ce::EnumEquippedId::HANDS:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvGloveBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::RIGHT_FINGER:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvRingRightBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::WAIST:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvBeltBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::LEFT_FINGER:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvRingLeftBox.LoadItemImage(item.get(), bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::FEET:
-            if (!MainForm.getItemBitmap(item.get(), bitmap))
-            {
-                continue;
-            }
-
-            InvBootsBox.LoadItemImage(item.get(), bitmap);
-            break;
-        }
-    }
+    InvHeadBox.LoadItemImage();
+    InvNeckBox.LoadItemImage();
+    InvHandRightBox.LoadItemImage();
+    InvTorsoBox.LoadItemImage();
+    InvHandLeftBox.LoadItemImage();
+    InvGloveBox.LoadItemImage();
+    InvRingRightBox.LoadItemImage();
+    InvBeltBox.LoadItemImage();
+    InvRingLeftBox.LoadItemImage();
+    InvBootsBox.LoadItemImage();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::LoadCorpseItemImages()
@@ -1524,130 +2280,25 @@ void CD2ItemsForm::LoadCorpseItemImages()
     }
 
     InvCorpseHeadBox.ShowWindow(SW_SHOW);
+    InvCorpseHeadBox.LoadItemImage();
     InvCorpseNeckBox.ShowWindow(SW_SHOW);
+    InvCorpseNeckBox.LoadItemImage();
     InvCorpseHandRightBox.ShowWindow(SW_SHOW);
+    InvCorpseHandRightBox.LoadItemImage();
     InvCorpseTorsoBox.ShowWindow(SW_SHOW);
+    InvCorpseTorsoBox.LoadItemImage();
     InvCorpseHandLeftBox.ShowWindow(SW_SHOW);
+    InvCorpseHandLeftBox.LoadItemImage();
     InvCorpseGloveBox.ShowWindow(SW_SHOW);
+    InvCorpseGloveBox.LoadItemImage();
     InvCorpseRingRightBox.ShowWindow(SW_SHOW);
+    InvCorpseRingRightBox.LoadItemImage();
     InvCorpseBeltBox.ShowWindow(SW_SHOW);
+    InvCorpseBeltBox.LoadItemImage();
     InvCorpseRingLeftBox.ShowWindow(SW_SHOW);
+    InvCorpseRingLeftBox.LoadItemImage();
     InvCorpseBootsBox.ShowWindow(SW_SHOW);
-
-    for (const auto& item : corpseItems)
-    {
-        CBitmap bitmap;
-        switch (item.getEquippedId())
-        {
-        case d2ce::EnumEquippedId::HEAD:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseHeadBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::NECK:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseNeckBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseHandRightBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::ALT_HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseHandRightBox.LoadItemImage(item, bitmap, TRUE);
-            break;
-
-        case d2ce::EnumEquippedId::TORSO:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseTorsoBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_LEFT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseHandLeftBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::ALT_HAND_LEFT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseHandLeftBox.LoadItemImage(item, bitmap, TRUE);
-            break;
-
-        case d2ce::EnumEquippedId::HANDS:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseGloveBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::RIGHT_FINGER:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseRingRightBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::WAIST:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseBeltBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::LEFT_FINGER:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseRingLeftBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::FEET:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvCorpseBootsBox.LoadItemImage(item, bitmap);
-            break;
-        }
-    }
+    InvCorpseBootsBox.LoadItemImage();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::LoadMercItemImages()
@@ -1672,9 +2323,13 @@ void CD2ItemsForm::LoadMercItemImages()
     else
     {
         InvMercHeadBox.ShowWindow(SW_SHOW);
+        InvMercHeadBox.LoadItemImage();
         InvMercHandRightBox.ShowWindow(SW_SHOW);
+        InvMercHandRightBox.LoadItemImage();
         InvMercTorsoBox.ShowWindow(SW_SHOW);
+        InvMercTorsoBox.LoadItemImage();
         InvMercHandLeftBox.ShowWindow(SW_SHOW);
+        InvMercHandLeftBox.LoadItemImage();
     }
 
     auto uName = utf8::utf8to16(Merc.getClassName());
@@ -1697,49 +2352,6 @@ void CD2ItemsForm::LoadMercItemImages()
     }
 
     MercGroupBox.SetWindowText(windowText);
-
-    for (const auto& item : Merc.getItems())
-    {
-        CBitmap bitmap;
-        switch (item.getEquippedId())
-        {
-        case d2ce::EnumEquippedId::HEAD:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHeadBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHandRightBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::TORSO:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercTorsoBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_LEFT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHandLeftBox.LoadItemImage(item, bitmap);
-            break;
-        }
-    }
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::LoadGolemItemImages()
@@ -1752,24 +2364,12 @@ void CD2ItemsForm::LoadGolemItemImages()
     }
 
     InvGolemBox.ShowWindow(SW_SHOW);
+    InvGolemBox.LoadItemImage();
     std::string strValue;
     d2ce::LocalizationHelpers::GetStringTxtValue("IronGolem", strValue, "Iron Golem");
     auto uText = utf8::utf8to16(strValue);
     CString windowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
     GolemGroupBox.SetWindowText(windowText);
-    if (!MainForm.hasGolem())
-    {
-        return;
-    }
-
-    CBitmap bitmap;
-    auto& item = MainForm.getGolemItem();
-    if (!MainForm.getItemBitmap(item, bitmap))
-    {
-        return;
-    }
-
-    InvGolemBox.LoadItemImage(item, bitmap);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::LoadGridItemImages()
@@ -1795,7 +2395,6 @@ void CD2ItemsForm::LoadGridItemImages()
     }
     else
     {
-        CubeGroupBox.ShowWindow(SW_HIDE);
         InvCubeGrid.ShowWindow(SW_HIDE);
     }
 }
@@ -1951,99 +2550,212 @@ size_t CD2ItemsForm::upgradeRejuvenationPotions(d2ce::ItemFilter filter)
     return numUpgraded;
 }
 //---------------------------------------------------------------------------
-void CD2ItemsForm::refreshGrid(const d2ce::Item& item)
+bool CD2ItemsForm::refreshGrid(const d2ce::Item& item)
 {
-    auto itemAltLocation = d2ce::EnumAltItemLocation::UNKNOWN;
     auto itemLocation = item.getLocation();
     switch (itemLocation)
     {
     case d2ce::EnumItemLocation::STORED:
-        itemAltLocation = item.getAltPositionId();
-        break;
+        return refreshGrid(itemLocation, item.getAltPositionId());
 
     case d2ce::EnumItemLocation::EQUIPPED:
-        refreshEquipped(item);
-        return;
+        return refreshEquipped(item);
     }
 
-    refreshGrid(itemLocation, itemAltLocation);
+    return refreshGrid(itemLocation);
 }
 //---------------------------------------------------------------------------
-void CD2ItemsForm::refreshEquipped(const d2ce::Item& item)
+bool CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId)
+{
+    CWaitCursor wait;
+    switch (locationId)
+    {
+    case d2ce::EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            InvCubeGrid.LoadItemImages();
+            if (getHasHoradricCube())
+            {
+                InvCubeGrid.ShowWindow(SW_SHOW);
+            }
+            else
+            {
+                InvCubeGrid.ShowWindow(SW_HIDE);
+            }
+            return true;
+
+        case d2ce::EnumAltItemLocation::INVENTORY:
+            InvGrid.LoadItemImages();
+            return true;
+
+        case d2ce::EnumAltItemLocation::STASH:
+            InvStashGrid.LoadItemImages();
+            return true;
+
+        default: // refresh all stored
+            InvCubeGrid.LoadItemImages();
+            if (getHasHoradricCube())
+            {
+                InvCubeGrid.ShowWindow(SW_SHOW);
+            }
+            else
+            {
+                InvCubeGrid.ShowWindow(SW_HIDE);
+            }
+            InvGrid.LoadItemImages();
+            InvStashGrid.LoadItemImages();
+            return true;
+        }
+        break;
+
+    case d2ce::EnumItemLocation::BELT:
+        altPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+        InvBeltGrid.LoadItemImages();
+        return true;
+
+    case d2ce::EnumItemLocation::BUFFER: // refresh all
+        InvBeltGrid.LoadItemImages();
+        InvCubeGrid.LoadItemImages();
+        if (getHasHoradricCube())
+        {
+            InvCubeGrid.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvCubeGrid.ShowWindow(SW_HIDE);
+        }
+
+        InvGrid.LoadItemImages();
+        InvStashGrid.LoadItemImages();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId)
+{
+    switch (locationId)
+    {
+    case d2ce::EnumItemLocation::BELT:
+        InvBeltGrid.LoadItemImages();
+        return true;
+
+    case d2ce::EnumItemLocation::STORED: // refresh all stored
+        InvCubeGrid.LoadItemImages();
+        if (getHasHoradricCube())
+        {
+            InvCubeGrid.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvCubeGrid.ShowWindow(SW_HIDE);
+        }
+
+        InvGrid.LoadItemImages();
+        InvStashGrid.LoadItemImages();
+        return true;
+
+    case d2ce::EnumItemLocation::BUFFER: // refresh all
+        InvBeltGrid.LoadItemImages();
+        InvCubeGrid.LoadItemImages();
+        if (getHasHoradricCube())
+        {
+            InvCubeGrid.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvCubeGrid.ShowWindow(SW_HIDE);
+        }
+
+        InvGrid.LoadItemImages();
+        InvStashGrid.LoadItemImages();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::refreshGrid(d2ce::EnumAltItemLocation altPositionId)
+{
+    return refreshGrid(d2ce::EnumItemLocation::STORED, altPositionId);
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::refreshEquipped(const d2ce::Item& item)
 {
     CWaitCursor wait;
     if (item.getLocation() != d2ce::EnumItemLocation::EQUIPPED)
     {
-        return;
+        return false;
     }
 
-    CBitmap bitmap;
-    switch (item.getEquippedId())
+    return refreshEquipped(item.getEquippedId());
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::refreshEquipped(d2ce::EnumEquippedId id)
+{
+    switch (id)
     {
     case d2ce::EnumEquippedId::HEAD:
-        InvHeadBox.Redraw();
+        InvHeadBox.LoadItemImage();
         if (MainForm.isExpansionCharacter() && Merc.isHired())
         {
-            InvMercHeadBox.Redraw();
+            InvMercHeadBox.LoadItemImage();
         }
-        break;
+        return true;
 
     case d2ce::EnumEquippedId::NECK:
-        InvNeckBox.Redraw();
-        break;
+        InvNeckBox.LoadItemImage();
+        return true;
 
-    case d2ce::EnumEquippedId::HAND_RIGHT:
-        InvHandRightBox.Redraw();
+    case d2ce::EnumEquippedId::LEFT_ARM:
+    case d2ce::EnumEquippedId::RIGHT_ARM:
+        InvHandRightBox.LoadItemImage();
+        InvHandLeftBox.LoadItemImage();
         if (MainForm.isExpansionCharacter() && Merc.isHired())
         {
-            InvMercHandRightBox.Redraw();
+            InvMercHandRightBox.LoadItemImage();
+            InvMercHandLeftBox.LoadItemImage();
         }
-        break;
+        return true;
 
-    case d2ce::EnumEquippedId::ALT_HAND_RIGHT:
-        InvHandRightBox.Redraw();
-        break;
+    case d2ce::EnumEquippedId::ALT_RIGHT_ARM:
+    case d2ce::EnumEquippedId::ALT_LEFT_ARM:
+        InvHandRightBox.LoadItemImage();
+        InvHandLeftBox.LoadItemImage();
+        return true;
 
     case d2ce::EnumEquippedId::TORSO:
-        InvTorsoBox.Redraw();
+        InvTorsoBox.LoadItemImage();
         if (MainForm.isExpansionCharacter() && Merc.isHired())
         {
-            InvMercTorsoBox.Redraw();
+            InvMercTorsoBox.LoadItemImage();
         }
-        break;
+        return true;
 
-    case d2ce::EnumEquippedId::HAND_LEFT:
-        InvHandLeftBox.Redraw();
-        if (MainForm.isExpansionCharacter() && Merc.isHired())
-        {
-            InvMercHandLeftBox.Redraw();
-        }
-        break;
+    case d2ce::EnumEquippedId::GLOVES:
+        InvGloveBox.LoadItemImage();
+        return true;
 
-    case d2ce::EnumEquippedId::ALT_HAND_LEFT:
-        InvHandLeftBox.Redraw();
-        break;
+    case d2ce::EnumEquippedId::RIGHT_RING:
+        InvRingRightBox.LoadItemImage();
+        return true;
 
-    case d2ce::EnumEquippedId::HANDS:
-        InvGloveBox.Redraw();
-        break;
+    case d2ce::EnumEquippedId::BELT:
+        InvBeltBox.LoadItemImage();
+        return true;
 
-    case d2ce::EnumEquippedId::RIGHT_FINGER:
-        InvRingRightBox.LoadItemImage(item, bitmap);
-        break;
-
-    case d2ce::EnumEquippedId::WAIST:
-        InvBeltBox.Redraw();
-        break;
-
-    case d2ce::EnumEquippedId::LEFT_FINGER:
-        InvRingLeftBox.Redraw();
-        break;
+    case d2ce::EnumEquippedId::LEFT_RING:
+        InvRingLeftBox.LoadItemImage();
+        return true;
 
     case d2ce::EnumEquippedId::FEET:
-        InvBootsBox.Redraw();
-        break;
+        InvBootsBox.LoadItemImage();
+        return true;
     }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 size_t CD2ItemsForm::fillAllStackables(d2ce::ItemFilter filter)
@@ -2118,46 +2830,6 @@ size_t CD2ItemsForm::fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::Enu
     return numAdded;
 }
 //---------------------------------------------------------------------------
-void CD2ItemsForm::refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
-{
-    CWaitCursor wait;
-    bool bRefreshAll = true;
-    switch (locationId)
-    {
-    case d2ce::EnumItemLocation::BELT:
-        bRefreshAll = false;
-        InvBeltGrid.LoadItemImages();
-        break;
-
-    case d2ce::EnumItemLocation::STORED:
-        switch (altPositionId)
-        {
-        case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
-            bRefreshAll = false;
-            InvCubeGrid.LoadItemImages();
-            break;
-
-        case d2ce::EnumAltItemLocation::INVENTORY:
-            bRefreshAll = false;
-            InvGrid.LoadItemImages();
-            break;
-
-        case d2ce::EnumAltItemLocation::STASH:
-            bRefreshAll = false;
-            InvStashGrid.LoadItemImages();
-            break;
-        }
-    }
-
-    if (bRefreshAll)
-    {
-        InvBeltGrid.LoadItemImages();
-        InvCubeGrid.LoadItemImages();
-        InvGrid.LoadItemImages();
-        InvStashGrid.LoadItemImages();
-    }
-}
-//---------------------------------------------------------------------------
 void CD2ItemsForm::refreshAllGrids()
 {
     CWaitCursor wait;
@@ -2165,9 +2837,14 @@ void CD2ItemsForm::refreshAllGrids()
     InvGrid.LoadItemImages();
     InvStashGrid.LoadItemImages();
 
+    InvCubeGrid.LoadItemImages();
     if (getHasHoradricCube())
     {
-        InvCubeGrid.LoadItemImages();
+        InvCubeGrid.ShowWindow(SW_SHOW);
+    }
+    else
+    {
+        InvCubeGrid.ShowWindow(SW_HIDE);
     }
 }
 //---------------------------------------------------------------------------
@@ -2268,34 +2945,34 @@ void CD2ItemsForm::SetCurrItemInfo(CPoint point)
             {
             case IDC_INV_HEAD:
             case IDC_INV_NECK:
-            case IDC_INV_HAND_RIGHT:
+            case IDC_INV_RIGHT_ARM:
             case IDC_INV_TORSO:
-            case IDC_INV_HAND_LEFT:
-            case IDC_INV_GLOVE:
-            case IDC_INV_RING_RIGHT:
+            case IDC_INV_LEFT_ARM:
+            case IDC_INV_GLOVES:
+            case IDC_INV_RIGHT_RING:
             case IDC_INV_BELT:
-            case IDC_INV_RING_LEFT:
-            case IDC_INV_BOOTS:
+            case IDC_INV_LEFT_RING:
+            case IDC_INV_FEET:
                 CurrItemLocation[1] = 1; // character body
                 break;
 
             case IDC_INV_CORPSE_HEAD:
             case IDC_INV_CORPSE_NECK:
-            case IDC_INV_CORPSE_HAND_RIGHT:
+            case IDC_INV_CORPSE_RIGHT_ARM:
             case IDC_INV_CORPSE_TORSO:
-            case IDC_INV_CORPSE_HAND_LEFT:
-            case IDC_INV_CORPSE_GLOVE:
-            case IDC_INV_CORPSE_RING_RIGHT:
+            case IDC_INV_CORPSE_LEFT_ARM:
+            case IDC_INV_CORPSE_GLOVES:
+            case IDC_INV_CORPSE_RIGHT_RING:
             case IDC_INV_CORPSE_BELT:
-            case IDC_INV_CORPSE_RING_LEFT:
-            case IDC_INV_CORPSE_BOOTS:
+            case IDC_INV_CORPSE_LEFT_RING:
+            case IDC_INV_CORPSE_FEET:
                 CurrItemLocation[1] = 2; // character corpse
                 break;
 
             case IDC_INV_MERC_HEAD:
-            case IDC_INV_MERC_HAND_RIGHT:
+            case IDC_INV_MERC_RIGHT_ARM:
             case IDC_INV_MERC_TORSO:
-            case IDC_INV_MERC_HAND_LEFT:
+            case IDC_INV_MERC_LEFT_ARM:
                 CurrItemLocation[1] = 3; // Mercenary body
                 break;
 
@@ -2323,36 +3000,36 @@ void CD2ItemsForm::SetCurrItemInfo(CPoint point)
     {
     case IDC_INV_HEAD:
     case IDC_INV_NECK:
-    case IDC_INV_HAND_RIGHT:
+    case IDC_INV_RIGHT_ARM:
     case IDC_INV_TORSO:
-    case IDC_INV_HAND_LEFT:
-    case IDC_INV_GLOVE:
-    case IDC_INV_RING_RIGHT:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_GLOVES:
+    case IDC_INV_RIGHT_RING:
     case IDC_INV_BELT:
-    case IDC_INV_RING_LEFT:
-    case IDC_INV_BOOTS:
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_FEET:
         CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
         CurrItemLocation[1] = 1; // character body
         break;
 
     case IDC_INV_CORPSE_HEAD:
     case IDC_INV_CORPSE_NECK:
-    case IDC_INV_CORPSE_HAND_RIGHT:
+    case IDC_INV_CORPSE_RIGHT_ARM:
     case IDC_INV_CORPSE_TORSO:
-    case IDC_INV_CORPSE_HAND_LEFT:
-    case IDC_INV_CORPSE_GLOVE:
-    case IDC_INV_CORPSE_RING_RIGHT:
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_CORPSE_RIGHT_RING:
     case IDC_INV_CORPSE_BELT:
-    case IDC_INV_CORPSE_RING_LEFT:
-    case IDC_INV_CORPSE_BOOTS:
+    case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_CORPSE_FEET:
         CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
         CurrItemLocation[1] = 2; // character corpse
         break;
 
     case IDC_INV_MERC_HEAD:
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
     case IDC_INV_MERC_TORSO:
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
         CurrItemLocation[1] = 3; // Mercenary body
         break;
@@ -2392,6 +3069,313 @@ void CD2ItemsForm::ClearCurrItemInfo()
 {
     CurrItemLocation = { 0, 0 };
     CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::ResetCursor()
+{
+    if (ItemCursor != NULL)
+    {
+        ::DestroyIcon(ItemCursor);
+        ItemCursor = NULL;
+        CurrCursor = NULL;
+        ::SetCursor(LoadCursor(NULL, IDC_ARROW));
+        CurrDragItem = nullptr;
+        CurrDragItemInv = d2ce::EnumItemInventory::UNKNOWN;
+    }
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO* pTI) const
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_HEAD:
+        return InvHeadBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_HEAD:
+        return InvCorpseHeadBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_HEAD:
+        return InvMercHeadBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_NECK:
+        return InvNeckBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_NECK:
+        return InvCorpseNeckBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_RIGHT_ARM:
+        return InvHandRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_RIGHT_ARM:
+        return InvCorpseHandRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_RIGHT_ARM:
+        return InvMercHandRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_TORSO:
+        return InvTorsoBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_TORSO:
+        return InvCorpseTorsoBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_TORSO:
+        return InvMercTorsoBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_LEFT_ARM:
+        return InvHandLeftBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_LEFT_ARM:
+        return InvCorpseHandLeftBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_LEFT_ARM:
+        return InvMercHandLeftBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_GLOVES:
+        return InvGloveBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_GLOVES:
+        return InvCorpseGloveBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_RIGHT_RING:
+        return InvRingRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_RIGHT_RING:
+        return InvCorpseRingRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_BELT:
+        return InvBeltBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_BELT:
+        return InvCorpseBeltBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_LEFT_RING:
+        return InvRingLeftBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_LEFT_RING:
+        return InvCorpseRingLeftBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_FEET:
+        return InvBootsBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CORPSE_FEET:
+        return InvCorpseBootsBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_GOLEM:
+        return InvGolemBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_GRID:
+        return InvGrid.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_CUBE_GRID:
+        return InvCubeGrid.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_BELT_GRID:
+        return InvBeltGrid.GetInvBitmap(image, point, pTI);
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point)
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_HEAD:
+        return InvHeadBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_HEAD:
+        return InvCorpseHeadBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_HEAD:
+        return InvMercHeadBox.CanPlaceItem(item, point);
+
+    case IDC_INV_NECK:
+        return InvNeckBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_NECK:
+        return InvCorpseNeckBox.CanPlaceItem(item, point);
+
+    case IDC_INV_RIGHT_ARM:
+        return InvHandRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_RIGHT_ARM:
+        return InvCorpseHandRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_RIGHT_ARM:
+        return InvMercHandRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_TORSO:
+        return InvTorsoBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_TORSO:
+        return InvCorpseTorsoBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_TORSO:
+        return InvMercTorsoBox.CanPlaceItem(item, point);
+
+    case IDC_INV_LEFT_ARM:
+        return InvHandLeftBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_LEFT_ARM:
+        return InvCorpseHandLeftBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_LEFT_ARM:
+        return InvMercHandLeftBox.CanPlaceItem(item, point);
+
+    case IDC_INV_GLOVES:
+        return InvGloveBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_GLOVES:
+        return InvCorpseGloveBox.CanPlaceItem(item, point);
+
+    case IDC_INV_RIGHT_RING:
+        return InvRingRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_RIGHT_RING:
+        return InvCorpseRingRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_BELT:
+        return InvBeltBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_BELT:
+        return InvCorpseBeltBox.CanPlaceItem(item, point);
+
+    case IDC_INV_LEFT_RING:
+        return InvRingLeftBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_LEFT_RING:
+        return InvCorpseRingLeftBox.CanPlaceItem(item, point);
+
+    case IDC_INV_FEET:
+        return InvBootsBox.CanPlaceItem(item, point);
+
+    case IDC_INV_CORPSE_FEET:
+        return InvCorpseBootsBox.CanPlaceItem(item, point);
+
+    case IDC_INV_GOLEM:
+        return InvGolemBox.CanPlaceItem(item, point);
+
+    case IDC_INV_GRID:
+        return InvGrid.CanPlaceItem(item, point);
+
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.CanPlaceItem(item, point);
+
+    case IDC_INV_CUBE_GRID:
+        return InvCubeGrid.CanPlaceItem(item, point);
+
+    case IDC_INV_BELT_GRID:
+        return InvBeltGrid.CanPlaceItem(item, point);
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemsForm::PlaceItem(UINT id, d2ce::Item& item, CPoint point, CBitmap& bitmap)
+{
+    ScreenToClient(&point);
+
+    // Make sure we have hit an item
+    switch (id)
+    {
+    case IDC_INV_HEAD:
+        return InvHeadBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_HEAD:
+        return InvCorpseHeadBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_HEAD:
+        return InvMercHeadBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_NECK:
+        return InvNeckBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_NECK:
+        return InvCorpseNeckBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_RIGHT_ARM:
+        return InvHandRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_RIGHT_ARM:
+        return InvCorpseHandRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_RIGHT_ARM:
+        return InvMercHandRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_TORSO:
+        return InvTorsoBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_TORSO:
+        return InvCorpseTorsoBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_TORSO:
+        return InvMercTorsoBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_LEFT_ARM:
+        return InvHandLeftBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_LEFT_ARM:
+        return InvCorpseHandLeftBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_LEFT_ARM:
+        return InvMercHandLeftBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_GLOVES:
+        return InvGloveBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_GLOVES:
+        return InvCorpseGloveBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_RIGHT_RING:
+        return InvRingRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_RIGHT_RING:
+        return InvCorpseRingRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_BELT:
+        return InvBeltBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_BELT:
+        return InvCorpseBeltBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_LEFT_RING:
+        return InvRingLeftBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_LEFT_RING:
+        return InvCorpseRingLeftBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_FEET:
+        return InvBootsBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CORPSE_FEET:
+        return InvCorpseBootsBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_GOLEM:
+        return InvGolemBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_GRID:
+        return InvGrid.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_STASH_GRID:
+        return InvStashGrid.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_CUBE_GRID:
+        return InvCubeGrid.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_BELT_GRID:
+        return InvBeltGrid.PlaceItem(item, point, bitmap);
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 d2ce::ItemFilter CD2ItemsForm::GetCurrItemFilter() const
@@ -2463,13 +3447,13 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.GetInvItem();
 
-    case IDC_INV_HAND_RIGHT:
+    case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.GetInvItem();
 
-    case IDC_INV_CORPSE_HAND_RIGHT:
+    case IDC_INV_CORPSE_RIGHT_ARM:
         return InvCorpseHandRightBox.GetInvItem();
 
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.GetInvItem();
 
     case IDC_INV_TORSO:
@@ -2481,25 +3465,25 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_MERC_TORSO:
         return InvMercTorsoBox.GetInvItem();
 
-    case IDC_INV_HAND_LEFT:
+    case IDC_INV_LEFT_ARM:
         return InvHandLeftBox.GetInvItem();
 
-    case IDC_INV_CORPSE_HAND_LEFT:
+    case IDC_INV_CORPSE_LEFT_ARM:
         return InvCorpseHandLeftBox.GetInvItem();
 
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.GetInvItem();
 
-    case IDC_INV_GLOVE:
+    case IDC_INV_GLOVES:
         return InvGloveBox.GetInvItem();
 
-    case IDC_INV_CORPSE_GLOVE:
+    case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.GetInvItem();
 
-    case IDC_INV_RING_RIGHT:
+    case IDC_INV_RIGHT_RING:
         return InvRingRightBox.GetInvItem();
 
-    case IDC_INV_CORPSE_RING_RIGHT:
+    case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.GetInvItem();
 
     case IDC_INV_BELT:
@@ -2508,16 +3492,16 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.GetInvItem();
 
-    case IDC_INV_RING_LEFT:
+    case IDC_INV_LEFT_RING:
         return InvRingLeftBox.GetInvItem();
 
-    case IDC_INV_CORPSE_RING_LEFT:
+    case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.GetInvItem();
 
-    case IDC_INV_BOOTS:
+    case IDC_INV_FEET:
         return InvBootsBox.GetInvItem();
 
-    case IDC_INV_CORPSE_BOOTS:
+    case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.GetInvItem();
 
     case IDC_INV_GOLEM:
@@ -2561,13 +3545,13 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.InvHitTest(point, pTI);
 
-    case IDC_INV_HAND_RIGHT:
+    case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_HAND_RIGHT:
+    case IDC_INV_CORPSE_RIGHT_ARM:
         return InvCorpseHandRightBox.InvHitTest(point, pTI);
 
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_TORSO:
@@ -2579,25 +3563,25 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_MERC_TORSO:
         return InvMercTorsoBox.InvHitTest(point, pTI);
 
-    case IDC_INV_HAND_LEFT:
+    case IDC_INV_LEFT_ARM:
         return InvHandLeftBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_HAND_LEFT:
+    case IDC_INV_CORPSE_LEFT_ARM:
         return InvCorpseHandLeftBox.InvHitTest(point, pTI);
 
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.InvHitTest(point, pTI);
 
-    case IDC_INV_GLOVE:
+    case IDC_INV_GLOVES:
         return InvGloveBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_GLOVE:
+    case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.InvHitTest(point, pTI);
 
-    case IDC_INV_RING_RIGHT:
+    case IDC_INV_RIGHT_RING:
         return InvRingRightBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_RING_RIGHT:
+    case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_BELT:
@@ -2606,16 +3590,16 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.InvHitTest(point, pTI);
 
-    case IDC_INV_RING_LEFT:
+    case IDC_INV_LEFT_RING:
         return InvRingLeftBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_RING_LEFT:
+    case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.InvHitTest(point, pTI);
 
-    case IDC_INV_BOOTS:
+    case IDC_INV_FEET:
         return InvBootsBox.InvHitTest(point, pTI);
 
-    case IDC_INV_CORPSE_BOOTS:
+    case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.InvHitTest(point, pTI);
 
     case IDC_INV_GOLEM:
@@ -2637,55 +3621,330 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     return nullptr;
 }
 //---------------------------------------------------------------------------
-CSize CD2ItemsForm::getInvGridSize(UINT id) const
+std::optional<d2ce::EnumCharClass> CD2ItemsForm::getCharClass() const
+{
+    return MainForm.getCharacterInfo().getClass();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::CharStats> CD2ItemsForm::getDisplayedCharStats() const
+{
+    return MainForm.getDisplayedCharStats();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::Mercenary*> CD2ItemsForm::getMercInfo() const
+{
+    return &Merc;
+}
+//---------------------------------------------------------------------------
+CSize CD2ItemsForm::getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
 {
     d2ce::ItemDimensions dimensions;
-    switch (id)
+    switch (locationId)
     {
-    case IDC_INV_GRID:
-        getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, dimensions);
+    case d2ce::EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case d2ce::EnumAltItemLocation::INVENTORY:
+            getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, dimensions);
+            break;
+
+        case d2ce::EnumAltItemLocation::STASH:
+            getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, dimensions);
+            break;
+
+        case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            getItemLocationDimensions(d2ce::EnumAltItemLocation::HORADRIC_CUBE, dimensions);
+            break;
+        }
         break;
 
-    case IDC_INV_BELT_GRID:
+    case d2ce::EnumItemLocation::BELT:
         getItemLocationDimensions(d2ce::EnumItemLocation::BELT, dimensions);
-        break;
-
-    case IDC_INV_STASH_GRID:
-        getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, dimensions);
-        break;
-
-    case IDC_INV_CUBE_GRID:
-        getItemLocationDimensions(d2ce::EnumAltItemLocation::HORADRIC_CUBE, dimensions);
         break;
     }
 
     return CSize(dimensions.InvWidth, dimensions.InvHeight);
 }
 //---------------------------------------------------------------------------
-const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsForm::getInvGridItems(UINT id) const
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2ItemsForm::getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const
 {
     static std::vector<std::reference_wrapper<d2ce::Item>> s_empty;
-    switch (id)
+    switch (locationId)
     {
-    case IDC_INV_GRID:
-        return getItemsInInventory();
+    case d2ce::EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case d2ce::EnumAltItemLocation::INVENTORY:
+            return getItemsInInventory();
 
-    case IDC_INV_BELT_GRID:
+        case d2ce::EnumAltItemLocation::STASH:
+            return getItemsInStash();
+
+        case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            return getItemsInHoradricCube();
+        }
+        break;
+
+    case d2ce::EnumItemLocation::BELT:
         return getItemsInBelt();
-
-    case IDC_INV_STASH_GRID:
-        return getItemsInStash();
-
-    case IDC_INV_CUBE_GRID:
-        return getItemsInHoradricCube();
     }
 
     return s_empty;
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemsForm::getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const
+{
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::PLAYER:
+        for (const auto& item : MainForm.getEquippedItems())
+        {
+            if (equippedId == item.get().getEquippedId())
+            {
+                return &(item.get());
+            }
+        }
+        break;
+
+    case d2ce::EnumItemInventory::CORPSE:
+        for (const auto& item : MainForm.getCorpseItems())
+        {
+            if (equippedId == item.getEquippedId())
+            {
+                return &item;
+            }
+        }
+        break;
+
+    case d2ce::EnumItemInventory::MERCENARY:
+        for (const auto& item : Merc.getItems())
+        {
+            if (equippedId == item.getEquippedId())
+            {
+                return &item;
+            }
+        }
+        break;
+
+    case d2ce::EnumItemInventory::GOLEM:
+        if (!MainForm.getGolemItem().empty())
+        {
+            return &MainForm.getGolemItem().front();
+        }
+        break;
+    }
+    return nullptr;
+}
+//---------------------------------------------------------------------------
 bool CD2ItemsForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
     return MainForm.getItemBitmap(item, bitmap);
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    auto bHasBelt = MainForm.getHasBeltEquipped();
+    auto bHasCube = MainForm.getHasHoradricCube();
+    auto numberOfBeltSlots = MainForm.getMaxNumberOfItemsInBelt();
+    auto preLocationId = item.getLocation();
+    auto preAltPositionId = item.getAltPositionId();
+    auto preEquippedId = item.getEquippedId();
+    if ((preLocationId == d2ce::EnumItemLocation::EQUIPPED) && (preEquippedId == d2ce::EnumEquippedId::NONE))
+    {
+        preLocationId = d2ce::EnumItemLocation::BUFFER;
+        preAltPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+    }
+
+    if (MainForm.setItemLocation(item, locationId, altPositionId, positionX, positionY, invType, pRemovedItem))
+    {
+        switch (preLocationId)
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(preEquippedId);
+            if ((bHasBelt != MainForm.getHasBeltEquipped()) || (numberOfBeltSlots != MainForm.getMaxNumberOfItemsInBelt()))
+            {
+                refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+            }
+            else if (bHasCube != MainForm.getHasHoradricCube())
+            {
+                refreshGrid(d2ce::EnumItemLocation::STORED);
+            }
+            else
+            {
+                if ((preLocationId != locationId) ||
+                    (preAltPositionId != altPositionId))
+                {
+                    refreshGrid(locationId, altPositionId);
+                }
+            }
+            break;
+
+        default:
+            if (bHasCube != MainForm.getHasHoradricCube())
+            {
+                refreshGrid(d2ce::EnumItemLocation::STORED);
+            }
+            else
+            {
+                refreshGrid(preLocationId, preAltPositionId);
+                if ((preLocationId != locationId) ||
+                    (preAltPositionId != altPositionId))
+                {
+                    refreshGrid(locationId, altPositionId);
+                }
+            }
+            break;
+        }
+
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    auto bHasBelt = MainForm.getHasBeltEquipped();
+    auto bHasCube = MainForm.getHasHoradricCube();
+    auto numberOfBeltSlots = MainForm.getMaxNumberOfItemsInBelt();
+    auto preLocationId = item.getLocation();
+    auto preAltPositionId = item.getAltPositionId();
+    auto preEquippedId = item.getEquippedId();
+    if ((preLocationId == d2ce::EnumItemLocation::EQUIPPED) && (preEquippedId == d2ce::EnumEquippedId::NONE))
+    {
+        preLocationId = d2ce::EnumItemLocation::BUFFER;
+        preAltPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+    }
+
+    if (MainForm.setItemLocation(item, locationId, positionX, positionY, invType, pRemovedItem))
+    {
+        switch (preLocationId)
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(preEquippedId);
+            if ((bHasBelt != MainForm.getHasBeltEquipped()) || (numberOfBeltSlots != MainForm.getMaxNumberOfItemsInBelt()))
+            {
+                refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+            }
+            else if (bHasCube != MainForm.getHasHoradricCube())
+            {
+                refreshGrid(d2ce::EnumItemLocation::STORED);
+            }
+            else
+            {
+                if (preLocationId != locationId)
+                {
+                    refreshGrid(locationId);
+                }
+            }
+            break;
+
+        default:
+            if (bHasCube != MainForm.getHasHoradricCube())
+            {
+                refreshGrid(d2ce::EnumItemLocation::STORED);
+            }
+            else
+            {
+                refreshGrid(preLocationId, preAltPositionId);
+                if (preLocationId != locationId)
+                {
+                    refreshGrid(locationId);
+                }
+            }
+            break;
+        }
+
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    auto bHasBelt = MainForm.getHasBeltEquipped();
+    auto numberOfBeltSlots = MainForm.getMaxNumberOfItemsInBelt();
+    auto preLocationId = item.getLocation();
+    auto preAltPositionId = item.getAltPositionId();
+    auto preEquippedId = item.getEquippedId();
+    if ((preLocationId == d2ce::EnumItemLocation::EQUIPPED) && (preEquippedId == d2ce::EnumEquippedId::NONE))
+    {
+        preLocationId = d2ce::EnumItemLocation::BUFFER;
+        preAltPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+    }
+
+    if (MainForm.setItemLocation(item, altPositionId, positionX, positionY, invType, pRemovedItem))
+    {
+        switch (preLocationId)
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(preEquippedId);
+            if ((bHasBelt != MainForm.getHasBeltEquipped()) || (numberOfBeltSlots != MainForm.getMaxNumberOfItemsInBelt()))
+            {
+                refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+            }
+            else
+            {
+                if (preAltPositionId != altPositionId)
+                {
+                    refreshGrid(d2ce::EnumItemLocation::STORED, altPositionId);
+                }
+            }
+            break;
+
+        default:
+            refreshGrid(preLocationId, preAltPositionId);
+            if (preAltPositionId != altPositionId)
+            {
+                refreshGrid(d2ce::EnumItemLocation::STORED, altPositionId);
+            }
+            break;
+        }
+
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2ItemsForm::setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    auto bHasBelt = MainForm.getHasBeltEquipped();
+    auto numberOfBeltSlots = MainForm.getMaxNumberOfItemsInBelt();
+    auto preLocationId = item.getLocation();
+    auto preAltPositionId = item.getAltPositionId();
+    auto preEquipId = item.getEquippedId();
+    if ((preLocationId == d2ce::EnumItemLocation::EQUIPPED) && (preEquipId == d2ce::EnumEquippedId::NONE))
+    {
+        preLocationId = d2ce::EnumItemLocation::BUFFER;
+        preAltPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+    }
+
+    if (MainForm.setItemLocation(item, equippedId, invType, pRemovedItem))
+    {
+        if ((bHasBelt != MainForm.getHasBeltEquipped()) || (numberOfBeltSlots != MainForm.getMaxNumberOfItemsInBelt()))
+        {
+            refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN); // refresh all grids
+            refreshEquipped(equippedId);
+        }
+        else
+        {
+            if (preEquipId != d2ce::EnumEquippedId::NONE)
+            {
+                refreshEquipped(preEquipId);
+            }
+            else
+            {
+                refreshGrid(preLocationId, preAltPositionId);
+            }
+
+            if (preEquipId != equippedId)
+            {
+                refreshEquipped(equippedId);
+            }
+        }
+
+        return true;
+    }
+    return false;
 }
 //---------------------------------------------------------------------------
 BOOL CD2ItemsForm::OnInitDialog()
@@ -2739,8 +3998,20 @@ BOOL CD2ItemsForm::OnInitDialog()
                   // EXCEPTION: OCX Property Pages should return FALSE
 }
 //---------------------------------------------------------------------------
+void CD2ItemsForm::OnDestroy()
+{
+    ResetCursor();
+    __super::OnDestroy();
+}
+//---------------------------------------------------------------------------
 BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
 {
+    if (ItemCursor != NULL)
+    {
+        *pResult = 0;
+        return FALSE;
+    }
+
     ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
 
     TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
@@ -2766,25 +4037,25 @@ BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         case IDC_INV_MERC_HEAD:
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
-        case IDC_INV_HAND_RIGHT:
-        case IDC_INV_CORPSE_HAND_RIGHT:
-        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_RIGHT_ARM:
+        case IDC_INV_CORPSE_RIGHT_ARM:
+        case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_TORSO:
         case IDC_INV_CORPSE_TORSO:
         case IDC_INV_MERC_TORSO:
-        case IDC_INV_HAND_LEFT:
-        case IDC_INV_CORPSE_HAND_LEFT:
-        case IDC_INV_MERC_HAND_LEFT:
-        case IDC_INV_GLOVE:
-        case IDC_INV_CORPSE_GLOVE:
-        case IDC_INV_RING_RIGHT:
-        case IDC_INV_CORPSE_RING_RIGHT:
+        case IDC_INV_LEFT_ARM:
+        case IDC_INV_CORPSE_LEFT_ARM:
+        case IDC_INV_MERC_LEFT_ARM:
+        case IDC_INV_GLOVES:
+        case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_RIGHT_RING:
+        case IDC_INV_CORPSE_RIGHT_RING:
         case IDC_INV_BELT:
         case IDC_INV_CORPSE_BELT:
-        case IDC_INV_RING_LEFT:
-        case IDC_INV_CORPSE_RING_LEFT:
-        case IDC_INV_BOOTS:
-        case IDC_INV_CORPSE_BOOTS:
+        case IDC_INV_LEFT_RING:
+        case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_FEET:
+        case IDC_INV_CORPSE_FEET:
         case IDC_INV_GRID:
         case IDC_INV_STASH_GRID:
         case IDC_INV_CUBE_GRID:
@@ -2805,7 +4076,7 @@ BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
     else
         lstrcpyn(pTTTW->szText, strTipText, (sizeof(pTTTW->szText) / sizeof(pTTTW->szText[0])));
 #endif
-    * pResult = 0;
+    *pResult = 0;
 
     ::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE);
 
@@ -2896,6 +4167,9 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
             pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
             pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+
             auto numItems = pSubPopup->GetMenuItemCount();
             if (numItems > 1)
             {
@@ -2918,6 +4192,7 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
     bool canHaveSockets = CurrItem->canHaveSockets();
     bool canPersonalize = CurrItem->canPersonalize();
+    bool isSocketed = CurrItem->isSocketed();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -2931,10 +4206,20 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
+        if (!canHaveSockets || (isSocketed && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+        }
+
+        if (!isSocketed || CurrItem->getSocketedItemCount() == 0)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+        }
+
+        if (!canHaveSockets || CurrItem->getPossibleRunewords().empty())
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
         }
 
         if (!canPersonalize)
@@ -3021,6 +4306,279 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
+    else
+    {
+        CMenu menu;
+        VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
+
+        CMenu* pPopup = FindPopup(menu, 3);
+        ENSURE(pPopup != NULL);
+
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+    }
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    TOOLINFO ti = { 0 };
+    INT_PTR nHit = __super::OnToolHitTest(point, &ti);
+    if (nHit == -1)
+    {
+        if (ItemCursor != NULL)
+        {
+            if (CurrDragItem != NULL)
+            {
+                const d2ce::Item* pRemovedItem = nullptr;
+                setItemLocation(*CurrDragItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
+            }
+
+            // placed it
+            ResetCursor();
+        }
+
+        __super::OnLButtonDown(nFlags, point);
+        return;
+    }
+
+    switch (nHit)
+    {
+    case IDC_INV_GRID:
+    case IDC_INV_BELT_GRID:
+    case IDC_INV_STASH_GRID:
+    case IDC_INV_CUBE_GRID:
+    case IDC_INV_HEAD:
+    case IDC_INV_CORPSE_HEAD:
+    case IDC_INV_MERC_HEAD:
+    case IDC_INV_GLOVES:
+    case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_FEET:
+    case IDC_INV_CORPSE_FEET:
+    case IDC_INV_NECK:
+    case IDC_INV_CORPSE_NECK:
+    case IDC_INV_RIGHT_RING:
+    case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_LEFT_RING:
+    case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_RIGHT_ARM:
+    case IDC_INV_CORPSE_RIGHT_ARM:
+    case IDC_INV_MERC_RIGHT_ARM:
+    case IDC_INV_TORSO:
+    case IDC_INV_CORPSE_TORSO:
+    case IDC_INV_MERC_TORSO:
+    case IDC_INV_LEFT_ARM:
+    case IDC_INV_CORPSE_LEFT_ARM:
+    case IDC_INV_MERC_LEFT_ARM:
+    case IDC_INV_GOLEM:
+    case IDC_INV_BELT:
+    case IDC_INV_CORPSE_BELT:
+        break;
+
+    default:
+        __super::OnLButtonDown(nFlags, point);
+        return;
+    }
+
+    if (ItemCursor == NULL)
+    {
+        // Make sure we have hit an item
+        auto pt = point;
+        ClientToScreen(&pt);
+        CurrDragItem = const_cast<d2ce::Item*>(InvHitTest((UINT)nHit, pt, &ti));
+        if (CurrDragItem == nullptr)
+        {
+            __super::OnLButtonDown(nFlags, point);
+            return;
+        }
+
+        CBitmap image;
+        if (!GetInvBitmap((UINT)nHit, image, pt, &ti))
+        {
+            CurrDragItem = nullptr;
+            __super::OnLButtonDown(nFlags, point);
+            return;
+        }
+
+        ItemCursor = CreateItemCursor(image);
+        CurrCursor = ItemCursor;
+        ::SetCursor(CurrCursor);
+
+        switch (nHit)
+        {
+        case IDC_INV_CORPSE_HEAD:
+        case IDC_INV_CORPSE_NECK:
+        case IDC_INV_CORPSE_RIGHT_ARM:
+        case IDC_INV_CORPSE_TORSO:
+        case IDC_INV_CORPSE_LEFT_ARM:
+        case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_CORPSE_BELT:
+        case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_CORPSE_FEET:
+            CurrDragItemInv = d2ce::EnumItemInventory::CORPSE;
+            break;
+
+        case IDC_MERC_GROUP:
+        case IDC_INV_MERC_HEAD:
+        case IDC_INV_MERC_RIGHT_ARM:
+        case IDC_INV_MERC_TORSO:
+        case IDC_INV_MERC_LEFT_ARM:
+            CurrDragItemInv = d2ce::EnumItemInventory::MERCENARY;
+            break;
+
+        case IDC_INV_GOLEM:
+            CurrDragItemInv = d2ce::EnumItemInventory::GOLEM;
+            break;
+
+        case IDC_INV_HEAD:
+        case IDC_INV_NECK:
+        case IDC_INV_RIGHT_ARM:
+        case IDC_INV_TORSO:
+        case IDC_INV_LEFT_ARM:
+        case IDC_INV_GLOVES:
+        case IDC_INV_RIGHT_RING:
+        case IDC_INV_BELT:
+        case IDC_INV_LEFT_RING:
+        case IDC_INV_FEET:
+        case IDC_INV_GRID:
+        case IDC_INV_BELT_GRID:
+        case IDC_INV_STASH_GRID:
+        case IDC_INV_CUBE_GRID:
+            CurrDragItemInv = d2ce::EnumItemInventory::PLAYER;
+            break;
+
+        default:
+            CurrDragItemInv = d2ce::EnumItemInventory::UNKNOWN;
+            break;
+        }
+    }
+    else
+    {
+        // Make sure we have hit an item
+        auto pt = point;
+        ClientToScreen(&pt);
+
+        CBitmap image;
+        auto pItem = PlaceItem((UINT)nHit, *CurrDragItem, pt, image);
+        if (pItem == nullptr || (pItem != CurrDragItem))
+        {
+            // placed it
+            ResetCursor();
+
+            if (pItem != nullptr)
+            {
+                // swap for new drag item
+                CurrDragItem = const_cast<d2ce::Item*>(pItem);
+                ItemCursor = CreateItemCursor(image);
+                CurrCursor = ItemCursor;
+                ::SetCursor(CurrCursor);
+            }
+        }
+    }
+
+    __super::OnLButtonDown(nFlags, point);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnMouseMove(UINT nFlags, CPoint point)
+{
+    if (ItemCursor != NULL)
+    {
+        if (CurrDragItem == nullptr)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        TOOLINFO ti = { 0 };
+        INT_PTR nHit = __super::OnToolHitTest(point, &ti);
+        if (nHit == -1)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_TRASH_CURSOR)));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        switch (nHit)
+        {
+        case IDC_INV_GRID:
+        case IDC_INV_BELT_GRID:
+        case IDC_INV_STASH_GRID:
+        case IDC_INV_CUBE_GRID:
+        case IDC_INV_HEAD:
+        case IDC_INV_CORPSE_HEAD:
+        case IDC_INV_MERC_HEAD:
+        case IDC_INV_GLOVES:
+        case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_FEET:
+        case IDC_INV_CORPSE_FEET:
+        case IDC_INV_NECK:
+        case IDC_INV_CORPSE_NECK:
+        case IDC_INV_RIGHT_RING:
+        case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_LEFT_RING:
+        case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_RIGHT_ARM:
+        case IDC_INV_CORPSE_RIGHT_ARM:
+        case IDC_INV_MERC_RIGHT_ARM:
+        case IDC_INV_TORSO:
+        case IDC_INV_CORPSE_TORSO:
+        case IDC_INV_MERC_TORSO:
+        case IDC_INV_LEFT_ARM:
+        case IDC_INV_CORPSE_LEFT_ARM:
+        case IDC_INV_MERC_LEFT_ARM:
+        case IDC_INV_GOLEM:
+        case IDC_INV_BELT:
+        case IDC_INV_CORPSE_BELT:
+            break;
+
+        default:
+            CurrCursor = NULL;
+            ::SetCursor(AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_TRASH_CURSOR)));
+            __super::OnMouseMove(nFlags, point);
+            return;
+        }
+
+        // Make sure we have place the item
+        auto pt = point;
+        ClientToScreen(&pt);
+        if (CanPlaceItem((UINT)nHit, *CurrDragItem, pt))
+        {
+            if (CurrCursor == NULL)
+            {
+                CurrCursor = ItemCursor;
+                ::SetCursor(CurrCursor);
+            }
+        }
+        else if (CurrCursor != NULL)
+        {
+            CurrCursor = NULL;
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+        }
+    }
+
+    __super::OnMouseMove(nFlags, point);
+}
+//---------------------------------------------------------------------------
+BOOL CD2ItemsForm::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+    if(nHitTest == HTCLIENT)
+    {
+        if (CurrCursor != NULL)
+        {
+            ::SetCursor(CurrCursor);
+            return TRUE;
+        }
+
+        if (ItemCursor != NULL)
+        {
+            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            return TRUE;
+        }
+    }
+
+    return __super::OnSetCursor(pWnd, nHitTest, message);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextFix()
@@ -3139,6 +4697,28 @@ void CD2ItemsForm::OnItemContextMaxsockets()
     ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUnsocket()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.removeSocketedItems(*CurrItem))
+    {
+        switch (CurrItem->getLocation())
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(*CurrItem);
+            break;
+        }
+
+        // refresh all storage grids
+        refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextMaxsocketsforallitems()
 {
     auto filter(GetCurrItemFilter());
@@ -3170,6 +4750,80 @@ void CD2ItemsForm::OnItemContextRemovePersonalization()
 
     MainForm.removeItemPersonalization(*CurrItem);
     ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextApplyruneword()
+{
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextImportitem()
+{
+    CFileDialog fileDialog(TRUE, _T("d2i"), NULL,
+        OFN_HIDEREADONLY | OFN_FILEMUSTEXIST,
+        _T("Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*||"), this, 0, TRUE);
+    const int check_id = 101;
+    fileDialog.AddCheckButton(check_id, L"Randomize Item Id", TRUE);
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    BOOL check = TRUE;
+    fileDialog.GetCheckButtonState(check_id, check);
+    bool bRandomizeId = check ? true : false;
+
+    const d2ce::Item* pImportedItem = nullptr;
+    {
+        CWaitCursor wait;
+        if (!MainForm.importItem(fileDialog.GetPathName().GetString(), pImportedItem, bRandomizeId) || (pImportedItem == nullptr))
+        {
+            return;
+        }
+    }
+
+    CBitmap image;
+    InvStashGrid.GetScaledItemBitmap(*pImportedItem, image);
+
+    // swap for new drag item
+    ResetCursor();
+    CurrDragItem = const_cast<d2ce::Item*>(pImportedItem);
+    ItemCursor = CreateItemCursor(image);
+    CurrCursor = ItemCursor;
+    ::SetCursor(CurrCursor);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextExportitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    auto uName = utf8::utf8to16(CurrItem->getDisplayedItemName());
+    CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    filename.Replace(_T("\n"), _T("-"));
+    filename += _T(".d2i");
+
+    CFileDialog fileDialog(FALSE, _T("d2i"), filename,
+        OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+        _T("Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*||"), this);
+
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    {
+        CWaitCursor wait;
+        if (!CurrItem->exportItem(fileDialog.GetPathName().GetString()))
+        {
+            CString msg(_T("Item export failed"));
+            AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+        }
+    }
+
+    CString msg(_T("Item exported successfully"));
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextUpgradeGem()

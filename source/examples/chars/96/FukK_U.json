@@ -42946,6 +42946,7 @@
         "Class Specific",
         "Melee Weapon",
         "Thrown Weapon",
+        "Spears and Polearms",
         "Weapon"
       ],
       "type_id": 3,
@@ -45526,6 +45527,7 @@
       "type": "7pa",
       "categories": [
         "Polearm",
+        "Spears and Polearms",
         "Melee Weapon",
         "Weapon"
       ],
@@ -46390,50 +46392,12 @@
       "name": "damagepercent"
     },
     {
-      "id": 32,
-      "values": [
-        611
-      ],
-      "name": "armorclass_vs_missile",
-      "description": "+{0} Defense vs. Missile"
-    },
-    {
-      "id": 33,
-      "values": [
-        255
-      ],
-      "name": "armorclass_vs_hth",
-      "description": "+{0} Defense vs. Melee"
-    },
-    {
       "id": 36,
       "values": [
         4845
       ],
       "name": "damageresist",
       "description": "Damage Reduced by {0}%"
-    },
-    {
-      "id": 67,
-      "values": [
-        582
-      ],
-      "name": "velocitypercent"
-    },
-    {
-      "id": 68,
-      "values": [
-        194
-      ],
-      "name": "attackrate"
-    },
-    {
-      "id": 76,
-      "values": [
-        265
-      ],
-      "name": "item_maxhp_percent",
-      "description": "Increase Maximum Life {0}%"
     },
     {
       "id": 80,
@@ -46468,140 +46432,6 @@
       ],
       "name": "item_allskills",
       "description": "+{0} to All Skills"
-    },
-    {
-      "id": 151,
-      "values": [
-        122,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 156,
-      "values": [
-        2259
-      ],
-      "name": "item_pierce",
-      "description": "+{0}% Piercing Attack"
-    },
-    {
-      "id": 305,
-      "values": [
-        1025
-      ],
-      "name": "item_pierce_cold",
-      "description": "-{0}% to Enemy Cold Resistance"
-    },
-    {
-      "id": 306,
-      "values": [
-        1025
-      ],
-      "name": "item_pierce_fire",
-      "description": "-{0}% to Enemy Fire Resistance"
-    },
-    {
-      "id": 307,
-      "values": [
-        1025
-      ],
-      "name": "item_pierce_ltng",
-      "description": "-{0}% to Enemy Lightning Resistance"
-    },
-    {
-      "id": 308,
-      "values": [
-        1025
-      ],
-      "name": "item_pierce_pois",
-      "description": "-{0}% to Enemy Poison Resistance"
-    },
-    {
-      "id": 329,
-      "values": [
-        2766
-      ],
-      "name": "passive_fire_mastery",
-      "description": "+{0}% to Fire Skill Damage"
-    },
-    {
-      "id": 330,
-      "values": [
-        2766
-      ],
-      "name": "passive_ltng_mastery",
-      "description": "+{0}% to Lightning Skill Damage"
-    },
-    {
-      "id": 331,
-      "values": [
-        2766
-      ],
-      "name": "passive_cold_mastery",
-      "description": "+{0}% to Cold Skill Damage"
-    },
-    {
-      "id": 332,
-      "values": [
-        2305
-      ],
-      "name": "passive_pois_mastery",
-      "description": "+{0}% to Poison Skill Damage"
-    },
-    {
-      "id": 333,
-      "values": [
-        765
-      ],
-      "name": "passive_fire_pierce",
-      "description": "-{0}% to Enemy Fire Resistance"
-    },
-    {
-      "id": 334,
-      "values": [
-        765
-      ],
-      "name": "passive_ltng_pierce",
-      "description": "-{0}% to Enemy Lightning Resistance"
-    },
-    {
-      "id": 335,
-      "values": [
-        510
-      ],
-      "name": "passive_cold_pierce",
-      "description": "-{0}% to Enemy Cold Resistance"
-    },
-    {
-      "id": 336,
-      "values": [
-        510
-      ],
-      "name": "passive_pois_pierce",
-      "description": "-{0}% to Enemy Poison Resistance"
-    },
-    {
-      "id": 345,
-      "values": [
-        4335
-      ],
-      "name": "passive_mastery_throw_th"
-    },
-    {
-      "id": 346,
-      "values": [
-        4335
-      ],
-      "name": "passive_mastery_throw_dmg"
-    },
-    {
-      "id": 347,
-      "values": [
-        4335
-      ],
-      "name": "passive_mastery_throw_crit"
     },
     {
       "id": 27,
@@ -46652,14 +46482,6 @@
       "description": "Poison Resist +{0}%"
     },
     {
-      "id": 79,
-      "values": [
-        822
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
-    },
-    {
       "id": 93,
       "values": [
         428
@@ -46692,103 +46514,12 @@
       "description": "+{0}% Faster Cast Rate"
     },
     {
-      "id": 108,
-      "values": [
-        1
-      ],
-      "name": "item_restinpeace",
-      "description": "Slain Monsters Rest in Peace"
-    },
-    {
-      "id": 109,
-      "values": [
-        511
-      ],
-      "name": "curse_resistance"
-    },
-    {
       "id": 110,
       "values": [
         235
       ],
       "name": "item_poisonlengthresist",
       "description": "Poison Length Reduced by {0}%"
-    },
-    {
-      "id": 113,
-      "values": [
-        1651
-      ],
-      "name": "item_stupidity",
-      "description": "Hit Blinds Target +{0}"
-    },
-    {
-      "id": 115,
-      "values": [
-        1
-      ],
-      "name": "item_ignoretargetac",
-      "description": "Ignore Target's Defense"
-    },
-    {
-      "id": 134,
-      "values": [
-        31
-      ],
-      "name": "item_freeze",
-      "description": "Freezes target +{0}"
-    },
-    {
-      "id": 153,
-      "values": [
-        1
-      ],
-      "name": "item_cannotbefrozen",
-      "description": "Cannot Be Frozen"
-    },
-    {
-      "id": 291,
-      "values": [
-        3,
-        1023,
-        1023
-      ],
-      "name": "item_absorb_pois_bytime"
-    },
-    {
-      "id": 338,
-      "values": [
-        127
-      ],
-      "name": "passive_dodge"
-    },
-    {
-      "id": 343,
-      "values": [
-        4590
-      ],
-      "name": "passive_mastery_melee_dmg"
-    },
-    {
-      "id": 344,
-      "values": [
-        4590
-      ],
-      "name": "passive_mastery_melee_crit"
-    },
-    {
-      "id": 357,
-      "values": [
-        2305
-      ],
-      "name": "passive_mag_mastery"
-    },
-    {
-      "id": 358,
-      "values": [
-        1275
-      ],
-      "name": "passive_mag_pierce"
     },
     {
       "id": 38,
@@ -46857,14 +46588,6 @@
       ],
       "name": "item_nonclassskill",
       "description": "+{1} to {0}"
-    },
-    {
-      "id": 111,
-      "values": [
-        7365
-      ],
-      "name": "item_normaldamage",
-      "description": "Damage +{0}"
     },
     {
       "id": 142,
@@ -46939,13 +46662,6 @@
       "description": "+{0}% Faster Hit Recovery"
     },
     {
-      "id": 342,
-      "values": [
-        4080
-      ],
-      "name": "passive_mastery_melee_th"
-    },
-    {
       "id": 19,
       "values": [
         1023
@@ -46986,22 +46702,6 @@
       "description": "+{0} to Vitality"
     },
     {
-      "id": 77,
-      "values": [
-        689
-      ],
-      "name": "item_maxmana_percent",
-      "description": "Increase Maximum Mana {0}%"
-    },
-    {
-      "id": 85,
-      "values": [
-        461
-      ],
-      "name": "item_addexperience",
-      "description": "+{0}% to Experience Gained"
-    },
-    {
       "id": 97,
       "values": [
         117,
@@ -47011,93 +46711,6 @@
       "description": "+{1} to {0}"
     },
     {
-      "id": 151,
-      "values": [
-        103,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 195,
-      "values": [
-        63,
-        121,
-        100
-      ],
-      "name": "item_skillonattack",
-      "description": "{2}% Chance to cast level {0} {1} on attack"
-    },
-    {
-      "id": 60,
-      "values": [
-        1878
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
-      "id": 62,
-      "values": [
-        1878
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
-    },
-    {
-      "id": 151,
-      "values": [
-        113,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 151,
-      "values": [
-        98,
-        31
-      ],
-      "name": "item_aura",
-      "description": "Level {0} {1} Aura When Equipped"
-    },
-    {
-      "id": 9,
-      "values": [
-        2676
-      ],
-      "name": "maxmana",
-      "description": "+{0} to Mana"
-    },
-    {
-      "id": 35,
-      "values": [
-        756
-      ],
-      "name": "magic_damage_reduction",
-      "description": "Magic Damage Reduced by {0}"
-    },
-    {
-      "id": 270,
-      "values": [
-        3,
-        1023,
-        12276
-      ],
-      "name": "item_hp_bytime"
-    },
-    {
-      "id": 293,
-      "values": [
-        3,
-        1023,
-        12276
-      ],
-      "name": "item_find_magic_bytime"
-    },
-    {
       "id": 17,
       "values": [
         511,
@@ -47105,42 +46718,6 @@
       ],
       "name": "item_maxdamage_percent",
       "description": "+{0}% Enhanced Damage"
-    },
-    {
-      "id": 48,
-      "values": [
-        255,
-        511
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
-      "id": 50,
-      "values": [
-        63,
-        1023
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
-      "id": 53,
-      "values": [
-        511
-      ],
-      "name": "magicmaxdam",
-      "description": "+{0} magic damage"
-    },
-    {
-      "id": 54,
-      "values": [
-        255,
-        511,
-        255
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
     },
     {
       "id": 83,
@@ -47196,68 +46773,20 @@
       "description": "+{1} to {0}"
     },
     {
-      "id": 119,
+      "id": 9,
       "values": [
-        491
+        2676
       ],
-      "name": "item_tohit_percent",
-      "description": "{0}% Bonus to Attack Rating"
+      "name": "maxmana",
+      "description": "+{0} to Mana"
     },
     {
-      "id": 121,
+      "id": 35,
       "values": [
-        491
+        756
       ],
-      "name": "item_demondamage_percent",
-      "description": "+{0}% Damage to Demons"
-    },
-    {
-      "id": 122,
-      "values": [
-        491
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
-      "id": 123,
-      "values": [
-        895
-      ],
-      "name": "item_demon_tohit",
-      "description": "+{0} to Attack Rating against Demons"
-    },
-    {
-      "id": 124,
-      "values": [
-        895
-      ],
-      "name": "item_undead_tohit",
-      "description": "+{0} to Attack Rating against Undead"
-    },
-    {
-      "id": 135,
-      "values": [
-        100
-      ],
-      "name": "item_openwounds",
-      "description": "+{0}% Chance of Open Wounds"
-    },
-    {
-      "id": 136,
-      "values": [
-        100
-      ],
-      "name": "item_crushingblow",
-      "description": "+{0}% Chance of Crushing Blow"
-    },
-    {
-      "id": 141,
-      "values": [
-        100
-      ],
-      "name": "item_deadlystrike",
-      "description": "+{0}% Deadly Strike"
+      "name": "magic_damage_reduction",
+      "description": "Magic Damage Reduced by {0}"
     }
   ]
 }

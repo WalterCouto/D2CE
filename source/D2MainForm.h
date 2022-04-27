@@ -257,6 +257,7 @@ private:	// User declarations
     d2ce::Character CharInfo;
     d2ce::BasicStats Bs; // original values
     d2ce::CharStats Cs;  // original values
+    d2ce::CharStats DisplayedCs; // stats with item bonuses added
     std::vector<WORD> m_vecTemplate;
 
     CCharNameEdit CharName;
@@ -346,6 +347,7 @@ private:
 public:
     // Character Stats
     d2ce::Character& getCharacterInfo();
+    const d2ce::CharStats& getDisplayedCharStats() const;
     std::string getCharacterName();
     d2ce::EnumCharVersion getCharacterVersion() const;
     bitmask::bitmask<d2ce::EnumCharStatus> getCharacterStatus() const;
@@ -380,7 +382,7 @@ public:
 
     // Golem Info
     bool hasGolem() const;
-    const d2ce::Item& getGolemItem() const;
+    const std::list<d2ce::Item>& getGolemItem() const;
 
     // Quests
     const d2ce::ActsInfo& getQuests();
@@ -416,12 +418,14 @@ public:
     bool setItemMaxDurability(d2ce::Item& item);
     bool addItemSocket(d2ce::Item& item);
     bool setItemMaxSocketCount(d2ce::Item& item);
+    bool removeSocketedItems(d2ce::Item& item);
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
     bool setItemIndestructible(d2ce::Item& item);
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+    bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
@@ -429,7 +433,12 @@ public:
     size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
-    size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter()); 
+    size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
 
     size_t getNumberOfEquippedItems() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;

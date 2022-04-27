@@ -12850,6 +12850,7 @@
       "type": "crs",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -13072,14 +13073,6 @@
       "description": "Magic Damage Reduced by {0}"
     },
     {
-      "id": 60,
-      "values": [
-        3
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
       "id": 80,
       "values": [
         6
@@ -13216,15 +13209,6 @@
       "description": "Attacker Takes Damage of {0}"
     },
     {
-      "id": 50,
-      "values": [
-        2,
-        25
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
       "id": 128,
       "values": [
         11
@@ -13239,15 +13223,6 @@
       ],
       "name": "manarecoverybonus",
       "description": "Regenerate Mana {0}%"
-    },
-    {
-      "id": 48,
-      "values": [
-        3,
-        5
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
     },
     {
       "id": 22,
@@ -13281,24 +13256,6 @@
       "name": "item_throw_maxdamage"
     },
     {
-      "id": 96,
-      "values": [
-        5
-      ],
-      "name": "item_fastermovevelocity",
-      "description": "+{0}% Faster Run/Walk"
-    },
-    {
-      "id": 201,
-      "values": [
-        3,
-        48,
-        10
-      ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
-    },
-    {
       "id": 17,
       "values": [
         18,
@@ -13325,14 +13282,6 @@
       "description": "+{1} to {0} {2}"
     },
     {
-      "id": 122,
-      "values": [
-        100
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
       "id": 218,
       "values": [
         8
@@ -13341,12 +13290,12 @@
       "description": "+{0} to Maximum Damage (Based on Character Level)"
     },
     {
-      "id": 252,
+      "id": 96,
       "values": [
         5
       ],
-      "name": "item_replenish_durability",
-      "description": "Repairs 1 durability in {0} seconds"
+      "name": "item_fastermovevelocity",
+      "description": "+{0}% Faster Run/Walk"
     }
   ]
 }

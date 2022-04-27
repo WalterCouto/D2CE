@@ -956,7 +956,7 @@ void d2ce::Character::readBasicInfo()
         m_mapid_location = std::ftell(m_charfile);
         std::fread(&MapID, sizeof(MapID), 1, m_charfile);
 
-        Merc.readInfo(Bs.Version, m_charfile);
+        Merc.readInfo(m_charfile);
         if (Bs.Version > EnumCharVersion::v115)
         {
             std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_0BF_v116.size(), SEEK_SET);
@@ -1336,7 +1336,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
 
         std::fwrite(UNKNOWN_0AF.data(), UNKNOWN_0AF.size(), 1, m_charfile);
 
-        if (!Merc.readInfo(root, m_bJsonSerializedFormat, Bs.Version, m_charfile))
+        if (!Merc.readInfo(root, m_bJsonSerializedFormat, m_charfile))
         {
             return false;
         }
@@ -1763,7 +1763,7 @@ bool d2ce::Character::saveAsD2s()
     return true;
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::writeBasicInfo()
+void d2ce::Character::writeBasicInfo() const
 {
     std::fseek(m_charfile, m_name_location, SEEK_SET);
     std::fwrite(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
@@ -1843,17 +1843,17 @@ void d2ce::Character::writeBasicInfo()
     std::fflush(m_charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::writeActs()
+bool d2ce::Character::writeActs() const
 {
     return Acts.writeActs(m_charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::writeStats()
+bool d2ce::Character::writeStats() const
 {
     return Cs.writeStats(m_charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::writeItems()
+bool d2ce::Character::writeItems() const
 {
     return m_items.writeItems(m_charfile, isExpansionCharacter(), hasMercenary());
 }
@@ -1862,7 +1862,7 @@ bool d2ce::Character::writeItems()
    This function makes sure that any changes to the character's
    experience and gold values are correctly stored in the file.
 */
-void d2ce::Character::writeTempFile()
+void d2ce::Character::writeTempFile() const
 {
     m_tempfilename.clear();
     wchar_t name1[L_tmpnam_s];
@@ -2270,7 +2270,7 @@ bool d2ce::Character::hasMercenary() const
     return Merc.isHired();
 }
 //---------------------------------------------------------------------------
-d2ce::Mercenary& d2ce::Character::getMercenaryInfo()
+d2ce::Mercenary& d2ce::Character::getMercenaryInfo() const
 {
     return Merc;
 }
@@ -2310,19 +2310,24 @@ bool d2ce::Character::hasGolem() const
     return m_items.hasGolem();
 }
 //---------------------------------------------------------------------------
-const d2ce::Item& d2ce::Character::getGolemItem() const
+const std::list<d2ce::Item>& d2ce::Character::getGolemItem() const
 {
     return m_items.getGolemItem();
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::fillBasicStats(BasicStats& bs)
+void d2ce::Character::fillBasicStats(BasicStats& bs) const
 {
     std::memcpy(&bs, &Bs, sizeof(BasicStats));
 }
 //---------------------------------------------------------------------------
-void d2ce::Character::fillCharacterStats(CharStats& cs)
+void d2ce::Character::fillCharacterStats(CharStats& cs) const
 {
     Cs.fillCharacterStats(cs);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::fillDisplayedCharacterStats(CharStats& cs) const
+{
+    Cs.fillDisplayedCharacterStats(cs);
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::updateBasicStats(BasicStats& bs)
@@ -2701,6 +2706,11 @@ std::uint32_t d2ce::Character::getMaxGoldInStash() const
     return Cs.getMaxGoldInStash();
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getStrength() const
+{
+    return Cs.getStrength();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Character::isGameComplete() const
 {
     return Bs.isGameComplete();
@@ -2770,6 +2780,11 @@ std::uint32_t d2ce::Character::getMinStrength() const
 std::uint32_t d2ce::Character::getMinEnergy() const
 {
     return Cs.getMinEnergy();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getDexterity() const
+{
+    return Cs.getDexterity();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMinDexterity() const
@@ -3073,6 +3088,26 @@ size_t d2ce::Character::maxSocketCountAllItems(d2ce::ItemFilter filter)
     return m_items.maxSocketCountAllItems(filter);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    return m_items.setItemLocation(item, locationId, altPositionId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    return m_items.setItemLocation(item, locationId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    return m_items.setItemLocation(item, altPositionId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    return m_items.setItemLocation(item, *this, equippedId, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfStackables() const
 {
     return m_items.getNumberOfStackables();
@@ -3173,6 +3208,11 @@ bool d2ce::Character::addItem(EnumAltItemLocation altPositionId, std::array<std:
     return m_items.addItem(altPositionId, strcode);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    return m_items.importItem(path, pImportedItem, bRandomizeId);
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
     return m_items.fillEmptySlots(locationId, altPositionId, strcode);
@@ -3186,6 +3226,11 @@ size_t d2ce::Character::fillEmptySlots(EnumItemLocation locationId, std::array<s
 size_t d2ce::Character::fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
     return m_items.fillEmptySlots(altPositionId, strcode);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::removeSocketedItems(d2ce::Item& item)
+{
+    return m_items.removeSocketedItems(item);;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

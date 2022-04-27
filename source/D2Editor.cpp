@@ -18,6 +18,20 @@
 
 Revision History
 ================
+Version 2.16 (May 15, 2022)
+   - Updated: fix up mercenary for PTR 2.4 changes to Barbarian
+
+   - Added: add support for dragging and dropping items.
+   - Added: add d2i item files and support for import/export 
+              of items. The application supports the standard
+              d2i files that exists today but if the item being
+              exported is a D2R PTR 2.4 ear or personalized item
+              that contains utf-8 characters outside the ASCII
+              range, it will export the d2i file as a v1.16 item
+              which is not the same as the format of existing d2i
+              files.
+   - Added: add ability to socket and unsocket items
+
 Version 2.15 (April 26, 2022)
    - Updated: Reorganize resources and add txt file to allow for 
               future localization and customizations.

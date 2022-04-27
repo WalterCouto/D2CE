@@ -1036,7 +1036,7 @@ bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::writeQuests(std::FILE* charfile)
+bool d2ce::ActsInfo::writeQuests(std::FILE* charfile) const
 {
     if (quests_start_location == 0)
     {
@@ -1070,7 +1070,7 @@ bool d2ce::ActsInfo::writeQuests(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile)
+bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile) const
 {
     if (waypoints_start_location == 0)
     {
@@ -1092,7 +1092,7 @@ bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::writeNPC(std::FILE* charfile)
+bool d2ce::ActsInfo::writeNPC(std::FILE* charfile) const
 {
     if (npc_start_location == 0)
     {
@@ -1286,7 +1286,7 @@ bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat, s
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::writeActs(std::FILE* charfile)
+bool d2ce::ActsInfo::writeActs(std::FILE* charfile) const
 {
     if (!writeQuests(charfile))
     {

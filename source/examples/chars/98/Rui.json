@@ -100,6 +100,7 @@
     "merc_name": "Ragnar",
     "merc_type": 25,
     "merc_class": "Barbarian",
+    "merc_attribute": "Bash",
     "merc_level": 60,
     "merc_experience": 26352000,
     "merc_difficulty": "Normal",
@@ -14528,7 +14529,7 @@
         {
           "id": 122,
           "values": [
-            74
+            124
           ],
           "name": "item_undeaddamage_percent",
           "description": "+{0}% Damage to Undead"
@@ -14540,14 +14541,6 @@
           ],
           "name": "item_undead_tohit",
           "description": "+{0} to Attack Rating against Undead"
-        },
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+{0}% Damage to Undead"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -14571,18 +14564,10 @@
         {
           "id": 122,
           "values": [
-            74
+            124
           ],
           "name": "item_undeaddamage_percent",
-          "description": "+74% Damage to Undead"
-        },
-        {
-          "id": 122,
-          "values": [
-            50
-          ],
-          "name": "item_undeaddamage_percent",
-          "description": "+50% Damage to Undead"
+          "description": "+124% Damage to Undead"
         },
         {
           "id": 124,
@@ -15373,6 +15358,7 @@
       "type": "9ss",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -15776,14 +15762,6 @@
       "description": "+{0}% Increased Attack Speed"
     },
     {
-      "id": 152,
-      "values": [
-        3
-      ],
-      "name": "item_indesctructible",
-      "description": "Indestructible"
-    },
-    {
       "id": 7,
       "values": [
         16
@@ -15798,14 +15776,6 @@
       ],
       "name": "maxstamina",
       "description": "+{0} Maximum Stamina"
-    },
-    {
-      "id": 34,
-      "values": [
-        2
-      ],
-      "name": "normal_damage_reduction",
-      "description": "Damage Reduced by {0}"
     },
     {
       "id": 0,
@@ -15872,40 +15842,6 @@
       "description": "+{0} Defense (Based on Character Level)"
     },
     {
-      "id": 252,
-      "values": [
-        5
-      ],
-      "name": "item_replenish_durability",
-      "description": "Repairs 1 durability in {0} seconds"
-    },
-    {
-      "id": 31,
-      "values": [
-        10
-      ],
-      "name": "armorclass",
-      "description": "+{0} Defense"
-    },
-    {
-      "id": 48,
-      "values": [
-        4,
-        11
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
-      "id": 50,
-      "values": [
-        2,
-        13
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
       "id": 17,
       "values": [
         195,
@@ -15913,22 +15849,6 @@
       ],
       "name": "item_maxdamage_percent",
       "description": "+{0}% Enhanced Damage"
-    },
-    {
-      "id": 60,
-      "values": [
-        7
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
-      "id": 62,
-      "values": [
-        4
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
     },
     {
       "id": 83,
@@ -15940,38 +15860,12 @@
       "description": "{0}"
     },
     {
-      "id": 117,
+      "id": 31,
       "values": [
-        1
+        10
       ],
-      "name": "item_preventheal",
-      "description": "Prevent Monster Heal"
-    },
-    {
-      "id": 57,
-      "values": [
-        54,
-        54,
-        100
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
-      "id": 122,
-      "values": [
-        124
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
-      "id": 124,
-      "values": [
-        72
-      ],
-      "name": "item_undead_tohit",
-      "description": "+{0} to Attack Rating against Undead"
+      "name": "armorclass",
+      "description": "+{0} Defense"
     }
   ]
 }

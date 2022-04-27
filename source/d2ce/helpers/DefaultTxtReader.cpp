@@ -426,7 +426,6 @@ namespace d2ce
             return nullptr;
         }
 
-
         template <typename F>
         std::unique_ptr<ITxtDocument> LoadTxtStream(F f,
             const rapidcsv::LabelParams& pLabelParams = rapidcsv::LabelParams(),

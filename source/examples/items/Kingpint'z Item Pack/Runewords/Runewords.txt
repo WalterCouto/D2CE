@@ -1,0 +1,121 @@
+Runewords:
+
+1.11
+----
+
+Armors: (All in Archon-Plate)
+Bone
+Duress
+Enlightenment
+Myth
+Peace
+Rain
+Principle
+Treachery
+
+Shields:
+Splendor (Bloodlord Skull)
+Splendor (Zakarum-Shield)
+Splendor (Monarch)
+
+
+Good RWs
+--------
+
+Armor: (All in Archon-Plate)
+Chains of Honor
+Chains of Honor (Eth)
+Enigma
+Enigma (Eth)
+
+Merc: (Best for Merc Act 2)
+Doom (Eth)
+
+Shield:
+Exil (Vortex, Eth)
+
+Weapon: (All in Bersercer Axe)
+Beast
+Call to Arms
+Doom
+Eternity
+
+
+Ladder-Only
+-----------
+
+Armor: (All in Archon-Plate)
+Fortitude
+Fortitude (Eth)
+
+Weapon:
+
+Bows
+----
+Brand (HB)
+Brand (GMB)
+Edge (HB)
+Edge (GMB)
+Faith (HB)
+Faith (GMB)
+Harmony (HB)
+Harmony (GMB)
+Ice (HB)
+Ice (GMB)
+Wrath (HB)
+Wrath (GMB)
+
+Swords
+------
+Death
+Destruction
+Fortitude
+Grief
+Last Wish
+Lawbringer
+Oath
+Phoenix
+Spirit
+Voice of Reason
+
+Helmet:
+Dream
+
+Merc:
+Destruction
+Infinity
+Insight
+Obedience
+Phoenix
+Pride
+Rift
+
+Shield:
+Dragon (Monarch)
+Dragon (Zakarum-Shield)
+Dream (Monarch)
+Dream (Zakarum-Shield)
+Spirit (Monarch)
+Spirit (Zakarum-Shield)
+
+
+
+NOTE:
+The Runewords SHOULD have BEST POSSIBLE Stats!
+Weapons (Bows): Every Bow as Hydra Bow and Great Matron Bow!
+Weapons (Swords): Mostly made in Phase Blades (PB)
+Merc: ALL in Cryptic Axe (CA) ALL SHOULD be Etheral!
+Shields: Should be in all Possible Shields (Normal, Paladin, 1 as Necromancer)
+
+
+Info.:
+PB=Phase Blade
+CA=Cryptic Axe
+BA=Berserk Axe
+Mon=Monarch
+Zaka=Zakarum-Shield
+BS=Bloodlord Skull
+AP=Archon-Plate
+Vortex=Vortex Shield
+GMB=Great Matron Bow
+HB=Hydra Bow

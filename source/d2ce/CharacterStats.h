@@ -33,7 +33,7 @@ namespace d2ce
 
     private:
         mutable std::vector<std::uint8_t> data;
-        std::uint32_t stats_location = 0,
+        mutable std::uint32_t stats_location = 0,
             skills_location = 0,
             pd2_skills_location = 0; // PD2 Skills
         bool update_locations = true;
@@ -66,7 +66,7 @@ namespace d2ce
                  14 Gold in Inventory
            MSB:  15 Gold in Stash
         */
-        bitmask::bitmask<EnumCharStatInfo> StatInfo = EnumCharStatInfo::All; // pos 562 (pre-1.09)
+        mutable bitmask::bitmask<EnumCharStatInfo> StatInfo = EnumCharStatInfo::All; // pos 562 (pre-1.09)
 
         std::uint8_t nullByte = 0;
 
@@ -84,9 +84,9 @@ namespace d2ce
         void updateLifePointsEarned(std::uint16_t lifePointsEarned);
         void updatePointsEarned(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarne);
 
-        void checkStatInfo();
+        void checkStatInfo() const;
         EnumCharStatInfo GetStatInfoMask(std::uint16_t stat) const;
-        std::uint32_t* GetStatBuffer(std::uint16_t stat);
+        std::uint32_t* GetStatBuffer(std::uint16_t stat) const;
 
         std::uint64_t readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
         bool skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits);
@@ -100,17 +100,17 @@ namespace d2ce
         void applyJsonSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat);
         bool readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
 
-        size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value);
-        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
-        size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat);
-        size_t writeBufferBits(std::FILE* charfile);
-        bool writeStats_109(std::FILE* charfile);
-        bool writeSkills(std::FILE* charfile);
+        size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value) const;
+        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat) const;
+        size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat) const;
+        size_t writeBufferBits(std::FILE* charfile) const;
+        bool writeStats_109(std::FILE* charfile) const;
+        bool writeSkills(std::FILE* charfile) const;
 
         std::uint32_t getStatPointsPerLevel() const;
 
     protected:
-        CharStats Cs;                 // Strength:  pos 565 (pre-1.09)
+        mutable CharStats Cs;         // Strength:  pos 565 (pre-1.09)
                                       // Energy:    pos 569 (pre-1.09)
                                       // Dexterity: pos 573 (pre-1.09)
                                       // Vitality:  pos 577 (pre-1.09)
@@ -125,7 +125,7 @@ namespace d2ce
 
         bool readStats(std::FILE* charfile);
         bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
-        bool writeStats(std::FILE* charfile);
+        bool writeStats(std::FILE* charfile) const;
         std::uint32_t getHeaderLocation();
 
         void resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned);
@@ -148,7 +148,8 @@ namespace d2ce
 
         void clear();
 
-        void fillCharacterStats(CharStats& cs);
+        void fillCharacterStats(CharStats& cs) const;
+        void fillDisplayedCharacterStats(CharStats& cs) const;
         void updateCharacterStats(const CharStats& cs);
 
         std::uint32_t getLevel() const;
@@ -164,7 +165,9 @@ namespace d2ce
         std::uint32_t getMaxGoldInBelt() const;
         std::uint32_t getMaxGoldInStash() const;
         std::uint32_t getMinStrength() const;
+        std::uint32_t getStrength() const;
         std::uint32_t getMinEnergy() const;
+        std::uint32_t getDexterity() const;
         std::uint32_t getMinDexterity() const;
         std::uint32_t getMinVitality() const;
         std::uint32_t getMaxHitPoints() const;

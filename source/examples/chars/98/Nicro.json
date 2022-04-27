@@ -2328,6 +2328,7 @@
       "categories": [
         "Crossbow Quiver",
         "Missile",
+        "Second Hand",
         "Miscellaneous"
       ],
       "type_id": 4,
@@ -4579,6 +4580,7 @@
       "type": "bsd",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -6469,6 +6471,7 @@
       "type": "bsw",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -6946,6 +6949,7 @@
       "type": "9s8",
       "categories": [
         "Polearm",
+        "Spears and Polearms",
         "Melee Weapon",
         "Weapon"
       ],
@@ -8021,14 +8025,6 @@
       "description": "Poison Resist +{0}%"
     },
     {
-      "id": 152,
-      "values": [
-        5
-      ],
-      "name": "item_indesctructible",
-      "description": "Indestructible"
-    },
-    {
       "id": 2,
       "values": [
         7
@@ -8069,28 +8065,11 @@
       "description": "+{0} to Maximum Damage"
     },
     {
-      "id": 48,
-      "values": [
-        1,
-        3
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
       "id": 160,
       "values": [
         1
       ],
       "name": "item_throw_maxdamage"
-    },
-    {
-      "id": 39,
-      "values": [
-        18
-      ],
-      "name": "fireresist",
-      "description": "Fire Resist +{0}%"
     },
     {
       "id": 96,
@@ -8101,32 +8080,6 @@
       "description": "+{0}% Faster Run/Walk"
     },
     {
-      "id": 154,
-      "values": [
-        85
-      ],
-      "name": "item_staminadrainpct",
-      "description": "{0}% Slower Stamina Drain"
-    },
-    {
-      "id": 54,
-      "values": [
-        2,
-        4,
-        25
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
-    },
-    {
-      "id": 11,
-      "values": [
-        9
-      ],
-      "name": "maxstamina",
-      "description": "+{0} Maximum Stamina"
-    },
-    {
       "id": 9,
       "values": [
         3
@@ -8135,22 +8088,20 @@
       "description": "+{0} to Mana"
     },
     {
+      "id": 39,
+      "values": [
+        18
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
       "id": 41,
       "values": [
         12
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
-    },
-    {
-      "id": 201,
-      "values": [
-        5,
-        38,
-        14
-      ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
     },
     {
       "id": 99,
@@ -8186,32 +8137,6 @@
       "description": "Cold Resist +{0}%"
     },
     {
-      "id": 62,
-      "values": [
-        17
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
-    },
-    {
-      "id": 60,
-      "values": [
-        16
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
-      "id": 57,
-      "values": [
-        286,
-        286,
-        179
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
       "id": 214,
       "values": [
         24
@@ -8220,13 +8145,12 @@
       "description": "+{0} Defense (Based on Character Level)"
     },
     {
-      "id": 50,
+      "id": 11,
       "values": [
-        4,
-        62
+        9
       ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
+      "name": "maxstamina",
+      "description": "+{0} Maximum Stamina"
     }
   ]
 }

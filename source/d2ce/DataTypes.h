@@ -981,7 +981,7 @@ namespace d2ce
     struct ItemDamage
     {
         BaseDamage OneHanded;         // Minimum/Maximum one-handed damage
-        bool bOneOrTwoHanded = false; // Can weopon be carried in 1 or 2 hands by Barbarian?
+        bool bOneOrTwoHanded = false; // Can weapon be carried in 1 or 2 hands by Barbarian?
         bool bTwoHanded = false;      // is this a two handed weapon?
         BaseDamage TwoHanded;         // Minimum/Maximum two-handed damage
         BaseDamage Missile;           // Minimum/Maximum ranged damage
@@ -1278,6 +1278,9 @@ namespace d2ce
         bool skipName = false;
 
         SpellDescStruct spellDesc; // For potions, the description and points applied
+        
+        std::vector<EnumEquippedId> bodyLocations;
+        std::optional<std::string> quiverCode;
 
         bool hasCategory(const std::string category) const;
         bool hasCategoryCode(const std::string code) const;
@@ -1285,7 +1288,9 @@ namespace d2ce
         bool isWeapon() const;
         bool isThrownWeapon() const;
         bool isMissileWeapon() const;
+        bool isMissile() const;
         bool isTwoHandedWeapon() const;
+        bool isOneOrTwoHandedWeapon() const; // Can weapon be carried in 1 or 2 hands by Barbarian?
         bool isShield() const;
         bool isArmor() const;
         bool isHelm() const;
@@ -1306,6 +1311,7 @@ namespace d2ce
         bool isRune() const;
         bool isCharm() const;
         bool isBelt() const;
+        bool isBoots() const;
         bool isBeltable() const;
         bool isScroll() const;
         bool isKey() const;
@@ -1316,6 +1322,9 @@ namespace d2ce
         bool isSimpleItem() const;
         bool isUnusedItem() const;
         bool isExpansionItem() const;
+        bool isSecondHand() const;
+        bool isClassSpecific() const;
+        std::optional<d2ce::EnumCharClass> getClass() const;
 
         bool hasUndeadBonus() const;
 
@@ -1323,6 +1332,9 @@ namespace d2ce
         std::uint8_t getMaxSockets(std::uint8_t level) const;
 
         bool canPersonalize() const;
+
+        bool canEquip(EnumEquippedId equipId) const;
+        bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
 
         bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, std::uint8_t parentGemApplyType = 0) const;
 
@@ -1344,6 +1356,10 @@ namespace d2ce
         std::vector<std::string> runeCodes; // What runes are required to make the runeword and in what order they are to be socketed.
 
         std::vector<MagicalAttribute> attribs; // The modifiers this runeword will give to items
+
+        // The general level requirement that your character must meet before they can use this runeword.
+        std::uint16_t levelreq = 0;
+        d2ce::EnumItemVersion version = d2ce::EnumItemVersion::v107; // min required version
     };
 }
 //---------------------------------------------------------------------------

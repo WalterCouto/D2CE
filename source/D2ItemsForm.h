@@ -28,9 +28,17 @@ class CD2ItemsGridCallback
 {
 public:
     virtual ~CD2ItemsGridCallback() = default;
-    virtual CSize getInvGridSize(UINT id) const = 0;
-    virtual const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const = 0;
+    virtual std::optional<d2ce::EnumCharClass> getCharClass() const = 0;
+    virtual std::optional<d2ce::CharStats> getDisplayedCharStats() const = 0;
+    virtual std::optional<d2ce::Mercenary*> getMercInfo() const = 0;
+    virtual CSize getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const = 0;
+    virtual const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const = 0;
+    virtual const d2ce::Item* getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const = 0;
     virtual bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const = 0;
+    virtual bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) = 0;
+    virtual bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) = 0;
+    virtual bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) = 0;
+    virtual bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) = 0;
 };
 
 //---------------------------------------------------------------------------
@@ -47,12 +55,14 @@ public:
 public:
     virtual ~CD2EquippedItemStatic();
 
+    bool CanPlaceItem(const d2ce::Item& item, CPoint point);
+    const d2ce::Item* PlaceItem(d2ce::Item& item, CPoint point, CBitmap& bitmap);
+    bool GetInvBitmap(CBitmap& image, CPoint point, TOOLINFO* pTI = nullptr) const; // get item bitmap at point
     const d2ce::Item* GetInvItem() const; // get equipped item
     const d2ce::Item* InvHitTest(CPoint point, TOOLINFO* pTI = nullptr) const; // get item at point
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;  // get tool at point
 
     void SetUseAltImage(BOOL flag = FALSE);
-    void Redraw();
 
     // Generated message map functions
 protected:
@@ -67,11 +77,26 @@ protected:
     virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
     BOOL InitBackgroundImage();
-    BOOL LoadBackgroundImage(BOOL isAltImage = FALSE);
-    BOOL LoadItemImage(const d2ce::Item& item, CBitmap& bitmap, BOOL isAltImage = FALSE);
+    BOOL LoadBackgroundImage();
+    BOOL LoadBackgroundImage(BOOL isAltImage);
+    BOOL LoadItemImage();
 
+    const d2ce::Item* GetInvEquippedItem() const;
+    const d2ce::Item* GetInvEquippedItem(BOOL isAltImage) const;
+    const d2ce::Item* GetInvEquippedItem(d2ce::EnumEquippedId equippedId) const;
     bool GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
+    bool GetScaledItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
+    bool SetItemLocation(d2ce::Item& item, const d2ce::Item* &pRemovedItem) const;
     CD2ItemsGridCallback* GetCallback() const;
+
+    d2ce::EnumEquippedId GetEquippedId() const;
+    d2ce::EnumEquippedId GetEquippedId(BOOL isAltImage) const;
+    d2ce::EnumItemInventory GetItemInventory() const;
+    std::optional<d2ce::Mercenary*> GetMercInfo() const;
+    std::optional<d2ce::EnumCharClass> GetCharClass() const;
+    std::optional<d2ce::CharStats> GetDisplayedCharStats() const;
+
+    bool CanPlaceItemWith(const d2ce::Item& item) const;
 
 protected:
     CBitmap InvImage;
@@ -95,6 +120,9 @@ public:
 public:
     virtual ~CD2ItemsGridStatic();
 
+    bool CanPlaceItem(const d2ce::Item& item, CPoint point);
+    const d2ce::Item* PlaceItem(d2ce::Item& item, CPoint point, CBitmap& bitmap);
+    bool GetInvBitmap(CBitmap& image, CPoint point, TOOLINFO* pTI = nullptr) const; // get item bitmap at point
     const d2ce::Item* GetInvItem(UINT offset) const; // get item at grid offset
     const d2ce::Item* InvHitTest(CPoint point, TOOLINFO* pTI = nullptr) const; // get item at point
     virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;  // get tool at point
@@ -117,8 +145,14 @@ protected:
     CSize GetInvGridSize() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& GetInvGridItems() const;
     bool GetItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
+    bool GetScaledItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const;
     CRect GetInvRect(const d2ce::Item& item) const;
+    CRect GetItemRectAtGridPos(const d2ce::Item& item, CPoint position) const;
+    bool SetItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem) const;
     CD2ItemsGridCallback* GetCallback() const;
+
+    d2ce::EnumItemLocation GetLocation() const;
+    d2ce::EnumAltItemLocation GetAltPositionId() const;
 
 protected:
     CBitmap InvGridImage;
@@ -159,9 +193,13 @@ protected:
 protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
+    afx_msg void OnDestroy();
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedSharedStashButton();
-    afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+    afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
     afx_msg void OnItemContextFix();
     afx_msg void OnItemContextFixallitems();
     afx_msg void OnItemContextLoad();
@@ -172,9 +210,13 @@ protected:
     afx_msg void OnItemContextIndestructibleforallitems();
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
+    afx_msg void OnItemContextUnsocket();
     afx_msg void OnItemContextMaxsocketsforallitems();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
+    afx_msg void OnItemContextApplyruneword();
+    afx_msg void OnItemContextImportitem();
+    afx_msg void OnItemContextExportitem();
     afx_msg void OnItemContextUpgradeGem();
     afx_msg void OnItemContextUpgradeGems();
     afx_msg void OnItemContextUpgradePotion();
@@ -232,8 +274,14 @@ protected:
 
     CD2MainForm& MainForm;
     d2ce::Mercenary& Merc;
+    d2ce::CharStats DisplayedCs;
     d2ce::Item* CurrItem = nullptr;
     std::array< std::uint8_t, 2> CurrItemLocation = { 0x00, 0x00 };
+    HCURSOR CurrCursor = NULL;
+    HCURSOR ItemCursor = NULL;
+    HCURSOR TrashCursor = NULL;
+    d2ce::Item* CurrDragItem = nullptr;
+    d2ce::EnumItemInventory CurrDragItemInv = d2ce::EnumItemInventory::UNKNOWN;
     bool HasHoradricCube = false;
     bool HasBeltEquipped = false;
     BOOL IsWeaponII = FALSE;
@@ -254,8 +302,12 @@ protected:
     size_t upgradePotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
     bool upgradeToFullRejuvenationPotion(d2ce::Item& item);
     size_t upgradeRejuvenationPotions(d2ce::ItemFilter filter = d2ce::ItemFilter());
-    void refreshGrid(const d2ce::Item& item);
-    void refreshEquipped(const d2ce::Item& item);
+    bool refreshGrid(const d2ce::Item& item);
+    bool refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId);
+    bool refreshGrid(d2ce::EnumItemLocation locationId);
+    bool refreshGrid(d2ce::EnumAltItemLocation altPositionId);
+    bool refreshEquipped(const d2ce::Item& item);
+    bool refreshEquipped(d2ce::EnumEquippedId id);
     size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
@@ -264,7 +316,6 @@ protected:
 
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
-    void refreshGrid(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const;
     void refreshAllGrids();
 
     // Helpers
@@ -292,6 +343,11 @@ protected:
     void SetCurrItemInfo(CPoint point);
     void ClearCurrItemInfo();
 
+    void ResetCursor();
+    bool GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO* pTI) const;
+    bool CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point);
+    const d2ce::Item* PlaceItem(UINT id, d2ce::Item& item, CPoint point, CBitmap& bitmap);
+
     d2ce::ItemFilter GetCurrItemFilter() const;
 
     // Inherited via CD2ItemToolTipCtrlCallback
@@ -299,9 +355,18 @@ protected:
     const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const override;
 
     // Inherited via CD2ItemsGridCallback
-    CSize getInvGridSize(UINT id) const override;
-    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(UINT id) const override;
+    std::optional<d2ce::EnumCharClass> getCharClass() const override;
+    std::optional<d2ce::CharStats> getDisplayedCharStats() const override;
+    std::optional<d2ce::Mercenary*> getMercInfo() const override;
+    CSize getInvGridSize(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const std::vector<std::reference_wrapper<d2ce::Item>>& getInvGridItems(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId) const override;
+    const d2ce::Item* getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const override;
     bool getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const override;
+
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
+    bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem) override;
 };
 
 //---------------------------------------------------------------------------

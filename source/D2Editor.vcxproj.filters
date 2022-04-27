@@ -519,6 +519,9 @@
     <None Include="res\TXT\LNG\levels.json">
       <Filter>Resource Files\TXT\LNG</Filter>
     </None>
+    <None Include="res\trash.cur">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\D2Editor.ico">

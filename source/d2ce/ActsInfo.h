@@ -107,16 +107,16 @@ namespace d2ce
         void applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
         void applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat);
         bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, std::FILE* charfile);
-        bool writeQuests(std::FILE* charfile);
-        bool writeWaypoints(std::FILE* charfile);
-        bool writeNPC(std::FILE* charfile);
+        bool writeQuests(std::FILE* charfile) const;
+        bool writeWaypoints(std::FILE* charfile) const;
+        bool writeNPC(std::FILE* charfile) const;
 
         void validateAct(EnumDifficulty diff, EnumAct act);
 
     protected:
         bool readActs(std::FILE* charfile);
         bool readActs(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
-        bool writeActs(std::FILE* charfile);
+        bool writeActs(std::FILE* charfile) const;
 
         void questsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         std::string getQuestsJsonName(EnumDifficulty diff, bool bSerializedFormat = false) const;

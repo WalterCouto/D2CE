@@ -4032,6 +4032,7 @@
       "type": "bar",
       "categories": [
         "Polearm",
+        "Spears and Polearms",
         "Melee Weapon",
         "Weapon"
       ],
@@ -6055,6 +6056,7 @@
       "type": "dgr",
       "categories": [
         "Knife",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -8475,34 +8477,6 @@
       "description": "Lightning Resist +{0}%"
     },
     {
-      "id": 54,
-      "values": [
-        2,
-        4,
-        25
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
-    },
-    {
-      "id": 11,
-      "values": [
-        24
-      ],
-      "name": "maxstamina",
-      "description": "+{0} Maximum Stamina"
-    },
-    {
-      "id": 57,
-      "values": [
-        21,
-        21,
-        75
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
       "id": 93,
       "values": [
         60
@@ -8511,44 +8485,20 @@
       "description": "+{0}% Increased Attack Speed"
     },
     {
-      "id": 121,
-      "values": [
-        21
-      ],
-      "name": "item_demondamage_percent",
-      "description": "+{0}% Damage to Demons"
-    },
-    {
-      "id": 122,
-      "values": [
-        80
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
-    },
-    {
-      "id": 123,
-      "values": [
-        28
-      ],
-      "name": "item_demon_tohit",
-      "description": "+{0} to Attack Rating against Demons"
-    },
-    {
-      "id": 124,
-      "values": [
-        41
-      ],
-      "name": "item_undead_tohit",
-      "description": "+{0} to Attack Rating against Undead"
-    },
-    {
       "id": 9,
       "values": [
         10
       ],
       "name": "maxmana",
       "description": "+{0} to Mana"
+    },
+    {
+      "id": 11,
+      "values": [
+        24
+      ],
+      "name": "maxstamina",
+      "description": "+{0} Maximum Stamina"
     }
   ]
 }

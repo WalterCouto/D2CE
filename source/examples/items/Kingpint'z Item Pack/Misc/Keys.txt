@@ -1,0 +1,3 @@
+After Feedback from Fryzie, the keys should work with UdieToo Editor!
+So, i put them back to the FINAL Version!
+I haven't tested it, but it should be working with HE 0.95!

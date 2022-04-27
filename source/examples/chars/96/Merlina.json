@@ -9867,15 +9867,6 @@
       "description": "Poison Resist +{0}%"
     },
     {
-      "id": 48,
-      "values": [
-        27,
-        52
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
       "id": 105,
       "values": [
         10
@@ -9898,23 +9889,6 @@
       ],
       "name": "item_fastergethitrate",
       "description": "+{0}% Faster Hit Recovery"
-    },
-    {
-      "id": 50,
-      "values": [
-        1,
-        71
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
-    },
-    {
-      "id": 60,
-      "values": [
-        7
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
     },
     {
       "id": 93,
@@ -9950,14 +9924,6 @@
       ],
       "name": "item_singleskill",
       "description": "+{1} to {0} {2}"
-    },
-    {
-      "id": 122,
-      "values": [
-        50
-      ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
     },
     {
       "id": 7,

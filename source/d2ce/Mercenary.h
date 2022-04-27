@@ -41,7 +41,6 @@ namespace d2ce
                        // Type:       pos 185 (1.09+ only)
                        // Experience: pos 187 (1.09+ only), hireling's experience
 
-        EnumCharVersion Version = APP_CHAR_VERSION;  // Version for Character file
         std::uint32_t mercInfo_location = 177;
 
         Character& CharInfo;
@@ -53,8 +52,8 @@ namespace d2ce
         ~Mercenary();
 
     protected:
-        bool readInfo(EnumCharVersion version, std::FILE* charfile);
-        bool readInfo(const Json::Value& root, bool bSerializedFormat, EnumCharVersion version, std::FILE* charfile);
+        bool readInfo(std::FILE* charfile);
+        bool readInfo(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
         bool writeInfo(std::FILE* charfile);
 
         void setTxtReader();
@@ -68,7 +67,8 @@ namespace d2ce
         // Read-Only stats
         // Level, Experience, Strength, Dexterity and Life are set
         void fillMercStats(CharStats& cs) const;
-        
+
+        EnumCharVersion getVersion() const;
         std::uint32_t getLevel() const;
         std::uint32_t getMinLevel() const;
         std::uint32_t getMaxLevel() const;
@@ -77,6 +77,8 @@ namespace d2ce
         std::uint32_t getMinExperience() const;
         std::uint32_t getMaxExperience() const;
         void setExperience(std::uint32_t experience);
+        std::uint32_t getStrength() const;
+        std::uint32_t getDexterity() const;
         EnumMercenaryClass getClass() const;
         const std::string& getClassName() const;
         void setClass(EnumMercenaryClass mercClass);
@@ -97,10 +99,13 @@ namespace d2ce
         void setIsHired(bool bIsHired);
         bool isDead() const;
         void setIsDead(bool bIsDead);
+        const std::optional<d2ce::EnumCharClass>& getEquivClass() const;
 
         // Items
         size_t getNumberOfItems() const;
         const std::list<Item>& getItems() const;
+        bool canEquipItem(const d2ce::Item& item, EnumEquippedId equipId) const;
+        d2ce::EnumEquippedId verifyEquippedId(const d2ce::Item& item, EnumEquippedId equipId) const;
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
@@ -109,7 +114,7 @@ namespace d2ce
 
         static const std::vector<std::string>& getMercNames(EnumMercenaryClass mercClass);
         static const std::vector<std::string>& getMercClassNames();
-        static const std::vector<std::string>& getMercAttributes(EnumMercenaryClass mercClass);
+        static const std::vector<std::string>& getMercAttributes(EnumMercenaryClass mercClass, EnumCharVersion version);
         static const std::string& getMercClassName(EnumMercenaryClass mercClass);
     };
 }

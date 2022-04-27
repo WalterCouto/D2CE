@@ -352,6 +352,7 @@
     <None Include="d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl" />
     <None Include="d2ce\thirdparty\rapidcsv\LICENSE" />
     <None Include="d2ce\thirdparty\utf8\include\utf8\LICENSE" />
+    <None Include="res\trash.cur" />
     <None Include="res\D2Editor.rc2" />
     <None Include="res\TXT\LNG\item-gems.json" />
     <None Include="res\TXT\LNG\item-modifiers.json" />

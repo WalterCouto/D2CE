@@ -46,7 +46,7 @@ namespace d2ce
         std::uint32_t FileSize = 0;                                     // pos 8 (1.09+ only), file's size
         long Checksum = 0;                                              // pos 12 (1.09+ only), stores (possible) checksum
         std::uint32_t WeaponSet = 0;                                    // pos 16 (1.09+, otherwise pos 26 uint16_t)
-        BasicStats Bs;                                                  // Name:   pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8),
+        mutable BasicStats Bs;                                          // Name:   pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8),
                                                                         //         name includes terminating NULL
                                                                         // Status: pos 36 (1.09+, otherwise, pos 24), determines character status
                                                                         // Title:  pos 37 (1.09+, otherwise pos 25), character's title
@@ -68,11 +68,11 @@ namespace d2ce
                                                                         // four least significant bits = which act is character saved at
         std::uint32_t MapID = 0;                                        // pos 171 (1.09+, otherwise 126)
                                                                        
-        Mercenary Merc; // Dead:       pos 177 (1.09+ only)
-                        // Id:         pos 179 (1.09+ only)
-                        // NameId:     pos 183 (1.09+ only)
-                        // Type:       pos 185 (1.09+ only)
-                        // Experience: pos 187 (1.09+ only), hireling's experience
+        mutable Mercenary Merc; // Dead:       pos 177 (1.09+ only)
+                                // Id:         pos 179 (1.09+ only)
+                                // NameId:     pos 183 (1.09+ only)
+                                // Type:       pos 185 (1.09+ only)
+                                // Experience: pos 187 (1.09+ only), hireling's experience
 
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
@@ -88,7 +88,7 @@ namespace d2ce
 
         // the following variables are not part of the character file format
         std::FILE* m_charfile = nullptr;
-        std::filesystem::path m_d2sfilename, m_jsonfilename, m_tempfilename;
+        mutable std::filesystem::path m_d2sfilename, m_jsonfilename, m_tempfilename;
         std::error_code m_error_code;
         std::uint32_t m_filesize_location,
             m_checksum_location,
@@ -125,11 +125,11 @@ namespace d2ce
         bool readItems();
         bool readItems(const Json::Value& root);
 
-        void writeBasicInfo();
-        bool writeActs();
-        bool writeStats();
-        bool writeItems();
-        void writeTempFile();
+        void writeBasicInfo() const;
+        bool writeActs() const;
+        bool writeStats() const;
+        bool writeItems() const;
+        void writeTempFile() const;
 
         void headerAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void validateActs();
@@ -161,7 +161,7 @@ namespace d2ce
 
         // Mercenary Info
         bool hasMercenary() const;
-        Mercenary& getMercenaryInfo();
+        Mercenary& getMercenaryInfo() const;
         const std::list<d2ce::Item>& getMercItems() const;
 
         bool getMercItemBonuses(std::vector<MagicalAttribute>& attribs) const;
@@ -174,11 +174,12 @@ namespace d2ce
 
         // Golem Info
         bool hasGolem() const;
-        const d2ce::Item& getGolemItem() const;
+        const std::list<d2ce::Item>& getGolemItem() const;
 
         // Character Stats
-        void fillBasicStats(BasicStats& bs);
-        void fillCharacterStats(CharStats& cs);
+        void fillBasicStats(BasicStats& bs) const;
+        void fillCharacterStats(CharStats& cs) const;
+        void fillDisplayedCharacterStats(CharStats& cs) const;
 
         void updateBasicStats(BasicStats& bs);
         void updateCharacterStats(CharStats& cs);
@@ -229,8 +230,10 @@ namespace d2ce
         std::uint32_t getNextExperienceLevel() const;
         std::uint32_t getMaxGoldInBelt() const;
         std::uint32_t getMaxGoldInStash() const;
+        std::uint32_t getStrength() const;
         std::uint32_t getMinStrength() const;
         std::uint32_t getMinEnergy() const;
+        std::uint32_t getDexterity() const;
         std::uint32_t getMinDexterity() const;
         std::uint32_t getMinVitality() const;
         std::uint32_t getMaxHitPoints() const;
@@ -305,6 +308,11 @@ namespace d2ce
         size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
         size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
+        bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+        bool setItemLocation(d2ce::Item& item, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+
         size_t getNumberOfStackables() const;
         size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
@@ -321,9 +329,12 @@ namespace d2ce
         bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
         size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+
+        bool removeSocketedItems(d2ce::Item& item);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;

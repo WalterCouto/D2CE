@@ -43,11 +43,16 @@ namespace d2ce
 
         struct SharedStashPage
         {
+            SharedStashPage(std::list<d2ce::Item>& bufferItems) : StashItems(bufferItems)
+            {
+            }
+
             SharedStashHeader Header; // page start (64 bytes)
             Items StashItems;         // pos 0x40 relative to page start
         };
 
         std::vector<SharedStashPage> Pages;
+        std::list<d2ce::Item> BufferItems;       // Buffer for items not in any page's inventory yet
         std::filesystem::path m_d2ifilename;
         EnumCharVersion CharVersion = APP_CHAR_VERSION;
 
@@ -135,8 +140,11 @@ namespace d2ce
         size_t setIndestructibleAllItems();
         size_t setIndestructibleAllItems(size_t page);
         bool addItem(std::array<std::uint8_t, 4>& strcode, size_t page);
+        bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
         size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode, size_t page);
+        bool setItemLocation(d2ce::Item& item, size_t itemPage, std::uint16_t positionX, std::uint16_t positionY, size_t page, const d2ce::Item*& pRemovedItem);
+        bool removeSocketedItems(d2ce::Item& item);
 
     protected:
         bool refresh(std::FILE* charfile);

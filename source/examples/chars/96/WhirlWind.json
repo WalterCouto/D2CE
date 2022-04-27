@@ -4673,6 +4673,7 @@
       "type": "7cr",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -5732,6 +5733,7 @@
       "type": "7cr",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -15594,36 +15596,12 @@
       "description": "Poison Resist +{0}%"
     },
     {
-      "id": 60,
+      "id": 16,
       "values": [
-        40
+        1125
       ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
-      "id": 62,
-      "values": [
-        12
-      ],
-      "name": "manadrainmindam",
-      "description": "{0}% Mana stolen per hit"
-    },
-    {
-      "id": 1,
-      "values": [
-        40
-      ],
-      "name": "energy",
-      "description": "+{0} to Energy"
-    },
-    {
-      "id": 3,
-      "values": [
-        95
-      ],
-      "name": "vitality",
-      "description": "+{0} to Vitality"
+      "name": "item_armor_percent",
+      "description": "+{0}% Enhanced Defense"
     },
     {
       "id": 43,
@@ -15632,22 +15610,6 @@
       ],
       "name": "coldresist",
       "description": "Cold Resist +{0}%"
-    },
-    {
-      "id": 85,
-      "values": [
-        10
-      ],
-      "name": "item_addexperience",
-      "description": "+{0}% to Experience Gained"
-    },
-    {
-      "id": 127,
-      "values": [
-        2
-      ],
-      "name": "item_allskills",
-      "description": "+{0} to All Skills"
     },
     {
       "id": 83,
@@ -15659,83 +15621,12 @@
       "description": "{0}"
     },
     {
-      "id": 89,
-      "values": [
-        11
-      ],
-      "name": "item_lightradius",
-      "description": "+{0} to Light Radius"
-    },
-    {
-      "id": 198,
-      "values": [
-        10,
-        197,
-        25
-      ],
-      "name": "item_skillonhit",
-      "description": "{2}% Chance to cast level {0} {1} on striking"
-    },
-    {
-      "id": 204,
-      "values": [
-        30,
-        62,
-        9,
-        10
-      ],
-      "name": "item_charged_skill",
-      "description": "Level {0} {1} ({2}/{3} Charges)"
-    },
-    {
-      "id": 16,
-      "values": [
-        1125
-      ],
-      "name": "item_armor_percent",
-      "description": "+{0}% Enhanced Defense"
-    },
-    {
-      "id": 92,
-      "values": [
-        7
-      ],
-      "name": "item_levelreq"
-    },
-    {
       "id": 99,
       "values": [
         60
       ],
       "name": "item_fastergethitrate",
       "description": "+{0}% Faster Hit Recovery"
-    },
-    {
-      "id": 119,
-      "values": [
-        20
-      ],
-      "name": "item_tohit_percent",
-      "description": "{0}% Bonus to Attack Rating"
-    },
-    {
-      "id": 188,
-      "values": [
-        0,
-        4,
-        5
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
-    },
-    {
-      "id": 50,
-      "values": [
-        1,
-        30
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
     },
     {
       "id": 93,
@@ -15746,20 +15637,20 @@
       "description": "+{0}% Increased Attack Speed"
     },
     {
+      "id": 127,
+      "values": [
+        2
+      ],
+      "name": "item_allskills",
+      "description": "+{0} to All Skills"
+    },
+    {
       "id": 128,
       "values": [
         15
       ],
       "name": "item_attackertakeslightdamage",
       "description": "Attacker Takes Lightning Damage of {0}"
-    },
-    {
-      "id": 250,
-      "values": [
-        3
-      ],
-      "name": "item_deadlystrike_perlevel",
-      "description": "+{0}% Deadly Strike (Based on Character Level)"
     },
     {
       "id": 17,
@@ -15771,14 +15662,6 @@
       "description": "+{0}% Enhanced Damage"
     },
     {
-      "id": 75,
-      "values": [
-        75
-      ],
-      "name": "item_maxdurability_percent",
-      "description": "Increase Maximum Durability {0}%"
-    },
-    {
       "id": 105,
       "values": [
         75
@@ -15787,30 +15670,20 @@
       "description": "+{0}% Faster Cast Rate"
     },
     {
-      "id": 114,
-      "values": [
-        36
-      ],
-      "name": "item_damagetomana",
-      "description": "+{0}% Damage Taken Goes To Mana"
-    },
-    {
-      "id": 201,
-      "values": [
-        15,
-        60,
-        60
-      ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
-    },
-    {
       "id": 216,
       "values": [
         40
       ],
       "name": "item_hp_perlevel",
       "description": "+{0} to Life (Based on Character Level)"
+    },
+    {
+      "id": 89,
+      "values": [
+        11
+      ],
+      "name": "item_lightradius",
+      "description": "+{0} to Light Radius"
     },
     {
       "id": 19,
@@ -15829,46 +15702,12 @@
       "description": "+{0} to Minimum Damage"
     },
     {
-      "id": 112,
-      "values": [
-        64
-      ],
-      "name": "item_howl",
-      "description": "Hit Causes Monster to Flee +{0}%"
-    },
-    {
-      "id": 141,
-      "values": [
-        40
-      ],
-      "name": "item_deadlystrike",
-      "description": "+{0}% Deadly Strike"
-    },
-    {
-      "id": 188,
-      "values": [
-        2,
-        4,
-        6
-      ],
-      "name": "item_addskill_tab",
-      "description": "{0} {1}"
-    },
-    {
       "id": 31,
       "values": [
         225
       ],
       "name": "armorclass",
       "description": "+{0} Defense"
-    },
-    {
-      "id": 34,
-      "values": [
-        7
-      ],
-      "name": "normal_damage_reduction",
-      "description": "Damage Reduced by {0}"
     },
     {
       "id": 74,
@@ -15887,6 +15726,14 @@
       "description": "+{0}% to Maximum Lightning Resist"
     },
     {
+      "id": 3,
+      "values": [
+        95
+      ],
+      "name": "vitality",
+      "description": "+{0} to Vitality"
+    },
+    {
       "id": 96,
       "values": [
         20
@@ -15895,28 +15742,12 @@
       "description": "+{0}% Faster Run/Walk"
     },
     {
-      "id": 154,
-      "values": [
-        50
-      ],
-      "name": "item_staminadrainpct",
-      "description": "{0}% Slower Stamina Drain"
-    },
-    {
       "id": 242,
       "values": [
         8
       ],
       "name": "item_stamina_perlevel",
       "description": "+{0} Maximum Stamina (Based on Character Level)"
-    },
-    {
-      "id": 252,
-      "values": [
-        5
-      ],
-      "name": "item_replenish_durability",
-      "description": "Repairs 1 durability in {0} seconds"
     },
     {
       "id": 11,
@@ -15935,63 +15766,12 @@
       "description": "Damage Reduced by {0}%"
     },
     {
-      "id": 136,
-      "values": [
-        50
-      ],
-      "name": "item_crushingblow",
-      "description": "+{0}% Chance of Crushing Blow"
-    },
-    {
-      "id": 9,
-      "values": [
-        170
-      ],
-      "name": "maxmana",
-      "description": "+{0} to Mana"
-    },
-    {
       "id": 27,
       "values": [
         32
       ],
       "name": "manarecoverybonus",
       "description": "Regenerate Mana {0}%"
-    },
-    {
-      "id": 150,
-      "values": [
-        66
-      ],
-      "name": "item_slow",
-      "description": "Slows Target by {0}%"
-    },
-    {
-      "id": 152,
-      "values": [
-        2
-      ],
-      "name": "item_indesctructible",
-      "description": "Indestructible"
-    },
-    {
-      "id": 153,
-      "values": [
-        2
-      ],
-      "name": "item_cannotbefrozen",
-      "description": "Cannot Be Frozen"
-    },
-    {
-      "id": 204,
-      "values": [
-        8,
-        95,
-        176,
-        176
-      ],
-      "name": "item_charged_skill",
-      "description": "Level {0} {1} ({2}/{3} Charges)"
     },
     {
       "id": 80,
@@ -16002,12 +15782,20 @@
       "description": "{0}% Better Chance of Getting Magic Items"
     },
     {
-      "id": 113,
+      "id": 1,
       "values": [
-        2
+        40
       ],
-      "name": "item_stupidity",
-      "description": "Hit Blinds Target +{0}"
+      "name": "energy",
+      "description": "+{0} to Energy"
+    },
+    {
+      "id": 9,
+      "values": [
+        170
+      ],
+      "name": "maxmana",
+      "description": "+{0} to Mana"
     }
   ]
 }

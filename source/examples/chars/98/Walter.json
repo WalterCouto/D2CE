@@ -12047,6 +12047,7 @@
       "type": "9cr",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -15662,6 +15663,7 @@
       "type": "wsd",
       "categories": [
         "Sword",
+        "Swords and Knives",
         "Melee Weapon",
         "Weapon"
       ],
@@ -17014,14 +17016,6 @@
       "description": "Magic Damage Reduced by {0}"
     },
     {
-      "id": 60,
-      "values": [
-        3
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
       "id": 80,
       "values": [
         6
@@ -17062,40 +17056,12 @@
       "description": "Fire Resist +{0}%"
     },
     {
-      "id": 79,
-      "values": [
-        45
-      ],
-      "name": "item_goldbonus",
-      "description": "{0}% Extra Gold from Monsters"
-    },
-    {
-      "id": 204,
-      "values": [
-        2,
-        72,
-        25,
-        25
-      ],
-      "name": "item_charged_skill",
-      "description": "Level {0} {1} ({2}/{3} Charges)"
-    },
-    {
       "id": 41,
       "values": [
         291
       ],
       "name": "lightresist",
       "description": "Lightning Resist +{0}%"
-    },
-    {
-      "id": 50,
-      "values": [
-        4,
-        38
-      ],
-      "name": "lightmindam",
-      "description": "Adds {0}-{1} lightning damage"
     },
     {
       "id": 128,
@@ -17178,76 +17144,6 @@
       "description": "+{0}% Faster Hit Recovery"
     },
     {
-      "id": 31,
-      "values": [
-        147
-      ],
-      "name": "armorclass",
-      "description": "+{0} Defense"
-    },
-    {
-      "id": 57,
-      "values": [
-        216,
-        216,
-        75
-      ],
-      "name": "poisonmindam",
-      "description": "Adds {0}-{1} poison damage over {2} seconds"
-    },
-    {
-      "id": 22,
-      "values": [
-        23
-      ],
-      "name": "maxdamage",
-      "description": "+{0} to Maximum Damage"
-    },
-    {
-      "id": 24,
-      "values": [
-        1
-      ],
-      "name": "secondary_maxdamage",
-      "description": "+{0} to Maximum Damage"
-    },
-    {
-      "id": 160,
-      "values": [
-        1
-      ],
-      "name": "item_throw_maxdamage"
-    },
-    {
-      "id": 48,
-      "values": [
-        36,
-        73
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
-      "id": 54,
-      "values": [
-        3,
-        6,
-        25
-      ],
-      "name": "coldmindam",
-      "description": "Adds {0}-{1} cold damage"
-    },
-    {
-      "id": 195,
-      "values": [
-        5,
-        53,
-        8
-      ],
-      "name": "item_skillonattack",
-      "description": "{2}% Chance to cast level {0} {1} on attack"
-    },
-    {
       "id": 96,
       "values": [
         15
@@ -17264,22 +17160,12 @@
       "description": "+{0} to All Skills"
     },
     {
-      "id": 201,
+      "id": 31,
       "values": [
-        5,
-        48,
-        14
+        147
       ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
-    },
-    {
-      "id": 252,
-      "values": [
-        5
-      ],
-      "name": "item_replenish_durability",
-      "description": "Repairs 1 durability in {0} seconds"
+      "name": "armorclass",
+      "description": "+{0} Defense"
     },
     {
       "id": 17,
@@ -17291,52 +17177,12 @@
       "description": "+{0}% Enhanced Damage"
     },
     {
-      "id": 91,
+      "id": 22,
       "values": [
-        -30
+        23
       ],
-      "name": "item_req_percent",
-      "description": "Requirements +{0}%"
-    },
-    {
-      "id": 123,
-      "values": [
-        100
-      ],
-      "name": "item_demon_tohit",
-      "description": "+{0} to Attack Rating against Demons"
-    },
-    {
-      "id": 121,
-      "values": [
-        75
-      ],
-      "name": "item_demondamage_percent",
-      "description": "+{0}% Damage to Demons"
-    },
-    {
-      "id": 136,
-      "values": [
-        20
-      ],
-      "name": "item_crushingblow",
-      "description": "+{0}% Chance of Crushing Blow"
-    },
-    {
-      "id": 135,
-      "values": [
-        25
-      ],
-      "name": "item_openwounds",
-      "description": "+{0}% Chance of Open Wounds"
-    },
-    {
-      "id": 117,
-      "values": [
-        1
-      ],
-      "name": "item_preventheal",
-      "description": "Prevent Monster Heal"
+      "name": "maxdamage",
+      "description": "+{0} to Maximum Damage"
     },
     {
       "id": 218,
@@ -17347,22 +17193,19 @@
       "description": "+{0} to Maximum Damage (Based on Character Level)"
     },
     {
-      "id": 122,
+      "id": 24,
       "values": [
-        50
+        1
       ],
-      "name": "item_undeaddamage_percent",
-      "description": "+{0}% Damage to Undead"
+      "name": "secondary_maxdamage",
+      "description": "+{0} to Maximum Damage"
     },
     {
-      "id": 201,
+      "id": 160,
       "values": [
-        3,
-        38,
-        10
+        1
       ],
-      "name": "item_skillongethit",
-      "description": "{2}% Chance to cast level {0} {1} when struck"
+      "name": "item_throw_maxdamage"
     }
   ]
 }

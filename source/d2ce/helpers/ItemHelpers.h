@@ -27,6 +27,16 @@
 
 namespace d2ce
 {
+    template <class _Ct, class _Pr>
+    void removeItem_if(_Ct& _Cted, _Pr _Pred)
+    {
+        auto iter = std::remove_if(_Cted.begin(), _Cted.end(), _Pred);
+        if (iter != _Cted.end())
+        {
+            _Cted.erase(iter, _Cted.end());
+        }
+    }
+
     namespace ItemHelpers
     {
         void setTxtReader(const ITxtReader& txtReader);
@@ -48,6 +58,8 @@ namespace d2ce
         std::uint16_t getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode);
 
         std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
+        void applyNonMaxMagicalAttributes(CharStats& cs, std::vector<MagicalAttribute>& attribs);
+        void applyMaxMagicalAttributes(CharStats& cs, std::vector<MagicalAttribute>& attribs);
     }
     //---------------------------------------------------------------------------
 

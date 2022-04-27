@@ -339,9 +339,9 @@
 #define IDB_INVEMPTY                    483
 #define IDB_INV_ARMOR                   484
 #define IDB_INV_BELT                    485
-#define IDB_INV_BOOTS                   486
-#define IDB_INV_HELM_GLOVE_0_0          487
-#define IDB_INV_HELM_GLOVE_0_1          488
+#define IDB_INV_FEET                    486
+#define IDB_INV_HELM_GLOVES_0_0         487
+#define IDB_INV_HELM_GLOVES_0_1         488
 #define IDB_INV_RING_AMULET_0_0         489
 #define IDB_INV_RING_AMULET_0_1         490
 #define IDB_INV_WEAPONS                 491
@@ -577,6 +577,7 @@
 #define IDB_SKILL_SOR58                 721
 #define IDB_SKILL_UNK                   722
 #define IDR_HIRELING_TXT                723
+#define IDC_TRASH_CURSOR                724
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -804,11 +805,11 @@
 #define IDC_BUTTON_TREE_2_ROW_1_COL_1   1112
 #define IDC_INV_MERC_HEAD               1113
 #define IDC_BUTTON_TREE_2_ROW_1_COL_2   1113
-#define IDC_INV_CORPSE_HAND_LEFT        1114
+#define IDC_INV_CORPSE_LEFT_ARM         1114
 #define IDC_BUTTON_TREE_2_ROW_1_COL_3   1114
-#define IDC_INV_HAND_LEFT               1115
+#define IDC_INV_LEFT_ARM                1115
 #define IDC_BUTTON_TREE_2_ROW_2_COL_1   1115
-#define IDC_INV_MERC_HAND_LEFT          1116
+#define IDC_INV_MERC_LEFT_ARM           1116
 #define IDC_BUTTON_TREE_2_ROW_2_COL_2   1116
 #define IDC_INV_TORSO                   1117
 #define IDC_BUTTON_TREE_2_ROW_2_COL_3   1117
@@ -816,11 +817,11 @@
 #define IDC_BUTTON_TREE_2_ROW_3_COL_1   1118
 #define IDC_INV_MERC_TORSO              1119
 #define IDC_BUTTON_TREE_2_ROW_3_COL_2   1119
-#define IDC_INV_HAND_RIGHT              1120
+#define IDC_INV_RIGHT_ARM               1120
 #define IDC_BUTTON_TREE_2_ROW_3_COL_3   1120
-#define IDC_INV_CORPSE_HAND_RIGHT       1121
+#define IDC_INV_CORPSE_RIGHT_ARM        1121
 #define IDC_BUTTON_TREE_2_ROW_4_COL_1   1121
-#define IDC_INV_MERC_HAND_RIGHT         1122
+#define IDC_INV_MERC_RIGHT_ARM          1122
 #define IDC_BUTTON_TREE_2_ROW_4_COL_2   1122
 #define IDC_INV_NECK                    1123
 #define IDC_BUTTON_TREE_2_ROW_4_COL_3   1123
@@ -830,21 +831,21 @@
 #define IDC_BUTTON_TREE_2_ROW_5_COL_2   1125
 #define IDC_INV_CORPSE_BELT             1126
 #define IDC_BUTTON_TREE_2_ROW_5_COL_3   1126
-#define IDC_INV_BOOTS                   1127
+#define IDC_INV_FEET                    1127
 #define IDC_BUTTON_TREE_2_ROW_6_COL_1   1127
-#define IDC_INV_CORPSE_BOOTS            1128
+#define IDC_INV_CORPSE_FEET             1128
 #define IDC_BUTTON_TREE_2_ROW_6_COL_2   1128
-#define IDC_INV_RING_RIGHT              1129
+#define IDC_INV_RIGHT_RING              1129
 #define IDC_BUTTON_TREE_2_ROW_6_COL_3   1129
-#define IDC_INV_CORPSE_RING_RIGHT       1130
+#define IDC_INV_CORPSE_RIGHT_RING       1130
 #define IDC_BUTTON_TREE_3_ROW_1_COL_1   1130
-#define IDC_INV_RING_LEFT               1131
+#define IDC_INV_LEFT_RING               1131
 #define IDC_BUTTON_TREE_3_ROW_1_COL_2   1131
-#define IDC_INV_CORPSE_RING_LEFT        1132
+#define IDC_INV_CORPSE_LEFT_RING        1132
 #define IDC_BUTTON_TREE_3_ROW_1_COL_3   1132
-#define IDC_INV_GLOVE                   1133
+#define IDC_INV_GLOVES                  1133
 #define IDC_BUTTON_TREE_3_ROW_2_COL_1   1133
-#define IDC_INV_CORPSE_GLOVE            1134
+#define IDC_INV_CORPSE_GLOVES           1134
 #define IDC_BUTTON_TREE_3_ROW_2_COL_2   1134
 #define IDC_INV_GOLEM                   1135
 #define IDC_BUTTON_TREE_3_ROW_2_COL_3   1135
@@ -921,13 +922,17 @@
 #define ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS 32816
 #define ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS 32817
 #define ID_VIEW_SHAREDSTASH             32818
+#define ID_ITEM_CONTEXT_UNSOCKET        32819
+#define ID_ITEM_CONTEXT_APPLY_RUNEWORD  32820
+#define ID_ITEM_CONTEXT_IMPORT_ITEM     32821
+#define ID_ITEM_CONTEXT_EXPORT_ITEM     32822
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        513
-#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_RESOURCE_VALUE        727
+#define _APS_NEXT_COMMAND_VALUE         32821
 #define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

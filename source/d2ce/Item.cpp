@@ -32,104 +32,104 @@ namespace d2ce
 {
     constexpr std::uint32_t NUM_OF_LEVELS = 99; // max level (game limit)
 
-    constexpr std::uint32_t MAX_KEY_QUANTITY_100 =    6; // max # of keys stacked (verion 1.06 and lower)
-    constexpr std::uint32_t MAX_GLD_QUANTITY     = 4095; // max gld amount
-    constexpr std::uint32_t MAX_STACKED_QUANTITY =  511; // max # of items in a stack
-    constexpr std::uint16_t MAX_DURABILITY       = 0xFF; // max durability of an item (0 is Indestructible)
+    constexpr std::uint32_t MAX_KEY_QUANTITY_100 = 6; // max # of keys stacked (verion 1.06 and lower)
+    constexpr std::uint32_t MAX_GLD_QUANTITY = 4095; // max gld amount
+    constexpr std::uint32_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
+    constexpr std::uint16_t MAX_DURABILITY = 0xFF; // max durability of an item (0 is Indestructible)
 
-    constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER  = { 0x6A, 0x66 };  // alternatively "jf"
+    constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };  // alternatively "jf"
     constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "jk"
 
     constexpr std::uint32_t MIN_START_STATS_POS = 641;
 
-    constexpr std::uint32_t IS_IDENTIFIED_FLAG_OFFSET   =  4;
-    constexpr std::uint32_t IS_DISABLED_FLAG_OFFSET     =  8;
-    constexpr std::uint32_t IS_SOCKETED_FLAG_OFFSET     = 11;
-    constexpr std::uint32_t IS_NEW_FLAG_OFFSET          = 13;
+    constexpr std::uint32_t IS_IDENTIFIED_FLAG_OFFSET = 4;
+    constexpr std::uint32_t IS_DISABLED_FLAG_OFFSET = 8;
+    constexpr std::uint32_t IS_SOCKETED_FLAG_OFFSET = 11;
+    constexpr std::uint32_t IS_NEW_FLAG_OFFSET = 13;
     constexpr std::uint32_t IS_BAD_EQUIPPED_FLAG_OFFSET = 14;
-    constexpr std::uint32_t IS_EAR_FLAG_OFFSET          = 16;
-    constexpr std::uint32_t IS_STARTER_FLAG_OFFSET      = 17;
-    constexpr std::uint32_t IS_SIMPLE_FLAG_OFFSET       = 21;
-    constexpr std::uint32_t IS_ETHEREAL_FLAG_OFFSET     = 22;
+    constexpr std::uint32_t IS_EAR_FLAG_OFFSET = 16;
+    constexpr std::uint32_t IS_STARTER_FLAG_OFFSET = 17;
+    constexpr std::uint32_t IS_SIMPLE_FLAG_OFFSET = 21;
+    constexpr std::uint32_t IS_ETHEREAL_FLAG_OFFSET = 22;
     constexpr std::uint32_t IS_PERSONALIZED_FLAG_OFFSET = 24;
-    constexpr std::uint32_t IS_RUNEWORD_FLAG_OFFSET     = 26;
+    constexpr std::uint32_t IS_RUNEWORD_FLAG_OFFSET = 26;
 
     constexpr std::uint32_t ITEM_TYPE_BIT_OFFSET = 19; // for v1.00 to 1.06, these two bits tell us the item version (non-zero means 1.04 - 1.06 items)
 
-    constexpr std::uint32_t QUALITY_BIT_OFFSET     = 134;
-    constexpr std::uint32_t QUALITY_BIT_OFFSET_100 =  65;
-    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 =  97;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET = 134;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET_100 = 65;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 = 97;
 
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69;
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101;
 
-    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS            =   4;
-    constexpr std::uint16_t REAL_DATA_NUM_BITS_110           =  96; // realm data prior to D2R
-    constexpr std::uint16_t REAL_DATA_NUM_BITS               = 128;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS          =  11;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108      =  10; // 1.09 or older
-    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS          =   8;
-    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS =   8;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS      =   9;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108  =   8; // 1.09 or older
-    constexpr std::uint16_t STACKABLE_NUM_BITS               =   9;
-    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS           =  12;
-    constexpr std::uint16_t GLD_STACKABLE_LARGE_NUM_BITS     =  32;
-    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS             =  12;
-    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS        =   4;
-    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS           =  11;
-    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS           =  12;
-    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS    =   3;
-    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS         =   8;
-    constexpr std::uint16_t PROPERTY_ID_NUM_BITS             =   9;
-    constexpr std::uint16_t MONSTER_ID_NUM_BITS              =  10;
+    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS = 4;
+    constexpr std::uint16_t REAL_DATA_NUM_BITS_110 = 96; // realm data prior to D2R
+    constexpr std::uint16_t REAL_DATA_NUM_BITS = 128;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS = 11;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108 = 10; // 1.09 or older
+    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS = 8;
+    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS = 8;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS = 9;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108 = 8; // 1.09 or older
+    constexpr std::uint16_t STACKABLE_NUM_BITS = 9;
+    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS = 12;
+    constexpr std::uint16_t GLD_STACKABLE_LARGE_NUM_BITS = 32;
+    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS = 12;
+    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS = 4;
+    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS = 11;
+    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS = 12;
+    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS = 3;
+    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS = 8;
+    constexpr std::uint16_t PROPERTY_ID_NUM_BITS = 9;
+    constexpr std::uint16_t MONSTER_ID_NUM_BITS = 10;
 
-    constexpr std::uint16_t ITEM_V100_NUM_BITS           = 216;
-    constexpr std::uint16_t ITEM_V100_UNIQUE_ID_NUM_BITS =   8;
-    constexpr std::uint16_t ITEM_V104_EAR_NUM_BITS       = 208;
-    constexpr std::uint16_t ITEM_V104_SM_NUM_BITS        = 120;
-    constexpr std::uint16_t ITEM_V104_EX_NUM_BITS        = 248;
+    constexpr std::uint16_t ITEM_V100_NUM_BITS = 216;
+    constexpr std::uint16_t ITEM_V100_UNIQUE_ID_NUM_BITS = 8;
+    constexpr std::uint16_t ITEM_V104_EAR_NUM_BITS = 208;
+    constexpr std::uint16_t ITEM_V104_SM_NUM_BITS = 120;
+    constexpr std::uint16_t ITEM_V104_EX_NUM_BITS = 248;
 
-    constexpr std::uint32_t ITEM_V100_COORDINATES_BIT_OFFSET     = 120;
+    constexpr std::uint32_t ITEM_V100_COORDINATES_BIT_OFFSET = 120;
     constexpr std::uint32_t ITEM_V100_SPECIALITEMCODE_BIT_OFFSET = 129;
-    constexpr std::uint32_t ITEM_V100_EAR_COORDINATES_BIT_OFFSET =  64;
-    constexpr std::uint32_t ITEM_V104_SM_COORDINATES_BIT_OFFSET  =  64;
-    constexpr std::uint32_t ITEM_V104_EX_COORDINATES_BIT_OFFSET  = 152;
-    constexpr std::uint32_t ITEM_V104_EX_UNIQUECODE_BIT_OFFSET   = 161;
-    constexpr std::uint32_t ITEM_V104_EAR_COORDINATES_BIT_OFFSET =  64;
+    constexpr std::uint32_t ITEM_V100_EAR_COORDINATES_BIT_OFFSET = 64;
+    constexpr std::uint32_t ITEM_V104_SM_COORDINATES_BIT_OFFSET = 64;
+    constexpr std::uint32_t ITEM_V104_EX_COORDINATES_BIT_OFFSET = 152;
+    constexpr std::uint32_t ITEM_V104_EX_UNIQUECODE_BIT_OFFSET = 161;
+    constexpr std::uint32_t ITEM_V104_EAR_COORDINATES_BIT_OFFSET = 64;
 
-    constexpr std::uint32_t ITEM_V100_CONTAINER_BIT_OFFSET     = 200;
-    constexpr std::uint32_t ITEM_V100_EAR_CONTAINER_BIT_OFFSET =  80;
-    constexpr std::uint32_t ITEM_V104_EX_CONTAINER_BIT_OFFSET  = 232;
+    constexpr std::uint32_t ITEM_V100_CONTAINER_BIT_OFFSET = 200;
+    constexpr std::uint32_t ITEM_V100_EAR_CONTAINER_BIT_OFFSET = 80;
+    constexpr std::uint32_t ITEM_V104_EX_CONTAINER_BIT_OFFSET = 232;
 
-    constexpr std::uint32_t ITEM_V100_ITEMCODE_BIT_OFFSET      =  64;
-    constexpr std::uint32_t ITEM_V100_EAR_TYPECODE_BIT_OFFSET  =  74;
-    constexpr std::uint32_t ITEM_V100_TYPECODE_BIT_OFFSET      =  68;
-    constexpr std::uint32_t ITEM_V100_DURABILITY_BIT_OFFSET    = 105;
-    constexpr std::uint32_t ITEM_V100_DWA_BIT_OFFSET           = 139;
-    constexpr std::uint32_t ITEM_V100_DWB_BIT_OFFSET           = 171;
-    constexpr std::uint32_t ITEM_V104_EX_TYPECODE_BIT_OFFSET   =  58;
-    constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET   =  80;
-    constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET   =  82;
-    constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET   =  82;
+    constexpr std::uint32_t ITEM_V100_ITEMCODE_BIT_OFFSET = 64;
+    constexpr std::uint32_t ITEM_V100_EAR_TYPECODE_BIT_OFFSET = 74;
+    constexpr std::uint32_t ITEM_V100_TYPECODE_BIT_OFFSET = 68;
+    constexpr std::uint32_t ITEM_V100_DURABILITY_BIT_OFFSET = 105;
+    constexpr std::uint32_t ITEM_V100_DWA_BIT_OFFSET = 139;
+    constexpr std::uint32_t ITEM_V100_DWB_BIT_OFFSET = 171;
+    constexpr std::uint32_t ITEM_V104_EX_TYPECODE_BIT_OFFSET = 58;
+    constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET = 80;
+    constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET = 82;
+    constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET = 82;
     constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 137;
-    constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET        = 171;
-    constexpr std::uint32_t ITEM_V104_EX_DWB_BIT_OFFSET        = 203;
-    
-    constexpr std::uint32_t ITEM_V100_BITFIELD3_BIT_OFFSET       = 48;
-    constexpr std::uint32_t ITEM_V100_NUM_SOCKETED_BIT_OFFSET    = 53;
-    constexpr std::uint32_t ITEM_V100_LEVEL_BIT_OFFSET           = 56;
-    constexpr std::uint32_t ITEM_V104_EX_EQUIP_ID_BIT_OFFSET     = 90;
-    constexpr std::uint32_t ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET = 95;
-    constexpr std::uint32_t ITEM_V104_EX_LEVEL_BIT_OFFSET        = 98;
+    constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET = 171;
+    constexpr std::uint32_t ITEM_V104_EX_DWB_BIT_OFFSET = 203;
 
-    constexpr std::uint32_t ITEM_V107_EXTENDED_DATA_BIT_OFFSET   = 108;
-    constexpr std::uint32_t ITEM_V107_START_BIT_OFFSET           =  23; // 16 bit for item header + 7 bits for the item version
-    constexpr std::uint32_t ITEM_V115_LOCATION_BIT_OFFSET        =  35;
-    constexpr std::uint32_t ITEM_V115_EQUIPPED_ID_BIT_OFFSET     =  38;
-    constexpr std::uint32_t ITEM_V115_POSITION_BIT_OFFSET        =  42;
-    constexpr std::uint32_t ITEM_V115_ALT_POSITION_ID_BIT_OFFSET =  50;
-    constexpr std::uint32_t ITEM_V115_TYPE_CODE_BIT_OFFSET       =  53;
+    constexpr std::uint32_t ITEM_V100_BITFIELD3_BIT_OFFSET = 48;
+    constexpr std::uint32_t ITEM_V100_NUM_SOCKETED_BIT_OFFSET = 53;
+    constexpr std::uint32_t ITEM_V100_LEVEL_BIT_OFFSET = 56;
+    constexpr std::uint32_t ITEM_V104_EX_EQUIP_ID_BIT_OFFSET = 90;
+    constexpr std::uint32_t ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET = 95;
+    constexpr std::uint32_t ITEM_V104_EX_LEVEL_BIT_OFFSET = 98;
+
+    constexpr std::uint32_t ITEM_V107_EXTENDED_DATA_BIT_OFFSET = 108;
+    constexpr std::uint32_t ITEM_V107_START_BIT_OFFSET = 23; // 16 bit for item header + 7 bits for the item version
+    constexpr std::uint32_t ITEM_V115_LOCATION_BIT_OFFSET = 35;
+    constexpr std::uint32_t ITEM_V115_EQUIPPED_ID_BIT_OFFSET = 38;
+    constexpr std::uint32_t ITEM_V115_POSITION_BIT_OFFSET = 42;
+    constexpr std::uint32_t ITEM_V115_ALT_POSITION_ID_BIT_OFFSET = 50;
+    constexpr std::uint32_t ITEM_V115_TYPE_CODE_BIT_OFFSET = 53;
 
     constexpr std::uint16_t ATTRIBUTE_ID_INDESTRUCTIBLE = 152;
 
@@ -178,16 +178,93 @@ namespace d2ce
         return node.asInt64();
     }
 
+    struct ItemPredicate
+    {
+        ItemPredicate(const d2ce::Item& item) : m_item(item) {}
+
+        bool operator() (const d2ce::Item& item)
+        {
+            return &item == &m_item ? true : false;
+        }
+
+        bool operator() (const std::reference_wrapper<Item>& itemRef)
+        {
+            return &(itemRef.get()) == &m_item ? true : false;
+        }
+    private:
+        const d2ce::Item& m_item;
+    };
+
+    struct ItemEnumEquippedIdPredicate
+    {
+        ItemEnumEquippedIdPredicate(d2ce::EnumEquippedId equippedId) : m_equippedId(equippedId) {}
+
+        bool operator() (const d2ce::Item& item)
+        {
+            if (item.getLocation() != EnumItemLocation::EQUIPPED)
+            {
+                return false;
+            }
+            return item.getEquippedId() == m_equippedId ? true : false;
+        }
+
+        bool operator() (const std::reference_wrapper<Item>& itemRef)
+        {
+            auto& item = itemRef.get();
+            if (item.getLocation() != EnumItemLocation::EQUIPPED)
+            {
+                return false;
+            }
+
+            return item.getEquippedId() == m_equippedId ? true : false;
+        }
+    private:
+        d2ce::EnumEquippedId m_equippedId;
+    };
+
+    struct ItemIsBeltablePredicate
+    {
+        ItemIsBeltablePredicate() {}
+
+        bool operator() (const d2ce::Item& item)
+        {
+            return item.isBeltable();
+        }
+
+        bool operator() (const std::reference_wrapper<Item>& itemRef)
+        {
+            return itemRef.get().isBeltable();
+        }
+    };
+
+    struct ItemIsInHoradricCube
+    {
+        ItemIsInHoradricCube() {}
+
+        bool operator() (const d2ce::Item& item)
+        {
+            return (item.getLocation() == d2ce::EnumItemLocation::STORED) &&
+                (item.getAltPositionId() == d2ce::EnumAltItemLocation::HORADRIC_CUBE);
+        }
+
+        bool operator() (const std::reference_wrapper<Item>& itemRef)
+        {
+            return (itemRef.get().getLocation() == d2ce::EnumItemLocation::STORED) &&
+                (itemRef.get().getAltPositionId() == d2ce::EnumAltItemLocation::HORADRIC_CUBE);
+        }
+    };
+
     void AddUndeadBonusMagicalAttribute(EnumItemVersion version, std::uint16_t gameVersion, std::vector<MagicalAttribute>& attribs)
     {
         const auto& stat = ItemHelpers::getItemStat(version, "item_undeaddamage_percent");
         bool bHasUndeadAttrib = false;
-        for (const auto& item : attribs)
+        for (auto& item : attribs)
         {
             if (item.Id == stat.id)
             {
                 bHasUndeadAttrib = true;
-                break;
+                item.Values[0] += 50;
+                return;
             }
         }
 
@@ -197,7 +274,7 @@ namespace d2ce
         attrib.Name = stat.name;
         attrib.Version = version;
         attrib.GameVersion = gameVersion;
-        attrib.DescPriority = bHasUndeadAttrib ? stat.descPriority : 0;
+        attrib.DescPriority = 0;
         attrib.Values = { 50 };
         attribs.push_back(attrib);
     }
@@ -213,6 +290,10 @@ namespace d2ce
         const ItemType& getInvalidItemTypeHelper();
 
         std::string getRunewordNameFromId(std::uint16_t id);
+        const d2ce::RunewordType& getRunewordFromId(std::uint16_t id);
+        std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
+        std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
+
         bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
@@ -248,6 +329,188 @@ namespace d2ce
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
         bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
+    }
+
+    void FilterMagicalAttribsForBonus(const std::vector<MagicalAttribute>& unfilteredAttribs, std::vector<MagicalAttribute>& attribs)
+    {
+        // filter out the properties that give us a bonuses
+        attribs.clear();
+        for (auto& attrib : unfilteredAttribs)
+        {
+            switch (attrib.Id)
+            {
+            case   0: // strength
+            case   1: // energy
+            case   2: // dexterity
+            case   3: // vitality
+            case   7: // maxhp
+            case   9: // maxmana
+            case  11: // maxstamina
+            case  19: // tohit
+            case  27: // manarecoverybonus
+            case  74: // hpregen
+            case 138: // item_manaafterkill
+            case  89: // item_lightradius
+                attribs.push_back(attrib);
+                continue;
+
+            case  78: // item_attackertakesdamage
+            case 128: // item_attackertakeslightdamage
+                attribs.push_back(attrib);
+                continue;
+
+            case  93: // item_fasterattackrate
+            case  96: // item_fastermovevelocity
+            case  99: // item_fastergethitrate
+            case 102: // item_fasterblockrate
+            case 105: // item_fastercastrate
+                attribs.push_back(attrib);
+                continue;
+
+            case  16: // item_armor_percent
+            case  31: // armorclass
+            case 214: // item_armor_perlevel
+            case 215: // item_armorpercent_perlevel
+                attribs.push_back(attrib);
+                continue;
+
+            case  17: // item_maxdamage_percent
+            case  21: // mindamage
+            case  22: // maxdamage
+            case  23: // secondary_mindamage
+            case  24: // secondary_maxdamage
+            case  25: // damagepercent
+            case  35: // magic_damage_reduction
+            case  80: // item_magicbonus
+            case 159: // item_throw_mindamage
+            case 160: // item_throw_maxdamage
+            case 218: // item_maxdamage_perlevel
+            case 219: // item_maxdamage_percent_perlevel
+                attribs.push_back(attrib);
+                continue;
+
+            case  36: // damageresist
+            case  37: // magicresist
+            case  38: // maxmagicresist
+            case  39: // fireresist
+            case  40: // maxfireresist
+            case  41: // lightresist
+            case  42: // maxlightresist
+            case  43: // coldresist
+            case  44: // maxcoldresist
+            case  45: // poisonresist
+            case  46: // maxpoisonresist
+            case 110: // item_poisonlengthresist
+                attribs.push_back(attrib);
+                continue;
+
+            case  83: // item_addclassskills
+            case  97: // item_nonclassskill
+            case 107: // item_singleskill
+            case 126: // item_elemskill
+            case 127: // item_allskills
+                attribs.push_back(attrib);
+                continue;
+
+            case 142: // item_absorbfire_percent
+            case 143: // item_absorbfire
+            case 144: // item_absorblight_percent
+            case 145: // item_absorblight
+            case 146: // item_absorbmagic_percent
+            case 147: // item_absorbmagic
+            case 148: // item_absorbcold_percent
+            case 149: // item_absorbcold
+                attribs.push_back(attrib);
+                continue;
+            }
+
+            const auto& stat = ItemHelpers::getItemStat(attrib);
+            if (stat.opAttribs.op_base == "level")
+            {
+                for (const auto& opStat : stat.opAttribs.op_stats)
+                {
+                    if ((opStat == "strength") || (opStat == "energy") || (opStat == "dexterity") || (opStat == "vitality") ||
+                        (opStat == "armorclass") || (opStat == "maxdamage") || (opStat == "mindamage") ||
+                        (opStat == "item_attackertakeslightdamage") ||
+                        (opStat == "maxhp") || (opStat == "maxmana") || (opStat == "maxstamina") ||
+                        (opStat == "coldresist") || (opStat == "fireresist") || (opStat == "lightresist") || (opStat == "poisonresist"))
+                    {
+                        attribs.push_back(attrib);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    std::array<std::uint8_t, 4> ItemCodeStringConverter(const std::string& sValue)
+    {
+        std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+        if (sValue.size() != 3)
+        {
+            return strcode;
+        }
+
+        std::memcpy(strcode.data(), sValue.c_str(), 3);
+        return strcode;
+    }
+
+    void CheckOffsetValue(size_t& curBitOffset, size_t& startOffset, bool& bFoundMatch, ptrdiff_t diff)
+    {
+        if ((curBitOffset == 0) && (&startOffset != &curBitOffset))
+        {
+            return;
+        }
+
+        if (!bFoundMatch && (&startOffset == &curBitOffset))
+        {
+            bFoundMatch = true;
+            return;
+        }
+
+        if (curBitOffset == startOffset)
+        {
+            if (bFoundMatch)
+            {
+                curBitOffset += diff;
+            }
+            return;
+        }
+
+        if (curBitOffset > startOffset)
+        {
+            curBitOffset += diff;
+            return;
+        }
+    }
+
+    void CheckMarkerOffsetValue(size_t& curMarkerBitOffset, size_t& curBitOffset, size_t& startOffset, bool& bFoundMatch, ptrdiff_t diff)
+    {
+        if (bFoundMatch)
+        {
+            CheckOffsetValue(curMarkerBitOffset, startOffset, bFoundMatch, diff);
+            if (curBitOffset > 0)
+            {
+                curBitOffset = curMarkerBitOffset;
+            }
+            return;
+        }
+
+        if ((&startOffset == &curMarkerBitOffset) || (&startOffset == &curBitOffset))
+        {
+            bFoundMatch = true;
+            return;
+        }
+
+        if (curMarkerBitOffset > startOffset)
+        {
+            curMarkerBitOffset += diff;
+            if (curBitOffset > 0)
+            {
+                curBitOffset = curMarkerBitOffset;
+            }
+            return;
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -524,7 +787,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
         return;
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-    
+
     // position x/y
     position_offset = current_bit_offset;
     value = 0;
@@ -544,7 +807,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
         return;
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-    
+
     // alt position x/y
     alt_position_id_offset = current_bit_offset;
     value = static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::UNKNOWN);
@@ -558,14 +821,14 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
 
     // type code
     type_code_offset = current_bit_offset;
-    
+
     std::uint8_t numBitsSet = 0;
     switch (ItemVersion)
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
     case EnumItemVersion::v104: // v1.04 - v1.06 item
         *this = invalidItem; // should not get here
-        return; 
+        return;
 
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08 item
@@ -580,7 +843,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
 
     case EnumItemVersion::v115: // v1.15 Diablo II Resurrected item
     case EnumItemVersion::v116: // v1.15 Diablo II Resurrected Patch 2.4 item
-    default: 
+    default:
         ItemHelpers::encodeItemCodev115(strcode, value64, numBitsSet);
         if (!setBits64(current_bit_offset, itemCodeBitsSet, itemCode))
         {
@@ -607,7 +870,328 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
     item_end_bit_offset = max_bit_offset;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::writeItem(std::FILE* charfile)
+d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path)
+{
+    std::FILE* charfile = nullptr;
+    errno_t err = err = _wfopen_s(&charfile, path.wstring().c_str(), L"rb");
+    if (err != 0)
+    {
+        // something went wrong
+        return;
+    }
+
+    std::fseek(charfile, 0, SEEK_END);
+    auto fileBitSize = std::ftell(charfile) * 8;
+    std::rewind(charfile);
+
+    bool bIsv115orHigher = false;
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[0])
+    {
+        bIsv115orHigher = true; // we can only hope it is true
+    }
+    else
+    {
+        std::fread(&value, sizeof(value), 1, charfile);
+        if (value != ITEM_MARKER[1])
+        {
+            bIsv115orHigher = true;  // we can only hope it is true
+        }
+    }
+    std::rewind(charfile);
+
+    // d2i items files are usually base on v1.07 - v1.14d item format, however
+    // there is the rare chance you have v1.00 - v1.06 item format and more likely
+    // v1.16 item (Diablo II: Resurrected Patch 2.4) with a player name being non-ASCII
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+        isExpansion = false;
+        if (!bIsv115orHigher)
+        {
+            switch (fileBitSize)
+            {
+            case ITEM_V100_NUM_BITS:
+                if (readItem(itemVersion, false, charfile) && verifyItemConsistency())
+                {
+                    // imported successfully
+                    std::fclose(charfile);
+                    return;
+                }
+                clear();
+                break;
+
+            default:
+                break;
+            }
+        }
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        isExpansion = false;
+        if (!bIsv115orHigher)
+        {
+            switch (fileBitSize)
+            {
+            case ITEM_V104_EAR_NUM_BITS:
+            case ITEM_V104_SM_NUM_BITS:
+            case ITEM_V104_EX_NUM_BITS:
+                if (readItem(itemVersion, false, charfile) && verifyItemConsistency())
+                {
+                    // imported successfully
+                    std::fclose(charfile);
+                    return;
+                }
+                clear();
+                break;
+
+            default:
+                break;
+            }
+        }
+        break;
+
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+        if (isExpansion && !bIsv115orHigher)
+        {
+            if (readItem(itemVersion, isExpansion, charfile))
+            {
+                // update raw version
+                size_t current_bit_offset = start_bit_offset + 32;
+                switch (itemVersion)
+                {
+                case EnumItemVersion::v107:
+
+                    switch (getRawVersion())
+                    {
+                    case 0:
+                        break;
+
+                    default:
+                        setBits(current_bit_offset, 8, 0);
+                        break;
+                    }
+                    break;
+
+                case EnumItemVersion::v108:
+                case EnumItemVersion::v109:
+                    switch (getRawVersion())
+                    {
+                    case   1:
+                    case 100:
+                        break;
+
+                    default:
+                        setBits(current_bit_offset, 8, 100);
+                        break;
+                    }
+                    break;
+
+                case EnumItemVersion::v110:
+                    switch (getRawVersion())
+                    {
+                    case   2:
+                    case 101:
+                        break;
+
+                    default:
+                        setBits(current_bit_offset, 8, 101);
+                        break;
+                    }
+                    break;
+                }
+
+                if (verifyItemConsistency())
+                {
+                    // imported successfully
+                    std::fclose(charfile);
+                    return;
+                }
+            }
+            clear();
+        }
+        break;
+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        if (isExpansion && bIsv115orHigher)
+        {
+            if (readItem(itemVersion, isExpansion, charfile) && verifyItemConsistency())
+            {
+                // imported successfully
+                std::fclose(charfile);
+                return;
+            }
+            clear();
+        }
+        break;
+    }
+
+    // this is a more complex import as it requires us to convert
+    std::rewind(charfile);
+    Item convertFrom;
+    auto importFromVersion = EnumItemVersion::v110;
+    if (bIsv115orHigher)
+    {
+        importFromVersion = EnumItemVersion::v116;
+        if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
+        {
+            // try v1.15
+            std::rewind(charfile);
+            convertFrom.clear();
+            importFromVersion = EnumItemVersion::v115;
+            if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
+            {
+                // failed to import
+                std::fclose(charfile);
+                return;
+            }
+        }
+        std::fclose(charfile);
+    }
+    else if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
+    {
+        // Check for v1.00 - v1.06 item format
+        std::rewind(charfile);
+        convertFrom.clear();
+        switch (fileBitSize)
+        {
+        case ITEM_V100_NUM_BITS:
+            importFromVersion = EnumItemVersion::v100;
+            if (!convertFrom.readItem(importFromVersion, false, charfile) && !convertFrom.verifyItemConsistency())
+            {
+                // failed to import
+                std::fclose(charfile);
+                return;
+            }
+            break;
+
+        case ITEM_V104_EAR_NUM_BITS:
+        case ITEM_V104_SM_NUM_BITS:
+        case ITEM_V104_EX_NUM_BITS:
+            importFromVersion = EnumItemVersion::v104;
+            if (!convertFrom.readItem(importFromVersion, false, charfile) && !convertFrom.verifyItemConsistency())
+            {
+                // failed to import
+                std::fclose(charfile);
+                return;
+            }
+            break;
+
+        default:
+            // failed to import
+            std::fclose(charfile);
+            return;
+        }
+    }
+    std::fclose(charfile);
+
+    // convert to json first
+    Json::Value itemRoot;
+    convertFrom.asJson(itemRoot, 1ui32, true);
+
+    // modify it to work for the item version we are using
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+        isExpansion = false;
+        itemRoot["Version"] = "0";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        isExpansion = false;
+        itemRoot["Version"] = "0";
+        itemRoot["IsV104"] = true;
+        break;
+
+    case EnumItemVersion::v107: // v1.07 item
+        itemRoot["Version"] = "0";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item 
+        itemRoot["Version"] = "100";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        itemRoot["Version"] = "101";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+    }
+
+    if (!isExpansion)
+    {
+        if (itemRoot.isMember("IsRuneword"))
+        {
+            itemRoot["IsRuneword"] = false;
+        }
+    }
+
+    if ((importFromVersion > EnumItemVersion::v115) && (itemVersion < EnumItemVersion::v116))
+    {
+        // check for personaliztion string
+        if (convertFrom.isPersonalized())
+        {
+            // personalization has change, make sure they are all 7 bit characters
+            for (std::uint8_t singleChar : convertFrom.getPersonalizedName())
+            {
+                if (singleChar > 0x7F)
+                {
+                    itemRoot["IsPersonalized"] = false;
+                    itemRoot["PlayerName"] = "SOMEONE";
+                    break;
+                }
+            }
+        }
+        else if (convertFrom.isEar())
+        {
+            // player name has change, make sure they are all 7 bit characters
+            EarAttributes earAttrib;
+            if (convertFrom.getEarAttributes(earAttrib))
+            {
+                for (std::uint8_t singleChar : earAttrib.getName())
+                {
+                    if (singleChar > 0x7F)
+                    {
+                        itemRoot["PlayerName"] = "SOMEONE";
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // read item in
+    readItem(itemRoot, true, itemVersion, isExpansion);
+    if (!verifyItemConsistency())
+    {
+        // failed to import
+        clear();
+    }
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::writeItem(std::FILE* charfile) const
 {
     if (data.empty())
     {
@@ -668,6 +1252,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     multi_graphic_bit_offset = other.multi_graphic_bit_offset;
     autoAffix_bit_offset = other.autoAffix_bit_offset;
     quality_attrib_bit_offset = other.quality_attrib_bit_offset;
+    runeword_id_bit_offset_marker = other.runeword_id_bit_offset_marker;
     runeword_id_bit_offset = other.runeword_id_bit_offset;
     personalized_bit_offset_marker = other.personalized_bit_offset_marker;
     personalized_bit_offset = other.personalized_bit_offset;
@@ -683,6 +1268,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     bonus_bits_bit_offset = other.bonus_bits_bit_offset;
     magical_props_bit_offset = other.magical_props_bit_offset;
     set_bonus_props_bit_offset = other.set_bonus_props_bit_offset;
+    runeword_props_bit_offset_marker = other.runeword_props_bit_offset_marker;
     runeword_props_bit_offset = other.runeword_props_bit_offset;
     item_end_bit_offset = other.item_end_bit_offset;
     item_current_socket_idx = other.item_current_socket_idx;
@@ -724,6 +1310,7 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     multi_graphic_bit_offset = std::exchange(other.multi_graphic_bit_offset, 0);
     autoAffix_bit_offset = std::exchange(other.autoAffix_bit_offset, 0);
     quality_attrib_bit_offset = std::exchange(other.quality_attrib_bit_offset, 0);
+    runeword_id_bit_offset_marker = std::exchange(other.runeword_id_bit_offset_marker, 0);
     runeword_id_bit_offset = std::exchange(other.runeword_id_bit_offset, 0);
     personalized_bit_offset_marker = std::exchange(other.personalized_bit_offset_marker, 0);
     personalized_bit_offset = std::exchange(other.personalized_bit_offset, 0);
@@ -739,6 +1326,7 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     bonus_bits_bit_offset = std::exchange(other.bonus_bits_bit_offset, 0);
     magical_props_bit_offset = std::exchange(other.magical_props_bit_offset, 0);
     set_bonus_props_bit_offset = std::exchange(other.set_bonus_props_bit_offset, 0);
+    runeword_props_bit_offset_marker = std::exchange(other.runeword_props_bit_offset_marker, 0);
     runeword_props_bit_offset = std::exchange(other.runeword_props_bit_offset, 0);
     item_end_bit_offset = std::exchange(other.item_end_bit_offset, 0);
     item_current_socket_idx = std::exchange(other.item_current_socket_idx, 0);
@@ -821,21 +1409,446 @@ std::uint16_t d2ce::Item::getRawVersion() const
         return 0; // pre-1.08 normal
     }
 
-    return (std::uint16_t)read_uint32_bits(start_bit_offset + 32, (ItemVersion < EnumItemVersion::v115 ? 8 : 3));
+    return (std::uint16_t)readBits(start_bit_offset + 32, (ItemVersion < EnumItemVersion::v115 ? 8 : 3));
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY)
+bool d2ce::Item::isExpansionItem() const
 {
-    if ((locationId == EnumItemLocation::STORED) && (altPositionId == EnumAltItemLocation::UNKNOWN))
+    return getGameVersion() == 100 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY)
+{
+    switch (locationId)
+    {
+    case EnumItemLocation::STORED:
+        if (altPositionId == EnumAltItemLocation::UNKNOWN)
+        {
+            // invalid state
+            return false;
+        }
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        // invalid state
+        return false;
+
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::BUFFER:
+    case EnumItemLocation::SOCKET:
+        altPositionId = EnumAltItemLocation::UNKNOWN;
+        break;
+
+    default:
+        return false;
+    }
+
+    return setLocation(locationId, altPositionId, EnumEquippedId::NONE, positionX, positionY);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setLocation(EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY)
+{
+    switch (locationId)
+    {
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::BUFFER:
+    case EnumItemLocation::SOCKET:
+        break;
+
+    case EnumItemLocation::STORED:
+    case EnumItemLocation::EQUIPPED:
+    default:
+        // invalid state
+        return false;
+    }
+
+    return setLocation(locationId, EnumAltItemLocation::UNKNOWN, EnumEquippedId::NONE, positionX, positionY);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setLocation(EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY)
+{
+    switch (altPositionId)
+    {
+    case EnumAltItemLocation::UNKNOWN:
+        // invalid state
+        return false;
+
+    case EnumAltItemLocation::HORADRIC_CUBE:
+        if (isHoradricCube())
+        {
+            // invalid state
+            return false;
+        }
+        break;
+    }
+
+    return setLocation(EnumItemLocation::STORED, altPositionId, EnumEquippedId::NONE, positionX, positionY);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setLocation(EnumEquippedId equippedId)
+{
+    if (equippedId == EnumEquippedId::NONE)
     {
         // invalid state
         return false;
     }
 
+    if (!canEquip(equippedId))
+    {
+        // invalid state
+        return false;
+    }
+
+    return setLocation(EnumItemLocation::EQUIPPED, EnumAltItemLocation::UNKNOWN, equippedId, 0, 0);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, EnumEquippedId equippedId, std::uint16_t positionX, std::uint16_t positionY)
+{
+    switch (locationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case EnumAltItemLocation::UNKNOWN:
+            // invalid state
+            return false;
+
+        case EnumAltItemLocation::HORADRIC_CUBE:
+            if (isHoradricCube())
+            {
+                // invalid state
+                return false;
+            }
+            break;
+        }
+
+        equippedId = EnumEquippedId::NONE;
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        if (equippedId == EnumEquippedId::NONE)
+        {
+            // invalid state
+            return false;
+        }
+
+        if (!canEquip(equippedId))
+        {
+            // invalid state
+            return false;
+        }
+
+        altPositionId = EnumAltItemLocation::UNKNOWN;
+        positionX = 0;
+        positionY = 0;
+        break;
+
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::BUFFER:
+    case EnumItemLocation::SOCKET:
+        equippedId = EnumEquippedId::NONE;
+        altPositionId = EnumAltItemLocation::UNKNOWN;
+        break;
+
+    default:
+        return false;
+    }
+
     if (isEar())
     {
-        // don't support placing ears
-        return false;
+        size_t current_bit_offset = 0;
+        size_t bitSize = 10;
+        std::uint32_t value = 0;
+        switch (locationId)
+        {
+        case EnumItemLocation::STORED:
+            break;
+
+        case EnumItemLocation::BUFFER:
+            switch (ItemVersion)
+            {
+            case EnumItemVersion::v100:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint8_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x08);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumItemVersion::v104:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x0100);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+                return true;
+
+            default:
+                current_bit_offset = location_bit_offset;
+                value = static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::BUFFER);
+                bitSize = 3;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                // position x/y
+                current_bit_offset = position_offset;
+                bitSize = 4;
+                value = 0;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                bitSize = 4;
+                value = 0;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = alt_position_id_offset;
+                bitSize = 3;
+                value = static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::UNKNOWN);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                return true;
+            }
+            break;
+
+        case EnumItemLocation::BELT:
+        case EnumItemLocation::SOCKET:
+        case EnumItemLocation::EQUIPPED:
+        default:
+            // ears can only be stored
+            return false;
+        }
+
+        switch (ItemVersion)
+        {
+        case EnumItemVersion::v100:
+            switch (altPositionId)
+            {
+            case EnumAltItemLocation::INVENTORY:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x9F);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumAltItemLocation::STASH:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x40);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumAltItemLocation::HORADRIC_CUBE:
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x60);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+            }
+            break;
+
+        case EnumItemVersion::v104:
+            switch (altPositionId)
+            {
+            case EnumAltItemLocation::INVENTORY:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xE3FF);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumAltItemLocation::STASH:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x1000);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumAltItemLocation::HORADRIC_CUBE:
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x0C00);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, positionY))
+                {
+                    return false;
+                }
+                return true;
+            }
+            break;
+
+        default:
+            current_bit_offset = location_bit_offset;
+            value = static_cast<std::underlying_type_t<EnumItemLocation>>(locationId);
+            bitSize = 3;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            // position x/y
+            current_bit_offset = position_offset;
+            bitSize = 4;
+            value = positionX;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            bitSize = 4;
+            value = positionY;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = alt_position_id_offset;
+            bitSize = 3;
+            value = static_cast<std::underlying_type_t<EnumAltItemLocation>>(altPositionId);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     size_t current_bit_offset = 0;
@@ -852,7 +1865,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             case EnumAltItemLocation::INVENTORY:
                 current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xF807);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -881,7 +1894,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -891,7 +1904,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             case EnumAltItemLocation::STASH:
                 current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -920,7 +1933,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -930,7 +1943,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             case EnumAltItemLocation::HORADRIC_CUBE:
                 current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -959,7 +1972,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -976,7 +1989,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1007,7 +2020,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1017,7 +2030,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
         case EnumItemLocation::EQUIPPED:
             current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1025,7 +2038,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             current_bit_offset = position_offset;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1033,11 +2046,12 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             current_bit_offset = equipped_id_offset;
             bitSize = 4;
-            value = positionX;
-            if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+            value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
+            if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM))
             {
                 return false;
             }
+
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1045,7 +2059,41 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x4000);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x3FFF) | 0x4000);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            return true;
+
+        case EnumItemLocation::BUFFER:
+            current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0008);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = position_offset;
+            bitSize = 16;
+            value = 0;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = equipped_id_offset;
+            bitSize = 4;
+            value = 0;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+
+            current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -1065,7 +2113,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
                 case EnumAltItemLocation::INVENTORY:
                     current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x03FE);
+                    value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x03FE);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1087,17 +2135,17 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
                     }
-                    break;
+                    return true;
 
                 case EnumAltItemLocation::STASH:
                     current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x1000);
+                    value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x1000);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1119,7 +2167,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1129,7 +2177,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
                 case EnumAltItemLocation::HORADRIC_CUBE:
                     current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x0C00);
+                    value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x0C00);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1151,14 +2199,14 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
                     }
-                    break;
+                    return true;
                 }
-                return true;
+                break;
 
             case EnumItemLocation::BELT:
                 if (!isBeltable())
@@ -1168,7 +2216,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1192,7 +2240,48 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x00000003);
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) | 0x00000003);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumItemLocation::SOCKET:
+                if (!isSocketFiller())
+                {
+                    return false;
+                }
+
+                if (positionX >= 7)
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03E0) | 0xFC1B);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, positionX))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) | 0x00000003);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1201,6 +2290,38 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
             case EnumItemLocation::EQUIPPED:
                 return false; // Simple items can't be equipped
+
+            case EnumItemLocation::BUFFER:
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x0001);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000004);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                return true;
             }
         }
         else
@@ -1213,7 +2334,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
                 case EnumAltItemLocation::INVENTORY:
                     current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+                    value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xF807);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1235,7 +2356,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
                     bitSize = 8;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+                    value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1243,7 +2364,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1251,7 +2372,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
                     bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+                    value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1261,7 +2382,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
                 case EnumAltItemLocation::STASH:
                     current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+                    value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1283,7 +2404,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
                     bitSize = 8;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+                    value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1291,7 +2412,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1299,17 +2420,17 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
                     bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+                    value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
                     }
-                    break;
+                    return true;
 
                 case EnumAltItemLocation::HORADRIC_CUBE:
                     current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
                     bitSize = 16;
-                    value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+                    value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1331,7 +2452,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
                     bitSize = 8;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+                    value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1339,7 +2460,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
                     bitSize = 32;
-                    value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                    value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
@@ -1347,14 +2468,14 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                     current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
                     bitSize = 16;
-                    value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+                    value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
                     if (!setBits(current_bit_offset, bitSize, value))
                     {
                         return false;
                     }
-                    break;
+                    return true;
                 }
-                break;
+                return true;
 
             case EnumItemLocation::BELT:
             case EnumItemLocation::SOCKET:
@@ -1363,7 +2484,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             case EnumItemLocation::EQUIPPED:
                 current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1371,7 +2492,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = position_offset;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1379,7 +2500,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
                 bitSize = 8;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+                value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1387,11 +2508,12 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = equipped_id_offset;
                 bitSize = 4;
-                value = positionX;
-                if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+                value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
+                if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM))
                 {
                     return false;
                 }
+
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1399,7 +2521,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
                 bitSize = 32;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1407,7 +2529,57 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
 
                 current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x4000);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) | 0x4000);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+                return true;
+
+            case EnumItemLocation::BUFFER:
+                current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = position_offset;
+                bitSize = 16;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+                bitSize = 8;
+                value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = equipped_id_offset;
+                bitSize = 4;
+                value = 0;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+                bitSize = 32;
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    return false;
+                }
+
+                current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+                bitSize = 16;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -1432,23 +2604,19 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
             return false;
         }
 
-        if (locationId == EnumItemLocation::BELT)
+        bitSize = 4;
+        current_bit_offset = equipped_id_offset;
+        value = 0;
+        if (locationId == EnumItemLocation::EQUIPPED)
         {
-            positionX = positionY * 4 + positionX;
-            positionY = 0;
-        }
-        else if (locationId == EnumItemLocation::EQUIPPED)
-        {
-            // if not equipped, equipped_id could be missing
-            bitSize = 4;
-            current_bit_offset = equipped_id_offset;
-            value = positionX;
-            if (!setBits(current_bit_offset, bitSize, value))
-            {
-                return false;
-            }
+            value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
             positionX = 0;
             positionY = 0;
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
         }
 
         // position x/y
@@ -1466,7 +2634,7 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
         {
             return false;
         }
-        
+
         current_bit_offset = alt_position_id_offset;
         bitSize = 3;
         value = static_cast<std::underlying_type_t<EnumAltItemLocation>>(altPositionId);
@@ -1480,19 +2648,276 @@ bool d2ce::Item::setItemLocation(EnumItemLocation locationId, EnumAltItemLocatio
     return false;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::isExpansionItem() const
+void d2ce::Item::verifyRuneword()
 {
-    return getGameVersion() == 100 ? true : false;
+    if (!isSocketed() || !isExpansionItem())
+    {
+        return;
+    }
+
+    for (const auto& runeword : getPossibleRunewords(true))
+    {
+        // possible runeword
+        bool foundRuneword = true;
+        auto iter = runeword.runeCodes.begin();
+        for (const auto& socketedItem : SocketedItems)
+        {
+            if (iter == runeword.runeCodes.end())
+            {
+                foundRuneword = false;
+                break;
+            }
+
+            auto& itemType = socketedItem.getItemTypeHelper();
+            if (itemType.code != *iter)
+            {
+                foundRuneword = false;
+                break;
+            }
+            ++iter;
+        }
+
+        if (foundRuneword)
+        {
+            RunewordAttributes runeAttrib;
+            if (getRunewordAttributes(runeAttrib))
+            {
+                if (runeword.id == runeAttrib.Id)
+                {
+                    // we are still ok
+                    return;
+                }
+            }
+
+            // change runeword id
+            // make copy of originon incase of failure
+            std::vector<std::uint8_t> origData(data);
+            if (isRuneword() && (runeword_id_bit_offset != 0))
+            {
+                if (!updateBits(runeword_id_bit_offset, RUNEWORD_ID_NUM_BITS, runeword.id))
+                {
+                    return;
+                }
+
+                // truncate bonus list
+                if (runeword_props_bit_offset_marker != 0)
+                {
+                    item_end_bit_offset = runeword_props_bit_offset_marker;
+                    if ((item_end_bit_offset % 8) > 0)
+                    {
+                        auto bits = (std::uint8_t)(8 - (item_end_bit_offset % 8));
+                        updateBits(item_end_bit_offset, bits, 0);
+                    }
+                    size_t newSize = (item_end_bit_offset + 7) / 8;
+                    data.resize(newSize, 0);
+                }
+            }
+            else
+            {
+                // Complex change, add runeword id
+                // make a copy first
+                std::vector<std::uint8_t> oldData(data);
+
+                // resize to fit socket count
+                auto old_item_end_bit_offset = item_end_bit_offset;
+                auto diff = RUNEWORD_ID_NUM_BITS + RUNEWORD_PADDING_NUM_BITS;
+                item_end_bit_offset += diff;
+                size_t newSize = (item_end_bit_offset + 7) / 8;
+                data.resize(newSize, 0);
+
+                // Locate position for runeword id
+                size_t current_bit_offset = runeword_id_bit_offset_marker;
+                size_t old_current_bit_offset = current_bit_offset;
+                size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
+
+                // Set item as having a runword id
+                updateBits(start_bit_offset + IS_RUNEWORD_FLAG_OFFSET, 1, 1);
+                runeword_id_bit_offset = current_bit_offset;
+                updateBits(runeword_id_bit_offset, diff, runeword.id);
+                current_bit_offset += diff;
+
+                // now copy the remaining bits
+                std::uint32_t value = 0;
+                size_t valueBitSize = sizeof(value) * 8;
+                std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+                while (bitsToCopy > 0)
+                {
+                    bitsToCopy -= bits;
+                    value = readtemp_bits(oldData, old_current_bit_offset, bits);
+                    old_current_bit_offset += bits;
+                    updateBits(current_bit_offset, bits, value);
+                    current_bit_offset += bits;
+                    bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+                }
+
+                // clear any bits not written to
+                if ((current_bit_offset % 8) > 0)
+                {
+                    value = 0;
+                    bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+                    updateBits(current_bit_offset, bits, 0);
+                }
+
+                updateOffset(runeword_id_bit_offset_marker, diff);
+                runeword_props_bit_offset_marker = item_end_bit_offset;
+            }
+
+            // add bonus magical attributes from runeword id
+            runeword_props_bit_offset = runeword_props_bit_offset_marker;
+            size_t current_bit_offset = runeword_props_bit_offset;
+            if (!updatePropertyList(current_bit_offset, runeword.attribs))
+            {
+                data.swap(origData);
+                return;
+            }
+
+            item_end_bit_offset = current_bit_offset;
+            size_t newSize = (item_end_bit_offset + 7) / 8;
+            data.resize(newSize, 0);
+            return;
+        }
+    }
+
+    if (!isRuneword())
+    {
+        return;
+    }
+
+    // Complex change, remove runeword
+    runeword_props_bit_offset = 0;
+
+    // truncate data
+    size_t current_bit_offset = runeword_id_bit_offset_marker;
+    size_t old_current_bit_offset = personalized_bit_offset_marker;
+    size_t diff = old_current_bit_offset - current_bit_offset;
+    size_t bitsToCopy = runeword_props_bit_offset_marker - old_current_bit_offset;
+
+    std::uint32_t value = 0;
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    while (bitsToCopy > 0)
+    {
+        bitsToCopy -= bits;
+        value = readBits(old_current_bit_offset, bits);
+        old_current_bit_offset += bits;
+        updateBits(current_bit_offset, bits, value);
+        current_bit_offset += bits;
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    }
+
+    // clear any bits not written to
+    item_end_bit_offset = current_bit_offset;
+    if ((current_bit_offset % 8) > 0)
+    {
+        value = 0;
+        bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+        updateBits(current_bit_offset, bits, 0);
+    }
+
+    // truncate data
+    size_t newSize = (item_end_bit_offset + 7) / 8;
+    data.resize(newSize, 0);
+
+    // Set item as not having a runeword id
+    socket_count_bit_offset = 0;
+    updateBits(start_bit_offset + IS_RUNEWORD_FLAG_OFFSET, 1, 0);
+    runeword_id_bit_offset = 0;
+    runeword_props_bit_offset = 0;
+    updateOffset(runeword_id_bit_offset_marker, -std::int64_t(diff));
+}
+//---------------------------------------------------------------------------
+void d2ce::Item::updateSocketedItemCount()
+{
+    if (!isSocketed())
+    {
+        return;
+    }
+
+    cachedCombinedMagicalAttributes.clear();
+    if (nr_of_items_in_sockets_offset == 0)
+    {
+        switch (getVersion())
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isSimpleItem() || isEar())
+            {
+                return;
+            }
+
+            nr_of_items_in_sockets_offset = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
+            nr_of_items_in_sockets_bits = 2;
+            break;
+
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+            if (isSimpleItem() || isEar())
+            {
+                return;
+            }
+
+            nr_of_items_in_sockets_offset = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
+            nr_of_items_in_sockets_bits = 3;
+            break;
+
+        case EnumItemVersion::v107: // v1.07 item
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
+            nr_of_items_in_sockets_offset = extended_data_offset;
+            nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
+            break;
+        }
+    }
+
+    updateBits(nr_of_items_in_sockets_offset, nr_of_items_in_sockets_bits, std::uint32_t(SocketedItems.size()));
+}
+//---------------------------------------------------------------------------
+void d2ce::Item::updateOffset(size_t& startOffset, ptrdiff_t diff)
+{
+    bool bFoundMatch = false;
+    CheckOffsetValue(start_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(location_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(equipped_id_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(position_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(alt_position_id_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(type_code_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(extended_data_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(quest_difficulty_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(nr_of_items_in_sockets_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(item_id_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(item_level_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(quality_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(multi_graphic_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(autoAffix_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(quality_attrib_bit_offset, startOffset, bFoundMatch, diff);
+    CheckMarkerOffsetValue(runeword_id_bit_offset_marker, runeword_id_bit_offset, startOffset, bFoundMatch, diff);
+    CheckMarkerOffsetValue(personalized_bit_offset_marker, personalized_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(tome_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(body_part_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(realm_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(defense_rating_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(durability_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(stackable_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(gld_stackable_bit_offset, startOffset, bFoundMatch, diff);
+    CheckMarkerOffsetValue(socket_count_bit_offset_marker, socket_count_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(bonus_bits_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(magical_props_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(set_bonus_props_bit_offset, startOffset, bFoundMatch, diff);
+    CheckMarkerOffsetValue(runeword_props_bit_offset_marker, runeword_props_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(dwa_bit_offset, startOffset, bFoundMatch, diff);
+    CheckOffsetValue(dwb_bit_offset, startOffset, bFoundMatch, diff);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isIdentified() const
 {
-    return read_uint32_bits(start_bit_offset + IS_IDENTIFIED_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_IDENTIFIED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isDisabled() const
 {
-    return read_uint32_bits(start_bit_offset + IS_DISABLED_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_DISABLED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isSocketed() const
@@ -1502,27 +2927,27 @@ bool d2ce::Item::isSocketed() const
         return false;
     }
 
-    return read_uint32_bits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isNew() const
 {
-    return read_uint32_bits(start_bit_offset + IS_NEW_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_NEW_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isBadEquipped() const
 {
-    return read_uint32_bits(start_bit_offset + IS_BAD_EQUIPPED_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_BAD_EQUIPPED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isEar() const
 {
-    return read_uint32_bits(start_bit_offset + IS_EAR_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_EAR_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isStarterItem() const
 {
-    return read_uint32_bits(start_bit_offset + IS_STARTER_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_STARTER_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 /*
@@ -1547,23 +2972,23 @@ bool d2ce::Item::isSimpleItem() const
         return false;
     }
 
-    return read_uint32_bits(start_bit_offset + IS_SIMPLE_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_SIMPLE_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isEthereal() const
 {
-    return read_uint32_bits(start_bit_offset + IS_ETHEREAL_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_ETHEREAL_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isPersonalized() const
 {
-    if(ItemVersion < EnumItemVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107)
     {
         // v1.00 - v1.06 item
         return false;
     }
 
-    return read_uint32_bits(start_bit_offset + IS_PERSONALIZED_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_PERSONALIZED_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRuneword() const
@@ -1574,7 +2999,7 @@ bool d2ce::Item::isRuneword() const
         return false;
     }
 
-    return read_uint32_bits(start_bit_offset + IS_RUNEWORD_FLAG_OFFSET, 1) != 0 ? true : false;
+    return readBits(start_bit_offset + IS_RUNEWORD_FLAG_OFFSET, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 d2ce::EnumItemLocation d2ce::Item::getLocation() const
@@ -1589,7 +3014,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
             return EnumItemLocation::STORED;
         }
 
-        loc16 = (std::uint16_t)read_uint32_bits(ITEM_V100_CONTAINER_BIT_OFFSET, 16); 
+        loc16 = (std::uint16_t)readBits(ITEM_V100_CONTAINER_BIT_OFFSET, 16);
         switch (loc16 & 0x07F8)
         {
         case 0x0000:
@@ -1598,7 +3023,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
             return EnumItemLocation::STORED;
 
         case 0x07F8:
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V100_ITEMCODE_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V100_ITEMCODE_BIT_OFFSET, 16);
             if (loc16 & 0x8000)
             {
                 return isPotion() ? EnumItemLocation::BELT : EnumItemLocation::SOCKET;
@@ -1622,13 +3047,13 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
 
         if (isSimpleItem())
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_SM_COORDINATES_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V104_SM_COORDINATES_BIT_OFFSET, 16);
             switch (loc16 & 0xFC01)
             {
             case 0x0000:
             case 0x1000:
             case 0x0C00:
-                loc = (std::uint8_t)read_uint32_bits(ITEM_V104_SM_ITEMCODE_BIT_OFFSET, 8);
+                loc = (std::uint8_t)readBits(ITEM_V104_SM_ITEMCODE_BIT_OFFSET, 8);
                 if ((loc & 0x03) != 0)
                 {
                     return EnumItemLocation::BUFFER;
@@ -1637,7 +3062,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
                 return EnumItemLocation::STORED;
 
             case 0xFC01:
-                loc = (std::uint8_t)read_uint32_bits(ITEM_V104_SM_ITEMCODE_BIT_OFFSET, 8);
+                loc = (std::uint8_t)readBits(ITEM_V104_SM_ITEMCODE_BIT_OFFSET, 8);
                 if ((loc & 0x03) != 0x03)
                 {
                     return EnumItemLocation::BUFFER;
@@ -1652,7 +3077,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
             }
         }
 
-        loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_EX_CONTAINER_BIT_OFFSET, 16);
+        loc16 = (std::uint16_t)readBits(ITEM_V104_EX_CONTAINER_BIT_OFFSET, 16);
         switch (loc16 & 0x07F8)
         {
         case 0x0000:
@@ -1673,7 +3098,7 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
     default:
-        loc = (std::uint8_t)read_uint32_bits(location_bit_offset, 3);
+        loc = (std::uint8_t)readBits(location_bit_offset, 3);
 
         if (loc > static_cast<std::underlying_type_t<EnumItemLocation>>(EnumItemLocation::SOCKET))
         {
@@ -1691,8 +3116,8 @@ d2ce::EnumEquippedId d2ce::Item::getEquippedId() const
         return EnumEquippedId::NONE;
     }
 
-    auto value = (std::uint8_t)read_uint32_bits(equipped_id_offset, 4);
-    if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+    auto value = (std::uint8_t)readBits(equipped_id_offset, 4);
+    if (value > static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM))
     {
         return EnumEquippedId::NONE;
     }
@@ -1709,10 +3134,13 @@ std::uint8_t d2ce::Item::getPositionX() const
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
-           return (std::uint8_t)(read_uint32_bits(position_offset, 2) + read_uint32_bits(position_offset + 2, 2) * 4);
+            return (std::uint8_t)(readBits(position_offset, 2) + readBits(position_offset + 2, 2) * 4);
 
         case EnumItemLocation::STORED:
-            return (std::uint8_t)read_uint32_bits(position_offset, 5);
+            return (std::uint8_t)readBits(position_offset, 5);
+
+        case EnumItemLocation::SOCKET:
+            return (std::uint8_t)readBits(position_offset + 5, 3);
 
         default:
             return 0;
@@ -1726,7 +3154,7 @@ std::uint8_t d2ce::Item::getPositionX() const
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
     default:
-        return (std::uint8_t)read_uint32_bits(position_offset, 4);
+        return (std::uint8_t)readBits(position_offset, 4);
     }
 }
 //---------------------------------------------------------------------------
@@ -1739,10 +3167,11 @@ std::uint8_t d2ce::Item::getPositionY() const
         switch (getLocation())
         {
         case EnumItemLocation::BELT:
+        case EnumItemLocation::SOCKET:
             return 0;
 
         case EnumItemLocation::STORED:
-            return (std::uint8_t)read_uint32_bits(position_offset + 5, 2);
+            return (std::uint8_t)readBits(position_offset + 5, 2);
 
         default:
             return 0;
@@ -1756,7 +3185,7 @@ std::uint8_t d2ce::Item::getPositionY() const
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
     default:
-        return (std::uint8_t)read_uint32_bits(position_offset + 4, 4);
+        return (std::uint8_t)readBits(position_offset + 4, 4);
     }
 }
 //---------------------------------------------------------------------------
@@ -1774,7 +3203,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
 
         if (isEar())
         {
-            loc = (std::uint16_t)read_uint32_bits(ITEM_V100_EAR_CONTAINER_BIT_OFFSET, 8);
+            loc = (std::uint8_t)readBits(ITEM_V100_EAR_CONTAINER_BIT_OFFSET, 8);
             switch (loc & 0x60)
             {
             case 0x00:
@@ -1792,7 +3221,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
         }
         else
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V100_CONTAINER_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V100_CONTAINER_BIT_OFFSET, 16);
             switch (loc16 & 0x07F8)
             {
             case 0x0000:
@@ -1818,7 +3247,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
 
         if (isEar())
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_EAR_COORDINATES_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V104_EAR_COORDINATES_BIT_OFFSET, 16);
             switch (loc16 & 0x1C00)
             {
             case 0x0000:
@@ -1836,7 +3265,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
         }
         else if (isSimpleItem())
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_SM_COORDINATES_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V104_SM_COORDINATES_BIT_OFFSET, 16);
             switch (loc16 & 0xFC01)
             {
             case 0x0000:
@@ -1854,7 +3283,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
         }
         else
         {
-            loc16 = (std::uint16_t)read_uint32_bits(ITEM_V104_EX_CONTAINER_BIT_OFFSET, 16);
+            loc16 = (std::uint16_t)readBits(ITEM_V104_EX_CONTAINER_BIT_OFFSET, 16);
             switch (loc16 & 0x07F8)
             {
             case 0x0000:
@@ -1879,7 +3308,7 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
     default:
-        loc = (std::uint8_t)read_uint32_bits(alt_position_id_offset, 3); 
+        loc = (std::uint8_t)readBits(alt_position_id_offset, 3);
         if (loc > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
         {
             return EnumAltItemLocation::UNKNOWN;
@@ -1917,17 +3346,17 @@ bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
     switch (getVersion())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
-        return ItemHelpers::getItemCodev100(std::uint16_t(read_uint32_bits(type_code_offset, 10)), strcode);
+        return ItemHelpers::getItemCodev100(std::uint16_t(readBits(type_code_offset, 10)), strcode);
 
     case EnumItemVersion::v104: // v1.04 - v1.06 item
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08 item
     case EnumItemVersion::v109: // v1.09 item
     case EnumItemVersion::v110: // v1.10 - v1.14d item
-        strcode[0] = std::uint8_t(read_uint32_bits(type_code_offset, 8));
-        strcode[1] = std::uint8_t(read_uint32_bits(type_code_offset + 8, 8));
-        strcode[2] = std::uint8_t(read_uint32_bits(type_code_offset + 16, 8));
-        strcode[3] = std::uint8_t(read_uint32_bits(type_code_offset + 24, 6));
+        strcode[0] = std::uint8_t(readBits(type_code_offset, 8));
+        strcode[1] = std::uint8_t(readBits(type_code_offset + 8, 8));
+        strcode[2] = std::uint8_t(readBits(type_code_offset + 16, 8));
+        strcode[3] = std::uint8_t(readBits(type_code_offset + 24, 6));
         return true;
 
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
@@ -1974,7 +3403,7 @@ std::uint8_t d2ce::Item::getGemApplyType() const
     return result.gemApplyType;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4> &newgem)
+bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4>& newgem)
 {
     if (isEar())
     {
@@ -2309,49 +3738,7 @@ std::uint8_t d2ce::Item::getQuestDifficulty() const
         return 0;
     }
 
-    return (std::uint8_t)read_uint32_bits(quest_difficulty_offset, 2);
-}
-//---------------------------------------------------------------------------
-std::uint8_t d2ce::Item::socketedItemCount() const
-{
-    if (nr_of_items_in_sockets_offset == 0)
-    {
-        switch (getVersion())
-        {
-        case EnumItemVersion::v100: // v1.00 - v1.03 item
-            if (isSimpleItem() || isEar())
-            {
-                return 0;
-            }
-            
-            nr_of_items_in_sockets_offset = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
-            nr_of_items_in_sockets_bits = 2;
-            break;
-
-        case EnumItemVersion::v104: // v1.04 - v1.06 item
-            if (isSimpleItem() || isEar())
-            {
-                return 0;
-            }
-
-            nr_of_items_in_sockets_offset = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
-            nr_of_items_in_sockets_bits = 3;
-            break;
-
-        case EnumItemVersion::v107: // v1.07 item
-        case EnumItemVersion::v108: // v1.08 item
-        case EnumItemVersion::v109: // v1.09 item
-        case EnumItemVersion::v110: // v1.10 - v1.14d item
-        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
-        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
-        default:
-            nr_of_items_in_sockets_offset = extended_data_offset;
-            nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
-            break;
-        }
-    }
-
-    return (std::uint8_t)read_uint32_bits(nr_of_items_in_sockets_offset, nr_of_items_in_sockets_bits);
+    return (std::uint8_t)readBits(quest_difficulty_offset, 2);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
@@ -2363,7 +3750,7 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     }
 
     size_t currentOffset = type_code_offset;
-    attrib.Class = static_cast<EnumCharClass>(read_uint32_bits(currentOffset, 3));
+    attrib.Class = static_cast<EnumCharClass>(readBits(currentOffset, 3));
     currentOffset += 3;
 
     size_t levelBits = 7;
@@ -2375,7 +3762,7 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
         break;
     }
 
-    attrib.Level = std::uint32_t(read_uint32_bits(currentOffset, levelBits));
+    attrib.Level = std::uint32_t(readBits(currentOffset, levelBits));
     currentOffset += levelBits;
 
     // up to 15 7/8 bit characters
@@ -2384,7 +3771,7 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(currentOffset, bitSize);
+        c = (char)readBits(currentOffset, bitSize);
         if (c == 0)
         {
             break;
@@ -2656,7 +4043,7 @@ std::string d2ce::Item::getTransformColor() const
     {
         return ItemHelpers::getUniqueTCFromId(uniqueAttrib.Id);
     }
-    
+
     d2ce::RareAttributes rareAttrib;
     if (getRareOrCraftedAttributes(rareAttrib))
     {
@@ -2720,7 +4107,33 @@ std::uint32_t d2ce::Item::getId() const
         }
     }
 
-    return (std::uint32_t)read_uint64_bits(item_id_bit_offset, 32);
+    return readBits(item_id_bit_offset, 32);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::randomizeId()
+{
+    if (item_id_bit_offset == 0)
+    {
+        // should not happen
+        getId();
+        if (item_id_bit_offset == 0)
+        {
+            return false;
+        }
+    }
+
+    auto current_bit_offset = item_id_bit_offset;
+    if (!setBits(current_bit_offset, 32, ItemHelpers::generarateRandomDW()))
+    {
+        return false;
+    }
+
+    for (auto& item : SocketedItems)
+    {
+        item.randomizeId();
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getLevel() const
@@ -2770,7 +4183,7 @@ std::uint8_t d2ce::Item::getLevel() const
         break;
     }
 
-    return (std::uint8_t)read_uint32_bits(item_level_bit_offset, numBits);
+    return (std::uint8_t)readBits(item_level_bit_offset, numBits);
 }
 //---------------------------------------------------------------------------
 d2ce::EnumItemQuality d2ce::Item::getQuality() const
@@ -2828,7 +4241,7 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
         break;
     }
 
-    value = read_uint32_bits(quality_bit_offset, numBits);
+    value = readBits(quality_bit_offset, numBits);
     if (value > static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::TEMPERED))
     {
         return EnumItemQuality::UNKNOWN;
@@ -2862,11 +4275,11 @@ bool d2ce::Item::getMagicalAffixes(MagicalAffixes& affixes) const
     }
 
     size_t current_bit_offset = quality_attrib_bit_offset; // must copy value as readPropertyList will modify value
-    affixes.PrefixId = (std::uint16_t)read_uint32_bits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
+    affixes.PrefixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
     current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
     affixes.PrefixName = ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
 
-    affixes.SuffixId = (std::uint16_t)read_uint32_bits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
+    affixes.SuffixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
     current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
     affixes.SuffixName = ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
 
@@ -2881,7 +4294,7 @@ bool d2ce::Item::getRunewordAttributes(d2ce::RunewordAttributes& attrib) const
         return false;
     }
 
-    attrib.Id = (std::uint16_t)read_uint32_bits(runeword_id_bit_offset, RUNEWORD_ID_NUM_BITS);
+    attrib.Id = (std::uint16_t)readBits(runeword_id_bit_offset, RUNEWORD_ID_NUM_BITS);
     attrib.Name = ItemHelpers::getRunewordNameFromId(attrib.Id);
     size_t current_bit_offset = runeword_props_bit_offset; // must copy value as readPropertyList will modify value
     if (!readPropertyList(current_bit_offset, attrib.MagicalAttributes))
@@ -2907,7 +4320,7 @@ std::string d2ce::Item::getPersonalizedName() const
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(currentOffset, bitSize);
+        c = (char)readBits(currentOffset, bitSize);
         if (c == 0)
         {
             break;
@@ -2926,7 +4339,7 @@ std::uint8_t d2ce::Item::getTomeValue() const
         return 0;
     }
 
-    return std::uint8_t(read_uint32_bits(tome_bit_offset, 5));
+    return std::uint8_t(readBits(tome_bit_offset, 5));
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
@@ -2953,7 +4366,7 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
         return getSetAttributesv100(attrib);
     }
 
-    attrib.Id = (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
+    attrib.Id = (std::uint16_t)readBits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
     attrib.Name = ItemHelpers::getSetNameFromId(attrib.Id);
     attrib.ReqLevel = ItemHelpers::getSetLevelReqFromId(attrib.Id);
     if (bonus_bits_bit_offset == 0)
@@ -2962,7 +4375,7 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
     }
 
     std::vector<MagicalAttribute> setAttribs;
-    std::uint16_t setBonusBits = (std::uint16_t)read_uint32_bits(bonus_bits_bit_offset, 5);
+    std::uint16_t setBonusBits = (std::uint16_t)readBits(bonus_bits_bit_offset, 5);
     if (setBonusBits > 0)
     {
         // Item has more magical property lists due to being a set item
@@ -3013,12 +4426,12 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     }
 
     size_t current_bit_offset = quality_attrib_bit_offset;
-    attrib.Id = (std::uint16_t)read_uint32_bits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
+    attrib.Id = (std::uint16_t)readBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
     attrib.Name = ItemHelpers::getRareNameFromId(attrib.Id);
     attrib.Index = ItemHelpers::getRareIndexFromId(attrib.Id);
 
-    attrib.Id2 = (std::uint16_t)read_uint32_bits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
+    attrib.Id2 = (std::uint16_t)readBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
     attrib.Name2 = ItemHelpers::getRareNameFromId(attrib.Id2);
     attrib.Index2 = ItemHelpers::getRareIndexFromId(attrib.Id2);
@@ -3030,20 +4443,20 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     for (size_t i = 3; i > 0; --i)
     {
         MagicalAffixes affixes;
-        prefix = (std::uint8_t)read_uint32_bits(current_bit_offset, 1);
+        prefix = (std::uint8_t)readBits(current_bit_offset, 1);
         current_bit_offset += 1;
         if (prefix != 0)
         {
-            affixes.PrefixId = (std::uint16_t)read_uint32_bits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
+            affixes.PrefixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
             current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
             affixes.PrefixName = ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
         }
 
-        prefix = (std::uint8_t)read_uint32_bits(current_bit_offset, 1);
+        prefix = (std::uint8_t)readBits(current_bit_offset, 1);
         current_bit_offset += 1;
         if (prefix != 0)
         {
-            affixes.SuffixId = (std::uint16_t)read_uint32_bits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
+            affixes.SuffixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
             current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
             affixes.SuffixName = ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
         }
@@ -3097,7 +4510,7 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
         break;
     }
 
-    attrib.Id = (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, numBits);
+    attrib.Id = (std::uint16_t)readBits(quality_attrib_bit_offset, numBits);
     attrib.Name = ItemHelpers::getUniqueNameFromId(attrib.Id);
     attrib.ReqLevel = ItemHelpers::getUniqueLevelReqFromId(attrib.Id);
     return true;
@@ -3143,7 +4556,7 @@ bool d2ce::Item::getCombinedMagicalAttributes(std::vector<MagicalAttribute>& att
         attribs = cachedCombinedMagicalAttributes;
         return true;
     }
-  
+
     std::vector<MagicalAttribute> tempAttribs;
     if (!getMagicalAttributes(tempAttribs))
     {
@@ -3209,7 +4622,7 @@ bool d2ce::Item::hasMultipleGraphics() const
         }
     }
 
-    return read_uint32_bits(multi_graphic_bit_offset, 1) != 0 ? true : false;
+    return readBits(multi_graphic_bit_offset, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getPictureId() const
@@ -3226,7 +4639,7 @@ std::uint8_t d2ce::Item::getPictureId() const
         return getPictureIdv100();
     }
 
-    return (std::uint8_t)read_uint32_bits(multi_graphic_bit_offset + 1, 3);
+    return (std::uint8_t)readBits(multi_graphic_bit_offset + 1, 3);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isAutoAffix() const
@@ -3260,7 +4673,7 @@ bool d2ce::Item::isAutoAffix() const
         }
     }
 
-    return read_uint32_bits(autoAffix_bit_offset, 1) != 0 ? true : false;
+    return readBits(autoAffix_bit_offset, 1) != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getAutoAffixId() const
@@ -3270,7 +4683,7 @@ std::uint16_t d2ce::Item::getAutoAffixId() const
         return 0;
     }
 
-    return (std::uint16_t)read_uint32_bits(autoAffix_bit_offset + 1, 11);
+    return (std::uint16_t)readBits(autoAffix_bit_offset + 1, 11);
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getInferiorQualityId() const
@@ -3295,7 +4708,7 @@ std::uint8_t d2ce::Item::getInferiorQualityId() const
         return false;
     }
 
-    return (std::uint8_t)read_uint32_bits(quality_attrib_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS);
+    return (std::uint8_t)readBits(quality_attrib_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getFileIndex() const
@@ -3315,16 +4728,16 @@ std::uint16_t d2ce::Item::getFileIndex() const
     {
     case EnumItemQuality::INFERIOR:
     case EnumItemQuality::SUPERIOR:
-        return (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS);
+        return (std::uint16_t)readBits(quality_attrib_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS);
 
     case EnumItemQuality::SET:
     case EnumItemQuality::UNIQUE:
-        return (std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
+        return (std::uint16_t)readBits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
     }
 
     if (isBodyPart())
     {
-        return (std::uint16_t)read_uint32_bits(body_part_bit_offset, MONSTER_ID_NUM_BITS);
+        return (std::uint16_t)readBits(body_part_bit_offset, MONSTER_ID_NUM_BITS);
     }
 
     return 0;
@@ -3346,7 +4759,7 @@ std::uint16_t d2ce::Item::getSetItemMask() const
         return 0;
     }
 
-    return (std::uint16_t)read_uint32_bits(bonus_bits_bit_offset, 5);
+    return (std::uint16_t)readBits(bonus_bits_bit_offset, 5);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isArmor() const
@@ -3383,6 +4796,57 @@ bool d2ce::Item::isWeapon() const
     return result.isWeapon();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isTwoHandedWeapon() const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isTwoHandedWeapon();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isOneOrTwoHandedWeapon() const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isOneOrTwoHandedWeapon();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isShield() const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isShield();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isMissileWeapon() const
 {
     if (isSimpleItem())
@@ -3398,6 +4862,23 @@ bool d2ce::Item::isMissileWeapon() const
     }
 
     return result.isMissileWeapon();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isMissile() const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isMissile();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isTome() const
@@ -3630,6 +5111,54 @@ bool d2ce::Item::isUnusedItem() const
     return result.isUnusedItem();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isSecondHand() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isSecondHand();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isSocketFiller() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isSocketFiller();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isClassSpecific() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isClassSpecific();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::EnumCharClass> d2ce::Item::getClass() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return std::optional<d2ce::EnumCharClass>();
+    }
+
+    return result.getClass();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
 {
     if (isSimpleItem())
@@ -3691,33 +5220,89 @@ bool d2ce::Item::canPersonalize() const
     return result.canPersonalize();
 }
 //---------------------------------------------------------------------------
-std::uint8_t d2ce::Item::socketCount() const
+bool d2ce::Item::canEquip(EnumEquippedId equipId) const
 {
-    if (isSimpleItem() || !isSocketed())
+    if (isSimpleItem())
     {
-        return 0;
+        return false;
     }
 
-    switch (getVersion())
+    switch (equipId)
     {
-    case EnumItemVersion::v100: // v1.00 - v1.03 item
-    case EnumItemVersion::v104: // v1.04 - v1.06 item
-        return getMaxSocketCount();
-
-    case EnumItemVersion::v107: // v1.07 item
-    case EnumItemVersion::v108: // v1.08 item
-    case EnumItemVersion::v109: // v1.09 item
-    case EnumItemVersion::v110: // v1.10 - v1.14d item
-    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
-    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
-    default:
-        if (socket_count_bit_offset == 0)
+    case EnumEquippedId::ALT_RIGHT_ARM:
+    case EnumEquippedId::ALT_LEFT_ARM:
+        if (!isExpansionItem())
         {
-            return 0;
+            return false;
+        }
+        break;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.canEquip(equipId);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canEquip(EnumEquippedId equipId, EnumCharClass charClass) const
+{
+    if (isSimpleItem())
+    {
+        return false;
+    }
+
+    switch (equipId)
+    {
+    case EnumEquippedId::ALT_RIGHT_ARM:
+    case EnumEquippedId::ALT_LEFT_ARM:
+        if (!isExpansionItem())
+        {
+            return false;
+        }
+        break;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.canEquip(equipId, charClass);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canEquip(EnumEquippedId equipId, EnumCharClass charClass, const CharStats& cs) const
+{
+    if (!canEquip(equipId, charClass))
+    {
+        return false;
+    }
+
+    ItemRequirements itemReq;
+    if (getRequirements(itemReq))
+    {
+        if (itemReq.Level > cs.Level)
+        {
+            return false;
         }
 
-        return (std::uint8_t)read_uint32_bits(socket_count_bit_offset, SOCKET_COUNT_NUM_BITS);
+        if (itemReq.Strength > cs.Strength)
+        {
+            return false;
+        }
+
+        if (itemReq.Dexterity > cs.Dexterity)
+        {
+            return false;
+        }
     }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getQuantity() const
@@ -3731,18 +5316,18 @@ std::uint32_t d2ce::Item::getQuantity() const
     {
         if (ItemVersion < EnumItemVersion::v107)
         {
-            return read_uint32_bits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
+            return readBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS);
         }
 
-        if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
+        if ((std::uint8_t)readBits(gld_stackable_bit_offset, 1) > 0)
         {
-            return (std::uint32_t)read_uint64_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS);
+            return readBits(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS);
         }
 
-        return read_uint32_bits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS);
+        return readBits(gld_stackable_bit_offset + 1, GLD_STACKABLE_NUM_BITS);
     }
 
-    return read_uint32_bits(stackable_bit_offset, STACKABLE_NUM_BITS);
+    return readBits(stackable_bit_offset, STACKABLE_NUM_BITS);
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Item::getMaxQuantity() const
@@ -3811,7 +5396,7 @@ bool d2ce::Item::setQuantity(std::uint32_t quantity)
                 return updateBits(gld_stackable_bit_offset, GLD_STACKABLE_NUM_BITS, quantity);
             }
 
-            if ((std::uint8_t)read_uint32_bits(gld_stackable_bit_offset, 1) > 0)
+            if ((std::uint8_t)readBits(gld_stackable_bit_offset, 1) > 0)
             {
                 return updateBits64(gld_stackable_bit_offset + 1, GLD_STACKABLE_LARGE_NUM_BITS, quantity);
             }
@@ -3858,7 +5443,7 @@ std::uint16_t d2ce::Item::getDefenseRating() const
     }
 
     const auto& stat = ItemHelpers::getItemStat(getVersion(), "armorclass");
-    return (std::uint16_t)(read_uint32_bits(defense_rating_bit_offset, ((ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)) - stat.saveAdd);
+    return (std::uint16_t)(readBits(defense_rating_bit_offset, ((ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108)) - stat.saveAdd);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDurability(ItemDurability& durability) const
@@ -3880,13 +5465,13 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
     case EnumItemVersion::v104: // v1.04 - v1.06 item
-        if (!(itemType.isArmor() || itemType.isWeapon()) || itemType.isMissileWeapon())
+        if (!(itemType.isArmor() || itemType.isWeapon()) || itemType.isMissileWeapon() || itemType.isThrownWeapon())
         {
             return false;
         }
 
-        durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset, DURABILITY_CURRENT_NUM_BITS_108);
-        durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108, DURABILITY_MAX_NUM_BITS);
+        durability.Current = (std::uint16_t)readBits(durability_bit_offset, DURABILITY_CURRENT_NUM_BITS_108);
+        durability.Max = (std::uint16_t)readBits(durability_bit_offset + DURABILITY_CURRENT_NUM_BITS_108, DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
             durability.Current = 0;
@@ -3903,7 +5488,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
     default:
-        durability.Max = (std::uint16_t)read_uint32_bits(durability_bit_offset, DURABILITY_MAX_NUM_BITS);
+        durability.Max = (std::uint16_t)readBits(durability_bit_offset, DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
             if (itemType.isMissileWeapon())
@@ -3911,11 +5496,17 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
                 return false;
             }
 
+            if (!isExpansionItem() && itemType.isThrownWeapon())
+            {
+                // Durability on throwing weapons is only in the Expansion
+                return false;
+            }
+
             // Indestructible without the need for the magical attribute of indestructibility
             return true;
         }
 
-        durability.Current = (std::uint16_t)read_uint32_bits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
+        durability.Current = (std::uint16_t)readBits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
         return true;
     }
 }
@@ -4034,7 +5625,7 @@ bool d2ce::Item::getRealmDataFlag() const
         return false;
     }
 
-    return read_uint32_bits(realm_bit_offset, 1) == 0 ? false : true;
+    return readBits(realm_bit_offset, 1) == 0 ? false : true;
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getMaxSocketCount() const
@@ -4075,10 +5666,21 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
     return result.getMaxSockets(level);
 }
 //---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getMaxSocketedCount() const
+{
+    auto numSockets = getDisplayedSocketCount();
+    if (numSockets == 0)
+    {
+        return numSockets;
+    }
+
+    return std::min(numSockets, std::uint8_t((1 << nr_of_items_in_sockets_bits) - 1));
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::addMaxSocketCount()
 {
     auto maxSockets = getMaxSocketCount();
-    if (maxSockets <= socketCount())
+    if (maxSockets <= getSocketCount())
     {
         // no more room
         return false;
@@ -4090,7 +5692,7 @@ bool d2ce::Item::addMaxSocketCount()
 bool d2ce::Item::addSocket()
 {
     auto maxSockets = getMaxSocketCount();
-    auto curSockets = socketCount();
+    auto curSockets = getSocketCount();
     if (maxSockets <= curSockets)
     {
         // no more room
@@ -4106,9 +5708,9 @@ bool d2ce::Item::removeEmptySockets()
     {
         return false;
     }
-    
-    auto numSocketed = socketedItemCount();
-    auto numSockets = socketCount();
+
+    auto numSocketed = getSocketedItemCount();
+    auto numSockets = getSocketCount();
     if (numSocketed >= numSockets)
     {
         // no empty sockets
@@ -4125,8 +5727,8 @@ bool d2ce::Item::removeSocket()
         return false;
     }
 
-    auto numSocketed = socketedItemCount();
-    auto numSockets = socketCount();
+    auto numSocketed = getSocketedItemCount();
+    auto numSockets = getSocketCount();
     if (numSocketed >= numSockets)
     {
         // no empty sockets
@@ -4143,6 +5745,24 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         return false;
     }
 
+    if (numSockets > 0)
+    {
+        auto minSockets = getSocketCountBonus();
+        if (minSockets > 0)
+        {
+            if (numSockets <= minSockets)
+            {
+                numSockets = 1;
+            }
+            else
+            {
+                numSockets -= minSockets;
+            }
+        }
+
+        numSockets = std::min(numSockets, getMaxSocketCount());
+    }
+
     switch (getVersion())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
@@ -4150,24 +5770,34 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         // number of sockets is always the max number possible
         if (isSocketed())
         {
-            if ((numSockets > 0) || (socketedItemCount() > 0))
+            if ((numSockets > 0) || (getSocketedItemCount() > 0))
             {
                 // nothing to do here
                 return false;
             }
 
             // Set the item as not socketed
-            updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 0);
+            if (numSockets == 0)
+            {
+                updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 0);
+            }
+
             return true;
         }
 
-        if ((numSockets == 0) || !canHaveSockets())
+        if (numSockets == 0)
         {
             // nothing to do here
+            return true;
+        }
+
+        if (!canHaveSockets())
+        {
+            // can't add sockets
             return false;
         }
 
-        // Set the item as not socketed
+        // Set the item as not sockets
         updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 1);
         return true;
 
@@ -4189,9 +5819,9 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     if (isSocketed())
     {
         // Already has sockets, so just update count
-        auto numSocketed = socketedItemCount();
+        auto numSocketed = getSocketedItemCount();
         numSockets = std::max(numSockets, numSocketed); // can only remove empty sockets
-        if (numSockets == socketCount())
+        if (numSockets == getSocketCount())
         {
             // nothing to do
             return false;
@@ -4215,15 +5845,16 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
 
         // move bits up
         std::uint32_t value = 0;
-        std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        size_t valueBitSize = sizeof(value) * 8;
+        std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         while (bitsToCopy > 0)
         {
             bitsToCopy -= bits;
-            value = read_uint32_bits(old_current_bit_offset, bits);
+            value = readBits(old_current_bit_offset, bits);
             old_current_bit_offset += bits;
             updateBits(current_bit_offset, bits, value);
             current_bit_offset += bits;
-            bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+            bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         }
 
         // clear any bits not written to
@@ -4233,36 +5864,18 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
             bits = (std::uint8_t)(8 - (current_bit_offset % 8));
             updateBits(current_bit_offset, bits, 0);
         }
-        
+
         // Set item as not socketed
         socket_count_bit_offset = 0;
         updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 0);
 
         // truncate data
-        item_end_bit_offset -= SOCKET_COUNT_NUM_BITS;
+        auto bitDiff = -std::int64_t(SOCKET_COUNT_NUM_BITS);
+        item_end_bit_offset += bitDiff;
         size_t newSize = (item_end_bit_offset + 7) / 8;
         data.resize(newSize, 0);
 
-        if (bonus_bits_bit_offset != 0)
-        {
-            bonus_bits_bit_offset -= SOCKET_COUNT_NUM_BITS;
-        }
-
-        if (magical_props_bit_offset != 0)
-        {
-            magical_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
-        }
-
-        if (set_bonus_props_bit_offset != 0)
-        {
-            set_bonus_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
-        }
-
-        if (runeword_props_bit_offset != 0)
-        {
-            runeword_props_bit_offset -= SOCKET_COUNT_NUM_BITS;
-        }
-
+        updateOffset(socket_count_bit_offset_marker, bitDiff);
         return true;
     }
 
@@ -4286,7 +5899,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     size_t current_bit_offset = socket_count_bit_offset_marker;
     size_t old_current_bit_offset = current_bit_offset;
     size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
-   
+
     // Set item as socketed
     updateBits(start_bit_offset + IS_SOCKETED_FLAG_OFFSET, 1, 1);
     socket_count_bit_offset = current_bit_offset;
@@ -4295,7 +5908,8 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
 
     // now copy the remaining bits
     std::uint32_t value = 0;
-    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
         bitsToCopy -= bits;
@@ -4303,7 +5917,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         old_current_bit_offset += bits;
         updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
-        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
     // clear any bits not written to
@@ -4314,26 +5928,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         updateBits(current_bit_offset, bits, 0);
     }
 
-    if (bonus_bits_bit_offset != 0)
-    {
-        bonus_bits_bit_offset += SOCKET_COUNT_NUM_BITS;
-    }
-
-    if (magical_props_bit_offset != 0)
-    {
-        magical_props_bit_offset += SOCKET_COUNT_NUM_BITS;
-    }
-
-    if (set_bonus_props_bit_offset != 0)
-    {
-        set_bonus_props_bit_offset += SOCKET_COUNT_NUM_BITS;
-    }
-
-    if (runeword_props_bit_offset != 0)
-    {
-        runeword_props_bit_offset += SOCKET_COUNT_NUM_BITS;
-    }
-
+    updateOffset(socket_count_bit_offset_marker, std::int64_t(SOCKET_COUNT_NUM_BITS));
     return true;
 }
 //---------------------------------------------------------------------------
@@ -4350,12 +5945,13 @@ bool d2ce::Item::addPersonalization(const std::string& name)
 
     // up to 15 7/8 bit characters
     size_t bitSize = (ItemVersion >= EnumItemVersion::v116) ? 8 : 7;
-    size_t numberOfBitsToAdd = (curName.size() + 1) * bitSize;
+    size_t numChars = std::min(curName.size(), size_t(NAME_LENGTH - 1));
+    size_t numberOfBitsToAdd = (numChars + 1) * bitSize;
 
     std::array<char, NAME_LENGTH> playerName;
     playerName.fill(0);
-    strcpy_s(playerName.data(), curName.length() + 1, curName.c_str());
-    playerName[15] = 0; // must be zero
+    strncpy_s(playerName.data(), NAME_LENGTH, curName.c_str(), numChars);
+    playerName[NAME_LENGTH - 1] = 0;
 
     // make a copy first
     std::vector<std::uint8_t> oldData(data);
@@ -4392,7 +5988,8 @@ bool d2ce::Item::addPersonalization(const std::string& name)
 
     // now copy the remaining bits
     std::uint32_t value = 0;
-    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
         bitsToCopy -= bits;
@@ -4400,7 +5997,7 @@ bool d2ce::Item::addPersonalization(const std::string& name)
         old_current_bit_offset += bits;
         updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
-        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
     // clear any bits not written to
@@ -4411,71 +6008,7 @@ bool d2ce::Item::addPersonalization(const std::string& name)
         updateBits(current_bit_offset, bits, 0);
     }
 
-    if (tome_bit_offset != 0)
-    {
-        tome_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (body_part_bit_offset != 0)
-    {
-        body_part_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (realm_bit_offset != 0)
-    {
-        realm_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (defense_rating_bit_offset != 0)
-    {
-        defense_rating_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (durability_bit_offset != 0)
-    {
-        durability_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (stackable_bit_offset != 0)
-    {
-        stackable_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (gld_stackable_bit_offset != 0)
-    {
-        gld_stackable_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (socket_count_bit_offset_marker != 0)
-    {
-        socket_count_bit_offset_marker += numberOfBitsToAdd;
-    }
-
-    if (socket_count_bit_offset != 0)
-    {
-        socket_count_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (bonus_bits_bit_offset != 0)
-    {
-        bonus_bits_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (magical_props_bit_offset != 0)
-    {
-        magical_props_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (set_bonus_props_bit_offset != 0)
-    {
-        set_bonus_props_bit_offset += numberOfBitsToAdd;
-    }
-
-    if (runeword_props_bit_offset != 0)
-    {
-        runeword_props_bit_offset += numberOfBitsToAdd;
-    }
-
+    updateOffset(personalized_bit_offset_marker, std::int64_t(numberOfBitsToAdd));
     return true;
 }
 //---------------------------------------------------------------------------
@@ -4495,7 +6028,7 @@ bool d2ce::Item::removePersonalization()
     char c = 0;
     for (std::uint8_t idx = 0; idx < 15; ++idx)
     {
-        c = (char)read_uint32_bits(old_current_bit_offset, bitSize);
+        c = (char)readBits(old_current_bit_offset, bitSize);
         old_current_bit_offset += bitSize;
         if (c == 0)
         {
@@ -4509,15 +6042,16 @@ bool d2ce::Item::removePersonalization()
 
     // move bits up
     std::uint32_t value = 0;
-    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
         bitsToCopy -= bits;
-        value = read_uint32_bits(old_current_bit_offset, bits);
+        value = readBits(old_current_bit_offset, bits);
         old_current_bit_offset += bits;
         updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
-        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
     // clear any bits not written to
@@ -4528,7 +6062,7 @@ bool d2ce::Item::removePersonalization()
         updateBits(current_bit_offset, bits, 0);
     }
 
-    // Set item as not socketed
+    // Set item as not personlized
     personalized_bit_offset = 0;
     updateBits(start_bit_offset + IS_PERSONALIZED_FLAG_OFFSET, 1, 0);
 
@@ -4537,71 +6071,7 @@ bool d2ce::Item::removePersonalization()
     size_t newSize = (item_end_bit_offset + 7) / 8;
     data.resize(newSize, 0);
 
-    if (tome_bit_offset != 0)
-    {
-        tome_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (body_part_bit_offset != 0)
-    {
-        body_part_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (realm_bit_offset != 0)
-    {
-        realm_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (defense_rating_bit_offset != 0)
-    {
-        defense_rating_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (durability_bit_offset != 0)
-    {
-        durability_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (stackable_bit_offset != 0)
-    {
-        stackable_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (gld_stackable_bit_offset != 0)
-    {
-        gld_stackable_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (socket_count_bit_offset_marker != 0)
-    {
-        socket_count_bit_offset_marker -= numberOfBitsToRemove;
-    }
-
-    if (socket_count_bit_offset != 0)
-    {
-        socket_count_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (bonus_bits_bit_offset != 0)
-    {
-        bonus_bits_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (magical_props_bit_offset != 0)
-    {
-        magical_props_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (set_bonus_props_bit_offset != 0)
-    {
-        set_bonus_props_bit_offset -= numberOfBitsToRemove;
-    }
-
-    if (runeword_props_bit_offset != 0)
-    {
-        runeword_props_bit_offset -= numberOfBitsToRemove;
-    }
-
+    updateOffset(personalized_bit_offset_marker, -std::int64_t(numberOfBitsToRemove));
     return true;
 }
 //---------------------------------------------------------------------------
@@ -4628,7 +6098,7 @@ bool d2ce::Item::setIndestructible()
     if (attribs.empty())
     {
         // Indestructible without the need for the magical attribute of indestructibility
-        if (read_uint32_bits(magical_props_bit_offset, DURABILITY_MAX_NUM_BITS) == 0)
+        if (readBits(durability_bit_offset, DURABILITY_MAX_NUM_BITS) == 0)
         {
             // should not happen, already indestructable
             return false;
@@ -4645,15 +6115,16 @@ bool d2ce::Item::setIndestructible()
 
         // move bits up
         std::uint32_t value = 0;
-        std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        size_t valueBitSize = sizeof(value) * 8;
+        std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         while (bitsToCopy > 0)
         {
             bitsToCopy -= bits;
-            value = read_uint32_bits(old_current_bit_offset, bits);
+            value = readBits(old_current_bit_offset, bits);
             old_current_bit_offset += bits;
             updateBits(current_bit_offset, bits, value);
             current_bit_offset += bits;
-            bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+            bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         }
 
         // clear any bits not written to
@@ -4669,46 +6140,7 @@ bool d2ce::Item::setIndestructible()
         size_t newSize = (item_end_bit_offset + 7) / 8;
         data.resize(newSize, 0);
 
-        if (stackable_bit_offset != 0)
-        {
-            stackable_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (gld_stackable_bit_offset != 0)
-        {
-            gld_stackable_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (socket_count_bit_offset_marker != 0)
-        {
-            socket_count_bit_offset_marker -= numberOfBitsToRemove;
-        }
-
-        if (socket_count_bit_offset != 0)
-        {
-            socket_count_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (bonus_bits_bit_offset != 0)
-        {
-            bonus_bits_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (magical_props_bit_offset != 0)
-        {
-            magical_props_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (set_bonus_props_bit_offset != 0)
-        {
-            set_bonus_props_bit_offset -= numberOfBitsToRemove;
-        }
-
-        if (runeword_props_bit_offset != 0)
-        {
-            runeword_props_bit_offset -= numberOfBitsToRemove;
-        }
-
+        updateOffset(durability_bit_offset, -std::int64_t(numberOfBitsToRemove));
         return true;
     }
 
@@ -4750,7 +6182,8 @@ bool d2ce::Item::setIndestructible()
     // now copy the remaining bits
     size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
     std::uint32_t value = 0;
-    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
         bitsToCopy -= bits;
@@ -4758,7 +6191,7 @@ bool d2ce::Item::setIndestructible()
         old_current_bit_offset += bits;
         updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
-        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
     // clear any bits not written to
@@ -4769,17 +6202,482 @@ bool d2ce::Item::setIndestructible()
         updateBits(current_bit_offset, bits, 0);
     }
 
-    if (set_bonus_props_bit_offset != 0)
+    updateOffset(old_current_bit_offset, std::int64_t(numberOfBitsToAdd));
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass) const
+{
+    if (&item == this)
     {
-        set_bonus_props_bit_offset += numberOfBitsToAdd;
+        return true;
     }
 
-    if (runeword_props_bit_offset != 0)
+    // assume items are going to be placed in the hands
+    if (canEquip(d2ce::EnumEquippedId::RIGHT_ARM, charClass))
     {
-        runeword_props_bit_offset += numberOfBitsToAdd;
+        if (!item.canEquip(d2ce::EnumEquippedId::LEFT_ARM, charClass))
+        {
+            return false;
+        }
+    }
+    else if (canEquip(d2ce::EnumEquippedId::LEFT_ARM, charClass))
+    {
+        if (!item.canEquip(d2ce::EnumEquippedId::RIGHT_ARM, charClass))
+        {
+            return false;
+        }
+    }
+
+    const auto& itemType = getItemTypeHelper();
+    const auto& otherItemType = item.getItemTypeHelper();
+    if (itemType.isSecondHand())
+    {
+        if (otherItemType.isSecondHand() || otherItemType.isTwoHandedWeapon())
+        {
+            // no room for two second hand items
+            return false;
+        }
+
+        // is it a valid second hand item?
+        if (itemType.isMissile())
+        {
+            if (!otherItemType.quiverCode.has_value())
+            {
+                // no room for quivers
+                return false;
+            }
+
+            if (!itemType.hasCategoryCode(otherItemType.quiverCode.value()))
+            {
+                return false;
+            }
+        }
+    }
+    else if (otherItemType.isSecondHand())
+    {
+        if (itemType.isTwoHandedWeapon())
+        {
+            // no room for a second hand item
+            return false;
+        }
+
+        // is it a valid second hand item?
+        if (otherItemType.isMissile())
+        {
+            if (!itemType.quiverCode.has_value())
+            {
+                // no room for quivers
+                return false;
+            }
+
+            if (!otherItemType.hasCategoryCode(itemType.quiverCode.value()))
+            {
+                return false;
+            }
+        }
+    }
+    else if (itemType.isMissileWeapon() || otherItemType.isMissileWeapon())
+    {
+        // No second hand item, so we have no room for the missile weapon
+        return false;
+    }
+    else if (itemType.isTwoHandedWeapon())
+    {
+        switch (charClass)
+        {
+        case d2ce::EnumCharClass::Barbarian:
+            if (!itemType.isOneOrTwoHandedWeapon() || !otherItemType.isOneOrTwoHandedWeapon())
+            {
+                // no room for two-handed weapon
+                return false;
+            }
+            break;
+
+        default:
+            // no room for two-handed weapon
+            return false;
+        }
+    }
+    else if (otherItemType.isTwoHandedWeapon())
+    {
+        switch (charClass)
+        {
+        case d2ce::EnumCharClass::Barbarian:
+            if (!itemType.isOneOrTwoHandedWeapon() || !otherItemType.isOneOrTwoHandedWeapon())
+            {
+                // no room for two-handed weapon
+                return false;
+            }
+            break;
+
+        default:
+            // no room for two-handed weapon
+            return false;
+        }
+    }
+    else if (itemType.isWeapon())
+    {
+        switch (charClass)
+        {
+        case d2ce::EnumCharClass::Barbarian:
+            break;
+
+        case d2ce::EnumCharClass::Assassin:
+            if (!itemType.isClassSpecific() || !otherItemType.isClassSpecific())
+            {
+                return false;
+            }
+            break;
+
+        default:
+            // no room for two weapons
+            return false;
+        }
     }
 
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass, const CharStats& cs) const
+{
+    if (&item == this)
+    {
+        return true;
+    }
+
+    // assume items are going to be placed in the hands
+    if (!item.canEquip(d2ce::EnumEquippedId::LEFT_ARM, charClass, cs) &&
+        !item.canEquip(d2ce::EnumEquippedId::RIGHT_ARM, charClass, cs))
+    {
+        return false;
+    }
+
+    return canEquipWith(item, charClass);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canSocketItem(const d2ce::Item& socketFiller) const
+{
+    if (!isSocketed() || !socketFiller.isSocketFiller())
+    {
+        return false;
+    }
+
+    // any free slots?
+    if (getSocketedItemCount() >= getMaxSocketedCount())
+    {
+        return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canSocketItem(const d2ce::Item& socketFiller, std::uint32_t level) const
+{
+    if (!canSocketItem(socketFiller))
+    {
+        return false;
+    }
+
+    if (getLocation() != EnumItemLocation::EQUIPPED)
+    {
+        // no need to check level
+        return true;
+    }
+
+    // Do we meet requirements?
+    d2ce::ItemRequirements existingItemReq;
+    if (getRequirements(existingItemReq))
+    {
+        d2ce::ItemRequirements itemReq;
+        if (socketFiller.getRequirements(itemReq))
+        {
+            if ((itemReq.Level > existingItemReq.Level) &&
+                (itemReq.Level > level))
+            {
+                // the required level can't be met
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::removeSocketedItems()
+{
+    if (SocketedItems.empty())
+    {
+        return true;
+    }
+
+    SocketedItems.clear();
+    updateSocketedItemCount();
+    verifyRuneword();
+    return SocketedItems.empty() ? true : false;
+}
+//---------------------------------------------------------------------------
+std::vector<d2ce::RunewordType> d2ce::Item::getPossibleRunewords(bool bUseCurrentSocketCount, bool bExcludeServerOnly) const
+{
+    return ItemHelpers::getPossibleRunewords(*this, bUseCurrentSocketCount, bExcludeServerOnly);
+}
+//---------------------------------------------------------------------------
+std::vector<d2ce::RunewordType> d2ce::Item::getPossibleRunewords(std::uint32_t level, bool bUseCurrentSocketCount, bool bExcludeServerOnly) const
+{
+    return ItemHelpers::getPossibleRunewords(*this, level, bUseCurrentSocketCount, bExcludeServerOnly);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setRuneword(std::uint16_t id)
+{
+    RunewordAttributes runeAttrib;
+    if (isRuneword())
+    {
+        if (getRunewordAttributes(runeAttrib))
+        {
+            if (id == runeAttrib.Id)
+            {
+                // we are still ok
+                return true;
+            }
+        }
+    }
+
+    auto& runeword = ItemHelpers::getRunewordFromId(id);
+    if (runeword.id != id)
+    {
+        return false;
+    }
+
+    auto runeSocketCount = std::uint8_t(runeword.runeCodes.size());
+    auto numSockets = std::max(getMaxSocketCount(), getDisplayedSocketCount());
+    if (numSockets < runeSocketCount)
+    {
+        // not enough sockets
+        return false;
+    }
+
+    // remove any socketed items
+    if (isSocketed())
+    {
+        removeSocketedItems();
+    }
+
+    setSocketCount(runeSocketCount);
+
+    auto version = getVersion();
+    auto isExpansion = isExpansionItem();
+    auto gemApplyType = getGemApplyType();
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    for (const auto& runeCode : runeword.runeCodes)
+    {
+        strcode = ItemCodeStringConverter(runeCode);
+        Item runeItem(version, strcode, isExpansion);
+        if (runeItem.data.empty() || !runeItem.isRune() || !canSocketItem(runeItem))
+        {
+            // invalid item
+            cachedCombinedMagicalAttributes.clear();
+            return false;
+        }
+
+        if (!runeItem.setLocation(d2ce::EnumItemLocation::SOCKET, std::uint16_t(SocketedItems.size()), 0ui16))
+        {
+            cachedCombinedMagicalAttributes.clear();
+            return false;
+        }
+
+        const auto& runeItemType = runeItem.getItemTypeHelper();
+        runeItemType.getSocketedMagicalAttributes(runeItem, runeItem.socketedMagicalAttributes, gemApplyType);
+        SocketedItems.push_back(runeItem);
+        updateSocketedItemCount();
+    }
+
+    cachedCombinedMagicalAttributes.clear();
+    verifyRuneword();
+
+    if (!isRuneword())
+    {
+        return false;
+    }
+
+    if (!getRunewordAttributes(runeAttrib))
+    {
+        return false;
+    }
+
+    return (id == runeAttrib.Id) ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::exportItem(const std::filesystem::path& path) const
+{
+    if (data.empty())
+    {
+        return false;
+    }
+
+    bool directExport = false;
+    switch (ItemVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        directExport = true;
+        break;
+
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+        if (isExpansionItem())
+        {
+            directExport = true;
+        }
+        break;
+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        break;
+
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
+        if (isExpansionItem())
+        {
+            if (isPersonalized())
+            {
+                // personalization has change, make sure they are all 7 bit characters
+                for (std::uint8_t singleChar : getPersonalizedName())
+                {
+                    if (singleChar > 0x7F)
+                    {
+                        directExport = true;
+                        break;
+                    }
+                }
+            }
+            else if (isEar())
+            {
+                // player name has change, make sure they are all 7 bit characters
+                EarAttributes earAttrib;
+                if (getEarAttributes(earAttrib))
+                {
+                    for (std::uint8_t singleChar : earAttrib.getName())
+                    {
+                        if (singleChar > 0x7F)
+                        {
+                            directExport = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        break;
+    }
+
+    if (directExport)
+    {
+        // we can directly write out the data
+        std::FILE* charfile = NULL;
+        _wfopen_s(&charfile, path.wstring().c_str(), L"wb");
+        std::rewind(charfile);
+        bool ret = writeItem(charfile);
+        std::fclose(charfile);
+        return ret;
+    }
+
+    // convert to json first
+    Json::Value itemRoot;
+    asJson(itemRoot, 1ui32, true);
+
+    // modify it to work for the item version we are using
+    auto convertToVersion = EnumItemVersion::v110;
+    if (ItemVersion >= EnumItemVersion::v116)
+    {
+        if (isPersonalized())
+        {
+            // personalization has change, make sure they are all 7 bit characters
+            for (std::uint8_t singleChar : getPersonalizedName())
+            {
+                if (singleChar > 0x7F)
+                {
+                    convertToVersion = EnumItemVersion::v116;
+                    break;
+                }
+            }
+        }
+        else if (isEar())
+        {
+            // player name has change, make sure they are all 7 bit characters
+            EarAttributes earAttrib;
+            if (getEarAttributes(earAttrib))
+            {
+                for (std::uint8_t singleChar : earAttrib.getName())
+                {
+                    if (singleChar > 0x7F)
+                    {
+                        convertToVersion = EnumItemVersion::v116;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    bool isExpansion = true;
+    switch (convertToVersion)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+        isExpansion = false;
+        itemRoot["Version"] = "0";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        isExpansion = false;
+        itemRoot["Version"] = "0";
+        itemRoot["IsV104"] = true;
+        break;
+
+    case EnumItemVersion::v107: // v1.07 item
+        itemRoot["Version"] = "0";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item 
+        itemRoot["Version"] = "100"; 
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        itemRoot["Version"] = "101";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+    }
+
+    if (!isExpansion)
+    {
+        if (itemRoot.isMember("IsRuneword"))
+        {
+            itemRoot["IsRuneword"] = false;
+        }
+    }
+
+    // read item into correct version for export
+    Item exportItem;
+    exportItem.readItem(itemRoot, true, convertToVersion, isExpansion);
+    return exportItem.exportItem(path);
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedItemName() const
@@ -4888,7 +6786,7 @@ std::string d2ce::Item::getDisplayedItemName() const
         break;
 
     case EnumItemQuality::NORMAL:
-        if (socketedItemCount() > 0)
+        if (getSocketedItemCount() > 0)
         {
             LocalizationHelpers::GetStringTxtValue("GemmedNormalName", strFormat, "%0 %1");
             LocalizationHelpers::GetStringTxtValue("Gemmed", strValue);
@@ -5127,12 +7025,19 @@ std::string d2ce::Item::getDisplayedItemName() const
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getDisplayedSocketCount() const
 {
-    auto count = socketCount();
+    auto count = getSocketCount();
     if (count == 0)
     {
         return 0;
     }
 
+    // Calculate item bonus
+    count += getSocketCountBonus();
+    return count;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getSocketCountBonus() const
+{
     // Calculate item bonus
     std::vector<MagicalAttribute> magicalAttributes;
     if (getCombinedMagicalAttributes(magicalAttributes))
@@ -5142,16 +7047,87 @@ std::uint8_t d2ce::Item::getDisplayedSocketCount() const
         for (auto& attrib : magicalAttributes)
         {
             const auto& stat = ItemHelpers::getItemStat(attrib);
-            if(stat.name == "item_numsockets")
+            if (stat.name == "item_numsockets")
             {
                 eCount += ItemHelpers::getMagicalAttributeValue(attrib, 1, 0, stat);
             }
         }
 
-        count += (std::uint8_t)eCount;
+        return (std::uint8_t)eCount;
     }
 
-    return count;
+    return 0;
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getSocketCount() const
+{
+    if (isSimpleItem() || !isSocketed())
+    {
+        return 0;
+    }
+
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        return getMaxSocketCount();
+
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+    case EnumItemVersion::v109: // v1.09 item
+    case EnumItemVersion::v110: // v1.10 - v1.14d item
+    case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+    case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+    default:
+        if (socket_count_bit_offset == 0)
+        {
+            return 0;
+        }
+
+        return (std::uint8_t)readBits(socket_count_bit_offset, SOCKET_COUNT_NUM_BITS);
+    }
+}
+//---------------------------------------------------------------------------
+std::uint8_t d2ce::Item::getSocketedItemCount() const
+{
+    if (nr_of_items_in_sockets_offset == 0)
+    {
+        switch (getVersion())
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isSimpleItem() || isEar())
+            {
+                return 0;
+            }
+
+            nr_of_items_in_sockets_offset = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
+            nr_of_items_in_sockets_bits = 2;
+            break;
+
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+            if (isSimpleItem() || isEar())
+            {
+                return 0;
+            }
+
+            nr_of_items_in_sockets_offset = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
+            nr_of_items_in_sockets_bits = 3;
+            break;
+
+        case EnumItemVersion::v107: // v1.07 item
+        case EnumItemVersion::v108: // v1.08 item
+        case EnumItemVersion::v109: // v1.09 item
+        case EnumItemVersion::v110: // v1.10 - v1.14d item
+        case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
+        case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
+        default:
+            nr_of_items_in_sockets_offset = extended_data_offset;
+            nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
+            break;
+        }
+    }
+
+    return (std::uint8_t)readBits(nr_of_items_in_sockets_offset, nr_of_items_in_sockets_bits);
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedSocketedRunes() const
@@ -5443,7 +7419,7 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
         {
             dmgMin = std::max(dmgMinThrow, dmgMin2);
         }
-        
+
         if (eDmg == 0)
         {
             eDmg = std::max(eDmgThrow, eDmg2);
@@ -5989,7 +7965,7 @@ std::uint64_t d2ce::Item::readBits(std::FILE* charfile, size_t& current_bit_offs
         return 0;
     }
 
-    return read_uint64_bits(readOffset, bits);
+    return readBits64(readOffset, bits);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::skipBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits)
@@ -6068,7 +8044,6 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
 
-    item_current_socket_idx = 0;
     dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
@@ -6122,7 +8097,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
 
         if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
         {
-            if (read_uint32_bits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
+            if (readBits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
             {
                 ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
             }
@@ -6500,6 +8475,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             break;
         }
 
+        runeword_id_bit_offset_marker = current_bit_offset;
         if (isRuneword())
         {
             runeword_id_bit_offset = current_bit_offset;
@@ -6547,7 +8523,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             }
         }
 
-         
+
         realm_bit_offset = current_bit_offset;
         auto realmBits = (ItemVersion >= EnumItemVersion::v115) ? REAL_DATA_NUM_BITS : REAL_DATA_NUM_BITS_110;
         std::vector<std::uint32_t> test(realmBits / 32, 0);
@@ -6664,6 +8640,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             }
         }
 
+        runeword_props_bit_offset_marker = current_bit_offset;
         if (isRuneword())
         {
             // runewords have their own list of magical properties
@@ -6675,13 +8652,15 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
         }
     }
 
-    auto numSocketed = socketedItemCount();
+    auto numSocketed = getSocketedItemCount();
     if (numSocketed > 0)
     {
+        auto gemApplyType = getGemApplyType();
         for (std::uint8_t i = 0; !feof(charfile) && i < numSocketed; ++i)
         {
             SocketedItems.resize(SocketedItems.size() + 1);
             auto& childItem = SocketedItems.back();
+            childItem.item_current_socket_idx = SocketedItems.size() - 1;
             if (!childItem.readItem(version, isExpansion, charfile))
             {
                 return false;
@@ -6694,10 +8673,9 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             }
 
             // resolve magical properties of socketed gem
-            childItem.getItemCode(strcode);
-            const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
-            std::vector<MagicalAttribute> attribs;
-            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
+            childItem.item_current_socket_idx = 0;
+            const auto& childItemType = childItem.getItemTypeHelper();
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, gemApplyType);
         }
     }
 
@@ -6841,13 +8819,22 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         EnumItemLocation locationId = static_cast<EnumItemLocation>(value);
-
         node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
-        if (node.isNull())
+        switch (locationId)
         {
-            return false;
+        case EnumItemLocation::STORED:
+            if (node.isNull())
+            {
+                return false;
+            }
+
+            value = std::uint16_t(node.asInt64());
+            break;
+
+        default:
+            value = 0;
+            break;
         }
-        value = std::uint16_t(node.asInt64());
         if (value > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
         {
             return false;
@@ -6860,13 +8847,37 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             return false;
         }
         auto positionX = std::uint16_t(node.asInt64());
+        switch (locationId)
+        {
+        case EnumItemLocation::SOCKET:
+            positionX = std::uint16_t(item_current_socket_idx);
+            break;
+        }
 
         node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
-        if (node.isNull())
+        std::uint16_t positionY = 0;
+        switch (locationId)
         {
-            return false;
+        case EnumItemLocation::SOCKET:
+            positionY = 0;
+            break;
+
+        case EnumItemLocation::STORED:
+            if (node.isNull())
+            {
+                return false;
+            }
+
+            positionY = std::uint16_t(node.asInt64());
+            break;
+
+        default:
+            if (!node.isNull())
+            {
+                positionY = std::uint16_t(node.asInt64());
+            }
+            break;
         }
-        auto positionY = std::uint16_t(node.asInt64());
 
         switch (locationId)
         {
@@ -6876,7 +8887,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::INVENTORY:
                 current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
                 bitSize = 8;
-                value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x9F);
+                value = (std::uint8_t)(readBits(current_bit_offset, bitSize) & 0x9F);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -6900,7 +8911,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::STASH:
                 current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
                 bitSize = 8;
-                value = (std::uint8_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x9F) | 0x40);
+                value = (std::uint8_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x40);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -6924,7 +8935,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::HORADRIC_CUBE:
                 current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
                 bitSize = 8;
-                value = (std::uint8_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x9F) | 0x60);
+                value = (std::uint8_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x60);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7138,6 +9149,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             value = std::min(std::uint32_t(node.asInt64()), MAX_STACKED_QUANTITY);
         }
 
+        current_bit_offset = stackable_bit_offset;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7190,7 +9202,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     if (!node.isNull())
     {
         value = std::uint16_t(node.asInt64());
-        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM))
         {
             equippedId = static_cast<EnumEquippedId>(value);
         }
@@ -7218,7 +9230,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::INVENTORY:
             current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xF807);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7247,7 +9259,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7257,7 +9269,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::STASH:
             current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7286,7 +9298,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7296,7 +9308,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::HORADRIC_CUBE:
             current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7325,7 +9337,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7337,7 +9349,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     case EnumItemLocation::BELT:
         current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7368,7 +9380,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7378,7 +9390,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     case EnumItemLocation::EQUIPPED:
         current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7386,7 +9398,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = position_offset;
         bitSize = 16;
-        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+        value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7402,7 +9414,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x4000);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x3FFF) | 0x4000);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7412,7 +9424,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     case EnumItemLocation::SOCKET:
         current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7420,7 +9432,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V100_COORDINATES_BIT_OFFSET;
         bitSize = 8;
-        value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xE1);
+        value = (std::uint8_t)(readBits(current_bit_offset, bitSize) & 0xE1);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7428,7 +9440,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V100_BITFIELD3_BIT_OFFSET;
         bitSize = 8;
-        value = (std::uint8_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF0);
+        value = (std::uint8_t)(readBits(current_bit_offset, bitSize) & 0xF0);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7436,7 +9448,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x3FFF) | 0x8000);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -7470,7 +9482,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)readBits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
         }
         else
         {
@@ -7657,7 +9669,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::INVENTORY:
                 current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xE3FF);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7681,7 +9693,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::STASH:
                 current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF) | 0x1000);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x1000);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7705,7 +9717,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::HORADRIC_CUBE:
                 current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xE3FF) | 0x0C00);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x0C00);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7816,7 +9828,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::INVENTORY:
                 current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x03FE);
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x03FE);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7838,7 +9850,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7848,7 +9860,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::STASH:
                 current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x1000);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x1000);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7870,7 +9882,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7880,7 +9892,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             case EnumAltItemLocation::HORADRIC_CUBE:
                 current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
                 bitSize = 16;
-                value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0x0C00);
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x0C00);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7902,7 +9914,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -7914,7 +9926,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         case EnumItemLocation::BELT:
             current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0xFC01);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7938,7 +9950,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
             bitSize = 32;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x00000003);
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) | 0x00000003);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7951,7 +9963,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         case EnumItemLocation::SOCKET:
             current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0x03E0) | 0xFC1B);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03E0) | 0xFC1B);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7962,7 +9974,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
                 return false;
             }
 
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xFC7F) | (item_current_socket_idx << 7));
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xFC7F) | (item_current_socket_idx << 7));
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -7970,7 +9982,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
             bitSize = 32;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x00000003);
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) | 0x00000003);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8144,6 +10156,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
             value = std::min(std::uint32_t(node.asInt64()), MAX_STACKED_QUANTITY);
         }
 
+        current_bit_offset = stackable_bit_offset;
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8196,7 +10209,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     if (!node.isNull())
     {
         value = std::uint16_t(node.asInt64());
-        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT))
+        if (value < static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM))
         {
             equippedId = static_cast<EnumEquippedId>(value);
         }
@@ -8224,7 +10237,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::INVENTORY:
             current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xF807);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xF807);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8246,7 +10259,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
             bitSize = 8;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8254,7 +10267,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
             bitSize = 32;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8262,7 +10275,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8272,7 +10285,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::STASH:
             current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0020);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8294,7 +10307,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
             bitSize = 8;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8302,7 +10315,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
             bitSize = 32;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8310,7 +10323,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8320,7 +10333,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         case EnumAltItemLocation::HORADRIC_CUBE:
             current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
             bitSize = 16;
-            value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0018);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8342,7 +10355,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
             bitSize = 8;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+            value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8350,7 +10363,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
             bitSize = 32;
-            value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8358,7 +10371,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
             current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
             bitSize = 16;
-            value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xBFFF);
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
             if (!setBits(current_bit_offset, bitSize, value))
             {
                 return false;
@@ -8374,7 +10387,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     case EnumItemLocation::EQUIPPED:
         current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
         bitSize = 16;
-        value = (std::uint16_t)((read_uint32_bits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+        value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8382,7 +10395,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = position_offset;
         bitSize = 16;
-        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) & 0x01);
+        value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8390,7 +10403,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
         bitSize = 8;
-        value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xC3);
+        value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8406,7 +10419,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
         bitSize = 32;
-        value = (std::uint32_t)(read_uint32_bits(current_bit_offset, bitSize) & 0xFFFFFFFC);
+        value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8414,7 +10427,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
         current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
         bitSize = 16;
-        value = (std::uint16_t)(read_uint32_bits(current_bit_offset, bitSize) | 0x4000);
+        value = (std::uint16_t)(readBits(current_bit_offset, bitSize) | 0x4000);
         if (!setBits(current_bit_offset, bitSize, value))
         {
             return false;
@@ -8448,7 +10461,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)readBits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
         }
         else
         {
@@ -8470,6 +10483,83 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::verifyItemConsistency() const
+{
+    if (data.empty())
+    {
+        return false;
+    }
+
+    // make sure it was read poperly.
+    auto& helper = getItemTypeHelper();
+    if (&helper == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        return false;
+    }
+
+    switch (ItemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+    case EnumItemVersion::v107:
+        switch (getRawVersion())
+        {
+        case 0:
+            break;
+
+        default:
+            return false;
+        }
+        break;
+
+    case EnumItemVersion::v108:
+    case EnumItemVersion::v109:
+        switch (getRawVersion())
+        {
+        case   1:
+        case 100:
+            break;
+
+        default:
+            return false;
+        }
+        break;
+
+    case EnumItemVersion::v110:
+        switch (getRawVersion())
+        {
+        case   2:
+        case 101:
+            break;
+
+        default:
+            return false;
+        }
+        break;
+
+    case EnumItemVersion::v115:
+    case EnumItemVersion::v116:
+        switch (getRawVersion())
+        {
+        case 4:
+        case 5:
+            break;
+
+        default:
+            return false;
+        }
+        break;
+    }
+
+    if (isSimpleItem() != helper.isSimpleItem())
+    {
+        return false;
+    }
+
+    // looks mostly proper
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumItemVersion version, bool isExpansion)
 {
     if (itemRoot.isNull())
@@ -8481,7 +10571,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
 
-    item_current_socket_idx = 0;
     dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
@@ -8556,7 +10645,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     if (ItemVersion < EnumItemVersion::v115)
     {
         value = *((std::uint16_t*)ITEM_MARKER.data());
-        setBits(current_bit_offset, ITEM_MARKER.size()*8, value);
+        setBits(current_bit_offset, ITEM_MARKER.size() * 8, value);
         start_bit_offset = current_bit_offset;
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
@@ -8688,11 +10777,11 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         if (ItemVersion == EnumItemVersion::v100)
         {
             // Check unknown bits that indicate it's an 1.04 - 1.06 not 1.03 or older
-            if (read_uint32_bits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
+            if (readBits(start_bit_offset + ITEM_TYPE_BIT_OFFSET, 2) != 0)
             {
                 ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
             }
-            else if(bSerializedFormat)
+            else if (bSerializedFormat)
             {
                 value = 0;
                 node = itemRoot["IsV104"];
@@ -8729,7 +10818,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         case EnumItemVersion::v100: // v1.00 - v1.03 item
             if (!readItemv100(itemRoot, bSerializedFormat))
             {
-                return 0;
+                return false;
             }
 
             if (isEar() || isSimpleItem())
@@ -8760,12 +10849,13 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 return false;
             }
 
-            item_current_socket_idx = 0;
+            auto gemApplyType = getGemApplyType();
             auto iter_end = node.end();
-            for (auto iter = node.begin(); iter != iter_end; ++iter, ++item_current_socket_idx)
+            for (auto iter = node.begin(); iter != iter_end; ++iter)
             {
                 SocketedItems.resize(SocketedItems.size() + 1);
                 auto& childItem = SocketedItems.back();
+                childItem.item_current_socket_idx = SocketedItems.size() - 1;
                 if (!childItem.readItem(*iter, bSerializedFormat, version, isExpansion))
                 {
                     return false;
@@ -8778,10 +10868,9 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 }
 
                 // resolve magical properties of socketed gem
-                childItem.getItemCode(strcode);
-                const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
-                std::vector<MagicalAttribute> attribs;
-                childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
+                childItem.item_current_socket_idx = 0;
+                const auto& childItemType = childItem.getItemTypeHelper();
+                childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, gemApplyType);
             }
         }
 
@@ -8813,13 +10902,23 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     // if not equipped, equipped_id could be missing
-    bitSize = 4; 
+    auto itemLocation = getLocation();
+    bitSize = 4;
     equipped_id_offset = current_bit_offset;
     value = 0;
     node = itemRoot[bSerializedFormat ? "Location" : "equipped_id"];
     if (!node.isNull())
     {
-        value = std::uint16_t(node.asInt64());
+        switch (itemLocation)
+        {
+        case EnumItemLocation::EQUIPPED:
+            value = std::uint16_t(node.asInt64());
+            break;
+
+        default:
+            value = 0;
+            break;
+        }
     }
 
     if (!setBits(current_bit_offset, bitSize, value))
@@ -8840,6 +10939,13 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
     current_bit_offset = position_offset;
     value = std::uint16_t(node.asInt64());
+    switch (itemLocation)
+    {
+    case EnumItemLocation::SOCKET:
+        value = std::uint16_t(item_current_socket_idx);
+        break;
+    }
+
     if (!setBits(current_bit_offset, bitSize, value))
     {
         return false;
@@ -8848,12 +10954,29 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
     bitSize = 4;
     node = itemRoot[bSerializedFormat ? "Y" : "position_y"];
-    if (node.isNull())
+    switch (itemLocation)
     {
-        return false;
+    case EnumItemLocation::SOCKET:
+        value = 0;
+        break;
+
+    case EnumItemLocation::STORED:
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        value = std::uint16_t(node.asInt64());
+        break;
+
+    default:
+        if (!node.isNull())
+        {
+            value = std::uint16_t(node.asInt64());
+        }
+        break;
     }
 
-    value = std::uint16_t(node.asInt64());
     if (!setBits(current_bit_offset, bitSize, value))
     {
         return false;
@@ -8864,14 +10987,24 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     alt_position_id_offset = current_bit_offset;
     bitSize = 3;
 
+    current_bit_offset = alt_position_id_offset;
     node = itemRoot[bSerializedFormat ? "Page" : "alt_position_id"];
-    if (node.isNull())
+    switch (itemLocation)
     {
-        return false;
+    case EnumItemLocation::STORED:
+        if (node.isNull())
+        {
+            return false;
+        }
+
+        value = std::uint16_t(node.asInt64());
+        break;
+
+    default:
+        value = 0;
+        break;
     }
 
-    current_bit_offset = alt_position_id_offset;
-    value = std::uint16_t(node.asInt64());
     if (!setBits(current_bit_offset, bitSize, value))
     {
         return false;
@@ -9011,7 +11144,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
-    default: 
+    default:
         ItemHelpers::encodeItemCodev115(strcode, value64, numBitsSet);
         bitSize = numBitsSet;
         if (!setBits64(current_bit_offset, bitSize, value64))
@@ -9316,7 +11449,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 return false;
             }
             max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-            
+
             value = 0;
             node = itemRoot["MagicSuffixIds"];
             if (node.isArray() && !node.empty())
@@ -9617,6 +11750,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         break;
     }
 
+    runeword_id_bit_offset_marker = current_bit_offset;
     if (isRuneword())
     {
         runeword_id_bit_offset = current_bit_offset;
@@ -9768,7 +11902,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 return false;
             }
             max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-
         }
 
         // Some armor/weapons like phase blades don't have durability
@@ -9787,7 +11920,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-        if(value > 0)
+        if (value > 0)
         {
             // current durability value (8 bits + unknown single bit)
             bitSize = (ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108;
@@ -9970,11 +12103,11 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         if (bSerializedFormat)
         {
             ++iter;
-            if(iter == iter_end)
+            if (iter == iter_end)
             {
                 return false;
             }
-            
+
             if (isRuneword())
             {
                 ++iter;
@@ -10001,6 +12134,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
     }
 
+    runeword_props_bit_offset_marker = current_bit_offset;
     if (isRuneword())
     {
         // runewords have their own list of magical properties
@@ -10050,11 +12184,13 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             return false;
         }
 
+        auto gemApplyType = getGemApplyType();
         auto iter_end = node.end();
         for (auto iter = node.begin(); iter != iter_end; ++iter)
         {
             SocketedItems.resize(SocketedItems.size() + 1);
             auto& childItem = SocketedItems.back();
+            childItem.item_current_socket_idx = SocketedItems.size() - 1;
             if (!childItem.readItem(*iter, bSerializedFormat, version, isExpansion))
             {
                 return false;
@@ -10067,10 +12203,9 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             }
 
             // resolve magical properties of socketed gem
-            childItem.getItemCode(strcode);
-            const auto& childItemType = ItemHelpers::getItemTypeHelper(strcode);
-            std::vector<MagicalAttribute> attribs;
-            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, getGemApplyType());
+            childItem.item_current_socket_idx = 0;
+            const auto& childItemType = childItem.getItemTypeHelper();
+            childItemType.getSocketedMagicalAttributes(childItem, childItem.socketedMagicalAttributes, gemApplyType);
         }
     }
 
@@ -10176,8 +12311,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             item["QuestDifficulty"] = std::uint16_t(getQuestDifficulty());
         }
 
-        item["NumberOfSocketedItems"] = std::uint16_t(socketedItemCount());
-        item["TotalNumberOfSockets"] = std::uint16_t(socketCount());
+        item["NumberOfSocketedItems"] = std::uint16_t(getSocketedItemCount());
+        item["TotalNumberOfSockets"] = std::uint16_t(getSocketCount());
 
         // Socketed items
         Json::Value socketedItems(Json::arrayValue);
@@ -10197,10 +12332,10 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                 dwb_bit_offset = dwa_bit_offset + 32;
             }
 
-            item["Dwa"] = (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32);
-            item["Dwb"] = (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32);
+            item["Dwa"] = readBits(dwa_bit_offset, 32);
+            item["Dwb"] = readBits(dwb_bit_offset, 32);
         }
-        
+
         auto quality = getQuality();
         item["Quality"] = std::uint16_t(quality);
         item["HasMultipleGraphics"] = hasMultipleGraphics();
@@ -10260,6 +12395,12 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         if (durability.Max > 0)
         {
             item["Durability"] = durability.Current;
+        }
+        else if (!isExpansionItem() && itemType.isThrownWeapon())
+        {
+            // Durability on throwing weapons is only in the Expansion
+            item["MaxDurability"] = itemType.durability.Max;
+            item["Durability"] = itemType.durability.Max;
         }
         item["Quantity"] = getQuantity();
         item["SetItemMask"] = getSetItemMask();
@@ -10351,7 +12492,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         // For compatibility with other Json exports we add type_id
         if (itemType.isWeapon())
         {
-            item["type_id"] = 3; 
+            item["type_id"] = 3;
         }
         else if (itemType.isShield())
         {
@@ -10370,7 +12511,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         {
             item["quest_difficulty"] = std::uint16_t(getQuestDifficulty());
         }
-        item["nr_of_items_in_sockets"] = std::uint16_t(socketedItemCount());
+        item["nr_of_items_in_sockets"] = std::uint16_t(getSocketedItemCount());
 
         if (isSimpleItem() && (ItemVersion != EnumItemVersion::v100))
         {
@@ -10397,8 +12538,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                     dwb_bit_offset = dwa_bit_offset + 32;
                 }
 
-                item["dwa"] = (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32);
-                item["dwb"] = (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32);
+                item["dwa"] = readBits(dwa_bit_offset, 32);
+                item["dwb"] = readBits(dwb_bit_offset, 32);
             }
 
             auto quality = getQuality();
@@ -10491,7 +12632,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
 
             if (isSocketed())
             {
-                item["total_nr_of_sockets"] = std::uint16_t(socketCount());
+                item["total_nr_of_sockets"] = std::uint16_t(getSocketCount());
             }
 
             Json::Value magicalAttribs(Json::arrayValue);
@@ -10677,7 +12818,7 @@ void d2ce::Item::byteRangeAsJson(Json::Value& parent, size_t startByte, size_t e
     {
         std::stringstream ss;
         ss << std::dec << (idx - startByte);
-        unknownData[ss.str()] = read_uint32_bits(idx, 1);
+        unknownData[ss.str()] = readBits(idx, 1);
     }
     parent[propName] = unknownData;
 }
@@ -10938,7 +13079,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 {
                     return false;
                 }
-                
+
                 nextId = id + 1;
                 id = std::uint16_t(node.asInt64());
                 if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
@@ -11253,7 +13394,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
         while (nextInChain && valueIdx < 4)
         {
             const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
-            if(statNext.id != nextInChain)
+            if (statNext.id != nextInChain)
             {
                 // corrupt file
                 return false;
@@ -11296,13 +13437,24 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         return false;
     }
 
-    std::uint16_t id = (std::uint16_t)read_uint32_bits(current_bit_offset, PROPERTY_ID_NUM_BITS);
+    size_t dataBitSize = data.size() * 8;
+    if (current_bit_offset >= dataBitSize)
+    {
+        return false;
+    }
+
+    std::uint16_t id = (std::uint16_t)readBits(current_bit_offset, PROPERTY_ID_NUM_BITS);
     current_bit_offset += PROPERTY_ID_NUM_BITS;
     std::uint16_t nextInChain = 0;
     auto itemVersion = getVersion();
     auto gameVersion = getGameVersion();
     while (id != 0x1FF)
     {
+        if (current_bit_offset >= dataBitSize)
+        {
+            return false;
+        }
+
         MagicalAttribute magicalAttrib;
         const auto& stat = ItemHelpers::getItemStat(itemVersion, id);
         if (id != stat.id)
@@ -11334,13 +13486,13 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 6) - stat.saveAdd);
             current_bit_offset += 6;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10) - stat.saveAdd);
             current_bit_offset += 10;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
             current_bit_offset += stat.saveBits;
         }
         else if (stat.encode == 3)
@@ -11351,16 +13503,16 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 6) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 6) - stat.saveAdd);
             current_bit_offset += 6;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10) - stat.saveAdd);
             current_bit_offset += 10;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 8) - stat.saveAdd);
             current_bit_offset += 8;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 8) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 8) - stat.saveAdd);
             current_bit_offset += 8;
         }
         else if (stat.encode == 4)
@@ -11372,40 +13524,40 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 2));
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 2));
             current_bit_offset += 2;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10));
             current_bit_offset += 10;
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 10));
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10));
             current_bit_offset += 10;
         }
         else if (stat.saveParamBits > 0)
         {
             if (stat.name.compare("item_addskill_tab") == 0)
             {
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 3) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64(current_bit_offset, 3) - stat.saveAdd);
                 current_bit_offset += 3;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, 13) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64(current_bit_offset, 13) - stat.saveAdd);
                 current_bit_offset += 13;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
                 current_bit_offset += stat.saveBits;
             }
             else
             {
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveParamBits) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveParamBits) - stat.saveAdd);
                 current_bit_offset += stat.saveParamBits;
 
-                magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
                 current_bit_offset += stat.saveBits;
             }
         }
         else
         {
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, stat.saveBits) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
             current_bit_offset += stat.saveBits;
         }
 
@@ -11425,17 +13577,346 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(read_uint64_bits(current_bit_offset, statNext.saveBits) - statNext.saveAdd);
+            magicalAttrib.Values.push_back(readBits64(current_bit_offset, statNext.saveBits) - statNext.saveAdd);
             current_bit_offset += statNext.saveBits;
             nextInChain = statNext.nextInChain;
         }
 
         attrib.push_back(magicalAttrib);
-        id = (std::uint16_t)read_uint32_bits(current_bit_offset, PROPERTY_ID_NUM_BITS);
+        id = (std::uint16_t)readBits(current_bit_offset, PROPERTY_ID_NUM_BITS);
         current_bit_offset += PROPERTY_ID_NUM_BITS;
     }
 
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vector<MagicalAttribute>& attribs)
+{
+    auto itemVersion = getVersion();
+    std::uint16_t id = 0x1FF;
+    std::int64_t value = 0;
+    std::uint16_t nextInChain = 0;
+    std::vector<std::int64_t> values;
+    for (const auto& attrib : attribs)
+    {
+        auto iterValue = attrib.Values.begin();
+        auto iterValueEnd = attrib.Values.end();
+        id = attrib.Id;
+        if (!setBits(current_bit_offset, PROPERTY_ID_NUM_BITS, id))
+        {
+            return false;
+        }
+
+        const auto& stat = ItemHelpers::getItemStat(itemVersion, id);
+        if (id != stat.id)
+        {
+            // corrupt file
+            return false;
+        }
+
+        // saveBits being zero or >= 64 is unrecoverably bad, and
+        // encode type 4 is only used by stats that were never implemented (time-based stats)
+        if (stat.saveBits == 0 || stat.saveBits >= 64)
+        {
+            // corrupt file
+            return false;
+        }
+
+        if (stat.encode == 2)
+        {
+            if (stat.saveBits != 7 || stat.saveParamBits != 16)
+            {
+                // corrupt file
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 6, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 10, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, stat.saveBits, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue != iterValueEnd)
+            {
+                return false;
+            }
+        }
+        else if (stat.encode == 3)
+        {
+            if (stat.saveBits != 16 || stat.saveParamBits != 16)
+            {
+                // corrupt file
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 6, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 10, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 8, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, 8, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue != iterValueEnd)
+            {
+                return false;
+            }
+        }
+        else if (stat.encode == 4)
+        {
+            // time-based stats were never implemented, but we handle them
+            if (stat.saveBits != 22 || stat.saveParamBits != 0)
+            {
+                // corrupt file
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            if (!setBits64(current_bit_offset, 2, *iterValue))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            if (!setBits64(current_bit_offset, 10, *iterValue))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            if (!setBits64(current_bit_offset, 10, *iterValue))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+            if (iterValue != iterValueEnd)
+            {
+                return false;
+            }
+        }
+        else if (stat.saveParamBits > 0)
+        {
+            if (stat.name.compare("item_addskill_tab") == 0)
+            {
+                std::advance(iterValue, 1);
+                if (iterValue == iterValueEnd)
+                {
+                    return false;
+                }
+
+                value = *iterValue + stat.saveAdd;
+                if (!setBits64(current_bit_offset, 3, value))
+                {
+                    return false;
+                }
+
+                std::advance(iterValue, 1);
+                if (iterValue == iterValueEnd)
+                {
+                    return false;
+                }
+
+                value = *iterValue + stat.saveAdd;
+                if (!setBits64(current_bit_offset, 13, value))
+                {
+                    return false;
+                }
+
+                std::advance(iterValue, 1);
+                if (iterValue == iterValueEnd)
+                {
+                    return false;
+                }
+
+                value = *iterValue + stat.saveAdd;
+                if (!setBits64(current_bit_offset, stat.saveBits, value))
+                {
+                    return false;
+                }
+
+                std::advance(iterValue, 1);
+                if (iterValue != iterValueEnd)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                std::advance(iterValue, 1);
+                if (iterValue == iterValueEnd)
+                {
+                    return false;
+                }
+
+                value = *iterValue + stat.saveAdd;
+                if (!setBits64(current_bit_offset, stat.saveParamBits, value))
+                {
+                    return false;
+                }
+
+                std::advance(iterValue, 1);
+                if (iterValue == iterValueEnd)
+                {
+                    return false;
+                }
+
+                value = *iterValue + stat.saveAdd;
+                if (!setBits64(current_bit_offset, stat.saveBits, value))
+                {
+                    return false;
+                }
+
+                std::advance(iterValue, 1);
+                if (iterValue != iterValueEnd)
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            std::advance(iterValue, 1);
+            if (iterValue == iterValueEnd)
+            {
+                return false;
+            }
+
+            value = *iterValue + stat.saveAdd;
+            if (!setBits64(current_bit_offset, stat.saveBits, value))
+            {
+                return false;
+            }
+
+            std::advance(iterValue, 1);
+        }
+
+        nextInChain = stat.nextInChain;
+        while (nextInChain)
+        {
+            if (iterValue == attrib.Values.end())
+            {
+                return false;
+            }
+
+            const auto& statNext = ItemHelpers::getItemStat(itemVersion, nextInChain);
+            if (statNext.id != nextInChain)
+            {
+                // corrupt file
+                return false;
+            }
+
+            if (statNext.saveParamBits != 0)
+            {
+                // corrupt file
+                return false;
+            }
+
+            value = *iterValue + statNext.saveAdd;
+            if (!setBits64(current_bit_offset, statNext.saveBits, value))
+            {
+                return false;
+            }
+
+            nextInChain = statNext.nextInChain;
+            std::advance(iterValue, 1);
+        }
+
+        if (iterValue != attrib.Values.end())
+        {
+            return false;
+        }
+    }
+
+    id = 0x1FF;
+    return setBits(current_bit_offset, PROPERTY_ID_NUM_BITS, id);
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getEncodedChar(std::FILE* charfile, size_t& current_bit_offset)
@@ -11460,6 +13941,35 @@ std::uint8_t d2ce::Item::getEncodedChar(std::FILE* charfile, size_t& current_bit
 
     // something went wrong
     return UINT8_MAX;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Item::readBits(size_t start, size_t size) const
+{
+    if ((size > 32) || (start >= (data.size() * 8)))
+    {
+        return 0;
+    }
+
+    if (size >= 24)
+    {
+        return (std::uint32_t)read_uint64_bits(start, size);
+    }
+    return read_uint32_bits(start, size);
+}
+//---------------------------------------------------------------------------
+std::uint64_t d2ce::Item::readBits64(size_t start, size_t size) const
+{
+    if ((size > 56) || (start >= (data.size() * 8)))
+    {
+        return 0;
+    }
+
+    if (size >= 24)
+    {
+        return read_uint64_bits(start, size);
+    }
+
+    return (std::uint64_t)read_uint32_bits(start, size);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::updateBits(size_t start, size_t size, std::uint32_t value)
@@ -11542,7 +14052,8 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
 
     // now copy the remaining bits
     std::uint32_t value = 0;
-    std::uint8_t bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
         bitsToCopy -= bits;
@@ -11550,7 +14061,7 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
         old_current_bit_offset += bits;
         updateBits(current_bit_offset, bits, value);
         current_bit_offset += bits;
-        bits = (std::uint8_t)std::min(sizeof(value), bitsToCopy);
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
     // clear any bits not written to
@@ -11602,6 +14113,11 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
         if (quality_attrib_bit_offset != 0)
         {
             quality_attrib_bit_offset += diff;
+        }
+
+        if (runeword_id_bit_offset_marker != 0)
+        {
+            runeword_id_bit_offset_marker += diff;
         }
 
         if (runeword_id_bit_offset != 0)
@@ -11679,6 +14195,11 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
             set_bonus_props_bit_offset += diff;
         }
 
+        if (runeword_props_bit_offset_marker != 0)
+        {
+            runeword_props_bit_offset_marker += diff;
+        }
+
         if (runeword_props_bit_offset != 0)
         {
             runeword_props_bit_offset += diff;
@@ -11709,7 +14230,7 @@ std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
         dwb_bit_offset = dwa_bit_offset + 32;
     }
 
-    return ItemHelpers::generateInferiorQualityId(getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
+    return ItemHelpers::generateInferiorQualityId(getLevel(), readBits(dwb_bit_offset, 32));
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
@@ -11747,7 +14268,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
         return false;
     }
 
-    if (!ItemHelpers::generateMagicalAffixes(strcode, magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    if (!ItemHelpers::generateMagicalAffixes(strcode, magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -11780,7 +14301,7 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
         return false;
     }
 
-    attrib.Id = ItemHelpers::getSetItemId((std::uint16_t)read_uint32_bits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+    attrib.Id = ItemHelpers::getSetItemId((std::uint16_t)readBits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
     if (attrib.Id >= MAXUINT16)
     {
         attrib.Id = 0;
@@ -11808,10 +14329,10 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
                 dwb_bit_offset = dwa_bit_offset + 32;
             }
 
-            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
+            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32));
         }
         break;
-       
+
     case EnumItemQuality::UNIQUE:
         if (getUniqueAttributes(uniqueAttrib) && !uniqueAttrib.Name.empty())
         {
@@ -11820,7 +14341,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
                 dwb_bit_offset = dwa_bit_offset + 32;
             }
 
-            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
+            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32));
         }
         break;
 
@@ -11838,7 +14359,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
             std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
             if (getItemCode(strcode))
             {
-                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32));
+                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32));
             }
 
         }
@@ -11894,7 +14415,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         return false;
     }
 
-    if (!ItemHelpers::generateRareOrCraftedAffixes(strcode, rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), (std::uint32_t)read_uint64_bits(dwb_bit_offset, 32)) || (rare_affixes_v100.Id == MAXUINT16))
+    if (!ItemHelpers::generateRareOrCraftedAffixes(strcode, rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32)) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }
@@ -11956,7 +14477,7 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
         return 0;
     }
 
-    return std::uint8_t(ItemHelpers::generateDWARandomOffset((std::uint32_t)read_uint64_bits(dwa_bit_offset, 32), 1) % modulo);
+    return std::uint8_t(ItemHelpers::generateDWARandomOffset(readBits(dwa_bit_offset, 32), 1) % modulo);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getDefenseRatingv100() const
@@ -11972,26 +14493,30 @@ std::uint16_t d2ce::Item::getDefenseRatingv100() const
         return false;
     }
 
-    return ItemHelpers::generateDefenseRating(strcode, (std::uint32_t)read_uint64_bits(dwa_bit_offset, 32));
+    return ItemHelpers::generateDefenseRating(strcode, readBits(dwa_bit_offset, 32));
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::findItems()
 {
+    if (IsSharedStash)
+    {
+        findSharedStashItems();
+        return;
+    }
+
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
     ItemLocationReference.clear();
-    ItemAltLocationReference.clear();
     ItemLocationEmptySpots.clear();
-    ItemAltLocationEmptySpots.clear();
     HasBeltEquipped = false;
     HasHoradricCube = false;
     EquippedBeltSlots = 0;
 
     std::map<d2ce::EnumAltItemLocation, ItemDimensions> altItemDimensions;
     {
-        auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::INVENTORY];
+        auto& emptySlots = ItemLocationEmptySpots[EnumItemLocation::STORED][d2ce::EnumAltItemLocation::INVENTORY];
         auto& dimensions = altItemDimensions[d2ce::EnumAltItemLocation::INVENTORY];
         if (getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, dimensions))
         {
@@ -12005,7 +14530,7 @@ void d2ce::Items::findItems()
 
     ItemDimensions stashDimensions;
     {
-        auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::STASH];
+        auto& emptySlots = ItemLocationEmptySpots[EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH];
         auto& dimensions = altItemDimensions[d2ce::EnumAltItemLocation::STASH];
         if (getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, dimensions))
         {
@@ -12048,15 +14573,18 @@ void d2ce::Items::findItems()
         }
 
         itemLocation = item.getLocation();
+        itemAltLocation = item.getAltPositionId();
         switch (itemLocation)
         {
         case d2ce::EnumItemLocation::BELT:
             HasBeltEquipped = true;
-            ItemLocationReference[itemLocation].push_back(const_cast<d2ce::Item&>(item));
+            itemAltLocation = EnumAltItemLocation::UNKNOWN;
+            ItemLocationReference[itemLocation][itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
             break;
 
         case d2ce::EnumItemLocation::EQUIPPED:
-            ItemLocationReference[itemLocation].push_back(const_cast<d2ce::Item&>(item));
+            itemAltLocation = EnumAltItemLocation::UNKNOWN;
+            ItemLocationReference[itemLocation][itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
             if ((!HasBeltEquipped || (EquippedBeltSlots == 0)) && item.isBelt())
             {
                 HasBeltEquipped = true;
@@ -12065,17 +14593,15 @@ void d2ce::Items::findItems()
             break;
 
         case d2ce::EnumItemLocation::STORED:
-            itemAltLocation = item.getAltPositionId();
+            ItemLocationReference[itemLocation][itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
             switch (itemAltLocation)
             {
             case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
                 HasHoradricCube = true;
-                ItemAltLocationReference[itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
                 break;
 
             case d2ce::EnumAltItemLocation::INVENTORY:
             case d2ce::EnumAltItemLocation::STASH:
-                ItemAltLocationReference[itemAltLocation].push_back(const_cast<d2ce::Item&>(item));
                 if (!HasHoradricCube)
                 {
                     HasHoradricCube = item.isHoradricCube();
@@ -12084,8 +14610,8 @@ void d2ce::Items::findItems()
                 if (item.getDimensions(dimensions))
                 {
                     // remove slots from empty list
-                    auto& emptySlots = ItemAltLocationEmptySpots[itemAltLocation];
-                    auto& invDimenstion =altItemDimensions[itemAltLocation];
+                    auto& emptySlots = ItemLocationEmptySpots[itemLocation][itemAltLocation];
+                    auto& invDimenstion = altItemDimensions[itemAltLocation];
                     auto posX = item.getPositionX();
                     auto posY = item.getPositionY();
                     for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
@@ -12102,7 +14628,7 @@ void d2ce::Items::findItems()
     }
 
     {
-        auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::BELT];
+        auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::BELT][d2ce::EnumAltItemLocation::UNKNOWN];
         if (getItemLocationDimensions(d2ce::EnumItemLocation::BELT, dimensions))
         {
             std::uint16_t totalPos = dimensions.InvHeight * dimensions.InvWidth;
@@ -12112,7 +14638,7 @@ void d2ce::Items::findItems()
             }
 
             // remove slots from empty list
-            for (const auto& itemRef : ItemLocationReference[d2ce::EnumItemLocation::BELT])
+            for (const auto& itemRef : ItemLocationReference[d2ce::EnumItemLocation::BELT][d2ce::EnumAltItemLocation::UNKNOWN])
             {
                 emptySlots.erase(itemRef.get().getPositionX());
             }
@@ -12122,18 +14648,18 @@ void d2ce::Items::findItems()
     if (HasHoradricCube)
     {
         itemAltLocation = EnumAltItemLocation::HORADRIC_CUBE;
-        auto& emptySlots = ItemAltLocationEmptySpots[itemAltLocation];
+        auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::STORED][itemAltLocation];
         auto& cubeDimensions = altItemDimensions[itemAltLocation];
         if (getItemLocationDimensions(itemAltLocation, cubeDimensions))
         {
-            std::uint16_t totalPos = dimensions.InvHeight * dimensions.InvWidth;
+            std::uint16_t totalPos = cubeDimensions.InvHeight * cubeDimensions.InvWidth;
             for (std::uint16_t pos = 0; pos < totalPos; ++pos)
             {
                 emptySlots.insert(pos);
             }
 
             // remove slots from empty list
-            for (const auto& itemRef : ItemAltLocationReference[itemAltLocation])
+            for (const auto& itemRef : ItemLocationReference[d2ce::EnumItemLocation::STORED][itemAltLocation])
             {
                 // remove slots from empty list
                 auto posX = itemRef.get().getPositionX();
@@ -12160,16 +14686,14 @@ void d2ce::Items::findSharedStashItems()
     Armor.clear();
     Weapons.clear();
     ItemLocationReference.clear();
-    ItemAltLocationReference.clear();
     ItemLocationEmptySpots.clear();
-    ItemAltLocationEmptySpots.clear();
     HasBeltEquipped = false;
     HasHoradricCube = false;
     EquippedBeltSlots = 0;
 
     ItemDimensions stashDimensions;
     {
-        auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::STASH];
+        auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH];
         if (getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, stashDimensions))
         {
             std::uint16_t totalPos = stashDimensions.InvHeight * stashDimensions.InvWidth;
@@ -12208,11 +14732,11 @@ void d2ce::Items::findSharedStashItems()
             GPSs.push_back(item);
         }
 
-        ItemAltLocationReference[d2ce::EnumAltItemLocation::STASH].push_back(const_cast<d2ce::Item&>(item));
+        ItemLocationReference[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH].push_back(const_cast<d2ce::Item&>(item));
         if (item.getDimensions(dimensions))
         {
             // remove slots from empty list
-            auto& emptySlots = ItemAltLocationEmptySpots[d2ce::EnumAltItemLocation::STASH];
+            auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH];
             auto posX = item.getPositionX();
             auto posY = item.getPositionY();
             for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
@@ -12624,7 +15148,7 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
             {
                 corpseItemsRoot.clear();
                 corpseLocationRoot = corpseLocationRoot[0];
-                if(!corpseLocationRoot.isNull())
+                if (!corpseLocationRoot.isNull())
                 {
                     value = corpseLocationRoot["Header"];
                     if (!value.isNull())
@@ -12981,7 +15505,9 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
 
     if (HasGolem != 0)
     {
-        if (!GolemItem.readItem(Version, isExpansionItems(), charfile))
+        GolemItem.resize(GolemItem.size() + 1);
+        auto& golemItem = GolemItem.back();
+        if (!golemItem.readItem(Version, isExpansionItems(), charfile))
         {
             // Corrupt file
             if (update_locations)
@@ -12989,8 +15515,8 @@ void d2ce::Items::readGolemItem(std::FILE* charfile)
                 golem_location = 0;
             }
 
-            GolemItem.clear();
-            HasGolem = false;
+            golemItem.clear();
+            HasGolem = 0;
         }
     }
 }
@@ -13042,7 +15568,9 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
 
     if (!golemItemRoot.isNull())
     {
-        if (!GolemItem.readItem(golemItemRoot, bSerializedFormat, Version, isExpansionItems()))
+        GolemItem.resize(GolemItem.size() + 1);
+        auto& golemItem = GolemItem.back();
+        if (!golemItem.readItem(golemItemRoot, bSerializedFormat, Version, isExpansionItems()))
         {
             GolemItem.clear();
         }
@@ -13052,13 +15580,16 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
     HasGolem = GolemItem.size() > 0 ? 1 : 0;
     std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
     golem_location = std::ftell(charfile);
-    if (!GolemItem.writeItem(charfile))
+    if (!GolemItem.empty())
     {
-        golem_location = 0;
+        if (!GolemItem.back().writeItem(charfile))
+        {
+            golem_location = 0;
+        }
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
+bool d2ce::Items::writeCorpseItems(std::FILE* charfile) const
 {
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
     if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
@@ -13095,7 +15626,7 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::writeMercItems(std::FILE* charfile)
+bool d2ce::Items::writeMercItems(std::FILE* charfile) const
 {
     if (!isExpansionItems())
     {
@@ -13126,15 +15657,18 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile)
     return writeGolemItem(charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::writeGolemItem(std::FILE* charfile)
+bool d2ce::Items::writeGolemItem(std::FILE* charfile) const
 {
     std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
-    HasGolem = GolemItem.size() > 0 ? 1 : 0;
+    HasGolem = GolemItem.empty() ? 0 : 1;
     std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
     golem_location = std::ftell(charfile);
-    if (!GolemItem.writeItem(charfile))
+    if (!GolemItem.empty())
     {
-        return false;
+        if (!GolemItem.back().writeItem(charfile))
+        {
+            return false;
+        }
     }
 
     return true;
@@ -13207,6 +15741,8 @@ bool d2ce::Items::readItems(const Character& charInfo, std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfile)
 {
+    clear();
+    IsSharedStash = true;
     switch (version)
     {
     case EnumCharVersion::v100: // v1.00 - v1.06
@@ -13216,33 +15752,33 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
 
     case EnumCharVersion::v107: // v1.07
         Version = EnumItemVersion::v107;
-        GameVersion = 0;
+        GameVersion = 100;
         break;
 
     case EnumCharVersion::v108: // v1.08
         Version = EnumItemVersion::v108;
-        GameVersion = 1;
+        GameVersion = 100;
         break;
 
     case EnumCharVersion::v109: // v1.09
         Version = EnumItemVersion::v109;
-        GameVersion = 1;
+        GameVersion = 100;
         break;
 
     case EnumCharVersion::v110: // v1.10 - v1.14d
         Version = EnumItemVersion::v110;
-        GameVersion = 1;
+        GameVersion = 100;
         break;
 
     case EnumCharVersion::v115: // Diablo II Resurrected
         Version = EnumItemVersion::v115;
-        GameVersion = 1;
+        GameVersion = 100;
         break;
 
     case EnumCharVersion::v116: // Diablo II Resurrected Patch 2.4
     default:
         Version = EnumItemVersion::v116;
-        GameVersion = 1;
+        GameVersion = 100;
         break;
     }
 
@@ -13325,7 +15861,7 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, con
 }
 //---------------------------------------------------------------------------
 // write items in place at offset saved from reasding
-bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMercID)
+bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMercID) const
 {
     switch (getDefaultItemVersion())
     {
@@ -13348,7 +15884,7 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMerc
         break;
     }
 
-    isMercHired = !MercItems.empty() | hasMercID;
+    isMercHired = !MercItems.empty() || hasMercID;
 
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
@@ -13376,7 +15912,7 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMerc
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::writeSharedStashPage(std::FILE* charfile)
+bool d2ce::Items::writeSharedStashPage(std::FILE* charfile) const
 {
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
@@ -13520,24 +16056,24 @@ bool d2ce::Items::golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, 
     {
         Json::Value golem;
         golem["Header"] = *((std::uint16_t*)GOLEM_ITEM_MARKER.data());
-        golem["Exists"] = (HasGolem ? true : false);
-        if (HasGolem != 0)
+        golem["Exists"] = (GolemItem.empty() ? false : true);
+        if (!GolemItem.empty())
         {
             Json::Value item;
-            GolemItem.asJson(item, charLevel, bSerializedFormat);
+            GolemItem.back().asJson(item, charLevel, bSerializedFormat);
             golem["Item"] = item;
         }
         parent["Golem"] = golem;
     }
     else
     {
-        if (!HasGolem)
+        if (GolemItem.empty())
         {
             return false;
         }
 
         Json::Value item;
-        GolemItem.asJson(item, charLevel, bSerializedFormat);
+        GolemItem.back().asJson(item, charLevel, bSerializedFormat);
         parent["golem_item"] = item;
     }
     return true;
@@ -13579,11 +16115,400 @@ bool d2ce::Items::isExpansionItems() const
     return getDefaultGameVersion() == 100 ? true : false;
 }
 //---------------------------------------------------------------------------
-d2ce::Items::Items()
+void d2ce::Items::verifyBeltSlots()
+{
+    auto& equippedLocationReference = ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED][d2ce::EnumAltItemLocation::UNKNOWN];
+    if (!equippedLocationReference.empty())
+    {
+        auto iter = std::find_if(equippedLocationReference.begin(), equippedLocationReference.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::BELT));
+        if (iter == equippedLocationReference.end())
+        {
+            HasBeltEquipped = false;
+            EquippedBeltSlots = 0;
+        }
+        else
+        {
+            HasBeltEquipped = true;
+            EquippedBeltSlots = iter->get().getTotalItemSlots();
+        }
+    }
+
+    auto locationId = d2ce::EnumItemLocation::BELT;
+    auto altPositionId = d2ce::EnumAltItemLocation::UNKNOWN;
+    auto& invEmptySlots = ItemLocationEmptySpots[locationId][altPositionId];
+    auto& invLocationReference = ItemLocationReference[locationId][altPositionId];
+
+    ItemDimensions invDimensions;
+    getItemLocationDimensions(d2ce::EnumItemLocation::BELT, invDimensions);
+    invEmptySlots.clear();
+    std::uint16_t totalPos = invDimensions.InvHeight * invDimensions.InvWidth;
+    for (std::uint16_t pos = 0; pos < totalPos; ++pos)
+    {
+        invEmptySlots.insert(pos);
+    }
+
+    // remove slots from empty list that fit into the belt
+    std::list<Item> itemToMove; // non-empty if given belt items need moving
+    std::uint16_t posX = 0;
+    for (const auto& itemRef : invLocationReference)
+    {
+        posX = itemRef.get().getPositionX();
+        if (posX < totalPos)
+        {
+            invEmptySlots.erase(posX);
+        }
+    }
+
+    if (invEmptySlots.empty())
+    {
+        // try to find spots for the items out of bounds still
+        auto iter = Inventory.begin();
+        bool bRemoveItem = false;
+        for (const auto& itemRef : invLocationReference)
+        {
+            posX = itemRef.get().getPositionX();
+            if (posX < totalPos)
+            {
+                continue;
+            }
+
+            bRemoveItem = true;
+            if (!invEmptySlots.empty())
+            {
+                posX = *invEmptySlots.begin();
+                if (iter->setLocation(d2ce::EnumItemLocation::BELT, posX, 0))
+                {
+                    bRemoveItem = false;
+                    invEmptySlots.erase(posX);
+                }
+            }
+
+            if (bRemoveItem)
+            {
+                iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(itemRef.get()));
+                if (iter != Inventory.end())
+                {
+                    const auto& itemType = iter->getItemTypeHelper();
+                    itemToMove.splice(itemToMove.end(), Inventory, iter);
+                    --NumOfItems;
+                    if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                    {
+                        d2ce::removeItem_if(GPSs, ItemPredicate(itemRef.get()));
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        // move any beltable items in the buffer over to the belt
+        auto iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsBeltablePredicate());
+        while (iter != BufferItems.end() && !invEmptySlots.empty())
+        {
+            posX = *(invEmptySlots.begin());
+            auto& item = *iter;
+            if (!item.setLocation(d2ce::EnumItemLocation::BELT, posX, 0))
+            {
+                iter = BufferItems.end();
+                continue;
+            }
+
+            invEmptySlots.erase(posX);
+
+            Inventory.splice(Inventory.end(), BufferItems, iter);
+            if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(item)) == invLocationReference.end())
+            {
+                invLocationReference.push_back(item);
+            }
+            ++NumOfItems;
+
+            const auto& itemType = item.getItemTypeHelper();
+            if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            {
+                GPSs.push_back(item);
+            }
+
+            iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsBeltablePredicate());
+        }
+    }
+
+    if (itemToMove.empty())
+    {
+        return;
+    }
+
+    for (const auto& item : itemToMove)
+    {
+        d2ce::removeItem_if(invLocationReference, ItemPredicate(item));
+    }
+
+    locationId = d2ce::EnumItemLocation::STORED;
+    altPositionId = d2ce::EnumAltItemLocation::INVENTORY;
+    auto* pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+    auto* pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+    getItemLocationDimensions(locationId, altPositionId, invDimensions);
+    while (!itemToMove.empty() && (pInvEmptySlots != nullptr))
+    {
+        if (pInvEmptySlots->empty())
+        {
+            switch (altPositionId)
+            {
+            case d2ce::EnumAltItemLocation::INVENTORY:
+                altPositionId = d2ce::EnumAltItemLocation::STASH;
+                pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+                pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+                getItemLocationDimensions(locationId, altPositionId, invDimensions);
+                break;
+
+            case d2ce::EnumAltItemLocation::STASH:
+                altPositionId = d2ce::EnumAltItemLocation::HORADRIC_CUBE;
+                pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+                pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+                getItemLocationDimensions(locationId, altPositionId, invDimensions);
+                break;
+
+            case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            default:
+                pInvEmptySlots = nullptr;
+                break;
+            }
+        }
+        else
+        {
+            auto iterMove = itemToMove.begin();
+            auto& item = *iterMove;
+            Inventory.splice(Inventory.end(), itemToMove, iterMove);
+            if (std::find_if(pInvLocationReference->begin(), pInvLocationReference->end(), ItemPredicate(item)) == pInvLocationReference->end())
+            {
+                pInvLocationReference->push_back(item);
+            }
+            ++NumOfItems;
+
+            const auto& itemType = item.getItemTypeHelper();
+            if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            {
+                GPSs.push_back(item);
+            }
+
+            posX = *(pInvEmptySlots->begin());
+            if (item.setLocation(locationId, altPositionId, posX % invDimensions.Width, posX / invDimensions.Width))
+            {
+                pInvEmptySlots->erase(posX);
+            }
+        }
+    }
+
+    if (!itemToMove.empty())
+    {
+        BufferItems.splice(BufferItems.end(), itemToMove, itemToMove.begin(), itemToMove.end());
+    }
+}
+//---------------------------------------------------------------------------
+void d2ce::Items::verifyHoradricCube()
+{
+    bool bFoundCube = false;
+    for (const auto& item : Inventory)
+    {
+        if (item.isHoradricCube())
+        {
+            bFoundCube = true;
+            break;
+        }
+    }
+
+    if (HasHoradricCube == bFoundCube)
+    {
+        // nothing changed
+        return;
+    }
+
+
+    ItemDimensions dimensions;
+    auto itemLoaction = d2ce::EnumItemLocation::STORED;
+    auto itemAltLocation = EnumAltItemLocation::HORADRIC_CUBE;
+    auto& emptySlots = ItemLocationEmptySpots[itemLoaction][itemAltLocation];
+    auto& invLocationReference = ItemLocationReference[itemLoaction][itemAltLocation];
+    if (bFoundCube)
+    {
+        HasHoradricCube = true;
+        ItemDimensions cubeDimensions;
+        ItemDimensions invItemDimensions;
+        if (getItemLocationDimensions(itemAltLocation, cubeDimensions))
+        {
+            std::uint16_t totalPos = cubeDimensions.InvHeight * cubeDimensions.InvWidth;
+            for (std::uint16_t pos = 0; pos < totalPos; ++pos)
+            {
+                emptySlots.insert(pos);
+            }
+
+            // move any Horadric Cube items in the buffer back into the inventory
+            auto iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsInHoradricCube());
+            while (iter != BufferItems.end() && !emptySlots.empty())
+            {
+                auto& item = *iter;
+                if (!item.getDimensions(dimensions))
+                {
+                    item.setLocation(EnumItemLocation::BUFFER, 0, 0);
+                    iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsInHoradricCube());
+                    continue;
+                }
+
+                bool bFits = true;
+                auto positionX = item.getPositionX();
+                auto positionY = item.getPositionY();
+                auto positionX2 = positionX + dimensions.Width - 1;
+                auto positionY2 = positionY + dimensions.Height - 1;
+                for (auto& itemRef : invLocationReference)
+                {
+                    auto& invItem = itemRef.get();
+                    if (&invItem == &item)
+                    {
+                        // don't bother checking yourself
+                        continue;
+                    }
+
+                    if (!invItem.getDimensions(invItemDimensions))
+                    {
+                        continue;
+                    }
+
+                    auto invItemPosX = invItem.getPositionX();
+                    auto invItemPosY = invItem.getPositionY();
+                    auto invItemPosX2 = invItemPosX + dimensions.Width - 1;
+                    auto invItemPosY2 = invItemPosY + dimensions.Height - 1;
+                    invItemPosY = invItem.getPositionY();
+                    if (positionX > invItemPosX2 || positionX2 < invItemPosX)
+                    {
+                        // does not intersect
+                        continue;
+                    }
+
+                    if (positionY > invItemPosY2 || positionY2 < invItemPosY)
+                    {
+                        // does not intersect
+                        continue;
+                    }
+
+                    // intersects with existing item
+                    bFits = false;
+                    item.setLocation(EnumItemLocation::BUFFER, 0, 0);
+                    break;
+                }
+
+                if (!bFits)
+                {
+                    iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsInHoradricCube());
+                }
+
+                Inventory.splice(Inventory.end(), BufferItems, iter);
+                if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(item)) == invLocationReference.end())
+                {
+                    invLocationReference.push_back(item);
+                }
+                ++NumOfItems;
+
+                auto& itemType = item.getItemTypeHelper();
+                if (itemType.isStackable())
+                {
+                    Stackables.push_back(item);
+
+                    if (itemType.isWeapon())
+                    {
+                        Weapons.push_back(item);
+                    }
+                }
+                else if (itemType.isWeapon())
+                {
+                    Weapons.push_back(item);
+                }
+                else if (itemType.isArmor())
+                {
+                    Armor.push_back(item);
+                }
+                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                {
+                    GPSs.push_back(item);
+                }
+
+                // remove slots from empty list
+                if (item.getDimensions(dimensions))
+                {
+                    for (std::uint16_t y = positionY; y <= positionY2; ++y)
+                    {
+                        for (std::uint16_t x = positionX; x <= positionX2; ++x)
+                        {
+                            emptySlots.erase(y * cubeDimensions.Width + x);
+                        }
+                    }
+                }
+
+                iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemIsInHoradricCube());
+            }
+        }
+
+        return;
+    }
+
+    // Horadric Cube was removed, make sure any items located in there are removed as well
+    HasHoradricCube = false;
+    std::list<Item> itemToMove; // non-empty if given Horadric Cube items need moving
+
+    auto iter = Inventory.begin();
+    for (const auto& itemRef : invLocationReference)
+    {
+        iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(itemRef.get()));
+        if (iter != Inventory.end())
+        {
+            const auto& itemType = iter->getItemTypeHelper();
+            itemToMove.splice(itemToMove.end(), Inventory, iter);
+            --NumOfItems;
+
+            if (itemType.isStackable())
+            {
+                d2ce::removeItem_if(Stackables, ItemPredicate(itemRef.get()));
+
+                if (itemType.isWeapon())
+                {
+                    d2ce::removeItem_if(Weapons, ItemPredicate(itemRef.get()));
+                }
+            }
+            else if (itemType.isWeapon())
+            {
+                d2ce::removeItem_if(Weapons, ItemPredicate(itemRef.get()));
+            }
+            else if (itemType.isArmor())
+            {
+                d2ce::removeItem_if(Armor, ItemPredicate(itemRef.get()));
+            }
+            else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            {
+                d2ce::removeItem_if(GPSs, ItemPredicate(itemRef.get()));
+            }
+        }
+    }
+
+    if (itemToMove.empty())
+    {
+        return;
+    }
+
+    for (const auto& item : itemToMove)
+    {
+        d2ce::removeItem_if(invLocationReference, ItemPredicate(item));
+    }
+
+    BufferItems.splice(BufferItems.end(), itemToMove, itemToMove.begin(), itemToMove.end());
+}
+//---------------------------------------------------------------------------
+d2ce::Items::Items() : BufferItems(Buffer)
 {
 }
 //---------------------------------------------------------------------------
-d2ce::Items::Items(const Items& other)
+d2ce::Items::Items(std::list<Item>& bufferItems) : BufferItems(bufferItems)
+{
+}
+//---------------------------------------------------------------------------
+d2ce::Items::Items(const Items& other) : BufferItems(other.BufferItems)
 {
     *this = other;
 }
@@ -13624,6 +16549,10 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
 
     update_locations = other.update_locations;
     isMercHired = other.isMercHired;
+
+    Buffer = other.Buffer;
+    LastItemMoved = other.LastItemMoved;
+    LastItemIdx = other.LastItemIdx;
 
     // refetch references to items
     GPSs.clear();
@@ -13679,6 +16608,10 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
 
     update_locations = std::exchange(other.update_locations, true);
     isMercHired = std::exchange(other.isMercHired, false);
+
+    Buffer.swap(other.Buffer);
+    LastItemMoved = std::exchange(other.LastItemMoved, nullptr);
+    LastItemIdx = std::exchange(other.LastItemIdx, MAXSIZE_T);
     return *this;
 }
 //---------------------------------------------------------------------------
@@ -13775,7 +16708,7 @@ size_t d2ce::Items::getNumberOfEquippedItems() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getEquippedItems() const
 {
-    return ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED];
+    return ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED][d2ce::EnumAltItemLocation::UNKNOWN];
 }
 //---------------------------------------------------------------------------
 d2ce::EnumItemVersion d2ce::Items::getDefaultItemVersion() const
@@ -13832,7 +16765,7 @@ bool d2ce::Items::getItemLocationDimensions(EnumItemLocation locationId, EnumAlt
 
     case EnumItemLocation::EQUIPPED:
         dimensions.Height = dimensions.InvHeight = 1;
-        dimensions.Width = dimensions.InvWidth = static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_HAND_LEFT);
+        dimensions.Width = dimensions.InvWidth = static_cast<std::underlying_type_t<EnumEquippedId>>(EnumEquippedId::ALT_LEFT_ARM);
         return true;
     }
 
@@ -13878,7 +16811,7 @@ size_t d2ce::Items::getNumberOfItemsInBelt() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInBelt() const
 {
-    return ItemLocationReference[d2ce::EnumItemLocation::BELT];
+    return ItemLocationReference[d2ce::EnumItemLocation::BELT][d2ce::EnumAltItemLocation::UNKNOWN];
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Items::getNumberOfItemsInInventory() const
@@ -13888,7 +16821,7 @@ size_t d2ce::Items::getNumberOfItemsInInventory() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInInventory() const
 {
-    return ItemAltLocationReference[d2ce::EnumAltItemLocation::INVENTORY];
+    return ItemLocationReference[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::INVENTORY];
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Items::getNumberOfItemsInStash() const
@@ -13898,7 +16831,7 @@ size_t d2ce::Items::getNumberOfItemsInStash() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInStash() const
 {
-    return ItemAltLocationReference[d2ce::EnumAltItemLocation::STASH];
+    return ItemLocationReference[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH];
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::getHasHoradricCube() const
@@ -13918,13 +16851,18 @@ size_t d2ce::Items::getNumberOfItemsInHoradricCube() const
 //---------------------------------------------------------------------------
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInHoradricCube() const
 {
-    return ItemAltLocationReference[d2ce::EnumAltItemLocation::HORADRIC_CUBE];
+    return ItemLocationReference[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::HORADRIC_CUBE];
 }
 //---------------------------------------------------------------------------
 // number of bytes to store all item sections
 size_t d2ce::Items::getByteSize() const
 {
-    size_t byteSize = GolemItem.getFullSize();
+    size_t byteSize = 0;
+    for (auto& item : GolemItem)
+    {
+        byteSize += item.getFullSize();
+    }
+
     for (auto& item : Inventory)
     {
         byteSize += item.getFullSize();
@@ -13997,16 +16935,19 @@ bool d2ce::Items::getMercItemBonuses(std::vector<MagicalAttribute>& attribs) con
     attribs.clear();
 
     // Combine all equipped magical properties
+    std::vector<MagicalAttribute> unfilteredAttribs;
     std::vector<MagicalAttribute> tempAttribs;
     std::multimap<size_t, size_t> itemIndexMap;
     for (auto& item : MercItems)
     {
         if (item.getCombinedMagicalAttributes(tempAttribs))
         {
-            ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
+            ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, unfilteredAttribs);
         }
     }
 
+    // filter out the properties that give us a bonuses
+    FilterMagicalAttribsForBonus(unfilteredAttribs, attribs);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -14034,32 +16975,27 @@ bool d2ce::Items::getDisplayedMercItemBonuses(std::vector<MagicalAttribute>& att
 std::uint16_t d2ce::Items::getCombinedMercDefenseRating(std::uint32_t charLevel) const
 {
     // Combine all equipped defense ratings
-    EnumItemLocation location_id = EnumItemLocation::STORED;
     std::uint64_t eDef = 0;
     std::uint64_t defenseRating = 0;
     std::vector<MagicalAttribute> magicalAttributes;
     for (auto& item : MercItems)
     {
-        location_id = item.getLocation();
-        if (location_id == EnumItemLocation::EQUIPPED)
+        defenseRating += item.getDefenseRating();
+        if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
         {
-            defenseRating += item.getDefenseRating();
-            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            for (auto& attrib : magicalAttributes)
             {
-                for (auto& attrib : magicalAttributes)
+                switch (attrib.Id)
                 {
-                    switch (attrib.Id)
-                    {
-                    case 16:
-                    case 215:
-                        eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 16:
+                case 215:
+                    eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 31:
-                    case 214:
-                        defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
-                    }
+                case 31:
+                case 214:
+                    defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
                 }
             }
         }
@@ -14074,7 +17010,6 @@ bool d2ce::Items::getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLe
     ItemDamage itemDamage;
     damage.clear();
 
-    EnumItemLocation location_id = EnumItemLocation::STORED;
     std::uint64_t eDmg = 0;
     std::uint64_t eDmgMax = 0;
     std::uint64_t dmgMin = 0;
@@ -14086,83 +17021,79 @@ bool d2ce::Items::getCombinedMercDamage(BaseDamage& damage, std::uint32_t charLe
     std::vector<MagicalAttribute> magicalAttributes;
     for (auto& item : MercItems)
     {
-        location_id = item.getLocation();
-        if (location_id == EnumItemLocation::EQUIPPED)
+        if (item.getDamage(itemDamage))
         {
-            if (item.getDamage(itemDamage))
+            if (item.isEthereal())
             {
-                if (item.isEthereal())
+                itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
+                itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+            }
+            damage.add(itemDamage.OneHanded);
+        }
+
+        if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+        {
+            for (auto& attrib : magicalAttributes)
+            {
+                switch (attrib.Id)
                 {
-                    itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
-                    itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+                case 17:
+                    eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 21:
+                    dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 22:
+                    dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 23:
+                    dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
+
+                case 24:
+                    dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
+
+                case 219:
+                    eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 159:
+                    dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
+
+                case 160:
+                    dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
                 }
-                damage.add(itemDamage.OneHanded);
             }
 
-            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            if (dmgMin == 0)
             {
-                for (auto& attrib : magicalAttributes)
-                {
-                    switch (attrib.Id)
-                    {
-                    case 17:
-                        eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                dmgMin = std::max(dmgMinThrow, dmgMin2);
+            }
 
-                    case 21:
-                        dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+            if (dmgMax == 0)
+            {
+                dmgMax = std::max(dmgMaxThrow, dmgMax2);
+            }
 
-                    case 22:
-                        dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+            if (dmgMin != 0)
+            {
+                damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
+            }
 
-                    case 23:
-                        dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
-                        break;
+            if (dmgMax != 0)
+            {
+                damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+            }
 
-                    case 24:
-                        dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
-                        break;
-
-                    case 219:
-                        eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
-
-                    case 159:
-                        dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
-                        break;
-
-                    case 160:
-                        dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
-                        break;
-                    }
-                }
-
-                if (dmgMin == 0)
-                {
-                    dmgMin = std::max(dmgMinThrow, dmgMin2);
-                }
-
-                if (dmgMax == 0)
-                {
-                    dmgMax = std::max(dmgMaxThrow, dmgMax2);
-                }
-
-                if (dmgMin != 0)
-                {
-                    damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
-                }
-
-                if (dmgMax != 0)
-                {
-                    damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
-                }
-
-                if (damage.Min > damage.Max)
-                {
-                    damage.Max = damage.Min + 1;
-                }
+            if (damage.Min > damage.Max)
+            {
+                damage.Max = damage.Min + 1;
             }
         }
     }
@@ -14185,9 +17116,97 @@ bool d2ce::Items::hasGolem() const
     return HasGolem != 0 ? true : false;
 }
 //---------------------------------------------------------------------------
-const d2ce::Item& d2ce::Items::getGolemItem() const
+const std::list<d2ce::Item>& d2ce::Items::getGolemItem() const
 {
     return GolemItem;
+}
+//---------------------------------------------------------------------------
+d2ce::Item d2ce::Items::removeItem(const d2ce::Item& item)
+{
+    auto iter = Inventory.begin();
+    auto iter_end = Inventory.end();
+    for (; iter != iter_end; ++iter)
+    {
+        auto& invItem = *iter;
+        if (&invItem == &item)
+        {
+            // found the item
+            d2ce::Item copy;
+            copy.swap(invItem);
+            copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
+            Inventory.erase(iter);
+            --NumOfItems;
+            findItems();
+            return copy;
+        }
+    }
+
+    iter = CorpseItems.begin();
+    iter_end = CorpseItems.end();
+    for (; iter != iter_end; ++iter)
+    {
+        auto& invItem = *iter;
+        if (&invItem == &item)
+        {
+            // found the item
+            d2ce::Item copy;
+            copy.swap(invItem);
+            copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
+            CorpseItems.erase(iter);
+            --NumOfCorpseItems;
+            findItems();
+            return copy;
+        }
+    }
+
+    iter = MercItems.begin();
+    iter_end = MercItems.end();
+    for (; iter != iter_end; ++iter)
+    {
+        auto& invItem = *iter;
+        if (&invItem == &item)
+        {
+            // found the item
+            d2ce::Item copy;
+            copy.swap(invItem);
+            copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
+            MercItems.erase(iter);
+            --NumOfMercItems;
+            findItems();
+            return copy;
+        }
+    }
+
+    iter = GolemItem.begin();
+    iter_end = GolemItem.end();
+    for (; iter != iter_end; ++iter)
+    {
+        auto& invItem = *iter;
+        if (&invItem == &item)
+        {
+            // found the item
+            d2ce::Item copy;
+            copy.swap(invItem);
+            copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
+            GolemItem.erase(iter);
+            HasGolem = 0;
+            findItems();
+            return copy;
+        }
+    }
+
+    // not found
+    return d2ce::Item();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::canEquipItem(const d2ce::Item& item, EnumEquippedId equipId) const
+{
+    return item.canEquip(equipId);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::canEquipItem(const d2ce::Item& item, EnumEquippedId equipId, EnumCharClass charClass, const CharStats& cs) const
+{
+    return item.canEquip(equipId, charClass, cs);
 }
 //---------------------------------------------------------------------------
 /*
@@ -14200,7 +17219,7 @@ size_t d2ce::Items::upgradeGems(ItemFilter filter)
     {
         return 0;
     }
-    
+
     bool bFiltered = false;
     filter.clearEquipped(); // GPS can't be equipped
     switch (filter.LocationId)
@@ -14584,9 +17603,9 @@ size_t d2ce::Items::repairAllItems(ItemFilter filter)
 
     if (!bFiltered || filter.IsGolem)
     {
-        if (HasGolem)
+        for (auto& item : GolemItem)
         {
-            if (GolemItem.fixDurability())
+            if (item.fixDurability())
             {
                 ++itemsFixed;
             }
@@ -14684,9 +17703,9 @@ size_t d2ce::Items::maxDurabilityAllItems(ItemFilter filter)
 
     if (!bFiltered || filter.IsGolem)
     {
-        if (HasGolem)
+        for (auto& item : GolemItem)
         {
-            if (GolemItem.setMaxDurability())
+            if (item.setMaxDurability())
             {
                 ++itemsFixed;
             }
@@ -14895,13 +17914,9 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         return false;
     }
 
-    std::set<std::uint16_t>* pEmptySlots = nullptr;
-    std::vector<std::reference_wrapper<Item>>* pLocationReference = nullptr;
     switch (locationId)
     {
     case EnumItemLocation::STORED:
-        pEmptySlots = &ItemAltLocationEmptySpots[altPositionId];
-        pLocationReference = &ItemAltLocationReference[altPositionId];
         break;
 
     case EnumItemLocation::BELT:
@@ -14909,23 +17924,21 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         {
             return false;
         }
-
-        pEmptySlots = &ItemLocationEmptySpots[locationId];
-        pLocationReference = &ItemLocationReference[locationId];
+        altPositionId = EnumAltItemLocation::UNKNOWN;
         break;
 
     case EnumItemLocation::EQUIPPED:
-        pEmptySlots = &ItemLocationEmptySpots[locationId];
-        pLocationReference = &ItemLocationReference[locationId];
+        altPositionId = EnumAltItemLocation::UNKNOWN;
         break;
 
     default:
         return false;
     }
 
-    if (pEmptySlots == nullptr || pEmptySlots->empty() || pLocationReference == nullptr)
+    auto& itemLocationEmptySpots = ItemLocationEmptySpots[locationId][altPositionId];
+    if (itemLocationEmptySpots.empty())
     {
-        // now free space
+        // no free space
         return false;
     }
 
@@ -14933,7 +17946,7 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
     std::uint16_t positionY = 0;
     std::uint16_t positionX = 0;
     std::uint16_t freeSlot = MAXUINT16;
-    for (const auto& slot : *pEmptySlots)
+    for (const auto& slot : itemLocationEmptySpots)
     {
         positionY = slot / invDimensions.InvWidth;
         positionX = slot % invDimensions.InvWidth;
@@ -14942,7 +17955,7 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         {
             for (std::uint16_t x = positionX; x < positionX + dimensions.Width && isGoodLocation; ++x)
             {
-                if (pEmptySlots->find(y * invDimensions.InvWidth + x) == pEmptySlots->end())
+                if (itemLocationEmptySpots.find(y * invDimensions.InvWidth + x) == itemLocationEmptySpots.end())
                 {
                     isGoodLocation = false;
                 }
@@ -14962,47 +17975,14 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         return false;
     }
 
-    if (!newItem.setItemLocation(locationId, altPositionId, positionX, positionY))
+    BufferItems.resize(BufferItems.size() + 1);
+    auto& bufferItem = BufferItems.back();
+    bufferItem.swap(newItem);
+    const d2ce::Item* pRemovedItem = nullptr;
+    if (!setItemLocation(bufferItem, locationId, altPositionId, positionX, positionY, d2ce::EnumItemInventory::PLAYER, pRemovedItem))
     {
-        // failed to place item
+        d2ce::removeItem_if(BufferItems, ItemPredicate(bufferItem));
         return false;
-    }
-
-    Inventory.push_back(newItem);
-    auto& item = const_cast<d2ce::Item&>(Inventory.back());
-    pLocationReference->push_back(item);
-
-    // remove slots now occupied
-    for (std::uint16_t y = positionY; y < positionY + dimensions.Height; ++y)
-    {
-        for (std::uint16_t x = positionX; x < positionX + dimensions.Width; ++x)
-        {
-            pEmptySlots->erase(y * invDimensions.InvWidth + x);
-        }
-    }
-
-    // add item to appropriate containers
-    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-    if (itemType.isStackable())
-    {
-        Stackables.push_back(item);
-
-        if (itemType.isWeapon())
-        {
-            Weapons.push_back(item);
-        }
-    }
-    else if (itemType.isWeapon())
-    {
-        Weapons.push_back(item);
-    }
-    else if (itemType.isArmor())
-    {
-        Armor.push_back(item);
-    }
-    else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
-    {
-        GPSs.push_back(item);
     }
 
     return true;
@@ -15030,7 +18010,7 @@ size_t d2ce::Items::fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocat
     {
         ++numAdded;
     }
-    
+
     return numAdded;
 }
 //---------------------------------------------------------------------------
@@ -15048,72 +18028,2514 @@ size_t d2ce::Items::fillEmptySlots(EnumAltItemLocation altPositionId, std::array
 {
     return fillEmptySlots(EnumItemLocation::STORED, altPositionId, strcode);
 }
+
+//---------------------------------------------------------------------------
+bool d2ce::Items::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    // import item
+    pImportedItem = nullptr;
+    Item importedItem(Version, isExpansionItems(), path);
+    if (importedItem.data.empty())
+    {
+        return false;
+    }
+
+    if (HasHoradricCube && importedItem.isHoradricCube())
+    {
+        // can only have one Horadric Cube
+        return false;
+    }
+
+    if (IsSharedStash && importedItem.isQuestItem())
+    {
+        // can't add quest items to shared stash
+        return false;
+    }
+
+    // place it into the buffer
+    if (!importedItem.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0))
+    {
+        return false;
+    }
+
+    if (bRandomizeId)
+    {
+        importedItem.randomizeId();
+    }
+
+    BufferItems.resize(BufferItems.size() + 1);
+    auto& bufferItem = BufferItems.back();
+    bufferItem.swap(importedItem);
+    pImportedItem = &bufferItem;
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::exportItem(d2ce::Item& item, const std::filesystem::path& path) const
+{
+    return item.exportItem(path);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const  d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    switch (locationId)
+    {
+    case EnumItemLocation::STORED:
+        switch (altPositionId)
+        {
+        case EnumAltItemLocation::UNKNOWN:
+            // invalid state
+            return false;
+
+        case EnumAltItemLocation::HORADRIC_CUBE:
+            if (item.isHoradricCube())
+            {
+                // invalid state
+                return false;
+            }
+            break;
+        }
+        break;
+
+    case EnumItemLocation::EQUIPPED:
+        // invalid state
+        return false;
+
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::BUFFER:
+        altPositionId = EnumAltItemLocation::UNKNOWN;
+        break;
+
+    default:
+        return false;
+    }
+
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::PLAYER:
+    case d2ce::EnumItemInventory::BUFFER:
+        break;
+
+    case d2ce::EnumItemInventory::SHARED_STASH:
+        if ((locationId != d2ce::EnumItemLocation::STORED) ||
+            (altPositionId != EnumAltItemLocation::STASH))
+        {
+            // invalid state
+            return false;
+        }
+        break;
+
+    case d2ce::EnumItemInventory::CORPSE:
+    case d2ce::EnumItemInventory::MERCENARY:
+    case d2ce::EnumItemInventory::GOLEM:
+    default:
+        return false;
+    }
+
+    std::list<Item> removedItems; // items to be removed into the buffer
+    std::array<std::uint8_t, 4> strcode;
+    if (!item.getItemCode(strcode))
+    {
+        // should not happen
+        return false;
+    }
+
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, ItemDimensions>> invDimensions;
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::INVENTORY]);
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::HORADRIC_CUBE, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::HORADRIC_CUBE]);
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH]);
+    getItemLocationDimensions(d2ce::EnumItemLocation::BELT, invDimensions[d2ce::EnumItemLocation::BELT][d2ce::EnumAltItemLocation::UNKNOWN]);
+
+    // Detect if is item being moved between inventory types
+    ItemDimensions dimensions;
+    if (!item.getDimensions(dimensions))
+    {
+        // should not happen
+        return false;
+    }
+
+    bool bCheckEquippedBelt = false;
+    d2ce::EnumItemInventory itemInvType = d2ce::EnumItemInventory::UNKNOWN;
+    auto itemLocationId = item.getLocation();
+    auto itemAltPositionId = (itemLocationId == d2ce::EnumItemLocation::STORED) ? item.getAltPositionId() : d2ce::EnumAltItemLocation::UNKNOWN;
+    std::list<Item> itemToMove; // non-empty if given item is moving inventories
+    std::list<d2ce::Item>* pMoveInv = nullptr;
+    size_t iterMoveIdx = MAXSIZE_T;
+    auto& itemInvDimenstion = invDimensions[itemLocationId][itemAltPositionId];
+    auto& itemEmptySlots = ItemLocationEmptySpots[itemLocationId][itemAltPositionId];
+    std::uint16_t itemPositionX = item.getPositionX();
+    std::uint16_t itemPositionY = item.getPositionY();
+    std::uint16_t itemPositionX2 = itemPositionX + dimensions.Width - 1;
+    std::uint16_t itemPositionY2 = itemPositionY + dimensions.Height - 1;
+    if ((itemLocationId != locationId) || (itemAltPositionId != altPositionId) || (invType == EnumItemInventory::BUFFER))
+    {
+        // item is moving between containers
+        std::list<Item>::iterator iter;
+        switch (itemLocationId)
+        {
+        case d2ce::EnumItemLocation::STORED:
+        case d2ce::EnumItemLocation::BELT:
+            // Find item and remove references and mark occupied slots as empty again
+            iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+            if (iter != Inventory.end())
+            {
+                d2ce::removeItem_if(ItemLocationReference[itemLocationId][itemAltPositionId], ItemPredicate(item));
+                if (itemLocationId == EnumItemLocation::BELT)
+                {
+                    itemInvType = d2ce::EnumItemInventory::PLAYER;
+                }
+                else
+                {
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::SHARED_STASH:
+                    case d2ce::EnumItemInventory::PLAYER:
+                        itemInvType = invType;
+                        break;
+
+                    default:
+                        itemInvType = d2ce::EnumItemInventory::PLAYER;
+                        break;
+                    }
+                }
+
+                // mark item slots as empty again
+                for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+                {
+                    for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                    {
+                        itemEmptySlots.insert(y * itemInvDimenstion.Width + x);
+                    }
+                }
+
+                // Check if we are moving inventories
+                bool bMoving = false;
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                case d2ce::EnumItemLocation::BELT:
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::BUFFER:
+                        // we are moving
+                        bMoving = true;
+                        break;
+                    }
+                    break;
+
+                case d2ce::EnumItemLocation::BUFFER:
+                    // we are moving
+                    bMoving = true;
+                    break;
+
+                default:
+                    return false;
+                }
+
+                if (bMoving)
+                {
+                    pMoveInv = &Inventory;
+                    iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                    itemToMove.splice(itemToMove.end(), Inventory, iter);
+                    --NumOfItems;
+
+                    if (itemType.isStackable())
+                    {
+                        d2ce::removeItem_if(Stackables, ItemPredicate(item));
+
+                        if (itemType.isWeapon())
+                        {
+                            d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                        }
+                    }
+                    else if (itemType.isWeapon())
+                    {
+                        d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                    }
+                    else if (itemType.isArmor())
+                    {
+                        d2ce::removeItem_if(Armor, ItemPredicate(item));
+                    }
+                    else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                    {
+                        d2ce::removeItem_if(GPSs, ItemPredicate(item));
+                    }
+                }
+            }
+            else
+            {
+                iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+                if (iter != BufferItems.end())
+                {
+                    // Buffer item
+                    itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                    // Check if we are moving inventories
+                    if (invType == EnumItemInventory::BUFFER)
+                    {
+                        LastItemMoved = nullptr;
+                        LastItemIdx = MAXSIZE_T;
+                        return true;
+                    }
+
+                    switch (locationId)
+                    {
+                    case d2ce::EnumItemLocation::STORED:
+                    case d2ce::EnumItemLocation::BELT:
+                        break;
+
+                    case d2ce::EnumItemLocation::BUFFER:
+                        LastItemMoved = nullptr;
+                        LastItemIdx = MAXSIZE_T;
+                        return true;
+
+                    default:
+                        return false;
+                    }
+
+                    itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                    pMoveInv = &BufferItems;
+                    iterMoveIdx = MAXSIZE_T;
+                }
+                else
+                {
+                    // can't find item!
+                    return false;
+                }
+            }
+            break;
+
+        case d2ce::EnumItemLocation::EQUIPPED:
+            // find out where it is equipped (i.e. Player, Player Cropse, Mercenary or Golem)
+            iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+            if (iter != Inventory.end())
+            {
+                // Still in same main inventory but moving in references
+                itemInvType = d2ce::EnumItemInventory::PLAYER;
+                d2ce::removeItem_if(ItemLocationReference[itemLocationId][itemAltPositionId], ItemPredicate(item));
+                if (item.isBelt())
+                {
+                    // make sure the potions stored in the inventory is correct
+                    bCheckEquippedBelt = true;
+                }
+
+                // Check if we are moving inventories
+                bool bMoving = false;
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                case d2ce::EnumItemLocation::BELT:
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::BUFFER:
+                        // we are moving
+                        bMoving = true;
+                        break;
+                    }
+                    break;
+
+                case d2ce::EnumItemLocation::BUFFER:
+                    // we are moving
+                    bMoving = true;
+                    break;
+
+                default:
+                    return false;
+                }
+
+                if (bMoving)
+                {
+                    // moving to another inventory
+                    pMoveInv = &Inventory;
+                    iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                    itemToMove.splice(itemToMove.end(), Inventory, iter);
+                    --NumOfItems;
+
+                    if (itemType.isStackable())
+                    {
+                        d2ce::removeItem_if(Stackables, ItemPredicate(item));
+
+                        if (itemType.isWeapon())
+                        {
+                            d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                        }
+                    }
+                    else if (itemType.isWeapon())
+                    {
+                        d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                    }
+                    else if (itemType.isArmor())
+                    {
+                        d2ce::removeItem_if(Armor, ItemPredicate(item));
+                    }
+                    else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                    {
+                        d2ce::removeItem_if(GPSs, ItemPredicate(item));
+                    }
+                }
+            }
+            else
+            {
+                iter = std::find_if(CorpseItems.begin(), CorpseItems.end(), ItemPredicate(item));
+                if (iter != CorpseItems.end())
+                {
+                    // Player Corpse inventory
+                    itemInvType = d2ce::EnumItemInventory::CORPSE;
+
+                    // Check if we are moving inventories
+                    bool bMoving = false;
+                    switch (locationId)
+                    {
+                    case d2ce::EnumItemLocation::STORED:
+                    case d2ce::EnumItemLocation::BELT:
+                    case d2ce::EnumItemLocation::BUFFER:
+                        // we are moving
+                        bMoving = true;
+                        break;
+
+                    default:
+                        return false;
+                    }
+
+                    if (bMoving)
+                    {
+                        pMoveInv = &CorpseItems;
+                        iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                        itemToMove.splice(itemToMove.end(), CorpseItems, iter);
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(MercItems.begin(), MercItems.end(), ItemPredicate(item));
+                    if (iter != MercItems.end())
+                    {
+                        // Mercenary inventory
+                        itemInvType = d2ce::EnumItemInventory::MERCENARY;
+
+                        // Check if we are moving inventories
+                        bool bMoving = false;
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                        case d2ce::EnumItemLocation::BUFFER:
+                            // we are moving
+                            bMoving = true;
+                            break;
+
+                        default:
+                            return false;
+                        }
+
+                        if (bMoving)
+                        {
+                            pMoveInv = &MercItems;
+                            iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                            itemToMove.splice(itemToMove.end(), MercItems, iter);
+                            --NumOfMercItems;
+                        }
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(GolemItem.begin(), GolemItem.end(), ItemPredicate(item));
+                    if (iter != GolemItem.end())
+                    {
+                        // Player Corpse inventory
+                        itemInvType = d2ce::EnumItemInventory::GOLEM;
+
+                        // Check if we are moving inventories
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                        case d2ce::EnumItemLocation::BUFFER:
+                            break;
+
+                        default:
+                            return false;
+                        }
+
+                        itemToMove.splice(itemToMove.end(), GolemItem, iter);
+                        pMoveInv = &GolemItem;
+                        iterMoveIdx = MAXSIZE_T;
+                        HasGolem = 0;
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+                    if (iter != BufferItems.end())
+                    {
+                        // Buffer item
+                        itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                        // Check if we are moving inventories
+                        if (invType == EnumItemInventory::BUFFER)
+                        {
+                            LastItemMoved = nullptr;
+                            LastItemIdx = MAXSIZE_T;
+                            return true;
+                        }
+
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                            break;
+
+                        case d2ce::EnumItemLocation::BUFFER:
+                            LastItemMoved = nullptr;
+                            LastItemIdx = MAXSIZE_T;
+                            return true;
+
+                        default:
+                            return false;
+                        }
+
+                        itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                        pMoveInv = &BufferItems;
+                        iterMoveIdx = MAXSIZE_T;
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    // failed to find item to move
+                    return false;
+                }
+            }
+            break;
+
+        case d2ce::EnumItemLocation::BUFFER:
+            iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+            if (iter != BufferItems.end())
+            {
+                // Buffer item
+                itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                // Check if we are moving inventories
+                if (invType == EnumItemInventory::BUFFER)
+                {
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+                }
+
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                case d2ce::EnumItemLocation::BELT:
+                    break;
+
+                case d2ce::EnumItemLocation::BUFFER:
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+
+                default:
+                    return false;
+                }
+
+                itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                pMoveInv = &BufferItems;
+                iterMoveIdx = MAXSIZE_T;
+            }
+            break;
+        }
+    }
+    else
+    {
+        std::list<Item>::iterator iter;
+        switch (itemLocationId)
+        {
+        case d2ce::EnumItemLocation::STORED:
+        case d2ce::EnumItemLocation::BELT:
+            // Find item and remove references and mark occupied slots as empty again
+            iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+            if (iter != Inventory.end())
+            {
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+
+                case d2ce::EnumItemInventory::PLAYER:
+                case d2ce::EnumItemInventory::SHARED_STASH:
+                    itemInvType = invType;
+                    break;
+
+                default:
+                    itemInvType = d2ce::EnumItemInventory::PLAYER;
+                    break;
+                }
+            }
+            else
+            {
+                iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+                if (iter == BufferItems.end())
+                {
+                    // could not find it
+                    return false;
+                }
+
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+
+                default:
+                    itemInvType = d2ce::EnumItemInventory::BUFFER;
+                    break;
+                }
+
+                // Check if we are moving inventories
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                case d2ce::EnumItemLocation::BELT:
+                    break;
+
+                case d2ce::EnumItemLocation::BUFFER:
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+
+                default:
+                    return false;
+                }
+
+                itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                pMoveInv = &BufferItems;
+                iterMoveIdx = MAXSIZE_T;
+            }
+            break;
+
+        case d2ce::EnumItemLocation::EQUIPPED:
+            // find out where it is equipped (i.e. Player, Player Cropse, Mercenary or Golem)
+            iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+            if (iter != Inventory.end())
+            {
+                itemInvType = d2ce::EnumItemInventory::PLAYER;
+
+                // Check if we are moving inventories
+                bool bMoving = false;
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                case d2ce::EnumItemInventory::SHARED_STASH:
+                    return false; // invalid
+
+                case d2ce::EnumItemInventory::PLAYER:
+                    break;
+
+                default:
+                    // we are moving
+                    bMoving = true;
+                    break;
+                }
+
+                if (bMoving)
+                {
+                    // moving to another inventory
+                    d2ce::removeItem_if(ItemLocationReference[itemLocationId][itemAltPositionId], ItemPredicate(item));
+                    pMoveInv = &Inventory;
+                    iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                    itemToMove.splice(itemToMove.end(), Inventory, iter);
+                    --NumOfItems;
+                }
+            }
+            else
+            {
+                iter = std::find_if(CorpseItems.begin(), CorpseItems.end(), ItemPredicate(item));
+                if (iter != CorpseItems.end())
+                {
+                    // Player Corpse inventory
+                    itemInvType = d2ce::EnumItemInventory::CORPSE;
+
+                    // Check if we are moving inventories
+                    bool bMoving = false;
+                    switch (locationId)
+                    {
+                    case d2ce::EnumItemLocation::STORED:
+                    case d2ce::EnumItemLocation::BELT:
+                    case d2ce::EnumItemLocation::BUFFER:
+                        // we are moving
+                        bMoving = true;
+                        break;
+
+                    default:
+                        return false;
+                    }
+
+                    if (bMoving)
+                    {
+                        pMoveInv = &CorpseItems;
+                        iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                        itemToMove.splice(itemToMove.end(), CorpseItems, iter);
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(MercItems.begin(), MercItems.end(), ItemPredicate(item));
+                    if (iter != MercItems.end())
+                    {
+                        // Mercenary inventory
+                        itemInvType = d2ce::EnumItemInventory::MERCENARY;
+
+                        // Check if we are moving inventories
+                        bool bMoving = false;
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                        case d2ce::EnumItemLocation::BUFFER:
+                            // we are moving
+                            bMoving = true;
+                            break;
+
+                        default:
+                            return false;
+                        }
+
+                        if (bMoving)
+                        {
+                            pMoveInv = &MercItems;
+                            iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                            itemToMove.splice(itemToMove.end(), MercItems, iter);
+                            --NumOfMercItems;
+                        }
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(GolemItem.begin(), GolemItem.end(), ItemPredicate(item));
+                    if (iter != GolemItem.end())
+                    {
+                        // Player Corpse inventory
+                        itemInvType = d2ce::EnumItemInventory::GOLEM;
+
+                        // Check if we are moving inventories
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                        case d2ce::EnumItemLocation::BUFFER:
+                            break;
+
+                        default:
+                            return false;
+                        }
+
+                        itemToMove.splice(itemToMove.end(), GolemItem, iter);
+                        pMoveInv = &GolemItem;
+                        iterMoveIdx = MAXSIZE_T;
+                        HasGolem = 0;
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+                    if (iter != BufferItems.end())
+                    {
+                        // Buffer item
+                        itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                        // Check if we are moving inventories
+                        switch (locationId)
+                        {
+                        case d2ce::EnumItemLocation::STORED:
+                        case d2ce::EnumItemLocation::BELT:
+                            break;
+
+                        case d2ce::EnumItemLocation::BUFFER:
+                            LastItemMoved = nullptr;
+                            LastItemIdx = MAXSIZE_T;
+                            return true;
+
+                        default:
+                            return false;
+                        }
+
+                        itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                        pMoveInv = &BufferItems;
+                        iterMoveIdx = MAXSIZE_T;
+                    }
+                }
+
+                if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+                {
+                    // failed to find item to move
+                    return false;
+                }
+            }
+            break;
+
+        case d2ce::EnumItemLocation::BUFFER:
+            iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+            if (iter != BufferItems.end())
+            {
+                // Buffer item
+                itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                // Check if we are moving inventories
+                switch (locationId)
+                {
+                case d2ce::EnumItemLocation::STORED:
+                case d2ce::EnumItemLocation::BELT:
+                    break;
+
+                case d2ce::EnumItemLocation::BUFFER:
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+
+                default:
+                    return false;
+                }
+
+                itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                pMoveInv = &BufferItems;
+                iterMoveIdx = MAXSIZE_T;
+            }
+            else
+            {
+                // failed to find item to move
+                return false;
+            }
+            break;
+
+        default:
+            // failed to find item to move
+            return false;
+        }
+    }
+
+    if (itemInvType == EnumItemInventory::UNKNOWN)
+    {
+        // failed to find item to move
+        return false;
+    }
+
+    auto iter = itemToMove.begin();
+    switch (invType)
+    {
+    case EnumItemInventory::BUFFER:
+        // just place item in the BUFFER as is
+        if (!itemToMove.empty())
+        {
+            iter = itemToMove.begin();
+            iter->setLocation(locationId, altPositionId, positionX, positionY);
+            BufferItems.splice(BufferItems.end(), itemToMove, iter);
+        }
+        LastItemMoved = nullptr;
+        LastItemIdx = MAXSIZE_T;
+        if (bCheckEquippedBelt)
+        {
+            verifyBeltSlots();
+        }
+
+        if (BufferItems.back().isHoradricCube())
+        {
+            // we just place a Horadric Cube in our inventory
+            verifyHoradricCube();
+        }
+        return true;
+    }
+
+    // Item is not equipped, but in an inventory grid
+    auto& emptySlots = ItemLocationEmptySpots[locationId][altPositionId];
+    auto& invLocationReference = ItemLocationReference[locationId][altPositionId];
+    auto& invDimenstion = invDimensions[locationId][altPositionId];
+    std::uint16_t positionX2 = positionX + dimensions.Width - 1;
+    std::uint16_t positionY2 = positionY + dimensions.Height - 1;
+    if (locationId == EnumItemLocation::BELT)
+    {
+        if (positionX >= invDimenstion.Width * invDimenstion.Height)
+        {
+            // out of bounds
+            if (!itemToMove.empty())
+            {
+                if (pMoveInv != nullptr)
+                {
+                    auto iterMoveInv = pMoveInv->end();
+                    if (iterMoveIdx != MAXSIZE_T)
+                    {
+                        iterMoveInv = pMoveInv->begin();
+                        std::advance(iterMoveInv, iterMoveIdx);
+                    }
+                    pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                    pMoveInv = nullptr;
+                }
+            }
+
+            // mark item slots as occupied again
+            for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+            {
+                for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                {
+                    itemEmptySlots.erase(y * itemInvDimenstion.Width + x);
+                }
+            }
+
+            return false;
+        }
+    }
+    else if ((positionX2 >= invDimenstion.Width) || (positionY2 >= invDimenstion.Height))
+    {
+        // out of bounds
+        if (!itemToMove.empty())
+        {
+            if (pMoveInv != nullptr)
+            {
+                auto iterMoveInv = pMoveInv->end();
+                if (iterMoveIdx != MAXSIZE_T)
+                {
+                    iterMoveInv = pMoveInv->begin();
+                    std::advance(iterMoveInv, iterMoveIdx);
+                }
+                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                pMoveInv = nullptr;
+            }
+        }
+
+        // mark item slots as occupied again
+        for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+        {
+            for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+            {
+                itemEmptySlots.erase(y * itemInvDimenstion.Width + x);
+            }
+        }
+
+        return false;
+    }
+
+    const d2ce::Item* pItem2 = nullptr;
+    size_t item2Idx = MAXSIZE_T;
+    std::uint16_t invItemPosX = 0;
+    std::uint16_t invItemPosX2 = 0;
+    std::uint16_t invItemPosY = 0;
+    std::uint16_t invItemPosY2 = 0;
+    ItemDimensions invItemDimensions;
+    for (auto& itemRef : invLocationReference)
+    {
+        auto& invItem = itemRef.get();
+        if (&invItem == &item)
+        {
+            // don't bother checking yourself
+            continue;
+        }
+
+        if (!invItem.getDimensions(invItemDimensions))
+        {
+            continue;
+        }
+
+        invItemPosX = invItem.getPositionX();
+        if (locationId == EnumItemLocation::BELT)
+        {
+            if (invItemPosX != positionX)
+            {
+                // does not intersect
+                continue;
+            }
+        }
+        else
+        {
+            invItemPosY = invItem.getPositionY();
+            invItemPosX2 = invItemPosX + invItemDimensions.Width - 1;
+            invItemPosY2 = invItemPosY + invItemDimensions.Height - 1;
+            invItemPosY = invItem.getPositionY();
+            if (positionX > invItemPosX2 || positionX2 < invItemPosX)
+            {
+                // does not intersect
+                continue;
+            }
+
+            if (positionY > invItemPosY2 || positionY2 < invItemPosY)
+            {
+                // does not intersect
+                continue;
+            }
+        }
+
+        if (pItem2 != nullptr)
+        {
+            // to many items overlap
+            if (!itemToMove.empty())
+            {
+                if (pMoveInv != nullptr)
+                {
+                    auto iterMoveInv = pMoveInv->end();
+                    if (iterMoveIdx != MAXSIZE_T)
+                    {
+                        iterMoveInv = pMoveInv->begin();
+                        std::advance(iterMoveInv, iterMoveIdx);
+                    }
+                    pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                    pMoveInv = nullptr;
+                }
+            }
+
+            return false;
+        }
+
+        pItem2 = &invItem;
+    }
+
+    if (pItem2 != nullptr)
+    {
+        // can we socket the item?
+        if (item.isSocketFiller() && pItem2->canSocketItem(item))
+        {
+            if (itemToMove.empty())
+            {
+                // we need to move the socketed item
+                iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+                if (iter != Inventory.end())
+                {
+                    pMoveInv = &Inventory;
+                    iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                    itemToMove.splice(itemToMove.end(), Inventory, iter);
+                    --NumOfItems;
+                    d2ce::removeItem_if(ItemLocationReference[item.getLocation()][item.getAltPositionId()], ItemPredicate(item));
+                    d2ce::removeItem_if(GPSs, ItemPredicate(item));
+                }
+            }
+
+            if (!itemToMove.empty())
+            {
+                // try to socket item
+                auto& itemToSocket = *const_cast<d2ce::Item*>(pItem2);
+                auto& socketedItems = itemToSocket.SocketedItems;
+                if (item.setLocation(d2ce::EnumItemLocation::SOCKET, std::uint16_t(socketedItems.size()), 0ui16))
+                {
+                    socketedItems.splice(socketedItems.end(), itemToMove, itemToMove.begin());
+                    itemToSocket.updateSocketedItemCount();
+                    itemToSocket.cachedCombinedMagicalAttributes.clear();
+
+                    // resolve magical properties of socketed gem
+                    const auto& childItemType = item.getItemTypeHelper();
+                    std::vector<MagicalAttribute> attribs;
+                    childItemType.getSocketedMagicalAttributes(item, item.socketedMagicalAttributes, itemToSocket.getGemApplyType());
+
+                    if (item.isRune())
+                    {
+                        itemToSocket.verifyRuneword();
+                    }
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+                }
+
+                // fall through to just move the item
+            }
+        }
+
+        // we have found an item to remove
+        iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(*pItem2));
+        if (iter == Inventory.end())
+        {
+            // failed to find item, should not happen!
+            if (!itemToMove.empty())
+            {
+                if (pMoveInv != nullptr)
+                {
+                    auto iterMoveInv = pMoveInv->end();
+                    if (iterMoveIdx != MAXSIZE_T)
+                    {
+                        iterMoveInv = pMoveInv->begin();
+                        std::advance(iterMoveInv, iterMoveIdx);
+                    }
+                    pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                    pMoveInv = nullptr;
+                }
+            }
+
+            return false;
+        }
+
+        item2Idx = std::distance(Inventory.begin(), iter);
+        if (itemToMove.empty())
+        {
+            // mark item slots as empty again
+            for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+            {
+                for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                {
+                    itemEmptySlots.insert(y * itemInvDimenstion.Width + x);
+                }
+            }
+        }
+
+        if (!item.setLocation(locationId, altPositionId, positionX, positionY))
+        {
+            // failed move item
+            if (itemToMove.empty())
+            {
+                // mark item slots as occupied again
+                for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+                {
+                    for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                    {
+                        itemEmptySlots.erase(y * itemInvDimenstion.Width + x);
+                    }
+                }
+            }
+            else if (pMoveInv != nullptr)
+            {
+                auto iterMoveInv = pMoveInv->end();
+                if (iterMoveIdx != MAXSIZE_T)
+                {
+                    iterMoveInv = pMoveInv->begin();
+                    std::advance(iterMoveInv, iterMoveIdx);
+                }
+                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                pMoveInv = nullptr;
+            }
+
+            return false;
+        }
+
+        if (item.isHoradricCube())
+        {
+            // we just place a Horadric Cube in our inventory
+            verifyHoradricCube();
+        }
+
+        d2ce::removeItem_if(invLocationReference, ItemPredicate(*pItem2));
+
+        // mark item slots as empty again
+        pItem2->getDimensions(invItemDimensions);
+        invItemPosX = pItem2->getPositionX();
+        invItemPosX2 = invItemPosX + invItemDimensions.Width - 1;
+        invItemPosY = pItem2->getPositionY();
+        invItemPosY2 = invItemPosY + invItemDimensions.Height - 1;
+        for (std::uint16_t y = invItemPosY; y <= invItemPosY2; ++y)
+        {
+            for (std::uint16_t x = invItemPosX; x <= invItemPosX2; ++x)
+            {
+                emptySlots.insert(y * invDimenstion.Width + x);
+            }
+        }
+
+        BufferItems.splice(BufferItems.end(), Inventory, iter);
+        pRemovedItem = pItem2;
+        if (bCheckEquippedBelt)
+        {
+            verifyBeltSlots();
+        }
+    }
+    else
+    {
+        if (itemToMove.empty())
+        {
+            // We are not moving ourself to a different repo, nor do we overlap with anyone.
+            // Did we move at all?
+            if ((locationId == itemLocationId) && (altPositionId == itemAltPositionId) &&
+                (positionX == itemPositionX) && (positionY == itemPositionY))
+            {
+                // nothing to do, we did not move
+                return true;
+            }
+
+            // mark item slots as empty again
+            for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+            {
+                for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                {
+                    itemEmptySlots.insert(y * itemInvDimenstion.Width + x);
+                }
+            }
+        }
+
+        if (!item.setLocation(locationId, altPositionId, positionX, positionY))
+        {
+            // failed move item
+            if (itemToMove.empty())
+            {
+                // mark item slots as occupied again
+                for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+                {
+                    for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                    {
+                        itemEmptySlots.erase(y * itemInvDimenstion.Width + x);
+                    }
+                }
+            }
+            else if (pMoveInv != nullptr)
+            {
+                auto iterMoveInv = pMoveInv->end();
+                if (iterMoveIdx != MAXSIZE_T)
+                {
+                    iterMoveInv = pMoveInv->begin();
+                    std::advance(iterMoveInv, iterMoveIdx);
+                }
+                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                pMoveInv = nullptr;
+            }
+
+            return false;
+        }
+    }
+
+    if (itemToMove.empty())
+    {
+        // make sure we have consistency in the reference cache
+        if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(item)) == invLocationReference.end())
+        {
+            invLocationReference.push_back(item);
+        }
+    }
+    else
+    {
+        auto insertIter = Inventory.end();
+        if ((LastItemMoved == &item) && (LastItemIdx != MAXSIZE_T))
+        {
+            insertIter = Inventory.begin();
+            std::advance(insertIter, LastItemIdx);
+            LastItemMoved = nullptr;
+            LastItemIdx = MAXSIZE_T;
+        }
+
+        iter = itemToMove.begin();
+        Inventory.splice(insertIter, itemToMove, iter);
+        if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(*iter)) == invLocationReference.end())
+        {
+            invLocationReference.push_back(*iter);
+        }
+        ++NumOfItems;
+
+        if (itemType.isStackable())
+        {
+            Stackables.push_back(item);
+
+            if (itemType.isWeapon())
+            {
+                Weapons.push_back(item);
+            }
+        }
+        else if (itemType.isWeapon())
+        {
+            Weapons.push_back(item);
+        }
+        else if (itemType.isArmor())
+        {
+            Armor.push_back(item);
+        }
+        else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+        {
+            GPSs.push_back(item);
+        }
+    }
+
+    // remove slots from empty list
+    for (std::uint16_t y = positionY; y <= positionY2; ++y)
+    {
+        for (std::uint16_t x = positionX; x <= positionX2; ++x)
+        {
+            emptySlots.erase(y * invDimenstion.Width + x);
+        }
+    }
+
+    LastItemMoved = pRemovedItem;
+    LastItemIdx = item2Idx;
+    if (bCheckEquippedBelt)
+    {
+        verifyBeltSlots();
+    }
+
+    if (item.isHoradricCube())
+    {
+        // we just place a Horadric Cube in our inventory
+        verifyHoradricCube();
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    switch (locationId)
+    {
+    case EnumItemLocation::BELT:
+    case EnumItemLocation::BUFFER:
+        break;
+
+    case EnumItemLocation::STORED:
+    case EnumItemLocation::EQUIPPED:
+    default:
+        // invalid state
+        return false;
+    }
+
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::PLAYER:
+    case d2ce::EnumItemInventory::BUFFER:
+        break;
+
+    default:
+        return false;
+    }
+
+    return setItemLocation(item, locationId, EnumAltItemLocation::UNKNOWN, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    switch (altPositionId)
+    {
+    case EnumAltItemLocation::UNKNOWN:
+        // invalid state
+        return false;
+
+    case EnumAltItemLocation::HORADRIC_CUBE:
+        if (item.isHoradricCube())
+        {
+            // invalid state
+            return false;
+        }
+        break;
+    }
+
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::PLAYER:
+    case d2ce::EnumItemInventory::BUFFER:
+        break;
+
+    case d2ce::EnumItemInventory::SHARED_STASH:
+        if (altPositionId != EnumAltItemLocation::STASH)
+        {
+            // invalid state
+            return false;
+        }
+        break;
+
+    default:
+        return false;
+    }
+
+    return setItemLocation(item, EnumItemLocation::STORED, altPositionId, positionX, positionY, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charInfo, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    if (equippedId == EnumEquippedId::NONE)
+    {
+        // invalid state
+        return false;
+    }
+
+    bool bSocketItem = false;
+    bool bCheckEquippedBelt = false;
+    auto& invLocationReference = ItemLocationReference[d2ce::EnumItemLocation::EQUIPPED][d2ce::EnumAltItemLocation::UNKNOWN];
+    auto iterEquipped = invLocationReference.end();
+    auto iterMercEquipped = MercItems.end();
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::PLAYER:
+        if (!item.canEquip(equippedId, charInfo.getClass()))
+        {
+            // can we socket the item?
+            if (!item.isSocketFiller())
+            {
+                return false;
+            }
+
+            iterEquipped = std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemEnumEquippedIdPredicate(equippedId));
+            if (iterEquipped == invLocationReference.end())
+            {
+                // nothing to socket
+                return false;
+            }
+
+            if (!iterEquipped->get().canSocketItem(item, charInfo.getLevel()))
+            {
+                // can't socket
+                return false;
+            }
+
+            bSocketItem = true;
+        }
+
+        if (!bSocketItem)
+        {
+            switch (equippedId)
+            {
+            case EnumEquippedId::LEFT_ARM:
+                // find right arm
+                iterEquipped = std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::RIGHT_ARM));
+                if (iterEquipped != invLocationReference.end())
+                {
+                    if (!iterEquipped->get().canEquipWith(item, charInfo.getClass()))
+                    {
+                        return false;
+                    }
+                }
+                break;
+
+            case EnumEquippedId::ALT_LEFT_ARM:
+                // find right arm
+                iterEquipped = std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_RIGHT_ARM));
+                if (iterEquipped != invLocationReference.end())
+                {
+                    if (!iterEquipped->get().canEquipWith(item, charInfo.getClass()))
+                    {
+                        return false;
+                    }
+                }
+                break;
+
+            case EnumEquippedId::RIGHT_ARM:
+                // find left arm
+                iterEquipped = std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::LEFT_ARM));
+                if (iterEquipped != invLocationReference.end())
+                {
+                    if (!iterEquipped->get().canEquipWith(item, charInfo.getClass()))
+                    {
+                        return false;
+                    }
+                }
+                break;
+
+            case EnumEquippedId::ALT_RIGHT_ARM:
+                // find left arm
+                iterEquipped = std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_LEFT_ARM));
+                if (iterEquipped != invLocationReference.end())
+                {
+                    if (!iterEquipped->get().canEquipWith(item, charInfo.getClass()))
+                    {
+                        return false;
+                    }
+                }
+                break;
+
+            case EnumEquippedId::BELT:
+                bCheckEquippedBelt = true;
+                break;
+            }
+        }
+        break;
+
+    case d2ce::EnumItemInventory::CORPSE: // can only drag out of corpse and Golem
+    case d2ce::EnumItemInventory::GOLEM:
+        return false;
+
+    case d2ce::EnumItemInventory::BUFFER:
+        break;
+
+    case d2ce::EnumItemInventory::MERCENARY:
+        if (!isExpansionItems() || (Version < EnumItemVersion::v109))
+        {
+            // invalid state
+            return false;
+        }
+
+        if (!charInfo.hasMercenary())
+        {
+            return false;
+        }
+
+        if (!charInfo.getMercenaryInfo().canEquipItem(item, equippedId))
+        {
+            // can we socket the item?
+            if (!item.isSocketFiller())
+            {
+                return false;
+            }
+
+            iterMercEquipped = std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(equippedId));
+            if (iterMercEquipped == MercItems.end())
+            {
+                // nothing to socket
+                return false;
+            }
+
+            if (!iterMercEquipped->canSocketItem(item, charInfo.getMercenaryInfo().getLevel()))
+            {
+                // can't socket
+                return false;
+            }
+
+            bSocketItem = true;
+        }
+        else
+        {
+            equippedId = charInfo.getMercenaryInfo().verifyEquippedId(item, equippedId);
+        }
+        break;
+
+    case d2ce::EnumItemInventory::SHARED_STASH:
+    default:
+        // invalid state
+        return false;
+    }
+
+    std::list<Item> removedItems; // items to be removed into the buffer
+    std::array<std::uint8_t, 4> strcode;
+    if (!item.getItemCode(strcode))
+    {
+        // should not happen
+        return false;
+    }
+
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, ItemDimensions>> invDimensions;
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::INVENTORY, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::INVENTORY]);
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::HORADRIC_CUBE, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::HORADRIC_CUBE]);
+    getItemLocationDimensions(d2ce::EnumAltItemLocation::STASH, invDimensions[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH]);
+    getItemLocationDimensions(d2ce::EnumItemLocation::BELT, invDimensions[d2ce::EnumItemLocation::BELT][d2ce::EnumAltItemLocation::UNKNOWN]);
+
+    // Detect if is item being moved between inventory types
+    ItemDimensions dimensions;
+    if (!item.getDimensions(dimensions))
+    {
+        // should not happen
+        return false;
+    }
+
+    d2ce::EnumItemInventory itemInvType = d2ce::EnumItemInventory::UNKNOWN;
+    auto itemLocationId = item.getLocation();
+    auto itemAltPositionId = (itemLocationId == d2ce::EnumItemLocation::STORED) ? item.getAltPositionId() : d2ce::EnumAltItemLocation::UNKNOWN;
+    std::list<Item> itemToMove; // non-empty if given item is moving inventories
+    std::list<d2ce::Item>* pMoveInv = nullptr;
+    size_t iterMoveIdx = MAXSIZE_T;
+    auto& itemInvDimenstion = invDimensions[itemLocationId][itemAltPositionId];
+    auto& itemEmptySlots = ItemLocationEmptySpots[itemLocationId][itemAltPositionId];
+    std::uint16_t itemPositionX = item.getPositionX();
+    std::uint16_t itemPositionY = item.getPositionY();
+    std::uint16_t itemPositionX2 = itemPositionX + dimensions.Width - 1;
+    std::uint16_t itemPositionY2 = itemPositionY + dimensions.Height - 1;
+    // item is moving between containers
+    std::list<Item>::iterator iter;
+    switch (itemLocationId)
+    {
+    case d2ce::EnumItemLocation::STORED:
+    case d2ce::EnumItemLocation::BELT:
+        // Find item and remove references and mark occupied slots as empty again
+        iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+        if (iter != Inventory.end())
+        {
+            d2ce::removeItem_if(ItemLocationReference[itemLocationId][itemAltPositionId], ItemPredicate(item));
+            if (itemLocationId == EnumItemLocation::BELT)
+            {
+                itemInvType = d2ce::EnumItemInventory::PLAYER;
+            }
+            else
+            {
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::SHARED_STASH:
+                case d2ce::EnumItemInventory::PLAYER:
+                    itemInvType = invType;
+                    break;
+
+                default:
+                    itemInvType = d2ce::EnumItemInventory::PLAYER;
+                    break;
+                }
+            }
+
+            // mark item slots as empty again
+            for (std::uint16_t y = itemPositionY; y <= itemPositionY2; ++y)
+            {
+                for (std::uint16_t x = itemPositionX; x <= itemPositionX2; ++x)
+                {
+                    itemEmptySlots.insert(y * itemInvDimenstion.Width + x);
+                }
+            }
+
+            // Check if we are moving inventories
+            bool bMoving = false;
+            if (bSocketItem)
+            {
+                bMoving = true;
+            }
+            else
+            {
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+
+                case d2ce::EnumItemInventory::PLAYER:
+                case d2ce::EnumItemInventory::SHARED_STASH:
+                    break;
+
+                default:
+                    // we are moving
+                    bMoving = true;
+                    break;
+                }
+            }
+
+            if (bMoving)
+            {
+                pMoveInv = &Inventory;
+                iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                itemToMove.splice(itemToMove.end(), Inventory, iter);
+                --NumOfItems;
+
+                if (itemType.isStackable())
+                {
+                    d2ce::removeItem_if(Stackables, ItemPredicate(item));
+
+                    if (itemType.isWeapon())
+                    {
+                        d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                    }
+                }
+                else if (itemType.isWeapon())
+                {
+                    d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                }
+                else if (itemType.isArmor())
+                {
+                    d2ce::removeItem_if(Armor, ItemPredicate(item));
+                }
+                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                {
+                    d2ce::removeItem_if(GPSs, ItemPredicate(item));
+                }
+            }
+        }
+        else
+        {
+            iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+            if (iter != BufferItems.end())
+            {
+                // Buffer item
+                itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                // Check if we are moving inventories
+                if (invType == EnumItemInventory::BUFFER)
+                {
+                    LastItemMoved = nullptr;
+                    LastItemIdx = MAXSIZE_T;
+                    return true;
+                }
+
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+                }
+
+                itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                pMoveInv = &BufferItems;
+                iterMoveIdx = MAXSIZE_T;
+            }
+            else
+            {
+                // can't find item!
+                return false;
+            }
+        }
+        break;
+
+    case d2ce::EnumItemLocation::EQUIPPED:
+        // find out where it is equipped (i.e. Player, Player Cropse, Mercenary or Golem)
+        iter = std::find_if(Inventory.begin(), Inventory.end(), ItemPredicate(item));
+        if (iter != Inventory.end())
+        {
+            // Still in same main inventory but moving in references
+            itemInvType = d2ce::EnumItemInventory::PLAYER;
+            d2ce::removeItem_if(ItemLocationReference[itemLocationId][itemAltPositionId], ItemPredicate(item));
+
+            // Check if we are moving inventories
+            bool bMoving = false;
+            if (bSocketItem)
+            {
+                bMoving = true;
+            }
+            else
+            {
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+
+                case d2ce::EnumItemInventory::PLAYER:
+                case d2ce::EnumItemInventory::SHARED_STASH:
+                    break;
+
+                default:
+                    // we are moving
+                    bMoving = true;
+                    break;
+                }
+            }
+
+            if (bMoving)
+            {
+                // moving to another inventory
+                pMoveInv = &Inventory;
+                iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                itemToMove.splice(itemToMove.end(), Inventory, iter);
+                --NumOfItems;
+
+                if (itemType.isStackable())
+                {
+                    d2ce::removeItem_if(Stackables, ItemPredicate(item));
+
+                    if (itemType.isWeapon())
+                    {
+                        d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                    }
+                }
+                else if (itemType.isWeapon())
+                {
+                    d2ce::removeItem_if(Weapons, ItemPredicate(item));
+                }
+                else if (itemType.isArmor())
+                {
+                    d2ce::removeItem_if(Armor, ItemPredicate(item));
+                }
+                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                {
+                    d2ce::removeItem_if(GPSs, ItemPredicate(item));
+                }
+            }
+        }
+        else
+        {
+            iter = std::find_if(CorpseItems.begin(), CorpseItems.end(), ItemPredicate(item));
+            if (iter != CorpseItems.end())
+            {
+                // Player Corpse inventory
+                itemInvType = d2ce::EnumItemInventory::CORPSE;
+
+                // Check if we are moving inventories
+                bool bMoving = false;
+                switch (invType)
+                {
+                case d2ce::EnumItemInventory::UNKNOWN:
+                    return false; // invalid
+
+                case d2ce::EnumItemInventory::CORPSE:
+                    break;
+
+                default:
+                    // we are moving
+                    bMoving = true;
+                    break;
+                }
+
+                if (bMoving)
+                {
+                    pMoveInv = &CorpseItems;
+                    iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                    itemToMove.splice(itemToMove.end(), CorpseItems, iter);
+                }
+            }
+
+            if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+            {
+                iter = std::find_if(MercItems.begin(), MercItems.end(), ItemPredicate(item));
+                if (iter != MercItems.end())
+                {
+                    // Mercenary inventory
+                    itemInvType = d2ce::EnumItemInventory::MERCENARY;
+
+                    // Check if we are moving inventories
+                    bool bMoving = false;
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::UNKNOWN:
+                        return false; // invalid
+
+                    case d2ce::EnumItemInventory::MERCENARY:
+                        break;
+
+                    default:
+                        // we are moving
+                        bMoving = true;
+                        break;
+                    }
+
+                    if (bMoving)
+                    {
+                        pMoveInv = &MercItems;
+                        iterMoveIdx = std::distance(pMoveInv->begin(), iter);
+                        itemToMove.splice(itemToMove.end(), MercItems, iter);
+                        --NumOfMercItems;
+                    }
+                }
+            }
+
+            if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+            {
+                iter = std::find_if(GolemItem.begin(), GolemItem.end(), ItemPredicate(item));
+                if (iter != GolemItem.end())
+                {
+                    // Player Corpse inventory
+                    itemInvType = d2ce::EnumItemInventory::GOLEM;
+
+                    // Check if we are moving inventories
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::UNKNOWN:
+                        return false; // invalid
+
+                    case d2ce::EnumItemInventory::GOLEM:
+                        LastItemMoved = nullptr;
+                        LastItemIdx = MAXSIZE_T;
+                        return true; // there is only one GOLEM item
+                    }
+
+                    itemToMove.splice(itemToMove.end(), GolemItem, iter);
+                    pMoveInv = &GolemItem;
+                    iterMoveIdx = MAXSIZE_T;
+                    HasGolem = 0;
+                }
+            }
+
+            if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+            {
+                iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+                if (iter != BufferItems.end())
+                {
+                    // Buffer item
+                    itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+                    // Check if we are moving inventories
+                    if (invType == EnumItemInventory::BUFFER)
+                    {
+                        LastItemMoved = nullptr;
+                        LastItemIdx = MAXSIZE_T;
+                        return true;
+                    }
+                    switch (invType)
+                    {
+                    case d2ce::EnumItemInventory::UNKNOWN:
+                        return false; // invalid
+                    }
+
+                    itemToMove.splice(itemToMove.end(), BufferItems, iter);
+                    pMoveInv = &BufferItems;
+                    iterMoveIdx = MAXSIZE_T;
+                }
+            }
+
+            if (itemInvType == d2ce::EnumItemInventory::UNKNOWN)
+            {
+                // failed to find item to move
+                return false;
+            }
+        }
+        break;
+
+    case d2ce::EnumItemLocation::BUFFER:
+        iter = std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item));
+        if (iter != BufferItems.end())
+        {
+            // Buffer item
+            itemInvType = d2ce::EnumItemInventory::BUFFER;
+
+            // Check if we are moving inventories
+            if (invType == EnumItemInventory::BUFFER)
+            {
+                LastItemMoved = nullptr;
+                LastItemIdx = MAXSIZE_T;
+                return true;
+            }
+
+            switch (invType)
+            {
+            case d2ce::EnumItemInventory::UNKNOWN:
+                return false; // invalid
+            }
+
+            itemToMove.splice(itemToMove.end(), BufferItems, iter);
+            pMoveInv = &BufferItems;
+            iterMoveIdx = MAXSIZE_T;
+        }
+        break;
+    }
+
+    if (itemInvType == EnumItemInventory::UNKNOWN)
+    {
+        // failed to find item to move
+        return false;
+    }
+
+    iter = itemToMove.begin();
+    switch (invType)
+    {
+    case EnumItemInventory::BUFFER:
+        // just place item in the BUFFER as is
+        if (!itemToMove.empty())
+        {
+            iter = itemToMove.begin();
+            BufferItems.splice(BufferItems.end(), itemToMove, iter);
+        }
+        LastItemMoved = nullptr;
+        LastItemIdx = MAXSIZE_T;
+        return true;
+
+    case EnumItemInventory::CORPSE: // only allowed to remove items from corpse
+        iter = std::find_if(CorpseItems.begin(), CorpseItems.end(), ItemEnumEquippedIdPredicate(equippedId));
+        if (iter != CorpseItems.end())
+        {
+            if (&(*iter) == &item)
+            {
+                return true;
+            }
+        }
+
+        if (!itemToMove.empty())
+        {
+            if (pMoveInv != nullptr)
+            {
+                auto iterMoveInv = pMoveInv->end();
+                if (iterMoveIdx != MAXSIZE_T)
+                {
+                    iterMoveInv = pMoveInv->begin();
+                    std::advance(iterMoveInv, iterMoveIdx);
+                }
+                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                pMoveInv = nullptr;
+            }
+        }
+        return false;
+
+    case EnumItemInventory::MERCENARY:
+        iter = std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(equippedId));
+        if (iter != MercItems.end())
+        {
+            if (&(*iter) == &item)
+            {
+                // we didn't move
+                return true;
+            }
+
+            // found existing item at location
+            if (bSocketItem)
+            {
+                if (itemToMove.empty())
+                {
+                    return false;
+                }
+
+                auto& itemToSocket = *iter;
+                auto& socketedItems = itemToSocket.SocketedItems;
+                if (!item.setLocation(d2ce::EnumItemLocation::SOCKET, std::uint16_t(socketedItems.size()), 0ui16))
+                {
+                    if (pMoveInv != nullptr)
+                    {
+                        auto iterMoveInv = pMoveInv->end();
+                        if (iterMoveIdx != MAXSIZE_T)
+                        {
+                            iterMoveInv = pMoveInv->begin();
+                            std::advance(iterMoveInv, iterMoveIdx);
+                        }
+                        pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                        pMoveInv = nullptr;
+                    }
+                    return false;
+                }
+
+                socketedItems.splice(socketedItems.end(), itemToMove, itemToMove.begin());
+                itemToSocket.updateSocketedItemCount();
+
+                // resolve magical properties of socketed gem
+                const auto& childItemType = item.getItemTypeHelper();
+                std::vector<MagicalAttribute> attribs;
+                childItemType.getSocketedMagicalAttributes(item, item.socketedMagicalAttributes, itemToSocket.getGemApplyType());
+
+                if (item.isRune())
+                {
+                    itemToSocket.verifyRuneword();
+                }
+                LastItemMoved = nullptr;
+                LastItemIdx = MAXSIZE_T;
+                return true;
+            }
+            else if (iter->isTwoHandedWeapon())
+            {
+                BufferItems.splice(BufferItems.end(), MercItems, iter);
+                pRemovedItem = &BufferItems.back();
+                --NumOfMercItems;
+            }
+            else if (item.isTwoHandedWeapon())
+            {
+                switch (equippedId)
+                {
+                case EnumEquippedId::LEFT_ARM:
+                case EnumEquippedId::ALT_LEFT_ARM:
+                    if (std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::RIGHT_ARM)) == MercItems.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), MercItems, iter);
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfMercItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+
+                case EnumEquippedId::RIGHT_ARM:
+                case EnumEquippedId::ALT_RIGHT_ARM:
+                    if (std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::LEFT_ARM)) == MercItems.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), MercItems, iter);
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfMercItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                BufferItems.splice(BufferItems.end(), MercItems, iter);
+                pRemovedItem = &BufferItems.back();
+                --NumOfMercItems;
+            }
+        }
+        else if (item.isTwoHandedWeapon())
+        {
+            auto iterOtherHand = MercItems.end();
+            switch (equippedId)
+            {
+            case EnumEquippedId::LEFT_ARM:
+            case EnumEquippedId::ALT_LEFT_ARM:
+                iterOtherHand = std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::RIGHT_ARM));
+                if (iterOtherHand != MercItems.end())
+                {
+                    BufferItems.splice(BufferItems.end(), MercItems, iterOtherHand);
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfMercItems;
+                }
+                break;
+
+            case EnumEquippedId::RIGHT_ARM:
+            case EnumEquippedId::ALT_RIGHT_ARM:
+                iterOtherHand = std::find_if(MercItems.begin(), MercItems.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::LEFT_ARM));
+                if (iterOtherHand != MercItems.end())
+                {
+                    BufferItems.splice(BufferItems.end(), MercItems, iterOtherHand);
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfMercItems;
+                }
+                break;
+            }
+        }
+
+        item.setLocation(equippedId);
+        if (!itemToMove.empty())
+        {
+            iter = itemToMove.begin();
+            MercItems.splice(MercItems.end(), itemToMove, iter);
+            ++NumOfMercItems;
+        }
+        LastItemMoved = nullptr;
+        LastItemIdx = MAXSIZE_T;
+        return true;
+
+    case EnumItemInventory::GOLEM:
+        if (!itemToMove.empty() || GolemItem.empty())
+        {
+            // should not happend
+            return false;
+        }
+
+        if (&(GolemItem.back()) == &item)
+        {
+            return true;
+        }
+        return false;
+
+    case EnumItemInventory::PLAYER:
+        iter = std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(equippedId));
+        if (iter != Inventory.end())
+        {
+            if (&(*iter) == &item)
+            {
+                // we didn't move
+                return true;
+            }
+
+            // found existing item at location
+            if (bSocketItem)
+            {
+                if (itemToMove.empty())
+                {
+                    return false;
+                }
+
+                auto& itemToSocket = *iter;
+                auto& socketedItems = itemToSocket.SocketedItems;
+                if (!item.setLocation(d2ce::EnumItemLocation::SOCKET, std::uint16_t(socketedItems.size()), 0ui16))
+                {
+                    if (pMoveInv != nullptr)
+                    {
+                        auto iterMoveInv = pMoveInv->end();
+                        if (iterMoveIdx != MAXSIZE_T)
+                        {
+                            iterMoveInv = pMoveInv->begin();
+                            std::advance(iterMoveInv, iterMoveIdx);
+                        }
+                        pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                        pMoveInv = nullptr;
+                    }
+                    return false;
+                }
+
+                socketedItems.splice(socketedItems.end(), itemToMove, itemToMove.begin());
+                itemToSocket.updateSocketedItemCount();
+
+                // resolve magical properties of socketed gem
+                const auto& childItemType = item.getItemTypeHelper();
+                std::vector<MagicalAttribute> attribs;
+                childItemType.getSocketedMagicalAttributes(item, item.socketedMagicalAttributes, itemToSocket.getGemApplyType());
+
+                if (item.isRune())
+                {
+                    itemToSocket.verifyRuneword();
+                }
+                LastItemMoved = nullptr;
+                LastItemIdx = MAXSIZE_T;
+                return true;
+            }
+            if (iter->isTwoHandedWeapon())
+            {
+                BufferItems.splice(BufferItems.end(), Inventory, iter);
+                d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                pRemovedItem = &BufferItems.back();
+                --NumOfItems;
+            }
+            else if (item.isTwoHandedWeapon())
+            {
+                switch (equippedId)
+                {
+                case EnumEquippedId::LEFT_ARM:
+                    if (std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::RIGHT_ARM)) == Inventory.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), Inventory, iter);
+                        d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+
+                case EnumEquippedId::ALT_LEFT_ARM:
+                    if (std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_RIGHT_ARM)) == Inventory.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), Inventory, iter);
+                        d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+
+                case EnumEquippedId::RIGHT_ARM:
+                    if (std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::LEFT_ARM)) == Inventory.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), Inventory, iter);
+                        d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+
+                case EnumEquippedId::ALT_RIGHT_ARM:
+                    if (std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_LEFT_ARM)) == Inventory.end())
+                    {
+                        BufferItems.splice(BufferItems.end(), Inventory, iter);
+                        d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                        pRemovedItem = &BufferItems.back();
+                        --NumOfItems;
+                    }
+                    else
+                    {
+                        if (!itemToMove.empty())
+                        {
+                            if (pMoveInv != nullptr)
+                            {
+                                auto iterMoveInv = pMoveInv->end();
+                                if (iterMoveIdx != MAXSIZE_T)
+                                {
+                                    iterMoveInv = pMoveInv->begin();
+                                    std::advance(iterMoveInv, iterMoveIdx);
+                                }
+                                pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+                                pMoveInv = nullptr;
+                            }
+                        }
+                        return false;
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                BufferItems.splice(BufferItems.end(), Inventory, iter);
+                d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
+                pRemovedItem = &BufferItems.back();
+                --NumOfItems;
+            }
+        }
+        else if (item.isTwoHandedWeapon())
+        {
+            auto iterOtherHand = Inventory.end();
+            switch (equippedId)
+            {
+            case EnumEquippedId::LEFT_ARM:
+                iterOtherHand = std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::RIGHT_ARM));
+                if (iterOtherHand != Inventory.end())
+                {
+                    BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
+                    d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfItems;
+                }
+                break;
+
+            case EnumEquippedId::ALT_LEFT_ARM:
+                iterOtherHand = std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_RIGHT_ARM));
+                if (iterOtherHand != Inventory.end())
+                {
+                    BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
+                    d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfItems;
+                }
+                break;
+
+            case EnumEquippedId::RIGHT_ARM:
+                iterOtherHand = std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::LEFT_ARM));
+                if (iterOtherHand != Inventory.end())
+                {
+                    BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
+                    d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfItems;
+                }
+                break;
+
+            case EnumEquippedId::ALT_RIGHT_ARM:
+                iterOtherHand = std::find_if(Inventory.begin(), Inventory.end(), ItemEnumEquippedIdPredicate(EnumEquippedId::ALT_LEFT_ARM));
+                if (iterOtherHand != Inventory.end())
+                {
+                    BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
+                    d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
+                    pRemovedItem = &BufferItems.back();
+                    --NumOfItems;
+                }
+                break;
+            }
+        }
+
+        item.setLocation(equippedId);
+        if (itemToMove.empty())
+        {
+            if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(item)) == invLocationReference.end())
+            {
+                invLocationReference.push_back(item);
+            }
+        }
+        else
+        {
+            iter = itemToMove.begin();
+            Inventory.splice(Inventory.end(), itemToMove, iter);
+            if (std::find_if(invLocationReference.begin(), invLocationReference.end(), ItemPredicate(*iter)) == invLocationReference.end())
+            {
+                invLocationReference.push_back(*iter);
+            }
+            ++NumOfItems;
+
+            if (itemType.isStackable())
+            {
+                Stackables.push_back(item);
+
+                if (itemType.isWeapon())
+                {
+                    Weapons.push_back(item);
+                }
+            }
+            else if (itemType.isWeapon())
+            {
+                Weapons.push_back(item);
+            }
+            else if (itemType.isArmor())
+            {
+                Armor.push_back(item);
+            }
+            else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            {
+                GPSs.push_back(item);
+            }
+        }
+
+        LastItemMoved = nullptr;
+        LastItemIdx = MAXSIZE_T;
+
+        if (bCheckEquippedBelt)
+        {
+            verifyBeltSlots();
+        }
+        return true;
+    }
+
+    if (!itemToMove.empty())
+    {
+        if (pMoveInv != nullptr)
+        {
+            auto iterMoveInv = pMoveInv->end();
+            if (iterMoveIdx != MAXSIZE_T)
+            {
+                iterMoveInv = pMoveInv->begin();
+                std::advance(iterMoveInv, iterMoveIdx);
+            }
+            pMoveInv->splice(iterMoveInv, itemToMove, itemToMove.begin());
+            pMoveInv = nullptr;
+        }
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::removeSocketedItems(d2ce::Item& item)
+{
+    // try to find spots for the items out of bounds still
+    auto locationId = d2ce::EnumItemLocation::STORED;
+    auto altPositionId = d2ce::EnumAltItemLocation::INVENTORY;
+    auto* pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+    auto* pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+
+    std::uint16_t posX = 0;
+    ItemDimensions invDimensions;
+    getItemLocationDimensions(locationId, altPositionId, invDimensions);
+    while (!item.SocketedItems.empty() && (pInvEmptySlots != nullptr))
+    {
+        if (pInvEmptySlots->empty())
+        {
+            switch (altPositionId)
+            {
+            case d2ce::EnumAltItemLocation::INVENTORY:
+                altPositionId = d2ce::EnumAltItemLocation::STASH;
+                pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+                pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+                getItemLocationDimensions(locationId, altPositionId, invDimensions);
+                break;
+
+            case d2ce::EnumAltItemLocation::STASH:
+                altPositionId = d2ce::EnumAltItemLocation::HORADRIC_CUBE;
+                pInvEmptySlots = &ItemLocationEmptySpots[locationId][altPositionId];
+                pInvLocationReference = &ItemLocationReference[locationId][altPositionId];
+                getItemLocationDimensions(locationId, altPositionId, invDimensions);
+                break;
+
+            case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+            default:
+                pInvEmptySlots = nullptr;
+                break;
+            }
+        }
+        else
+        {
+            auto iterMove = item.SocketedItems.begin();
+            auto& itemToMove = *iterMove;
+            Inventory.splice(Inventory.end(), item.SocketedItems, iterMove);
+            if (std::find_if(pInvLocationReference->begin(), pInvLocationReference->end(), ItemPredicate(itemToMove)) == pInvLocationReference->end())
+            {
+                pInvLocationReference->push_back(itemToMove);
+            }
+            ++NumOfItems;
+
+            const auto& itemType = itemToMove.getItemTypeHelper();
+            if (itemType.isGem() || itemType.isRune())
+            {
+                GPSs.push_back(itemToMove);
+            }
+
+            posX = *(pInvEmptySlots->begin());
+            if (itemToMove.setLocation(locationId, altPositionId, posX % invDimensions.Width, posX / invDimensions.Width))
+            {
+                pInvEmptySlots->erase(posX);
+            }
+        }
+    }
+
+    if (!item.SocketedItems.empty())
+    {
+        BufferItems.splice(BufferItems.end(), item.SocketedItems, item.SocketedItems.begin(), item.SocketedItems.end());
+    }
+
+    item.updateSocketedItemCount();
+    item.verifyRuneword();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::setRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    if (item.getSocketedItemCount() == 0)
+    {
+        return item.setRuneword(id);
+    }
+
+    RunewordAttributes runeAttrib;
+    if (item.isRuneword())
+    {
+        if (item.getRunewordAttributes(runeAttrib))
+        {
+            if (id == runeAttrib.Id)
+            {
+                // we are still ok
+                return true;
+            }
+        }
+    }
+
+    auto& runeword = ItemHelpers::getRunewordFromId(id);
+    if (runeword.id != id)
+    {
+        return false;
+    }
+
+    auto runeSocketCount = std::uint8_t(runeword.runeCodes.size());
+    auto numSockets = std::max(item.getMaxSocketCount(), item.getDisplayedSocketCount());
+    if (numSockets < runeSocketCount)
+    {
+        // not enough sockets
+        return false;
+    }
+
+    // remove any socketed items
+    removeSocketedItems(item);
+    return item.setRuneword(id);
+}
 //---------------------------------------------------------------------------
 bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
 {
     attribs.clear();
 
     // Combine all equipped magical properties
+    std::vector<MagicalAttribute> unfilteredAttribs;
     std::vector<MagicalAttribute> tempAttribs;
     std::multimap<size_t, size_t> itemIndexMap;
-    EnumItemLocation location_id = EnumItemLocation::STORED;
-    for (auto& item : Inventory)
+    for (auto& item : ItemLocationReference[EnumItemLocation::EQUIPPED][EnumAltItemLocation::UNKNOWN])
     {
-        location_id = item.getLocation();
-        if (location_id == EnumItemLocation::EQUIPPED)
+        if (item.get().getCombinedMagicalAttributes(tempAttribs))
         {
-            if (item.getCombinedMagicalAttributes(tempAttribs))
-            {
-                ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
-            }
-        }
-        else if (location_id == EnumItemLocation::STORED)
-        {
-            if ((item.getAltPositionId() == EnumAltItemLocation::INVENTORY) && item.isCharm())
-            {
-                if (item.getCombinedMagicalAttributes(tempAttribs))
-                {
-                    ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
-                }
-            }
+            ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, unfilteredAttribs);
         }
     }
-
-    return true;
-}
-//---------------------------------------------------------------------------
-bool d2ce::Items::getCharmBonuses(std::vector<MagicalAttribute>& attribs) const
-{
-    attribs.clear();
 
     // Combine all charm magical properties
-    std::vector<MagicalAttribute> tempAttribs;
-    std::multimap<size_t, size_t> itemIndexMap;
-    EnumItemLocation location_id = EnumItemLocation::STORED;
-    EnumAltItemLocation altLocation_id = EnumAltItemLocation::UNKNOWN;
-    for (auto& item : Inventory)
+    for (auto& item : ItemLocationReference[EnumItemLocation::STORED][EnumAltItemLocation::INVENTORY])
     {
-        if (!item.isCharm())
+        if (!item.get().isCharm())
         {
             continue;
         }
 
-        location_id = item.getLocation();
-        if (location_id != EnumItemLocation::STORED)
+        if (item.get().getCombinedMagicalAttributes(tempAttribs))
         {
-            continue;
-        }
-
-        altLocation_id = item.getAltPositionId();
-        if (altLocation_id == EnumAltItemLocation::INVENTORY)
-        {
-            if (item.getCombinedMagicalAttributes(tempAttribs))
-            {
-                ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
-            }
+            ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, unfilteredAttribs);
         }
     }
 
+    // filter out the properties that give us a bonuses
+    FilterMagicalAttribsForBonus(unfilteredAttribs, attribs);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -15141,32 +20563,54 @@ bool d2ce::Items::getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs
 std::uint16_t d2ce::Items::getCombinedDefenseRating(std::uint32_t charLevel) const
 {
     // Combine all equipped defense ratings
-    EnumItemLocation location_id = EnumItemLocation::STORED;
     std::uint64_t eDef = 0;
     std::uint64_t defenseRating = 0;
     std::vector<MagicalAttribute> magicalAttributes;
-    for (auto& item : Inventory)
+    for (auto& item : ItemLocationReference[EnumItemLocation::EQUIPPED][EnumAltItemLocation::UNKNOWN])
     {
-        location_id = item.getLocation();
-        if (location_id == EnumItemLocation::EQUIPPED)
+        defenseRating += item.get().getDefenseRating();
+        if (item.get().getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
         {
-            defenseRating += item.getDefenseRating();
-            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            for (auto& attrib : magicalAttributes)
             {
-                for (auto& attrib : magicalAttributes)
+                switch (attrib.Id)
                 {
-                    switch (attrib.Id)
-                    {
-                    case 16:
-                    case 215:
-                        eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 16:
+                case 215:
+                    eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 31:
-                    case 214:
-                        defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
-                    }
+                case 31:
+                case 214:
+                    defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+                }
+            }
+        }
+    }
+
+    for (auto& item : ItemLocationReference[EnumItemLocation::STORED][EnumAltItemLocation::INVENTORY])
+    {
+        if (!item.get().isCharm())
+        {
+            continue;
+        }
+
+        if (item.get().getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+        {
+            for (auto& attrib : magicalAttributes)
+            {
+                switch (attrib.Id)
+                {
+                case 16:
+                case 215:
+                    eDef += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 31:
+                case 214:
+                    defenseRating += Items::getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
                 }
             }
         }
@@ -15181,7 +20625,6 @@ bool d2ce::Items::getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel)
     ItemDamage itemDamage;
     damage.clear();
 
-    EnumItemLocation location_id = EnumItemLocation::STORED;
     std::uint64_t eDmg = 0;
     std::uint64_t eDmgMax = 0;
     std::uint64_t dmgMin = 0;
@@ -15191,85 +20634,155 @@ bool d2ce::Items::getCombinedDamage(BaseDamage& damage, std::uint32_t charLevel)
     std::uint64_t dmgMinThrow = 0;
     std::uint64_t dmgMaxThrow = 0;
     std::vector<MagicalAttribute> magicalAttributes;
-    for (auto& item : Inventory)
+    for (auto& item : ItemLocationReference[EnumItemLocation::EQUIPPED][EnumAltItemLocation::UNKNOWN])
     {
-        location_id = item.getLocation();
-        if (location_id == EnumItemLocation::EQUIPPED)
+        if (item.get().getDamage(itemDamage))
         {
-            if (item.getDamage(itemDamage))
+            if (item.get().isEthereal())
             {
-                if (item.isEthereal())
+                itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
+                itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+            }
+            damage.add(itemDamage.OneHanded);
+        }
+
+        if (item.get().getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+        {
+            for (auto& attrib : magicalAttributes)
+            {
+                switch (attrib.Id)
                 {
-                    itemDamage.OneHanded.Min += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Min) * 50) / 100);
-                    itemDamage.OneHanded.Max += std::uint16_t((std::uint64_t(itemDamage.OneHanded.Max) * 50) / 100);
+                case 17:
+                    eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 21:
+                    dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 22:
+                    dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 23:
+                    dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
+
+                case 24:
+                    dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
+
+                case 219:
+                    eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
+
+                case 159:
+                    dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
+
+                case 160:
+                    dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
                 }
-                damage.add(itemDamage.OneHanded);
             }
 
-            if (item.getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+            if (dmgMin == 0)
             {
-                for (auto& attrib : magicalAttributes)
+                dmgMin = std::max(dmgMinThrow, dmgMin2);
+            }
+
+            if (dmgMax == 0)
+            {
+                dmgMax = std::max(dmgMaxThrow, dmgMax2);
+            }
+
+            if (dmgMin != 0)
+            {
+                damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
+            }
+
+            if (dmgMax != 0)
+            {
+                damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+            }
+
+            if (damage.Min > damage.Max)
+            {
+                damage.Max = damage.Min + 1;
+            }
+        }
+    }
+
+    for (auto& item : ItemLocationReference[EnumItemLocation::STORED][EnumAltItemLocation::INVENTORY])
+    {
+        if (!item.get().isCharm())
+        {
+            continue;
+        }
+
+        if (item.get().getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+        {
+            for (auto& attrib : magicalAttributes)
+            {
+                switch (attrib.Id)
                 {
-                    switch (attrib.Id)
-                    {
-                    case 17:
-                        eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 17:
+                    eDmg += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 21:
-                        dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 21:
+                    dmgMin += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 22:
-                        dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 22:
+                    dmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 23:
-                        dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
-                        break;
+                case 23:
+                    dmgMin2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
 
-                    case 24:
-                        dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
-                        break;
+                case 24:
+                    dmgMax2 += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
 
-                    case 219:
-                        eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
-                        break;
+                case 219:
+                    eDmgMax += getMagicalAttributeValue(attrib, charLevel, 0);
+                    break;
 
-                    case 159:
-                        dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
-                        break;
+                case 159:
+                    dmgMinThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMin
+                    break;
 
-                    case 160:
-                        dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
-                        break;
-                    }
+                case 160:
+                    dmgMaxThrow += getMagicalAttributeValue(attrib, charLevel, 0); // should be the same as dmgMax
+                    break;
                 }
+            }
 
-                if (dmgMin == 0)
-                {
-                    dmgMin = std::max(dmgMinThrow, dmgMin2);
-                }
+            if (dmgMin == 0)
+            {
+                dmgMin = std::max(dmgMinThrow, dmgMin2);
+            }
 
-                if (dmgMax == 0)
-                {
-                    dmgMax = std::max(dmgMaxThrow, dmgMax2);
-                }
+            if (dmgMax == 0)
+            {
+                dmgMax = std::max(dmgMaxThrow, dmgMax2);
+            }
 
-                if (dmgMin != 0)
-                {
-                    damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
-                }
+            if (dmgMin != 0)
+            {
+                damage.Min += std::uint16_t(((dmgMin * eDmg) / 100) + dmgMin);
+            }
 
-                if (dmgMax != 0)
-                {
-                    damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
-                }
+            if (dmgMax != 0)
+            {
+                damage.Max += std::uint16_t(((dmgMax * (eDmg + eDmgMax)) / 100) + dmgMax);
+            }
 
-                if (damage.Min > damage.Max)
-                {
-                    damage.Max = damage.Min + 1;
-                }
+            if (damage.Min > damage.Max)
+            {
+                damage.Max = damage.Min + 1;
             }
         }
     }

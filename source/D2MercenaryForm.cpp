@@ -57,7 +57,7 @@ namespace
 
     CMenu* FindPopup(CMenu& parent, size_t idx = 0)
     {
-        int pos = FindPopupPosition(parent, idx);;
+        int pos = FindPopupPosition(parent, idx);
         if (pos < 0)
         {
             return nullptr;
@@ -165,9 +165,9 @@ namespace
             slots = CSize(2, 2);
             break;
 
-        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_MERC_TORSO:
-        case IDC_INV_MERC_HAND_LEFT:
+        case IDC_INV_MERC_LEFT_ARM:
             slots = CSize(2, 4);
             break;
         }
@@ -268,9 +268,9 @@ void CD2MercenaryForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAR_RESIST_LIGHTNING, ResistLightning);
     DDX_Control(pDX, IDC_CHAR_RESIST_POISON, ResistPoison);
     DDX_Control(pDX, IDC_INV_MERC_HEAD, InvMercHeadBox);
-    DDX_Control(pDX, IDC_INV_MERC_HAND_RIGHT, InvMercHandRightBox);
+    DDX_Control(pDX, IDC_INV_MERC_RIGHT_ARM, InvMercHandRightBox);
     DDX_Control(pDX, IDC_INV_MERC_TORSO, InvMercTorsoBox);
-    DDX_Control(pDX, IDC_INV_MERC_HAND_LEFT, InvMercHandLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_LEFT_ARM, InvMercHandLeftBox);
 }
 //---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::PreTranslateMessage(MSG* pMsg)
@@ -391,7 +391,6 @@ void CD2MercenaryForm::EnableMercInfoBox()
 {
     auto bEnable = Merc.isHired();
     auto bHasItem = Merc.getNumberOfItems() > 0 ? true : false;
-    auto bIsBarbarian = Merc.getClass() == d2ce::EnumMercenaryClass::Barbarian ? true : false;
 
     MercHired.EnableWindow(!bEnable || !bHasItem);
     MercDead.EnableWindow(bEnable);
@@ -399,9 +398,9 @@ void CD2MercenaryForm::EnableMercInfoBox()
     MercClass.EnableWindow(bEnable && !bHasItem);
     MercLevel.EnableWindow(bEnable);
     Difficulty.EnableWindow(bEnable);
-    Attribute.EnableWindow(bEnable && !bIsBarbarian);
-    Attribute.ShowWindow(bIsBarbarian ? SW_HIDE : SW_SHOW);
-    AttributeDash.ShowWindow(bIsBarbarian ? SW_HIDE : SW_SHOW);
+    Attribute.EnableWindow(bEnable);
+    Attribute.ShowWindow(bEnable ? SW_SHOW : SW_HIDE);
+    AttributeDash.ShowWindow(bEnable ? SW_SHOW : SW_HIDE);
     Experience.EnableWindow(bEnable);
     MercStrength.EnableWindow(bEnable);
     MercDexterity.EnableWindow(bEnable);
@@ -442,11 +441,6 @@ void CD2MercenaryForm::EnableMercInfoBox()
         ResistCold.SetWindowText(_T(""));
         ResistLightning.SetWindowText(_T(""));
         ResistPoison.SetWindowText(_T(""));
-    }
-    else if (bIsBarbarian)
-    {
-        Attribute.ResetContent();
-        Attribute.SetCurSel(-1);
     }
 }
 //---------------------------------------------------------------------------
@@ -501,7 +495,7 @@ void CD2MercenaryForm::UpdateAttributes()
     std::u16string uText;
     Attribute.ResetContent();
     CurAttributeClass = curClass;
-    const auto& attribs = d2ce::Mercenary::getMercAttributes(CurAttributeClass);
+    const auto& attribs = d2ce::Mercenary::getMercAttributes(CurAttributeClass, Merc.getVersion());
     for (const auto& name : attribs)
     {
         uText = utf8::utf8to16(name.c_str());
@@ -512,11 +506,13 @@ void CD2MercenaryForm::UpdateAttributes()
     {
         Attribute.EnableWindow(FALSE);
         Attribute.ShowWindow(SW_HIDE);
+        AttributeDash.ShowWindow(SW_HIDE);
         return;
     }
 
     Attribute.EnableWindow(TRUE);
     Attribute.ShowWindow(SW_SHOW);
+    AttributeDash.ShowWindow(SW_SHOW);
     Attribute.SetCurSel(Merc.getAttributeId());
 }
 //---------------------------------------------------------------------------
@@ -625,52 +621,13 @@ void CD2MercenaryForm::LoadMercItemImages()
     }
 
     InvMercHeadBox.ShowWindow(SW_SHOW);
+    InvMercHeadBox.LoadItemImage();
     InvMercHandRightBox.ShowWindow(SW_SHOW);
+    InvMercHandRightBox.LoadItemImage();
     InvMercTorsoBox.ShowWindow(SW_SHOW);
+    InvMercTorsoBox.LoadItemImage();
     InvMercHandLeftBox.ShowWindow(SW_SHOW);
-
-    for (const auto& item : Merc.getItems())
-    {
-        CBitmap bitmap;
-        switch (item.getEquippedId())
-        {
-        case d2ce::EnumEquippedId::HEAD:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHeadBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_RIGHT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHandRightBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::TORSO:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercTorsoBox.LoadItemImage(item, bitmap);
-            break;
-
-        case d2ce::EnumEquippedId::HAND_LEFT:
-            if (!MainForm.getItemBitmap(item, bitmap))
-            {
-                continue;
-            }
-
-            InvMercHandLeftBox.LoadItemImage(item, bitmap);
-            break;
-        }
-    }
+    InvMercHandLeftBox.LoadItemImage();
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::refreshEquipped(const d2ce::Item& item)
@@ -681,23 +638,25 @@ void CD2MercenaryForm::refreshEquipped(const d2ce::Item& item)
         return;
     }
 
-    CBitmap bitmap;
-    switch (item.getEquippedId())
+    refreshEquipped(item.getEquippedId());
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::refreshEquipped(d2ce::EnumEquippedId id)
+{
+    switch (id)
     {
     case d2ce::EnumEquippedId::HEAD:
-        InvMercHeadBox.Redraw();
+        InvMercHeadBox.LoadItemImage();
         break;
 
-    case d2ce::EnumEquippedId::HAND_RIGHT:
-        InvMercHandRightBox.Redraw();
+    case d2ce::EnumEquippedId::LEFT_ARM:
+    case d2ce::EnumEquippedId::RIGHT_ARM:
+        InvMercHandRightBox.LoadItemImage();
+        InvMercHandLeftBox.LoadItemImage();
         break;
 
     case d2ce::EnumEquippedId::TORSO:
-        InvMercTorsoBox.Redraw();
-        break;
-
-    case d2ce::EnumEquippedId::HAND_LEFT:
-        InvMercHandLeftBox.Redraw();
+        InvMercTorsoBox.LoadItemImage();
         break;
     }
 }
@@ -868,13 +827,13 @@ const d2ce::Item* CD2MercenaryForm::GetInvItem(UINT id, UINT /*offset*/) const
     case IDC_INV_MERC_HEAD:
         return InvMercHeadBox.GetInvItem();
 
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.GetInvItem();
 
     case IDC_INV_MERC_TORSO:
         return InvMercTorsoBox.GetInvItem();
 
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.GetInvItem();
         break;
     }
@@ -891,13 +850,13 @@ const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* 
     case IDC_INV_MERC_HEAD:
         return InvMercHeadBox.InvHitTest(point, pTI);
 
-    case IDC_INV_MERC_HAND_RIGHT:
+    case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_MERC_TORSO:
         return InvMercTorsoBox.InvHitTest(point, pTI);
 
-    case IDC_INV_MERC_HAND_LEFT:
+    case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.InvHitTest(point, pTI);
         break;
     }
@@ -905,20 +864,87 @@ const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* 
     return nullptr;
 }
 //---------------------------------------------------------------------------
-CSize CD2MercenaryForm::getInvGridSize(UINT /*id*/) const
+std::optional<d2ce::CharStats> CD2MercenaryForm::getDisplayedCharStats() const
+{
+    return std::optional<d2ce::CharStats>();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::EnumCharClass> CD2MercenaryForm::getCharClass() const
+{
+    return std::optional<d2ce::EnumCharClass>();
+}
+//---------------------------------------------------------------------------
+std::optional<d2ce::Mercenary*> CD2MercenaryForm::getMercInfo() const
+{
+    return &Merc;
+}
+//---------------------------------------------------------------------------
+CSize CD2MercenaryForm::getInvGridSize(d2ce::EnumItemLocation /*locationId*/, d2ce::EnumAltItemLocation /*altPositionId*/) const
 {
     return CSize(0, 0);
 }
 //---------------------------------------------------------------------------
-const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MercenaryForm::getInvGridItems(UINT /*id*/) const
+const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MercenaryForm::getInvGridItems(d2ce::EnumItemLocation /*locationId*/, d2ce::EnumAltItemLocation /*altPositionId*/) const
 {
     static std::vector<std::reference_wrapper<d2ce::Item>> s_empty;
     return s_empty;
 }
 //---------------------------------------------------------------------------
+const d2ce::Item* CD2MercenaryForm::getInvEquippedItem(d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType) const
+{
+    switch (invType)
+    {
+    case d2ce::EnumItemInventory::MERCENARY:
+        for (const auto& item : Merc.getItems())
+        {
+            if (equippedId == item.getEquippedId())
+            {
+                return &item;
+            }
+        }
+        break;
+    }
+    return nullptr;
+}
+//---------------------------------------------------------------------------
 bool CD2MercenaryForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
 {
     return MainForm.getItemBitmap(item, bitmap);
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumItemLocation /*locationId*/, d2ce::EnumAltItemLocation /*altPositionId*/, std::uint16_t /*positionX*/, std::uint16_t /*positionY*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumItemLocation /*locationId*/, std::uint16_t /*positionX*/, std::uint16_t /*positionY*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumAltItemLocation /*altPositionId*/, std::uint16_t /*positionX*/, std::uint16_t /*positionY*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    return false;
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+{
+    auto preEquippedId = item.getEquippedId();
+    if (MainForm.setItemLocation(item, equippedId, d2ce::EnumItemInventory::MERCENARY, pRemovedItem))
+    {
+        refreshEquipped(preEquippedId);
+        if ((preEquippedId != item.getEquippedId()))
+        {
+            refreshEquipped(item);
+        }
+
+        return true;
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::OnInitDialog()
@@ -1265,9 +1291,9 @@ BOOL CD2MercenaryForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
             break;
 
         case IDC_INV_MERC_HEAD:
-        case IDC_INV_MERC_HAND_RIGHT:
+        case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_MERC_TORSO:
-        case IDC_INV_MERC_HAND_LEFT:
+        case IDC_INV_MERC_LEFT_ARM:
             strTipText = _T("N/A");
             break;
         }
@@ -1422,7 +1448,7 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->socketCount())))
+        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);

@@ -698,6 +698,76 @@ namespace D2EditorTests
             TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v116, true, false);
         }
 
+        TEST_METHOD(TestJsonExport31)
+        {
+            TestJsonExportBase("Blizzard.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport32)
+        {
+            TestJsonExportBase("BowAma.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport33)
+        {
+            TestJsonExportBase("Element.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport34)
+        {
+            TestJsonExportBase("Fire.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport35)
+        {
+            TestJsonExportBase("FireClaw.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport36)
+        {
+            TestJsonExportBase("Frenzy.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport37)
+        {
+            TestJsonExportBase("Hammer.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport38)
+        {
+            TestJsonExportBase("JavaZone.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport39)
+        {
+            TestJsonExportBase("Lightning.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport40)
+        {
+            TestJsonExportBase("Orb.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport41)
+        {
+            TestJsonExportBase("Smiter.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport42)
+        {
+            TestJsonExportBase("Summon.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport43)
+        {
+            TestJsonExportBase("TollWut.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport44)
+        {
+            TestJsonExportBase("Traps.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -881,13 +951,97 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen31)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Rui.d2s", character, d2ce::EnumCharVersion::v116, true));
+            Assert::IsTrue(LoadCharFile("Rui.json", character, d2ce::EnumCharVersion::v116, true));
         }
 
         TEST_METHOD(TestJsonOpen32)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Drui.d2s", character, d2ce::EnumCharVersion::v116, true));
+            Assert::IsTrue(LoadCharFile("Drui.json", character, d2ce::EnumCharVersion::v116, true));
+        }
+
+        TEST_METHOD(TestJsonOpen33)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Blizzard.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen34)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("BowAma.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen35)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Element.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen36)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Fire.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen37)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("FireClaw.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen38)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Frenzy.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen39)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Hammer.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen40)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("JavaZone.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen41)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Lightning.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen42)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Orb.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen43)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Smiter.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen44)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Summon.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen45)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("TollWut.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen46)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Traps.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

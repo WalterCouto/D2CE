@@ -26,6 +26,23 @@ namespace d2ce
 {
     constexpr std::array<std::uint8_t, 4> HEADER = { 0x55, 0xAA, 0x55, 0xAA };
     constexpr size_t PAGE_HEADER_SIZE = 0x44;
+
+    struct ItemPredicate
+    {
+        ItemPredicate(const d2ce::Item& item) : m_item(item) {}
+
+        bool operator() (const d2ce::Item& item)
+        {
+            return &item == &m_item ? true : false;
+        }
+
+        bool operator() (const std::reference_wrapper<Item>& itemRef)
+        {
+            return &(itemRef.get()) == &m_item ? true : false;
+        }
+    private:
+        const d2ce::Item& m_item;
+    };
 }
 
 //---------------------------------------------------------------------------
@@ -63,6 +80,8 @@ d2ce::SharedStash& d2ce::SharedStash::operator=(const SharedStash& other)
     {
         return *this;
     }
+
+    BufferItems = other.BufferItems;
     Pages = other.Pages;
     m_d2ifilename = other.m_d2ifilename;
     return *this;
@@ -75,6 +94,9 @@ d2ce::SharedStash& d2ce::SharedStash::operator=(SharedStash&& other) noexcept
     {
         return *this;
     }
+
+    BufferItems.swap(other.BufferItems);
+    other.BufferItems.clear();
     Pages.swap(other.Pages);
     other.Pages.clear();
     m_d2ifilename.swap(other.m_d2ifilename);
@@ -746,6 +768,17 @@ bool d2ce::SharedStash::addItem(std::array<std::uint8_t, 4>& strcode, size_t pag
     return Pages[page].StashItems.addItem(EnumAltItemLocation::STASH, strcode);
 }
 //---------------------------------------------------------------------------
+bool d2ce::SharedStash::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    if (Pages.empty())
+    {
+        return false;
+    }
+
+    // doesn't matter which page does the import
+    return Pages.front().StashItems.importItem(path, pImportedItem, bRandomizeId);
+}
+//---------------------------------------------------------------------------
 size_t d2ce::SharedStash::fillEmptySlots(std::array<std::uint8_t, 4>& strcode)
 {
     size_t total = 0;
@@ -766,6 +799,65 @@ size_t d2ce::SharedStash::fillEmptySlots(std::array<std::uint8_t, 4>& strcode, s
     return Pages[page].StashItems.fillEmptySlots(EnumAltItemLocation::STASH, strcode);
 }
 //---------------------------------------------------------------------------
+bool d2ce::SharedStash::setItemLocation(d2ce::Item& item, size_t itemPage, std::uint16_t positionX, std::uint16_t positionY, size_t page, const d2ce::Item*& pRemovedItem)
+{
+    pRemovedItem = nullptr;
+    if ((page >= Pages.size()) || (itemPage >= Pages.size()))
+    {
+        return false;
+    }
+
+    // find entry
+    auto& pageStash = Pages[page].StashItems;
+    auto& itemPageStash = Pages[itemPage].StashItems;
+    auto& inventory = itemPageStash.Inventory;
+    auto iter = std::find_if(inventory.begin(), inventory.end(), ItemPredicate(item));
+    if (iter != inventory.end())
+    {
+        if (page != itemPage)
+        {
+            // move item to Buffer
+            if (!Pages[itemPage].StashItems.setItemLocation(item, EnumAltItemLocation::STASH, item.getPositionX(), item.getPositionY(), EnumItemInventory::BUFFER, pRemovedItem))
+            {
+                return false;
+            }
+        }
+    }
+
+    auto prevPositionX = item.getPositionX();
+    auto prevPositionY = item.getPositionY();
+    if (!pageStash.setItemLocation(item, EnumAltItemLocation::STASH, positionX, positionY, EnumItemInventory::SHARED_STASH, pRemovedItem))
+    {
+        // if item was moved to the buffer, move it back to the inventory
+        if (std::find_if(BufferItems.begin(), BufferItems.end(), ItemPredicate(item)) != BufferItems.end())
+        {
+            if (!itemPageStash.setItemLocation(item, EnumAltItemLocation::STASH, prevPositionX, prevPositionY, EnumItemInventory::SHARED_STASH, pRemovedItem))
+            {
+                pRemovedItem = &item;
+            }
+        }
+        return false;
+    }
+    
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::SharedStash::removeSocketedItems(d2ce::Item& item)
+{
+    for (auto& page : Pages)
+    {
+        auto& pageStash = page.StashItems;
+        auto& inventory = pageStash.Inventory;
+        auto iter = std::find_if(inventory.begin(), inventory.end(), ItemPredicate(item));
+        if (iter != inventory.end())
+        {
+            return pageStash.removeSocketedItems(item);
+        }
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::SharedStash::refresh(std::FILE* charfile)
 {
     std::uint32_t fileSize = 0;
@@ -776,7 +868,7 @@ bool d2ce::SharedStash::refresh(std::FILE* charfile)
     std::fseek(charfile, 0, SEEK_SET);
     while (!feof(charfile) && (pos < fileSize))
     {
-        Pages.resize(Pages.size() + 1);
+        Pages.emplace_back(SharedStashPage(BufferItems));
         auto& page = Pages.back();
         auto& pageHeader = page.Header;
         std::fread(&pageHeader, sizeof(pageHeader), 1, charfile);

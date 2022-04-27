@@ -1213,7 +1213,7 @@ void d2ce::CharacterStats::updatePointsEarned(std::uint16_t lifePointsEarned, st
     updateSkillChoices(skillPointsEarned);
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::checkStatInfo()
+void d2ce::CharacterStats::checkStatInfo() const
 {
     // CurMana and CurStamina can be zero but seems to be always present
     StatInfo = EnumCharStatInfo::All;
@@ -1289,7 +1289,7 @@ d2ce::EnumCharStatInfo d2ce::CharacterStats::GetStatInfoMask(std::uint16_t stat)
     }
 }
 //---------------------------------------------------------------------------
-std::uint32_t* d2ce::CharacterStats::GetStatBuffer(std::uint16_t stat)
+std::uint32_t* d2ce::CharacterStats::GetStatBuffer(std::uint16_t stat) const
 {
     switch (stat)
     {
@@ -1896,7 +1896,7 @@ bool d2ce::CharacterStats::readSkills(const Json::Value& root, const Json::Value
     return true;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value)
+size_t d2ce::CharacterStats::updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value) const
 {
     size_t startIdx = current_bit_offset / 8;
     size_t endIdx = (current_bit_offset + size) / 8;
@@ -1923,7 +1923,7 @@ size_t d2ce::CharacterStats::updateBits(size_t& current_bit_offset, size_t size,
     return size;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat)
+size_t d2ce::CharacterStats::updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat) const
 {
     if (stat >= STAT_MAX && (stat != STAT_END_MARKER))
     {
@@ -1953,7 +1953,7 @@ size_t d2ce::CharacterStats::updateStat(std::FILE* charfile, size_t& current_bit
     return totalBitsWritten;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::updateStatBits(size_t& current_bit_offset, std::uint16_t stat)
+size_t d2ce::CharacterStats::updateStatBits(size_t& current_bit_offset, std::uint16_t stat) const
 {
     std::uint32_t* pStatValue = GetStatBuffer(stat);
     if (pStatValue == nullptr)
@@ -1966,14 +1966,14 @@ size_t d2ce::CharacterStats::updateStatBits(size_t& current_bit_offset, std::uin
     return updateBits(current_bit_offset, numBits, *pStatValue);
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::writeBufferBits(std::FILE* charfile)
+size_t d2ce::CharacterStats::writeBufferBits(std::FILE* charfile) const
 {
     std::fseek(charfile, stats_location, SEEK_SET);
     std::fwrite(&data[0], data.size(), 1, charfile);
     return data.size() * 8;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile)
+bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile) const
 {
     std::uint16_t value = StatInfo.bits();
     std::fwrite(&value, sizeof(value), 1, charfile);
@@ -2031,7 +2031,7 @@ bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::writeSkills(std::FILE* charfile)
+bool d2ce::CharacterStats::writeSkills(std::FILE* charfile) const
 {
     std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
     skills_location = std::ftell(charfile);
@@ -2114,7 +2114,7 @@ bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFo
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::writeStats(std::FILE* charfile)
+bool d2ce::CharacterStats::writeStats(std::FILE* charfile) const
 {
     if (stats_location == 0)
     {
@@ -2609,9 +2609,36 @@ std::array<std::uint8_t, d2ce::NUM_OF_PD2_SKILLS>& d2ce::CharacterStats::getPD2S
     return PD2Skills;
 }
 //---------------------------------------------------------------------------
-void d2ce::CharacterStats::fillCharacterStats(CharStats& cs)
+void d2ce::CharacterStats::fillCharacterStats(CharStats& cs) const
 {
     std::memcpy(&cs, &Cs, sizeof(cs));
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::fillDisplayedCharacterStats(CharStats& cs) const
+{
+    fillCharacterStats(cs);
+
+    // Apply item bonus
+    std::vector<MagicalAttribute> magicalAttributes;
+    if (CharInfo.getItemBonuses(magicalAttributes))
+    {
+        ItemHelpers::applyNonMaxMagicalAttributes(cs, magicalAttributes);
+
+        // update max values
+        const auto& charClassInfo = GetCharClassInfo(CharInfo.getClass());
+        std::uint32_t curLevel = std::min(std::max(cs.Level, std::uint32_t(1)), max_levels);
+        std::uint32_t curVitality = std::max(std::min(cs.Vitality, MAX_BASICSTATS), charClassInfo.Vitality);
+        std::uint32_t curEnergy = std::max(std::min(cs.Energy, MAX_BASICSTATS), charClassInfo.Energy);
+        std::uint32_t diffVitality = curVitality - charClassInfo.Vitality;
+        std::uint32_t diffEnergy = curEnergy - charClassInfo.Energy;
+        std::uint32_t displayed_min_hit_points = ((charClassInfo.Vitality + charClassInfo.HpAdd) << 8) + (charClassInfo.LifePerLevel << 6) * (curLevel - 1) + (charClassInfo.LifePerVitality << 6) * diffVitality;
+        std::uint32_t displayed_min_stamina = (charClassInfo.Stamina << 8) + (charClassInfo.StaminaPerLevel << 6) * (curLevel - 1) + (charClassInfo.StaminaPerVitality << 6) * diffVitality;
+        std::uint32_t displayed_min_mana = (charClassInfo.Energy << 8) + (charClassInfo.ManaPerLevel << 6) * (curLevel - 1) + (charClassInfo.ManaPerMagic << 6) * diffEnergy;
+        cs.MaxLife = std::max(cs.MaxLife, displayed_min_hit_points);
+        cs.MaxStamina = std::max(cs.MaxStamina, displayed_min_stamina);
+        cs.MaxMana = std::max(cs.MaxMana, displayed_min_mana);
+        ItemHelpers::applyMaxMagicalAttributes(cs, magicalAttributes);
+    }
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateCharacterStats(const CharStats& cs)
@@ -2788,9 +2815,19 @@ std::uint32_t d2ce::CharacterStats::getMinStrength() const
     return min_strength;
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getStrength() const
+{
+    return Cs.Strength;
+}
+//---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getMinEnergy() const
 {
     return min_energy;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::CharacterStats::getDexterity() const
+{
+    return Cs.Dexterity;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getMinDexterity() const
