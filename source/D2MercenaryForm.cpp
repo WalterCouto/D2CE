@@ -30,12 +30,54 @@
 
 namespace
 {
-    int FindPopupPosition(CMenu& parent, size_t idx = 0)
+    int FindPopupPosition(CMenu& parent, UINT childId)
     {
         auto numItems = parent.GetMenuItemCount();
         if (numItems <= 0)
         {
             return -1;
+        }
+
+        for (int i = 0; i < numItems; ++i)
+        {
+            auto id = parent.GetMenuItemID(i);
+            if (id == -1) // popup
+            {
+                CMenu* pPopup = parent.GetSubMenu(i);
+                if (pPopup != NULL)
+                {
+                    auto numChildItems = pPopup->GetMenuItemCount();
+                    for (int j = 0; j < numChildItems; ++j)
+                    {
+                        if (pPopup->GetMenuItemID(j) == childId)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    CMenu* FindPopupByChild(CMenu& parent, UINT childId)
+    {
+        auto pos = FindPopupPosition(parent, childId);
+        if (pos >= 0)
+        {
+            return parent.GetSubMenu(pos);
+        }
+
+        return nullptr;
+    }
+
+    CMenu* FindPopup(CMenu& parent, size_t idx = 0)
+    {
+        auto numItems = parent.GetMenuItemCount();
+        if (numItems <= 0)
+        {
+            return nullptr;
         }
 
         size_t curIdx = 0;
@@ -46,24 +88,13 @@ namespace
             {
                 if (curIdx == idx)
                 {
-                    return i;
+                    return parent.GetSubMenu(i);
                 }
                 ++curIdx;
             }
         }
 
-        return -1;
-    }
-
-    CMenu* FindPopup(CMenu& parent, size_t idx = 0)
-    {
-        int pos = FindPopupPosition(parent, idx);
-        if (pos < 0)
-        {
-            return nullptr;
-        }
-
-        return parent.GetSubMenu(pos);
+        return nullptr;
     }
 
     template <class charT>
@@ -332,6 +363,9 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2MercenaryForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2MercenaryForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2MercenaryForm::OnItemContextRemovePersonalization)
+    ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2MercenaryForm::OnItemContextApplyruneword)
+    ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2MercenaryForm::OnItemContextExportitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2MercenaryForm::OnItemContextRemoveitem)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -912,15 +946,47 @@ bool CD2MercenaryForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) co
     return MainForm.getItemBitmap(item, bitmap);
 }
 //---------------------------------------------------------------------------
-bool CD2MercenaryForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumItemLocation /*locationId*/, d2ce::EnumAltItemLocation /*altPositionId*/, std::uint16_t /*positionX*/, std::uint16_t /*positionY*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation /*altPositionId*/, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
 {
     pRemovedItem = nullptr;
+    switch (locationId)
+    {
+    case d2ce::EnumItemLocation::BUFFER:
+        break;
+
+    default:
+        return false;
+    }
+
+    auto preEquippedId = item.getEquippedId();
+    if (MainForm.setItemLocation(item, locationId, positionX, positionY, invType, pRemovedItem))
+    {
+        refreshEquipped(preEquippedId);
+        return true;
+    }
+
     return false;
 }
 //---------------------------------------------------------------------------
-bool CD2MercenaryForm::setItemLocation(d2ce::Item& /*item*/, d2ce::EnumItemLocation /*locationId*/, std::uint16_t /*positionX*/, std::uint16_t /*positionY*/, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
+bool CD2MercenaryForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
 {
     pRemovedItem = nullptr;
+    switch (locationId)
+    {
+    case d2ce::EnumItemLocation::BUFFER:
+        break;
+
+    default:
+        return false;
+    }
+
+    auto preEquippedId = item.getEquippedId(); 
+    if (MainForm.setItemLocation(item, locationId, positionX, positionY, invType, pRemovedItem))
+    {
+        refreshEquipped(preEquippedId);
+        return true;
+    }
+
     return false;
 }
 //---------------------------------------------------------------------------
@@ -1423,6 +1489,7 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool isWeapon = !isArmor && CurrItem->isWeapon();
     bool canHaveSockets = CurrItem->canHaveSockets();
     bool canPersonalize = CurrItem->canPersonalize();
+    bool isSocketed = CurrItem->isSocketed();
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1431,51 +1498,87 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu* pPopup = FindPopup(menu, 0);
         ENSURE(pPopup != NULL);
 
-        auto pos = FindPopupPosition(*pPopup, 0);
-        if (pos >= 0)
-        {
-            pPopup->DeleteMenu(pos, MF_BYPOSITION);
-        }
-
-        pos = FindPopupPosition(*pPopup, 0);
-        if (pos >= 0)
-        {
-            pPopup->DeleteMenu(pos, MF_BYPOSITION);
-        }
+        pPopup->DeleteMenu(ID_ITEM_CONTEXT_IMPORT_ITEM, MF_BYCOMMAND);
 
         if (!isStackable)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!canHaveSockets || (CurrItem->isSocketed() && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDSOCKET);
+        if (pos >= 0)
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
-        }
-
-        if (!canPersonalize)
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
-        }
-        else
-        {
-            if (CurrItem->isPersonalized())
+            if (!canHaveSockets)
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
             }
             else
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (isSocketed)
+                    {
+                        if (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+                        }
+
+                        if (CurrItem->getSocketedItemCount() == 0)
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                        }
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                    }
+
+                    if (CurrItem->getPossibleRunewords().empty())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+                    }
+
+                    if (pSubPopup->GetMenuItemCount() == 0)
+                    {
+                        pPopup->RemoveMenu(pos, MF_BYPOSITION);
+                    }
+                }
+            }
+        }
+
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_PERSONALIZE);
+        if (pos >= 0)
+        {
+            if (!canPersonalize)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (CurrItem->isPersonalized())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                    }
+                }
             }
         }
 
         if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_FIX);
+            if (pos >= 0)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -1569,6 +1672,56 @@ void CD2MercenaryForm::OnItemContextRemovePersonalization()
     }
 
     MainForm.removeItemPersonalization(*CurrItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextApplyruneword()
+{
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextExportitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    auto uName = utf8::utf8to16(CurrItem->getDisplayedItemName());
+    CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
+    filename.Replace(_T("\n"), _T("-"));
+    filename += _T(".d2i");
+
+    CFileDialog fileDialog(FALSE, _T("d2i"), filename,
+        OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+        _T("Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*||"), this);
+
+    if (fileDialog.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    {
+        CWaitCursor wait;
+        if (!CurrItem->exportItem(fileDialog.GetPathName().GetString()))
+        {
+            CString msg(_T("Item export failed"));
+            AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+        }
+    }
+
+    CString msg(_T("Item exported successfully"));
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextRemoveitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    const d2ce::Item* pRemovedItem = nullptr;
+    setItemLocation(*CurrItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

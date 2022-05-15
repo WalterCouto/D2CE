@@ -70,6 +70,9 @@ protected:
     afx_msg void OnItemContextMaxsockets();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
+    afx_msg void OnItemContextApplyruneword();
+    afx_msg void OnItemContextExportitem();
+    afx_msg void OnItemContextRemoveitem();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 

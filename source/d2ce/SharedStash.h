@@ -145,6 +145,7 @@ namespace d2ce
         size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode, size_t page);
         bool setItemLocation(d2ce::Item& item, size_t itemPage, std::uint16_t positionX, std::uint16_t positionY, size_t page, const d2ce::Item*& pRemovedItem);
         bool removeSocketedItems(d2ce::Item& item);
+        bool removeItem(d2ce::Item& item);
 
     protected:
         bool refresh(std::FILE* charfile);

@@ -858,6 +858,23 @@ bool d2ce::SharedStash::removeSocketedItems(d2ce::Item& item)
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::SharedStash::removeItem(d2ce::Item& item)
+{
+    for (auto& page : Pages)
+    {
+        auto& pageStash = page.StashItems;
+        auto& inventory = pageStash.Inventory;
+        auto iter = std::find_if(inventory.begin(), inventory.end(), ItemPredicate(item));
+        if (iter != inventory.end())
+        {
+            const d2ce::Item* pRemovedItem = nullptr;
+            return pageStash.setItemLocation(item, EnumItemLocation::BUFFER, 0, 0, EnumItemInventory::BUFFER, pRemovedItem);
+        }
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::SharedStash::refresh(std::FILE* charfile)
 {
     std::uint32_t fileSize = 0;

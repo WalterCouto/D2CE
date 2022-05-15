@@ -34,6 +34,48 @@
 
 namespace
 {
+    int FindPopupPosition(CMenu& parent, UINT childId)
+    {
+        auto numItems = parent.GetMenuItemCount();
+        if (numItems <= 0)
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < numItems; ++i)
+        {
+            auto id = parent.GetMenuItemID(i);
+            if (id == -1) // popup
+            {
+                CMenu* pPopup = parent.GetSubMenu(i);
+                if (pPopup != NULL)
+                {
+                    auto numChildItems = pPopup->GetMenuItemCount();
+                    for (int j = 0; j < numChildItems; ++j)
+                    {
+                        if (pPopup->GetMenuItemID(j) == childId)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    CMenu* FindPopupByChild(CMenu& parent, UINT childId)
+    {
+        auto pos = FindPopupPosition(parent, childId);
+        if (pos >= 0)
+        {
+            return parent.GetSubMenu(pos);
+        }
+
+        return nullptr;
+    }
+
     CMenu* FindPopup(CMenu& parent, size_t idx = 0)
     {
         auto numItems = parent.GetMenuItemCount();
@@ -569,6 +611,7 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2SharedStashForm::OnItemContextApplyruneword)
     ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2SharedStashForm::OnItemContextImportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2SharedStashForm::OnItemContextExportitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2SharedStashForm::OnItemContextRemoveitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2SharedStashForm::OnItemContextMaxsocketsforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2SharedStashForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2SharedStashForm::OnItemContextUpgradeGems)
@@ -1162,12 +1205,21 @@ bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocatio
 bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
 {
     pRemovedItem = nullptr;
-    if (locationId != d2ce::EnumItemLocation::STORED)
+    switch (locationId)
     {
+    case d2ce::EnumItemLocation::STORED:
+        return setItemLocation(item, d2ce::EnumAltItemLocation::STASH, positionX, positionY, invType, pRemovedItem);
+
+    case d2ce::EnumItemLocation::BUFFER:
+        if (Stash.removeItem(item))
+        {
+            refreshGrid();
+            return true;
+        }
         return false;
     }
-
-    return setItemLocation(item, d2ce::EnumAltItemLocation::STASH, positionX, positionY, invType, pRemovedItem);
+    return false;
+    
 }
 //---------------------------------------------------------------------------
 bool CD2SharedStashForm::setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory /*invType*/, const d2ce::Item*& pRemovedItem)
@@ -1359,44 +1411,80 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!canHaveSockets || (isSocketed && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDSOCKET);
+        if (pos >= 0)
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
-        }
-
-        if (!isSocketed || CurrItem->getSocketedItemCount() == 0)
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
-        }
-
-        if (!canHaveSockets || CurrItem->getPossibleRunewords().empty())
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
-        }
-
-        if (!canPersonalize)
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
-        }
-        else
-        {
-            if (CurrItem->isPersonalized())
+            if (!canHaveSockets)
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
             }
             else
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (isSocketed)
+                    {
+                        if (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+                        }
+
+                        if (CurrItem->getSocketedItemCount() == 0)
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                        }
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                    }
+
+                    if (CurrItem->getPossibleRunewords().empty())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+                    }
+
+                    if (pSubPopup->GetMenuItemCount() == 0)
+                    {
+                        pPopup->RemoveMenu(pos, MF_BYPOSITION);
+                    }
+                }
+            }
+        }
+
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_PERSONALIZE);
+        if (pos >= 0)
+        {
+            if (!canPersonalize)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (CurrItem->isPersonalized())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                    }
+                }
             }
         }
 
         if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_FIX);
+            if (pos >= 0)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -1458,6 +1546,18 @@ void CD2SharedStashForm::OnLButtonDown(UINT nFlags, CPoint point)
     INT_PTR nHit = __super::OnToolHitTest(point, &ti);
     if (nHit == -1)
     {
+        if (ItemCursor != NULL)
+        {
+            if (CurrDragItem != NULL)
+            {
+                const d2ce::Item* pRemovedItem = nullptr;
+                setItemLocation(*CurrDragItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
+            }
+
+            // placed it
+            ResetCursor();
+        }
+
         __super::OnLButtonDown(nFlags, point);
         return;
     }
@@ -1541,7 +1641,7 @@ void CD2SharedStashForm::OnMouseMove(UINT nFlags, CPoint point)
         if (nHit == -1)
         {
             CurrCursor = NULL;
-            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            ::SetCursor(AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_TRASH_CURSOR)));
             __super::OnMouseMove(nFlags, point);
             return;
         }
@@ -1556,7 +1656,7 @@ void CD2SharedStashForm::OnMouseMove(UINT nFlags, CPoint point)
 
         default:
             CurrCursor = NULL;
-            ::SetCursor(LoadCursor(NULL, IDC_NO));
+            ::SetCursor(AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_TRASH_CURSOR)));
             __super::OnMouseMove(nFlags, point);
             return;
         }
@@ -1832,6 +1932,18 @@ void CD2SharedStashForm::OnItemContextExportitem()
 
     CString msg(_T("Item exported successfully"));
     AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextRemoveitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    const d2ce::Item* pRemovedItem = nullptr;
+    setItemLocation(*CurrItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextUpgradeGem()

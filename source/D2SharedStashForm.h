@@ -71,6 +71,7 @@ protected:
     afx_msg void OnItemContextApplyruneword();
     afx_msg void OnItemContextImportitem();
     afx_msg void OnItemContextExportitem();
+    afx_msg void OnItemContextRemoveitem();
     afx_msg void OnItemContextUpgradeGem();
     afx_msg void OnItemContextUpgradeGems();
     afx_msg void OnItemContextUpgradePotion();

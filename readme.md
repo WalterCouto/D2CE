@@ -49,9 +49,9 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II Resurrected v1.2.68992 (PTR 2.4) and Diablo II Classic v1.14d (It has unit test confirming it supports the all versions from v1.00 and up as well but the files used in testing have not been tested in a real game)**
+- Tested with Diablo II Resurrected v1.2.68992 (PTR 2.4) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
-- For changed to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
+- For changes to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
 
 ### Distribution
 
@@ -77,8 +77,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.16 (May 15, 2022)**
+**Version 2.16 (May 16, 2022)**
 - Updated: fix up mercenary for PTR 2.4 changes to Barbarian<br>
+- Updated: reorganized item context menu<br>
+- Updated: fixed "reload" issue with mercenary data that would not read the items.<br>
 <br>
 
 - Added: add support for dragging and dropping items.<br>

@@ -15279,6 +15279,7 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         return;
     }
 
+    bool bHasMercId = true;
     if (update_locations)
     {
         bool bFoundMercMarker = false;
@@ -15313,21 +15314,31 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
         {
             return;
         }
-    }
 
-    // look ahead for no merc case
-    bool bHasMercId = true;
-    if (!feof(charfile))
+        // look ahead for no merc case
+        if (!feof(charfile))
+        {
+            auto startLoc = std::ftell(charfile);
+            std::fread(&value, sizeof(value), 1, charfile);
+            if (value != ITEM_MARKER[0])
+            {
+                bHasMercId = false;
+            }
+
+            std::fseek(charfile, startLoc, SEEK_SET);
+        }
+    }
+    else
     {
-        auto startLoc = std::ftell(charfile);
-        std::uint8_t value = 0;
-        std::fread(&value, sizeof(value), 1, charfile);
-        if (value != ITEM_MARKER[0])
+        if (merc_location == 0)
         {
             bHasMercId = false;
+            isMercHired = false;
         }
-
-        std::fseek(charfile, startLoc, SEEK_SET);
+        else
+        {
+            std::fseek(charfile, merc_location - 4, SEEK_SET);
+        }
     }
 
     if (bHasMercId)

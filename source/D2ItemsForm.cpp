@@ -36,6 +36,48 @@
 
 namespace
 {
+    int FindPopupPosition(CMenu& parent, UINT childId)
+    {
+        auto numItems = parent.GetMenuItemCount();
+        if (numItems <= 0)
+        {
+            return -1;
+        }
+
+        for (int i = 0; i < numItems; ++i)
+        {
+            auto id = parent.GetMenuItemID(i);
+            if (id == -1) // popup
+            {
+                CMenu* pPopup = parent.GetSubMenu(i);
+                if (pPopup != NULL)
+                {
+                    auto numChildItems = pPopup->GetMenuItemCount();
+                    for (int j = 0; j < numChildItems; ++j)
+                    {
+                        if (pPopup->GetMenuItemID(j) == childId)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    CMenu* FindPopupByChild(CMenu& parent, UINT childId)
+    {
+        auto pos = FindPopupPosition(parent, childId);
+        if (pos >= 0)
+        {
+            return parent.GetSubMenu(pos);
+        }
+
+        return nullptr;
+    }
+
     CMenu* FindPopup(CMenu& parent, size_t idx = 0)
     {
         auto numItems = parent.GetMenuItemCount();
@@ -2219,6 +2261,7 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2ItemsForm::OnItemContextApplyruneword)
     ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2ItemsForm::OnItemContextImportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2ItemsForm::OnItemContextExportitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2ItemsForm::OnItemContextRemoveitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2ItemsForm::OnItemContextMaxsocketsforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2ItemsForm::OnItemContextUpgradeGems)
@@ -4160,22 +4203,25 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
         if (filter.LocationId == d2ce::EnumItemLocation::BELT)
         {
-            CMenu* pSubPopup = FindPopup(*pPopup, 0);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
-            pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
-
-            auto numItems = pSubPopup->GetMenuItemCount();
-            if (numItems > 1)
+            CMenu* pSubPopup = FindPopupByChild(*pPopup, ID_ITEM_CONTEXT_UPGRADE_GEMS);
+            if (pSubPopup != nullptr)
             {
-                if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                pSubPopup->RemoveMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+
+                auto numItems = pSubPopup->GetMenuItemCount();
+                if (numItems > 1)
                 {
-                    pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                    if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                    {
+                        pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                    }
                 }
             }
         }
@@ -4206,44 +4252,80 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
         }
 
-        if (!canHaveSockets || (isSocketed && (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())))
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDSOCKET);
+        if (pos >= 0)
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
-        }
-
-        if (!isSocketed || CurrItem->getSocketedItemCount() == 0)
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
-        }
-
-        if (!canHaveSockets || CurrItem->getPossibleRunewords().empty())
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
-        }
-
-        if (!canPersonalize)
-        {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
-        }
-        else
-        {
-            if (CurrItem->isPersonalized())
+            if (!canHaveSockets)
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
             }
             else
             {
-                pPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (isSocketed)
+                    {
+                        if (CurrItem->getMaxSocketCount() <= CurrItem->getSocketCount())
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDSOCKET, MF_BYCOMMAND);
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETS, MF_BYCOMMAND);
+                        }
+
+                        if (CurrItem->getSocketedItemCount() == 0)
+                        {
+                            pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                        }
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UNSOCKET, MF_BYCOMMAND);
+                    }
+
+                    if (CurrItem->getPossibleRunewords().empty())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_APPLY_RUNEWORD, MF_BYCOMMAND);
+                    }
+
+                    if (pSubPopup->GetMenuItemCount() == 0)
+                    {
+                        pPopup->RemoveMenu(pos, MF_BYPOSITION);
+                    }
+                }
+            }
+        }
+
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_PERSONALIZE);
+        if (pos >= 0)
+        {
+            if (!canPersonalize)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (CurrItem->isPersonalized())
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_PERSONALIZE, MF_BYCOMMAND);
+                    }
+                    else
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, MF_BYCOMMAND);
+                    }
+                }
             }
         }
 
         if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
         {
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
-            pPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+            pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_FIX);
+            if (pos >= 0)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
         }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
@@ -4276,19 +4358,22 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEM, MF_BYCOMMAND);
             if (filter.LocationId == d2ce::EnumItemLocation::BELT)
             {
-                CMenu* pSubPopup = FindPopup(*pPopup, 0);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
-                pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
-                auto numItems = pSubPopup->GetMenuItemCount();
-                if (numItems > 1)
+                CMenu* pSubPopup = FindPopupByChild(*pPopup, ID_ITEM_CONTEXT_UPGRADE_GEMS);
+                if (pSubPopup != nullptr)
                 {
-                    if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADE_GEMS, MF_BYCOMMAND);
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXFILLSTACKABLES, MF_BYCOMMAND);
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_FIXALLITEMS, MF_BYCOMMAND);
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITYFORALLITEMS, MF_BYCOMMAND);
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLEFORALLITEMS, MF_BYCOMMAND);
+                    pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, MF_BYCOMMAND);
+                    auto numItems = pSubPopup->GetMenuItemCount();
+                    if (numItems > 1)
                     {
-                        pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                        if (pSubPopup->GetMenuItemID(numItems - 1) == 0)
+                        {
+                            pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
+                        }
                     }
                 }
             }
@@ -4824,6 +4909,18 @@ void CD2ItemsForm::OnItemContextExportitem()
 
     CString msg(_T("Item exported successfully"));
     AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextRemoveitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    const d2ce::Item* pRemovedItem = nullptr;
+    setItemLocation(*CurrItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextUpgradeGem()
