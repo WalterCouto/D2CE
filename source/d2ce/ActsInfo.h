@@ -129,7 +129,7 @@ namespace d2ce
         std::string getWaypointJsonName(EnumAct act, std::uint8_t waypoint, bool bSerializedFormat = false) const;
 
         void npcAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
-        std::string getNpcJsonName(std::uint8_t npc, bool bSerializedFormat = false) const;
+        std::string getNpcJsonName(std::uint8_t npc, bool& isOptional, bool bSerializedFormat = false) const;
 
         std::uint16_t getActIntroducedData(EnumDifficulty diff, EnumAct act) const;
         void setActIntroducedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const;

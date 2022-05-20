@@ -95,6 +95,52 @@
       "special8": {
         "graphic": 255,
         "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
       }
     },
     "difficulty": {
@@ -1163,6 +1209,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0007": {
+          "intro": true,
+          "congrats": false
+        },
         "greiz": {
           "intro": false,
           "congrats": false
@@ -1253,8 +1303,10 @@
     "vitality": 10,
     "unused_stats": 1023,
     "unused_skill_points": 249,
+    "current_hp_remainder": 255,
     "current_hp": 8191,
     "max_hp": 40,
+    "current_mana_remainder": 255,
     "current_mana": 8191,
     "max_mana": 35,
     "current_stamina": 1236,

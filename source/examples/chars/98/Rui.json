@@ -86,6 +86,52 @@
       "special8": {
         "graphic": 255,
         "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "7m7 ",
+          "tint": 81,
+          "quality": 6,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "xul ",
+          "tint": 17,
+          "quality": 4,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "xh9 ",
+          "tint": 255,
+          "quality": 4,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
       }
     },
     "difficulty": {
@@ -373,7 +419,8 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 256
       }
     },
     "quests_nm": {
@@ -1056,6 +1103,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": false
@@ -1075,6 +1126,10 @@
         "gheed": {
           "intro": false,
           "congrats": true
+        },
+        "unk0x0007": {
+          "intro": true,
+          "congrats": false
         },
         "greiz": {
           "intro": false,
@@ -1102,6 +1157,10 @@
         },
         "drogan": {
           "intro": false,
+          "congrats": true
+        },
+        "unk0x000F": {
+          "intro": true,
           "congrats": true
         },
         "alkor": {
@@ -1140,7 +1199,19 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": false
+        },
         "ormus": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0021": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0022": {
           "intro": true,
           "congrats": false
         },
@@ -1162,6 +1233,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": false
+        },
         "charsi": {
           "intro": true,
           "congrats": false
@@ -1246,7 +1321,15 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": false
+        },
         "ormus": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0022": {
           "intro": true,
           "congrats": false
         },
@@ -1380,6 +1463,7 @@
     "max_hp": 4283,
     "current_mana": 1132,
     "max_mana": 1121,
+    "current_stamina_remainder": 102,
     "current_stamina": 4963,
     "max_stamina": 1188,
     "level": 99,

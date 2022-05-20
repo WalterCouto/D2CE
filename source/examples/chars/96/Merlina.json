@@ -321,7 +321,8 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 384
       }
     },
     "quests_nm": {

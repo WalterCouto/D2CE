@@ -44,137 +44,251 @@ namespace d2ce
     constexpr std::array<std::uint8_t, 2> UNKNOWN_029 = { 0x10, 0x1E };
     constexpr std::array<std::uint8_t, 4> UNKNOWN_034 = { 0xFF, 0xFF, 0xFF, 0xFF };
     constexpr std::array<std::uint8_t, 36> UNKNOWN_05A_v100 = { 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     constexpr std::array<std::uint8_t, 2> UNKNOWN_0AF = { 0x00, 0x00 };
-    constexpr std::array<std::uint8_t, 140> UNKNOWN_0BF = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    constexpr std::array<std::uint8_t, 28> UNKNOWN_0BF = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    constexpr std::array<std::uint8_t, 76> UNKNOWN_0BF_v116 = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    constexpr std::array<std::uint8_t, 48> UNKNOWN_0DB = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    constexpr std::array<std::uint8_t, 48> UNKNOWN_11B_v116 = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    constexpr std::array<std::uint8_t, 48> DEFAULT_0DB_v115 = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v109 = { 0x01, 0x00, 0x00, 0x00 };
+    constexpr std::array<std::uint8_t, 16> UNKNOWN_10B = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+    constexpr std::array<std::uint8_t, 48> UNKNOWN_11B = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B = { 0x01, 0x00, 0x00, 0x00 };
     constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v115 = { 0x00, 0x00, 0x00, 0x00 };
 
-    void ApplyJsonAppearnces(const Json::Value& appearances, std::array<std::uint8_t, APPEARANCES_LENGTH> &appearancesValue)
+    void ApplyJsonAppearnces(const Json::Value& appearances, std::array<std::uint8_t, APPEARANCES_LENGTH>& appearancesValue)
     {
-        if (!appearances.isNull())
+        appearancesValue.fill(0xFF);
+        if (appearances.isNull())
         {
-            size_t idx = 0;
-            std::string key;
-            auto iter_end = appearances.end();
-            for (auto iter = appearances.begin(); iter != iter_end; ++iter)
+            return;
+        }
+
+        size_t idx = 0;
+        std::string key;
+        auto iter_end = appearances.end();
+        for (auto iter = appearances.begin(); iter != iter_end; ++iter)
+        {
+            if (iter->isNull())
             {
-                if (iter->isNull())
+                continue;
+            }
+
+            key = iter.name();
+            idx = 0;
+            if (_stricmp(key.c_str(), "torso") == 0)
+            {
+                idx = 1;
+            }
+            else if (_stricmp(key.c_str(), "legs") == 0)
+            {
+                idx = 2;
+            }
+            else if ((strcmp(key.c_str(), "right_arm") == 0) || (strcmp(key.c_str(), "RightArm") == 0))
+            {
+                idx = 3;
+            }
+            else if ((strcmp(key.c_str(), "left_arm") == 0) || (strcmp(key.c_str(), "LeftArm") == 0))
+            {
+                idx = 4;
+            }
+            else if ((strcmp(key.c_str(), "right_hand") == 0) || (strcmp(key.c_str(), "RightHand") == 0))
+            {
+                idx = 5;
+            }
+            else if ((strcmp(key.c_str(), "left_hand") == 0) || (strcmp(key.c_str(), "LeftHand") == 0))
+            {
+                idx = 6;
+            }
+            else if (_stricmp(key.c_str(), "shield") == 0)
+            {
+                idx = 7;
+            }
+            else if (_stricmp(key.c_str(), "special1") == 0)
+            {
+                idx = 8;
+            }
+            else if (_stricmp(key.c_str(), "special2") == 0)
+            {
+                idx = 9;
+            }
+            else if (_stricmp(key.c_str(), "special3") == 0)
+            {
+                idx = 10;
+            }
+            else if (_stricmp(key.c_str(), "special4") == 0)
+            {
+                idx = 11;
+            }
+            else if (_stricmp(key.c_str(), "special5") == 0)
+            {
+                idx = 12;
+            }
+            else if (_stricmp(key.c_str(), "special6") == 0)
+            {
+                idx = 13;
+            }
+            else if (_stricmp(key.c_str(), "special7") == 0)
+            {
+                idx = 14;
+            }
+            else if (_stricmp(key.c_str(), "special8") == 0)
+            {
+                idx = 15;
+            }
+            else if (_stricmp(key.c_str(), "head") != 0)
+            {
+                continue;
+            }
+
+            auto iter2_end = iter->end();
+            for (auto iter2 = iter->begin(); iter2 != iter2_end; ++iter2)
+            {
+                if (iter2->isNull())
                 {
                     continue;
                 }
 
-                key = iter.name();
-                idx = 0;
-                if (_stricmp(key.c_str(), "torso") == 0)
+                key = iter2.name();
+                if (_stricmp(key.c_str(), "tint") == 0)
                 {
-                    idx = 1;
+                    idx += 16;
                 }
-                else if (_stricmp(key.c_str(), "legs") == 0)
+                else if (_stricmp(key.c_str(), "graphic") != 0)
                 {
-                    idx = 2;
-                }
-                else if ((strcmp(key.c_str(), "right_arm") == 0) || (strcmp(key.c_str(), "RightArm") == 0))
-                {
-                    idx = 3;
-                }
-                else if ((strcmp(key.c_str(), "left_arm") == 0) || (strcmp(key.c_str(), "LeftArm") == 0))
-                {
-                    idx = 4;
-                }
-                else if ((strcmp(key.c_str(), "right_hand") == 0) || (strcmp(key.c_str(), "RightHand") == 0))
-                {
-                    idx = 5;
-                }
-                else if ((strcmp(key.c_str(), "left_hand") == 0) || (strcmp(key.c_str(), "LeftHand") == 0))
-                {
-                    idx = 6;
-                }
-                else if (_stricmp(key.c_str(), "shield") == 0)
-                {
-                    idx = 7;
-                }
-                else if (_stricmp(key.c_str(), "special1") == 0)
-                {
-                    idx = 8;
-                }
-                else if (_stricmp(key.c_str(), "special2") == 0)
-                {
-                    idx = 9;
-                }
-                else if (_stricmp(key.c_str(), "special3") == 0)
-                {
-                    idx = 10;
-                }
-                else if (_stricmp(key.c_str(), "special4") == 0)
-                {
-                    idx = 11;
-                }
-                else if (_stricmp(key.c_str(), "special5") == 0)
-                {
-                    idx = 12;
-                }
-                else if (_stricmp(key.c_str(), "special6") == 0)
-                {
-                    idx = 13;
-                }
-                else if (_stricmp(key.c_str(), "special7") == 0)
-                {
-                    idx = 14;
-                }
-                else if (_stricmp(key.c_str(), "special8") == 0)
-                {
-                    idx = 15;
+                    continue;
                 }
 
-                auto iter2_end = iter->end();
-                for (auto iter2 = iter->begin(); iter2 != iter2_end; ++iter2)
+                appearancesValue[idx] = std::uint8_t(iter2->asInt());
+            }
+        }
+    }
+    
+    void ApplyJsonD2RAppearnces(const Json::Value& appearances, std::array<std::uint8_t, D2R_APPEARANCES_LENGTH>& appearancesValue)
+    {
+        appearancesValue = DEFAULT_0DB_v115;
+        if (appearances.isNull())
+        {
+            return;
+        }
+
+        size_t startIdx = 0;
+        size_t idx = 0;
+        std::string key;
+        std::string typecode;
+        auto iter_end = appearances.end();
+        size_t byteSize = 12;
+        for (auto iter = appearances.begin(); iter != iter_end; ++iter)
+        {
+            if (iter->isNull())
+            {
+                continue;
+            }
+
+            static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
+
+            key = iter.name();
+            idx = 0;
+            if ((strcmp(key.c_str(), "left_hand") == 0) || (strcmp(key.c_str(), "LeftHand") == 0))
+            {
+                startIdx = byteSize;
+            }
+            else if (_stricmp(key.c_str(), "torso") == 0)
+            {
+                startIdx = 2 * byteSize;
+            }
+            else if (_stricmp(key.c_str(), "head") == 0)
+            {
+                startIdx = 3 * byteSize;
+            }
+            else if ((strcmp(key.c_str(), "right_hand") != 0) && (strcmp(key.c_str(), "RightHand") != 0))
+            {
+                continue;
+            }
+
+            auto iter2_end = iter->end();
+            for (auto iter2 = iter->begin(); iter2 != iter2_end; ++iter2)
+            {
+                if (iter2->isNull())
                 {
-                    if (iter2->isNull())
+                    continue;
+                }
+
+                idx = startIdx;
+                key = iter2.name();
+                if (_stricmp(key.c_str(), "code") == 0)
+                {
+                    typecode = iter2->asString();
+                    for (const auto& ch : typecode)
                     {
-                        continue;
-                    }
+                        if ((idx - startIdx) >= 4)
+                        {
+                            break;
+                        }
 
-                    key = iter2.name();
+                        appearancesValue[idx++] = std::uint8_t(ch);
+                    }
+                }
+                else
+                {
                     if (_stricmp(key.c_str(), "tint") == 0)
                     {
-                        idx += 16;
+                        idx += 4;
                     }
-                    else if (_stricmp(key.c_str(), "graphic") != 0)
+                    else if (_stricmp(key.c_str(), "quality") == 0)
+                    {
+                        idx += 5;
+                    }
+                    else if (_stricmp(key.c_str(), "id") == 0)
+                    {
+                        idx += 6;
+                    }
+                    else if (_stricmp(key.c_str(), "unk1") == 0)
+                    {
+                        idx += 7;
+                    }
+                    else if (_stricmp(key.c_str(), "unk2") == 0)
+                    {
+                        idx += 8;
+                    }
+                    else if (_stricmp(key.c_str(), "unk3") == 0)
+                    {
+                        idx += 9;
+                    }
+                    else if (_stricmp(key.c_str(), "unk4") == 0)
+                    {
+                        idx += 10;
+                    }
+                    else if (_stricmp(key.c_str(), "unk5") == 0)
+                    {
+                        idx += 11;
+                    }
+                    else
                     {
                         continue;
                     }
@@ -384,6 +498,7 @@ void d2ce::Character::initialize()
     LeftSwapSkill = 0;
     RightSwapSkill = 0;
     Appearances.fill(0xFF);
+    D2RAppearances = DEFAULT_0DB_v115;
 
     Bs.DifficultyLastPlayed = EnumDifficulty::Normal;
     StartingAct.fill(0);
@@ -957,13 +1072,26 @@ void d2ce::Character::readBasicInfo()
         std::fread(&MapID, sizeof(MapID), 1, m_charfile);
 
         Merc.readInfo(m_charfile);
-        if (Bs.Version > EnumCharVersion::v115)
+        std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_0BF.size(), SEEK_SET);
+        if (Bs.Version >= EnumCharVersion::v115)
         {
-            std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_0BF_v116.size(), SEEK_SET);
-            m_name_location = std::ftell(m_charfile);
-            std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
-            Bs.Name[15] = 0; // must be zero
+            std::fread(D2RAppearances.data(), D2RAppearances.size(), 1, m_charfile);
+            if (Bs.Version >= EnumCharVersion::v116)
+            {
+                m_name_location = std::ftell(m_charfile);
+                std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
+                Bs.Name[15] = 0; // must be zero
+            }
+            else
+            {
+                std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_10B.size(), SEEK_SET);
+            }
         }
+        else
+        {
+            std::fseek(m_charfile, std::ftell(m_charfile) + long(UNKNOWN_0DB.size() + UNKNOWN_10B.size()), SEEK_SET);
+        }
+        std::fseek(m_charfile, std::ftell(m_charfile) + long(UNKNOWN_11B.size() + UNKNOWN_14B.size()), SEEK_SET);
     }
 
     if (Bs.getStartingActTitle() > Bs.Title)
@@ -1244,6 +1372,15 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     jsonValue = m_bJsonSerializedFormat ? root["Appearances"] : header["menu_appearance"];
     ApplyJsonAppearnces(jsonValue, Appearances);
 
+    if (Bs.Version >= EnumCharVersion::v115)
+    {
+        if (!jsonValue.isNull())
+        {
+            jsonValue = m_bJsonSerializedFormat ? jsonValue["D2R"] : jsonValue["d2r"];
+            ApplyJsonD2RAppearnces(jsonValue, D2RAppearances);
+        }
+    }
+
     jsonValue = m_bJsonSerializedFormat ? root["AssignedSkills"] : header["assigned_skills"];
     ApplyJsonAssignedSkills(jsonValue, AssignedSkills);
 
@@ -1341,43 +1478,41 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
             return false;
         }
 
-        if (Bs.Version > EnumCharVersion::v115)
+        std::fwrite(UNKNOWN_0BF.data(), UNKNOWN_0BF.size(), 1, m_charfile);
+        if (Bs.Version >= EnumCharVersion::v115)
         {
-            // Realm data?
-            std::fwrite(UNKNOWN_0BF_v116.data(), UNKNOWN_0BF_v116.size(), 1, m_charfile);
-
-            m_name_location = std::ftell(m_charfile);
-            jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
-            if (jsonValue.isNull())
+            std::fwrite(D2RAppearances.data(), D2RAppearances.size(), 1, m_charfile);
+            if (Bs.Version >= EnumCharVersion::v116)
             {
-                return false;
+                m_name_location = std::ftell(m_charfile);
+                jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
+                if (jsonValue.isNull())
+                {
+                    return false;
+                }
+
+                // Check Name
+                // Remove any invalid characters from the name
+                std::string curName(jsonValue.asString());
+                LocalizationHelpers::CheckCharName(curName);
+                Bs.Name.fill(0);
+                strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
+                Bs.Name[15] = 0; // must be zero
+                std::fwrite(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
             }
-
-            // Check Name
-            // Remove any invalid characters from the name
-            std::string curName(jsonValue.asString());
-            LocalizationHelpers::CheckCharName(curName);
-            Bs.Name.fill(0);
-            strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
-            Bs.Name[15] = 0; // must be zero
-            std::fwrite(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
-
-            // Realm data?
-            std::fwrite(UNKNOWN_11B_v116.data(), UNKNOWN_11B_v116.size(), 1, m_charfile);
+            else
+            {
+                std::fwrite(UNKNOWN_10B.data(), UNKNOWN_10B.size(), 1, m_charfile);
+            }
+            std::fwrite(UNKNOWN_11B.data(), UNKNOWN_11B.size(), 1, m_charfile);
             std::fwrite(UNKNOWN_14B_v115.data(), UNKNOWN_14B_v115.size(), 1, m_charfile);
         }
         else
         {
-            // Realm data?
-            std::fwrite(UNKNOWN_0BF.data(), UNKNOWN_0BF.size(), 1, m_charfile);
-            if (Bs.Version < EnumCharVersion::v115)
-            {
-                std::fwrite(UNKNOWN_14B_v109.data(), UNKNOWN_14B_v109.size(), 1, m_charfile);
-            }
-            else
-            {
-                std::fwrite(UNKNOWN_14B_v115.data(), UNKNOWN_14B_v115.size(), 1, m_charfile);
-            }
+            std::fwrite(UNKNOWN_0DB.data(), UNKNOWN_0DB.size(), 1, m_charfile);
+            std::fwrite(UNKNOWN_10B.data(), UNKNOWN_10B.size(), 1, m_charfile);
+            std::fwrite(UNKNOWN_11B.data(), UNKNOWN_11B.size(), 1, m_charfile);
+            std::fwrite(UNKNOWN_14B.data(), UNKNOWN_14B.size(), 1, m_charfile);
         }
     }
 
@@ -1977,6 +2112,79 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             appearance["Tint"] = std::uint16_t(Appearances[idx + 15]);
             appearances[prop] = appearance;
         }
+
+        // D2R Appearances
+        if (Bs.Version >= EnumCharVersion::v115)
+        {
+            static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
+
+            idx = 0;
+            Json::Value d2rAppearances;
+            std::uint8_t typecodeValue = 0;
+            std::string typecode;
+            for (const auto& prop : all_d2r_appearance_props)
+            {
+                Json::Value appearance;
+                {
+                    std::stringstream ss;
+                    typecodeValue = D2RAppearances[idx++];
+                    bool bNullFound = false;
+                    if (typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+                    typecode = ss.str();
+                }
+                
+                appearance["Code"] = typecode;
+                appearance["Tint"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Quality"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Id"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk1"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk2"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk3"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk4"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk5"] = std::uint16_t(D2RAppearances[idx++]);
+                d2rAppearances[prop] = appearance;
+            }
+
+            appearances["D2R"] = d2rAppearances;
+        }
+
         parent["Appearances"] = appearances;
 
         // Location
@@ -2102,6 +2310,78 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             appearance["tint"] = std::uint16_t(Appearances[idx + 15]);
             appearances[prop] = appearance;
         }
+
+        // D2R Appearances
+        if (Bs.Version >= EnumCharVersion::v115)
+        {
+            static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
+
+            idx = 0;
+            Json::Value d2rAppearances; std::uint8_t typecodeValue = 0;
+            std::string typecode;
+            for (const auto& prop : all_d2r_appearance_props)
+            {
+                Json::Value appearance;
+                {
+                    std::stringstream ss;
+                    typecodeValue = D2RAppearances[idx++];
+                    bool bNullFound = false;
+                    if (typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+                    typecode = ss.str();
+                }
+
+                appearance["code"] = typecode;
+                appearance["tint"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["quality"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["id"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk1"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk2"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk3"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk4"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk5"] = std::uint16_t(D2RAppearances[idx++]);
+                d2rAppearances[prop] = appearance;
+            }
+
+            appearances["d2r"] = d2rAppearances;
+        }
+
         header["menu_appearance"] = appearances;
 
         // StartingAct

@@ -142,7 +142,7 @@ namespace d2ce
 
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void unknownAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
-        void byteRangeAsJson(Json::Value& parent, size_t startByte, size_t numBytes) const;
+        void bitRangeAsJson(Json::Value& parent, size_t startBit, size_t numBits) const;
 
         std::uint16_t getRawVersion() const;
 

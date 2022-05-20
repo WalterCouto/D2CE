@@ -382,7 +382,8 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 384
       }
     },
     "quests_nm": {
@@ -968,6 +969,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": false
+        },
         "charsi": {
           "intro": true,
           "congrats": false
@@ -986,6 +991,10 @@
         },
         "gheed": {
           "intro": false,
+          "congrats": false
+        },
+        "unk0x0007": {
+          "intro": true,
           "congrats": false
         },
         "greiz": {
@@ -1016,6 +1025,10 @@
           "intro": false,
           "congrats": true
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": false
+        },
         "alkor": {
           "intro": true,
           "congrats": false
@@ -1030,6 +1043,10 @@
         },
         "cain_act_iii": {
           "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
+          "intro": false,
           "congrats": true
         },
         "elzix": {
@@ -1052,7 +1069,23 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": false
+        },
         "ormus": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0021": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0022": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0023": {
           "intro": true,
           "congrats": false
         },

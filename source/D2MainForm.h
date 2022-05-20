@@ -312,7 +312,6 @@ private:	// User declarations
 
 private:
     void OpenFile(LPCTSTR filename);
-    void ExportAsJson(bool bSerializedFormat = false);
     void ClearAllBoolVars();
     void DisplayCharInfo();
     void UpdateCharInfo();

@@ -38,7 +38,7 @@ namespace d2ce
     constexpr std::uint16_t MAX_DURABILITY = 0xFF; // max durability of an item (0 is Indestructible)
 
     constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };  // alternatively "jf"
-    constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "jk"
+    constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "kf"
 
     constexpr std::uint32_t MIN_START_STATS_POS = 641;
 
@@ -168,7 +168,7 @@ namespace d2ce
         }
     }
 
-    std::uint64_t SaveGetNodeValue(Json::Value& node)
+    std::uint64_t SafeGetNodeValue(Json::Value& node)
     {
         if (node.isNull())
         {
@@ -5484,6 +5484,27 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
     case EnumItemVersion::v107: // v1.07 item
     case EnumItemVersion::v108: // v1.08 item
     case EnumItemVersion::v109: // v1.09 item
+        durability.Max = (std::uint16_t)readBits(durability_bit_offset, DURABILITY_MAX_NUM_BITS);
+        if (durability.Max == 0)
+        {
+            if (itemType.isMissileWeapon())
+            {
+                return false;
+            }
+
+            if (!isExpansionItem() && itemType.isThrownWeapon())
+            {
+                // Durability on throwing weapons is only in the Expansion
+                return false;
+            }
+
+            // Indestructible without the need for the magical attribute of indestructibility
+            return true;
+        }
+
+        durability.Current = (std::uint16_t)readBits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
+        return true;
+
     case EnumItemVersion::v110: // v1.10 - v1.14d item
     case EnumItemVersion::v115: // v1.15 Diablo II: Resurrected item
     case EnumItemVersion::v116: // v1.16 Diablo II: Resurrected Patch 2.4 item
@@ -5507,6 +5528,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         }
 
         durability.Current = (std::uint16_t)readBits(durability_bit_offset + DURABILITY_MAX_NUM_BITS, DURABILITY_CURRENT_READ_NUM_BITS);
+        durability.CurrentBit9 = (readBits(durability_bit_offset + DURABILITY_MAX_NUM_BITS + DURABILITY_CURRENT_READ_NUM_BITS, 1) != 0) ? true : false;
         return true;
     }
 }
@@ -8523,10 +8545,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             }
         }
 
-
         realm_bit_offset = current_bit_offset;
         auto realmBits = (ItemVersion >= EnumItemVersion::v115) ? REAL_DATA_NUM_BITS : REAL_DATA_NUM_BITS_110;
-        std::vector<std::uint32_t> test(realmBits / 32, 0);
         if (readBits(charfile, current_bit_offset, 1) != 0)
         {
             if (!itemType.isMiscellaneous() || itemType.isGem() || itemType.isRing() ||
@@ -10721,46 +10741,43 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         flags[20] = 1;
     }
 
-    if (!bSerializedFormat)
+    Json::Value unknowns = itemRoot["_unknown_data"];
+    if (!unknowns.isNull())
     {
-        Json::Value unknowns = itemRoot["_unknown_data"];
-        if (!unknowns.isNull())
+        struct bitRange
         {
-            struct byteRange
-            {
-                size_t startIdx = 0;
-                size_t endIdx = 0;
-            };
-            static std::vector<byteRange> unknowns_range = { {0,3},{5,10},{12,12},{14,15},{18,20},{23,23},{25,25},{27,31} };
+            size_t startIdx = 0;
+            size_t endIdx = 0;
+        };
+        static std::vector<bitRange> unknowns_range = { {0,3},{5,10},{12,12},{14,15},{18,20},{23,23},{25,25},{27,31} };
 
-            size_t bitNum = 0;
-            Json::Value unknownData;
-            for (const auto& byteInfo : unknowns_range)
+        size_t bitNum = 0;
+        Json::Value unknownData;
+        for (const auto& bitInfo : unknowns_range)
+        {
+            std::stringstream ss;
+            ss << "b" << std::dec << bitInfo.startIdx;
+            if (bitInfo.endIdx > bitInfo.startIdx)
             {
-                std::stringstream ss;
-                ss << "b" << std::dec << byteInfo.startIdx;
-                if (byteInfo.endIdx > byteInfo.startIdx)
-                {
-                    ss << "_" << std::dec << byteInfo.endIdx;
-                }
+                ss << "_" << std::dec << bitInfo.endIdx;
+            }
 
-                node = unknowns[ss.str()];
-                if (node.isNull())
+            node = unknowns[ss.str()];
+            if (node.isNull())
+            {
+                continue;
+            }
+
+            auto iter_end = node.end();
+            for (auto iter = node.begin(); iter != iter_end; ++iter)
+            {
+                if (iter->isNull())
                 {
                     continue;
                 }
 
-                auto iter_end = node.end();
-                for (auto iter = node.begin(); iter != iter_end; ++iter)
-                {
-                    if (iter->isNull())
-                    {
-                        continue;
-                    }
-
-                    bitNum = byteInfo.startIdx + size_t(std::stoi(iter.name()));
-                    SetFlagBit(*iter, bitNum, flags);
-                }
+                bitNum = bitInfo.startIdx + size_t(std::stoi(iter.name()));
+                SetFlagBit(*iter, bitNum, flags);
             }
         }
     }
@@ -11072,7 +11089,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
 
         // Check Name
-        // Remove any invalid characters from the number
+        // Remove any invalid characters from the name
         if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
         {
             return false;
@@ -11585,9 +11602,8 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-        // Following the name IDs, we got 6 possible magical affixes, the pattern
-        // is 1 bit id, 11 bit value... But the value will only exist if the prefix
-        // is 1. 
+        // Following the name IDs, we got 6 possible magical affixes, the pattern is
+        // 1 bit id, 11 bit value... But the value will only exist if the prefix is 1. 
         if (bSerializedFormat)
         {
             Json::Value prefixIdsNode = itemRoot["MagicPrefixIds"];
@@ -11788,7 +11804,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
 
         // Check Name
-        // Remove any invalid characters from the number
+        // Remove any invalid characters from the name
         std::array<char, NAME_LENGTH> playerName;
         if (!ItemHelpers::ProcessNameNode(node, playerName))
         {
@@ -11876,9 +11892,58 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     realm_bit_offset = current_bit_offset;
     value = 0;
     bitSize = 1;
-    if (!setBits(current_bit_offset, bitSize, value))
+    size_t realmBits;
+    std::vector<std::uint32_t> realmData;
+    if (!unknowns.isNull())
     {
-        return false;
+        node = unknowns["realm_data"];
+        if (!node.isNull())
+        {
+            if (!itemType.isMiscellaneous() || itemType.isGem() || itemType.isRing() ||
+                itemType.isAmulet() || itemType.isCharm() || itemType.isRune())
+            {
+                realmBits = (ItemVersion >= EnumItemVersion::v115) ? REAL_DATA_NUM_BITS : REAL_DATA_NUM_BITS_110;
+                auto numItems = ((realmBits + 31) / 32);
+                if (node.size() == numItems)
+                {
+                    value = 1;
+                    auto iter_end = node.end();
+                    for (auto iter = node.begin(); iter != iter_end; ++iter)
+                    {
+                        realmData.push_back(std::uint32_t(iter->asInt64()));
+                    }
+                }
+            }
+            else if (node.size() == 1)
+            {
+                value = 1;
+                realmBits = 3;
+                realmData.push_back(std::uint32_t(node[0].asInt64()));
+            }
+        }
+
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            return false;
+        }
+
+        if (value == 1)
+        {
+            for (const auto& realmValue : realmData)
+            {
+                auto writeSize = std::min(realmBits, size_t(32));
+                if (writeSize == 0)
+                {
+                    break;
+                }
+
+                realmBits -= writeSize;
+                if (!setBits(current_bit_offset, writeSize, realmValue))
+                {
+                    return false;
+                }
+            }
+        }
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
@@ -11928,7 +11993,8 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             node = itemRoot[bSerializedFormat ? "Durability" : "current_durability"];
             if (!node.isNull())
             {
-                value = std::uint16_t(node.asInt64());
+                auto mask = (1ui16 << bitSize) - 1;
+                value = std::uint16_t(node.asInt64() & mask);
             }
 
             if (!setBits(current_bit_offset, bitSize, value))
@@ -12394,7 +12460,12 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         item["MaxDurability"] = durability.Max;
         if (durability.Max > 0)
         {
-            item["Durability"] = durability.Current;
+            auto durValue = durability.Current & 0xFF;
+            if (durability.CurrentBit9)
+            {
+                durValue |= 0x100;
+            }
+            item["Durability"] = durValue;
         }
         else if (!isExpansionItem() && itemType.isThrownWeapon())
         {
@@ -12439,6 +12510,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         item["IsEthereal"] = isEthereal();
         item["IsPersonalized"] = isPersonalized();
         item["IsRuneword"] = isRuneword();
+        unknownAsJson(item, bSerializedFormat);
 
         if (parent.isArray())
         {
@@ -12451,7 +12523,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
     }
     else
     {
-        unknownAsJson(item);
+        unknownAsJson(item, bSerializedFormat);
         item["identified"] = (isIdentified() ? 1 : 0);
         item["socketed"] = (isSocketed() ? 1 : 0);
         item["new"] = (isNew() ? 1 : 0);
@@ -12626,7 +12698,18 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                 item["max_durability"] = durability.Max;
                 if (durability.Max > 0)
                 {
-                    item["current_durability"] = durability.Current;
+                    auto durValue = durability.Current & 0xFF;
+                    if (durability.CurrentBit9)
+                    {
+                        durValue |= 0x100;
+                    }
+                    item["current_durability"] = durValue;
+                }
+                else if (!isExpansionItem() && itemType.isThrownWeapon())
+                {
+                    // Durability on throwing weapons is only in the Expansion
+                    item["max_durability"] = itemType.durability.Max;
+                    item["current_durability"] = itemType.durability.Max;
                 }
             }
 
@@ -12787,14 +12870,48 @@ void d2ce::Item::unknownAsJson(Json::Value& parent, bool /*bSerializedFormat*/) 
     Json::Value unknownData;
     for (const auto& byteInfo : unknowns)
     {
-        byteRangeAsJson(unknownData, byteInfo.startIdx, byteInfo.endIdx);
+        bitRangeAsJson(unknownData, byteInfo.startIdx, byteInfo.endIdx);
+    }
+
+    if (getRealmDataFlag())
+    {
+        size_t current_bit_offset = realm_bit_offset + 1;
+
+        Json::Value unknownBytes;
+        auto itemType = getItemTypeHelper();
+        if (!itemType.isMiscellaneous() || itemType.isGem() || itemType.isRing() ||
+            itemType.isAmulet() || itemType.isCharm() || itemType.isRune())
+        {
+            auto realmBits = (ItemVersion >= EnumItemVersion::v115) ? REAL_DATA_NUM_BITS : REAL_DATA_NUM_BITS_110;
+            std::uint16_t numBits = 32;
+            while (realmBits > 0)
+            {
+                auto readSize = std::min(realmBits, numBits);
+                std::stringstream ss;
+                ss << "b" << std::dec << current_bit_offset;
+                ss << "_" << std::dec << (current_bit_offset + readSize);
+                unknownBytes[ss.str()] = readBits(current_bit_offset, readSize);
+                current_bit_offset += readSize;
+                realmBits -= readSize;
+            }
+        }
+        else
+        {
+            std::uint16_t numBits = 3;
+            std::stringstream ss;
+            ss << "b" << std::dec << current_bit_offset;
+            ss << "_" << std::dec << (current_bit_offset + numBits);
+            unknownBytes[ss.str()] = readBits(current_bit_offset, numBits);
+            current_bit_offset += numBits;
+        }
+        unknownData["realm_data"] = unknownBytes;
     }
     parent["_unknown_data"] = unknownData;
 }
 //---------------------------------------------------------------------------
-void d2ce::Item::byteRangeAsJson(Json::Value& parent, size_t startByte, size_t endByte) const
+void d2ce::Item::bitRangeAsJson(Json::Value& parent, size_t startBit, size_t endBit) const
 {
-    if (endByte < startByte)
+    if (endBit < startBit)
     {
         return;
     }
@@ -12802,22 +12919,22 @@ void d2ce::Item::byteRangeAsJson(Json::Value& parent, size_t startByte, size_t e
     std::string propName;
     {
         std::stringstream ss;
-        ss << "b" << std::dec << startByte;
-        if (endByte > startByte)
+        ss << "b" << std::dec << startBit;
+        if (endBit > startBit)
         {
-            ss << "_" << std::dec << endByte;
+            ss << "_" << std::dec << endBit;
         }
 
         propName = ss.str();
     }
 
     Json::Value unknownData;
-    startByte += start_bit_offset;
-    endByte += start_bit_offset;
-    for (size_t idx = startByte; idx <= endByte; ++idx)
+    startBit += start_bit_offset;
+    endBit += start_bit_offset;
+    for (size_t idx = startBit; idx <= endBit; ++idx)
     {
         std::stringstream ss;
-        ss << std::dec << (idx - startByte);
+        ss << std::dec << (idx - startBit);
         unknownData[ss.str()] = readBits(idx, 1);
     }
     parent[propName] = unknownData;
@@ -12959,7 +13076,6 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
 bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerializedFormat, size_t& current_bit_offset)
 {
     std::uint16_t id = 0x1FF;
-    std::uint16_t nextId = 0x1FF;
     std::int64_t value = 0;
     std::vector<std::int64_t> values;
     size_t valueIdx = 0;
@@ -13009,141 +13125,96 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
 
         if (bSerializedFormat)
         {
-            switch (id)
+            if (stat.encode == 2)
             {
-            case 17:
-            case 48:
-            case 50:
-            case 52:
-                node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-
-                ++iter;
-                if (iter == iter_end)
-                {
-                    return false;
-                }
-
-                node = iter->operator[](bSerializedFormat ? "Id" : "id");
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                nextId = id + 1;
-                id = std::uint16_t(node.asInt64());
-                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
-                {
-                    return false;
-                }
-
-                node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-                break;
-
-            case 54:
-            case 57:
-                node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-
-                ++iter;
-                if (iter == iter_end)
-                {
-                    return false;
-                }
-
-                node = iter->operator[]("Id");
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                nextId = id + 1;
-                id = std::uint16_t(node.asInt64());
-                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
-                {
-                    return false;
-                }
-
-                node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-
-                ++iter;
-                if (iter == iter_end)
-                {
-                    return false;
-                }
-
-                node = iter->operator[]("Id");
-                if (node.isNull())
-                {
-                    return false;
-                }
-
-                nextId = id + 1;
-                id = std::uint16_t(node.asInt64());
-                if (id != nextId || !ItemHelpers::hasItemStat(getVersion(), id))
-                {
-                    return false;
-                }
-
-                node = iter->operator[]("Values");
-                values.push_back(SaveGetNodeValue(node));
-                break;
-
-            case 188:
-                node = iter->operator[]("SkillTab");
-                values.push_back(SaveGetNodeValue(node));
-
                 node = iter->operator[]("SkillLevel");
-                values.push_back(SaveGetNodeValue(node));
-
-                node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-                break;
-
-            case 195:
-            case 196:
-            case 197:
-            case 198:
-            case 199:
-            case 201:
-                node = iter->operator[]("SkillLevel");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 node = iter->operator[]("SkillId");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 values.push_back(node.asInt64());
-                break;
-
-            case 204:
+            }
+            else if (stat.encode == 3)
+            {
                 node = iter->operator[]("SkillLevel");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 node = iter->operator[]("SkillId");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 node = iter->operator[]("MaxCharges");
-                values.push_back(SaveGetNodeValue(node));
+                values.push_back(SafeGetNodeValue(node));
 
                 node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-                break;
+                values.push_back(SafeGetNodeValue(node));
+            }
+            else if (id == 188)
+            {
+                node = iter->operator[]("SkillTab");
+                values.push_back(SafeGetNodeValue(node));
 
-            default:
+                node = iter->operator[]("SkillLevel");
+                values.push_back(SafeGetNodeValue(node));
+
+                node = iter->operator[]("Value");
+                values.push_back(SafeGetNodeValue(node));
+            }
+            else
+            {
                 if (stat.saveParamBits > 0)
                 {
                     node = iter->operator[]("Param");
-                    values.push_back(SaveGetNodeValue(node));
+                    values.push_back(SafeGetNodeValue(node));
                 }
 
                 node = iter->operator[]("Value");
-                values.push_back(SaveGetNodeValue(node));
-                break;
+                values.push_back(SafeGetNodeValue(node));
+
+                nextInChain = stat.nextInChain;
+                while (nextInChain && values.size() < 4)
+                {
+                    ++iter;
+                    if (iter == iter_end)
+                    {
+                        // corrupt file
+                        return false;
+                    }
+
+                    node = iter->operator[]("Id");
+                    if (node.isNull())
+                    {
+                        // corrupt file
+                        return false;
+                    }
+
+                    id = std::uint16_t(node.asInt64());
+                    if (id != nextInChain)
+                    {
+                        // corrupt file
+                        return false;
+                    }
+
+                    const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
+                    if (statNext.id != nextInChain)
+                    {
+                        // corrupt file
+                        return false;
+                    }
+
+                    if (statNext.saveParamBits != 0)
+                    {
+                        // corrupt file
+                        return false;
+                    }
+
+                    node = iter->operator[]("Value");
+                    values.push_back(SafeGetNodeValue(node));
+                    nextInChain = statNext.nextInChain;
+                }
             }
         }
         else
@@ -13157,7 +13228,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             auto iter2_end = node.end();
             for (auto iter2 = node.begin(); iter2 != iter2_end; ++iter2)
             {
-                values.push_back(SaveGetNodeValue(*iter2));
+                values.push_back(SafeGetNodeValue(*iter2));
             }
         }
 
@@ -13469,6 +13540,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         magicalAttrib.Version = itemVersion;
         magicalAttrib.GameVersion = gameVersion;
         magicalAttrib.DescPriority = stat.descPriority;
+        magicalAttrib.encode = stat.encode;
 
         // saveBits being zero or >= 64 is unrecoverably bad, and
         // encode type 4 is only used by stats that were never implemented (time-based stats)

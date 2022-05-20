@@ -18,11 +18,13 @@
 
 Revision History
 ================
-Version 2.16 (May 16, 2022)
+Version 2.16 (May 20, 2022)
    - Updated: fix up mercenary for PTR 2.4 changes to Barbarian
    - Updated: reorganized item context menu
    - Updated: fixed "reload" issue with mercenary data that would
               not read the items.
+   - Updated: modified json export to contain more information to
+              allow it to recreate a d2s file more accurately.
 
    - Added: add support for dragging and dropping items.
    - Added: add d2i item files and support for import/export 

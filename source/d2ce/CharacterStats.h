@@ -134,7 +134,7 @@ namespace d2ce
 
         void updateClass();
 
-        std::string getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat = false) const;
+        std::string getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat = false, bool bRemainder = false) const;
         void attributesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void skillsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const;

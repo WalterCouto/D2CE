@@ -326,9 +326,16 @@ void d2ce::ActsInfo::applyJsonActComplete(const Json::Value& actCompleteRoot, bo
             }
         }
     }
-    else if (actCompleteRoot.asBool())
+    else if (actCompleteRoot.isBool())
     {
-        questValue[0] = 1;
+        if (actCompleteRoot.asBool())
+        {
+            questValue[0] = 1;
+        }
+    }
+    else
+    {
+        questValue = std::uint16_t(actCompleteRoot.asInt64());
     }
 
     setActCompletedData(diff, act, std::uint16_t(questValue.to_ulong()));
@@ -349,6 +356,7 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
     std::string key;
     std::string name;
     auto iter_end = questActRoot.end();
+    bool bAppliedCompletedValue = false;
     for (auto iter = questActRoot.begin(); iter != iter_end; ++iter)
     {
         if (iter->isNull())
@@ -363,6 +371,14 @@ void d2ce::ActsInfo::applyJsonQuestAct(const Json::Value& questActRoot, bool bSe
         }
         else if (_stricmp(key.c_str(), (bSerializedFormat ? "Completion" : "completed")) == 0)
         {
+            if (bSerializedFormat || !bAppliedCompletedValue)
+            {
+                applyJsonActComplete(*iter, bSerializedFormat, diff, act);
+            }
+        }
+        else if (!bSerializedFormat && (_stricmp(key.c_str(), "completed_value")) == 0)
+        {
+            bAppliedCompletedValue = true;
             applyJsonActComplete(*iter, bSerializedFormat, diff, act);
         }
         else
@@ -921,10 +937,11 @@ void d2ce::ActsInfo::applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bo
             continue;
         }
 
+        bool isOptional = false;
         key = iter.name();
         for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
         {
-            name = getNpcJsonName(npc, bSerializedFormat);
+            name = getNpcJsonName(npc, isOptional, bSerializedFormat);
             if (name.empty())
             {
                 continue;
@@ -1492,6 +1509,15 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) c
                     questAct[getQuestJsonName(act, quest, bSerializedFormat)] = questElement;
                 }
                 questAct["completed"] = getActCompletedStrict(diff, act); // Make sure we always reflect the actual value not the possible implied value for Act V
+                if (act == EnumAct::V)
+                {
+                    auto actVCompete = getActVResetStatCompletedData(diff);
+                    if (actVCompete > 1)
+                    {
+                        questAct["completed_value"] = actVCompete;
+                    }
+                }
+
                 questDiff[getActJsonName(act, bSerializedFormat)] = questAct;
             }
             parent[getQuestsJsonName(diff, bSerializedFormat)] = questDiff;
@@ -2024,6 +2050,7 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool bSerializedFormat) cons
 {
     static std::initializer_list<EnumDifficulty> all_diff = { EnumDifficulty::Normal, EnumDifficulty::Nightmare, EnumDifficulty::Hell };
 
+    bool isOptional = false;
     if (bSerializedFormat)
     {
         Json::Value npcDialog;
@@ -2039,7 +2066,7 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool bSerializedFormat) cons
             for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
             {
                 Json::Value npcElement;
-                npcName = getNpcJsonName(npc, bSerializedFormat);
+                npcName = getNpcJsonName(npc, isOptional, bSerializedFormat);
                 if (npcName.empty())
                 {
                     continue;
@@ -2066,8 +2093,13 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool bSerializedFormat) cons
             for (std::uint8_t npc = 0; npc < intro.size(); ++npc)
             {
                 Json::Value npcElement;
-                npcName = getNpcJsonName(npc, bSerializedFormat);
+                npcName = getNpcJsonName(npc, isOptional, bSerializedFormat);
                 if (npcName.empty())
+                {
+                    continue;
+                }
+
+                if (isOptional && (intro[npc] == 0) && (congrats[npc] == 0))
                 {
                     continue;
                 }
@@ -2082,19 +2114,17 @@ void d2ce::ActsInfo::npcAsJson(Json::Value& parent, bool bSerializedFormat) cons
     }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFormat) const
+std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool& isOptional, bool bSerializedFormat) const
 {
+    isOptional = false;
     switch (npc)
     {
     case 0:
         return bSerializedFormat ? "WarrivActII" : "warriv_act_ii";
 
     case 1:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0001";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0001" : "unk0x0001";
 
     case 2:
         return bSerializedFormat ? "Charsi" : "charsi";
@@ -2112,11 +2142,8 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return bSerializedFormat ? "Gheed" : "gheed";
 
     case 7:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0007";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0007" : "unk0x0007";
 
     case 8:
         return bSerializedFormat ? "Greiz" : "greiz";
@@ -2140,11 +2167,8 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return bSerializedFormat ? "Drogan" : "drogan";
 
     case 15:
-        if (bSerializedFormat)
-        {
-            return "Unk0x000F";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x000F" : "unk0x000F";
 
     case 16:
         return bSerializedFormat ? "Alkor" : "alkor";
@@ -2156,28 +2180,19 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return bSerializedFormat ? "Ashera" : "ashera";
 
     case 19:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0013";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0013" : "unk0x0013";
 
     case 20:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0014";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0014" : "unk0x0014";
 
     case 21:
         return bSerializedFormat ? "CainActIII" : "cain_act_iii";
 
     case 22:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0016";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0016" : "unk0x0016";
 
     case 23:
         return bSerializedFormat ? "Elzix" : "elzix";
@@ -2189,11 +2204,8 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Anya" : "anya") : "";
 
     case 26:
-        if (bSerializedFormat)
-        {
-            return "Unk0x001A";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x001A" : "unk0x001A";
 
     case 27:
         return bSerializedFormat ? "Natalya" : "natalya";
@@ -2202,56 +2214,36 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return bSerializedFormat ? "MeshifActIII" : "meshif_act_iii";
 
     case 29:
-        if (bSerializedFormat)
-        {
-            return "Unk0x001D";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x001D" : "unk0x001D";
 
     case 30:
-        if (bSerializedFormat)
-        {
-            return "Unk0x001F";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x001F" : "unk0x001F";
 
     case 31:
         return bSerializedFormat ? "Ormus" : "ormus";
 
     case 32:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0021";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0021" : "unk0x0021";
 
     case 33:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0022";
-        }
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0022" : "unk0x0022";
         break;
 
     case 34:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0023";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0023" : "unk0x0023";
 
     case 35:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0024";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0024" : "unk0x0024";
 
     case 36:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0025";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0025" : "unk0x0025";
 
     case 37:
         return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "CainActV" : "cain_act_v") : "";
@@ -2263,13 +2255,11 @@ std::string d2ce::ActsInfo::getNpcJsonName(std::uint8_t npc, bool bSerializedFor
         return CharInfo.isExpansionCharacter() ? (bSerializedFormat ? "Nihlathak" : "nihlathak") : "";
 
     case 40:
-        if (bSerializedFormat)
-        {
-            return "Unk0x0029";
-        }
-        break;
+        isOptional = bSerializedFormat ? false : true;
+        return bSerializedFormat ? "Unk0x0029" : "unk0x0029";
     }
 
+    isOptional = true;
     return "";
 }
 //---------------------------------------------------------------------------
@@ -2412,7 +2402,7 @@ void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::
     if (actNum < 3)
     {
         Acts[diffNum].Act[actNum].Completed = value;
-        if ((value != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
+        if (((value & 0x1) != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
         {
             // Make sure act intro is set properly
             Acts[diffNum].Act[actNum].Intro = 1;
@@ -2424,16 +2414,17 @@ void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::
     {
         // "Completed" flag is at index 3 of the quests
         Acts[diffNum].Act[actNum].Quests[3] = value;
-        if ((value != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
+        if (((value & 0x1) != 0) && (Acts[diffNum].Act[actNum].Intro == 0))
         {
             // Make sure act intro is set properly
             Acts[diffNum].Act[actNum].Intro = 1;
         }
         return;
     }
-
-    Acts[diffNum].ActV.Completed = std::uint8_t(value);
-    if ((value != 0) && (Acts[diffNum].ActV.Intro == 0))
+    
+    Acts[diffNum].ActV.ResetStats = std::uint8_t((value >> 8) & 0xFF);
+    Acts[diffNum].ActV.Completed = std::uint8_t(value & 0xFF);
+    if (((value & 0x1) != 0) && (Acts[diffNum].ActV.Intro == 0))
     {
         // Make sure act intro is set properly
         Acts[diffNum].ActV.Intro = 1;

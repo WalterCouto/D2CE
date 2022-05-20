@@ -1674,6 +1674,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": true
@@ -1691,6 +1695,10 @@
           "congrats": true
         },
         "gheed": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0007": {
           "intro": true,
           "congrats": true
         },
@@ -1722,6 +1730,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": true
+        },
         "alkor": {
           "intro": true,
           "congrats": true
@@ -1734,7 +1746,19 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0013": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0014": {
+          "intro": true,
+          "congrats": true
+        },
         "cain_act_iii": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
           "intro": true,
           "congrats": true
         },
@@ -1750,6 +1774,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001A": {
+          "intro": true,
+          "congrats": true
+        },
         "natalya": {
           "intro": true,
           "congrats": true
@@ -1758,7 +1786,35 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001D": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": true
+        },
         "ormus": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0021": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0022": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0023": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0024": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0025": {
           "intro": true,
           "congrats": true
         },
@@ -1780,6 +1836,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": true
@@ -1797,6 +1857,10 @@
           "congrats": true
         },
         "gheed": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0007": {
           "intro": true,
           "congrats": true
         },
@@ -1828,6 +1892,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": true
+        },
         "alkor": {
           "intro": true,
           "congrats": true
@@ -1840,7 +1908,19 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0013": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0014": {
+          "intro": true,
+          "congrats": true
+        },
         "cain_act_iii": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
           "intro": true,
           "congrats": true
         },
@@ -1856,6 +1936,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001A": {
+          "intro": true,
+          "congrats": true
+        },
         "natalya": {
           "intro": true,
           "congrats": true
@@ -1864,7 +1948,35 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001D": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": true
+        },
         "ormus": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0021": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0022": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0023": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0024": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0025": {
           "intro": true,
           "congrats": true
         },
@@ -1886,6 +1998,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": true
@@ -1903,6 +2019,10 @@
           "congrats": true
         },
         "gheed": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0007": {
           "intro": true,
           "congrats": true
         },
@@ -1934,6 +2054,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": true
+        },
         "alkor": {
           "intro": true,
           "congrats": true
@@ -1946,7 +2070,19 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x0013": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0014": {
+          "intro": true,
+          "congrats": true
+        },
         "cain_act_iii": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
           "intro": true,
           "congrats": true
         },
@@ -1962,6 +2098,10 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001A": {
+          "intro": true,
+          "congrats": true
+        },
         "natalya": {
           "intro": true,
           "congrats": true
@@ -1970,7 +2110,35 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001D": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": true
+        },
         "ormus": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0021": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0022": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0023": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0024": {
+          "intro": true,
+          "congrats": true
+        },
+        "unk0x0025": {
           "intro": true,
           "congrats": true
         },
@@ -1994,10 +2162,13 @@
     "energy": 15,
     "dexterity": 168,
     "vitality": 379,
+    "current_hp_remainder": 179,
     "current_hp": 1384,
     "max_hp": 974,
+    "current_mana_remainder": 8,
     "current_mana": 294,
     "max_mana": 210,
+    "current_stamina_remainder": 99,
     "current_stamina": 860,
     "max_stamina": 540,
     "level": 99,

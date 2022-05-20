@@ -991,9 +991,7 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_COMMAND(ID_FILE_OPEN, &CD2MainForm::OnFileOpen)
     ON_MESSAGE(WM_OPEN_DLG_FILE, &CD2MainForm::OnMRUFileOpen)
     ON_COMMAND(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnFileExportAsJson)
-    ON_COMMAND(ID_FILE_EXPORT_AS_JSON_SERIALIZED, &CD2MainForm::OnFileExportAsSerializedJson)
     ON_UPDATE_COMMAND_UI(ID_FILE_EXPORT_AS_JSON, &CD2MainForm::OnUpdateFileExportAsJson)
-    ON_UPDATE_COMMAND_UI(ID_FILE_EXPORT_AS_JSON_SERIALIZED, &CD2MainForm::OnUpdateFileExportAsJson)
     ON_COMMAND(ID_VIEW_REFRESH, &CD2MainForm::OnViewRefresh)
     ON_UPDATE_COMMAND_UI(ID_VIEW_REFRESH, &CD2MainForm::OnUpdateViewRefresh)
     ON_CBN_SELCHANGE(IDC_DIFFICULTY, &CD2MainForm::OnCbnSelchangeDifficultyCmb)
@@ -3224,7 +3222,7 @@ void CD2MainForm::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && CharInfo.is_json()) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
-void CD2MainForm::ExportAsJson(bool bSerializedFormat)
+void CD2MainForm::OnFileExportAsJson()
 {
     if (!CharInfo.is_open())
     {
@@ -3237,12 +3235,17 @@ void CD2MainForm::ExportAsJson(bool bSerializedFormat)
 
     CFileDialog fileDialog(FALSE, _T("json"), filename,
         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-        _T("JSON file  (*.json)|*.json|"), this);
-
+        _T("JSON file  (*.json)|*.json|"), this, 0, TRUE);
+    const int check_id = 101;
+    fileDialog.AddCheckButton(check_id, L"Serialized Format", FALSE);
     if (fileDialog.DoModal() != IDOK)
     {
         return;
     }
+
+    BOOL check = TRUE;
+    fileDialog.GetCheckButtonState(check_id, check);
+    bool bSerializedFormat = check ? true : false;
 
     CWaitCursor wait;
     auto jsonfilename = utf8::utf16to8(reinterpret_cast<const char16_t*>(fileDialog.GetPathName().GetString()));
@@ -3261,16 +3264,6 @@ void CD2MainForm::ExportAsJson(bool bSerializedFormat)
     CString msg(_T("Character stats exported to JSON"));
     StatusBar.SetWindowText(msg);
     AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
-}
-
-void CD2MainForm::OnFileExportAsJson()
-{
-    ExportAsJson(false);
-}
-
-void CD2MainForm::OnFileExportAsSerializedJson()
-{
-    ExportAsJson(true);
 }
 
 void CD2MainForm::OnUpdateFileExportAsJson(CCmdUI* pCmdUI)

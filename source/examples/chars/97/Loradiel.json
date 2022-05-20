@@ -86,6 +86,52 @@
       "special8": {
         "graphic": 255,
         "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "scp ",
+          "tint": 255,
+          "quality": 8,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "pa4 ",
+          "tint": 255,
+          "quality": 8,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "ful ",
+          "tint": 255,
+          "quality": 8,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "ghm ",
+          "tint": 255,
+          "quality": 8,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
       }
     },
     "difficulty": {
@@ -323,7 +369,8 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 640
       }
     },
     "quests_nm": {
@@ -909,6 +956,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": true
@@ -928,6 +979,10 @@
         "gheed": {
           "intro": false,
           "congrats": true
+        },
+        "unk0x0007": {
+          "intro": true,
+          "congrats": false
         },
         "greiz": {
           "intro": false,
@@ -955,6 +1010,10 @@
         },
         "drogan": {
           "intro": false,
+          "congrats": false
+        },
+        "unk0x000F": {
+          "intro": true,
           "congrats": false
         },
         "alkor": {
@@ -1232,6 +1291,7 @@
     "unused_skill_points": 1,
     "current_hp": 1811,
     "max_hp": 144,
+    "current_mana_remainder": 128,
     "current_mana": 672,
     "max_mana": 60,
     "current_stamina": 601,
@@ -7449,6 +7509,12 @@
           "2": 0,
           "3": 0,
           "4": 0
+        },
+        "realm_data": {
+          "b131_163": 4294967295,
+          "b163_195": 4294967295,
+          "b195_227": 0,
+          "b227_259": 263194586
         }
       },
       "identified": 1,
@@ -7483,7 +7549,7 @@
       "timestamp": 1,
       "defense_rating": 2000,
       "max_durability": 16,
-      "current_durability": 232,
+      "current_durability": 488,
       "total_nr_of_sockets": 3,
       "magic_attributes": [
         {

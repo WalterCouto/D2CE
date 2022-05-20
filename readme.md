@@ -77,10 +77,11 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.16 (May 16, 2022)**
+**Version 2.16 (May 20, 2022)**
 - Updated: fix up mercenary for PTR 2.4 changes to Barbarian<br>
 - Updated: reorganized item context menu<br>
 - Updated: fixed "reload" issue with mercenary data that would not read the items.<br>
+- Updated: modified json export to contain more information to allow it to recreate a d2s file more accurately.<br>
 <br>
 
 - Added: add support for dragging and dropping items.<br>

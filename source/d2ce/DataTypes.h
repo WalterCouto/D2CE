@@ -353,6 +353,7 @@ namespace d2ce
         EnumItemVersion Version = EnumItemVersion::v100;
         std::uint16_t GameVersion = 0;
         std::uint8_t DescPriority = 0;   // The higher this value is the further up in the item description this stat will be listed
+        std::uint8_t encode = 0;
 
         void clear()
         {
@@ -365,6 +366,7 @@ namespace d2ce
             Visible = true;
             Version = EnumItemVersion::v100;
             GameVersion = 0;
+            encode = 0;
         }
 
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const
@@ -469,9 +471,9 @@ namespace d2ce
                         attrib["Stat"] = "poisonlength";
                         break;
                     }
-                    if (Values.size() > 1)
+                    if (Values.size() > 2)
                     {
-                        attrib["Value"] = Values[1];
+                        attrib["Value"] = Values[2];
                     }
                     else
                     {
@@ -508,80 +510,96 @@ namespace d2ce
                     }
                     break;
 
-                case 195:
-                case 196:
-                case 197:
-                case 198:
-                case 199:
-                case 201:
-                    if (Values.size() > 1)
-                    {
-                        attrib["SkillId"] = Values[1];
-                    }
-                    else
-                    {
-                        attrib["SkillId"] = 0;
-                    }
-
-                    if (!Values.empty())
-                    {
-                        attrib["SkillLevel"] = Values[0];
-                    }
-                    else
-                    {
-                        attrib["SkillLevel"] = 0;
-                    }
-
-                    if (Values.size() > 2)
-                    {
-                        attrib["Value"] = Values[2];
-                    }
-                    else
-                    {
-                        attrib["Value"] = 0;
-                    }
-                    break;
-
-                case 204:
-                    if (Values.size() > 1)
-                    {
-                        attrib["SkillId"] = Values[1];
-                    }
-                    else
-                    {
-                        attrib["SkillId"] = 0;
-                    }
-
-                    if (!Values.empty())
-                    {
-                        attrib["SkillLevel"] = Values[0];
-                    }
-                    else
-                    {
-                        attrib["SkillLevel"] = 0;
-                    }
-
-                    if (Values.size() > 2)
-                    {
-                        attrib["MaxCharges"] = Values[2];
-                    }
-                    else
-                    {
-                        attrib["MaxCharges"] = 0;
-                    }
-
-                    if (Values.size() > 3)
-                    {
-                        attrib["Value"] = Values[3];
-                    }
-                    else
-                    {
-                        attrib["Value"] = 0;
-                    }
-                    break;
-
                 default:
-                    if (Values.size() >= 2)
+                    if (encode == 2)
+                    {
+                        if (Values.size() > 1)
+                        {
+                            attrib["SkillId"] = Values[1];
+                        }
+                        else
+                        {
+                            attrib["SkillId"] = 0;
+                        }
+
+                        if (!Values.empty())
+                        {
+                            attrib["SkillLevel"] = Values[0];
+                        }
+                        else
+                        {
+                            attrib["SkillLevel"] = 0;
+                        }
+
+                        if (Values.size() > 2)
+                        {
+                            attrib["Value"] = Values[2];
+                        }
+                        else
+                        {
+                            attrib["Value"] = 0;
+                        }
+                    }
+                    else if (encode == 3)
+                    {
+                        if (Values.size() > 1)
+                        {
+                            attrib["SkillId"] = Values[1];
+                        }
+                        else
+                        {
+                            attrib["SkillId"] = 0;
+                        }
+
+                        if (!Values.empty())
+                        {
+                            attrib["SkillLevel"] = Values[0];
+                        }
+                        else
+                        {
+                            attrib["SkillLevel"] = 0;
+                        }
+
+                        if (Values.size() > 2)
+                        {
+                            attrib["MaxCharges"] = Values[2];
+                        }
+                        else
+                        {
+                            attrib["MaxCharges"] = 0;
+                        }
+
+                        if (Values.size() > 3)
+                        {
+                            attrib["Value"] = Values[3];
+                        }
+                        else
+                        {
+                            attrib["Value"] = 0;
+                        }
+                    }
+                    else if (encode == 4)
+                    {
+                        // time-based stats were never implemented, but we handle them
+                        std::uint64_t value = 0;
+                        switch (Values.size())
+                        {
+                        case 1:
+                            value = Values[0];
+                            break;
+
+                        case 3:
+                            value |= (Values[2] & 0x3FF) << 12;
+                            if (Values.size() > 1)
+                            {
+                                value |= (Values[1] & 0x3FF) << 2;
+                            }
+                            value |= Values[0] & 0x3;
+                            break;
+                        }
+                        attrib["Value"] = value;
+                    }
+                    else if (Values.size() >= 2)
                     {
                         attrib["Param"] = Values[0];
                         attrib["Value"] = Values[1];
@@ -935,12 +953,14 @@ namespace d2ce
         std::uint16_t Current = 0;
         std::uint16_t Max = 0;
         std::uint16_t Base = 0;
+        bool CurrentBit9 = false; // for v1.10 and higher we have an unknown 9th bit for Current value
 
         void clear()
         {
             Current = 0;
             Max = 0;
             Base = 0;
+            CurrentBit9 = false;
         }
     };
 

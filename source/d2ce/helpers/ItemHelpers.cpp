@@ -6198,6 +6198,7 @@ namespace d2ce
                             attrib.Version = version;
                             attrib.GameVersion = gameVersion;
                             attrib.DescPriority = stat.descPriority;
+                            attrib.encode = stat.encode;
                             magicalAttributes.push_back(attrib);
                             chainedAttribs[stat.id] = { 1, stat.nextInChain, magicalAttributes.size() - 1 };
                         }
@@ -6226,6 +6227,7 @@ namespace d2ce
                                 attrib.Version = version;
                                 attrib.GameVersion = gameVersion;
                                 attrib.DescPriority = stat.descPriority;
+                                attrib.encode = stat.encode;
                                 magicalAttributes.push_back(attrib);
                                 chainedAttribs[stat.id] = { 1, 0, magicalAttributes.size() - 1 };
                             }
@@ -6237,6 +6239,7 @@ namespace d2ce
                             attrib.Version = version;
                             attrib.GameVersion = gameVersion;
                             attrib.DescPriority = stat.descPriority;
+                            attrib.encode = stat.encode;
                             magicalAttributes.push_back(attrib);
                         }
                     }
@@ -6247,6 +6250,7 @@ namespace d2ce
                         attrib.Version = version;
                         attrib.GameVersion = gameVersion;
                         attrib.DescPriority = stat.descPriority;
+                        attrib.encode = stat.encode;
                         magicalAttributes.push_back(attrib);
                     }
                 }
@@ -8439,7 +8443,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
     case EnumItemQuality::TEMPERED:
     case EnumItemQuality::CRAFT:
     case EnumItemQuality::UNIQUE:
-        // runewords do not work with thse
+        // runewords do not work with these
         return result;
     }
 
@@ -8471,7 +8475,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
 
         if (iterNumSockets == s_ItemNumRunesRunewordsMap.end())
         {
-            return result;
+            continue;
         }
 
         auto iter = s_ItemRunewordsType.end();
@@ -8479,7 +8483,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
         for (const auto& runewordId : runwordIds)
         {
             iter = s_ItemRunewordsType.find(runewordId);
-            if (iter == s_ItemRunewordsType.end())
+            if (iter != s_ItemRunewordsType.end())
             {
                 const auto& runeword = iter->second;
                 if (bExcludeServerOnly && runeword.serverOnly)

@@ -1576,6 +1576,7 @@ void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSe
     {
         std::string key;
         std::string name;
+        static std::initializer_list<std::uint16_t> all_fullstats = { 6, 7, 8, 9, 10, 11 };
         std::uint32_t* pStatValue = nullptr;
         std::uint32_t statValue = 0;
         auto iter_end = statsRoot.end();
@@ -1593,22 +1594,39 @@ void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSe
                 if (_stricmp(key.c_str(), name.c_str()) == 0)
                 {
                     statValue = std::uint32_t(iter->asInt64());
-                    switch (stat)
+                    if (std::find(all_fullstats.begin(), all_fullstats.end(), stat) != all_fullstats.end())
                     {
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
                         statValue <<= 8;
-                        break;
                     }
 
                     pStatValue = GetStatBuffer(stat);
                     if (pStatValue != nullptr)
                     {
                         *pStatValue = statValue;
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (auto iter = statsRoot.begin(); iter != iter_end; ++iter)
+        {
+            if (iter->isNull())
+            {
+                continue;
+            }
+
+            key = iter.name();
+            for (const auto& stat : all_fullstats)
+            {
+                name = getAttributeJsonName(stat, bSerializedFormat, true);
+                if (_stricmp(key.c_str(), name.c_str()) == 0)
+                {
+                    statValue = (std::uint32_t(iter->asInt64()) & 0xFF);
+                    pStatValue = GetStatBuffer(stat);
+                    if (pStatValue != nullptr)
+                    {
+                        *pStatValue |= statValue;
                     }
                     break;
                 }
@@ -1623,24 +1641,36 @@ void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSe
 
     updateMinStats();
     bool updateCur = Cs.CurLife == Cs.MaxLife ? true : false;
-    Cs.MaxLife = std::max(Cs.MaxLife, min_hit_points);
-    if (updateCur)
+    std::uint32_t maxValue = std::max(Cs.MaxLife, min_hit_points);
+    if ((maxValue > Cs.MaxLife) && (((maxValue - Cs.MaxLife) >> 8) > 1))
     {
-        Cs.CurLife = Cs.MaxLife;
+        Cs.MaxLife = maxValue;
+        if (updateCur)
+        {
+            Cs.CurLife = Cs.MaxLife;
+        }
     }
 
     updateCur = Cs.CurStamina == Cs.MaxStamina ? true : false;
-    Cs.MaxStamina = std::max(Cs.MaxStamina, min_stamina);
-    if (updateCur)
+    maxValue = std::max(Cs.MaxStamina, min_stamina);
+    if ((maxValue > Cs.MaxStamina) && (((maxValue - Cs.MaxStamina) >> 8) > 1))
     {
-        Cs.CurStamina = Cs.MaxStamina;
+        Cs.MaxStamina = maxValue;
+        if (updateCur)
+        {
+            Cs.CurStamina = Cs.MaxStamina;
+        }
     }
 
     updateCur = Cs.CurMana == Cs.MaxMana ? true : false;
-    Cs.MaxMana = std::max(Cs.MaxMana, min_mana);
-    if (updateCur)
+    maxValue = std::max(Cs.MaxMana, min_mana);
+    if ((maxValue > Cs.MaxMana) && (((maxValue - Cs.MaxMana) >> 8) > 1))
     {
-        Cs.CurMana = Cs.MaxMana;
+        Cs.MaxMana = maxValue;
+        if (updateCur)
+        {
+            Cs.CurMana = Cs.MaxMana;
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -2244,8 +2274,26 @@ void d2ce::CharacterStats::updateClass()
     }
 }
 //---------------------------------------------------------------------------
-std::string d2ce::CharacterStats::getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat) const
+std::string d2ce::CharacterStats::getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat, bool bRemainder) const
 {
+    if (bRemainder)
+    {
+        switch (stat)
+        {
+        case 6:
+            return bSerializedFormat ? "hitpoints_remainder" : "current_hp_remainder";
+        case 7:
+            return bSerializedFormat ? "maxhp_remainder" : "max_hp_remainder";
+        case 8:
+            return bSerializedFormat ? "mana_remainder" : "current_mana_remainder";
+        case 9:
+            return bSerializedFormat ? "maxmana_remainder" : "max_mana_remainder";
+        case 10:
+            return bSerializedFormat ? "stamina_remainder" : "current_stamina_remainder";
+        case 11:
+            return bSerializedFormat ? "maxstamina_remainder" : "max_stamina_remainder";
+        }
+    }
     switch (stat)
     {
     case 0:
@@ -2290,6 +2338,7 @@ void d2ce::CharacterStats::attributesAsJson(Json::Value& parent, bool bSerialize
     Json::Value attributes;
     std::uint32_t* pStatValue = nullptr;
     std::uint32_t statValue = 0;
+    static std::initializer_list<std::uint16_t> all_fullstats = { 6, 7, 8, 9, 10, 11 };
 
     (const_cast<CharacterStats*>(this))->checkStatInfo();
     if (bSerializedFormat)
@@ -2306,17 +2355,15 @@ void d2ce::CharacterStats::attributesAsJson(Json::Value& parent, bool bSerialize
             }
 
             statValue = *pStatValue;
-            switch (stat)
+            if (std::find(all_fullstats.begin(), all_fullstats.end(), stat) != all_fullstats.end())
             {
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
+                if ((statValue & 0xFF) != 0)
+                {
+                    stats[getAttributeJsonName(stat, bSerializedFormat, true)] = (statValue & 0xFF);
+                }
                 statValue >>= 8;
-                break;
             }
+
             stats[getAttributeJsonName(stat, bSerializedFormat)] = statValue;
         }
         attributes["Stats"] = stats;
@@ -2335,18 +2382,14 @@ void d2ce::CharacterStats::attributesAsJson(Json::Value& parent, bool bSerialize
             }
 
             statValue = *pStatValue;
-            switch (stat)
+            if (std::find(all_fullstats.begin(), all_fullstats.end(), stat) != all_fullstats.end())
             {
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
+                if ((statValue & 0xFF) != 0)
+                {
+                    attributes[getAttributeJsonName(stat, bSerializedFormat, true)] = (statValue & 0xFF);
+                }
                 statValue >>= 8;
-                break;
             }
-
             attributes[getAttributeJsonName(stat, bSerializedFormat)] = statValue;
         }
         parent["attributes"] = attributes;

@@ -74,6 +74,8 @@ namespace d2ce
                                 // Type:       pos 185 (1.09+ only)
                                 // Experience: pos 187 (1.09+ only), hireling's experience
 
+        std::array<std::uint8_t, D2R_APPEARANCES_LENGTH> D2RAppearances; // pos 219 - 266 (1.15+ D2R only) Character menu appearance
+
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
         // hell act info starts at pos 537 (1.09+ only)

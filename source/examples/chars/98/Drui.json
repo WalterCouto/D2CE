@@ -86,6 +86,52 @@
       "special8": {
         "graphic": 255,
         "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "hst ",
+          "tint": 164,
+          "quality": 7,
+          "id": 125,
+          "unk1": 0,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "ltp ",
+          "tint": 255,
+          "quality": 4,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "dr1 ",
+          "tint": 255,
+          "quality": 4,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
       }
     },
     "difficulty": {
@@ -372,7 +418,8 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 384
       }
     },
     "quests_nm": {

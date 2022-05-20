@@ -92,6 +92,52 @@
       "special8": {
         "graphic": 255,
         "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "am7 ",
+          "tint": 255,
+          "quality": 7,
+          "id": 26,
+          "unk1": 1,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "aqv ",
+          "tint": 255,
+          "quality": 2,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "xea ",
+          "tint": 70,
+          "quality": 7,
+          "id": 210,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "xrn ",
+          "tint": 81,
+          "quality": 7,
+          "id": 206,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
       }
     },
     "difficulty": {
@@ -379,7 +425,8 @@
           "closed": true,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 640
       }
     },
     "quests_nm": {
@@ -628,7 +675,8 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": false
+        "completed": false,
+        "completed_value": 640
       }
     },
     "quests_hell": {
@@ -1003,6 +1051,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x0001": {
+          "intro": false,
+          "congrats": true
+        },
         "charsi": {
           "intro": true,
           "congrats": false
@@ -1051,6 +1103,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": false
+        },
         "alkor": {
           "intro": false,
           "congrats": false
@@ -1065,6 +1121,10 @@
         },
         "cain_act_iii": {
           "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
+          "intro": false,
           "congrats": true
         },
         "elzix": {
@@ -1087,7 +1147,15 @@
           "intro": true,
           "congrats": true
         },
+        "unk0x001F": {
+          "intro": true,
+          "congrats": false
+        },
         "ormus": {
+          "intro": true,
+          "congrats": false
+        },
+        "unk0x0022": {
           "intro": true,
           "congrats": false
         },
@@ -1108,6 +1176,10 @@
         "warriv_act_ii": {
           "intro": false,
           "congrats": false
+        },
+        "unk0x0001": {
+          "intro": false,
+          "congrats": true
         },
         "charsi": {
           "intro": true,
@@ -1157,6 +1229,10 @@
           "intro": false,
           "congrats": false
         },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": false
+        },
         "alkor": {
           "intro": false,
           "congrats": false
@@ -1171,6 +1247,10 @@
         },
         "cain_act_iii": {
           "intro": true,
+          "congrats": true
+        },
+        "unk0x0016": {
+          "intro": false,
           "congrats": true
         },
         "elzix": {
@@ -1326,7 +1406,9 @@
     "unused_stats": 27,
     "current_hp": 479,
     "max_hp": 307,
+    "current_mana_remainder": 144,
     "current_mana": 162,
+    "max_mana_remainder": 144,
     "max_mana": 97,
     "current_stamina": 1336,
     "max_stamina": 1330,
