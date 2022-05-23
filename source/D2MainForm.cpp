@@ -984,8 +984,10 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_CBN_SELCHANGE(IDC_STARTING_ACT_CMB, &CD2MainForm::OnCbnSelchangeStartingActCmb)
     ON_COMMAND(ID_FILE_SAVE, &CD2MainForm::OnFileSave)
     ON_COMMAND(ID_FILE_SAVE_AS, &CD2MainForm::OnFileSaveAs)
+    ON_COMMAND(ID_FILE_SAVE_AS_VERSION, &CD2MainForm::OnFileSaveAsVersion)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CD2MainForm::OnUpdateFileSave)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, &CD2MainForm::OnUpdateFileSaveAs)
+    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS_VERSION, &CD2MainForm::OnUpdateFileSaveAsVersion)
     ON_COMMAND(ID_FILE_CLOSE, &CD2MainForm::OnFileClose)
     ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE, &CD2MainForm::OnUpdateFileClose)
     ON_COMMAND(ID_FILE_OPEN, &CD2MainForm::OnFileOpen)
@@ -2200,7 +2202,7 @@ void CD2MainForm::DisplayCharInfo()
 
     auto vesion = CharInfo.getVersion();
     CharStatusLadder.EnableWindow(vesion >= d2ce::EnumCharVersion::v110 ? TRUE : FALSE);
-    CharStatusExpansion.EnableWindow((vesion < d2ce::EnumCharVersion::v107 || vesion == d2ce::EnumCharVersion::v108) ? FALSE : TRUE);
+    CharStatusExpansion.EnableWindow(FALSE);
     if (s_pLevelInfo != nullptr)
     {
         s_pLevelInfo->ResetView();
@@ -2889,7 +2891,7 @@ void CD2MainForm::EnableCharInfoBox(BOOL bEnable)
     CharName.EnableWindow(bEnable);
     CharStatusHardcore.EnableWindow(bEnable);
     CharStatusResurrected.EnableWindow(bEnable);
-    CharStatusExpansion.EnableWindow(bEnable);
+    CharStatusExpansion.EnableWindow(FALSE);
     CharStatusLadder.EnableWindow(bEnable);
     CharClass.EnableWindow(bEnable);
     Difficulty.EnableWindow(bEnable);
@@ -3036,7 +3038,7 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         {
             // The checksum was updated on load, so just save the file
             CWaitCursor wait;
-            CharInfo.save();
+            CharInfo.save(BackupChar);
         }
     }
 
@@ -3101,12 +3103,7 @@ int CD2MainForm::DoFileCloseAction()
 void CD2MainForm::OnFileSave()
 {
     CWaitCursor wait;
-    if (BackupChar)
-    {
-        WriteBackupFile();
-    }
-
-    if (!CharInfo.save())
+    if (!CharInfo.save(BackupChar))
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -3159,25 +3156,36 @@ void CD2MainForm::OnFileSaveAs()
         return;
     }
 
-    if (BackupChar)
+    std::filesystem::path p(CurPathName.GetString());
+    p.remove_filename();
+
+    CFolderPickerDialog folderDialog(p.wstring().c_str(), 0UL, this);
+    if (folderDialog.DoModal() != IDOK)
     {
-        std::filesystem::path p(CurPathName.GetString());
-        p.replace_extension();
-        p.replace_filename(std::filesystem::u8path(CharInfo.getName().data()));
-        p.replace_extension(".d2s");
-        if (std::filesystem::exists(p))
-        {
-            CString newD2SPath(p.wstring().c_str());
-            CString backupname(ChangeFileExt(newD2SPath, _T(".bak")));
-            CopyFile(newD2SPath, backupname, false);
-        }
+        return;
     }
 
-    bool bSuccess = true;
     CWaitCursor wait;
-    if (!CharInfo.saveAsD2s())
+    if (Editted && !CharInfo.save(BackupChar))
     {
-        bSuccess = false;
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+        return;
+    }
+
+    // Save already done above
+    bool bSuccess = true;
+    auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
+    if (!CharInfo.saveAsD2s(folderDialog.GetPathName().GetString(), saveOp))
+    {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
         {
@@ -3222,6 +3230,184 @@ void CD2MainForm::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && CharInfo.is_json()) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnFileSaveAsVersion()
+{
+    if (!CharInfo.is_open())
+    {
+        return;
+    }
+
+    if (Editted && !CharInfo.save(BackupChar))
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+        return;
+    }
+
+    auto version = CharInfo.getVersion();
+    DWORD dwIDComboItem = 0;
+    HRESULT hr = 0;
+    std::filesystem::path p = CurPathName.GetString();
+    bool modifiedOpenedFile = false;
+    auto convertToVersion = d2ce::EnumCharVersion::v110;
+    auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
+    if (CharInfo.is_json())
+    {
+        auto uName = utf8::utf8to16(CharInfo.getName().data());
+        CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
+        filename += _T(".json");
+
+        CFileDialog fileDialog(FALSE, _T("json"), filename,
+            OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+            _T("JSON file  (*.json)|*.json|"), this, 0, TRUE);
+        const int combo_id = 101;
+
+        fileDialog.StartVisualGroup(1, _T("Version"));
+        fileDialog.AddComboBox(combo_id);
+        if (version != d2ce::EnumCharVersion::v110)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v110;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v115)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v115;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v115), _T("D2R 1.0.x - 1.1.x"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v116)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v116;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v116), _T("D2R PTR 2.4+"));
+        }
+        fileDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
+        fileDialog.EndVisualGroup();
+        fileDialog.MakeProminent(1);
+        if (fileDialog.DoModal() != IDOK)
+        {
+            return;
+        }
+
+        dwIDComboItem = static_cast<DWORD>(convertToVersion);
+        hr = fileDialog.GetSelectedControlItem(combo_id, dwIDComboItem);
+        if (SUCCEEDED(hr))
+        {
+            convertToVersion = static_cast<d2ce::EnumCharVersion>(dwIDComboItem);
+        }
+
+        modifiedOpenedFile = (CurPathName.CompareNoCase(fileDialog.GetPathName())) == 0 ? true : false;
+        p = fileDialog.GetPathName().GetString();
+    }
+    else
+    {
+        std::filesystem::path orig(CurPathName.GetString());
+        orig = orig.parent_path();
+        CFolderPickerDialog folderDialog(orig.wstring().c_str(), 0UL, this);
+        const int combo_id = 101;
+        folderDialog.StartVisualGroup(1, _T("Version"));
+        folderDialog.AddComboBox(combo_id);
+        if (version != d2ce::EnumCharVersion::v110)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v110;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v115)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v115;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v115), _T("D2R 1.0.x - 1.1.x"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v116)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v116;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v116), _T("D2R PTR 2.4+"));
+        }
+        folderDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
+        folderDialog.EndVisualGroup();
+        folderDialog.MakeProminent(1);
+        if (folderDialog.DoModal() != IDOK)
+        {
+            return;
+        }
+
+        dwIDComboItem = static_cast<DWORD>(convertToVersion);
+        hr = folderDialog.GetSelectedControlItem(combo_id, dwIDComboItem);
+        if (SUCCEEDED(hr))
+        {
+            convertToVersion = static_cast<d2ce::EnumCharVersion>(dwIDComboItem);
+        }
+
+        p = folderDialog.GetPathName().GetString();
+        modifiedOpenedFile = (orig == p) ? true : false;
+        p /= std::filesystem::u8path(Bs.Name.data());
+        p.replace_extension(".d2s");
+    }
+
+    if (!CharInfo.saveAsVersion(p, convertToVersion, saveOp))
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        if (!CharInfo.is_open())
+        {
+            if (s_pLevelInfo != nullptr)
+            {
+                s_pLevelInfo->ResetView();
+            }
+
+            CurPathName.Empty();
+            Initialize();
+
+            hasBackupFile = false;
+
+            EnableCharInfoBox(FALSE);
+            OnSetMessageString(AFX_IDS_IDLEMESSAGE);
+            return;
+        }
+    }
+
+    if (modifiedOpenedFile)
+    {
+        CurPathName = CharInfo.getPath().wstring().c_str();
+        EnableCharInfoBox(TRUE);
+
+        hasBackupFile = HasBackupFile(CurPathName);
+
+        CharInfo.fillBasicStats(Bs);
+        CharInfo.fillCharacterStats(Cs);
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+        DisplayCharInfo();
+        CtrlEditted.clear();
+        StatusBar.SetWindowText(_T("Character stats have been refreshed"));
+        UpdateAppTitle();
+    }
+    else
+    {
+        StatusBar.SetWindowText(_T("Character stats have exported"));
+    }
+    return;
+}
+
+void CD2MainForm::OnUpdateFileSaveAsVersion(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(CharInfo.is_open() ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnFileExportAsJson()
 {
     if (!CharInfo.is_open())
@@ -3253,10 +3439,28 @@ void CD2MainForm::OnFileExportAsJson()
     _wfopen_s(&jsonFile, fileDialog.GetPathName(), L"wb");
     std::rewind(jsonFile);
 
-    auto output = CharInfo.asJson(bSerializedFormat);
+    if (Editted && !CharInfo.save(BackupChar))
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Corrupted Diablo II save file discovered!");
+        }
+
+        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+        Editted = false;
+        OnFileClose();
+        return;
+    }
+
+    // Save already done above
+    auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
+    auto output = CharInfo.asJson(bSerializedFormat, saveOp);
     if (!output.empty())
     {
         std::fwrite(output.c_str(), output.size(), 1, jsonFile);
+        std::fflush(jsonFile);
     }
 
     std::fclose(jsonFile);
@@ -3710,36 +3914,6 @@ void CD2MainForm::OnUpdateOptionsUpgradeRejuvenation(CCmdUI* pCmdUI)
 {
     pCmdUI->Enable(hasUpgradableRejuvenations ? TRUE : FALSE);
 }
-//---------------------------------------------------------------------------
-/*
-   Makes a backup copy of the character file and overwrites any
-   existing backup file
-*/
-void CD2MainForm::WriteBackupFile()
-{
-    CStringA oldPathNameA(CurPathName);
-    CString backupname;
-
-    auto now = std::chrono::system_clock::now();
-    auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-    auto ext = "." + std::to_string(UTC) + ".bak";
-    CString backupExt(ext.c_str());
-
-    if (CharInfo.is_json())
-    {
-        backupname = CurPathName + backupExt;
-    }
-    else
-    {
-        backupname = ChangeFileExt(CurPathName, backupExt);
-    }
-
-    if (CopyFile(CurPathName, backupname, false))
-    {
-        hasBackupFile = true;
-    }
-}
-
 //---------------------------------------------------------------------------
 void CD2MainForm::OnViewSkillTree()
 {

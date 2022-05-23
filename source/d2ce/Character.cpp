@@ -1582,11 +1582,43 @@ bool d2ce::Character::readItems(const Json::Value& root)
     return m_items.readItems(root, m_bJsonSerializedFormat, *this, m_charfile);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::save()
+bool d2ce::Character::save(bool backup)
 {
     if (m_charfile == nullptr)
     {
         return false;
+    }
+
+    if (backup)
+    {
+        // backup existing file
+        auto now = std::chrono::system_clock::now();
+        auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        std::filesystem::path orig;
+        std::filesystem::path p;
+        if (is_json())
+        {
+            orig = m_jsonfilename;
+            p = orig;
+            auto ext = p.extension();
+            ext += "." + std::to_string(UTC) + ".bak";
+            p.replace_extension(ext);
+        }
+        else
+        {
+            orig = m_d2sfilename;
+            p = orig;
+            auto ext = "." + std::to_string(UTC) + ".bak";
+            p.replace_extension(ext);
+        }
+
+        try
+        {
+            std::filesystem::copy_file(orig, p, std::filesystem::copy_options::overwrite_existing);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
     }
 
     m_error_code.clear();
@@ -1816,7 +1848,7 @@ bool d2ce::Character::save()
     if (!m_jsonfilename.empty())
     {
         // export the json again
-        auto json = asJson(m_bJsonSerializedFormat);
+        auto json = asJson(m_bJsonSerializedFormat, d2ce::Character::EnumCharSaveOp::NoSave);
         if (!json.empty())
         {
             std::FILE* jsonFile = NULL;
@@ -1829,12 +1861,269 @@ bool d2ce::Character::save()
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Character::saveAsD2s()
+bool d2ce::Character::saveAsVersion(EnumCharVersion version, EnumCharSaveOp backup)
 {
-    // first save any outstanding changes
-    if (!save())
+    if (!is_open())
     {
         return false;
+    }
+
+    std::filesystem::path path = is_json() ? m_jsonfilename : m_d2sfilename;
+    return saveAsVersion(path, version, backup);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::saveAsVersion(const std::filesystem::path& path, EnumCharVersion version, EnumCharSaveOp saveOp)
+{
+    bool bIsJson = is_json();
+    bool bBackup = false;
+    bool bSave = true;
+    switch (saveOp)
+    {
+    case EnumCharSaveOp::SaveWithBackup:
+        bBackup = true;
+        bSave = true;
+        break;
+
+    case EnumCharSaveOp::BackupOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::SaveOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::NoSave:
+    default:
+        bBackup = false;
+        bSave = false;
+        break;
+    }
+
+    if (bSave)
+    {
+        // first save any outstanding changes
+        if (!save(bBackup))
+        {
+            return false;
+        }
+    }
+
+    auto jsonStr = asJson(version, true, EnumCharSaveOp::NoSave);
+    if (jsonStr.empty())
+    {
+        return false;
+    }
+
+    bool bOpenFile = false;
+    auto p = path;
+    if (bIsJson)
+    {
+        
+
+        if (std::filesystem::exists(p))
+        {
+            if (p == m_jsonfilename)
+            {
+                bOpenFile = true;
+                close();
+            }
+
+            if (bBackup)
+            {
+                // backup existing file
+                auto now = std::chrono::system_clock::now();
+                auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+                std::filesystem::path orig;
+                orig = path;
+                auto ext = p.extension();
+                ext += "." + std::to_string(UTC) + ".bak";
+                p.replace_extension(ext);
+
+                try
+                {
+                    std::filesystem::rename(orig, p);
+                }
+                catch (std::filesystem::filesystem_error const&)
+                {
+                }
+            }
+            else
+            {
+                // remove existing file
+                try
+                {
+                    std::filesystem::remove(p);
+                }
+                catch (std::filesystem::filesystem_error const&)
+                {
+                }
+            }
+        }
+    }
+
+    std::FILE* jsonFile = NULL;
+    if (bIsJson)
+    {
+        _wfopen_s(&jsonFile, path.wstring().c_str(), L"wb");
+        std::rewind(jsonFile);
+        std::fwrite(jsonStr.c_str(), jsonStr.size(), 1, jsonFile);
+        std::fclose(jsonFile);
+        if (bOpenFile)
+        {
+            return open(path, true);
+        }
+        return true;
+    }
+
+    if (std::filesystem::exists(p))
+    {
+        if (p == m_d2sfilename)
+        {
+            bOpenFile = true;
+            close();
+        }
+
+        if (bBackup)
+        {
+            // backup existing file
+            auto now = std::chrono::system_clock::now();
+            auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+            auto ext = "." + std::to_string(UTC) + ".bak";
+            auto orig = p;
+            p.replace_extension(ext);
+
+            try
+            {
+                std::filesystem::rename(orig, p);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+            }
+        }
+        else
+        {
+            // remove existing file
+            try
+            {
+                std::filesystem::remove(p);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+            }
+        }
+    }
+
+    wchar_t name1[L_tmpnam_s];
+    errno_t err = _wtmpnam_s(name1, L_tmpnam_s);
+    if (err != 0)
+    {
+        m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
+        return false;
+    }
+
+    _wfopen_s(&jsonFile, name1, L"wb");
+    std::rewind(jsonFile);
+    std::fwrite(jsonStr.c_str(), jsonStr.size(), 1, jsonFile);
+    std::fflush(jsonFile);
+    std::fclose(jsonFile);
+    if (bOpenFile)
+    {
+        if (!openJson(name1))
+        {
+            return false;
+        }
+
+        // remove temp file
+        try
+        {
+            std::filesystem::remove(name1);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+        }
+
+        p = path;
+        p.remove_filename();
+        return saveAsD2s(p);
+    }
+
+    Character convert;
+    if (!convert.openJson(name1))
+    {
+        m_error_code = convert.m_error_code;
+        return false;
+    }
+
+    // remove temp file
+    try
+    {
+        std::filesystem::remove(name1);
+    }
+    catch (std::filesystem::filesystem_error const&)
+    {
+    }
+
+    p = path;
+    p.remove_filename();
+    if (!convert.saveAsD2s(p))
+    {
+        m_error_code = convert.m_error_code;
+        return false;
+    }
+
+    convert.close();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::saveAsD2s(EnumCharSaveOp saveOp)
+{
+    if (m_jsonfilename.empty())
+    {
+        return true;
+    }
+
+    std::filesystem::path p = m_jsonfilename;
+    p.remove_filename();
+    return saveAsD2s(p, saveOp);
+}
+
+bool d2ce::Character::saveAsD2s(const std::filesystem::path& path, EnumCharSaveOp saveOp)
+{
+    bool bBackup = false;
+    bool bSave = true;
+    switch (saveOp)
+    {
+    case EnumCharSaveOp::SaveWithBackup:
+        bBackup = true;
+        bSave = true;
+        break;
+
+    case EnumCharSaveOp::BackupOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::SaveOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::NoSave:
+    default:
+        bBackup = false;
+        bSave = false;
+        break;
+    }
+
+    if (bSave)
+    {
+        // first save any outstanding changes
+        if (!save(bBackup))
+        {
+            return false;
+        }
     }
 
     if (m_jsonfilename.empty())
@@ -1846,24 +2135,41 @@ bool d2ce::Character::saveAsD2s()
     m_charfile = NULL;
 
     auto oldFileName = m_d2sfilename;
-
-    // move d2s file to json file path
-    std::filesystem::path p = m_jsonfilename;
     m_jsonfilename.clear();
 
-    p.replace_extension();
-    m_d2sfilename = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+    // move d2s file to json file path
+    m_d2sfilename = path / std::filesystem::u8path(Bs.Name.data());
     m_d2sfilename.replace_extension(".d2s");
-    p = m_d2sfilename;
+
+    auto p = m_d2sfilename;
     if (std::filesystem::exists(p))
     {
-        // remove exist file, back would be down prior to call this
-        try
+        if (bBackup)
         {
-            std::filesystem::remove(m_d2sfilename);
+            // backup existing file
+            auto now = std::chrono::system_clock::now();
+            auto UTC = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+            auto ext = "." + std::to_string(UTC) + ".bak";
+            p.replace_extension(ext);
+
+            try
+            {
+                std::filesystem::rename(m_d2sfilename, p);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+            }
         }
-        catch (std::filesystem::filesystem_error const&)
+        else
         {
+            // remove existing file
+            try
+            {
+                std::filesystem::remove(m_d2sfilename);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+            }
         }
     }
 
@@ -2025,6 +2331,391 @@ void d2ce::Character::writeTempFile() const
     // Write Character, Corpse, Mercenary and Golem m_items
     m_items.writeItems(tempfile, isExpansionCharacter(), hasMercenary());
     std::fclose(tempfile);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version, bool bSerializedFormat) const
+{
+    if (version == Bs.Version)
+    {
+        headerAsJson(parent, bSerializedFormat);
+        return;
+    }
+    if (bSerializedFormat)
+    {
+        Json::Value header;
+        header["Magic"] = *((std::uint32_t*)Header.data());
+        header["Version"] = static_cast<std::underlying_type_t<EnumCharVersion>>(version);
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            header["Filesize"] = FileSize;
+            header["Checksum"] = Checksum;
+        }
+        parent["Header"] = header;
+
+        parent["ActiveWeapon"] = WeaponSet;
+        parent["Name"] = Bs.Name.data();
+
+        // status
+        Json::Value status;
+        status["IsHardcore"] = isHardcoreCharacter();
+        status["IsDead"] = isResurrectedCharacter();
+        status["IsExpansion"] = isExpansionCharacter();
+        if (isLadderCharacter())
+        {
+            status["IsLadder"] = true;
+        }
+        parent["Status"] = status;
+
+        parent["Progression"] = std::uint16_t(getTitle());
+        parent["ClassId"] = std::uint16_t(getClass());
+        parent["Level"] = std::uint16_t(DisplayLevel);
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            parent["Created"] = Created;
+            parent["LastPlayed"] = LastPlayed;
+        }
+
+        // assigned_skills
+        Json::Value assignedSkills(Json::arrayValue);
+        for (auto& skillId : AssignedSkills)
+        {
+            Json::Value skill;
+            skill["Id"] = skillId;
+            assignedSkills.append(skill);
+        }
+        parent["AssignedSkills"] = assignedSkills;
+
+        {
+            Json::Value skill;
+            skill["Id"] = LeftSkill;
+            parent["LeftSkill"] = skill;
+        }
+
+        {
+            Json::Value skill;
+            skill["Id"] = RightSkill;
+            parent["RightSkill"] = skill;
+        }
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            {
+                Json::Value skill;
+                skill["Id"] = LeftSwapSkill;
+                parent["LeftSwapSkill"] = skill;
+            }
+            {
+                Json::Value skill;
+                skill["Id"] = RightSwapSkill;
+                parent["RightSwapSkill"] = skill;
+            }
+        }
+
+        // Appearances
+        static std::initializer_list<std::string> all_appearance_props = { "Head", "Torso", "Legs", "RightArm", "LeftArm", "RightHand", "LeftHand", "Shield",
+            "Special1", "Special2",  "Special3", "Special4", "Special5", "Special6", "Special7", "Special8" };
+
+        size_t idx = 0;
+        Json::Value appearances;
+        for (const auto& prop : all_appearance_props)
+        {
+            Json::Value appearance;
+            appearance["Graphic"] = std::uint16_t(Appearances[idx++]);
+            appearance["Tint"] = std::uint16_t(Appearances[idx + 15]);
+            appearances[prop] = appearance;
+        }
+
+        // D2R Appearances
+        if ((version >= EnumCharVersion::v115) && (Bs.Version >= EnumCharVersion::v115))
+        {
+            static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
+
+            idx = 0;
+            Json::Value d2rAppearances;
+            std::uint8_t typecodeValue = 0;
+            std::string typecode;
+            for (const auto& prop : all_d2r_appearance_props)
+            {
+                Json::Value appearance;
+                {
+                    std::stringstream ss;
+                    typecodeValue = D2RAppearances[idx++];
+                    bool bNullFound = false;
+                    if (typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+                    typecode = ss.str();
+                }
+
+                appearance["Code"] = typecode;
+                appearance["Tint"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Quality"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Id"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk1"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk2"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk3"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk4"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["Unk5"] = std::uint16_t(D2RAppearances[idx++]);
+                d2rAppearances[prop] = appearance;
+            }
+
+            appearances["D2R"] = d2rAppearances;
+        }
+
+        parent["Appearances"] = appearances;
+
+        // Location
+        auto diffLastPlayed = getDifficultyLastPlayed();
+        auto startingAct = (std::uint16_t)getStartingAct() + 1;
+        Json::Value location;
+        {
+            Json::Value locationDiff;
+            locationDiff["Active"] = ((diffLastPlayed == EnumDifficulty::Normal) ? true : false);
+            locationDiff["Act"] = ((diffLastPlayed == EnumDifficulty::Normal) ? startingAct : 1);
+            location["Normal"] = locationDiff;
+        }
+        {
+            Json::Value locationDiff;
+            locationDiff["Active"] = ((diffLastPlayed == EnumDifficulty::Nightmare) ? true : false);
+            locationDiff["Act"] = ((diffLastPlayed == EnumDifficulty::Nightmare) ? startingAct : 1);
+            location["Nightmare"] = locationDiff;
+        }
+        {
+            Json::Value locationDiff;
+            locationDiff["Active"] = ((diffLastPlayed == EnumDifficulty::Hell) ? true : false);
+            locationDiff["Act"] = ((diffLastPlayed == EnumDifficulty::Hell) ? startingAct : 1);
+            location["Hell"] = locationDiff;
+        }
+        parent["Location"] = location;
+        parent["MapId"] = MapID;
+
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            Merc.asJson(parent, bSerializedFormat);
+        }
+
+        Acts.questsAsJson(parent, bSerializedFormat);
+        Acts.waypointsAsJson(parent, bSerializedFormat);
+        Acts.npcAsJson(parent, bSerializedFormat);
+    }
+    else
+    {
+        Json::Value header;
+        {
+            std::stringstream ss;
+            ss << std::hex << *((std::uint32_t*)Header.data());
+            header["identifier"] = ss.str();
+        }
+        header["version"] = Version;
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            header["filesize"] = FileSize;
+            {
+                std::stringstream ss;
+                ss << std::hex << Checksum;
+                header["checksum"] = ss.str();
+            }
+        }
+        header["name"] = Bs.Name.data();
+
+        // status
+        Json::Value status;
+        status["hardcore"] = isHardcoreCharacter();
+        status["died"] = isResurrectedCharacter();
+        status["expansion"] = isExpansionCharacter();
+        if (isLadderCharacter())
+        {
+            status["ladder"] = true;
+        }
+
+        if (isDeadCharacter())
+        {
+            status["dead"] = true;
+        }
+        header["status"] = status;
+
+        header["progression"] = std::uint16_t(getTitle());
+        header["active_arms"] = WeaponSet;
+        header["class"] = getClassName();
+        header["class_id"] = std::uint16_t(getClass());
+        header["level"] = std::uint16_t(DisplayLevel);
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            header["created"] = Created;
+            header["last_played"] = LastPlayed;
+        }
+
+        // assigned_skills
+        auto nullCount = 0; // no need to include nulls at the end of list
+        Json::Value nullValue;
+        Json::Value assignedSkills(Json::arrayValue);
+        for (auto& skillId : AssignedSkills)
+        {
+            if (skillId >= MAXUINT16)
+            {
+                ++nullCount;
+                continue;
+            }
+
+            while (nullCount > 0)
+            {
+                assignedSkills.append(nullValue);
+                --nullCount;
+            }
+
+            assignedSkills.append(CharClassHelper::getSkillIndexById(std::uint16_t(skillId)));
+        }
+        header["assigned_skills"] = assignedSkills;
+        header["left_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(LeftSkill));
+        header["right_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(RightSkill));
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            header["left_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(LeftSwapSkill));
+            header["right_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(RightSwapSkill));
+        }
+
+        // Appearances
+        static std::initializer_list<std::string> all_appearance_props = { "head", "torso", "legs", "right_arm", "left_arm", "right_hand", "left_hand", "shield",
+            "special1", "special2",  "special3", "special4", "special5", "special6", "special7", "special8" };
+
+        size_t idx = 0;
+        Json::Value appearances;
+        for (const auto& prop : all_appearance_props)
+        {
+            Json::Value appearance;
+            appearance["graphic"] = std::uint16_t(Appearances[idx++]);
+            appearance["tint"] = std::uint16_t(Appearances[idx + 15]);
+            appearances[prop] = appearance;
+        }
+
+        // D2R Appearances
+        if ((version >= EnumCharVersion::v115) && (Bs.Version >= EnumCharVersion::v115))
+        {
+            static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
+
+            idx = 0;
+            Json::Value d2rAppearances; std::uint8_t typecodeValue = 0;
+            std::string typecode;
+            for (const auto& prop : all_d2r_appearance_props)
+            {
+                Json::Value appearance;
+                {
+                    std::stringstream ss;
+                    typecodeValue = D2RAppearances[idx++];
+                    bool bNullFound = false;
+                    if (typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+
+                    typecodeValue = D2RAppearances[idx++];
+                    if (!bNullFound && typecodeValue > 0)
+                    {
+                        ss << (char)typecodeValue;
+                    }
+                    else
+                    {
+                        bNullFound = true;
+                    }
+                    typecode = ss.str();
+                }
+
+                appearance["code"] = typecode;
+                appearance["tint"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["quality"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["id"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk1"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk2"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk3"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk4"] = std::uint16_t(D2RAppearances[idx++]);
+                appearance["unk5"] = std::uint16_t(D2RAppearances[idx++]);
+                d2rAppearances[prop] = appearance;
+            }
+
+            appearances["d2r"] = d2rAppearances;
+        }
+
+        header["menu_appearance"] = appearances;
+
+        // StartingAct
+        {
+            Json::Value difficulty;
+            difficulty["Normal"] = std::uint16_t(StartingAct[0]);
+            difficulty["Nightmare"] = std::uint16_t(StartingAct[1]);
+            difficulty["Hell"] = std::uint16_t(StartingAct[2]);
+            header["difficulty"] = difficulty;
+        }
+        header["map_id"] = MapID;
+
+        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        {
+            Merc.asJson(header, bSerializedFormat);
+        }
+
+        Acts.questsAsJson(header, bSerializedFormat);
+        Acts.waypointsAsJson(header, bSerializedFormat);
+        Acts.npcAsJson(header, bSerializedFormat);
+
+        parent["header"] = header;
+    }
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) const
@@ -2477,8 +3168,90 @@ const std::filesystem::path& d2ce::Character::getPath() const
     return m_jsonfilename.empty() ? m_d2sfilename : m_jsonfilename;
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Character::asJson(bool bSerializedFormat) const
+std::string d2ce::Character::asJson(EnumCharVersion version, bool bSerializedFormat, EnumCharSaveOp saveOp)
 {
+    if (version == getVersion())
+    {
+        return asJson(bSerializedFormat, saveOp);
+    }
+
+    bool bBackup = false;
+    bool bSave = true;
+    switch (saveOp)
+    {
+    case EnumCharSaveOp::SaveWithBackup:
+        bBackup = true;
+        bSave = true;
+        break;
+
+    case EnumCharSaveOp::BackupOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::SaveOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::NoSave:
+    default:
+        bBackup = false;
+        bSave = false;
+        break;
+    }
+
+    if (bSave)
+    {
+        // first save any outstanding changes
+        save(bBackup);
+    }
+
+    Json::Value root;
+    headerAsJson(root, version, bSerializedFormat);
+    Cs.asJson(root, bSerializedFormat);
+    m_items.asJson(root, getLevel(), version, bSerializedFormat);
+
+    Json::StreamWriterBuilder builder;
+    builder["indentation"] = jsonIndentStr;
+    builder["enableYAMLCompatibility"] = true;
+    return Json::writeString(builder, root);
+}
+//---------------------------------------------------------------------------
+std::string d2ce::Character::asJson(bool bSerializedFormat, EnumCharSaveOp saveOp)
+{
+    bool bBackup = false;
+    bool bSave = true;
+    switch (saveOp)
+    {
+    case EnumCharSaveOp::SaveWithBackup:
+        bBackup = true;
+        bSave = true;
+        break;
+
+    case EnumCharSaveOp::BackupOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::SaveOnly:
+        bBackup = true;
+        bSave = false;
+        break;
+
+    case EnumCharSaveOp::NoSave:
+    default:
+        bBackup = false;
+        bSave = false;
+        break;
+    }
+
+    if (bSave)
+    {
+        // first save any outstanding changes
+        save(bBackup);
+    }
+
     Json::Value root;
     headerAsJson(root, bSerializedFormat);
     Cs.asJson(root, bSerializedFormat);
@@ -3510,7 +4283,7 @@ size_t d2ce::Character::fillEmptySlots(EnumAltItemLocation altPositionId, std::a
 //---------------------------------------------------------------------------
 bool d2ce::Character::removeSocketedItems(d2ce::Item& item)
 {
-    return m_items.removeSocketedItems(item);;
+    return m_items.removeSocketedItems(item);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

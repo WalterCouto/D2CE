@@ -140,6 +140,7 @@ namespace d2ce
         bool readItem(const Json::Value& itemRoot, bool bSerializedFormat, EnumItemVersion version, bool isExpansion);
         bool writeItem(std::FILE* charfile) const;
 
+        void asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVersion version, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void unknownAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void bitRangeAsJson(Json::Value& parent, size_t startBit, size_t numBits) const;
@@ -418,11 +419,13 @@ namespace d2ce
         bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false) const;
         bool writeSharedStashPage(std::FILE* charfile) const;
 
+        void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVersion version, bool bSerializedFormat = false) const;
         void itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         void corpseItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         bool mercItemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         bool golemItemAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
         bool itemBonusesAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
+        void asJson(Json::Value& parent, std::uint32_t charLevel, EnumCharVersion version, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat = false) const;
 
         bool isExpansionItems() const;

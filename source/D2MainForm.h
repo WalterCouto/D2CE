@@ -190,6 +190,8 @@ protected:
     afx_msg void OnUpdateFileSave(CCmdUI* pCmdUI);
     afx_msg void OnFileSaveAs();
     afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
+    afx_msg void OnFileSaveAsVersion();
+    afx_msg void OnUpdateFileSaveAsVersion(CCmdUI* pCmdUI);
     afx_msg void OnFileClose();
     afx_msg void OnUpdateFileClose(CCmdUI* pCmdUI);
     afx_msg void OnFileOpen();
@@ -227,7 +229,6 @@ protected:
     afx_msg void OnOptionsResetStats();
     afx_msg void OnUpdateOptionsResetStats(CCmdUI* pCmdUI);
     afx_msg void OnFileExportAsJson();
-    afx_msg void OnFileExportAsSerializedJson();
     afx_msg void OnUpdateFileExportAsJson(CCmdUI* pCmdUI);
     afx_msg void OnViewMercenary();
     afx_msg void OnUpdateViewMercenary(CCmdUI* pCmdUI);
@@ -324,7 +325,6 @@ private:
     void UpdateTitleDisplay();
     void UpdateDifficultyDisplay();
     void UpdateStartingActDisplay();
-    void WriteBackupFile();
     void SetupBasicStats();
     void StatsChanged();
     bool CheckIsHardcoreDead(bool& bStatChanged);

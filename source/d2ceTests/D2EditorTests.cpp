@@ -354,7 +354,7 @@ namespace D2EditorTests
     {
         d2ce::Character character;
         Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
-        auto json = character.asJson(serialized);
+        auto json = character.asJson(serialized, d2ce::Character::EnumCharSaveOp::NoSave);
         Assert::AreEqual(ConvertNewLines(json), GetCharExpectedJsonOutput(character, version, serialized));
     }
 
@@ -1063,15 +1063,15 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.maxDurabilityAllItems();
             character.fillAllStackables();
             character.upgradePotions();
-            Assert::IsTrue(character.save());
-            auto json = character.asJson();
+            Assert::IsTrue(character.save(false));
+            auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v110));
         }
 
@@ -1095,15 +1095,15 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setDifficultyComplete(d2ce::EnumDifficulty::Normal);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::IsTrue(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
-            auto json = character.asJson();
+            auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
 
             strNewText = "DannyIsGreatIV";
@@ -1118,14 +1118,14 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setGameComplete();
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::IsTrue(character.isGameComplete());
-            json = character.asJson();
+            json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
 
             strNewText = "DannyIsGreatV";
@@ -1140,15 +1140,15 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Change some items
             character.setNoDifficultyComplete();
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::IsFalse(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
-            json = character.asJson();
+            json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 
@@ -1171,13 +1171,13 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Upgrade Gems
             Assert::AreEqual(character.upgradeGems(), size_t(2));
-            Assert::IsTrue(character.save());
-            auto json = character.asJson();
+            Assert::IsTrue(character.save(false));
+            auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 
@@ -1200,13 +1200,13 @@ namespace D2EditorTests
             bs.Name.fill(0);
             strcpy_s(bs.Name.data(), strNewText.length() + 1, strNewText.c_str());
             character.updateBasicStats(bs);
-            Assert::IsTrue(character.save());
+            Assert::IsTrue(character.save(false));
             Assert::AreEqual(expectedTempPath.wstring(), character.getPath().wstring());
 
             // Upgrade potions
             Assert::AreEqual(character.upgradeRejuvenationPotions(), size_t(26));
-            Assert::IsTrue(character.save());
-            auto json = character.asJson();
+            Assert::IsTrue(character.save(false));
+            auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
             Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
         }
 	};

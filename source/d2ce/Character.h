@@ -37,6 +37,9 @@ namespace d2ce
     //---------------------------------------------------------------------------
     class Character
     {
+    public:
+        enum class EnumCharSaveOp : std::uint8_t { NoSave, SaveWithBackup, SaveOnly, BackupOnly };
+
     protected:
         // the following variables are what would be found in the character file format
         // variables that are commented out means that no functions have been
@@ -133,8 +136,11 @@ namespace d2ce
         bool writeItems() const;
         void writeTempFile() const;
 
+        void headerAsJson(Json::Value& parent, EnumCharVersion version, bool bSerializedFormat = false) const;
         void headerAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void validateActs();
+
+        std::string asJson(EnumCharVersion version, bool bSerializedFormat = false, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup); // utf-8
 
     public:
         Character();
@@ -143,11 +149,14 @@ namespace d2ce
         // File operations
         bool open(const std::filesystem::path& path, bool validateChecksum = true);
         bool refresh();
-        bool save();
-        bool saveAsD2s();
+        bool save(bool backup = true);
+        bool saveAsVersion(EnumCharVersion version, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup);
+        bool saveAsVersion(const std::filesystem::path& path, EnumCharVersion version, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup);
+        bool saveAsD2s(EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup);
+        bool saveAsD2s(const std::filesystem::path& path, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup);
         void close();
         const std::filesystem::path& getPath() const;
-        std::string asJson(bool bSerializedFormat = false) const; // utf-8
+        std::string asJson(bool bSerializedFormat = false, EnumCharSaveOp backup = EnumCharSaveOp::SaveWithBackup); // utf-8
 
         void setDefaultTxtReader();
         void setTxtReader(const ITxtReader& txtReader);

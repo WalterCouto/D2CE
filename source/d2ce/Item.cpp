@@ -1499,7 +1499,7 @@ bool d2ce::Item::setLocation(EnumEquippedId equippedId)
         return false;
     }
 
-    return setLocation(EnumItemLocation::EQUIPPED, EnumAltItemLocation::UNKNOWN, equippedId, 0, 0);
+    return setLocation(EnumItemLocation::EQUIPPED, EnumAltItemLocation::UNKNOWN, equippedId, static_cast<std::uint16_t>(equippedId), 0);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, EnumEquippedId equippedId, std::uint16_t positionX, std::uint16_t positionY)
@@ -1539,7 +1539,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
         }
 
         altPositionId = EnumAltItemLocation::UNKNOWN;
-        positionX = 0;
+        positionX = static_cast<std::uint16_t>(equippedId);
         positionY = 0;
         break;
 
@@ -2610,7 +2610,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
         if (locationId == EnumItemLocation::EQUIPPED)
         {
             value = static_cast<std::underlying_type_t<EnumEquippedId>>(equippedId);
-            positionX = 0;
+            positionX = std::uint16_t(value);
             positionY = 0;
         }
 
@@ -10669,35 +10669,100 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         start_bit_offset = current_bit_offset;
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-        node = itemRoot[bSerializedFormat ? "Version" : "version"];
-        if (node.isNull())
+        if (ItemVersion <= EnumItemVersion::v107) // pre-1.07 character file
         {
-            if (ItemVersion <= EnumItemVersion::v107) // pre-1.07 character file
-            {
-                rawVersion = 0;
-            }
-            else if (version < EnumItemVersion::v110) // pre-1.10 character file
-            {
-                rawVersion = 100;
-            }
-            else
-            {
-                rawVersion = 2;
-            }
+            rawVersion = 0;
         }
         else
         {
-            rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 10)) : std::uint16_t(node.asInt64());
+            node = itemRoot[bSerializedFormat ? "Version" : "version"];
+            if (node.isNull())
+            {
+                if (version < EnumItemVersion::v110) // pre-1.10 character file
+                {
+                    rawVersion = isExpansion ? 100 : 1;
+                }
+                else
+                {
+                    rawVersion = isExpansion ? 101 : 2;
+                }
+            }
+            else
+            {
+                rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 10)) : std::uint16_t(node.asInt64());
+                if (version < EnumItemVersion::v110) // pre-1.10 character file
+                {
+                    switch (rawVersion)
+                    {
+                    case 100:
+                    case 101:
+                    case 5:
+                        rawVersion = 100;
+                        break;
+
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 4:
+                        rawVersion = 1;
+                        break;
+
+                    default:
+                        rawVersion = isExpansion ? 100 : 1;
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (rawVersion)
+                    {
+                    case 100:
+                    case 101:
+                    case 5:
+                        rawVersion = 101;
+                        break;
+
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 4:
+                        rawVersion = 2;
+                        break;
+
+                    default:
+                        rawVersion = isExpansion ? 101 : 2;
+                        break;
+                    }
+                }
+            }
         }
     }
     else
     {
-        GameVersion = isExpansion ? 100 : 1;
         rawVersion = isExpansion ? 5 : 4;
         node = itemRoot[bSerializedFormat ? "Version" : "version"];
         if (!node.isNull())
         {
             rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 2)) : std::uint16_t(node.asInt64());
+            switch (rawVersion)
+            {
+            case 100:
+            case 101:
+            case 5:
+                rawVersion = 5;
+                break;
+
+            case 0:
+            case 1:
+            case 2:
+            case 4:
+                rawVersion = 4;
+                break;
+
+            default:
+                rawVersion = isExpansion ? 5 : 4;
+                break;
+            }
         }
     }
 
@@ -11888,7 +11953,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     }
 
     // Realm Data Flag
-    // TODO: should we add information to the json export (always 0 it seems)
     realm_bit_offset = current_bit_offset;
     value = 0;
     bitSize = 1;
@@ -12277,6 +12341,729 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
     item_end_bit_offset = max_bit_offset;
     return true;
+}
+//---------------------------------------------------------------------------
+void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVersion version, bool bSerializedFormat) const
+{
+    if (version == ItemVersion)
+    {
+        asJson(parent, charLevel, bSerializedFormat);
+        return;
+    }
+
+    bool isExpansion = isExpansionItem();
+    bool bIsPersonalized = isPersonalized();
+    auto gameVersion = getGameVersion();
+    auto rawVersion = getRawVersion();
+    switch (version)
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03
+    case EnumItemVersion::v104: // v1.04 - v1.06
+        isExpansion = false;
+        bIsPersonalized = false;
+        gameVersion = 0;
+        rawVersion = 0;
+        break;
+    case EnumItemVersion::v107: // v1.07
+        gameVersion = isExpansion ? 100 : 0;
+        rawVersion = 0;
+        break;
+
+    case EnumItemVersion::v108: // v1.08
+    case EnumItemVersion::v109: // v1.09
+    case EnumItemVersion::v110: // v1.10 - v1.14d
+        switch (rawVersion)
+        {
+        case 100:
+        case 101:
+        case 5:
+            gameVersion = 100;
+            rawVersion = 100;
+            break;
+
+        case 0:
+        case 1:
+        case 2:
+        case 4:
+            gameVersion = 1;
+            rawVersion = 1;
+            break;
+
+        default:
+            gameVersion = isExpansion ? 100 : 1;
+            rawVersion = isExpansion ? 100 : 1;
+            break;
+        }
+        break;
+
+    case EnumItemVersion::v115: // Diablo II Resurrected
+    case EnumItemVersion::v116: // Diablo II Resurrected Patch 2.4
+    default:
+        switch (rawVersion)
+        {
+        case 100:
+        case 101:
+        case 5:
+            gameVersion = 100;
+            rawVersion = 5;
+            break;
+
+        case 0:
+        case 1:
+        case 2:
+        case 4:
+            gameVersion = 1;
+            rawVersion = 4;
+            break;
+
+        default:
+            gameVersion = isExpansion ? 100 : 1;
+            rawVersion = isExpansion ? 5 : 4;
+            break;
+        }
+        break;
+    }
+
+    bool bIsEar = isEar();
+    EarAttributes earAttrib;
+    if (bIsEar)
+    {
+        getEarAttributes(earAttrib);
+    }
+
+    if (version < ItemVersion)
+    {
+        // check stash location and item to make sure it is valid
+        const auto& itemType = getItemTypeHelper();
+        if ((getLocation() == EnumItemLocation::STORED) && (getAltPositionId() == EnumAltItemLocation::STASH))
+        {
+            if ((ItemVersion >= d2ce::EnumItemVersion::v115 && version < d2ce::EnumItemVersion::v115) ||
+                (isExpansionItem() && !isExpansion))
+            {
+
+                // STASH is a 6 x 4/8 grid
+                ItemDimensions stashDimensions;
+                stashDimensions.Width = stashDimensions.InvWidth = 6;
+                stashDimensions.Height = stashDimensions.InvHeight = !isExpansion ? 4 : 8;
+                if (((getPositionX() + itemType.dimensions.Width - 1) > stashDimensions.Width) ||
+                    ((getPositionY() + itemType.dimensions.Height - 1) > stashDimensions.Height))
+                {
+                    return;
+                }
+            }
+        }
+
+        if (itemType.isExpansionItem() && !isExpansion)
+        {
+            // invalid item
+            return;
+        }
+
+        // check for personaliztion string
+        if ((ItemVersion >= d2ce::EnumItemVersion::v115 && version < d2ce::EnumItemVersion::v115) ||
+            (isExpansionItem() && !isExpansion))
+        {
+            if ((ItemVersion >= d2ce::EnumItemVersion::v116) && (version <= d2ce::EnumItemVersion::v115))
+            {
+                if (bIsPersonalized)
+                {
+                    // personalization has change, make sure they are all 7 bit characters
+                    for (std::uint8_t singleChar : getPersonalizedName())
+                    {
+                        if (singleChar > 0x7F)
+                        {
+                            bIsPersonalized = false;
+                            break;
+                        }
+                    }
+                }
+                else if (bIsEar)
+                {
+                    // player name has change, make sure they are all 7 bit characters
+                    for (std::uint8_t singleChar : earAttrib.Name)
+                    {
+                        if (singleChar > 0x7F)
+                        {
+                            earAttrib.Name.fill(0);
+                            strcpy_s(earAttrib.Name.data(), 7, "SOMEONE");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    std::vector<MagicalAttribute> magicalAttributes;
+    d2ce::RunewordAttributes runewordAttrib;
+    Json::Value item;
+    if (bSerializedFormat)
+    {
+        if (version < EnumItemVersion::v115)
+        {
+            item["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+
+            std::stringstream ss;
+            ss << std::dec << rawVersion;
+            item["Version"] = ss.str();
+            if (version == EnumItemVersion::v104)
+            {
+                item["IsV104"] = true;
+            }
+        }
+        else
+        {
+            switch (rawVersion)
+            {
+            case 0:
+                item["Version"] = "0";
+                break;
+
+            case 1:
+                item["Version"] = "1";
+                break;
+
+            case 2:
+                item["Version"] = "10";
+                break;
+
+            case 3:
+                item["Version"] = "11";
+                break;
+
+            case 4:
+                item["Version"] = "100";
+                break;
+
+            case 5:
+                item["Version"] = "101";
+                break;
+
+            case 6:
+                item["Version"] = "110";
+                break;
+
+            case 7:
+                item["Version"] = "111";
+                break;
+
+            default:
+                item["Version"] = "101";
+                break;
+
+            }
+        }
+
+        item["Mode"] = std::uint16_t(getLocation());
+        item["Location"] = std::uint16_t(getEquippedId());
+        item["X"] = std::uint16_t(getPositionX());
+        item["Y"] = std::uint16_t(getPositionY());
+        item["Page"] = std::uint16_t(getAltPositionId());
+
+        std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+        getItemCode(strcode);
+
+        if (bIsEar)
+        {
+            item["EarLevel"] = earAttrib.getLevel();
+            item["PlayerName"] = earAttrib.Name.data();
+            item["Code"] = "";
+        }
+        else
+        {
+            item["EarLevel"] = 0;
+            if (bIsPersonalized)
+            {
+                item["PlayerName"] = getPersonalizedName();
+            }
+
+            std::string sCode((char*)strcode.data(), 4);
+            item["Code"] = sCode;
+        }
+
+        const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+        if (itemType.isQuestItem())
+        {
+            item["QuestDifficulty"] = std::uint16_t(getQuestDifficulty());
+        }
+
+        item["TotalNumberOfSockets"] = std::uint16_t(getSocketCount());
+
+        // Socketed items
+        Json::Value socketedItems(Json::arrayValue);
+        for (auto& socketedItem : SocketedItems)
+        {
+            socketedItem.asJson(socketedItems, charLevel, version, bSerializedFormat);
+        }
+        item["NumberOfSocketedItems"] = std::uint16_t(socketedItems.size());
+        item["SocketedItems"] = socketedItems;
+
+        item["Id"] = getId();
+        item["ItemLevel"] = std::uint16_t(getLevel());
+
+        if (dwa_bit_offset != 0)
+        {
+            if (dwb_bit_offset == 0)
+            {
+                dwb_bit_offset = dwa_bit_offset + 32;
+            }
+
+            item["Dwa"] = readBits(dwa_bit_offset, 32);
+            item["Dwb"] = readBits(dwb_bit_offset, 32);
+        }
+
+        auto quality = getQuality();
+        item["Quality"] = std::uint16_t(quality);
+        item["HasMultipleGraphics"] = hasMultipleGraphics();
+        item["GraphicId"] = std::uint16_t(getPictureId());
+        item["IsAutoAffix"] = isAutoAffix();
+        item["AutoAffixId"] = getAutoAffixId();
+        item["FileIndex"] = getFileIndex();
+
+        d2ce::RareAttributes rareAttrib;
+        std::vector<MagicalAffixes> affixes;
+        affixes.resize(3);
+        switch (quality)
+        {
+        case EnumItemQuality::MAGIC:
+            getMagicalAffixes(affixes[0]);
+            break;
+
+        case EnumItemQuality::RARE:
+        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::TEMPERED:
+            if (getRareOrCraftedAttributes(rareAttrib))
+            {
+                affixes = rareAttrib.Affixes;
+            }
+            break;
+        }
+
+        if (isTome())
+        {
+            affixes[0].SuffixId = getTomeValue();
+        }
+
+        Json::Value magicPrefixIds(Json::arrayValue);
+        for (auto& affix : affixes)
+        {
+            magicPrefixIds.append(affix.PrefixId);
+        }
+        item["MagicPrefixIds"] = magicPrefixIds;
+
+        Json::Value magicSuffixIds(Json::arrayValue);
+        for (auto& affix : affixes)
+        {
+            magicSuffixIds.append(affix.SuffixId);
+        }
+        item["MagicSuffixIds"] = magicSuffixIds;
+
+        item["RarePrefixId"] = rareAttrib.Id;
+        item["RareSuffixId"] = rareAttrib.Id2;
+
+        getRunewordAttributes(runewordAttrib);
+        item["RunewordId"] = runewordAttrib.Id;
+        item["Armor"] = getDefenseRating();
+
+        ItemDurability durability;
+        getDurability(durability);
+        item["MaxDurability"] = durability.Max;
+        if (durability.Max > 0)
+        {
+            auto durValue = durability.Current & 0xFF;
+            if (durability.CurrentBit9)
+            {
+                durValue |= 0x100;
+            }
+            item["Durability"] = durValue;
+        }
+        else if (!isExpansion && itemType.isThrownWeapon())
+        {
+            // Durability on throwing weapons is only in the Expansion
+            item["MaxDurability"] = itemType.durability.Max;
+            item["Durability"] = itemType.durability.Max;
+        }
+        item["Quantity"] = getQuantity();
+        item["SetItemMask"] = getSetItemMask();
+
+        Json::Value statLists(Json::arrayValue);
+        if (!isSimpleItem())
+        {
+            getMagicalAttributes(magicalAttributes);
+            MagicalAttribute::attributesAsJsonArray(statLists, magicalAttributes, bSerializedFormat);
+
+            if (isExpansion && isRuneword())
+            {
+                MagicalAttribute::attributesAsJsonArray(statLists, runewordAttrib.MagicalAttributes, bSerializedFormat);
+            }
+
+            d2ce::SetAttributes setAttrib;
+            switch (quality)
+            {
+            case EnumItemQuality::SET:
+                getSetAttributes(setAttrib);
+                if (!setAttrib.SetAttributes.empty())
+                {
+                    setAttrib.setAttributesAsJsonArray(statLists, bSerializedFormat);
+                }
+                break;
+            }
+        }
+        item["StatLists"] = statLists;
+
+        item["IsIdentified"] = isIdentified();
+        item["IsSocketed"] = isSocketed();
+        item["IsNew"] = isNew();
+        item["IsEar"] = bIsEar;
+        item["IsStarterItem"] = isStarterItem();
+        item["IsCompact"] = isSimpleItem();
+        item["IsEthereal"] = isEthereal();
+        item["IsPersonalized"] = bIsPersonalized;
+        item["IsRuneword"] = isExpansion && isRuneword();
+        unknownAsJson(item, bSerializedFormat);
+
+        if (parent.isArray())
+        {
+            parent.append(item);
+        }
+        else
+        {
+            parent.swap(item);
+        }
+    }
+    else
+    {
+        unknownAsJson(item, bSerializedFormat);
+        item["identified"] = (isIdentified() ? 1 : 0);
+        item["socketed"] = (isSocketed() ? 1 : 0);
+        item["new"] = (isNew() ? 1 : 0);
+        item["is_ear"] = (bIsEar ? 1 : 0);
+        item["starter_item"] = (isStarterItem() ? 1 : 0);
+        item["simple_item"] = (isSimpleItem() ? 1 : 0);
+        item["ethereal"] = (isEthereal() ? 1 : 0);
+        item["personalized"] = (bIsPersonalized ? 1 : 0);
+        item["given_runeword"] = (isExpansion && isRuneword() ? 1 : 0);
+        item["version"] = rawVersion;
+        item["location_id"] = std::uint16_t(getLocation());
+        item["equipped_id"] = std::uint16_t(getEquippedId());
+        item["position_x"] = std::uint16_t(getPositionX());
+        item["position_y"] = std::uint16_t(getPositionY());
+        item["alt_position_id"] = std::uint16_t(getAltPositionId());
+
+        if (bIsEar)
+        {
+            earAttrib.asJson(item);
+            return;
+        }
+
+        std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+        getItemCode(strcode);
+        const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+        std::string sCode((char*)strcode.data(), 3);
+        item["type"] = sCode;
+
+        Json::Value categories(Json::arrayValue);
+        for (auto& category : itemType.categories)
+        {
+            categories.append(category);
+        }
+        item["categories"] = categories;
+
+        // For compatibility with other Json exports we add type_id
+        if (itemType.isWeapon())
+        {
+            item["type_id"] = 3;
+        }
+        else if (itemType.isShield())
+        {
+            item["type_id"] = 2;
+        }
+        else if (itemType.isArmor())
+        {
+            item["type_id"] = 1;
+        }
+        else
+        {
+            item["type_id"] = 4;
+        }
+
+        if (itemType.isQuestItem())
+        {
+            item["quest_difficulty"] = std::uint16_t(getQuestDifficulty());
+        }
+
+        if (isSimpleItem() && (version != EnumItemVersion::v100))
+        {
+            getMagicalAttributes(magicalAttributes);
+            if (!magicalAttributes.empty())
+            {
+                Json::Value magicalAttribs(Json::arrayValue);
+                for (auto& attrib : magicalAttributes)
+                {
+                    attrib.asJson(magicalAttribs, bSerializedFormat);
+                }
+                item["magic_attributes"] = magicalAttribs;
+            }
+        }
+        else
+        {
+            item["id"] = getId();
+            item["level"] = std::uint16_t(getLevel());
+
+            if (dwa_bit_offset != 0)
+            {
+                if (dwb_bit_offset == 0)
+                {
+                    dwb_bit_offset = dwa_bit_offset + 32;
+                }
+
+                item["dwa"] = readBits(dwa_bit_offset, 32);
+                item["dwb"] = readBits(dwb_bit_offset, 32);
+            }
+
+            auto quality = getQuality();
+            item["quality"] = std::uint16_t(quality);
+            item["multiple_pictures"] = (hasMultipleGraphics() ? 1 : 0);
+            if (hasMultipleGraphics())
+            {
+                item["picture_id"] = std::uint16_t(getPictureId());
+            }
+            item["class_specific"] = (isAutoAffix() ? 1 : 0);
+            if (isAutoAffix())
+            {
+                item["auto_affix_id"] = getAutoAffixId();
+            }
+            if (quality == EnumItemQuality::INFERIOR)
+            {
+                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
+            }
+            else if (quality == EnumItemQuality::SUPERIOR)
+            {
+                item["file_index"] = std::uint16_t(getFileIndex());
+            }
+            else if (quality == EnumItemQuality::MAGIC)
+            {
+                d2ce::MagicalAffixes magicalAffixes;
+                getMagicalAffixes(magicalAffixes);
+                magicalAffixes.asJson(item);
+            }
+
+            if (isExpansion && isRuneword())
+            {
+                getRunewordAttributes(runewordAttrib);
+                runewordAttrib.asJson(item);
+            }
+
+            d2ce::SetAttributes setAttrib;
+            d2ce::RareAttributes rareAttrib;
+            d2ce::UniqueAttributes uniqueAttrib;
+            switch (quality)
+            {
+            case EnumItemQuality::SET:
+                getSetAttributes(setAttrib);
+                setAttrib.asJson(item);
+                break;
+
+            case EnumItemQuality::RARE:
+            case EnumItemQuality::CRAFT:
+            case EnumItemQuality::TEMPERED:
+                getRareOrCraftedAttributes(rareAttrib);
+                rareAttrib.asJson(item);
+                break;
+
+            case EnumItemQuality::UNIQUE:
+                getUniqueAttributes(uniqueAttrib);
+                uniqueAttrib.asJson(item);
+                break;
+            }
+
+            if (bIsPersonalized)
+            {
+                item["personalized_name"] = getPersonalizedName();
+            }
+
+            if (isTome())
+            {
+                item["magic_suffix"] = getTomeValue();
+            }
+
+            item["timestamp"] = (getRealmDataFlag() ? 1 : 0);
+            if (isStackable())
+            {
+                item["quantity"] = getQuantity();
+            }
+
+            auto defenseRating = getDefenseRating();
+            if (defenseRating > 0)
+            {
+                item["defense_rating"] = defenseRating;
+            }
+
+            ItemDurability durability;
+            if (getDurability(durability))
+            {
+                item["max_durability"] = durability.Max;
+                if (durability.Max > 0)
+                {
+                    auto durValue = durability.Current & 0xFF;
+                    if (durability.CurrentBit9)
+                    {
+                        durValue |= 0x100;
+                    }
+                    item["current_durability"] = durValue;
+                }
+                else if (!isExpansion && itemType.isThrownWeapon())
+                {
+                    // Durability on throwing weapons is only in the Expansion
+                    item["max_durability"] = itemType.durability.Max;
+                    item["current_durability"] = itemType.durability.Max;
+                }
+            }
+
+            if (isSocketed())
+            {
+                item["total_nr_of_sockets"] = std::uint16_t(getSocketCount());
+            }
+
+            Json::Value magicalAttribs(Json::arrayValue);
+            getMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                attrib.asJson(magicalAttribs, bSerializedFormat);
+            }
+            item["magic_attributes"] = magicalAttribs;
+
+            if (itemType.isWeapon())
+            {
+                itemType.dam.asJson(item);
+            }
+
+            if (isSocketed())
+            {
+                // Socketed items
+                Json::Value socketedItems(Json::arrayValue);
+                for (auto& socketedItem : SocketedItems)
+                {
+                    socketedItem.asJson(socketedItems, charLevel, version, bSerializedFormat);
+                }
+                item["nr_of_items_in_sockets"] = std::uint16_t(socketedItems.size());
+                item["socketed_items"] = socketedItems;
+            }
+        }
+
+        item["type_name"] = itemType.name;
+
+        ItemRequirements req;
+        if (!getDisplayedRequirements(req, charLevel))
+        {
+            req = itemType.req;
+        }
+
+        if (req.Strength != 0)
+        {
+            item["reqstr"] = req.Strength;
+        }
+
+        if (req.Dexterity != 0)
+        {
+            item["reqdex"] = req.Dexterity;
+        }
+
+        if (req.Level != 0)
+        {
+            item["levelreq"] = req.Level;
+        }
+
+        item["inv_file"] = itemType.inv_file;
+        item["inv_height"] = itemType.dimensions.Height;
+        item["inv_width"] = itemType.dimensions.Width;
+
+        if (itemType.inv_transform != 0)
+        {
+            item["inv_transform"] = itemType.inv_transform;
+        }
+
+        auto tc = getTransformColor();
+        if (!tc.empty())
+        {
+            item["transform_color"] = tc;
+        }
+
+        if (!isSimpleItem() || !magicalAttributes.empty())
+        {
+            // For efficiency reasons we do the formatting using the existing list 
+            // instead of building it again
+            ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
+            }
+
+            // Sort display items in proper order
+            std::sort(magicalAttributes.begin(), magicalAttributes.end(), ItemHelpers::magicalAttributeSorter);
+
+            Json::Value displayedMagicAttributes(Json::arrayValue);
+            for (auto& attrib : magicalAttributes)
+            {
+                attrib.asJson(displayedMagicAttributes, bSerializedFormat);
+            }
+            item["displayed_magic_attributes"] = displayedMagicAttributes;
+
+            Json::Value displayedRunewordAttributes(Json::arrayValue);
+            if (!runewordAttrib.MagicalAttributes.empty())
+            {
+                ItemHelpers::checkForRelatedMagicalAttributes(runewordAttrib.MagicalAttributes);
+                for (auto& attrib : runewordAttrib.MagicalAttributes)
+                {
+                    ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
+                }
+
+                // Sort display items in proper order
+                std::sort(runewordAttrib.MagicalAttributes.begin(), runewordAttrib.MagicalAttributes.end(), ItemHelpers::magicalAttributeSorter);
+
+                for (auto& attrib : runewordAttrib.MagicalAttributes)
+                {
+                    attrib.asJson(displayedRunewordAttributes, bSerializedFormat);
+                }
+            }
+            item["displayed_runeword_attributes"] = displayedRunewordAttributes;
+
+            Json::Value combinedMagicAttributes(Json::arrayValue);
+            getCombinedMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                attrib.asJson(combinedMagicAttributes, bSerializedFormat);
+            }
+            item["combined_magic_attributes"] = combinedMagicAttributes;
+
+            // For efficiency reasons we do the formatting using the existing list 
+            // instead of building it again
+            ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
+            for (auto& attrib : magicalAttributes)
+            {
+                ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
+            }
+
+            // Sort display items in proper order
+            std::sort(magicalAttributes.begin(), magicalAttributes.end(), ItemHelpers::magicalAttributeSorter);
+
+            Json::Value displayedCombinedMagicAttributes(Json::arrayValue);
+            for (auto& attrib : magicalAttributes)
+            {
+                attrib.asJson(displayedCombinedMagicAttributes, bSerializedFormat);
+            }
+            item["displayed_combined_magic_attributes"] = displayedCombinedMagicAttributes;
+        }
+
+        if (parent.isArray())
+        {
+            parent.append(item);
+        }
+        else
+        {
+            parent.swap(item);
+        }
+    }
 }
 //---------------------------------------------------------------------------
 void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
@@ -16012,6 +16799,39 @@ bool d2ce::Items::writeSharedStashPage(std::FILE* charfile) const
     return true;
 }
 //---------------------------------------------------------------------------
+void d2ce::Items::itemsAsJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVersion version, bool bSerializedFormat) const
+{
+    if (version == Version)
+    {
+        itemsAsJson(parent, charLevel, bSerializedFormat);
+        return;
+    }
+
+    if (bSerializedFormat)
+    {
+        Json::Value playerItemList;
+        playerItemList["Header"] = *((std::uint16_t*)ITEM_MARKER.data());
+
+        Json::Value items(Json::arrayValue);
+        for (auto& item : Inventory)
+        {
+            item.asJson(items, charLevel, version, bSerializedFormat);
+        }
+        playerItemList["Count"] = items.size();
+        playerItemList["Items"] = items;
+        parent["PlayerItemList"] = playerItemList;
+    }
+    else
+    {
+        Json::Value items(Json::arrayValue);
+        for (auto& item : Inventory)
+        {
+            item.asJson(items, charLevel, version, bSerializedFormat);
+        }
+        parent["items"] = items;
+    }
+}
+//---------------------------------------------------------------------------
 void d2ce::Items::itemsAsJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
 {
     if (bSerializedFormat)
@@ -16182,6 +17002,61 @@ bool d2ce::Items::itemBonusesAsJson(Json::Value& parent, bool bSerializedFormat)
     }
     parent["item_bonuses"] = itemBonuses;
     return true;
+}
+//---------------------------------------------------------------------------
+void d2ce::Items::asJson(Json::Value& parent, std::uint32_t charLevel, EnumCharVersion version, bool bSerializedFormat) const
+{
+    EnumItemVersion itemVersion = APP_ITEM_VERSION;
+    switch (version)
+    {
+    case EnumCharVersion::v100: // v1.00 - v1.06
+        itemVersion = EnumItemVersion::v104;
+        switch (Version)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v104: // v1.04 - v1.06
+            asJson(parent, charLevel, bSerializedFormat);
+            return;
+        }
+        break;
+
+    case EnumCharVersion::v107: // v1.07
+        itemVersion = EnumItemVersion::v107;
+        break;
+
+    case EnumCharVersion::v108: // v1.08
+        itemVersion = EnumItemVersion::v108;
+        break;
+
+    case EnumCharVersion::v109: // v1.09
+        itemVersion = EnumItemVersion::v109;
+        break;
+
+    case EnumCharVersion::v110: // v1.10 - v1.14d
+        itemVersion = EnumItemVersion::v110;
+        break;
+
+    case EnumCharVersion::v115: // Diablo II Resurrected
+        itemVersion = EnumItemVersion::v115;
+        break;
+
+    case EnumCharVersion::v116: // Diablo II Resurrected Patch 2.4
+    default:
+        itemVersion = EnumItemVersion::v116;
+        break;
+    }
+
+    if (itemVersion == Version)
+    {
+        asJson(parent, charLevel, bSerializedFormat);
+        return;
+    }
+
+    itemsAsJson(parent, charLevel, itemVersion, bSerializedFormat);
+    corpseItemsAsJson(parent, charLevel, bSerializedFormat);
+    mercItemsAsJson(parent, charLevel, bSerializedFormat);
+    golemItemAsJson(parent, charLevel, bSerializedFormat);
+    itemBonusesAsJson(parent, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSerializedFormat) const
