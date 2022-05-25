@@ -26,6 +26,7 @@
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
 #include "D2SharedStashForm.h"
+#include "D2RunewordForm.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <deque>
 #include <utf8/utf8.h>
@@ -3470,6 +3471,28 @@ d2ce::ItemFilter CD2ItemsForm::GetCurrItemFilter() const
     return filter;
 }
 //---------------------------------------------------------------------------
+bool CD2ItemsForm::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    auto preLocationId = item.getLocation();
+    auto preAltPositionId = item.getAltPositionId();
+    auto preEquipId = item.getEquippedId();
+    if (MainForm.setItemRuneword(item, id))
+    {
+        if (preEquipId != d2ce::EnumEquippedId::NONE)
+        {
+            refreshEquipped(preEquipId);
+        }
+        else
+        {
+            refreshGrid(preLocationId, preAltPositionId);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
 {
     // Make sure we have hit an item
@@ -4190,11 +4213,6 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     auto filter(GetCurrItemFilter());
     if (CurrItem == nullptr)
     {
-        if (filter.LocationId == d2ce::EnumItemLocation::EQUIPPED)
-        {
-            return;
-        }
-
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
@@ -4223,6 +4241,14 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                         pSubPopup->RemoveMenu(numItems - 1, MF_BYPOSITION);
                     }
                 }
+            }
+        }
+        else if (filter.LocationId == d2ce::EnumItemLocation::EQUIPPED)
+        {
+            auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_GPS_CREATOR);
+            if (pos >= 0)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
             }
         }
 
@@ -4839,6 +4865,14 @@ void CD2ItemsForm::OnItemContextRemovePersonalization()
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextApplyruneword()
 {
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    CD2RunewordForm dlg(*this);
+    dlg.DoModal();
+    SetFocus();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextImportitem()

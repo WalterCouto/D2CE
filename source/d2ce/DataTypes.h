@@ -1357,6 +1357,7 @@ namespace d2ce
         bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
 
         bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, std::uint8_t parentGemApplyType = 0) const;
+        bool getRuneMagicalAttributes(const d2ce::Item& parentItem, std::vector<MagicalAttribute>& attribs) const;
 
         std::string getPotionDesc(EnumCharClass charClass) const;
 

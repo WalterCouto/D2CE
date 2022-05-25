@@ -3845,7 +3845,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -3949,7 +3949,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -4565,7 +4565,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -4664,7 +4664,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -5356,7 +5356,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -5460,7 +5460,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -6076,7 +6076,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -6175,7 +6175,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -6867,7 +6867,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -6971,7 +6971,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -7587,7 +7587,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -7686,7 +7686,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -8378,7 +8378,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -8482,7 +8482,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -9098,7 +9098,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -9197,7 +9197,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -9889,7 +9889,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -9993,7 +9993,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -10609,7 +10609,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -10708,7 +10708,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -11400,7 +11400,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -11504,7 +11504,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -12120,7 +12120,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -12219,7 +12219,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -12911,7 +12911,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -13015,7 +13015,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -13631,7 +13631,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -13730,7 +13730,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -14756,7 +14756,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -14860,7 +14860,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -15476,7 +15476,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -15575,7 +15575,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -16267,7 +16267,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -16371,7 +16371,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -16987,7 +16987,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -17086,7 +17086,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -17778,7 +17778,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -17882,7 +17882,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -18498,7 +18498,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -18597,7 +18597,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -19289,7 +19289,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -19393,7 +19393,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -20009,7 +20009,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -20108,7 +20108,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -20800,7 +20800,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -20904,7 +20904,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,
@@ -21520,7 +21520,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 216,
@@ -21619,7 +21619,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 127,

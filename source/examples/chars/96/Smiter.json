@@ -18493,7 +18493,7 @@
             14
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -19140,7 +19140,7 @@
             14
           ],
           "name": "item_aura",
-          "description": "Level Defiance 14 Aura When Equipped"
+          "description": "Level 14 Defiance Aura When Equipped"
         },
         {
           "id": 188,
@@ -19266,7 +19266,7 @@
             14
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -19347,7 +19347,7 @@
             14
           ],
           "name": "item_aura",
-          "description": "Level Defiance 14 Aura When Equipped"
+          "description": "Level 14 Defiance Aura When Equipped"
         },
         {
           "id": 188,

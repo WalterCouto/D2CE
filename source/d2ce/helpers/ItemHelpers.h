@@ -53,6 +53,7 @@ namespace d2ce
         const bool hasItemStat(const MagicalAttribute& attrib);
 
         const ItemType& getItemTypeHelper(const std::array<std::uint8_t, 4>& strcode);
+        const ItemType& getItemTypeHelper(const std::string& code);
 
         void getValidGPSCodes(std::vector <std::string>& gpsCodes, bool isExpansion = true);
         std::uint16_t getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode);
@@ -60,6 +61,7 @@ namespace d2ce
         std::int64_t getMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
         void applyNonMaxMagicalAttributes(CharStats& cs, std::vector<MagicalAttribute>& attribs);
         void applyMaxMagicalAttributes(CharStats& cs, std::vector<MagicalAttribute>& attribs);
+        bool formatMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel);
     }
     //---------------------------------------------------------------------------
 

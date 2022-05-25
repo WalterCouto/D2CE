@@ -99,7 +99,6 @@ namespace d2ce
         size_t runeword_props_bit_offset = 0;
         size_t item_end_bit_offset = 0;
         size_t item_current_socket_idx = 0; // temp variable for socketed gem ordering
-        size_t dwa_bit_offset = 0;
         mutable size_t dwb_bit_offset = 0;
         mutable MagicalCachev100 magic_affixes_v100;
         mutable RareOrCraftedCachev100 rare_affixes_v100;
@@ -234,6 +233,7 @@ namespace d2ce
         bool getRunewordAttributes(RunewordAttributes& attrib) const;
         std::string getPersonalizedName() const;
         std::uint8_t getTomeValue() const; // used in serialization
+        std::uint16_t getSetItemId() const;
         bool getSetAttributes(SetAttributes& attrib) const;
         bool getRareOrCraftedAttributes(RareAttributes& attrib) const;
         bool getUniqueAttributes(UniqueAttributes& attrib) const;
@@ -524,7 +524,7 @@ namespace d2ce
         bool setItemLocation(d2ce::Item& item, const d2ce::Character& charInfo, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item* &pRemovedItem);
 
         bool removeSocketedItems(d2ce::Item& item);
-        bool setRuneword(d2ce::Item& item, std::uint16_t id);
+        bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;

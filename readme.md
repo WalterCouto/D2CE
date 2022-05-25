@@ -1,4 +1,4 @@
-﻿# Diablo II Character Editor
+# Diablo II Character Editor
 Copyright (c) 2000-2003 By Burton Tsang<br>
 Copyright (c) 2021-2022 By Walter Couto<br>
 
@@ -77,7 +77,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.16 (May 20, 2022)**
+**Version 2.16 (June 5, 2022)**
 - Updated: fix up mercenary for PTR 2.4 changes to Barbarian<br>
 - Updated: reorganized item context menu<br>
 - Updated: fixed "reload" issue with mercenary data that would not read the items.<br>
@@ -87,6 +87,8 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 - Added: add support for dragging and dropping items.<br>
 - Added: add d2i item files and support for import/export of items. The application supports the standard d2i files that exists today but if the item being exported is a D2R PTR 2.4 ear or personalized item that contains utf-8 characters outside the ASCII range, it will export the d2i file as a v1.16 item  which is not the same as the format of existing d2i files.<br>
 - Added: add ability to socket and unsocket items<br>
+- Added: add ability to convert character file to a different version via the "Change Version" menu item.<br>
+- Added: add ability to apply runewords to item via the "Apply Runeword" context menu item.<br>
 <br>
 
 **Version 2.15 (April 26, 2022)**

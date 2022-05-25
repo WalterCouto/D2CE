@@ -1106,6 +1106,16 @@ const d2ce::Item* CD2SharedStashForm::PlaceItem(UINT id, d2ce::Item& item, CPoin
     return false;
 }
 //---------------------------------------------------------------------------
+bool CD2SharedStashForm::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    if (Stash.setItemRuneword(item, id))
+    {
+        refreshGrid();
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
 const d2ce::Item* CD2SharedStashForm::GetInvItem(UINT id, UINT offset) const
 {
     // Make sure we have hit an item

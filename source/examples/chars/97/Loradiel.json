@@ -7134,7 +7134,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 215,
@@ -7181,7 +7181,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Prayer 20 Aura When Equipped"
+          "description": "Level 20 Prayer Aura When Equipped"
         },
         {
           "id": 127,
@@ -7275,7 +7275,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 215,
@@ -7318,7 +7318,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Prayer 20 Aura When Equipped"
+          "description": "Level 20 Prayer Aura When Equipped"
         },
         {
           "id": 127,
@@ -7719,7 +7719,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 153,
@@ -7797,7 +7797,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Cleansing 20 Aura When Equipped"
+          "description": "Level 20 Cleansing Aura When Equipped"
         },
         {
           "id": 99,
@@ -8187,7 +8187,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 153,
@@ -8256,7 +8256,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Cleansing 20 Aura When Equipped"
+          "description": "Level 20 Cleansing Aura When Equipped"
         },
         {
           "id": 99,
@@ -10867,7 +10867,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 204,
@@ -10922,7 +10922,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Prayer 20 Aura When Equipped"
+          "description": "Level 20 Prayer Aura When Equipped"
         },
         {
           "id": 99,
@@ -11355,7 +11355,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 204,
@@ -11401,7 +11401,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Prayer 20 Aura When Equipped"
+          "description": "Level 20 Prayer Aura When Equipped"
         },
         {
           "id": 99,
@@ -22145,7 +22145,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -23379,7 +23379,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Cleansing 20 Aura When Equipped"
+          "description": "Level 20 Cleansing Aura When Equipped"
         },
         {
           "id": 188,
@@ -23499,7 +23499,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -23713,7 +23713,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Cleansing 20 Aura When Equipped"
+          "description": "Level 20 Cleansing Aura When Equipped"
         },
         {
           "id": 188,
@@ -24145,7 +24145,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -25315,7 +25315,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Salvation 20 Aura When Equipped"
+          "description": "Level 20 Salvation Aura When Equipped"
         },
         {
           "id": 188,
@@ -25451,7 +25451,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -25649,7 +25649,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Salvation 20 Aura When Equipped"
+          "description": "Level 20 Salvation Aura When Equipped"
         },
         {
           "id": 188,
@@ -26056,7 +26056,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -27202,7 +27202,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Fire 20 Aura When Equipped"
+          "description": "Level 20 Resist Fire Aura When Equipped"
         },
         {
           "id": 188,
@@ -27318,7 +27318,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -27532,7 +27532,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Fire 20 Aura When Equipped"
+          "description": "Level 20 Resist Fire Aura When Equipped"
         },
         {
           "id": 188,
@@ -27910,7 +27910,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -29056,7 +29056,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Lightning 20 Aura When Equipped"
+          "description": "Level 20 Resist Lightning Aura When Equipped"
         },
         {
           "id": 188,
@@ -29172,7 +29172,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -29386,7 +29386,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Lightning 20 Aura When Equipped"
+          "description": "Level 20 Resist Lightning Aura When Equipped"
         },
         {
           "id": 188,
@@ -34061,7 +34061,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -35294,7 +35294,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Concentration 20 Aura When Equipped"
+          "description": "Level 20 Concentration Aura When Equipped"
         },
         {
           "id": 188,
@@ -35414,7 +35414,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -35628,7 +35628,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Concentration 20 Aura When Equipped"
+          "description": "Level 20 Concentration Aura When Equipped"
         },
         {
           "id": 188,
@@ -36026,7 +36026,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -37172,7 +37172,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Fanaticism 20 Aura When Equipped"
+          "description": "Level 20 Fanaticism Aura When Equipped"
         },
         {
           "id": 188,
@@ -37290,7 +37290,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -37503,7 +37503,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Fanaticism 20 Aura When Equipped"
+          "description": "Level 20 Fanaticism Aura When Equipped"
         },
         {
           "id": 188,
@@ -37882,7 +37882,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -39028,7 +39028,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Cold 20 Aura When Equipped"
+          "description": "Level 20 Resist Cold Aura When Equipped"
         },
         {
           "id": 188,
@@ -39146,7 +39146,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -39359,7 +39359,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Resist Cold 20 Aura When Equipped"
+          "description": "Level 20 Resist Cold Aura When Equipped"
         },
         {
           "id": 188,
@@ -39762,7 +39762,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -40995,7 +40995,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Redemption 20 Aura When Equipped"
+          "description": "Level 20 Redemption Aura When Equipped"
         },
         {
           "id": 188,
@@ -41115,7 +41115,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 188,
@@ -41329,7 +41329,7 @@
             20
           ],
           "name": "item_aura",
-          "description": "Level Redemption 20 Aura When Equipped"
+          "description": "Level 20 Redemption Aura When Equipped"
         },
         {
           "id": 188,

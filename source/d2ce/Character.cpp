@@ -40,14 +40,14 @@ namespace d2ce
     };
     constexpr std::array<std::uint8_t, 6> UNKNOWN_01C_v100 = { 0xDD, 0x00, 0x10, 0x00, 0x82, 0x00 };
     constexpr std::array<std::uint8_t, 6> UNKNOWN_01C_v107 = { 0x3F, 0x01, 0x10, 0x00, 0x82, 0x00 };
-    constexpr std::array<std::uint8_t, 2> UNKNOWN_026 = { 0x00, 0x00 };
-    constexpr std::array<std::uint8_t, 2> UNKNOWN_029 = { 0x10, 0x1E };
+    constexpr std::array<std::uint8_t, 2> UNKNOWN_01A = { 0x00, 0x00 };
+    constexpr std::array<std::uint8_t, 2> UNKNOWN_01D = { 0x10, 0x1E };
     constexpr std::array<std::uint8_t, 4> UNKNOWN_034 = { 0xFF, 0xFF, 0xFF, 0xFF };
-    constexpr std::array<std::uint8_t, 36> UNKNOWN_05A_v100 = { 
+    constexpr std::array<std::uint8_t, 37> UNKNOWN_05A_v100 = { 
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     constexpr std::array<std::uint8_t, 2> UNKNOWN_0AF = { 0x00, 0x00 };
     constexpr std::array<std::uint8_t, 28> UNKNOWN_0BF = {
@@ -989,15 +989,8 @@ void d2ce::Character::readBasicInfo()
 
     if (Bs.Version < EnumCharVersion::v109)
     {
-        if (Bs.Version < EnumCharVersion::v107)
-        {
-            m_starting_location = 38;
-            std::fseek(m_charfile, m_starting_location, SEEK_SET);
-        }
-        else
-        {
-            m_starting_location = std::ftell(m_charfile);
-        }
+        m_starting_location = 38;
+        std::fseek(m_charfile, m_starting_location, SEEK_SET);
 
         m_appearances_location = m_starting_location;
         std::fread(Appearances.data(), Appearances.size(), 1, m_charfile);
@@ -1028,8 +1021,6 @@ void d2ce::Character::readBasicInfo()
         StartingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
 
         m_mapid_location = 126;
-        auto diff = m_mapid_location -std::ftell(m_charfile);
-        diff;
         std::fseek(m_charfile, m_mapid_location, SEEK_SET);
         std::fread(&MapID, sizeof(MapID), 1, m_charfile);
     }
@@ -1339,7 +1330,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
     else
     {
-        std::fwrite(UNKNOWN_026.data(), UNKNOWN_026.size(), 1, m_charfile);
+        std::fwrite(UNKNOWN_01A.data(), UNKNOWN_01A.size(), 1, m_charfile);
     }
 
     m_class_location = std::ftell(m_charfile);
@@ -1352,7 +1343,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
     else
     {
-        std::fwrite(UNKNOWN_029.data(), UNKNOWN_029.size(), 1, m_charfile);
+        std::fwrite(UNKNOWN_01D.data(), UNKNOWN_01D.size(), 1, m_charfile);
     }
 
     // Level can be retrieved from the attributes section
@@ -1363,7 +1354,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         DisplayLevel = std::uint8_t(jsonValue.asInt());
     }
     std::fwrite(&DisplayLevel, sizeof(DisplayLevel), 1, m_charfile);
-    if (Bs.Version < EnumCharVersion::v107)
+    if (Bs.Version < EnumCharVersion::v109)
     {
         value = 0;
         std::fwrite(&value, sizeof(value), 1, m_charfile);
@@ -4159,6 +4150,11 @@ bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumAltItemLocation altP
 bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
 {
     return m_items.setItemLocation(item, *this, equippedId, invType, pRemovedItem);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    return m_items.setItemRuneword(item, id);
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::getNumberOfStackables() const

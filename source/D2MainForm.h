@@ -21,7 +21,7 @@
 #pragma once
 
 #include "d2ce/Character.h"
-#include "MainFormConstants.h"
+#include "D2MainFormConstants.h"
 #include "resource.h"
 #include <memory>
 #include <set>
@@ -438,6 +438,8 @@ public:
     bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
     bool setItemLocation(d2ce::Item& item, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
     bool setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
+
+    bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
 
     size_t getNumberOfEquippedItems() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getEquippedItems() const;

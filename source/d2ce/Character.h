@@ -324,6 +324,8 @@ namespace d2ce
         bool setItemLocation(d2ce::Item& item, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
         bool setItemLocation(d2ce::Item& item, EnumEquippedId equippedId, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
 
+        bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
+
         size_t getNumberOfStackables() const;
         size_t fillAllStackables(d2ce::ItemFilter filter = d2ce::ItemFilter());
 

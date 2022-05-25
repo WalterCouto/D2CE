@@ -249,7 +249,9 @@
     <ClInclude Include="D2LevelInfoForm.h" />
     <ClInclude Include="D2MainForm.h" />
     <ClInclude Include="D2MercenaryForm.h" />
+    <ClInclude Include="D2MultiLineListCtrl.h" />
     <ClInclude Include="D2QuestsForm.h" />
+    <ClInclude Include="D2RunewordForm.h" />
     <ClInclude Include="D2SharedStashForm.h" />
     <ClInclude Include="D2SkillTreeForm.h" />
     <ClInclude Include="D2WaypointsForm.h" />
@@ -258,7 +260,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="d2ce\Item.h" />
     <ClInclude Include="d2ce\ItemConstants.h" />
-    <ClInclude Include="MainFormConstants.h" />
+    <ClInclude Include="D2MainFormConstants.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="d2ce\SkillConstants.h" />
@@ -332,7 +334,9 @@
     <ClCompile Include="D2LevelInfoForm.cpp" />
     <ClCompile Include="D2MainForm.cpp" />
     <ClCompile Include="D2MercenaryForm.cpp" />
+    <ClCompile Include="D2MultiLineListCtrl.cpp" />
     <ClCompile Include="D2QuestsForm.cpp" />
+    <ClCompile Include="D2RunewordForm.cpp" />
     <ClCompile Include="D2SharedStashForm.cpp" />
     <ClCompile Include="D2SkillTreeForm.cpp" />
     <ClCompile Include="D2WaypointsForm.cpp" />

@@ -15,6 +15,7 @@
     "level": 1,
     "assigned_skills": [
       null,
+      "Attack",
       null,
       "Attack",
       null,
@@ -34,7 +35,7 @@
     "right_skill": "Attack",
     "menu_appearance": {
       "head": {
-        "graphic": 0,
+        "graphic": 255,
         "tint": 255
       },
       "torso": {
@@ -54,19 +55,19 @@
         "tint": 255
       },
       "right_hand": {
-        "graphic": 255,
-        "tint": 255
-      },
-      "left_hand": {
         "graphic": 4,
         "tint": 255
       },
-      "shield": {
+      "left_hand": {
         "graphic": 255,
         "tint": 255
       },
-      "special1": {
+      "shield": {
         "graphic": 79,
+        "tint": 255
+      },
+      "special1": {
+        "graphic": 255,
         "tint": 255
       },
       "special2": {

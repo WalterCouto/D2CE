@@ -103,18 +103,18 @@ namespace d2ce
     constexpr std::uint32_t ITEM_V104_EX_CONTAINER_BIT_OFFSET = 232;
 
     constexpr std::uint32_t ITEM_V100_ITEMCODE_BIT_OFFSET = 64;
-    constexpr std::uint32_t ITEM_V100_EAR_TYPECODE_BIT_OFFSET = 74;
+    constexpr std::uint32_t ITEM_V100_EAR_ITEMCODE_BIT_OFFSET = 48;
+    constexpr std::uint32_t ITEM_V100_EAR_ATTRIBE_BIT_OFFSET = 74;
+    constexpr std::uint32_t ITEM_V100_EAR_LEVEL_BIT_OFFSET = 100;
     constexpr std::uint32_t ITEM_V100_TYPECODE_BIT_OFFSET = 68;
     constexpr std::uint32_t ITEM_V100_DURABILITY_BIT_OFFSET = 105;
     constexpr std::uint32_t ITEM_V100_DWA_BIT_OFFSET = 139;
-    constexpr std::uint32_t ITEM_V100_DWB_BIT_OFFSET = 171;
     constexpr std::uint32_t ITEM_V104_EX_TYPECODE_BIT_OFFSET = 58;
     constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET = 80;
     constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET = 82;
     constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET = 82;
     constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 137;
     constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET = 171;
-    constexpr std::uint32_t ITEM_V104_EX_DWB_BIT_OFFSET = 203;
 
     constexpr std::uint32_t ITEM_V100_BITFIELD3_BIT_OFFSET = 48;
     constexpr std::uint32_t ITEM_V100_NUM_SOCKETED_BIT_OFFSET = 53;
@@ -299,6 +299,7 @@ namespace d2ce
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
 
         std::uint16_t getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
+        std::uint32_t getSetItemDWBCode(std::uint16_t setItemId);
         std::uint32_t getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
@@ -671,8 +672,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
             quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_100;
             quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
             item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
-            dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
-            dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
+            item_id_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
+            dwb_bit_offset = item_id_bit_offset + 32;
             if (itemCode >= MAXUINT16)
             {
                 *this = invalidItem;
@@ -704,7 +705,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
             }
 
             value = ItemHelpers::generarateRandomDW();
-            current_bit_offset = dwa_bit_offset;
+            current_bit_offset = item_id_bit_offset;
             if (!setBits(current_bit_offset, 32, value))
             {
                 *this = invalidItem;
@@ -1232,6 +1233,7 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
 
     data = other.data;
     SocketedItems = other.SocketedItems;
+    socketedMagicalAttributes = other.socketedMagicalAttributes;
     cachedCombinedMagicalAttributes = other.cachedCombinedMagicalAttributes;
 
     ItemVersion = other.ItemVersion;
@@ -1272,7 +1274,6 @@ d2ce::Item& d2ce::Item::operator=(const Item& other)
     runeword_props_bit_offset = other.runeword_props_bit_offset;
     item_end_bit_offset = other.item_end_bit_offset;
     item_current_socket_idx = other.item_current_socket_idx;
-    dwa_bit_offset = other.dwa_bit_offset;
     dwb_bit_offset = other.dwb_bit_offset;
     magic_affixes_v100 = other.magic_affixes_v100;
     rare_affixes_v100 = other.rare_affixes_v100;
@@ -1330,7 +1331,6 @@ d2ce::Item& d2ce::Item::operator=(Item&& other) noexcept
     runeword_props_bit_offset = std::exchange(other.runeword_props_bit_offset, 0);
     item_end_bit_offset = std::exchange(other.item_end_bit_offset, 0);
     item_current_socket_idx = std::exchange(other.item_current_socket_idx, 0);
-    dwa_bit_offset = std::exchange(other.dwa_bit_offset, 0);
     dwb_bit_offset = std::exchange(other.dwb_bit_offset, 0);
     magic_affixes_v100 = std::exchange(other.magic_affixes_v100, MagicalCachev100());
     rare_affixes_v100 = std::exchange(other.rare_affixes_v100, RareOrCraftedCachev100());
@@ -2763,6 +2763,7 @@ void d2ce::Item::verifyRuneword()
             }
 
             // add bonus magical attributes from runeword id
+            cachedCombinedMagicalAttributes.clear();
             runeword_props_bit_offset = runeword_props_bit_offset_marker;
             size_t current_bit_offset = runeword_props_bit_offset;
             if (!updatePropertyList(current_bit_offset, runeword.attribs))
@@ -2778,6 +2779,7 @@ void d2ce::Item::verifyRuneword()
         }
     }
 
+    cachedCombinedMagicalAttributes.clear();
     if (!isRuneword())
     {
         return;
@@ -2906,7 +2908,6 @@ void d2ce::Item::updateOffset(size_t& startOffset, ptrdiff_t diff)
     CheckOffsetValue(magical_props_bit_offset, startOffset, bFoundMatch, diff);
     CheckOffsetValue(set_bonus_props_bit_offset, startOffset, bFoundMatch, diff);
     CheckMarkerOffsetValue(runeword_props_bit_offset_marker, runeword_props_bit_offset, startOffset, bFoundMatch, diff);
-    CheckOffsetValue(dwa_bit_offset, startOffset, bFoundMatch, diff);
     CheckOffsetValue(dwb_bit_offset, startOffset, bFoundMatch, diff);
 }
 //---------------------------------------------------------------------------
@@ -3757,6 +3758,10 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     switch (getVersion())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
+        currentOffset = ITEM_V100_EAR_LEVEL_BIT_OFFSET;
+        levelBits = 8;
+        break;
+
     case EnumItemVersion::v104: // v1.04 - v1.06 item
         levelBits = 8;
         break;
@@ -4092,8 +4097,14 @@ std::uint32_t d2ce::Item::getId() const
         switch (getVersion())
         {
         case EnumItemVersion::v100: // v1.00 - v1.03 item
+            item_id_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
+            dwb_bit_offset = item_id_bit_offset + 32;
+            break;
+
         case EnumItemVersion::v104: // v1.04 - v1.06 item
-            return 0;
+            item_id_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
+            dwb_bit_offset = item_id_bit_offset + 32;
+            break;
 
         case EnumItemVersion::v107: // v1.07 item
         case EnumItemVersion::v108: // v1.08 item
@@ -4112,6 +4123,11 @@ std::uint32_t d2ce::Item::getId() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::randomizeId()
 {
+    if (isSimpleItem() || (getVersion() < EnumItemVersion::v107))
+    {
+        return false;
+    }
+
     if (item_id_bit_offset == 0)
     {
         // should not happen
@@ -4340,6 +4356,41 @@ std::uint8_t d2ce::Item::getTomeValue() const
     }
 
     return std::uint8_t(readBits(tome_bit_offset, 5));
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getSetItemId() const
+{
+    if (quality_attrib_bit_offset == 0)
+    {
+        return 0;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::SET:
+        break;
+
+    default:
+        return 0;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
+    std::uint16_t id = 0;
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        if (!getItemCode(strcode))
+        {
+            // should not happen
+            return 0;
+        }
+
+        id = ItemHelpers::getSetItemId((std::uint16_t)readBits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+        return (id >= MAXUINT16) ? 0 : id;
+    }
+
+    return (std::uint16_t)readBits(quality_attrib_bit_offset, SET_UNIQUE_ID_NUM_BITS);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
@@ -5685,7 +5736,7 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
         break;
     }
 
-    return result.getMaxSockets(level);
+    return std::max(result.getMaxSockets(level), getSocketCount());
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getMaxSocketedCount() const
@@ -6493,7 +6544,10 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     for (const auto& runeCode : runeword.runeCodes)
     {
         strcode = ItemCodeStringConverter(runeCode);
-        Item runeItem(version, strcode, isExpansion);
+        std::list<Item> runeItems;
+        runeItems.push_back(Item(version, strcode, isExpansion));
+        auto iter = runeItems.begin();
+        auto& runeItem = *iter;
         if (runeItem.data.empty() || !runeItem.isRune() || !canSocketItem(runeItem))
         {
             // invalid item
@@ -6509,7 +6563,7 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
 
         const auto& runeItemType = runeItem.getItemTypeHelper();
         runeItemType.getSocketedMagicalAttributes(runeItem, runeItem.socketedMagicalAttributes, gemApplyType);
-        SocketedItems.push_back(runeItem);
+        SocketedItems.splice(SocketedItems.end(), runeItems, iter);
         updateSocketedItemCount();
     }
 
@@ -7916,18 +7970,7 @@ bool d2ce::Item::getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& at
         AddUndeadBonusMagicalAttribute(getVersion(), getGameVersion(), attribs);
     }
 
-    // check for the "all" cases
-    ItemHelpers::checkForRelatedMagicalAttributes(attribs);
-
-    bool bFormatted = false;
-    for (auto& attrib : attribs)
-    {
-        bFormatted |= ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
-    }
-
-    // Sort display items in proper order
-    std::sort(attribs.begin(), attribs.end(), ItemHelpers::magicalAttributeSorter);
-    return bFormatted;
+    return d2ce::ItemHelpers::formatMagicalAttributes(attribs, charLevel);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedRunewordAttributes(RunewordAttributes& attribs, std::uint32_t charLevel) const
@@ -7937,18 +7980,7 @@ bool d2ce::Item::getDisplayedRunewordAttributes(RunewordAttributes& attribs, std
         return false;
     }
 
-    // check for the "all" cases
-    ItemHelpers::checkForRelatedMagicalAttributes(attribs.MagicalAttributes);
-
-    bool bFormatted = false;
-    for (auto& attrib : attribs.MagicalAttributes)
-    {
-        bFormatted |= ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
-    }
-
-    // Sort display items in proper order
-    std::sort(attribs.MagicalAttributes.begin(), attribs.MagicalAttributes.end(), ItemHelpers::magicalAttributeSorter);
-    return bFormatted;
+    return d2ce::ItemHelpers::formatMagicalAttributes(attribs.MagicalAttributes, charLevel);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
@@ -7958,18 +7990,7 @@ bool d2ce::Item::getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttrib
         return false;
     }
 
-    // check for the "all" cases
-    ItemHelpers::checkForRelatedMagicalAttributes(attribs);
-
-    bool bFormatted = false;
-    for (auto& attrib : attribs)
-    {
-        bFormatted |= ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
-    }
-
-    // Sort display items in proper order
-    std::sort(attribs.begin(), attribs.end(), ItemHelpers::magicalAttributeSorter);
-    return bFormatted;
+    return d2ce::ItemHelpers::formatMagicalAttributes(attribs, charLevel);
 }
 //---------------------------------------------------------------------------
 std::uint64_t d2ce::Item::readBits(std::FILE* charfile, size_t& current_bit_offset, size_t bits)
@@ -8066,7 +8087,6 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
 
-    dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
     rare_affixes_v100.clear();
@@ -8149,7 +8169,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             if (isEar())
             {
                 position_offset = ITEM_V100_EAR_COORDINATES_BIT_OFFSET + 2;
-                type_code_offset = ITEM_V100_EAR_TYPECODE_BIT_OFFSET;
+                type_code_offset = ITEM_V100_EAR_ATTRIBE_BIT_OFFSET;
             }
             else
             {
@@ -8162,8 +8182,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
                 quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_100;
                 quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
                 item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
-                dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
-                dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
+                item_id_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
+                dwb_bit_offset = item_id_bit_offset + 32;
 
                 stackable_bit_offset = 0;
                 gld_stackable_bit_offset = 0;
@@ -8232,8 +8252,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
                 quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_104;
                 quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
                 item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
-                dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
-                dwb_bit_offset = ITEM_V104_EX_DWB_BIT_OFFSET;
+                item_id_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
+                dwb_bit_offset = item_id_bit_offset + 32;
 
                 // 31 bytes total
                 if (!skipBits(charfile, current_bit_offset, (ITEM_V104_EX_NUM_BITS - current_bit_offset)))
@@ -8729,10 +8749,10 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     if (isEar())
     {
         position_offset = ITEM_V100_EAR_COORDINATES_BIT_OFFSET + 2;
-        type_code_offset = ITEM_V100_EAR_TYPECODE_BIT_OFFSET;
+        type_code_offset = ITEM_V100_EAR_ATTRIBE_BIT_OFFSET;
 
         size_t bitSize = 10;
-        current_bit_offset = type_code_offset;
+        current_bit_offset = ITEM_V100_EAR_ITEMCODE_BIT_OFFSET + 5;
         if (!setBits(current_bit_offset, bitSize, 0x13B))
         {
             return false;
@@ -8997,8 +9017,8 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_100;
     quality_attrib_bit_offset = ITEM_V100_SPECIALITEMCODE_BIT_OFFSET;
     item_level_bit_offset = ITEM_V100_LEVEL_BIT_OFFSET;
-    dwa_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
-    dwb_bit_offset = ITEM_V100_DWB_BIT_OFFSET;
+    item_id_bit_offset = ITEM_V100_DWA_BIT_OFFSET;
+    dwb_bit_offset = item_id_bit_offset + 32;
 
     node = itemRoot[bSerializedFormat ? "Code" : "type"];
     if (node.isNull())
@@ -9481,14 +9501,26 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     if (node.isNull())
     {
         // generate new one
-        value = ItemHelpers::generarateRandomDW();
+        node = itemRoot[bSerializedFormat ? "Id" : "id"];
+        if (node.isNull())
+        {
+            value = ItemHelpers::generarateRandomDW();
+        }
+        else
+        {
+            value = std::uint32_t(node.asInt64());
+            if (value == 0)
+            {
+                value = ItemHelpers::generarateRandomDW();
+            }
+        }
     }
     else
     {
         value = std::uint32_t(node.asInt64());
     }
 
-    current_bit_offset = dwa_bit_offset;
+    current_bit_offset = item_id_bit_offset;
     if (!setBits(current_bit_offset, 32, value))
     {
         return false;
@@ -10023,8 +10055,8 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     quality_bit_offset = start_bit_offset + QUALITY_BIT_OFFSET_104;
     quality_attrib_bit_offset = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
     item_level_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET;
-    dwa_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
-    dwb_bit_offset = ITEM_V104_EX_DWB_BIT_OFFSET;
+    item_id_bit_offset = ITEM_V104_EX_DWA_BIT_OFFSET;
+    dwb_bit_offset = item_id_bit_offset + 32;
 
     // 31 bytes total
     data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
@@ -10460,14 +10492,26 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     if (node.isNull())
     {
         // generate new one
-        value = ItemHelpers::generarateRandomDW();
+        node = itemRoot[bSerializedFormat ? "Id" : "id"];
+        if (node.isNull())
+        {
+            value = ItemHelpers::generarateRandomDW();
+        }
+        else
+        {
+            value = std::uint32_t(node.asInt64());
+            if (value == 0)
+            {
+                value = ItemHelpers::generarateRandomDW();
+            }
+        }
     }
     else
     {
         value = std::uint32_t(node.asInt64());
     }
 
-    current_bit_offset = dwa_bit_offset;
+    current_bit_offset = item_id_bit_offset;
     if (!setBits(current_bit_offset, 32, value))
     {
         return false;
@@ -10481,7 +10525,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)readBits(quality_attrib_bit_offset, ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            value = ItemHelpers::getSetItemDWBCode(getSetItemId());
         }
         else
         {
@@ -10591,7 +10635,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
 
-    dwa_bit_offset = 0;
     dwb_bit_offset = 0;
     magic_affixes_v100.clear();
     rare_affixes_v100.clear();
@@ -12217,6 +12260,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     {
         return false;
     }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     if (setBonusBits > 0)
     {
@@ -12261,6 +12305,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             {
                 return false;
             }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
         }
     }
 
@@ -12304,8 +12349,10 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         {
             return false;
         }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
     }
-
+    
+    item_end_bit_offset = max_bit_offset;
     if (numSocketed > 0)
     {
         node = itemRoot[bSerializedFormat ? "SocketedItems" : "socketed_items"];
@@ -12339,7 +12386,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         }
     }
 
-    item_end_bit_offset = max_bit_offset;
     return true;
 }
 //---------------------------------------------------------------------------
@@ -12598,21 +12644,29 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         item["NumberOfSocketedItems"] = std::uint16_t(socketedItems.size());
         item["SocketedItems"] = socketedItems;
 
-        item["Id"] = getId();
+        auto id = getId();
+        auto quality = getQuality();
+        item["Id"] = id;
         item["ItemLevel"] = std::uint16_t(getLevel());
-
-        if (dwa_bit_offset != 0)
+        if (dwb_bit_offset != 0)
         {
-            if (dwb_bit_offset == 0)
-            {
-                dwb_bit_offset = dwa_bit_offset + 32;
-            }
-
-            item["Dwa"] = readBits(dwa_bit_offset, 32);
+            item["Dwa"] = readBits(item_id_bit_offset, 32);
             item["Dwb"] = readBits(dwb_bit_offset, 32);
         }
+        else if (version < EnumItemVersion::v107)
+        {
+            item["Dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
+            if (quality == EnumItemQuality::SET)
+            {
+                // Find correct DWB value for the SET
+                item["Dwb"] = ItemHelpers::getSetItemDWBCode(getSetItemId());
+            }
+            else
+            {
+                item["Dwb"] = ItemHelpers::generarateRandomDW();
+            }
+        }
 
-        auto quality = getQuality();
         item["Quality"] = std::uint16_t(quality);
         item["HasMultipleGraphics"] = hasMultipleGraphics();
         item["GraphicId"] = std::uint16_t(getPictureId());
@@ -12807,18 +12861,19 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         }
         else
         {
-            item["id"] = getId();
+            auto id = getId();
+            item["id"] = id;
             item["level"] = std::uint16_t(getLevel());
 
-            if (dwa_bit_offset != 0)
+            if (dwb_bit_offset != 0)
             {
-                if (dwb_bit_offset == 0)
-                {
-                    dwb_bit_offset = dwa_bit_offset + 32;
-                }
-
-                item["dwa"] = readBits(dwa_bit_offset, 32);
+                item["dwa"] = readBits(item_id_bit_offset, 32);
                 item["dwb"] = readBits(dwb_bit_offset, 32);
+            }
+            else if (version < EnumItemVersion::v107)
+            {
+                item["dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
+                item["dwb"] = ItemHelpers::generarateRandomDW();
             }
 
             auto quality = getQuality();
@@ -13178,14 +13233,9 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         item["Id"] = getId();
         item["ItemLevel"] = std::uint16_t(getLevel());
 
-        if (dwa_bit_offset != 0)
+        if (dwb_bit_offset != 0)
         {
-            if (dwb_bit_offset == 0)
-            {
-                dwb_bit_offset = dwa_bit_offset + 32;
-            }
-
-            item["Dwa"] = readBits(dwa_bit_offset, 32);
+            item["Dwa"] = readBits(item_id_bit_offset, 32);
             item["Dwb"] = readBits(dwb_bit_offset, 32);
         }
 
@@ -13390,14 +13440,9 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             item["id"] = getId();
             item["level"] = std::uint16_t(getLevel());
 
-            if (dwa_bit_offset != 0)
+            if (dwb_bit_offset != 0)
             {
-                if (dwb_bit_offset == 0)
-                {
-                    dwb_bit_offset = dwa_bit_offset + 32;
-                }
-
-                item["dwa"] = readBits(dwa_bit_offset, 32);
+                item["dwa"] = readBits(item_id_bit_offset, 32);
                 item["dwb"] = readBits(dwb_bit_offset, 32);
             }
 
@@ -14489,7 +14534,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
                 return false;
             }
 
-            std::advance(iterValue, 1);
             if (iterValue == iterValueEnd)
             {
                 return false;
@@ -14539,7 +14583,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
                 return false;
             }
 
-            std::advance(iterValue, 1);
             if (iterValue == iterValueEnd)
             {
                 return false;
@@ -14602,7 +14645,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
                 return false;
             }
 
-            std::advance(iterValue, 1);
             if (iterValue == iterValueEnd)
             {
                 return false;
@@ -14645,7 +14687,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
         {
             if (stat.name.compare("item_addskill_tab") == 0)
             {
-                std::advance(iterValue, 1);
                 if (iterValue == iterValueEnd)
                 {
                     return false;
@@ -14689,7 +14730,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
             }
             else
             {
-                std::advance(iterValue, 1);
                 if (iterValue == iterValueEnd)
                 {
                     return false;
@@ -14722,7 +14762,6 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
         }
         else
         {
-            std::advance(iterValue, 1);
             if (iterValue == iterValueEnd)
             {
                 return false;
@@ -14740,7 +14779,7 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
         nextInChain = stat.nextInChain;
         while (nextInChain)
         {
-            if (iterValue == attrib.Values.end())
+            if (iterValue == iterValueEnd)
             {
                 return false;
             }
@@ -14768,7 +14807,7 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
             std::advance(iterValue, 1);
         }
 
-        if (iterValue != attrib.Values.end())
+        if (iterValue != iterValueEnd)
         {
             return false;
         }
@@ -15070,7 +15109,7 @@ bool d2ce::Item::updateItemCodev115(std::uint64_t code, size_t numBitsSet)
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
 {
-    if (dwa_bit_offset == 0)
+    if (item_id_bit_offset == 0)
     {
         return 0;
     }
@@ -15086,7 +15125,7 @@ std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
 
     if (dwb_bit_offset == 0)
     {
-        dwb_bit_offset = dwa_bit_offset + 32;
+        dwb_bit_offset = item_id_bit_offset + 32;
     }
 
     return ItemHelpers::generateInferiorQualityId(getLevel(), readBits(dwb_bit_offset, 32));
@@ -15095,7 +15134,7 @@ std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
 bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
 {
     affixes.clear();
-    if ((dwa_bit_offset == 0) || (quality_attrib_bit_offset == 0) || (type_code_offset == 0))
+    if ((item_id_bit_offset == 0) || (quality_attrib_bit_offset == 0) || (type_code_offset == 0))
     {
         return false;
     }
@@ -15117,7 +15156,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
 
     if (dwb_bit_offset == 0)
     {
-        dwb_bit_offset = dwa_bit_offset + 32;
+        dwb_bit_offset = item_id_bit_offset + 32;
     }
 
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
@@ -15185,7 +15224,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
         {
             if (dwb_bit_offset == 0)
             {
-                dwb_bit_offset = dwa_bit_offset + 32;
+                dwb_bit_offset = item_id_bit_offset + 32;
             }
 
             return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32));
@@ -15197,7 +15236,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
         {
             if (dwb_bit_offset == 0)
             {
-                dwb_bit_offset = dwa_bit_offset + 32;
+                dwb_bit_offset = item_id_bit_offset + 32;
             }
 
             return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(dwb_bit_offset, 32));
@@ -15231,7 +15270,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
 bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
 {
     attrib.clear();
-    if ((dwa_bit_offset == 0) || (quality_attrib_bit_offset == 0) || (type_code_offset == 0))
+    if ((item_id_bit_offset == 0) || (quality_attrib_bit_offset == 0) || (type_code_offset == 0))
     {
         return false;
     }
@@ -15264,7 +15303,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
 
     if (dwb_bit_offset == 0)
     {
-        dwb_bit_offset = dwa_bit_offset + 32;
+        dwb_bit_offset = item_id_bit_offset + 32;
     }
 
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
@@ -15336,12 +15375,12 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
         return 0;
     }
 
-    return std::uint8_t(ItemHelpers::generateDWARandomOffset(readBits(dwa_bit_offset, 32), 1) % modulo);
+    return std::uint8_t(ItemHelpers::generateDWARandomOffset(getId(), 1) % modulo);
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::Item::getDefenseRatingv100() const
 {
-    if (dwa_bit_offset == 0)
+    if (item_id_bit_offset == 0)
     {
         return 0;
     }
@@ -15352,7 +15391,7 @@ std::uint16_t d2ce::Item::getDefenseRatingv100() const
         return false;
     }
 
-    return ItemHelpers::generateDefenseRating(strcode, readBits(dwa_bit_offset, 32));
+    return ItemHelpers::generateDefenseRating(strcode, getId());
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::findItems()
@@ -21423,7 +21462,7 @@ bool d2ce::Items::removeSocketedItems(d2ce::Item& item)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::setRuneword(d2ce::Item& item, std::uint16_t id)
+bool d2ce::Items::setItemRuneword(d2ce::Item& item, std::uint16_t id)
 {
     if (item.getSocketedItemCount() == 0)
     {

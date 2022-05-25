@@ -21,7 +21,7 @@
 #include "pch.h"
 #include "D2Editor.h"
 #include "D2WaypointsForm.h"
-#include "MainFormConstants.h"
+#include "D2MainFormConstants.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"

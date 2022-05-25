@@ -48,6 +48,7 @@ namespace d2ce
 
         const ItemType& getInvalidItemTypeHelper();
 
+        void initRunewordData();
         std::string getRunewordNameFromId(std::uint16_t id);
         const d2ce::RunewordType& getRunewordFromId(std::uint16_t id);
         std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
@@ -58,6 +59,7 @@ namespace d2ce
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
 
         std::uint16_t getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
+        std::uint32_t getSetItemDWBCode(std::uint16_t setItemId);
         std::uint32_t getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
@@ -1711,10 +1713,11 @@ namespace d2ce
             break;
 
         case 16: // Level [sLvl] [skill] Aura When Equipped
-            strPos = strValue2.find("%s");
-            if (strPos != strValue2.npos)
+            strPos = descstrpos.find("%s");
+            if (strPos != descstrpos.npos)
             {
-                strValue2.replace(strPos, 2, "{0}");
+                descstrpos.replace(strPos, 2, "{0}");
+                descstrneg = descstrpos;
                 ConvertPlaceHolders(descstrpos, descstrneg, bGenerateNeg, 1);
             }
             else
@@ -1845,6 +1848,7 @@ namespace d2ce
                 if (strPos != descstrpos.npos)
                 {
                     descstrpos.replace(strPos, 2, "{0}");
+                    descstrneg = descstrpos;
                     ConvertPlaceHolders(descstrpos, descstrneg, false, 1);
                 }
                 else
@@ -2728,7 +2732,7 @@ namespace d2ce
     std::uint16_t s_ItemCurTypeCodeIdx_v100 = 0;
     std::map<std::uint16_t, std::string> s_ItemTypeCodes_v100;
     std::map<std::string, ItemType> s_ItemWeaponType;
-    const ItemType& GetWeaponItemType(std::string code)
+    const ItemType& GetWeaponItemType(const std::string& code)
     {
         auto iter = s_ItemWeaponType.find(code);
         if (iter != s_ItemWeaponType.end())
@@ -3293,7 +3297,7 @@ namespace d2ce
     }
 
     std::map<std::string, ItemType> s_ItemArmorType;
-    const ItemType& GetArmorItemType(std::string code)
+    const ItemType& GetArmorItemType(const std::string& code)
     {
         auto iter = s_ItemArmorType.find(code);
         if (iter != s_ItemArmorType.end())
@@ -4298,7 +4302,7 @@ namespace d2ce
         s_ItemMiscType.swap(itemMiscType);
     }
 
-    const d2ce::ItemType& GetItemTypeHelper(std::string code)
+    const d2ce::ItemType& GetItemTypeHelper(const std::string& code)
     {
         // Could be armor
         {
@@ -5959,7 +5963,7 @@ namespace d2ce
         s_ItemSetItemsType.swap(itemSetItemsType);
     }
 
-    void ProcessMagicalProperites(const std::vector<ItemAffixModType>& modTypes, std::vector<MagicalAttribute>& magicalAttributes, ItemRandStruct& rnd, d2ce::EnumItemVersion version, std::uint16_t gameVersion)
+    void ProcessMagicalProperites(const std::vector<ItemAffixModType>& modTypes, std::vector<MagicalAttribute>& magicalAttributes, ItemRandStruct& rnd, d2ce::EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = false)
     {
         std::uint16_t func = 0;
         std::uint16_t val = 0;
@@ -6064,6 +6068,10 @@ namespace d2ce
                 {
                     val = std::uint16_t(std::atoi(mod.val.c_str()));
                 }
+                else
+                {
+                    val = std::uint16_t(lastParam);
+                }
 
                 bool bCalcValue = false;
                 attrib.Id = iterName->second;
@@ -6098,7 +6106,14 @@ namespace d2ce
                 case 12: // random selection of parameters for parameter-based stat
                     if (modMax > modMin)
                     {
-                        lastValue = std::uint16_t(GenerateRandom(rnd) % (modMax - modMin) + modMin);
+                        if (bMaxAlways)
+                        {
+                            lastValue = modMax;
+                        }
+                        else
+                        {
+                            lastValue = std::uint16_t(GenerateRandom(rnd) % (modMax - modMin) + modMin);
+                        }
                         --numRndCalls;
                     }
                     else
@@ -6171,7 +6186,14 @@ namespace d2ce
                 {
                     if (modMax > modMin)
                     {
-                        lastValue = std::uint16_t(GenerateRandom(rnd) % (modMax - modMin) + modMin);
+                        if (bMaxAlways)
+                        {
+                            lastValue = modMax;
+                        }
+                        else
+                        {
+                            lastValue = std::uint16_t(GenerateRandom(rnd) % (modMax - modMin) + modMin);
+                        }
                         --numRndCalls;
                     }
                     else
@@ -6916,6 +6938,18 @@ namespace d2ce
                 strValue = doc.GetCellString(modParam[idx], i);
                 if (!strValue.empty())
                 {
+                    auto c = strValue[0];
+                    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+                    {
+                        // this must be a skill index name
+                        const auto& skillInfo = CharClassHelper::getSkillByIndex(strValue);
+                        if (skillInfo.id != MAXUINT16)
+                        {
+                            // convert to a skill ID
+                            strValue = std::to_string(skillInfo.id);
+                        }
+                    }
+
                     mod.param = strValue;
                 }
 
@@ -6932,7 +6966,7 @@ namespace d2ce
                 }
             }
 
-            ProcessMagicalProperites(mods, itemType.attribs, rnd, APP_ITEM_VERSION, APP_ITEM_GAME_VERSION);
+            ProcessMagicalProperites(mods, itemType.attribs, rnd, APP_ITEM_VERSION, APP_ITEM_GAME_VERSION, true);
             itemNumRunesRunewordsMap[std::uint8_t(itemType.runeCodes.size())].push_back(itemType.id);
 
             static std::map<std::string, d2ce::EnumItemVersion> patchReleaseMap = {
@@ -7029,7 +7063,7 @@ namespace d2ce
     {
         InitItemStatsData(txtReader);
         InitItemRarePrefixData(txtReader);
-        InitRunewordData(txtReader);
+        InitItemGemsTypeData(txtReader);
     }
 
     const std::map<std::string, std::uint8_t> huffmanDecodeMap = {
@@ -7783,6 +7817,50 @@ bool d2ce::ItemType::getSocketedMagicalAttributes(const d2ce::Item& item, std::v
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemType::getRuneMagicalAttributes(const d2ce::Item& parentItem, std::vector<MagicalAttribute>& attribs) const
+{
+    attribs.clear();
+    std::uint8_t parentGemApplyType = parentItem.getGemApplyType();
+    if (!isRune())
+    {
+        return false;
+    }
+
+    auto iter = s_ItemGemsType.find(code);
+    if (iter == s_ItemGemsType.end())
+    {
+        // should not happen
+        return false;
+    }
+    switch (parentGemApplyType)
+    {
+    case 0:
+        attribs = iter->second.weaponAttribs;
+        break;
+
+    case 1:
+        attribs = iter->second.helmAttribs;
+        break;
+
+    case 2:
+        attribs = iter->second.shieldAttribs;
+        break;
+
+    default:
+        return false;
+    }
+
+    auto itemVersion = parentItem.getVersion();
+    auto gameVersion = parentItem.getGameVersion();
+    for (auto& attrib : attribs)
+    {
+        attrib.Version = itemVersion;
+        attrib.GameVersion = gameVersion;
+    }
+
+    return attribs.empty() ? false : true;
+}
+//---------------------------------------------------------------------------
 std::string d2ce::ItemType::getPotionDesc(d2ce::EnumCharClass charClass) const
 {
     if (!isPotion())
@@ -8399,9 +8477,20 @@ const d2ce::ItemType& d2ce::ItemHelpers::getItemTypeHelper(const std::array<std:
     return GetItemTypeHelper(strcode);
 }
 //---------------------------------------------------------------------------
+const d2ce::ItemType& d2ce::ItemHelpers::getItemTypeHelper(const std::string& code)
+{
+    return GetItemTypeHelper(code);
+}
+//---------------------------------------------------------------------------
 const d2ce::ItemType& d2ce::ItemHelpers::getInvalidItemTypeHelper()
 {
     return s_invalidItemType;
+}
+//---------------------------------------------------------------------------
+void d2ce::ItemHelpers::initRunewordData()
+{
+    auto& txtReader = ItemHelpers::getTxtReader();
+    InitRunewordData(txtReader);
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getRunewordNameFromId(std::uint16_t id)
@@ -8498,7 +8587,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
                     continue;
                 }
 
-                if (itemVersion > runeword.version)
+                if (itemVersion < runeword.version)
                 {
                     // skip
                     continue;
@@ -8654,6 +8743,17 @@ std::uint16_t d2ce::ItemHelpers::getSetItemId(std::uint16_t id, const std::array
     }
 
     return MAXUINT16;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::ItemHelpers::getSetItemDWBCode(std::uint16_t setItemId)
+{
+    auto iter = s_ItemSetItemsType.find(setItemId);
+    if (iter == s_ItemSetItemsType.end())
+    {
+        return false;
+    }
+
+    return iter->second.dwbCode;
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::ItemHelpers::getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode)
@@ -9559,6 +9659,22 @@ void d2ce::ItemHelpers::applyMaxMagicalAttributes(CharStats& cs, std::vector<Mag
             }
         }
     }
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::formatMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel)
+{
+    // check for the "all" cases
+    ItemHelpers::checkForRelatedMagicalAttributes(attribs);
+
+    bool bFormatted = false;
+    for (auto& attrib : attribs)
+    {
+        bFormatted |= ItemHelpers::formatDisplayedMagicalAttribute(attrib, charLevel);
+    }
+
+    // Sort display items in proper order
+    std::sort(attribs.begin(), attribs.end(), ItemHelpers::magicalAttributeSorter);
+    return bFormatted;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat)

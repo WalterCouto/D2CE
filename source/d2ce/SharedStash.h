@@ -146,6 +146,7 @@ namespace d2ce
         bool setItemLocation(d2ce::Item& item, size_t itemPage, std::uint16_t positionX, std::uint16_t positionY, size_t page, const d2ce::Item*& pRemovedItem);
         bool removeSocketedItems(d2ce::Item& item);
         bool removeItem(d2ce::Item& item);
+        bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
 
     protected:
         bool refresh(std::FILE* charfile);

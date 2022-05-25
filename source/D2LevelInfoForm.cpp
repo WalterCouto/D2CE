@@ -93,7 +93,7 @@ CD2LevelInfoForm::~CD2LevelInfoForm()
 //---------------------------------------------------------------------------
 void CD2LevelInfoForm::DoDataExchange(CDataExchange* pDX)
 {
-    CDialogEx::DoDataExchange(pDX);
+    __super::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LEVELINFO_GRID, LevelInfoGrid);
 }
 //---------------------------------------------------------------------------

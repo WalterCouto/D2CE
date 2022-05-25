@@ -28,6 +28,7 @@
 #define IDB_INVQLT                      157
 #define IDD_SHARED_STASH_DIALOG         157
 #define IDB_INVLEA                      158
+#define IDD_RUNEWORD_DIALOG             158
 #define IDB_INVHLA                      159
 #define IDB_INVSTU                      160
 #define IDB_INVRNG                      161
@@ -875,6 +876,7 @@
 #define IDC_BUTTON_TREE_3_ROW_6_COL_3   1147
 #define IDC_PAGE_COMBO                  1150
 #define IDC_SHARED_STASH_BUTTON         1151
+#define IDC_RUNEWORD_LIST               1152
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -932,9 +934,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        727
+#define _APS_NEXT_RESOURCE_VALUE        725
 #define _APS_NEXT_COMMAND_VALUE         32824
-#define _APS_NEXT_CONTROL_VALUE         1152
+#define _APS_NEXT_CONTROL_VALUE         1153
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

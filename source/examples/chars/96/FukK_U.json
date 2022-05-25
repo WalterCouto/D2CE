@@ -2512,7 +2512,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -2655,7 +2655,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Fanaticism 31 Aura When Equipped"
+          "description": "Level 31 Fanaticism Aura When Equipped"
         },
         {
           "id": 127,
@@ -2998,7 +2998,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -3134,7 +3134,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Fanaticism 31 Aura When Equipped"
+          "description": "Level 31 Fanaticism Aura When Equipped"
         },
         {
           "id": 127,
@@ -8053,7 +8053,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -8185,7 +8185,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Thorns 31 Aura When Equipped"
+          "description": "Level 31 Thorns Aura When Equipped"
         },
         {
           "id": 96,
@@ -8631,7 +8631,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -8758,7 +8758,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Thorns 31 Aura When Equipped"
+          "description": "Level 31 Thorns Aura When Equipped"
         },
         {
           "id": 96,
@@ -9246,7 +9246,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -9389,7 +9389,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Concentration 31 Aura When Equipped"
+          "description": "Level 31 Concentration Aura When Equipped"
         },
         {
           "id": 83,
@@ -9805,7 +9805,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -9944,7 +9944,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Concentration 31 Aura When Equipped"
+          "description": "Level 31 Concentration Aura When Equipped"
         },
         {
           "id": 83,
@@ -10433,7 +10433,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -10576,7 +10576,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Might 31 Aura When Equipped"
+          "description": "Level 31 Might Aura When Equipped"
         },
         {
           "id": 83,
@@ -10992,7 +10992,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 156,
@@ -11131,7 +11131,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Might 31 Aura When Equipped"
+          "description": "Level 31 Might Aura When Equipped"
         },
         {
           "id": 83,
@@ -45744,7 +45744,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 198,
@@ -46307,7 +46307,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Redemption 13 Aura When Equipped"
+          "description": "Level 13 Redemption Aura When Equipped"
         },
         {
           "id": 17,
@@ -46384,7 +46384,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 198,
@@ -46467,7 +46467,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Redemption 13 Aura When Equipped"
+          "description": "Level 13 Redemption Aura When Equipped"
         },
         {
           "id": 17,

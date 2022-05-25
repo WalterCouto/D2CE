@@ -17768,7 +17768,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 198,
@@ -18331,7 +18331,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Redemption 13 Aura When Equipped"
+          "description": "Level 13 Redemption Aura When Equipped"
         },
         {
           "id": 17,
@@ -18408,7 +18408,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 198,
@@ -18491,7 +18491,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Redemption 13 Aura When Equipped"
+          "description": "Level 13 Redemption Aura When Equipped"
         },
         {
           "id": 17,

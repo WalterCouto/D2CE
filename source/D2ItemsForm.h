@@ -173,6 +173,7 @@ class CD2ItemsForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, public
     friend class CD2GemsForm;
     friend class CD2AddGemsForm;
     friend class CD2SharedStashForm;
+    friend class CD2RunewordForm;
     DECLARE_DYNAMIC(CD2ItemsForm)
 
 public:
@@ -350,6 +351,8 @@ protected:
     const d2ce::Item* PlaceItem(UINT id, d2ce::Item& item, CPoint point, CBitmap& bitmap);
 
     d2ce::ItemFilter GetCurrItemFilter() const;
+
+    bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
 
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;

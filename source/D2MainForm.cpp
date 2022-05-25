@@ -5670,6 +5670,18 @@ bool CD2MainForm::setItemLocation(d2ce::Item& item, d2ce::EnumEquippedId equippe
     return false;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    if (CharInfo.setItemRuneword(item, id))
+    {
+        ItemsChanged = true;
+        StatsChanged();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 size_t CD2MainForm::getNumberOfEquippedItems() const
 {
     return CharInfo.getNumberOfEquippedItems();

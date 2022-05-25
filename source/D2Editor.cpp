@@ -18,7 +18,7 @@
 
 Revision History
 ================
-Version 2.16 (May 24, 2022)
+Version 2.16 (June 5, 2022)
    - Updated: fix up mercenary for PTR 2.4 changes to Barbarian
    - Updated: reorganized item context menu
    - Updated: fixed "reload" issue with mercenary data that would
@@ -38,6 +38,8 @@ Version 2.16 (May 24, 2022)
    - Added: add ability to socket and unsocket items
    - Added: add ability to convert character file to a different
             version via the "Change Version" menu item.
+   - Added: add ability to apply runewords to item via the 
+            "Apply Runeword" context menu item.
 
 Version 2.15 (April 26, 2022)
    - Updated: Reorganize resources and add txt file to allow for 

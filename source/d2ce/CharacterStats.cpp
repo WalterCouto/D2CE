@@ -37,8 +37,14 @@ namespace d2ce
     constexpr std::array<size_t, 16> V110_BITS_PER_STAT = { 10,10,10,10,10,8,21,21,21,21,21,21,7,32,25,25 };
 
     constexpr std::uint32_t MIN_START_STATS_POS = 765;
+    constexpr std::uint32_t MIN_START_STATS_POS_v100 = 560;
 
     constexpr std::array<std::uint8_t, 2> SKILLS_MARKER = { 0x69, 0x66 };             // alternatively "if"
+
+    namespace ItemHelpers
+    {
+        void initRunewordData();
+    }
 
     std::map<d2ce::EnumCharClass, std::vector<std::uint32_t>> s_MinExpRequired;
     void InitExperienceData(const ITxtReader& txtReader)
@@ -1025,6 +1031,7 @@ namespace d2ce
         s_SkillInfoMap.swap(skillInfoMap);
 
         InitSkillDescData(txtReader);
+        ItemHelpers::initRunewordData();
     }
 
     const std::vector<std::uint32_t>& GetExperienceLevels(EnumCharClass charClass)
@@ -1416,9 +1423,9 @@ bool d2ce::CharacterStats::readAllStats(std::FILE* charfile)
         }
         else
         {
-            if (cur_pos < MIN_START_POS)
+            if (cur_pos < MIN_START_STATS_POS_v100)
             {
-                cur_pos = MIN_START_POS;
+                cur_pos = MIN_START_STATS_POS_v100;
                 std::fseek(charfile, cur_pos, SEEK_SET);
             }
         }

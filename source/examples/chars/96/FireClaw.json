@@ -20291,7 +20291,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         }
       ],
       "base_damage": {
@@ -20549,7 +20549,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Sanctuary 13 Aura When Equipped"
+          "description": "Level 13 Sanctuary Aura When Equipped"
         },
         {
           "id": 127,
@@ -20732,7 +20732,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 197,
@@ -20779,7 +20779,7 @@
             13
           ],
           "name": "item_aura",
-          "description": "Level Sanctuary 13 Aura When Equipped"
+          "description": "Level 13 Sanctuary Aura When Equipped"
         },
         {
           "id": 127,

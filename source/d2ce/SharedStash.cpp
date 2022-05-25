@@ -875,6 +875,22 @@ bool d2ce::SharedStash::removeItem(d2ce::Item& item)
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::SharedStash::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    for (auto& page : Pages)
+    {
+        auto& pageStash = page.StashItems;
+        auto& inventory = pageStash.Inventory;
+        auto iter = std::find_if(inventory.begin(), inventory.end(), ItemPredicate(item));
+        if (iter != inventory.end())
+        {
+            return pageStash.setItemRuneword(item, id);
+        }
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::SharedStash::refresh(std::FILE* charfile)
 {
     std::uint32_t fileSize = 0;

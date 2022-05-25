@@ -31,17 +31,20 @@ namespace d2ce
     constexpr std::array<std::uint8_t, 2> QUESTS_SIZE_MARKER = { 0x2A, 0x01 };
 
     constexpr std::uint32_t MIN_START_QUEST_POS = 335;
+    constexpr std::uint32_t MIN_START_QUEST_POS_v100 = 130;
 
     constexpr std::array<std::uint8_t, 2> WAYPOINTS_MARKER = { 0x57, 0x53 };          // alternatively "WS"
     constexpr std::array<std::uint8_t, 4> WAYPOINTS_VERSION = { 0x01, 0x00, 0x00, 0x00 };
     constexpr std::array<std::uint8_t, 2> WAYPOINTS_SIZE_MARKER = { 0x50, 0x00 };
 
     constexpr std::uint32_t MIN_START_WAYPOINTS_POS = 633;
+    constexpr std::uint32_t MIN_START_WAYPOINTS_POS_v100 = 428;
 
     constexpr std::array<std::uint8_t, 2> NPC_MARKER = { 0x01, 0x77 };
     constexpr std::array<std::uint8_t, 2> NPC_SIZE_MARKER = { 0x34, 0x00 };
 
     constexpr std::uint32_t MIN_START_NPC_POS = 713;
+    constexpr std::uint32_t MIN_START_NPC_POS_v100 = 508;
 
     constexpr std::uint16_t questNotStarted = 0x0000;
     constexpr std::uint16_t questStarted = 0x0004;
@@ -103,9 +106,9 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
         }
         else
         {
-            if (cur_pos < MIN_START_POS)
+            if (cur_pos < MIN_START_QUEST_POS_v100)
             {
-                cur_pos = MIN_START_POS;
+                cur_pos = MIN_START_QUEST_POS_v100;
                 std::fseek(charfile, cur_pos, SEEK_SET);
             }
         }
@@ -566,9 +569,9 @@ bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
         }
         else
         {
-            if (cur_pos < MIN_START_POS)
+            if (cur_pos < MIN_START_WAYPOINTS_POS_v100)
             {
-                cur_pos = MIN_START_POS;
+                cur_pos = MIN_START_WAYPOINTS_POS_v100;
                 std::fseek(charfile, cur_pos, SEEK_SET);
             }
         }
@@ -854,9 +857,9 @@ bool d2ce::ActsInfo::readNPC(std::FILE* charfile)
         }
         else
         {
-            if (cur_pos < MIN_START_POS)
+            if (cur_pos < MIN_START_NPC_POS_v100)
             {
-                cur_pos = MIN_START_POS;
+                cur_pos = MIN_START_NPC_POS_v100;
                 std::fseek(charfile, cur_pos, SEEK_SET);
             }
         }

@@ -150,7 +150,7 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainFormConstants.h">
+    <ClInclude Include="D2MainFormConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D2LevelInfoForm.h">
@@ -290,6 +290,12 @@
     </ClInclude>
     <ClInclude Include="d2ce\helpers\DefaultTxtReader.h">
       <Filter>Header Files\d2ce\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="D2MultiLineListCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D2RunewordForm.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +469,12 @@
     </ClCompile>
     <ClCompile Include="d2ce\helpers\LevelsJson.cpp">
       <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="D2MultiLineListCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D2RunewordForm.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

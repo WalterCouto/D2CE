@@ -8875,7 +8875,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 155,
@@ -8947,7 +8947,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Summon Resist 31 Aura When Equipped"
+          "description": "Level 31 Summon Resist Aura When Equipped"
         },
         {
           "id": 156,
@@ -9206,7 +9206,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 155,
@@ -9271,7 +9271,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Summon Resist 31 Aura When Equipped"
+          "description": "Level 31 Summon Resist Aura When Equipped"
         },
         {
           "id": 156,
@@ -23304,7 +23304,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -23313,7 +23313,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -23322,7 +23322,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 336,
@@ -23347,7 +23347,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Lightning 31 Aura When Equipped"
+          "description": "Level 31 Resist Lightning Aura When Equipped"
         },
         {
           "id": 151,
@@ -23356,7 +23356,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Cold 31 Aura When Equipped"
+          "description": "Level 31 Resist Cold Aura When Equipped"
         },
         {
           "id": 151,
@@ -23365,7 +23365,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Fire 31 Aura When Equipped"
+          "description": "Level 31 Resist Fire Aura When Equipped"
         },
         {
           "id": 127,
@@ -23851,7 +23851,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -23860,7 +23860,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -23869,7 +23869,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 336,
@@ -23888,7 +23888,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Lightning 31 Aura When Equipped"
+          "description": "Level 31 Resist Lightning Aura When Equipped"
         },
         {
           "id": 151,
@@ -23897,7 +23897,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Cold 31 Aura When Equipped"
+          "description": "Level 31 Resist Cold Aura When Equipped"
         },
         {
           "id": 151,
@@ -23906,7 +23906,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Resist Fire 31 Aura When Equipped"
+          "description": "Level 31 Resist Fire Aura When Equipped"
         },
         {
           "id": 127,
@@ -31608,7 +31608,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -31617,7 +31617,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -31626,7 +31626,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -31635,7 +31635,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -31644,7 +31644,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -31653,7 +31653,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         }
       ],
       "base_damage": {
@@ -34217,7 +34217,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 151,
@@ -34226,7 +34226,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Sanctuary 31 Aura When Equipped"
+          "description": "Level 31 Sanctuary Aura When Equipped"
         },
         {
           "id": 151,
@@ -34235,7 +34235,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Vigor 31 Aura When Equipped"
+          "description": "Level 31 Vigor Aura When Equipped"
         },
         {
           "id": 151,
@@ -34244,7 +34244,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Holy Freeze 31 Aura When Equipped"
+          "description": "Level 31 Holy Freeze Aura When Equipped"
         },
         {
           "id": 151,
@@ -34253,7 +34253,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Concentration 31 Aura When Equipped"
+          "description": "Level 31 Concentration Aura When Equipped"
         },
         {
           "id": 151,
@@ -34262,7 +34262,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Sacrifice 31 Aura When Equipped"
+          "description": "Level 31 Sacrifice Aura When Equipped"
         },
         {
           "id": 127,
@@ -34342,7 +34342,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -34351,7 +34351,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -34360,7 +34360,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -34369,7 +34369,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -34378,7 +34378,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 151,
@@ -34387,7 +34387,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level {0} {1} Aura When Equipped"
+          "description": "Level {1} {0} Aura When Equipped"
         },
         {
           "id": 7,
@@ -34535,7 +34535,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Conviction 31 Aura When Equipped"
+          "description": "Level 31 Conviction Aura When Equipped"
         },
         {
           "id": 151,
@@ -34544,7 +34544,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Sanctuary 31 Aura When Equipped"
+          "description": "Level 31 Sanctuary Aura When Equipped"
         },
         {
           "id": 151,
@@ -34553,7 +34553,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Vigor 31 Aura When Equipped"
+          "description": "Level 31 Vigor Aura When Equipped"
         },
         {
           "id": 151,
@@ -34562,7 +34562,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Holy Freeze 31 Aura When Equipped"
+          "description": "Level 31 Holy Freeze Aura When Equipped"
         },
         {
           "id": 151,
@@ -34571,7 +34571,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Concentration 31 Aura When Equipped"
+          "description": "Level 31 Concentration Aura When Equipped"
         },
         {
           "id": 151,
@@ -34580,7 +34580,7 @@
             31
           ],
           "name": "item_aura",
-          "description": "Level Sacrifice 31 Aura When Equipped"
+          "description": "Level 31 Sacrifice Aura When Equipped"
         },
         {
           "id": 127,
