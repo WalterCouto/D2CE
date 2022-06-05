@@ -17,7 +17,7 @@
 		<Contact_Info>
 			<Author_First_Name>Walter</Author_First_Name>
 			<Author_Last_Name>Couto</Author_Last_Name>
-			<Author_Email>walter_coiuto@hotmail.com</Author_Email>
+			<Author_Email>walter_couto@hotmail.com</Author_Email>
 			<Contact_First_Name />
 			<Contact_Last_Name />
 			<Contact_Email />
@@ -25,7 +25,7 @@
 		<Support_Info>
 			<Sales_Email />
 			<Support_Email />
-			<General_Email>walter_coiuto@hotmail.com</General_Email>
+			<General_Email>walter_couto@hotmail.com</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
 			<General_Phone />
@@ -34,9 +34,9 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Diablo II Character Editor</Program_Name>
-		<Program_Version>2.0.9</Program_Version>
-		<Program_Release_Month>01</Program_Release_Month>
-		<Program_Release_Day>08</Program_Release_Day>
+		<Program_Version>2.1.6</Program_Version>
+		<Program_Release_Month>06</Program_Release_Month>
+		<Program_Release_Day>05</Program_Release_Day>
 		<Program_Release_Year>2022</Program_Release_Year>
 		<Program_Cost_Dollars>0</Program_Cost_Dollars>
 		<Program_Cost_Other_Code>CAD</Program_Cost_Other_Code>
@@ -51,9 +51,9 @@
 		<Program_Category_Class />
 		<Program_System_Requirements />
 		<File_Info>
-			<File_Size_Bytes>10499584</File_Size_Bytes>
-			<File_Size_K>10253</File_Size_K>
-			<File_Size_MB>10.01</File_Size_MB>
+			<File_Size_Bytes>19513856</File_Size_Bytes>
+			<File_Size_K>19056</File_Size_K>
+			<File_Size_MB>18.6</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -72,7 +72,7 @@
 			<Char_Desc_80 />
 			<Char_Desc_250 />
 			<Char_Desc_450 />
-			<Char_Desc_2000>The Diablo II Character Editor is an updated relase of the original Diablo 2 Character Editor v 1.97 by Burton Tsan. I has been tested with Diablo II: Resurrected as well as  Diablo II Classic v1.14d and was designed to be a little tool that will help you edit the following stats of your Diablo II Character:
+			<Char_Desc_2000>The Diablo II Character Editor is an updated release of the original Diablo 2 Character Editor v1.97 by Burton Tsan. It has been tested with Diablo II: Resurrected (Patch 2.4 included) as well as Diablo II Classic v1.14d is this simple application designed to offer individuals the possibility to alter their Diablo II character's particularities through its simple settings and menus. The following stats can be edited:
 
   - Character class
   - Character name
@@ -98,7 +98,9 @@
   - Upgrade Potions to Full Rejuvenation
   - Upgrade Durability of all weapons and armor to the max value
   - Upgrade Quantity of all stackable items to the max value
-  - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull</Char_Desc_2000>
+  - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull
+  - Modify number of Sockets or what is socketed
+  - Import and Export of items</Char_Desc_2000>
 		</English>
 	</Program_Descriptions>
 	<Web_Info>
