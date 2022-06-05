@@ -15,8 +15,7 @@ is based on.
 Each .d2s file starts with a 765 byte header, after which data
 is of variable length.
 
-|Byte |    Byte   |    Byte   |
-|'71' |'87' - '89'|'92' - '96'|Byte | Length | Desc
+|Byte <br>'71' |Byte<br>'87' - '89'|Byte<br>'92' - '96'|Byte | Length | Desc
 |-----|-----------|-----------|-----|--------|------------
 |  0  |  0        |  0        |  0  |   4    | Signature (0xaa55aa55)
 |  4  |  4        |  4        |  4  |   4    | [Version ID](#versions)
@@ -437,210 +436,192 @@ Skills are a `32 byte` section containing a `2 byte` header with the value `if` 
 
 Items are stored in lists described by this header:
 
-Byte | Size | Desc
------|------|-----
-0    | 2    | "JM"
-2    | 2    | Item Count
+|Byte | Size | Desc
+|-----|------|-----
+|0    | 2    | "JM"
+|2    | 2    | Item Count
 
 After this come N items. Each item starts with a basic 14-byte
 structure. Many fields in this structure are not "byte-aligned"
 and are described by their bit position and sizes.
 
-  Bit   |  Bit   |  Bit   |  Bit   |
-  '71'  |  '71'  |  '71'  |  '71'  |    Bit    |
-15 bytes|26 bytes|27 bytes|31 bytes|'87' - '96'|Bit | Size | Desc
---------|--------|--------|--------|-----------|----|------|------
-  0     |  0     |  0     |  0     |  0        |    | 16   | "JM" (separate from the list header)
- 16     | 16     | 16     | 16     | 16        |  0 |  4   | ? 0x00
- 20     | 20     | 20     | 20     | 20        |  4 |  1   | Identified
- 21     | 21     | 21     | 21     | 21        |  5 |  6   | ? 0x00
- 27     | 27     | 27     | 27     | 27        | 11 |  1   | Socketed
- 28     | 28     | 28     | 28     | 28        | 12 |  1   | ? 0x00
- 29     | 29     | 29     | 29     | 29        | 13 |  1   | Picked up since last save
- 30     | 30     | 30     | 30     | 30        | 14 |  2   | ? 0x00
-        | 32     | 32     |        | 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes
- 32     |        |        | 32     |           |    |  1   | ? 0x00
- 33     | 33     | 33     | 33     | 33        | 17 |  1   | Starter Gear
- 34     | 34     | 34     | 34     | 34        | 18 |  1   | ? 0x00
- 35     | 35     |        | 35     |           |    |  2   | ? 0x03
-        |        | 35     |        | 35        | 19 |  2   | ? 0x00 
- 37     | 37     |        | 37     | 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes
-        |        | 37     |        |           |    |  1   | ? 0x00
- 38     | 38     | 38     | 38     | 38        | 22 |  1   | Ethereal
- 39     | 39     | 39     | 39     | 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00
-        |        |        |        | 40        | 24 |  1   | Personalized
- 40     | 40     | 40     | 40     |           |    |  1   | ? 0x00
- 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00
-        |        |        |        | 42        | 26 |  1   | [Runeword](#runeword)
- 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00
- 43     | 43     | 43     | 43     | 43        | 27 |  5   | ? 0x00
+|Bit<br>'71'<br>15 bytes|Bit<br>'71'<br>26 bytes|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes|Bit<br>'87' - '96'|Bit | Size | Desc
+|--------|--------|--------|--------|-----------|----|------|------
+|  0     |  0     |  0     |  0     |  0        |    | 16   | "JM" (separate from the list header)
+| 16     | 16     | 16     | 16     | 16        |  0 |  4   | ? 0x00
+| 20     | 20     | 20     | 20     | 20        |  4 |  1   | Identified
+| 21     | 21     | 21     | 21     | 21        |  5 |  6   | ? 0x00
+| 27     | 27     | 27     | 27     | 27        | 11 |  1   | Socketed
+| 28     | 28     | 28     | 28     | 28        | 12 |  1   | ? 0x00
+| 29     | 29     | 29     | 29     | 29        | 13 |  1   | Picked up since last save
+| 30     | 30     | 30     | 30     | 30        | 14 |  2   | ? 0x00
+|        | 32     | 32     |        | 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes
+| 32     |        |        | 32     |           |    |  1   | ? 0x00
+| 33     | 33     | 33     | 33     | 33        | 17 |  1   | Starter Gear
+| 34     | 34     | 34     | 34     | 34        | 18 |  1   | ? 0x00
+| 35     | 35     |        | 35     |           |    |  2   | ? 0x03
+|        |        | 35     |        | 35        | 19 |  2   | ? 0x00 
+| 37     | 37     |        | 37     | 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes
+|        |        | 37     |        |           |    |  1   | ? 0x00
+| 38     | 38     | 38     | 38     | 38        | 22 |  1   | Ethereal
+| 39     | 39     | 39     | 39     | 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00
+|        |        |        |        | 40        | 24 |  1   | Personalized
+| 40     | 40     | 40     | 40     |           |    |  1   | ? 0x00
+| 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00
+|        |        |        |        | 42        | 26 |  1   | [Runeword](#runeword)
+| 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00
+| 43     | 43     | 43     | 43     | 43        | 27 |  5   | ? 0x00
 
 
 #### Ear Item:
-  Bit   |  Bit   |
-  '71'  |  '71'  |
-26 bytes|27 bytes| Size | Desc
---------|--------|------|------
- 48     | 48     |  5   | ? 0x00
- 53     |        | 10   | ? 0x00
-        | 53     | 10   | 0x13B always, Ear Type code
- 63     | 63     |  3   | ? 0x00
- 66     | 66     |  5   | Column
- 71     | 71     |  2   | Row
- 73     | 73     |  1   | ? 0x00
- 74     |        |  3   | [Stash](#parent)
- 77     |        |  5   | ? 0x00
- 82     | 74     |  3   | Opponent Class
-        | 77     |  8   | ? 0x00
-        | 85     |  3   | [Stash](#parent)
-        | 88     |  2   | ? 0x00
- 85     |100     |  8   | Opponent Level
- 93     |108     |105   | Opponent Name
-198     |        | 10   | ? 0x00
-        |213     |  3   | ? 0x00
+|Bit<br>'71'<br>26 bytes|Bit<br>'71'<br>27 bytes| Size | Desc
+|--------|--------|------|------
+| 48     | 48     |  5   | ? 0x00
+| 53     |        | 10   | ? 0x00
+|        | 53     | 10   | 0x13B always, Ear Type code
+| 63     | 63     |  3   | ? 0x00
+| 66     | 66     |  5   | Column
+| 71     | 71     |  2   | Row
+| 73     | 73     |  1   | ? 0x00
+| 74     |        |  3   | [Stash](#parent)
+| 77     |        |  5   | ? 0x00
+| 82     | 74     |  3   | Opponent Class
+|        | 77     |  8   | ? 0x00
+|        | 85     |  3   | [Stash](#parent)
+|        | 88     |  2   | ? 0x00
+| 85     |100     |  8   | Opponent Level
+| 93     |108     |105   | Opponent Name
+|198     |        | 10   | ? 0x00
+|        |213     |  3   | ? 0x00
 
-
-    Bit    |
-'87' - '96'|Bit | Size | Desc
------------|----|------|------
-           | 32 |  3   | ? 0x00
- 48        |    | 10   | ? 0x00
- 58        | 35 |  3   | [Parent](#parent), always 0x00
- 61        | 38 |  4   | [Equipped](#equipped), always 0x00
- 65        | 42 |  4   | Column
- 69        | 46 |  3   | Row
- 72        | 49 |  1   | ? 0x00
- 73        | 50 |  3   | [Stash](#parent)
- 76        | 53 |  3   | Opponent Class
- 79        | 56 |  7   | Opponent Level
-           | 63 |120   | Opponent Name
- 86        |    |105   | Opponent Name
-           |183 |  1   | ? 0x00
-191        |    |  7   | ? 0x00
+|Bit<br>'87' - '96'|Bit | Size | Desc
+|-----------|----|------|------
+|           | 32 |  3   | ? 0x00
+| 48        |    | 10   | ? 0x00
+| 58        | 35 |  3   | [Parent](#parent), always 0x00
+| 61        | 38 |  4   | [Equipped](#equipped), always 0x00
+| 65        | 42 |  4   | Column
+| 69        | 46 |  3   | Row
+| 72        | 49 |  1   | ? 0x00
+| 73        | 50 |  3   | [Stash](#parent)
+| 76        | 53 |  3   | Opponent Class
+| 79        | 56 |  7   | Opponent Level
+|           | 63 |120   | Opponent Name
+| 86        |    |105   | Opponent Name
+|           |183 |  1   | ? 0x00
+|191        |    |  7   | ? 0x00
 
 #### Simple Item:
-  Bit   |  Bit   |
-  '71'  |  '71'  |
-15 bytes|27 bytes| Size | Desc
---------|--------|------|------
- 48     |        | 18   | ? 0x00
-        | 48     | 20   | ? 0x00
- 66     |        |  5   | Column, if socketed, 0x00 always, if stored in belt 4 bits used, 2 belt row and 2 for belt column)
-        | 68     | 10   | Type code, 10 bit integer
- 71     |        |  3   | Row, if socketed, 3 bits used other wise 2 bits, 0x00 always if stored in belt.
- 74     |        |  3   | [Stash](#parent)
- 77     |        |  3   | ? 0x00
-        | 78     |  1   | 0x01 socket or belt if potion
-        | 79     |  42  | ? 0x00
- 80     |        |  2   | ? 0x03
- 82     |        | 30   | Type code (3 letters)
-112     |        |  8   | ? 0x00 to pad to 120 bits
-        |121     |  5   | Column, if socketed, 0x00 always, if stored in belt 4 bits used, 2 belt row and 2 for belt column)
-        |126     |  3   | Row, if socketed, 3 bits used other wise 2 bits, 0x00 always if stored in belt.
-        |127     |  76  | ? 0x00 to pad to 120 bits
-        |203     |  8   | [Parent](#parent), if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
-        |211     |  5   | ? 0x00 to pad to 216 bits
+|Bit<br>'71'<br>15 bytes|Bit<br>'71'<br>27 bytes| Size | Desc
+|--------|--------|------|------
+| 48     |        | 18   | ? 0x00
+|        | 48     | 20   | ? 0x00
+| 66     |        |  5   | Column<br>if socketed, then 0x00 always<br>if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column
+|        | 68     | 10   | Type code, 10 bit integer
+| 71     |        |  3   | Row<br>if socketed, 3 bits used otherwise 2 bits,<br>0x00 always if stored in belt.
+| 74     |        |  3   | [Stash](#parent)
+| 77     |        |  3   | ? 0x00
+|        | 78     |  1   | 0x01 socket or belt if potion
+|        | 79     |  42  | ? 0x00
+| 80     |        |  2   | ? 0x03
+| 82     |        | 30   | Type code (3 letters)
+|112     |        |  8   | ? 0x00 to pad to 120 bits
+|        |121     |  5   | Column<br>if socketed, then 0x00 always<br>if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column
+|        |126     |  3   | Row, if socketed, 3 bits used otherwise 2 bits, 0x00 always if stored in belt.
+|        |127     |  76  | ? 0x00 to pad to 120 bits
+|        |203     |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
+|        |211     |  5   | ? 0x00 to pad to 216 bits
 
-    Bit    |
-'87' - '96'|Bit      | Size | Desc
------------|---------|------|------
-           | 32      |  3   | ? 0x00
- 48        |         | 10   | ? 0x00
- 58        | 35      |  3   | [Parent](#parent)
- 61        | 38      |  4   | [Equipped](#equipped), always 0x00
- 65        | 42      |  4   | Column
- 69        | 46      |  3   | Row
- 72        | 49      |  1   | ? 0x00
- 73        | 50      |  3   | [Stash](#parent)
-           | 53      | 8-30 | Type code (3 letters)
- 76        |         | 30   | Type code (3 letters)
-106        | 61 - 83 |1 or 3| if quest item, then 2 bits for quest and 1 bit for num sockets, otherise 1 bit for sockets
-           | 62 - 86 | 0-4  | ? 0x00 to pad to 64 or 88 bits
-107 or 109 |         | 3-5  | ? 0x00 to pad to 112 bits
-
+|Bit<br>'87' - '96'|Bit      | Size | Desc
+|-----------|---------|------|------
+|           | 32      |  3   | ? 0x00
+| 48        |         | 10   | ? 0x00
+| 58        | 35      |  3   | [Parent](#parent)
+| 61        | 38      |  4   | [Equipped](#equipped), always 0x00
+| 65        | 42      |  4   | Column
+| 69        | 46      |  3   | Row
+| 72        | 49      |  1   | ? 0x00
+| 73        | 50      |  3   | [Stash](#parent)
+|           | 53      | 8-30 | Type code (3 letters)
+| 76        |         | 30   | Type code (3 letters)
+|106        | 61 - 83 |1 or 3| if quest item, then 2 bits for quest and 1 bit for num sockets,<br>otherwise 1 bit for sockets
+|           | 62 - 86 | 0-4  | ? 0x00 to pad to 64 or 88 bits
+|107 or 109 |         | 3-5  | ? 0x00 to pad to 112 bits
 
 #### Gold Item (unused):
-  Bit   |  Bit   |
-  '71'  |  '71'  |
-27 bytes|31 bytes| Size | Desc
---------|--------|------|------
-        |  48    | 10   | ? 0x00
-        |  58    | 30   | Type code (3 letters)
- 48     |  90    | 16   | ? 0x00
- 64     |        |  4   | ? 0x00
- 68     |        | 10   | Type code, 10 bit integer
- 78     |        |  3   | ? 0x00
-        | 106    |  7   | ? 0x00
- 81     | 113    |  4   | ? 0x00
- 85     | 117    | 12   | 12 bit integer holding gold amount
- 97     | 129    | 24   | ? 0x00
-121     | 153    |  5   | Column
-126     | 158    |  3   | Row
-129     | 161    | 72   | ? 0x00
-203     | 235    |  8   | [Parent](#parent), if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
-211     | 243    |  5   | ? 0x00 to pad to 216/248 bits
+|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes| Size | Desc
+|--------|--------|------|------
+|        |  48    | 10   | ? 0x00
+|        |  58    | 30   | Type code (3 letters)
+| 48     |  90    | 16   | ? 0x00
+| 64     |        |  4   | ? 0x00
+| 68     |        | 10   | Type code, 10 bit integer
+| 78     |        |  3   | ? 0x00
+|        | 106    |  7   | ? 0x00
+| 81     | 113    |  4   | ? 0x00
+| 85     | 117    | 12   | 12 bit integer holding gold amount
+| 97     | 129    | 24   | ? 0x00
+|121     | 153    |  5   | Column
+|126     | 158    |  3   | Row
+|129     | 161    | 72   | ? 0x00
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
+|211     | 243    |  5   | ? 0x00 to pad to 216/248 bits
 
-
-    Bit    |
-'87' - '96'|Bit      | Size | Desc
------------|---------|------|------
-           | 32      |  3   | ? 0x00
- 48        |         | 10   | ? 0x00
- 58        | 35      |  3   | [Parent](#parent)
- 61        | 38      |  4   | [Equipped](#equipped), always 0x00
- 65        | 42      |  4   | Column
- 69        | 46      |  3   | Row
- 72        | 49      |  1   | ? 0x00
- 73        | 50      |  3   | [Stash](#parent)
-           | 53      | 8-30 | Type code (3 letters)
- 76        |         | 30   | Type code (3 letters)
-106        | 61 - 83 |1 or 3| if quest item, then 2 bits for quest and 1 bit for num sockets, otherise 1 bit for sockets
-           | 62 - 86 | 0-4  | ? 0x00 to pad to 64 or 88 bits
-107 or 109 |         | 3-5  | ? 0x00 to pad to 112 bits
+|Bit<br>'87' - '96'|Bit      | Size | Desc
+|-----------|---------|------|------
+|           | 32      |  3   | ? 0x00
+| 48        |         | 10   | ? 0x00
+| 58        | 35      |  3   | [Parent](#parent)
+| 61        | 38      |  4   | [Equipped](#equipped), always 0x00
+| 65        | 42      |  4   | Column
+| 69        | 46      |  3   | Row
+| 72        | 49      |  1   | ? 0x00
+| 73        | 50      |  3   | [Stash](#parent)
+|           | 53      | 8-30 | Type code (3 letters)
+| 76        |         | 30   | Type code (3 letters)
+|106        | 61 - 83 |1 or 3| if quest item, then 2 bits for quest and 1 bit for num sockets,<br>otherwise 1 bit for sockets
+|           | 62 - 86 | 0-4  | ? 0x00 to pad to 64 or 88 bits
+|107 or 109 |         | 3-5  | ? 0x00 to pad to 112 bits
 
 #### Extended items:
-  Bit   |  Bit   |
-  '71'  |  '71'  |
-27 bytes|31 bytes| Size | Desc
---------|--------|------|------
-        |  48    | 10   | ? 0x00
-        |  58    | 30   | Type code (3 letters)
- 48     |  90    |  4   | [Equipped](#equipped)
- 52     |  94    |  1   | ? 0x00
- 53     |  95    |  3   | number of socketed items
- 56     |  98    |  8   | Item Level
- 64     |        |  4   | ? 0x00
- 68     |        | 10   | Type code, 10 bit integer
- 78     |        |  3   | ? 0x00
-        | 106    |  7   | ? 0x00
- 81     | 113    |  4   | [Quality](#quality)
- 85     | 117    |  9   | number items stacked
- 94     | 126    | 11   | ? 0x00
-105     | 137    | 16   | Durability
-121     | 153    |  5   | Column, if socketed, then 0x00 always, if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column)
-126     | 158    |  3   | Row, if socketed, then 3 bits used otherwise 2 bits, 0x00 always if stored in belt.
-129     | 161    |  8   | Set ID, Unique ID, or 0x00 if not part of a Set or Unique
-139     | 171    | 32   | DWA
-171     | 203    | 32   | DWB
-203     | 235    |  8   | [Parent](#parent), if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
-211     | 243    |  5   | ? 0x00 to pad to 216/248 bits
+|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes| Size | Desc
+|--------|--------|------|------
+|        |  48    | 10   | ? 0x00
+|        |  58    | 30   | Type code (3 letters)
+| 48     |  90    |  4   | [Equipped](#equipped)
+| 52     |  94    |  1   | ? 0x00
+| 53     |  95    |  3   | number of socketed items
+| 56     |  98    |  8   | Item Level
+| 64     |        |  4   | ? 0x00
+| 68     |        | 10   | Type code, 10 bit integer
+| 78     |        |  3   | ? 0x00
+|        | 106    |  7   | ? 0x00
+| 81     | 113    |  4   | [Quality](#quality)
+| 85     | 117    |  9   | number items stacked
+| 94     | 126    | 11   | ? 0x00
+|105     | 137    | 16   | Durability
+|121     | 153    |  5   | Column<br>if socketed, then 0x00 always<br>if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column
+|126     | 158    |  3   | Row, if socketed, then 3 bits used otherwise 2 bits, 0x00 always if stored in belt.
+|129     | 161    |  8   | Set ID, Unique ID, or 0x00 if not part of a Set or Unique
+|139     | 171    | 32   | DWA
+|171     | 203    | 32   | DWB
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)
+|211     | 243    |  5   | ? 0x00 to pad to 216/248 bits
 
-    Bit    |
-'87' - '96'|Bit      | Size | Desc
------------|---------|------|------
-           | 32      |  3   | ? 0x00
- 48        |         | 10   | ? 0x00
- 58        | 35      |  3   | [Parent](#parent)
- 61        | 38      |  4   | [Equipped](#equipped), always 0x00
- 65        | 42      |  4   | Column
- 69        | 46      |  3   | Row
- 72        | 49      |  1   | ? 0x00
- 73        | 50      |  3   | [Stash](#parent)
-           | 53      | 8-30 | Type code (3 letters)
- 76        |         | 30   | Type code (3 letters)
-106        |         |  2   | ? 0x00
-108        | 61 - 83 |      | [Extended Item Data](#extended-item-data)
-
+|Bit<br>'87' - '96'|Bit      | Size | Desc
+|-----------|---------|------|------
+|           | 32      |  3   | ? 0x00
+| 48        |         | 10   | ? 0x00
+| 58        | 35      |  3   | [Parent](#parent)
+| 61        | 38      |  4   | [Equipped](#equipped), always 0x00
+| 65        | 42      |  4   | Column
+| 69        | 46      |  3   | Row
+| 72        | 49      |  1   | ? 0x00
+| 73        | 50      |  3   | [Stash](#parent)
+|           | 53      | 8-30 | Type code (3 letters)
+| 76        |         | 30   | Type code (3 letters)
+|106        |         |  2   | ? 0x00
+|108        | 61 - 83 |      | [Extended Item Data](#extended-item-data)
 
 ### Extended Item Data
 
