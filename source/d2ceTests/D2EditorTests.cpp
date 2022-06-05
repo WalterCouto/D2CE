@@ -300,10 +300,10 @@ namespace D2EditorTests
         }
     }
 
-    static bool LoadCharFile(const std::filesystem::path& fileName, d2ce::Character& character, d2ce::EnumCharVersion version, bool /*validateChecksum*/)
+    static bool LoadCharFile(const std::filesystem::path& fileName, d2ce::Character& character, d2ce::EnumCharVersion version, bool validateChecksum)
     {
         std::filesystem::path p = GetCharPathName(version) / fileName;
-        return character.open(p, false);
+        return character.open(p, validateChecksum);
     }
 
     static bool LoadCharTempFile(const char* fileName, d2ce::Character& character, d2ce::EnumCharVersion version, bool validateChecksum)
@@ -322,6 +322,18 @@ namespace D2EditorTests
         return character.open(tempFile, validateChecksum);
     }
 
+    static std::string GetJsonText(const std::filesystem::path& path)
+    {
+#ifdef _MSC_VER
+        std::ifstream expectedFile(path, std::ios::binary);
+#else
+        std::ifstream expectedFile(path, std::ios::binary);
+#endif
+        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
+        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
+        return ConvertNewLines(text);
+    }
+
     static std::string GetCharExpectedJsonOutput(const d2ce::Character& character, d2ce::EnumCharVersion version, bool bSerializedFormat = false)
     {
         std::stringstream ss;
@@ -333,15 +345,7 @@ namespace D2EditorTests
         ss << ".json";
 
         std::filesystem::path expectedPath = GetCharPathName(version) / std::filesystem::u8path(ss.str());
-
-#ifdef _MSC_VER
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#else
-        std::ifstream expectedFile(expectedPath, std::ios::binary);
-#endif
-        Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
-        std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
-        return ConvertNewLines(text);
+        return GetJsonText(expectedPath);
     }
 
     void TestOpenBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum)
@@ -356,6 +360,16 @@ namespace D2EditorTests
         Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
         auto json = character.asJson(serialized, d2ce::Character::EnumCharSaveOp::NoSave);
         Assert::AreEqual(ConvertNewLines(json), GetCharExpectedJsonOutput(character, version, serialized));
+    }
+
+    void TestJsonOpenBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum, bool serialized = false)
+    {
+        std::filesystem::path expectedPath = GetCharPathName(version) / fileName;
+        auto expectedJson = GetJsonText(expectedPath);
+        d2ce::Character character;
+        Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
+        auto json = character.asJson(serialized, d2ce::Character::EnumCharSaveOp::NoSave);
+        Assert::AreEqual(ConvertNewLines(json), expectedJson);
     }
 
     TEST_CLASS(D2EditorTests)
@@ -800,8 +814,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen06)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("fddfss.json", character, d2ce::EnumCharVersion::v108, true));
+            TestJsonOpenBase("fddfss.json", d2ce::EnumCharVersion::v108, true);
         }
 
         TEST_METHOD(TestJsonOpen07)
@@ -824,8 +837,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen10)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("test.json", character, d2ce::EnumCharVersion::v115, true));
+            TestJsonOpenBase("test.json", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonOpen11)
@@ -836,8 +848,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen12)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("test_serialized.json", character, d2ce::EnumCharVersion::v115, true));
+            TestJsonOpenBase("test_serialized.json", d2ce::EnumCharVersion::v115, true, true);
         }
 
         TEST_METHOD(TestJsonOpen13)
@@ -872,26 +883,22 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen18)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Necromancer.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBase("Necromancer.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen19)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Bow.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBase("Bow.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen20)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Spartacus.json", character, d2ce::EnumCharVersion::v115, true));
+            TestJsonOpenBase("Spartacus.json", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonOpen21)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Loradiel.json", character, d2ce::EnumCharVersion::v115, true));
+            TestJsonOpenBase("Loradiel.json", d2ce::EnumCharVersion::v115, true);
         }
 
         TEST_METHOD(TestJsonOpen22)
@@ -944,14 +951,12 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen30)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile(L"任务完成信.json", character, d2ce::EnumCharVersion::v116, true));
+            TestJsonOpenBase(L"任务完成信.json", d2ce::EnumCharVersion::v116, true);
         }
 
         TEST_METHOD(TestJsonOpen31)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Rui.json", character, d2ce::EnumCharVersion::v116, true));
+            TestJsonOpenBase("Rui.json", d2ce::EnumCharVersion::v116, true);
         }
 
         TEST_METHOD(TestJsonOpen32)
