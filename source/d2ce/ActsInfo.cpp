@@ -1328,7 +1328,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) c
     if (bSerializedFormat)
     {
         Json::Value quests;
-        quests["Magic"] = ((CharInfo.getVersion() < EnumCharVersion::v115) ? "1" : "0");
+        quests["Magic"] = ((CharInfo.getVersion() < EnumCharVersion::v100R) ? "1" : "0");
         quests["Header"] = *((std::uint32_t*)QUESTS_MARKER.data());
         quests["Version"] = *((std::uint32_t*)quests_version.data());
         quests["Length"] = *((std::uint16_t*)QUESTS_SIZE_MARKER.data());

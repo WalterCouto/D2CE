@@ -41,9 +41,9 @@ namespace d2ce
     constexpr std::uint32_t D2R_APPEARANCES_LENGTH = 48;
 
     // character version
-    enum class EnumCharVersion : std::uint32_t { v100 = 0x47, v107 = 0x57, v108 = 0x59, v109 = 0x5C, v110 = 0x60, v115 = 0x61, v116 = 0x62};
+    enum class EnumCharVersion : std::uint32_t { v100 = 0x47, v107 = 0x57, v108 = 0x59, v109 = 0x5C, v110 = 0x60, v100R = 0x61, v120 = 0x62};
 
-    constexpr EnumCharVersion APP_CHAR_VERSION = EnumCharVersion::v116; // default version used by application
+    constexpr EnumCharVersion APP_CHAR_VERSION = EnumCharVersion::v120; // default version used by application
 
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };

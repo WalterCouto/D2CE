@@ -42,8 +42,8 @@ namespace d2ce
     namespace ItemHelpers
     {
         bool getItemCodev100(std::uint16_t code, std::array<std::uint8_t, 4>& strcode);
-        std::uint8_t getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
-        void encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
+        std::uint8_t getResurrectedItemCode(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode);
+        void encodeResurrectedItem(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet);
         std::uint8_t HuffmanDecodeBitString(const std::string& bitstr);
 
         const ItemType& getInvalidItemTypeHelper();
@@ -53,7 +53,11 @@ namespace d2ce
         const d2ce::RunewordType& getRunewordFromId(std::uint16_t id);
         std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
         std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
+        bool getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
+        bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
 
+        bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
+        bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
@@ -2968,6 +2972,10 @@ namespace d2ce
             return;
         }
 
+        const SSIZE_T normcodeColumnIdx = doc.GetColumnIdx("normcode");
+        const SSIZE_T ubercodeColumnIdx = doc.GetColumnIdx("ubercode");
+        const SSIZE_T ultracodeColumnIdx = doc.GetColumnIdx("ultracode");
+
         std::string strValue;
         std::string name;
         std::string code;
@@ -3291,6 +3299,31 @@ namespace d2ce
             {
                 itemType.skipName = true;
             }
+
+            if (normcodeColumnIdx >= 0)
+            {
+                strValue = doc.GetCellString(normcodeColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    itemType.codes.push_back(strValue); 
+                    if (ubercodeColumnIdx >= 0)
+                    {
+                        strValue = doc.GetCellString(ubercodeColumnIdx, i);
+                        if (!strValue.empty())
+                        {
+                            itemType.codes.push_back(strValue);
+                            if (ultracodeColumnIdx >= 0)
+                            {
+                                strValue = doc.GetCellString(ultracodeColumnIdx, i);
+                                if (!strValue.empty())
+                                {
+                                    itemType.codes.push_back(strValue);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         s_ItemWeaponType.swap(itemWeaponType);
@@ -3499,6 +3532,10 @@ namespace d2ce
         {
             return;
         }
+
+        const SSIZE_T normcodeColumnIdx = doc.GetColumnIdx("normcode");
+        const SSIZE_T ubercodeColumnIdx = doc.GetColumnIdx("ubercode");
+        const SSIZE_T ultracodeColumnIdx = doc.GetColumnIdx("ultracode");
 
         std::string strValue;
         std::string code;
@@ -3792,6 +3829,31 @@ namespace d2ce
             if (!strValue.empty() && (strValue != "0"))
             {
                 itemType.skipName = true;
+            }
+
+            if (normcodeColumnIdx >= 0)
+            {
+                strValue = doc.GetCellString(normcodeColumnIdx, i);
+                if (!strValue.empty())
+                {
+                    itemType.codes.push_back(strValue);
+                    if (ubercodeColumnIdx >= 0)
+                    {
+                        strValue = doc.GetCellString(ubercodeColumnIdx, i);
+                        if (!strValue.empty())
+                        {
+                            itemType.codes.push_back(strValue);
+                            if (ultracodeColumnIdx >= 0)
+                            {
+                                strValue = doc.GetCellString(ultracodeColumnIdx, i);
+                                if (!strValue.empty())
+                                {
+                                    itemType.codes.push_back(strValue);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -4384,7 +4446,7 @@ namespace d2ce
         ItemAffixLevelType level;
         ItemAffixClassType classType;
 
-        std::uint16_t group = 0; // he group an affix is assigned to. The game cannot pick more then one affix from each group
+        std::uint16_t group = 0; // the group an affix is assigned to. The game cannot pick more then one affix from each group
 
         std::vector<ItemAffixModType> modType;
 
@@ -6145,8 +6207,15 @@ namespace d2ce
                     attrib.Values.push_back(lastValue);
                     break;
 
-                case 17: // use param field only
-                    attrib.Values.push_back(lastParam);
+                case 17: // use param field only if non-empty
+                    if (!modType.param.empty())
+                    {
+                        attrib.Values.push_back(lastParam);
+                    }
+                    else
+                    {
+                        bCalcValue = true;
+                    }
                     break;
 
                 case 18: // Related to /time properties.
@@ -6982,7 +7051,7 @@ namespace d2ce
                 {"Runeword30", d2ce::EnumItemVersion::v110}, {"Runeword31", d2ce::EnumItemVersion::v110},
                 {"Runeword33", d2ce::EnumItemVersion::v110}, {"Runeword34", d2ce::EnumItemVersion::v110},
                 {"Runeword36", d2ce::EnumItemVersion::v110}, {"Runeword37", d2ce::EnumItemVersion::v110},
-                {"Runeword38", d2ce::EnumItemVersion::v110}, {"Runeword40", d2ce::EnumItemVersion::v116},
+                {"Runeword38", d2ce::EnumItemVersion::v110}, {"Runeword40", d2ce::EnumItemVersion::v120},
                 {"Runeword41", d2ce::EnumItemVersion::v110}, {"Runeword44", d2ce::EnumItemVersion::v109},
                 {"Runeword45", d2ce::EnumItemVersion::v110}, {"Runeword47", d2ce::EnumItemVersion::v110}, 
                 {"Runeword48", d2ce::EnumItemVersion::v110}, {"Runeword49", d2ce::EnumItemVersion::v110},
@@ -6994,12 +7063,12 @@ namespace d2ce
                 {"Runeword72", d2ce::EnumItemVersion::v109}, {"Runeword74", d2ce::EnumItemVersion::v109},
                 {"Runeword75", d2ce::EnumItemVersion::v109}, {"Runeword81", d2ce::EnumItemVersion::v109},
                 {"Runeword82", d2ce::EnumItemVersion::v109}, {"Runeword83", d2ce::EnumItemVersion::v109},
-                {"Runeword84", d2ce::EnumItemVersion::v116}, {"Runeword87", d2ce::EnumItemVersion::v110},
+                {"Runeword84", d2ce::EnumItemVersion::v120}, {"Runeword87", d2ce::EnumItemVersion::v110},
                 {"Runeword88", d2ce::EnumItemVersion::v109}, {"Runeword91", d2ce::EnumItemVersion::v110},
-                {"Runeword92", d2ce::EnumItemVersion::v110}, {"Runeword94", d2ce::EnumItemVersion::v116},
-                {"Runeword95", d2ce::EnumItemVersion::v110}, {"Runeword97", d2ce::EnumItemVersion::v116},
+                {"Runeword92", d2ce::EnumItemVersion::v110}, {"Runeword94", d2ce::EnumItemVersion::v120},
+                {"Runeword95", d2ce::EnumItemVersion::v110}, {"Runeword97", d2ce::EnumItemVersion::v120},
                 {"Runeword98", d2ce::EnumItemVersion::v110}, {"Runeword99", d2ce::EnumItemVersion::v110},
-                {"Runeword103", d2ce::EnumItemVersion::v110}, {"Runeword106", d2ce::EnumItemVersion::v116},
+                {"Runeword103", d2ce::EnumItemVersion::v110}, {"Runeword106", d2ce::EnumItemVersion::v120},
                 {"Runeword109", d2ce::EnumItemVersion::v110}, {"Runeword110", d2ce::EnumItemVersion::v110},
                 {"Runeword112", d2ce::EnumItemVersion::v110}, {"Runeword116", d2ce::EnumItemVersion::v109},
                 {"Runeword117", d2ce::EnumItemVersion::v110}, {"Runeword120", d2ce::EnumItemVersion::v109},
@@ -7008,10 +7077,10 @@ namespace d2ce
                 {"Runeword128", d2ce::EnumItemVersion::v109}, {"Runeword131", d2ce::EnumItemVersion::v110},
                 {"Runeword133", d2ce::EnumItemVersion::v109}, {"Runeword134", d2ce::EnumItemVersion::v109},
                 {"Runeword137", d2ce::EnumItemVersion::v110}, {"Runeword139", d2ce::EnumItemVersion::v109},
-                {"Runeword148", d2ce::EnumItemVersion::v110}, {"Runeword151", d2ce::EnumItemVersion::v116},
+                {"Runeword148", d2ce::EnumItemVersion::v110}, {"Runeword151", d2ce::EnumItemVersion::v120},
                 {"Runeword154", d2ce::EnumItemVersion::v109}, {"Runeword160", d2ce::EnumItemVersion::v109},
                 {"Runeword162", d2ce::EnumItemVersion::v109}, {"Runeword163", d2ce::EnumItemVersion::v110},
-                {"Runeword165", d2ce::EnumItemVersion::v116}, {"Runeword168", d2ce::EnumItemVersion::v110},
+                {"Runeword165", d2ce::EnumItemVersion::v120}, {"Runeword168", d2ce::EnumItemVersion::v110},
                 {"Runeword170", d2ce::EnumItemVersion::v109},
             };
 
@@ -7028,7 +7097,7 @@ namespace d2ce
                 }
                 else if (strValue.find("D2R Ladder 1") == 0)
                 {
-                    itemType.version = d2ce::EnumItemVersion::v116;
+                    itemType.version = d2ce::EnumItemVersion::v120;
                 }
                 else
                 {
@@ -7154,7 +7223,8 @@ namespace d2ce
                 continue;
             }
 
-            if (prefix.second.level.level - 2 > level)
+            
+            if (std::min(prefix.second.level.level, 2ui16) - 2 > level)
             {
                 continue;
             }
@@ -7204,7 +7274,7 @@ namespace d2ce
                 continue;
             }
 
-            if (suffix.second.level.level - 2 > level)
+            if (std::min(suffix.second.level.level, 2ui16) - 2 > level)
             {
                 continue;
             }
@@ -7553,6 +7623,23 @@ bool d2ce::ItemType::isUpgradablePotion() const
     }
 
     return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isUpgradableItem() const
+{
+    if (codes.size() <= 1)
+    {
+        // no possible upgrades available
+        return false;
+    }
+
+    if (codes.back() == code)
+    {
+        // already upgraded
+        return false;
+    }
+    
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isRune() const
@@ -8174,7 +8261,7 @@ bool d2ce::ItemHelpers::getItemCodev100(std::uint16_t code, std::array<std::uint
     return false;
 }
 //---------------------------------------------------------------------------
-std::uint8_t d2ce::ItemHelpers::getItemCodev115(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode)
+std::uint8_t d2ce::ItemHelpers::getResurrectedItemCode(const std::vector<std::uint8_t>& data, size_t startOffset, std::array<std::uint8_t, 4>& strcode)
 {
     size_t offset = startOffset;
     for (size_t i = 0; i < 4; ++i)
@@ -8186,7 +8273,7 @@ std::uint8_t d2ce::ItemHelpers::getItemCodev115(const std::vector<std::uint8_t>&
 }
 //---------------------------------------------------------------------------
 // Retrieves encoded ItemCode (return number of bits set)
-void d2ce::ItemHelpers::encodeItemCodev115(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet)
+void d2ce::ItemHelpers::encodeResurrectedItem(const std::array<std::uint8_t, 4>& strcode, std::uint64_t& encodedVal, std::uint8_t& numBitsSet)
 {
     encodedVal = 0;
     numBitsSet = 0;
@@ -8524,6 +8611,17 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
 std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2ce::Item& item, std::uint32_t level, bool bUseCurrentSocketCount, bool bExcludeServerOnly)
 {
     std::vector<d2ce::RunewordType> result;
+    auto itemVersion = item.getVersion();
+    if (itemVersion < EnumItemVersion::v107)
+    {
+        return result;
+    }
+
+    if (!item.isExpansionItem())
+    {
+        return result;
+    }
+
     switch (item.getQuality())
     {
     case EnumItemQuality::MAGIC:
@@ -8536,9 +8634,16 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
         return result;
     }
 
-    auto itemVersion = item.getVersion();
-    if (itemVersion < EnumItemVersion::v107)
+    const auto& itemType = item.getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
+        // should not happen
+        return result;
+    }
+
+    if (itemType.isQuestItem() || (itemType.code == "leg"))
+    {
+        // runewords do not work with these either
         return result;
     }
 
@@ -8550,8 +8655,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
 
     auto minSockets = bUseCurrentSocketCount ? numSockets : item.getSocketCountBonus() + 1;
 
-    std::vector<std::string> categories;
-    item.getCategories(categories);
+    const std::vector<std::string>& categories = itemType.categories;
 
     bool isEquipped = item.getLocation() == d2ce::EnumItemLocation::EQUIPPED;
 
@@ -8622,6 +8726,259 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
     }
 
     return result;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes)
+{
+    prefixes.clear();
+    suffixes.clear();
+    if (item.isSimpleItem() || (item.isSocketFiller() && !item.isJewel()))
+    {
+        return false;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    if (!item.getItemCode(strcode))
+    {
+        return false;
+    }
+
+    auto gameVersion = item.getGameVersion();
+    switch (item.getQuality())
+    {
+    case d2ce::EnumItemQuality::NORMAL:
+        if (item.isRuneword())
+        {
+            // magical affixes do not work with these
+            return false;
+        }
+        break;
+
+    case d2ce::EnumItemQuality::MAGIC:
+        break;
+
+    default:
+        // magical affixes do not work with these
+        return false;
+    }
+
+    std::vector<ItemAffixType> affixPrefixes;
+    std::vector<ItemAffixType> affixSuffixes;
+    if (!GenerateMagicalAffixesBuffer(strcode, affixPrefixes, affixSuffixes, gameVersion, item.getLevel()))
+    {
+        return false;
+    }
+
+    for (auto& affix : affixPrefixes)
+    {
+        prefixes.push_back(affix.code);
+    }
+
+    for (auto& affix : affixSuffixes)
+    {
+        suffixes.push_back(affix.code);
+    }
+    return (!prefixes.empty() || !suffixes.empty()) ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes)
+{
+    prefixes.clear();
+    suffixes.clear();
+    if (item.isSimpleItem() || (item.isSocketFiller() && !item.isJewel()))
+    {
+        return false;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    if (!item.getItemCode(strcode))
+    {
+        return false;
+    }
+
+    auto gameVersion = item.getGameVersion();
+    switch (item.getQuality())
+    {
+    case d2ce::EnumItemQuality::NORMAL:
+        if (item.isRuneword())
+        {
+            // rare affixes do not work with these
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        break;
+
+    default:
+        // rare affixes do not work with these
+        return false;
+    }
+
+    std::vector<ItemAffixType> affixPrefixes;
+    std::vector<ItemAffixType> affixSuffixes;
+    if (!GenerateRareOrCraftedAffixesBuffer(strcode, affixPrefixes, affixSuffixes, gameVersion))
+    {
+        return false;
+    }
+
+    for (auto& affix : affixPrefixes)
+    {
+        prefixes.push_back(affix.code);
+    }
+
+    for (auto& affix : affixSuffixes)
+    {
+        suffixes.push_back(affix.code);
+    }
+    return (!prefixes.empty() || !suffixes.empty()) ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways)
+{
+    attribs.clear();
+
+    auto dwb = ItemHelpers::generarateRandomDW();
+    ItemRandStruct rnd = { dwb, 666 };
+    InitalizeItemRandomization(dwb, 0, EnumItemQuality::NORMAL, rnd);
+
+    bool bHasAffix = false;
+    if (magicalAffixes.PrefixId != 0)
+    {
+        bool bFoundAffix = false;
+        for (const auto& prefix : s_ItemMagicPrefixType)
+        {
+            if (prefix.second.code == magicalAffixes.PrefixId)
+            {
+                bFoundAffix = true;
+                ProcessMagicalProperites(prefix.second.modType, attribs, rnd, version, gameVersion, bMaxAlways);
+                break;
+            }
+        }
+
+        if (!bFoundAffix)
+        {
+            // invalid prefix
+            return false;
+        }
+        bHasAffix = true;
+    }
+
+    if (magicalAffixes.SuffixId != 0)
+    {
+        bool bFoundAffix = false;
+        for (const auto& suffix : s_ItemMagicSuffixType)
+        {
+            if (suffix.second.code == magicalAffixes.SuffixId)
+            {
+                bFoundAffix = true;
+                ProcessMagicalProperites(suffix.second.modType, attribs, rnd, version, gameVersion, bMaxAlways);
+                break;
+            }
+        }
+
+        if (!bFoundAffix)
+        {
+            // invalid suffix
+            return false;
+        }
+        bHasAffix = true;
+    }
+
+    if (!bHasAffix)
+    {
+        // invalid affix
+        return false;
+    }
+
+    return attribs.empty() ? false : true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways)
+{
+    attribs.clear();
+
+    auto dwb = ItemHelpers::generarateRandomDW();
+    ItemRandStruct rnd = { dwb, 666 };
+    InitalizeItemRandomization(dwb, 0, EnumItemQuality::NORMAL, rnd);
+
+    std::vector<std::uint16_t> prefixGroups;
+    std::vector<std::uint16_t> suffixGroups;
+    for (const auto& affix : rareAttrib.Affixes)
+    {
+        bool bHasAffix = false;
+        if (affix.PrefixId != 0)
+        {
+            bool bFoundAffix = false;
+            for (const auto& prefix : s_ItemMagicPrefixType)
+            {
+                if (prefix.second.code == affix.PrefixId)
+                {
+                    for (const auto& group : prefixGroups)
+                    {
+                        if (prefix.second.group == group)
+                        {
+                            // invalid prefix
+                            return false;
+                        }
+                    }
+
+                    prefixGroups.push_back(prefix.second.group);
+                    bFoundAffix = true;
+                    ProcessMagicalProperites(prefix.second.modType, attribs, rnd, version, gameVersion, bMaxAlways);
+                    break;
+                }
+            }
+
+            if (!bFoundAffix)
+            {
+                // invalid prefix
+                return false;
+            }
+            bHasAffix = true;
+        }
+
+        if (affix.SuffixId != 0)
+        {
+            bool bFoundAffix = false;
+            for (auto& suffix : s_ItemMagicSuffixType)
+            {
+                if (suffix.second.code == affix.SuffixId)
+                {
+                    for (const auto& group : suffixGroups)
+                    {
+                        if (suffix.second.group == group)
+                        {
+                            // invalid suffix
+                            return false;
+                        }
+                    }
+
+                    suffixGroups.push_back(suffix.second.group);
+                    bFoundAffix = true;
+                    ProcessMagicalProperites(suffix.second.modType, attribs, rnd, version, gameVersion, bMaxAlways);
+                    break;
+                }
+            }
+
+            if (!bFoundAffix)
+            {
+                // invalid suffix
+                return false;
+            }
+            bHasAffix = true;
+        }
+
+        if (!bHasAffix)
+        {
+            // invalid affix
+            return false;
+        }
+    }
+
+    return attribs.empty() ? false : true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
@@ -8907,7 +9264,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
                 bDone = true;
                 for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
                 {
-                    if (iter->group != prefixes[idx].group)
+                    if (iter->group == prefixes[idx].group)
                     {
                         GenerateRandom(rnd); // skip the next random number
                         bDone = false;
@@ -8936,7 +9293,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
                 bDone = true;
                 for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
                 {
-                    if (iter->group != suffixes[idx].group)
+                    if (iter->group == suffixes[idx].group)
                     {
                         GenerateRandom(rnd); // skip the next random number
                         bDone = false;
@@ -9495,7 +9852,12 @@ std::int64_t d2ce::ItemHelpers::getMagicalAttributeValue(MagicalAttribute& attri
         switch (idx)
         {
         case 0: // value at index 0 is durability units per 100 seconds
-            return 100 / value;
+            if (value != 0)
+            {
+                return 100 / value;
+            }
+            // should not happen
+            return value;
 
         default:
             return value;

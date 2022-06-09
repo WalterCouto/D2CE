@@ -20,6 +20,7 @@
 #include "pch.h"
 #include "D2Editor.h"
 #include "D2MercenaryForm.h"
+#include "D2RunewordForm.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
@@ -366,6 +367,8 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2MercenaryForm::OnItemContextApplyruneword)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2MercenaryForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2MercenaryForm::OnItemContextRemoveitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, &CD2MercenaryForm::OnItemContextMakesuperiorquality) 
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADEITEMTIER, &CD2MercenaryForm::OnItemContextUpgradehighertier)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -852,6 +855,18 @@ void CD2MercenaryForm::CheckToolTipCtrl()
             AfxGetModuleThreadState()->m_pToolTip = pToolTip;
         }
     }
+}
+//---------------------------------------------------------------------------
+bool CD2MercenaryForm::setItemRuneword(d2ce::Item& item, std::uint16_t id)
+{
+    auto preEquippedId = item.getEquippedId();
+    if (MainForm.setItemRuneword(item, id))
+    {
+        refreshEquipped(preEquippedId);
+        return true;
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 const d2ce::Item* CD2MercenaryForm::GetInvItem(UINT id, UINT /*offset*/) const
@@ -1484,12 +1499,19 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    bool isStackable = CurrItem->isStackable();
-    bool isArmor = !isStackable && CurrItem->isArmor();
-    bool isWeapon = !isArmor && CurrItem->isWeapon();
+    const auto& itemType = CurrItem->getItemTypeHelper();
+    bool isStackable = itemType.isStackable();
+    bool isArmor = itemType.isArmor();
+    bool isWeapon = itemType.isWeapon();
     bool canHaveSockets = CurrItem->canHaveSockets();
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
+    bool canMakeSuperior = CurrItem->canMakeSuperior();
+    bool canAddMagicalAffixes = CurrItem->canAddMagicalAffixes();
+    bool canAddRareAffixes = CurrItem->canAddRareAffixes();
+    bool canUpgradeTier = CurrItem->isUpgradableItem();
+
+    bool removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1578,6 +1600,41 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             if (pos >= 0)
             {
                 pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+        }
+
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        if (pos >= 0)
+        {
+            if (removeQualityMenu)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canMakeSuperior)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canUpgradeTier)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddMagicalAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddRareAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                    }
+                }
             }
         }
 
@@ -1677,6 +1734,18 @@ void CD2MercenaryForm::OnItemContextRemovePersonalization()
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnItemContextApplyruneword()
 {
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    CD2RunewordForm dlg(*this);
+    if (dlg.DoModal() == IDOK)
+    {
+        refreshEquipped(*CurrItem);
+    }
+    SetFocus();
+    CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::OnItemContextExportitem()
@@ -1722,6 +1791,34 @@ void CD2MercenaryForm::OnItemContextRemoveitem()
 
     const d2ce::Item* pRemovedItem = nullptr;
     setItemLocation(*CurrItem, d2ce::EnumItemLocation::BUFFER, 0, 0, d2ce::EnumItemInventory::BUFFER, pRemovedItem);
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextMakesuperiorquality()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.makeItemSuperior(*CurrItem))
+    {
+        refreshEquipped(*CurrItem);
+    }
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextUpgradehighertier()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.upgradeItemTier(*CurrItem))
+    {
+        refreshEquipped(*CurrItem);
+    }
     CurrItem = nullptr;
 }
 //---------------------------------------------------------------------------

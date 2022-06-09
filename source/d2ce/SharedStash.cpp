@@ -53,7 +53,7 @@ d2ce::SharedStash::SharedStash()
 d2ce::SharedStash::SharedStash(const Character& charInfo)
 {
     CharVersion = charInfo.getVersion();
-    if (CharVersion >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
+    if (CharVersion >= EnumCharVersion::v100R && charInfo.isExpansionCharacter())
     {
         m_d2ifilename = charInfo.getPath();
         m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
@@ -117,7 +117,7 @@ void d2ce::SharedStash::reset(const Character& charInfo)
 {
     clear();
     CharVersion = charInfo.getVersion();
-    if (CharVersion >= EnumCharVersion::v115 && charInfo.isExpansionCharacter())
+    if (CharVersion >= EnumCharVersion::v100R && charInfo.isExpansionCharacter())
     {
         m_d2ifilename = charInfo.getPath();
         m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
@@ -758,6 +758,46 @@ size_t d2ce::SharedStash::setIndestructibleAllItems(size_t page)
     return Pages[page].StashItems.setIndestructibleAllItems();
 }
 //---------------------------------------------------------------------------
+size_t d2ce::SharedStash::setSuperiorAllItems()
+{
+    size_t total = 0;
+    for (auto& page : Pages)
+    {
+        total += page.StashItems.setSuperiorAllItems();
+    }
+    return total;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::SharedStash::setSuperiorAllItems(size_t page)
+{
+    if (page >= Pages.size())
+    {
+        return 0;
+    }
+
+    return Pages[page].StashItems.setSuperiorAllItems();
+}
+//---------------------------------------------------------------------------
+size_t d2ce::SharedStash::upgradeTierAllItems(const d2ce::Character& charInfo)
+{
+    size_t total = 0;
+    for (auto& page : Pages)
+    {
+        total += page.StashItems.upgradeTierAllItems(charInfo);
+    }
+    return total;
+}
+//---------------------------------------------------------------------------
+size_t d2ce::SharedStash::upgradeTierAllItems(const d2ce::Character& charInfo, size_t page)
+{
+    if (page >= Pages.size())
+    {
+        return 0;
+    }
+
+    return Pages[page].StashItems.upgradeTierAllItems(charInfo);
+}
+//---------------------------------------------------------------------------
 bool d2ce::SharedStash::addItem(std::array<std::uint8_t, 4>& strcode, size_t page)
 {
     if (page >= Pages.size())
@@ -912,7 +952,7 @@ bool d2ce::SharedStash::refresh(std::FILE* charfile)
             return false;
         }
 
-        if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v115))
+        if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v100R))
         {
             // corrupt file
             Pages.pop_back();

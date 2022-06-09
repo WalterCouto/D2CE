@@ -212,7 +212,11 @@ protected:
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
     afx_msg void OnItemContextUnsocket();
+    afx_msg void OnItemContextMakesuperiorquality();
+    afx_msg void OnItemContextUpgradehighertier();
     afx_msg void OnItemContextMaxsocketsforallitems();
+    afx_msg void OnItemContextSuperiorforallitems();
+    afx_msg void OnItemContextHigherTierforallitems();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextApplyruneword();
@@ -315,6 +319,8 @@ protected:
     size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t setSuperiorAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t upgradeTierAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     size_t fillEmptySlots(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);

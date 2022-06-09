@@ -66,7 +66,11 @@ protected:
     afx_msg void OnItemContextAddsocket();
     afx_msg void OnItemContextMaxsockets();
     afx_msg void OnItemContextUnsocket();
+    afx_msg void OnItemContextMakesuperiorquality();
+    afx_msg void OnItemContextUpgradehighertier();
     afx_msg void OnItemContextMaxsocketsforallitems();
+    afx_msg void OnItemContextSuperiorforallitems();
+    afx_msg void OnItemContextHigherTierforallitems();
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextApplyruneword();
@@ -129,6 +133,8 @@ protected:
     size_t setIndestructibleAllItems(size_t page);
     size_t maxSocketCountAllItems();
     size_t maxSocketCountAllItems(size_t page);
+    size_t setSuperiorAllItems(size_t page);
+    size_t upgradeTierAllItems(size_t page);
 
     bool repairItem(d2ce::Item& item);
     bool setItemMaxQuantity(d2ce::Item& item);
@@ -139,6 +145,8 @@ protected:
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
     bool setItemIndestructible(d2ce::Item& item);
+    bool makeItemSuperior(d2ce::Item& item);
+    bool upgradeItemTier(d2ce::Item& item);
 
     bool addItem(std::array<std::uint8_t, 4>& strcode, size_t page);
     size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode);

@@ -61,7 +61,7 @@ namespace d2ce
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    constexpr std::array<std::uint8_t, 48> DEFAULT_0DB_v115 = {
+    constexpr std::array<std::uint8_t, 48> DEFAULT_0DB_v100R = {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -79,7 +79,7 @@ namespace d2ce
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
     constexpr std::array<std::uint16_t, 4> UNKNOWN_14B = { 0x01, 0x00, 0x00, 0x00 };
-    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v115 = { 0x00, 0x00, 0x00, 0x00 };
+    constexpr std::array<std::uint16_t, 4> UNKNOWN_14B_v100R = { 0x00, 0x00, 0x00, 0x00 };
 
     void ApplyJsonAppearnces(const Json::Value& appearances, std::array<std::uint8_t, APPEARANCES_LENGTH>& appearancesValue)
     {
@@ -191,7 +191,7 @@ namespace d2ce
     
     void ApplyJsonD2RAppearnces(const Json::Value& appearances, std::array<std::uint8_t, D2R_APPEARANCES_LENGTH>& appearancesValue)
     {
-        appearancesValue = DEFAULT_0DB_v115;
+        appearancesValue = DEFAULT_0DB_v100R;
         if (appearances.isNull())
         {
             return;
@@ -498,7 +498,7 @@ void d2ce::Character::initialize()
     LeftSwapSkill = 0;
     RightSwapSkill = 0;
     Appearances.fill(0xFF);
-    D2RAppearances = DEFAULT_0DB_v115;
+    D2RAppearances = DEFAULT_0DB_v100R;
 
     Bs.DifficultyLastPlayed = EnumDifficulty::Normal;
     StartingAct.fill(0);
@@ -928,7 +928,7 @@ void d2ce::Character::readBasicInfo()
         std::fread(&WeaponSet, sizeof(WeaponSet), 1, m_charfile);
     }
 
-    if (Bs.Version <= EnumCharVersion::v115)
+    if (Bs.Version <= EnumCharVersion::v100R)
     {
         m_name_location = std::ftell(m_charfile);
         std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
@@ -1064,10 +1064,10 @@ void d2ce::Character::readBasicInfo()
 
         Merc.readInfo(m_charfile);
         std::fseek(m_charfile, std::ftell(m_charfile) + (long)UNKNOWN_0BF.size(), SEEK_SET);
-        if (Bs.Version >= EnumCharVersion::v115)
+        if (Bs.Version >= EnumCharVersion::v100R)
         {
             std::fread(D2RAppearances.data(), D2RAppearances.size(), 1, m_charfile);
-            if (Bs.Version >= EnumCharVersion::v116)
+            if (Bs.Version >= EnumCharVersion::v120)
             {
                 m_name_location = std::ftell(m_charfile);
                 std::fread(Bs.Name.data(), Bs.Name.size(), 1, m_charfile);
@@ -1144,7 +1144,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         std::fwrite(&WeaponSet, sizeof(WeaponSet), 1, m_charfile);
     }
 
-    if (Bs.Version <= EnumCharVersion::v115)
+    if (Bs.Version <= EnumCharVersion::v100R)
     {
         m_name_location = std::ftell(m_charfile);
         jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
@@ -1363,7 +1363,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     jsonValue = m_bJsonSerializedFormat ? root["Appearances"] : header["menu_appearance"];
     ApplyJsonAppearnces(jsonValue, Appearances);
 
-    if (Bs.Version >= EnumCharVersion::v115)
+    if (Bs.Version >= EnumCharVersion::v100R)
     {
         if (!jsonValue.isNull())
         {
@@ -1470,10 +1470,10 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         }
 
         std::fwrite(UNKNOWN_0BF.data(), UNKNOWN_0BF.size(), 1, m_charfile);
-        if (Bs.Version >= EnumCharVersion::v115)
+        if (Bs.Version >= EnumCharVersion::v100R)
         {
             std::fwrite(D2RAppearances.data(), D2RAppearances.size(), 1, m_charfile);
-            if (Bs.Version >= EnumCharVersion::v116)
+            if (Bs.Version >= EnumCharVersion::v120)
             {
                 m_name_location = std::ftell(m_charfile);
                 jsonValue = m_bJsonSerializedFormat ? root["Name"] : header["name"];
@@ -1496,7 +1496,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
                 std::fwrite(UNKNOWN_10B.data(), UNKNOWN_10B.size(), 1, m_charfile);
             }
             std::fwrite(UNKNOWN_11B.data(), UNKNOWN_11B.size(), 1, m_charfile);
-            std::fwrite(UNKNOWN_14B_v115.data(), UNKNOWN_14B_v115.size(), 1, m_charfile);
+            std::fwrite(UNKNOWN_14B_v100R.data(), UNKNOWN_14B_v100R.size(), 1, m_charfile);
         }
         else
         {
@@ -2416,7 +2416,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         }
 
         // D2R Appearances
-        if ((version >= EnumCharVersion::v115) && (Bs.Version >= EnumCharVersion::v115))
+        if ((version >= EnumCharVersion::v100R) && (Bs.Version >= EnumCharVersion::v100R))
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
 
@@ -2614,7 +2614,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         }
 
         // D2R Appearances
-        if ((version >= EnumCharVersion::v115) && (Bs.Version >= EnumCharVersion::v115))
+        if ((version >= EnumCharVersion::v100R) && (Bs.Version >= EnumCharVersion::v100R))
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
 
@@ -2796,7 +2796,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
 
         // D2R Appearances
-        if (Bs.Version >= EnumCharVersion::v115)
+        if (Bs.Version >= EnumCharVersion::v100R)
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
 
@@ -2994,7 +2994,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
 
         // D2R Appearances
-        if (Bs.Version >= EnumCharVersion::v115)
+        if (Bs.Version >= EnumCharVersion::v100R)
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
 
@@ -3424,7 +3424,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     // Remove any invalid characters from the name
     bs.Name[15] = 0; // must be zero
     std::string curName(bs.Name.data());
-    LocalizationHelpers::CheckCharName(curName, ((bs.Version <= EnumCharVersion::v115) ? true : false));
+    LocalizationHelpers::CheckCharName(curName, ((bs.Version <= EnumCharVersion::v100R) ? true : false));
     bs.Name.fill(0);
     strcpy_s(bs.Name.data(), curName.length() + 1, curName.c_str());
     bs.Name[15] = 0; // must be zero
@@ -3512,17 +3512,17 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
         return EnumCharVersion::v109;
     }
 
-    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v115))
+    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v100R))
     {
         return EnumCharVersion::v110;
     }
 
-    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v116))
+    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v120))
     {
-        return EnumCharVersion::v115;
+        return EnumCharVersion::v100R;
     }
 
-    return EnumCharVersion::v116;
+    return EnumCharVersion::v120;
 }
 //---------------------------------------------------------------------------
 const std::array<char, d2ce::NAME_LENGTH>& d2ce::Character::getName() const
@@ -4117,9 +4117,19 @@ size_t d2ce::Character::repairAllItems(d2ce::ItemFilter filter)
     return m_items.repairAllItems(filter);
 }
 //---------------------------------------------------------------------------
+size_t d2ce::Character::upgradeTierAllItems(ItemFilter filter)
+{
+    return m_items.upgradeTierAllItems(*this, filter);
+}
+//---------------------------------------------------------------------------
 size_t d2ce::Character::maxDurabilityAllItems(d2ce::ItemFilter filter)
 {
     return m_items.maxDurabilityAllItems(filter);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::maxDefenseRatingAllItems(d2ce::ItemFilter filter)
+{
+    return m_items.setMaxDefenseRatingAllItems(filter);
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Character::setIndestructibleAllItems(d2ce::ItemFilter filter)
@@ -4130,6 +4140,11 @@ size_t d2ce::Character::setIndestructibleAllItems(d2ce::ItemFilter filter)
 size_t d2ce::Character::maxSocketCountAllItems(d2ce::ItemFilter filter)
 {
     return m_items.maxSocketCountAllItems(filter);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::Character::setSuperiorAllItems(ItemFilter filter)
+{
+    return m_items.setSuperiorAllItems(filter);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem)
@@ -4280,6 +4295,13 @@ size_t d2ce::Character::fillEmptySlots(EnumAltItemLocation altPositionId, std::a
 bool d2ce::Character::removeSocketedItems(d2ce::Item& item)
 {
     return m_items.removeSocketedItems(item);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::upgradeItemTier(d2ce::Item& item)
+{
+    d2ce::CharStats cs;
+    fillDisplayedCharacterStats(cs);
+    return m_items.upgradeItemTier(item, cs);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

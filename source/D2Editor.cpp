@@ -18,6 +18,18 @@
 
 Revision History
 ================
+Version 2.17 (June 13, 2022)
+   - Updated: fix up some edge cases for adding runeword to item
+   - Updated: fix logic to make sure unique items report the
+              highest required level.
+   - Updated: "Max Everything" now will make all applicable items
+              have superior quality and upgrade the item tier to the
+              highest possible tier.
+
+   - Added: add support for making an item Superior
+   - Added: add support for upgrading item tier to be exceptional
+            or elite depending on character level
+
 Version 2.16 (June 5, 2022)
    - Updated: fix up mercenary for PTR 2.4 changes to Barbarian
    - Updated: reorganized item context menu
@@ -32,9 +44,9 @@ Version 2.16 (June 5, 2022)
               d2i files that exists today but if the item being
               exported is a D2R PTR 2.4 ear or personalized item
               that contains utf-8 characters outside the ASCII
-              range, it will export the d2i file as a v1.16 item
-              which is not the same as the format of existing d2i
-              files.
+              range, it will export the d2i file as a D2R v1.2.x
+              item which is not the same as the format of existing
+              d2i files.
    - Added: add ability to socket and unsocket items
    - Added: add ability to convert character file to a different
             version via the "Change Version" menu item.
@@ -222,7 +234,7 @@ Version 2.00 (June 18, 2021)
               GPS has been merged across supported character file versions and
               the upgrade potions and gems methods. Support added for Runes.
    - Updated: The Adobe Acrobat PDF help file has been updated.
-   - Updated: Modfied item reading logic to be able to read v1.15 (D2R)
+   - Updated: Modified item reading logic to be able to read D2R v1.0.x - v1.1.x 
               character files.
    - Updated: File reading will now use read/write share mode again but cpp
               file has _MSC_VER guard around thus allowing the file to still

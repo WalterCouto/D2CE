@@ -606,6 +606,8 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2SharedStashForm::OnItemContextAddsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2SharedStashForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_UNSOCKET, &CD2SharedStashForm::OnItemContextUnsocket)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, &CD2SharedStashForm::OnItemContextMakesuperiorquality)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADEITEMTIER, &CD2SharedStashForm::OnItemContextUpgradehighertier)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2SharedStashForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2SharedStashForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2SharedStashForm::OnItemContextApplyruneword)
@@ -613,6 +615,8 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2SharedStashForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2SharedStashForm::OnItemContextRemoveitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2SharedStashForm::OnItemContextMaxsocketsforallitems)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_SUPERIORQUALITYALLITEMS, &CD2SharedStashForm::OnItemContextSuperiorforallitems)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_ALLITEMSMAXTIER, &CD2SharedStashForm::OnItemContextHigherTierforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2SharedStashForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2SharedStashForm::OnItemContextUpgradeGems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2SharedStashForm::OnItemContextUpgradePotion)
@@ -925,6 +929,32 @@ size_t CD2SharedStashForm::maxSocketCountAllItems(size_t page)
     return numUpgraded;
 }
 //---------------------------------------------------------------------------
+size_t CD2SharedStashForm::setSuperiorAllItems(size_t page)
+{
+    auto numUpgraded = Stash.setSuperiorAllItems(page);
+    if (numUpgraded > 0)
+    {
+        if (page == getCurrentPage())
+        {
+            refreshGrid();
+        }
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2SharedStashForm::upgradeTierAllItems(size_t page)
+{
+    auto numUpgraded = Stash.upgradeTierAllItems(MainForm.getCharacterInfo(), page);
+    if (numUpgraded > 0)
+    {
+        if (page == getCurrentPage())
+        {
+            refreshGrid();
+        }
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
 bool CD2SharedStashForm::repairItem(d2ce::Item& item)
 {
     return item.fixDurability();
@@ -968,6 +998,16 @@ bool CD2SharedStashForm::removeItemPersonalization(d2ce::Item& item)
 bool CD2SharedStashForm::setItemIndestructible(d2ce::Item& item)
 {
     return item.setIndestructible();
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::makeItemSuperior(d2ce::Item& item)
+{
+    return item.makeSuperior();
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::upgradeItemTier(d2ce::Item& item)
+{
+    return MainForm.upgradeItemTier(item);
 }
 //---------------------------------------------------------------------------
 bool CD2SharedStashForm::addItem(std::array<std::uint8_t, 4>& strcode, size_t page)
@@ -1399,15 +1439,22 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    bool isStackable = CurrItem->isStackable();
-    bool isArmor = !isStackable && CurrItem->isArmor();
-    bool isWeapon = !isArmor && CurrItem->isWeapon();
-    bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
-    bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
-    bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
+    const auto& itemType = CurrItem->getItemTypeHelper();
+    bool isStackable = itemType.isStackable();
+    bool isArmor = itemType.isArmor();
+    bool isWeapon = itemType.isWeapon();
+    bool isGem = itemType.isGem();
+    bool isPotion = itemType.isPotion();
+    bool isRune = itemType.isRune();
     bool canHaveSockets = CurrItem->canHaveSockets();
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
+    bool canMakeSuperior = CurrItem->canMakeSuperior();
+    bool canAddMagicalAffixes = CurrItem->canAddMagicalAffixes();
+    bool canAddRareAffixes = CurrItem->canAddRareAffixes();
+    bool canUpgradeTier = CurrItem->isUpgradableItem();
+
+    bool removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1497,6 +1544,41 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             }
         }
 
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        if (pos >= 0)
+        {
+            if (removeQualityMenu)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canMakeSuperior)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canUpgradeTier)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddMagicalAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddRareAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                    }
+                }
+            }
+        }
+        
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
     else if (isGem | isPotion | isRune)
@@ -1540,11 +1622,43 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     }
     else
     {
+        removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior;
+
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
         CMenu* pPopup = FindPopup(menu, 3);
         ENSURE(pPopup != NULL);
+
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        if (pos >= 0)
+        {
+            if (removeQualityMenu)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canMakeSuperior)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddMagicalAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddRareAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                    }
+                }
+            }
+        }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
@@ -1838,6 +1952,34 @@ void CD2SharedStashForm::OnItemContextUnsocket()
     ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextMakesuperiorquality()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (makeItemSuperior(*CurrItem))
+    {
+        refreshGrid();
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextUpgradehighertier()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (upgradeItemTier(*CurrItem))
+    {
+        refreshGrid();
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextMaxsocketsforallitems()
 {
     auto numChanged = maxSocketCountAllItems(getCurrentPage());
@@ -1845,6 +1987,26 @@ void CD2SharedStashForm::OnItemContextMaxsocketsforallitems()
 
     CString msg(BuildNumItemsChangedMessage(numChanged));
     msg += _T(" have been given the highest number of sockets");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextSuperiorforallitems()
+{
+    auto numChanged = setSuperiorAllItems(getCurrentPage());
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged));
+    msg += _T(" have been given Superior quality");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextHigherTierforallitems()
+{
+    auto numChanged = upgradeTierAllItems(getCurrentPage());
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged));
+    msg += _T(" have been upgraded to a higher tier");
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------

@@ -57,6 +57,11 @@ CD2RunewordForm::CD2RunewordForm(CD2ItemsForm& form)
 {
 }
 //---------------------------------------------------------------------------
+CD2RunewordForm::CD2RunewordForm(CD2MercenaryForm& form)
+    : CDialogEx(CD2RunewordForm::IDD, (CWnd*)&form), MainForm(form.MainForm), MercenaryFormPtr(&form), ItemPtr(form.CurrItem)
+{
+}
+//---------------------------------------------------------------------------
 CD2RunewordForm::CD2RunewordForm(CD2SharedStashForm& form)
     : CDialogEx(CD2RunewordForm::IDD, (CWnd*)&form), MainForm(form.MainForm), SharedStashFormPtr(&form), ItemPtr(form.CurrItem)
 {
@@ -108,6 +113,10 @@ void CD2RunewordForm::OnBnClickedOk()
             else if (ItemsFormPtr != nullptr)
             {
                 ItemsFormPtr->setItemRuneword(*ItemPtr, runwordId);
+            }
+            else if (MercenaryFormPtr != nullptr)
+            {
+                MercenaryFormPtr->setItemRuneword(*ItemPtr, runwordId);
             }
         }
     }

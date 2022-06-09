@@ -145,7 +145,7 @@ namespace D2EditorTests
         case d2ce::EnumCharVersion::v110:
             return GetChar96TempPathName();
 
-        case d2ce::EnumCharVersion::v115:
+        case d2ce::EnumCharVersion::v100R:
             return GetChar97TempPathName();
 
         default:
@@ -292,7 +292,7 @@ namespace D2EditorTests
         case d2ce::EnumCharVersion::v110:
             return GetChar96PathName();
 
-        case d2ce::EnumCharVersion::v115:
+        case d2ce::EnumCharVersion::v100R:
             return GetChar97PathName();
 
         default:
@@ -398,7 +398,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestOpen04)
         {
-            TestOpenBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen05)
@@ -423,12 +423,12 @@ namespace D2EditorTests
 
         TEST_METHOD(TestOpen09)
         {
-            TestOpenBase("MfBowzon.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("MfBowzon.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen10)
         {
-            TestOpenBase("test.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("test.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen11)
@@ -473,18 +473,18 @@ namespace D2EditorTests
 
         TEST_METHOD(TestOpen19)
         {
-            TestOpenBase("Spartacus.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("Spartacus.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen20)
         {
-            TestOpenBase("Spartacus_II.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("Spartacus_II.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen21)
         {
             // This character has the realm data of size 128 bits
-            TestOpenBase("Loradiel.d2s", d2ce::EnumCharVersion::v115, true);
+            TestOpenBase("Loradiel.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestOpen22)
@@ -529,37 +529,37 @@ namespace D2EditorTests
 
         TEST_METHOD(TestOpen30)
         {
-            TestOpenBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen31)
         {
-            TestOpenBase("Amazon.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Amazon.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen32)
         {
-            TestOpenBase("Drui.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Drui.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen33)
         {
-            TestOpenBase("Nicro.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Nicro.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen34)
         {
-            TestOpenBase("Rose.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Rose.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen35)
         {
-            TestOpenBase("Rui.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Rui.d2s", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestOpen36)
         {
-            TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v116, true);
+            TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v120, true);
         }
         TEST_METHOD(TestJsonExport01)
         {
@@ -578,7 +578,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonExport04)
         {
-            TestJsonExportBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v115, true);
+            TestJsonExportBase("Scroll_Test.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonExport05)
@@ -603,12 +603,12 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonExport09)
         {
-            TestJsonExportBase("MfBowzon.d2s", d2ce::EnumCharVersion::v115, true);
+            TestJsonExportBase("MfBowzon.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonExport10)
         {
-            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v115, true);
+            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonExport11)
@@ -618,12 +618,12 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonExport12)
         {
-            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v115, true, true);
+            TestJsonExportBase("test.d2s", d2ce::EnumCharVersion::v100R, true, true);
         }
 
         TEST_METHOD(TestJsonExport13)
         {
-            TestJsonExportBase("DannyIsGreat.d2s", d2ce::EnumCharVersion::v115, true, true);
+            TestJsonExportBase("DannyIsGreat.d2s", d2ce::EnumCharVersion::v100R, true, true);
         }
 
         TEST_METHOD(TestJsonExport14)
@@ -668,48 +668,48 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonExport22)
         {
-            TestJsonExportBase("Spartacus.d2s", d2ce::EnumCharVersion::v115, true, false);
+            TestJsonExportBase("Spartacus.d2s", d2ce::EnumCharVersion::v100R, true, false);
         }
 
         TEST_METHOD(TestJsonExport23)
         {
             // This character has the realm data of size 128 bits
-            TestJsonExportBase("Loradiel.d2s", d2ce::EnumCharVersion::v115, true, false);
+            TestJsonExportBase("Loradiel.d2s", d2ce::EnumCharVersion::v100R, true, false);
         }
 
         TEST_METHOD(TestJsonExport24)
         {
-            TestJsonExportBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase(L"任务完成信.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport25)
         {
-            TestJsonExportBase("Amazon.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Amazon.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport26)
         {
-            TestJsonExportBase("Drui.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Drui.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport27)
         {
-            TestJsonExportBase("Nicro.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Nicro.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport28)
         {
-            TestJsonExportBase("Rose.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Rose.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport29)
         {
-            TestJsonExportBase("Rui.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Rui.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport30)
         {
-            TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v116, true, false);
+            TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v120, true, false);
         }
 
         TEST_METHOD(TestJsonExport31)
@@ -803,7 +803,7 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen04)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Scroll_Test.json", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharFile("Scroll_Test.json", character, d2ce::EnumCharVersion::v100R, true));
         }
 
         TEST_METHOD(TestJsonOpen05)
@@ -832,12 +832,12 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen09)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("MfBowzon.json", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharFile("MfBowzon.json", character, d2ce::EnumCharVersion::v100R, true));
         }
 
         TEST_METHOD(TestJsonOpen10)
         {
-            TestJsonOpenBase("test.json", d2ce::EnumCharVersion::v115, true);
+            TestJsonOpenBase("test.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen11)
@@ -848,7 +848,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen12)
         {
-            TestJsonOpenBase("test_serialized.json", d2ce::EnumCharVersion::v115, true, true);
+            TestJsonOpenBase("test_serialized.json", d2ce::EnumCharVersion::v100R, true, true);
         }
 
         TEST_METHOD(TestJsonOpen13)
@@ -866,7 +866,7 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen15)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("DannyIsGreatII.json", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharFile("DannyIsGreatII.json", character, d2ce::EnumCharVersion::v100R, true));
         }
 
         TEST_METHOD(TestJsonOpen16)
@@ -893,12 +893,12 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen20)
         {
-            TestJsonOpenBase("Spartacus.json", d2ce::EnumCharVersion::v115, true);
+            TestJsonOpenBase("Spartacus.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen21)
         {
-            TestJsonOpenBase("Loradiel.json", d2ce::EnumCharVersion::v115, true);
+            TestJsonOpenBase("Loradiel.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen22)
@@ -951,18 +951,18 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen30)
         {
-            TestJsonOpenBase(L"任务完成信.json", d2ce::EnumCharVersion::v116, true);
+            TestJsonOpenBase(L"任务完成信.json", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestJsonOpen31)
         {
-            TestJsonOpenBase("Rui.json", d2ce::EnumCharVersion::v116, true);
+            TestJsonOpenBase("Rui.json", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestJsonOpen32)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Drui.json", character, d2ce::EnumCharVersion::v116, true));
+            Assert::IsTrue(LoadCharFile("Drui.json", character, d2ce::EnumCharVersion::v120, true));
         }
 
         TEST_METHOD(TestJsonOpen33)
@@ -1083,13 +1083,13 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonTestComplexChange02)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharTempFile("DannyIsGreat.d2s", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharTempFile("DannyIsGreat.d2s", character, d2ce::EnumCharVersion::v100R, true));
             Assert::IsTrue(character.isGameComplete());
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "DannyIsGreatIII";
-            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v100R);
             {
                 std::stringstream ss;
                 ss << strNewText << ".d2s";
@@ -1109,10 +1109,10 @@ namespace D2EditorTests
             Assert::IsTrue(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
             auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
-            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v100R));
 
             strNewText = "DannyIsGreatIV";
-            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
+            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v100R);
             {
                 std::stringstream ss;
                 ss << strNewText << ".d2s";
@@ -1131,10 +1131,10 @@ namespace D2EditorTests
             Assert::IsTrue(character.save(false));
             Assert::IsTrue(character.isGameComplete());
             json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
-            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v100R));
 
             strNewText = "DannyIsGreatV";
-            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
+            expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v100R);
             {
                 std::stringstream ss;
                 ss << strNewText << ".d2s";
@@ -1154,18 +1154,18 @@ namespace D2EditorTests
             Assert::IsFalse(character.isDifficultyComplete((d2ce::EnumDifficulty::Normal)));
             Assert::IsFalse(character.isGameComplete());
             json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
-            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v100R));
         }
 
         TEST_METHOD(TestJsonTestComplexChange03)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharTempFile("Walter.d2s", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharTempFile("Walter.d2s", character, d2ce::EnumCharVersion::v100R, true));
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "Walter_gem";
-            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v100R);
             {
                 std::stringstream ss;
                 ss << strNewText << ".d2s";
@@ -1183,18 +1183,18 @@ namespace D2EditorTests
             Assert::AreEqual(character.upgradeGems(), size_t(2));
             Assert::IsTrue(character.save(false));
             auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
-            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v100R));
         }
 
         TEST_METHOD(TestJsonTestComplexChange04)
         {
             d2ce::Character character;
-            Assert::IsTrue(LoadCharTempFile("Spartacus.d2s", character, d2ce::EnumCharVersion::v115, true));
+            Assert::IsTrue(LoadCharTempFile("Spartacus.d2s", character, d2ce::EnumCharVersion::v100R, true));
             d2ce::BasicStats bs;
             character.fillBasicStats(bs);
 
             std::string strNewText = "Spartacus_II";
-            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v115);
+            std::filesystem::path expectedTempPath = GetCharTempPathName(d2ce::EnumCharVersion::v100R);
             {
                 std::stringstream ss;
                 ss << strNewText << ".d2s";
@@ -1212,7 +1212,7 @@ namespace D2EditorTests
             Assert::AreEqual(character.upgradeRejuvenationPotions(), size_t(26));
             Assert::IsTrue(character.save(false));
             auto json = character.asJson(false, d2ce::Character::EnumCharSaveOp::NoSave);
-            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v115));
+            Assert::AreEqual(json, GetCharExpectedJsonOutput(character, d2ce::EnumCharVersion::v100R));
         }
 	};
 }

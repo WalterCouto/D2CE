@@ -1301,6 +1301,7 @@ namespace d2ce
         
         std::vector<EnumEquippedId> bodyLocations;
         std::optional<std::string> quiverCode;
+        std::vector<std::string> codes; // normal, uber, ultra
 
         bool hasCategory(const std::string category) const;
         bool hasCategoryCode(const std::string code) const;
@@ -1328,6 +1329,7 @@ namespace d2ce
         bool isUpgradableGem() const;
         bool isUpgradableRejuvenationPotion() const;
         bool isUpgradablePotion() const;
+        bool isUpgradableItem() const;
         bool isRune() const;
         bool isCharm() const;
         bool isBelt() const;

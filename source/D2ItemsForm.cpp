@@ -2257,6 +2257,8 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_ADDSOCKET, &CD2ItemsForm::OnItemContextAddsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETS, &CD2ItemsForm::OnItemContextMaxsockets)
     ON_COMMAND(ID_ITEM_CONTEXT_UNSOCKET, &CD2ItemsForm::OnItemContextUnsocket)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, &CD2ItemsForm::OnItemContextMakesuperiorquality)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADEITEMTIER, &CD2ItemsForm::OnItemContextUpgradehighertier)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2ItemsForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2ItemsForm::OnItemContextApplyruneword)
@@ -2264,6 +2266,8 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2ItemsForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2ItemsForm::OnItemContextRemoveitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAXSOCKETSFORALLITEMS, &CD2ItemsForm::OnItemContextMaxsocketsforallitems)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_SUPERIORQUALITYALLITEMS, &CD2ItemsForm::OnItemContextSuperiorforallitems)
+    ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_ALLITEMSMAXTIER, &CD2ItemsForm::OnItemContextHigherTierforallitems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEM, &CD2ItemsForm::OnItemContextUpgradeGem)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_GEMS, &CD2ItemsForm::OnItemContextUpgradeGems)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADE_POTION, &CD2ItemsForm::OnItemContextUpgradePotion)
@@ -2845,6 +2849,26 @@ size_t CD2ItemsForm::setIndestructibleAllItems(d2ce::ItemFilter filter)
 size_t CD2ItemsForm::maxSocketCountAllItems(d2ce::ItemFilter filter)
 {
     auto numUpgraded = MainForm.maxSocketCountAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::setSuperiorAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.setSuperiorAllItems(filter);
+    if (numUpgraded > 0)
+    {
+        refreshGrid(filter.LocationId, filter.AltPositionId);
+    }
+    return numUpgraded;
+}
+//---------------------------------------------------------------------------
+size_t CD2ItemsForm::upgradeTierAllItems(d2ce::ItemFilter filter)
+{
+    auto numUpgraded = MainForm.upgradeTierAllItems(filter);
     if (numUpgraded > 0)
     {
         refreshGrid(filter.LocationId, filter.AltPositionId);
@@ -4256,15 +4280,22 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         return;
     }
 
-    bool isStackable = CurrItem->isStackable();
-    bool isArmor = !isStackable && CurrItem->isArmor();
-    bool isWeapon = !isArmor && CurrItem->isWeapon();
-    bool isGem = !isStackable && !isArmor && !isWeapon && CurrItem->isGem();
-    bool isPotion = !isStackable && !isArmor && !isWeapon && !isGem && CurrItem->isPotion();
-    bool isRune = !isStackable && !isArmor && !isWeapon && !isGem && !isPotion && CurrItem->isRune();
+    const auto& itemType = CurrItem->getItemTypeHelper();
+    bool isStackable = itemType.isStackable();
+    bool isArmor = itemType.isArmor();
+    bool isWeapon = itemType.isWeapon();
+    bool isGem = itemType.isGem();
+    bool isPotion = itemType.isPotion();
+    bool isRune = itemType.isRune();
     bool canHaveSockets = CurrItem->canHaveSockets();
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
+    bool canMakeSuperior = CurrItem->canMakeSuperior();
+    bool canAddMagicalAffixes = CurrItem->canAddMagicalAffixes();
+    bool canAddRareAffixes = CurrItem->canAddRareAffixes();
+    bool canUpgradeTier = CurrItem->isUpgradableItem();
+
+    bool removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -4354,6 +4385,41 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             }
         }
 
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        if (pos >= 0)
+        {
+            if (removeQualityMenu)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canMakeSuperior)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canUpgradeTier)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddMagicalAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddRareAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                    }
+                }
+            }
+        }
+
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
     else if (isGem | isPotion | isRune)
@@ -4419,11 +4485,43 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     }
     else
     {
+        removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior;
+
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
 
         CMenu* pPopup = FindPopup(menu, 3);
         ENSURE(pPopup != NULL);
+
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        if (pos >= 0)
+        {
+            if (removeQualityMenu)
+            {
+                pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canMakeSuperior)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddMagicalAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                    }
+
+                    if (!canAddRareAffixes)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                    }
+                }
+            }
+        }
 
         pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
     }
@@ -4830,6 +4928,50 @@ void CD2ItemsForm::OnItemContextUnsocket()
     ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextMakesuperiorquality()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.makeItemSuperior(*CurrItem))
+    {
+        switch (CurrItem->getLocation())
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(*CurrItem);
+            break;
+        }
+
+        // refresh all storage grids
+        refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextUpgradehighertier()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.upgradeItemTier(*CurrItem))
+    {
+        switch (CurrItem->getLocation())
+        {
+        case d2ce::EnumItemLocation::EQUIPPED:
+            refreshEquipped(*CurrItem);
+            break;
+        }
+
+        // refresh all storage grids
+        refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextMaxsocketsforallitems()
 {
     auto filter(GetCurrItemFilter());
@@ -4838,6 +4980,28 @@ void CD2ItemsForm::OnItemContextMaxsocketsforallitems()
 
     CString msg(BuildNumItemsChangedMessage(numChanged, filter));
     msg += _T(" have been given the highest number of sockets");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextSuperiorforallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = setSuperiorAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been given Superior quality");
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextHigherTierforallitems()
+{
+    auto filter(GetCurrItemFilter());
+    auto numChanged = upgradeTierAllItems(filter);
+    ClearCurrItemInfo();
+
+    CString msg(BuildNumItemsChangedMessage(numChanged, filter));
+    msg += _T(" have been upgraded to a higher tier");
     AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
 }
 //---------------------------------------------------------------------------

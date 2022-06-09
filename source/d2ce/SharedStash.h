@@ -139,6 +139,10 @@ namespace d2ce
         size_t maxSocketCountAllItems(size_t page);
         size_t setIndestructibleAllItems();
         size_t setIndestructibleAllItems(size_t page);
+        size_t setSuperiorAllItems();
+        size_t setSuperiorAllItems(size_t page);
+        size_t upgradeTierAllItems(const d2ce::Character& charInfo);
+        size_t upgradeTierAllItems(const d2ce::Character& charInfo, size_t page);
         bool addItem(std::array<std::uint8_t, 4>& strcode, size_t page);
         bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
         size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode);

@@ -9,7 +9,7 @@ ______________________________________________
 ### How To Use
 
 1. Run the D2Editor.exe file<br>
-2. Open a Diablo II character file (press CTRL-O or click on File, Open) which is located in the "save" directory of where you installed Diablo II Resurrected.<br>
+2. Open a Diablo II character file (press CTRL-O or click on File, Open) which is located in the "save" directory of where you installed Diablo II: Resurrected.<br>
 3. Make changes (type in a value if editing level, gold, experience, etc. or use the mouse if changing title, class, or state)<br>
 4. Save changes (press CTRL-S or click on File, Save)<br>
 5. Play Diablo II.<br>
@@ -49,7 +49,7 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II Resurrected v1.2.68992 (PTR 2.4) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
+- Tested with Diablo II: Resurrected v1.3.70161 (PTR 2.4) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - For changes to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
 
@@ -77,6 +77,15 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.17 (June 13, 2022)**
+- Updated: fix up some edge cases for adding runeword to item
+- Updated: fix logic to make sure unique items report the highest required level
+- Updated: "Max Everything" now will make all applicable items have superior quality and upgrade the item tier to the highest possible tier<br>
+<br>
+- Added: add support for making an item Superior<br>
+- Added: add support for upgrading item tier to be exceptional or elite depending on character level<br>
+<br>
+
 **Version 2.16 (June 5, 2022)**
 - Updated: fix up mercenary for PTR 2.4 changes to Barbarian<br>
 - Updated: reorganized item context menu<br>
@@ -85,7 +94,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 <br>
 
 - Added: add support for dragging and dropping items.<br>
-- Added: add d2i item files and support for import/export of items. The application supports the standard d2i files that exists today but if the item being exported is a D2R PTR 2.4 ear or personalized item that contains utf-8 characters outside the ASCII range, it will export the d2i file as a v1.16 item  which is not the same as the format of existing d2i files.<br>
+- Added: add d2i item files and support for import/export of items. The application supports the standard d2i files that exists today but if the item being exported is a D2R PTR 2.4 ear or personalized item that contains utf-8 characters outside the ASCII range, it will export the d2i file as a D2R v1.2.x item  which is not the same as the format of existing d2i files.<br>
 - Added: add ability to socket and unsocket items<br>
 - Added: add ability to convert character file to a different version via the "Change Version" menu item.<br>
 - Added: add ability to apply runewords to item via the "Apply Runeword" context menu item.<br>
@@ -230,7 +239,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 - Updated: Level Requirements will show requirements using the version of from the character file. V1.10 is assumed to have the latest Level Requirements from Diablo II 1.14b, while versions 1.07-1.09 will level requirements for those versions and any version below 1.07 will show the level requirements that existed since 1.00. When loading the Level Requirements dialog with no character file opened, it will assume the latest file version.<br>
 - Updated: The GPS Converter Dialog is now fully called Gems, Potions & Skulls Converter as is the menu item. The logic around converting GPS has been merged across supported character file versions and the upgrade potions and gems methods. Support added for Runes.<br>
 - Updated: The Adobe Acrobat PDF help file has been updated.<br>
-- Updated: Modified item reading logic to be able to read v1.15 (D2R) character files.<br>
+- Updated: Modified item reading logic to be able to read D2R v1.0.x - v1.1.x character files.<br>
 - Updated: File reading will now use read/write share mode again but cpp file has _MSC_VER guard around thus allowing the file to still be portable in theory. This means you can once again open a file already opened by the game or something else but it is still recommended you do not have it open by anything else.<br>
 - Updated: namespace d2ce is now part of all non-MFC classes, i.e. the portable code. This quickly identifies what is part of UI logic and what is part of the core.<br>
 - Updated: Max Everything menu item to also make all potions the best quality, all gems and skulls perfect, all stackable items fully filled and all weapons and armor have max durability.<br>

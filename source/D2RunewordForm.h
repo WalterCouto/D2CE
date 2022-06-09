@@ -22,6 +22,7 @@
 //---------------------------------------------------------------------------
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
+#include "D2MercenaryForm.h"
 #include "D2MultiLineListCtrl.h"
 
 //---------------------------------------------------------------------------
@@ -31,6 +32,7 @@ class CD2RunewordForm : public CDialogEx
 
 public:
     CD2RunewordForm(CD2ItemsForm& form);
+    CD2RunewordForm(CD2MercenaryForm& form);
     CD2RunewordForm(CD2SharedStashForm& form);
     virtual ~CD2RunewordForm();
 
@@ -53,6 +55,7 @@ protected:
 private:
     CD2MainForm& MainForm;
     CD2ItemsForm* ItemsFormPtr = nullptr;
+    CD2MercenaryForm* MercenaryFormPtr = nullptr;
     CD2SharedStashForm* SharedStashFormPtr = nullptr;
     d2ce::Item* ItemPtr = nullptr;
     CD2MultiLineListCtrl RunewordGrid;

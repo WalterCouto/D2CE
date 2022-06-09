@@ -226,6 +226,10 @@ protected:
     afx_msg void OnUpdateOptionsIndestructibleforallitems(CCmdUI* pCmdUI);
     afx_msg void OnOptionsMaxsocketsforallitems();
     afx_msg void OnUpdateOptionsMaxsocketsforallitems(CCmdUI* pCmdUI);
+    afx_msg void OnOptionsSuperiorforallitems();
+    afx_msg void OnUpdateOptionsSuperiorforallitems(CCmdUI* pCmdUI);
+    afx_msg void OnOptionsHigherTierforallitems();
+    afx_msg void OnUpdateOptionsHigherTierforallitems(CCmdUI* pCmdUI);
     afx_msg void OnOptionsResetStats();
     afx_msg void OnUpdateOptionsResetStats(CCmdUI* pCmdUI);
     afx_msg void OnFileExportAsJson();
@@ -421,6 +425,8 @@ public:
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
     bool setItemIndestructible(d2ce::Item& item);
+    bool makeItemSuperior(d2ce::Item& item);
+    bool upgradeItemTier(d2ce::Item& item);
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
@@ -433,6 +439,8 @@ public:
     size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
     size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t setSuperiorAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+    size_t upgradeTierAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
 
     bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
     bool setItemLocation(d2ce::Item& item, d2ce::EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);

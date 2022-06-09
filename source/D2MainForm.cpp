@@ -1027,6 +1027,10 @@ BEGIN_MESSAGE_MAP(CD2MainForm, CDialogEx)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_INDESTRUCTIBLEFORALLITEMS, &CD2MainForm::OnUpdateOptionsIndestructibleforallitems)
     ON_COMMAND(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnOptionsMaxsocketsforallitems)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_MAXSOCKETSFORALLITEMS, &CD2MainForm::OnUpdateOptionsMaxsocketsforallitems)
+    ON_COMMAND(ID_OPTIONS_ALLITEMSSUPERIORQUALITY, &CD2MainForm::OnOptionsSuperiorforallitems)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_ALLITEMSSUPERIORQUALITY, &CD2MainForm::OnUpdateOptionsSuperiorforallitems)
+    ON_COMMAND(ID_OPTIONS_ALLITEMSHIGHERTIER, &CD2MainForm::OnOptionsHigherTierforallitems)
+    ON_UPDATE_COMMAND_UI(ID_OPTIONS_ALLITEMSHIGHERTIER, &CD2MainForm::OnUpdateOptionsHigherTierforallitems)
     ON_COMMAND(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnOptionsResetStats)
     ON_UPDATE_COMMAND_UI(ID_OPTIONS_RESET_STATS, &CD2MainForm::OnUpdateOptionsResetStats)
     ON_COMMAND(ID_VIEW_MERCENARY, &CD2MainForm::OnViewMercenary)
@@ -3278,16 +3282,16 @@ void CD2MainForm::OnFileSaveAsVersion()
             fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
         }
 
-        if (version != d2ce::EnumCharVersion::v115)
+        if (version != d2ce::EnumCharVersion::v100R)
         {
-            convertToVersion = d2ce::EnumCharVersion::v115;
-            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v115), _T("D2R 1.0.x - 1.1.x"));
+            convertToVersion = d2ce::EnumCharVersion::v100R;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v100R), _T("D2R 1.0.x - 1.1.x"));
         }
 
-        if (version != d2ce::EnumCharVersion::v116)
+        if (version != d2ce::EnumCharVersion::v120)
         {
-            convertToVersion = d2ce::EnumCharVersion::v116;
-            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v116), _T("D2R PTR 2.4+"));
+            convertToVersion = d2ce::EnumCharVersion::v120;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v120), _T("D2R PTR 2.4+"));
         }
         fileDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
         fileDialog.EndVisualGroup();
@@ -3321,16 +3325,16 @@ void CD2MainForm::OnFileSaveAsVersion()
             folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
         }
 
-        if (version != d2ce::EnumCharVersion::v115)
+        if (version != d2ce::EnumCharVersion::v100R)
         {
-            convertToVersion = d2ce::EnumCharVersion::v115;
-            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v115), _T("D2R 1.0.x - 1.1.x"));
+            convertToVersion = d2ce::EnumCharVersion::v100R;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v100R), _T("D2R 1.0.x - 1.1.x"));
         }
 
-        if (version != d2ce::EnumCharVersion::v116)
+        if (version != d2ce::EnumCharVersion::v120)
         {
-            convertToVersion = d2ce::EnumCharVersion::v116;
-            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v116), _T("D2R PTR 2.4+"));
+            convertToVersion = d2ce::EnumCharVersion::v120;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v120), _T("D2R PTR 2.4+"));
         }
         folderDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
         folderDialog.EndVisualGroup();
@@ -3537,7 +3541,10 @@ void CD2MainForm::OnOptionsMaxEverything()
     CharInfo.upgradeGems();
     CharInfo.upgradePotions();
     CharInfo.fillAllStackables();
-    CharInfo.maxDurabilityAllItems();
+    CharInfo.repairAllItems();
+    CharInfo.setSuperiorAllItems();
+    CharInfo.maxDefenseRatingAllItems();
+    CharInfo.upgradeTierAllItems();
     ItemsChanged = true;
     CheckStatsLeft();
     StatsChanged();
@@ -3727,7 +3734,7 @@ void CD2MainForm::UpdateAppTitle()
             }
             switch (CharInfo.getVersion())
             {
-            case d2ce::EnumCharVersion::v115:
+            case d2ce::EnumCharVersion::v100R:
                 newAppTitle += _T(" (Version 1.0.x - 1.1.x)");
                 break;
             case d2ce::EnumCharVersion::v110:
@@ -4750,6 +4757,42 @@ void CD2MainForm::OnUpdateOptionsMaxsocketsforallitems(CCmdUI* pCmdUI)
     pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
 }
 //---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsSuperiorforallitems()
+{
+    auto numChanged = setSuperiorAllItems();
+    CString msg;
+    msg.Format(_T("%zd item(s) have been given Superior quality"), numChanged);
+    if (numChanged > 0)
+    {
+        StatusBar.SetWindowText(msg);
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsSuperiorforallitems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
+void CD2MainForm::OnOptionsHigherTierforallitems()
+{
+    auto numChanged = upgradeTierAllItems();
+    CString msg;
+    msg.Format(_T("%zd item(s) have been upgraded to a higher tier"), numChanged);
+    if (numChanged > 0)
+    {
+        StatusBar.SetWindowText(msg);
+    }
+
+    AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+}
+
+void CD2MainForm::OnUpdateOptionsHigherTierforallitems(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable((CharInfo.is_open() && (CharInfo.getNumberOfArmor() != 0 || CharInfo.getNumberOfWeapons() != 0)) ? TRUE : FALSE);
+}
+//---------------------------------------------------------------------------
 void CD2MainForm::OnOptionsResetStats()
 {
     CharInfo.resetStats();
@@ -5437,6 +5480,30 @@ bool CD2MainForm::setItemIndestructible(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::makeItemSuperior(d2ce::Item& item)
+{
+    bool ret = item.makeSuperior();
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
+bool CD2MainForm::upgradeItemTier(d2ce::Item& item)
+{
+    bool ret = CharInfo.upgradeItemTier(item);
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
     if (!CharInfo.addItem(locationId, altPositionId, strcode))
@@ -5573,6 +5640,30 @@ size_t CD2MainForm::setIndestructibleAllItems(d2ce::ItemFilter filter)
 size_t CD2MainForm::maxSocketCountAllItems(d2ce::ItemFilter filter)
 {
     auto numChanged = CharInfo.maxSocketCountAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::setSuperiorAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.setSuperiorAllItems(filter);
+    if (numChanged > 0)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return numChanged;
+}
+//---------------------------------------------------------------------------
+size_t CD2MainForm::upgradeTierAllItems(d2ce::ItemFilter filter)
+{
+    auto numChanged = CharInfo.upgradeTierAllItems(filter);
     if (numChanged > 0)
     {
         ItemsChanged = true;

@@ -792,7 +792,7 @@ namespace d2ce
         switch (mercClass)
         {
         case EnumMercenaryClass::Barbarian:
-            if (version < EnumCharVersion::v116)
+            if (version < EnumCharVersion::v120)
             {
                 return s_LegacyBarbarianTypes;
             }
@@ -1888,7 +1888,7 @@ void d2ce::Mercenary::setIsDead(bool bIsDead)
 const std::optional<d2ce::EnumCharClass>& d2ce::Mercenary::getEquivClass() const
 {
     auto version = getVersion();
-    if (version < EnumCharVersion::v116)
+    if (version < EnumCharVersion::v120)
     {
         static std::optional<EnumCharClass> badValue;
         return badValue;
@@ -2248,7 +2248,7 @@ const std::vector<std::string>& d2ce::Mercenary::getMercAttributes(EnumMercenary
         return emptyValue;
 
     case EnumMercenaryClass::Barbarian:
-        if (version < EnumCharVersion::v116)
+        if (version < EnumCharVersion::v120)
         {
             return emptyValue;
         }

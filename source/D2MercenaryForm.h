@@ -26,6 +26,8 @@
 //---------------------------------------------------------------------------
 class CD2MercenaryForm : public CDialogEx, CD2ItemToolTipCtrlCallback, public CD2ItemsGridCallback
 {
+    friend class CD2RunewordForm;
+
     DECLARE_DYNAMIC(CD2MercenaryForm)
 
 public:
@@ -73,6 +75,8 @@ protected:
     afx_msg void OnItemContextApplyruneword();
     afx_msg void OnItemContextExportitem();
     afx_msg void OnItemContextRemoveitem();
+    afx_msg void OnItemContextMakesuperiorquality();
+    afx_msg void OnItemContextUpgradehighertier();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 
@@ -136,6 +140,8 @@ private:
     void SetInt(CWnd* Sender, std::uint32_t newValue);
 
     void CheckToolTipCtrl();
+
+    bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
 
     // Inherited via CD2ItemToolTipCtrlCallback
     const d2ce::Item* GetInvItem(UINT id, UINT offset) const override;

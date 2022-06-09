@@ -63,43 +63,10 @@ namespace d2ce
         mutable std::vector<std::uint8_t> data;
         EnumItemVersion ItemVersion = APP_ITEM_VERSION;
         std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
-        size_t start_bit_offset = 16;
-        size_t location_bit_offset = 58;
-        size_t equipped_id_offset = 61;
-        size_t position_offset = 65;
-        size_t alt_position_id_offset = 73;
-        size_t type_code_offset = 76;
-        size_t extended_data_offset = 108;
-        mutable size_t quest_difficulty_offset = 0;
-        mutable size_t nr_of_items_in_sockets_offset = 0;
+        mutable std::array<size_t, 31> bitOffsets = { 16, 58, 61, 65, 73, 76, 108 };
+        mutable std::array<size_t, 7> bitOffsetMarkers = { 0 };
         mutable size_t nr_of_items_in_sockets_bits = 3;
-        mutable size_t item_id_bit_offset = 0;
-        mutable size_t item_level_bit_offset = 0;
-        mutable size_t quality_bit_offset = 0;
-        mutable size_t multi_graphic_bit_offset = 0;
-        mutable size_t autoAffix_bit_offset = 0;
-        mutable size_t quality_attrib_bit_offset = 0;
-        size_t runeword_id_bit_offset_marker = 0; // offset where to put the runeword id
-        size_t runeword_id_bit_offset = 0;
-        size_t personalized_bit_offset = 0;
-        size_t personalized_bit_offset_marker = 0; // offset where to put the personalization
-        size_t tome_bit_offset = 0;
-        size_t body_part_bit_offset = 0;
-        size_t realm_bit_offset = 0;
-        size_t defense_rating_bit_offset = 0;
-        size_t durability_bit_offset = 0;
-        size_t stackable_bit_offset = 0;
-        size_t gld_stackable_bit_offset = 0;
-        size_t socket_count_bit_offset = 0;
-        size_t socket_count_bit_offset_marker = 0;
-        size_t bonus_bits_bit_offset = 0;
-        size_t magical_props_bit_offset = 0;
-        size_t set_bonus_props_bit_offset = 0;
-        size_t runeword_props_bit_offset_marker = 0; // offset where to put the runeword bonus properties
-        size_t runeword_props_bit_offset = 0;
-        size_t item_end_bit_offset = 0;
         size_t item_current_socket_idx = 0; // temp variable for socketed gem ordering
-        mutable size_t dwb_bit_offset = 0;
         mutable MagicalCachev100 magic_affixes_v100;
         mutable RareOrCraftedCachev100 rare_affixes_v100;
 
@@ -118,7 +85,7 @@ namespace d2ce
         std::uint64_t readBits64(size_t start, size_t size) const;
         bool updateBits(size_t start, size_t size, std::uint32_t value);
         bool updateBits64(size_t start, size_t size, std::uint64_t value);
-        bool updateItemCodev115(std::uint64_t code, size_t numBitsSet);
+        bool updateResurrectedItemCode(std::uint64_t code, size_t numBitsSet);
 
         std::uint8_t getInferiorQualityIdv100() const;
         bool getMagicalAffixesv100(MagicalAffixes& affixes) const;
@@ -148,8 +115,6 @@ namespace d2ce
 
         Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
         Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path); // read D2I item
-
-        bool isExpansionItem() const;
 
         bool setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
         bool setLocation(EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY);
@@ -189,6 +154,8 @@ namespace d2ce
         //   1 - Non-Expansion (post v1.08) (classic and LoD).
         // 100 - Expansion LoD
         std::uint16_t getGameVersion() const;
+
+        bool isExpansionItem() const;
 
         bool isIdentified() const;
         bool isDisabled() const; // item is broken
@@ -251,6 +218,7 @@ namespace d2ce
         bool isTwoHandedWeapon() const;
         bool isOneOrTwoHandedWeapon() const; // Can weapon be carried in 1 or 2 hands by Barbarian?
         bool isShield() const;
+        bool isThrownWeapon() const;
         bool isMissileWeapon() const;
         bool isMissile() const;
         bool isTome() const;
@@ -260,6 +228,7 @@ namespace d2ce
         bool isGem() const;
         bool isUpgradableGem() const;
         bool isUpgradablePotion() const;
+        bool isUpgradableItem() const;
         bool isUpgradableToFullRejuvenationPotion() const;
         bool isRune() const;
         bool isJewel() const;
@@ -277,6 +246,9 @@ namespace d2ce
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         bool canPersonalize() const;
+        bool canMakeSuperior() const;
+        bool canAddMagicalAffixes() const;
+        bool canAddRareAffixes() const;
         bool canEquip(EnumEquippedId equipId) const;
         bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
         bool canEquip(EnumEquippedId equipId, EnumCharClass charClass, const CharStats& cs) const;
@@ -291,6 +263,8 @@ namespace d2ce
         bool setQuantity(std::uint32_t quantity);
         bool setMaxQuantity();
         std::uint16_t getDefenseRating() const;
+        bool setDefenseRating(std::uint16_t ac);
+        bool setMaxDefenseRating();
         bool getDurability(ItemDurability& attrib) const;
         bool setDurability(const ItemDurability& durability);
         bool fixDurability();
@@ -305,6 +279,7 @@ namespace d2ce
         bool addPersonalization(const std::string& name);
         bool removePersonalization();
         bool setIndestructible();
+        bool upgradeTier(const CharStats& cs);
         bool canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass) const;
         bool canEquipWith(const d2ce::Item& item, d2ce::EnumCharClass charClass, const CharStats& cs) const;
         bool canSocketItem(const d2ce::Item& socketFiller) const;
@@ -313,6 +288,16 @@ namespace d2ce
         std::vector<d2ce::RunewordType> getPossibleRunewords(bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
         std::vector<d2ce::RunewordType> getPossibleRunewords(std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
         bool setRuneword(std::uint16_t id);
+        bool getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
+        bool getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
+        bool setMagicalAffixes(const d2ce::MagicalAffixes& affixes);
+        bool getPossibleSuperiorAttributes(std::vector<MagicalAttribute>& attribs) const;
+        bool makeSuperior(const std::vector<MagicalAttribute>& attribs);
+        bool makeSuperior();
+        bool makeNormal();
+        bool removeMagicalAffixes();
+        bool setRareOrCraftedAttributes(RareAttributes& attrib);
+        bool removeRareOrCraftedAttributes();
         bool exportItem(const std::filesystem::path& path) const;
 
         // Helper methods that return the text displayed on tooltips
@@ -503,12 +488,15 @@ namespace d2ce
         size_t upgradeGems(ItemFilter filter = ItemFilter());
         size_t upgradePotions(ItemFilter filter = ItemFilter());
         size_t upgradeRejuvenationPotions(ItemFilter filter = ItemFilter());
+        size_t upgradeTierAllItems(const d2ce::Character& charInfo, ItemFilter filter = ItemFilter());
         size_t convertGPSs(const std::array<std::uint8_t, 4>& existingGem, const std::array<std::uint8_t, 4>& desiredGem, ItemFilter filter = ItemFilter());
         size_t fillAllStackables(ItemFilter filter = ItemFilter());
         size_t repairAllItems(ItemFilter filter = ItemFilter());
         size_t maxDurabilityAllItems(ItemFilter filter = ItemFilter());
         size_t maxSocketCountAllItems(ItemFilter filter = ItemFilter());
+        size_t setMaxDefenseRatingAllItems(ItemFilter filter = ItemFilter());
         size_t setIndestructibleAllItems(ItemFilter filter = ItemFilter());
+        size_t setSuperiorAllItems(ItemFilter filter = ItemFilter());
         bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
@@ -525,6 +513,7 @@ namespace d2ce
 
         bool removeSocketedItems(d2ce::Item& item);
         bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
+        bool upgradeItemTier(d2ce::Item& item, const CharStats& cs);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;

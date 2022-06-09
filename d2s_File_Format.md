@@ -86,8 +86,8 @@ File version. The following values are known:
 * `89` is standard game v1.08
 * `92` is v1.09 (both the standard game and the Expansion Set.)
 * `96` is v1.10 - v1.14d
-* `97` is v1.15 (D2R 1.0.x - 1.1.x)
-* `98` is v1.16 (D2R 1.2.x+)
+* `97` is D2R v1.0.x - v1.1.x
+* `98` is D2R v1.2.x+ (Patch 2.4)
 
 
 ### Checksum

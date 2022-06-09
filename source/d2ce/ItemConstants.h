@@ -27,17 +27,17 @@ namespace d2ce
     // item version
     enum class EnumItemVersion : std::uint32_t
     {
-        v100, // v1.00 - v1.03 item
-        v104, // v1.04 - v1.06 item
-        v107, // v1.07 item
-        v108, // v1.08 item
-        v109, // v1.09 item
-        v110, // v1.10 - v1.14d item
-        v115, // v1.15 Diablo II: Resurrected item
-        v116, // v1.16 Diablo II: Resurrected Patch 2.4 item
+        v100,  // v1.00 - v1.03 item
+        v104,  // v1.04 - v1.06 item
+        v107,  // v1.07 item
+        v108,  // v1.08 item
+        v109,  // v1.09 item
+        v110,  // v1.10 - v1.14d item
+        v100R, // v1.0.x - v1.1.x Diablo II: Resurrected item
+        v120,  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
     };
 
-    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v116; // default item version used by application
+    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v120; // default item version used by application
 
     // default game version used by application
     // refers to the "version" column in resource files used internally

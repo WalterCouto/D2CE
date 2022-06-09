@@ -77,7 +77,7 @@ namespace d2ce
                                 // Type:       pos 185 (1.09+ only)
                                 // Experience: pos 187 (1.09+ only), hireling's experience
 
-        std::array<std::uint8_t, D2R_APPEARANCES_LENGTH> D2RAppearances; // pos 219 - 266 (1.15+ D2R only) Character menu appearance
+        std::array<std::uint8_t, D2R_APPEARANCES_LENGTH> D2RAppearances; // pos 219 - 266 (D2R only) Character menu appearance
 
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
@@ -315,9 +315,12 @@ namespace d2ce
         size_t getNumberOfArmor() const;
         size_t getNumberOfWeapons() const;
         size_t repairAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t upgradeTierAllItems(ItemFilter filter = ItemFilter());
         size_t maxDurabilityAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t maxDefenseRatingAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
         size_t setIndestructibleAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
         size_t maxSocketCountAllItems(d2ce::ItemFilter filter = d2ce::ItemFilter());
+        size_t setSuperiorAllItems(ItemFilter filter = ItemFilter());
 
         bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
         bool setItemLocation(d2ce::Item& item, EnumItemLocation locationId, std::uint16_t positionX, std::uint16_t positionY, d2ce::EnumItemInventory invType, const d2ce::Item*& pRemovedItem);
@@ -348,6 +351,7 @@ namespace d2ce
         size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
 
         bool removeSocketedItems(d2ce::Item& item);
+        bool upgradeItemTier(d2ce::Item& item);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;
