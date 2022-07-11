@@ -20689,9 +20689,9 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         positionY = slot / invDimensions.InvWidth;
         positionX = slot % invDimensions.InvWidth;
         bool isGoodLocation = true;
-        for (std::uint16_t y = positionY; y < positionY + dimensions.Height && isGoodLocation; ++y)
+        for (std::uint16_t y = positionY; y < std::uint16_t(positionY + dimensions.Height) && isGoodLocation; ++y)
         {
-            for (std::uint16_t x = positionX; x < positionX + dimensions.Width && isGoodLocation; ++x)
+            for (std::uint16_t x = positionX; x < std::uint16_t(positionX + dimensions.Width) && isGoodLocation; ++x)
             {
                 if (itemLocationEmptySpots.find(y * invDimensions.InvWidth + x) == itemLocationEmptySpots.end())
                 {
