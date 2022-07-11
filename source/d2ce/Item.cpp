@@ -16985,11 +16985,11 @@ void d2ce::Items::findItems()
                     // remove slots from empty list
                     auto& emptySlots = ItemLocationEmptySpots[itemLocation][itemAltLocation];
                     auto& invDimenstion = altItemDimensions[itemAltLocation];
-                    auto posX = item.getPositionX();
-                    auto posY = item.getPositionY();
-                    for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
+                    auto posX = std::uint16_t(item.getPositionX());
+                    auto posY = std::uint16_t(item.getPositionY());
+                    for (std::uint16_t y = posY; y < std::uint16_t(posY + dimensions.Height); ++y)
                     {
-                        for (std::uint16_t x = posX; x < posX + dimensions.Width; ++x)
+                        for (std::uint16_t x = posX; x < std::uint16_t(posX + dimensions.Width); ++x)
                         {
                             emptySlots.erase(y * invDimenstion.Width + x);
                         }
@@ -17035,13 +17035,13 @@ void d2ce::Items::findItems()
             for (const auto& itemRef : ItemLocationReference[d2ce::EnumItemLocation::STORED][itemAltLocation])
             {
                 // remove slots from empty list
-                auto posX = itemRef.get().getPositionX();
-                auto posY = itemRef.get().getPositionY();
+                auto posX = std::uint16_t(itemRef.get().getPositionX());
+                auto posY = std::uint16_t(itemRef.get().getPositionY());
                 if (itemRef.get().getDimensions(dimensions))
                 {
-                    for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
+                    for (std::uint16_t y = posY; y < std::uint16_t(posY + dimensions.Height); ++y)
                     {
-                        for (std::uint16_t x = posX; x < posX + dimensions.Width; ++x)
+                        for (std::uint16_t x = posX; x < std::uint16_t(posX + dimensions.Width); ++x)
                         {
                             emptySlots.erase(y * cubeDimensions.Width + x);
                         }
@@ -17110,11 +17110,11 @@ void d2ce::Items::findSharedStashItems()
         {
             // remove slots from empty list
             auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::STASH];
-            auto posX = item.getPositionX();
-            auto posY = item.getPositionY();
-            for (std::uint16_t y = posY; y < posY + dimensions.Height; ++y)
+            auto posX = std::uint16_t(item.getPositionX());
+            auto posY = std::uint16_t(item.getPositionY());
+            for (std::uint16_t y = posY; y < std::uint16_t(posY + dimensions.Height); ++y)
             {
-                for (std::uint16_t x = posX; x < posX + dimensions.Width; ++x)
+                for (std::uint16_t x = posX; x < std::uint16_t(posX + dimensions.Width); ++x)
                 {
                     emptySlots.erase(y * stashDimensions.Width + x);
                 }
@@ -18826,10 +18826,10 @@ void d2ce::Items::verifyHoradricCube()
                 }
 
                 bool bFits = true;
-                auto positionX = item.getPositionX();
-                auto positionY = item.getPositionY();
-                auto positionX2 = positionX + dimensions.Width - 1;
-                auto positionY2 = positionY + dimensions.Height - 1;
+                auto positionX = std::uint16_t(item.getPositionX());
+                auto positionY = std::uint16_t(item.getPositionY());
+                auto positionX2 = std::uint16_t(positionX + dimensions.Width - 1);
+                auto positionY2 = std::uint16_t(positionY + dimensions.Height - 1);
                 for (auto& itemRef : invLocationReference)
                 {
                     auto& invItem = itemRef.get();
@@ -18844,11 +18844,10 @@ void d2ce::Items::verifyHoradricCube()
                         continue;
                     }
 
-                    auto invItemPosX = invItem.getPositionX();
-                    auto invItemPosY = invItem.getPositionY();
-                    auto invItemPosX2 = invItemPosX + dimensions.Width - 1;
-                    auto invItemPosY2 = invItemPosY + dimensions.Height - 1;
-                    invItemPosY = invItem.getPositionY();
+                    auto invItemPosX = std::uint16_t(invItem.getPositionX());
+                    auto invItemPosY = std::uint16_t(invItem.getPositionY());
+                    auto invItemPosX2 = std::uint16_t(invItemPosX + dimensions.Width - 1);
+                    auto invItemPosY2 = std::uint16_t(invItemPosY + dimensions.Height - 1);
                     if (positionX > invItemPosX2 || positionX2 < invItemPosX)
                     {
                         // does not intersect
