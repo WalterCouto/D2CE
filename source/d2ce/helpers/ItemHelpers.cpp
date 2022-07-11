@@ -62,28 +62,21 @@ namespace d2ce
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
 
-        std::uint16_t getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
-        std::uint32_t getSetItemDWBCode(std::uint16_t setItemId);
-        std::uint32_t getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
         std::uint32_t generarateRandomDW();
-        std::string getSetNameFromId(std::uint16_t id);
         std::string getSetTCFromId(std::uint16_t id);
-        std::uint16_t getSetLevelReqFromId(std::uint16_t id);
         const std::string& getRareNameFromId(std::uint16_t id);
         const std::string& getRareIndexFromId(std::uint16_t id);
         const std::string& getMagicalPrefixFromId(std::uint16_t id);
         const std::string& getMagicalSuffixFromId(std::uint16_t id);
         const std::string& getMagicalPrefixTCFromId(std::uint16_t id);
         const std::string& getMagicalSuffixTCFromId(std::uint16_t id);
-        const std::string& getUniqueNameFromId(std::uint16_t id);
         std::uint16_t getIdFromRareIndex(const std::string& rareIndex);
         std::uint16_t getIdFromRareName(const std::string& rareName);
-        std::uint16_t getUniqueLevelReqFromId(std::uint16_t id);
         std::string getUniqueTCFromId(std::uint16_t id);
         std::uint16_t getMagicalPrefixLevelReqFromId(std::uint16_t id);
         std::uint16_t getMagicalSuffixLevelReqFromId(std::uint16_t id);
@@ -4171,7 +4164,11 @@ namespace d2ce
                 itemType.dimensions.Height = doc.GetCellUInt16(invheightColumnIdx, i);
             }
 
-            itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
+            strValue = doc.GetCellString(invfileColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.inv_file = strValue;
+            }
 
             strValue = doc.GetCellString(invTransColumnIdx, i);
             if (!strValue.empty())
@@ -4957,25 +4954,49 @@ namespace d2ce
         return iterSuffix->second;
     }
 
-    struct ItemUniqueType
+    struct ItemUniqueType : public ItemType
     {
         std::uint16_t id = 0; // index of the unique item
 
         std::string index; // The ID pointer that is referenced by the game in TreasureClassEx.txt and CubeMain.txt, this also controls the string that will be used to display the item's name in-game.
-        std::string name; // what string will be displayed in-game for this unique item
-
-        //   0 = pre v1.08 affixes
-        //   1 - Non-Expansion (post v1.08 affixes) (affixes available in classic and LoD).
-        // 100 - Expansion only affixes
-        std::uint16_t version = 0;
-
-        ItemAffixLevelType level; // The quality level of this unique item and The character level required to use this unique item
-        std::string code; // The code of the base form of this unique item, this is an ID pointer from Weapons.txt, Armor.txt or Misc.txt.
 
         std::string transform_color; // Palette shift to apply to the the DC6 inventory-file
-        std::string inv_file; //  Overrides the invfile and uniqueinvfile specified in Weapons.txt, Armor.txt or Misc.txt for the base item.
 
         std::vector<ItemAffixModType> modType; // Different modifiers a unique item can grant you
+
+        bool isUniqueItem() const override
+        {
+            return true;
+        }
+
+        std::uint16_t getUniqueItemId() const override
+        {
+            return id;
+        }
+
+        void CopyParentItem(const ItemType& parent)
+        {
+            compactsave = parent.compactsave;
+            ac = parent.ac;
+            dam = parent.dam;
+            req = parent.req;
+            durability = parent.durability;
+            code_v100 = parent.code_v100;
+            level = parent.level;
+            dimensions = parent.dimensions;
+            stackable = parent.stackable;
+            max_sockets = parent.max_sockets;
+            categories = parent.categories;
+            gemApplyType = parent.gemApplyType;
+            inv_file = parent.inv_file;
+            nameable = parent.nameable;
+            beltable = parent.beltable;
+            skipName = parent.skipName;
+            spellDesc = parent.spellDesc;
+            bodyLocations = parent.bodyLocations;
+            quiverCode = parent.quiverCode;
+            codes = parent.codes;
+        }
     };
 
     std::map<std::string, std::uint16_t> s_ItemUniqueQuestItemsIndex;
@@ -5156,17 +5177,26 @@ namespace d2ce
             {
                 itemUniqueQuestItemsIndex[itemType.code] = itemType.id;
             }
+            itemType.CopyParentItem(parentItemType);
 
             strValue = doc.GetCellString(lvlColumnIdx, i);
             if (!strValue.empty())
             {
-                itemType.level.level = doc.GetCellUInt16(lvlColumnIdx, i);
+                auto level = doc.GetCellUInt16(lvlColumnIdx, i);
+                if (level > 1)
+                {
+                    itemType.level.Quality = level;
+                }
             }
 
             strValue = doc.GetCellString(lvlreqColumnIdx, i);
             if (!strValue.empty())
             {
-                itemType.level.levelreq = doc.GetCellUInt16(lvlreqColumnIdx, i);
+                auto reqLevel = doc.GetCellUInt16(lvlreqColumnIdx, i);
+                if (reqLevel > 1)
+                {
+                    itemType.req.Level = reqLevel;
+                }
             }
 
             itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
@@ -5207,6 +5237,17 @@ namespace d2ce
         s_ItemUniqueQuestItemsIndex.swap(itemUniqueQuestItemsIndex);
         s_ItemUniqueItemsIndex.swap(itemUniqueItemsIndex);
         s_ItemUniqueItemsType.swap(itemUniqueItemsType);
+    }
+
+    const ItemType& GetUniqueItemTypeHelper(std::uint16_t id)
+    {
+        auto iter = s_ItemUniqueItemsType.find(id);
+        if (iter == s_ItemUniqueItemsType.end())
+        {
+            return s_invalidItemType;
+        }
+
+        return static_cast<const ItemType&>(iter->second);
     }
 
     struct ItemSetType
@@ -5509,25 +5550,16 @@ namespace d2ce
         s_ItemSetsType.swap(itemSetsType);
     }
 
-    struct ItemSetItemType
+    struct ItemSetItemType : public ItemType
     {
         std::uint16_t id = 0; // index of the set item
 
         std::string index; // string key to item's name
-        std::string name; // what string will be displayed in-game for this set item
 
         std::string setIndex; // string key to the index field in Sets.txt - the set the item is a part of.
 
-        //   0 = Available in Classic D2 and LoD Expansion.
-        // 100 - Available in LoD Expansion only.
-        std::uint16_t version = 0; // value from version field in Sets.txt 
-
-        ItemAffixLevelType level; // The quality level of this set item and The character level required to use this set item
-        std::string code; // The code of the base form of this set item, this is an ID pointer from Weapons.txt, Armor.txt or Misc.txt.
-
         std::string transform_color; // Palette shift to apply to the the DC6 inventory-file
-        std::string inv_file; //  Overrides the invfile and setinvfile specified in Weapons.txt, Armor.txt or Misc.txt for the base item.
-
+       
         std::vector<ItemAffixModType> modType; // Different fixed modifiers a set item can grant you (Blue attributes)
 
         // a property mode field that controls how the variable attributes will appear and be functional on a set item.
@@ -5598,6 +5630,45 @@ namespace d2ce
         std::vector<ItemAffixModType> a5ModType; // when any fifth set item is also equipped.
 
         std::uint32_t dwbCode = 0; // used for items with EnumItemVersion::v100 and EnumItemVersion::v104
+
+        bool isSetItem() const override
+        {
+            return true;
+        }
+
+        std::uint16_t getSetItemId() const override
+        {
+            return id;
+        }
+
+        std::uint32_t getSetItemDWBCode() const override
+        {
+            return dwbCode;
+        }
+
+        void CopyParentItem(const ItemType& parent)
+        {
+            compactsave = parent.compactsave;
+            ac = parent.ac;
+            dam = parent.dam;
+            req = parent.req;
+            durability = parent.durability;
+            code_v100 = parent.code_v100;
+            level = parent.level;
+            dimensions = parent.dimensions;
+            stackable = parent.stackable;
+            max_sockets = parent.max_sockets;
+            categories = parent.categories;
+            gemApplyType = parent.gemApplyType;
+            inv_file = parent.inv_file;
+            nameable = parent.nameable;
+            beltable = parent.beltable;
+            skipName = parent.skipName;
+            spellDesc = parent.spellDesc;
+            bodyLocations = parent.bodyLocations;
+            quiverCode = parent.quiverCode;
+            codes = parent.codes;
+        }
     };
 
     struct ItemRandStruct
@@ -5905,28 +5976,42 @@ namespace d2ce
             }
 
             itemType.code = doc.GetCellString(itemColumnIdx, i);
+            itemType.CopyParentItem(GetItemTypeHelper(itemType.code));
 
             strValue = doc.GetCellString(lvlColumnIdx, i);
             if (!strValue.empty())
             {
-                itemType.level.level = doc.GetCellUInt16(lvlColumnIdx, i);
+                auto level = doc.GetCellUInt16(lvlColumnIdx, i);
+                if (level > 1)
+                {
+                    itemType.level.Quality = level;
+                }
             }
 
             {
                 auto iter = setItemsDWBCode.find(itemType.index);
                 if (iter != setItemsDWBCode.end())
                 {
-                    itemType.dwbCode = GenerateSetItemDWBCode(iter->second, itemType.level.level);
+                    itemType.dwbCode = GenerateSetItemDWBCode(iter->second, itemType.level.Quality);
                 }
             }
 
             strValue = doc.GetCellString(lvlreqColumnIdx, i);
             if (!strValue.empty())
             {
-                itemType.level.levelreq = doc.GetCellUInt16(lvlreqColumnIdx, i);
+                auto reqLevel = doc.GetCellUInt16(lvlreqColumnIdx, i);
+                if (reqLevel > 1)
+                {
+                    itemType.req.Level = reqLevel;
+                }
             }
 
-            itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
+            strValue = doc.GetCellString(invfileColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.inv_file = strValue;
+            }
+
             itemType.transform_color = doc.GetCellString(invtransformColumnIdx, i);
 
             for (size_t idx = 0; idx < modParamSize; ++idx)
@@ -7205,6 +7290,29 @@ namespace d2ce
         return badValue;
     }
 
+    const ItemType& GetSetItemTypeHelper(std::uint16_t id)
+    {
+        auto iter = s_ItemSetItemsType.find(id);
+        if (iter == s_ItemSetItemsType.end())
+        {
+            return s_invalidItemType;
+        }
+
+        return static_cast<const ItemType&>(iter->second);
+    }
+
+    const ItemType& GetSetItemTypeHelper(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode)
+    {
+        const auto& setItem = GetSetItemType(id, strcode);
+        if (setItem.code.empty())
+        {
+            // invalid
+            return s_invalidItemType;
+        }
+
+        return static_cast<const ItemType&>(setItem);
+    }
+
     bool GenerateMagicalAffixesBuffer(const std::array<std::uint8_t, 4>& strcode, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t gameVersion, std::uint16_t level)
     {
         prefixes.clear();
@@ -7720,6 +7828,31 @@ bool d2ce::ItemType::isClassSpecific() const
 bool d2ce::ItemType::isSecondHand() const
 {
     return hasCategoryCode("seco");
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isUniqueItem() const
+{
+    return false;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ItemType::getUniqueItemId() const
+{
+    return MAXUINT16;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isSetItem() const
+{
+    return false;
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ItemType::getSetItemId() const
+{
+    return MAXUINT16;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::ItemType::getSetItemDWBCode() const
+{
+    return 0ui32;
 }
 //---------------------------------------------------------------------------
 std::optional<d2ce::EnumCharClass> d2ce::ItemType::getClass() const
@@ -8569,6 +8702,21 @@ const d2ce::ItemType& d2ce::ItemHelpers::getItemTypeHelper(const std::string& co
     return GetItemTypeHelper(code);
 }
 //---------------------------------------------------------------------------
+const d2ce::ItemType& d2ce::ItemHelpers::getUniqueItemTypeHelper(std::uint16_t id)
+{
+    return GetUniqueItemTypeHelper(id);
+}
+//---------------------------------------------------------------------------
+const d2ce::ItemType& d2ce::ItemHelpers::getSetItemTypeHelper(std::uint16_t id)
+{
+    return GetSetItemTypeHelper(id);
+}
+//---------------------------------------------------------------------------
+const d2ce::ItemType& d2ce::ItemHelpers::getSetItemTypeHelper(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode)
+{
+    return GetSetItemTypeHelper(id, strcode);
+}
+//---------------------------------------------------------------------------
 const d2ce::ItemType& d2ce::ItemHelpers::getInvalidItemTypeHelper()
 {
     return s_invalidItemType;
@@ -9070,61 +9218,6 @@ bool d2ce::ItemHelpers::getUniqueQuestMagicAttribs(const std::array<std::uint8_t
     return getUniqueMagicAttribs(iter->second, attribs, version, gameVersion, level, dwb);
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::ItemHelpers::getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode)
-{
-    auto iterSets = s_ItemSetsType.find(id);
-    if (iterSets == s_ItemSetsType.end())
-    {
-        return MAXUINT16;
-    }
-
-    // find set item
-    std::string testStr("   ");
-    testStr[0] = (char)strcode[0];
-    testStr[1] = (char)strcode[1];
-    testStr[2] = (char)strcode[2];
-    for (const auto& setItem : iterSets->second.items)
-    {
-        auto iter = s_ItemSetItemsIndex.find(setItem);
-        if (iter == s_ItemSetItemsIndex.end())
-        {
-            // should not happen
-            continue;
-        }
-
-        const auto& setItemType = s_ItemSetItemsType[iter->second];
-        if (setItemType.code == testStr)
-        {
-            return setItemType.id;
-        }
-    }
-
-    return MAXUINT16;
-}
-//---------------------------------------------------------------------------
-std::uint32_t d2ce::ItemHelpers::getSetItemDWBCode(std::uint16_t setItemId)
-{
-    auto iter = s_ItemSetItemsType.find(setItemId);
-    if (iter == s_ItemSetItemsType.end())
-    {
-        return false;
-    }
-
-    return iter->second.dwbCode;
-}
-//---------------------------------------------------------------------------
-std::uint32_t d2ce::ItemHelpers::getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode)
-{
-    const auto& setItem = GetSetItemType(id, strcode);
-    if (setItem.code.empty())
-    {
-        // invalid
-        return 0;
-    }
-
-    return setItem.dwbCode;
-}
-//---------------------------------------------------------------------------
 std::uint8_t d2ce::ItemHelpers::generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb)
 {
     if (dwb == 0)
@@ -9387,17 +9480,6 @@ std::uint32_t d2ce::ItemHelpers::generarateRandomDW()
     return std::uint32_t(spread(gen) + (spread(gen) << 16));
 }
 //---------------------------------------------------------------------------
-std::string d2ce::ItemHelpers::getSetNameFromId(std::uint16_t id)
-{
-    auto iter = s_ItemSetItemsType.find(id);
-    if (iter == s_ItemSetItemsType.end())
-    {
-        return "";
-    }
-
-    return iter->second.name;
-}
-//---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getSetTCFromId(std::uint16_t id)
 {
     auto iter = s_ItemSetItemsType.find(id);
@@ -9407,17 +9489,6 @@ std::string d2ce::ItemHelpers::getSetTCFromId(std::uint16_t id)
     }
 
     return iter->second.transform_color;
-}
-//---------------------------------------------------------------------------
-std::uint16_t d2ce::ItemHelpers::getSetLevelReqFromId(std::uint16_t id)
-{
-    auto iter = s_ItemSetItemsType.find(id);
-    if (iter == s_ItemSetItemsType.end())
-    {
-        return 0;
-    }
-
-    return iter->second.level.levelreq;
 }
 //---------------------------------------------------------------------------
 const std::string& d2ce::ItemHelpers::getRareNameFromId(std::uint16_t id)
@@ -9480,13 +9551,6 @@ const std::string& d2ce::ItemHelpers::getMagicalSuffixTCFromId(std::uint16_t id)
     return badValue;
 }
 //---------------------------------------------------------------------------
-const std::string& d2ce::ItemHelpers::getUniqueNameFromId(std::uint16_t id)
-{
-    static std::string badValue;
-    auto iter = s_ItemUniqueItemsType.find(id);
-    return (iter == s_ItemUniqueItemsType.end()) ? badValue : iter->second.name;
-}
-//---------------------------------------------------------------------------
 std::uint16_t d2ce::ItemHelpers::getIdFromRareIndex(const std::string& rareIndex)
 {
     auto iter = s_ItemRareIndex.find(rareIndex);
@@ -9497,12 +9561,6 @@ std::uint16_t d2ce::ItemHelpers::getIdFromRareName(const std::string& rareName)
 {
     auto iter = s_ItemRareNames.find(rareName);
     return (iter == s_ItemRareNames.end()) ? 0ui16 : iter->second;
-}
-//---------------------------------------------------------------------------
-std::uint16_t d2ce::ItemHelpers::getUniqueLevelReqFromId(std::uint16_t id)
-{
-    auto iter = s_ItemUniqueItemsType.find(id);
-    return (iter == s_ItemUniqueItemsType.end()) ? 0ui16 : iter->second.level.levelreq;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getUniqueTCFromId(std::uint16_t id)
@@ -10341,6 +10399,191 @@ bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char
         return true;
     }
 }
+//---------------------------------------------------------------------------
+std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::getPossibleItems(std::uint16_t gameVersion, d2ce::EnumCharClass charClass, const d2ce::CharStats& cs)
+{
+    std::vector<std::reference_wrapper<const d2ce::ItemType>> result;
+    for (const auto& item : s_ItemWeaponType)
+    {
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        // make sure the requirements are met
+        if (item.second.req.Level > cs.Level)
+        {
+            continue;
+        }
+
+        if (item.second.req.Strength > cs.Strength)
+        {
+            continue;
+        }
+
+        if (item.second.req.Dexterity > cs.Dexterity)
+        {
+            continue;
+        }
+
+        // if class specific, make sure we are the correct class
+        auto itemCharClass = item.second.getClass();
+        if (itemCharClass.has_value() && (charClass != itemCharClass.value()))
+        {
+            continue;
+        }
+
+        result.push_back(item.second);
+    }
+
+    for (const auto& item : s_ItemArmorType)
+    {
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        // make sure the requirements are met
+        if (item.second.req.Level > cs.Level)
+        {
+            continue;
+        }
+
+        if (item.second.req.Strength > cs.Strength)
+        {
+            continue;
+        }
+
+        if (item.second.req.Dexterity > cs.Dexterity)
+        {
+            continue;
+        }
+
+        // if class specific, make sure we are the correct class
+        auto itemCharClass = item.second.getClass();
+        if (itemCharClass.has_value() && (charClass != itemCharClass.value()))
+        {
+            continue;
+        }
+
+        result.push_back(item.second);
+    }
+
+    for (const auto& item : s_ItemMiscType)
+    {
+        if (item.second.isCharm() || item.second.isJewel() || 
+            item.second.isAmulet() || item.second.isRing())
+        {
+            // this are special magical items not handled as a regular
+            // item
+            continue;
+        }
+
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        // make sure the requirements are met
+        if (item.second.req.Level > cs.Level)
+        {
+            continue;
+        }
+
+        if (item.second.req.Strength > cs.Strength)
+        {
+            continue;
+        }
+
+        if (item.second.req.Dexterity > cs.Dexterity)
+        {
+            continue;
+        }
+
+        // if class specific, make sure we are the correct class
+        auto itemCharClass = item.second.getClass();
+        if (itemCharClass.has_value() && (charClass != itemCharClass.value()))
+        {
+            continue;
+        }
+
+        result.push_back(item.second);
+    }
+
+    for (const auto& item : s_ItemUniqueItemsType)
+    {
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        // make sure the requirements are met
+        if (item.second.req.Level > cs.Level)
+        {
+            continue;
+        }
+
+        if (item.second.req.Strength > cs.Strength)
+        {
+            continue;
+        }
+
+        if (item.second.req.Dexterity > cs.Dexterity)
+        {
+            continue;
+        }
+
+        // if class specific, make sure we are the correct class
+        auto itemCharClass = item.second.getClass();
+        if (itemCharClass.has_value() && (charClass != itemCharClass.value()))
+        {
+            continue;
+        }
+
+        result.push_back(item.second);
+    }
+
+    for (const auto& item : s_ItemSetItemsType)
+    {
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        // make sure the requirements are met
+        if (item.second.req.Level > cs.Level)
+        {
+            continue;
+        }
+
+        if (item.second.req.Strength > cs.Strength)
+        {
+            continue;
+        }
+
+        if (item.second.req.Dexterity > cs.Dexterity)
+        {
+            continue;
+        }
+
+        // if class specific, make sure we are the correct class
+        auto itemCharClass = item.second.getClass();
+        if (itemCharClass.has_value() && (charClass != itemCharClass.value()))
+        {
+            continue;
+        }
+
+        result.push_back(item.second);
+    }
+
+    return result;
+}
+//---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 namespace d2ce

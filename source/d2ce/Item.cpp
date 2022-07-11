@@ -364,28 +364,21 @@ namespace d2ce
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
 
-        std::uint16_t getSetItemId(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
-        std::uint32_t getSetItemDWBCode(std::uint16_t setItemId);
-        std::uint32_t getSetItemDWBCode(std::uint16_t id, const std::array<std::uint8_t, 4>& strcode);
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         bool generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
         std::uint32_t generarateRandomDW();
-        std::string getSetNameFromId(std::uint16_t id);
         std::string getSetTCFromId(std::uint16_t id);
-        std::uint16_t getSetLevelReqFromId(std::uint16_t id);
         const std::string& getRareNameFromId(std::uint16_t id);
         const std::string& getRareIndexFromId(std::uint16_t id);
         const std::string& getMagicalPrefixFromId(std::uint16_t id);
         const std::string& getMagicalSuffixFromId(std::uint16_t id);
         const std::string& getMagicalPrefixTCFromId(std::uint16_t id);
         const std::string& getMagicalSuffixTCFromId(std::uint16_t id);
-        const std::string& getUniqueNameFromId(std::uint16_t id);
         std::uint16_t getIdFromRareIndex(const std::string& rareIndex);
         std::uint16_t getIdFromRareName(const std::string& rareName);
-        std::uint16_t getUniqueLevelReqFromId(std::uint16_t id);
         std::string getUniqueTCFromId(std::uint16_t id);
         std::uint16_t getMagicalPrefixLevelReqFromId(std::uint16_t id);
         std::uint16_t getMagicalSuffixLevelReqFromId(std::uint16_t id);
@@ -3314,18 +3307,53 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
 const d2ce::ItemType& d2ce::Item::getItemTypeHelper() const
 {
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (getItemCode(strcode))
+    if (!getItemCode(strcode))
     {
-        const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-        if (result.isExpansionItem() && !isExpansionItem())
-        {
-            return ItemHelpers::getInvalidItemTypeHelper();
-        }
-
-        return result;
+        return ItemHelpers::getInvalidItemTypeHelper();
     }
 
-    return ItemHelpers::getInvalidItemTypeHelper();
+    const auto& result = ItemHelpers::getItemTypeHelper(strcode);
+    if (result.isExpansionItem() && !isExpansionItem())
+    {
+        return ItemHelpers::getInvalidItemTypeHelper();
+    }
+
+    auto quality = getQuality();
+    if (quality == EnumItemQuality::UNIQUE)
+    {
+        d2ce::UniqueAttributes uniqueAttrib;
+        if (getUniqueAttributes(uniqueAttrib))
+        {
+            const auto& uniqueResult = ItemHelpers::getUniqueItemTypeHelper(uniqueAttrib.Id);
+            if (&uniqueResult != &ItemHelpers::getInvalidItemTypeHelper())
+            {
+                // make sure the base type matches (for hacked items they may not)
+                if (uniqueResult.code == result.code)
+                {
+                    return uniqueResult;
+                }
+            }
+        }
+    }
+    else if (quality == EnumItemQuality::SET)
+    {
+        d2ce::SetAttributes setAttrib;
+        if (getSetAttributes(setAttrib))
+        {
+            const auto& setResult = ItemHelpers::getSetItemTypeHelper(setAttrib.Id);
+            if (&setResult != &ItemHelpers::getInvalidItemTypeHelper())
+            {
+                // make sure the base type matches (for hacked items they may not)
+                if (setResult.code == result.code)
+                {
+                    return setResult;
+                }
+            }
+        }
+    }
+
+    // default to base item
+    return result;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
@@ -3788,6 +3816,7 @@ bool d2ce::Item::getRequirements(ItemRequirements& req) const
         // should not happen
         return false;
     }
+
     req = result.req;
 
     d2ce::SetAttributes setAttrib;
@@ -3821,11 +3850,15 @@ bool d2ce::Item::getRequirements(ItemRequirements& req) const
         break;
 
     case EnumItemQuality::SET:
-        if (getSetAttributes(setAttrib))
+        if (!result.isSetItem())
         {
-            if (setAttrib.ReqLevel > 1)
+            // should not happen except for hacked items
+            if (getSetAttributes(setAttrib))
             {
-                req.Level = setAttrib.ReqLevel;
+                if (setAttrib.ReqLevel > 1)
+                {
+                    req.Level = setAttrib.ReqLevel;
+                }
             }
         }
         break;
@@ -3859,11 +3892,15 @@ bool d2ce::Item::getRequirements(ItemRequirements& req) const
         break;
 
     case EnumItemQuality::UNIQUE:
-        if (getUniqueAttributes(uniqueAttrib))
+        if (!result.isUniqueItem())
         {
-            if (uniqueAttrib.ReqLevel > 1)
+            // should not happen except for hacked items
+            if (getUniqueAttributes(uniqueAttrib))
             {
-                req.Level = uniqueAttrib.ReqLevel;
+                if (uniqueAttrib.ReqLevel > 1)
+                {
+                    req.Level = uniqueAttrib.ReqLevel;
+                }
             }
         }
         break;
@@ -4366,7 +4403,6 @@ std::uint16_t d2ce::Item::getSetItemId() const
     }
 
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    std::uint16_t id = 0;
     switch (getVersion())
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
@@ -4374,11 +4410,20 @@ std::uint16_t d2ce::Item::getSetItemId() const
         if (!getItemCode(strcode))
         {
             // should not happen
-            return 0;
+            return 0ui16;
         }
 
-        id = ItemHelpers::getSetItemId((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
-        return (id >= MAXUINT16) ? 0 : id;
+        {
+            const auto& itemType = ItemHelpers::getSetItemTypeHelper((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+            {
+                // should not happen
+                return 0ui16;
+            }
+
+            auto id = itemType.getSetItemId();
+            return (id >= MAXUINT16) ? 0 : id;
+        }
     }
 
     return (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), SET_UNIQUE_ID_NUM_BITS);
@@ -4409,8 +4454,15 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
     }
 
     attrib.Id = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), SET_UNIQUE_ID_NUM_BITS);
-    attrib.Name = ItemHelpers::getSetNameFromId(attrib.Id);
-    attrib.ReqLevel = ItemHelpers::getSetLevelReqFromId(attrib.Id);
+    const auto& itemType = ItemHelpers::getSetItemTypeHelper(attrib.Id);
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    attrib.Name = itemType.name;
+    attrib.ReqLevel = itemType.req.Level;
     if (GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) == 0)
     {
         return false;
@@ -4555,8 +4607,15 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
     }
 
     attrib.Id = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), numBits);
-    attrib.Name = ItemHelpers::getUniqueNameFromId(attrib.Id);
-    attrib.ReqLevel = ItemHelpers::getUniqueLevelReqFromId(attrib.Id);
+    const auto& itemType = ItemHelpers::getUniqueItemTypeHelper(attrib.Id);
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    attrib.Name = itemType.name;
+    attrib.ReqLevel = itemType.req.Level;
     return true;
 }
 //---------------------------------------------------------------------------
@@ -11062,7 +11121,8 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::getSetItemDWBCode((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            const auto& setItemType = ItemHelpers::getSetItemTypeHelper((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+            value = setItemType.getSetItemDWBCode();
         }
         else
         {
@@ -12055,7 +12115,8 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         if (getQuality() == EnumItemQuality::SET)
         {
             // Find correct DWB value for the SET
-            value = ItemHelpers::getSetItemDWBCode(getSetItemId());
+            const auto& setItemType = ItemHelpers::getSetItemTypeHelper(getSetItemId());
+            value = setItemType.getSetItemDWBCode();
         }
         else
         {
@@ -14192,7 +14253,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             if (quality == EnumItemQuality::SET)
             {
                 // Find correct DWB value for the SET
-                item["Dwb"] = ItemHelpers::getSetItemDWBCode(getSetItemId());
+                const auto& setItemType = ItemHelpers::getSetItemTypeHelper(getSetItemId());
+                item["Dwb"] = setItemType.getSetItemDWBCode();
             }
             else
             {
@@ -16599,15 +16661,23 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
         return false;
     }
 
-    attrib.Id = ItemHelpers::getSetItemId((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+    const auto& itemType = ItemHelpers::getSetItemTypeHelper((std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), ITEM_V100_UNIQUE_ID_NUM_BITS), strcode);
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+
+    attrib.Id = itemType.getSetItemId();
     if (attrib.Id >= MAXUINT16)
     {
         attrib.Id = 0;
         return false;
     }
 
-    attrib.Name = ItemHelpers::getSetNameFromId(attrib.Id);
-    attrib.ReqLevel = ItemHelpers::getSetLevelReqFromId(attrib.Id);
+    attrib.Name = itemType.name;
+    attrib.ReqLevel = itemType.req.Level;
     return true;
 }
 //---------------------------------------------------------------------------

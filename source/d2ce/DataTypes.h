@@ -1303,67 +1303,72 @@ namespace d2ce
         std::optional<std::string> quiverCode;
         std::vector<std::string> codes; // normal, uber, ultra
 
-        bool hasCategory(const std::string category) const;
-        bool hasCategoryCode(const std::string code) const;
-        bool isStackable() const;
-        bool isWeapon() const;
-        bool isThrownWeapon() const;
-        bool isMissileWeapon() const;
-        bool isMissile() const;
-        bool isTwoHandedWeapon() const;
-        bool isOneOrTwoHandedWeapon() const; // Can weapon be carried in 1 or 2 hands by Barbarian?
-        bool isShield() const;
-        bool isArmor() const;
-        bool isHelm() const;
-        bool isMiscellaneous() const;
-        bool isBook() const;
-        bool isPotion() const;
-        bool isJewel() const;
-        bool isGem() const;
-        bool isQuestItem() const;
-        bool isGoldItem() const;
-        bool isRejuvenationPotion() const;
-        bool isHealingPotion() const;
-        bool isManaPotion() const;
-        bool isSocketFiller() const;
-        bool isUpgradableGem() const;
-        bool isUpgradableRejuvenationPotion() const;
-        bool isUpgradablePotion() const;
-        bool isUpgradableItem() const;
-        bool isRune() const;
-        bool isCharm() const;
-        bool isBelt() const;
-        bool isBoots() const;
-        bool isBeltable() const;
-        bool isScroll() const;
-        bool isKey() const;
-        bool isHoradricCube() const;
-        bool isRing() const;
-        bool isAmulet() const;
-        bool isBodyPart() const;
-        bool isSimpleItem() const;
-        bool isUnusedItem() const;
-        bool isExpansionItem() const;
-        bool isSecondHand() const;
-        bool isClassSpecific() const;
+        virtual bool hasCategory(const std::string category) const;
+        virtual bool hasCategoryCode(const std::string code) const;
+        virtual bool isStackable() const;
+        virtual bool isWeapon() const;
+        virtual bool isThrownWeapon() const;
+        virtual bool isMissileWeapon() const;
+        virtual bool isMissile() const;
+        virtual bool isTwoHandedWeapon() const;
+        virtual bool isOneOrTwoHandedWeapon() const; // Can weapon be carried in 1 or 2 hands by Barbarian?
+        virtual bool isShield() const;
+        virtual bool isArmor() const;
+        virtual bool isHelm() const;
+        virtual bool isMiscellaneous() const;
+        virtual bool isBook() const;
+        virtual bool isPotion() const;
+        virtual bool isJewel() const;
+        virtual bool isGem() const;
+        virtual bool isQuestItem() const;
+        virtual bool isGoldItem() const;
+        virtual bool isRejuvenationPotion() const;
+        virtual bool isHealingPotion() const;
+        virtual bool isManaPotion() const;
+        virtual bool isSocketFiller() const;
+        virtual bool isUpgradableGem() const;
+        virtual bool isUpgradableRejuvenationPotion() const;
+        virtual bool isUpgradablePotion() const;
+        virtual bool isUpgradableItem() const;
+        virtual bool isRune() const;
+        virtual bool isCharm() const;
+        virtual bool isBelt() const;
+        virtual bool isBoots() const;
+        virtual bool isBeltable() const;
+        virtual bool isScroll() const;
+        virtual bool isKey() const;
+        virtual bool isHoradricCube() const;
+        virtual bool isRing() const;
+        virtual bool isAmulet() const;
+        virtual bool isBodyPart() const;
+        virtual bool isSimpleItem() const;
+        virtual bool isUnusedItem() const;
+        virtual bool isExpansionItem() const;
+        virtual bool isSecondHand() const;
+        virtual bool isClassSpecific() const;
+        virtual bool isUniqueItem() const;
+        virtual std::uint16_t getUniqueItemId() const;
+        virtual bool isSetItem() const;
+        virtual std::uint16_t getSetItemId() const;
+        virtual std::uint32_t getSetItemDWBCode() const;
         std::optional<d2ce::EnumCharClass> getClass() const;
 
-        bool hasUndeadBonus() const;
+        virtual bool hasUndeadBonus() const;
 
-        bool canHaveSockets() const;
+        virtual bool canHaveSockets() const;
         std::uint8_t getMaxSockets(std::uint8_t level) const;
 
-        bool canPersonalize() const;
+        virtual bool canPersonalize() const;
 
-        bool canEquip(EnumEquippedId equipId) const;
-        bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
+        virtual bool canEquip(EnumEquippedId equipId) const;
+        virtual bool canEquip(EnumEquippedId equipId, EnumCharClass charClass) const;
 
-        bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, std::uint8_t parentGemApplyType = 0) const;
-        bool getRuneMagicalAttributes(const d2ce::Item& parentItem, std::vector<MagicalAttribute>& attribs) const;
+        virtual bool getSocketedMagicalAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs, std::uint8_t parentGemApplyType = 0) const;
+        virtual bool getRuneMagicalAttributes(const d2ce::Item& parentItem, std::vector<MagicalAttribute>& attribs) const;
 
-        std::string getPotionDesc(EnumCharClass charClass) const;
+        virtual std::string getPotionDesc(EnumCharClass charClass) const;
 
-        const std::string& getRuneLetter() const;
+        virtual const std::string& getRuneLetter() const;
     };
 
     struct RunewordType
@@ -1383,6 +1388,16 @@ namespace d2ce
         // The general level requirement that your character must meet before they can use this runeword.
         std::uint16_t levelreq = 0;
         d2ce::EnumItemVersion version = d2ce::EnumItemVersion::v107; // min required version
+    };
+
+    struct UniqueItemType
+    {
+        std::uint16_t id = 0; // index of the unique item
+        std::string name; // what string will be displayed in-game for this unique item
+
+        d2ce::ItemType& baseItemType; // the base type of this unique item
+
+        std::vector<MagicalAttribute> attribs; // The modifiers this item has
     };
 }
 //---------------------------------------------------------------------------
