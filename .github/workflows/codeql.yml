@@ -1,0 +1,40 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: Source/D2Editor.sln
+
+jobs:
+  Analyze:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: cpp
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Build Code
+        working-directory: ${{ github.workspace }}
+        run: msbuild /m /p:Configuration="Debug" /p:Platform="x64" ${{ env.SOLUTION_FILE_PATH }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
