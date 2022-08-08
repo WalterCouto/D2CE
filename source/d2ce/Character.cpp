@@ -1806,6 +1806,23 @@ bool d2ce::Character::save(bool backup)
                     return false;
                 }
             }
+
+            m_tempfilename = origFileNameBase;
+            m_tempfilename.replace_extension(".ctl");
+            if (std::filesystem::exists(m_tempfilename))
+            {
+                std::filesystem::path tempPath = fileNameBase;
+                tempPath.replace_extension(".ctl");
+                try
+                {
+                    std::filesystem::rename(m_tempfilename, tempname);
+                }
+                catch (std::filesystem::filesystem_error const&)
+                {
+                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                    return false;
+                }
+            }
         }
     }
 
