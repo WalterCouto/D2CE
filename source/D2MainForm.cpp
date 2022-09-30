@@ -388,8 +388,8 @@ protected:
 
 protected:
     CString ProductName = _T("Diablo II: Resurrected Character Editor");
-    CString ProductNameAndVersion = _T("Diablo II: Resurrected Character Editor, Version 2.0.1");
-    CString LegalCopyright = _T("Copyright (c) 2021 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
+    CString ProductNameAndVersion = _T("Diablo II: Resurrected Character Editor, Version 2.1.8");
+    CString LegalCopyright = _T("Copyright (c) 2021-2022 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
     d2ce::EnumCharVersion FileVersion = d2ce::APP_CHAR_VERSION;
 public:
     virtual BOOL OnInitDialog();

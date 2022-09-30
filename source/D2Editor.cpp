@@ -18,7 +18,9 @@
 
 Revision History
 ================
-Version 2.17 (June 13, 2022)
+Version 2.17 (September 30, 2022)
+   - Updated: fix up reading of character files for PTR 2.5
+   - Updated: fix issue with renaming character missing one file
    - Updated: fix up some edge cases for adding runeword to item
    - Updated: fix logic to make sure unique items report the
               highest required level.
