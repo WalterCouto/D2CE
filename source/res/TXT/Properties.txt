@@ -269,3 +269,9 @@ oskill	1	22	item_nonclassskill																											+# to [Skill]	Skill	Min
 state	1	24	state																												State	1	1	Applies a State on the unit	0
 randclassskill	1	36	item_addclassskills		3																									+# to [Class] Skill Levels		Min Class ID	Max Class ID	val1 = # of Skill levels	0
 noconsume		1	item_noconsume																											+# to not Consume Quantity		Min %	Max %		0
+pierce-immunity-cold	1	1	item_pierce_cold_immunity																											Monster Cold Immunity is Sundered		Min %	Max %		0
+pierce-immunity-fire	1	1	item_pierce_fire_immunity																											Monster Fire Immunity is Sundered		Min %	Max %		0
+pierce-immunity-light	1	1	item_pierce_light_immunity																											Monster Lightning Immunity is Sundered		Min %	Max %		0
+pierce-immunity-poison	1	1	item_pierce_poison_immunity																											Monster Poison Immunity is Sundered		Min %	Max %		0
+pierce-immunity-damage	1	1	item_pierce_damage_immunity																											Monster Physical Immunity is Sundered		Min %	Max %		0
+pierce-immunity-magic	1	1	item_pierce_magic_immunity																											Monster Magic Immunity is Sundered		Min %	Max %		0

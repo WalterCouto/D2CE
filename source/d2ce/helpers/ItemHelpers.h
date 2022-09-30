@@ -66,7 +66,7 @@ namespace d2ce
         void applyMaxMagicalAttributes(CharStats& cs, std::vector<MagicalAttribute>& attribs);
         bool formatMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel);
 
-        std::vector<std::reference_wrapper<const ItemType>> getPossibleItems(std::uint16_t gameVersion, EnumCharClass charClass, const CharStats& cs);
+        std::vector<std::reference_wrapper<const ItemType>> getPossibleItems(EnumItemVersion version, std::uint16_t gameVersion, EnumCharClass charClass, const CharStats& cs);
     }
     //---------------------------------------------------------------------------
 

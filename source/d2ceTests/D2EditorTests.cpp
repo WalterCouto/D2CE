@@ -126,6 +126,18 @@ namespace D2EditorTests
         return char98TempPath;
     }
 
+    static const std::filesystem::path& GetChar99TempPathName()
+    {
+        static std::filesystem::path char99TempPath;
+        if (char99TempPath.empty())
+        {
+            char99TempPath = GetCharBaseTempPathName() / L"99";
+            std::filesystem::create_directories(char99TempPath);
+        }
+
+        return char99TempPath;
+    }
+
     static const std::filesystem::path& GetCharTempPathName(d2ce::EnumCharVersion version)
     {
         switch (version)
@@ -148,8 +160,11 @@ namespace D2EditorTests
         case d2ce::EnumCharVersion::v100R:
             return GetChar97TempPathName();
 
-        default:
+        case d2ce::EnumCharVersion::v120:
             return GetChar98TempPathName();
+
+        default:
+            return GetChar99TempPathName();
         }
     }
 
@@ -273,6 +288,17 @@ namespace D2EditorTests
         return char98Path;
     }
 
+    static const std::filesystem::path& GetChar99PathName()
+    {
+        static std::filesystem::path char99Path;
+        if (char99Path.empty())
+        {
+            char99Path = GetCharBasePathName() / L"99";
+        }
+
+        return char99Path;
+    }
+
     static const std::filesystem::path& GetCharPathName(d2ce::EnumCharVersion version)
     {
         switch (version)
@@ -295,8 +321,11 @@ namespace D2EditorTests
         case d2ce::EnumCharVersion::v100R:
             return GetChar97PathName();
 
-        default:
+        case d2ce::EnumCharVersion::v120:
             return GetChar98PathName();
+
+        default:
+            return GetChar99PathName();
         }
     }
 
@@ -561,6 +590,17 @@ namespace D2EditorTests
         {
             TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v120, true);
         }
+
+        TEST_METHOD(TestOpen37)
+        {
+            TestOpenBase("Walter.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen38)
+        {
+            TestOpenBase("immun_charm.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
@@ -780,6 +820,16 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonExport44)
         {
             TestJsonExportBase("Traps.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport45)
+        {
+            TestJsonExportBase("Walter.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport46)
+        {
+            TestJsonExportBase("immun_charm.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
@@ -1047,6 +1097,18 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadCharFile("Traps.json", character, d2ce::EnumCharVersion::v110, true));
+        }
+
+        TEST_METHOD(TestJsonOpen47)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Walter.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen48)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("immun_charm.json", character, d2ce::EnumCharVersion::v140, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

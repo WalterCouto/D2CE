@@ -9090,7 +9090,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"心力を宿す\",\n";
                 ss << u8"    \"ptBR\": \"[fs]Mentalista[ms]Mentalista[fp]Mentalistas[mp]Mentalistas\",\n";
                 ss << u8"    \"ruRU\": \"[ms]телепатический[fs]телепатическая[ns]телепатическое[pl]телепатические\",\n";
-                ss << u8"    \"zhCN\": \"会意者的\"\n";
+                ss << u8"    \"zhCN\": \"心灵师的\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 20748,\n";
@@ -9583,7 +9583,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"ゴーレム王が携えし\",\n";
                 ss << u8"    \"ptBR\": \"[fs]Golêmica[ms]Golêmico[fp]Golêmicas[mp]Golêmicos\",\n";
                 ss << u8"    \"ruRU\": \"[ms]големный[fs]големная[ns]големное[pl]големные\",\n";
-                ss << u8"    \"zhCN\": \"魔像领主的\"\n";
+                ss << u8"    \"zhCN\": \"傀儡领主的\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 20777,\n";
@@ -12864,7 +12864,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"寿命の\",\n";
                 ss << u8"    \"ptBR\": \"das Eras\",\n";
                 ss << u8"    \"ruRU\": \"долговечности\",\n";
-                ss << u8"    \"zhCN\": \"永世之\"\n";
+                ss << u8"    \"zhCN\": \"岁月之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 20970,\n";
@@ -15737,7 +15737,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"ファイアゴーレムの\",\n";
                 ss << u8"    \"ptBR\": \"do Golem de Fogo\",\n";
                 ss << u8"    \"ruRU\": \"огненного голема\",\n";
-                ss << u8"    \"zhCN\": \"火焰魔像之\"\n";
+                ss << u8"    \"zhCN\": \"火焰傀儡之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21139,\n";
@@ -15805,7 +15805,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"アイアンゴーレムの\",\n";
                 ss << u8"    \"ptBR\": \"do Golem de Ferro\",\n";
                 ss << u8"    \"ruRU\": \"железного голема\",\n";
-                ss << u8"    \"zhCN\": \"钢铁魔像之\"\n";
+                ss << u8"    \"zhCN\": \"钢铁傀儡之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21143,\n";
@@ -15873,7 +15873,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"ブラッドゴーレムの\",\n";
                 ss << u8"    \"ptBR\": \"do Golem de Sangue\",\n";
                 ss << u8"    \"ruRU\": \"кровяного голема\",\n";
-                ss << u8"    \"zhCN\": \"鲜血魔像之\"\n";
+                ss << u8"    \"zhCN\": \"鲜血傀儡之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21147,\n";
@@ -16026,7 +16026,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"クレイゴーレムの\",\n";
                 ss << u8"    \"ptBR\": \"do Golem de Barro\",\n";
                 ss << u8"    \"ruRU\": \"глиняного голема\",\n";
-                ss << u8"    \"zhCN\": \"黏土魔像之\"\n";
+                ss << u8"    \"zhCN\": \"黏土傀儡之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21156,\n";
@@ -16757,7 +16757,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"内なる目の\",\n";
                 ss << u8"    \"ptBR\": \"da Visão Interior\",\n";
                 ss << u8"    \"ruRU\": \"внутреннего зрения\",\n";
-                ss << u8"    \"zhCN\": \"内视之\"\n";
+                ss << u8"    \"zhCN\": \"心眼之\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21199,\n";

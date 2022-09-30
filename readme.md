@@ -49,7 +49,7 @@ You can edit the following stats:<br>
 
 ### Known Issues
 
-- Tested with Diablo II: Resurrected v1.3.70161 (PTR 2.4) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
+- Tested with Diablo II: Resurrected v1.4.71336 (PTR 2.5) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - For changes to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
 
@@ -70,18 +70,20 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * https://github.com/dschu012/D2SLib<br>
 * https://github.com/squeek502/d2itemreader<br>
 * https://github.com/nokka/d2s<br>
-* https://github.com/krisives/d2s-format<br>
 * https://tristram-archives.github.io/diablo2_infodump//2013/just%20hosting%20these,%20Downloaded%20from%20Internet/documentation/d2s_save_file_format_1.13d.html<br>
 * https://github.com/andersgong/d2bin2txt/<br>
 * https://diablo.antikrist.org/item-codes/<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.17 (June 13, 2022)**
-- Updated: fix up some edge cases for adding runeword to item
-- Updated: fix logic to make sure unique items report the highest required level
+**Version 2.17 (September 30, 2022)**
+- Updated: fix up reading of character files for PTR 2.5<br>
+- Updated: fix issue with renaming character missing one file<br>
+- Updated: fix up some edge cases for adding runeword to item<br>
+- Updated: fix logic to make sure unique items report the highest required level<br>
 - Updated: "Max Everything" now will make all applicable items have superior quality and upgrade the item tier to the highest possible tier<br>
 <br>
+
 - Added: add support for making an item Superior<br>
 - Added: add support for upgrading item tier to be exceptional or elite depending on character level<br>
 <br>

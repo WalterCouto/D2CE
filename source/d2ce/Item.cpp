@@ -360,13 +360,13 @@ namespace d2ce
 
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
-        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
-        bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool generateMagicalAffixes(const ItemType& itemType, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
+        bool generateRareOrCraftedAffixes(const ItemType& itemType, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
         std::uint32_t generarateRandomDW();
@@ -587,7 +587,7 @@ d2ce::Item::Item(const Item& other)
 {
     *this = other;
 }
-d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion)
+d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isExpansion)
 {
     static Item invalidItem;
     GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) = 0;
@@ -599,20 +599,22 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
         break;
     }
 
-    // We only support simple items
-    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-    if (!itemType.isSimpleItem())
-    {
-        *this = invalidItem;
-        return;
-    }
-
     if (!isExpansion && itemType.isExpansionItem())
     {
         // unsupported item
         *this = invalidItem;
         return;
     }
+
+    if (itemType.isPlayerBodyPart() || itemType.isCharm() || itemType.isJewel())
+    {
+        // ears, jewels or charms can't be created with this method
+        *this = invalidItem;
+        return;
+    }
+
+    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
+    std::memcpy(strcode.data(), itemType.code.c_str(), std::min(itemType.code.size(), size_t(3)));
 
     // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80
     data.reserve(80);
@@ -661,6 +663,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
 
     case EnumItemVersion::v100R:
     case EnumItemVersion::v120:
+    case EnumItemVersion::v140:
     default:
         ItemHelpers::encodeResurrectedItem(strcode, itemCode, itemCodeBitsSet);
         rawVersion = isExpansion ? 5 : 4;
@@ -688,7 +691,10 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
 
     if (ItemVersion > EnumItemVersion::v100)
     {
-        flags[IS_SIMPLE_FLAG_OFFSET] = 1;
+        if (itemType.isSimpleItem())
+        {
+            flags[IS_SIMPLE_FLAG_OFFSET] = 1;
+        }
     }
 
     if (ItemVersion >= EnumItemVersion::v107)
@@ -709,6 +715,20 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
         return;
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    auto quality = EnumItemQuality::NORMAL;
+    if (itemType.isUniqueItem())
+    {
+        quality = EnumItemQuality::UNIQUE;
+    }
+    else if (itemType.isSetItem())
+    {
+        quality = EnumItemQuality::SET;
+    }
+    else if (itemType.isRing() || itemType.isAmulet())
+    {
+        quality = EnumItemQuality::MAGIC;
+    }
 
     size_t bitSize = 0;
     if (ItemVersion < EnumItemVersion::v107)
@@ -747,7 +767,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
                 return;
             }
 
-            value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::NORMAL);
+            value = static_cast<std::underlying_type_t<EnumItemQuality>>(quality);
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
             bitSize = 3;
             if (!setBits(current_bit_offset, bitSize, value))
@@ -756,12 +776,20 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
                 return;
             }
 
-            value = 1;
-            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
-            if (!setBits(current_bit_offset, 8, value))
+            switch (quality)
             {
-                *this = invalidItem;
-                return;
+            case EnumItemQuality::SET:
+            case EnumItemQuality::UNIQUE:
+                value = itemType.getId();
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                break;
             }
 
             value = ItemHelpers::generarateRandomDW();
@@ -772,9 +800,127 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
                 return;
             }
 
-            value = ItemHelpers::generarateRandomDW();
+            if (quality == EnumItemQuality::SET)
+            {
+                value = itemType.getSetItemDWBCode();
+            }
+            else
+            {
+                value = ItemHelpers::generarateRandomDW();
+            }
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
             if (!setBits(current_bit_offset, 32, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            if (itemType.isArmor() || itemType.isWeapon())
+            {
+                value = itemType.durability.Max;
+                bitSize = DURABILITY_MAX_NUM_BITS;
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                if (value > 0)
+                {
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET);
+                    bitSize = DURABILITY_CURRENT_NUM_BITS_108;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                }
+            }
+
+            if (itemType.isGoldItem())
+            {
+                GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
+                value = MAX_GLD_QUANTITY;
+                if (!setBits(current_bit_offset, 1, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                bitSize = GLD_STACKABLE_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+            }
+            else if (itemType.isStackable())
+            {
+                GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
+
+                bitSize = STACKABLE_NUM_BITS;
+                value = std::max(1ui32, itemType.stackable.Max);
+                if (itemType.isKey())
+                {
+                    // we need at lease one key
+                    if (ItemVersion < EnumItemVersion::v107)
+                    {
+                        // TODO: should be handled by loading of file
+                        value = std::min(value, MAX_KEY_QUANTITY_100);
+                    }
+                    value = std::max(1ui32, value);
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+            }
+
+            value = std::min(1ui16, itemType.level.Quality);
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
+            if (!setBits(current_bit_offset, 8, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            // Place item in the buffer
+            current_bit_offset = ITEM_V100_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x0008);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+            bitSize = 16;
+            value = 0;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET);
+            bitSize = 4;
+            value = 0;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = ITEM_V100_ITEMCODE_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x3FFF);
+            if (!setBits(current_bit_offset, bitSize, value))
             {
                 *this = invalidItem;
                 return;
@@ -785,31 +931,275 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
             break;
 
         case EnumItemVersion::v104:
-            // 15 bytes total
-            data.resize((ITEM_V104_SM_NUM_BITS + 7) / 8, 0);
-
-            GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_SM_COORDINATES_BIT_OFFSET + 2;
-            GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_SM_TYPECODE_BIT_OFFSET;
-            GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_SM_NUM_BITS;
-            GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = 0;
-            GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = 0;
-            GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = 0;
-
-            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
-            if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
+            if (isSimpleItem())
             {
-                *this = invalidItem;
-                return;
-            }
+                // 15 bytes total
+                data.resize((ITEM_V104_SM_NUM_BITS + 7) / 8, 0);
 
-            GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_SM_NUM_BITS;
-            max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+                GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_SM_COORDINATES_BIT_OFFSET + 2;
+                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_SM_TYPECODE_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_SM_NUM_BITS;
+                GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = 0;
+                GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = 0;
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = 0;
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+                if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                // Place item in the buffer
+                current_bit_offset = ITEM_V104_SM_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0x03FE) | 0x0001);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
+                bitSize = 32;
+                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000004);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_SM_NUM_BITS;
+                max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+            }
+            else
+            {
+                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_EX_TYPECODE_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
+                nr_of_items_in_sockets_bits = 3;
+                GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
+                GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
+                GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = ITEM_V104_EX_LEVEL_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) = ITEM_V104_EX_DWA_BIT_OFFSET;
+                GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
+
+                // 31 bytes total
+                data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
+                GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_EX_NUM_BITS;
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+                if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                value = static_cast<std::underlying_type_t<EnumItemQuality>>(quality);
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
+                bitSize = 4;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                switch (quality)
+                {
+                case EnumItemQuality::SET:
+                case EnumItemQuality::UNIQUE:
+                    value = itemType.getId();
+
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                    bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                    break;
+                }
+
+                if (itemType.isArmor() || itemType.isWeapon())
+                {
+                    value = itemType.durability.Max;
+                    bitSize = DURABILITY_MAX_NUM_BITS;
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+
+                    if (value > 0)
+                    {
+                        current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET);
+                        bitSize = DURABILITY_CURRENT_NUM_BITS_108;
+                        if (!setBits(current_bit_offset, bitSize, value))
+                        {
+                            *this = invalidItem;
+                            return;
+                        }
+                    }
+                }
+
+                if (itemType.isGoldItem())
+                {
+                    GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
+                    value = MAX_GLD_QUANTITY;
+                    if (!setBits(current_bit_offset, 1, 0))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+
+                    bitSize = GLD_STACKABLE_NUM_BITS;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                }
+                else if (itemType.isStackable())
+                {
+                    GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
+
+                    bitSize = STACKABLE_NUM_BITS;
+                    value = std::max(1ui32, itemType.stackable.Max);
+                    if (itemType.isKey())
+                    {
+                        // we need at lease one key
+                        if (ItemVersion < EnumItemVersion::v107)
+                        {
+                            // TODO: should be handled by loading of file
+                            value = std::min(value, MAX_KEY_QUANTITY_100);
+                        }
+                        value = std::max(1ui32, value);
+                    }
+
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET);
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                }
+
+                value = std::min(1ui16, itemType.level.Quality);
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
+                if (!setBits(current_bit_offset, 8, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                value = ItemHelpers::generarateRandomDW();
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET);
+                if (!setBits(current_bit_offset, 32, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                if (quality == EnumItemQuality::SET)
+                {
+                    value = itemType.getSetItemDWBCode();
+                }
+                else
+                {
+                    value = ItemHelpers::generarateRandomDW();
+                }
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
+                if (!setBits(current_bit_offset, 32, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                // Place item in the buffer
+                current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+                bitSize = 16;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+                bitSize = 8;
+                value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET);
+                bitSize = 4;
+                value = 0;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+                bitSize = 32;
+                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+                bitSize = 16;
+                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_EX_NUM_BITS;
+                max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+            }
             break;
 
         default: // should not happen
@@ -904,7 +1294,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         ItemHelpers::encodeResurrectedItem(strcode, value64, numBitsSet);
         if (!setBits64(current_bit_offset, itemCodeBitsSet, itemCode))
@@ -919,6 +1310,131 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
 
     current_bit_offset = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
     value = 0;
+    bitSize = itemType.isSimpleItem() ? 1 : 3;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    if (itemType.isSimpleItem())
+    {
+        if (itemType.isGoldItem())
+        {
+            GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) + 1;
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
+            value = MAX_GLD_QUANTITY;
+            if (!setBits(current_bit_offset, 1, 0))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            bitSize = GLD_STACKABLE_NUM_BITS;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = current_bit_offset;
+            nr_of_items_in_sockets_bits = 1;
+        }
+        else
+        {
+            GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
+            nr_of_items_in_sockets_bits = 1;
+            if (itemType.isQuestItem())
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
+                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) + 2;
+                nr_of_items_in_sockets_bits = 1;
+
+                value = 0; // TODO need difficulty
+                bitSize = 2;
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+        }
+
+        GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
+        max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+        return;
+    }
+
+    if (itemType.isQuestItem())
+    {
+        GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
+        GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) + 2;
+        nr_of_items_in_sockets_bits = 1;
+
+        value = 0; // TODO need difficulty
+        bitSize = 2;
+
+        current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET);
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+    else
+    {
+        GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
+        nr_of_items_in_sockets_bits = 3;
+    }
+
+    value = 0;
+    bitSize = nr_of_items_in_sockets_bits;
+    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET);
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) = current_bit_offset;
+    auto dwa = ItemHelpers::generarateRandomDW();
+    value = dwa;
+    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET);
+    if (!setBits(current_bit_offset, 32, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = current_bit_offset;
+    value = itemType.level.Quality;
+    bitSize = 7;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = current_bit_offset;
+    value = std::uint32_t(quality);
+    bitSize = 4;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    // If this is TRUE, it means the item has more than one picture associated with it.
+    GET_BIT_OFFSET(ItemOffsets::MULTI_GRAPHIC_BIT_OFFSET) = current_bit_offset;
+    value = itemType.hasMultipleGraphics() ? 1 : 0;
     bitSize = 1;
     if (!setBits(current_bit_offset, bitSize, value))
     {
@@ -927,9 +1443,338 @@ d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strco
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-    GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
-    nr_of_items_in_sockets_bits = 1;
+    if (value != 0)
+    {
+        value = 0;
+        std::uint32_t modulo = itemType.getNumPictureIds();
+        if (modulo > 0)
+        {
+            value = ItemHelpers::generateDWARandomOffset(dwa, 1) % modulo;
+        }
+
+        bitSize = 3;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // If this is TRUE, it means the item is class specific.
+    GET_BIT_OFFSET(ItemOffsets::AUTOAFFIX_BIT_OFFSET) = current_bit_offset;
+    value = itemType.isClassSpecific() ? 1 : 0;
+    bitSize = 1;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+    if (value != 0)
+    {
+        value = itemType.auto_prefix;
+        bitSize = 11;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    MagicalCachev100 generated_magic_affixes;
+    switch (quality)
+    {
+    case EnumItemQuality::MAGIC:
+        if (!ItemHelpers::generateMagicalAffixes(itemType, generated_magic_affixes, itemVersion, GameVersion, getLevel(), 0, true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+        {
+            *this = invalidItem;
+            return;
+        }
+        break;
+
+    case EnumItemQuality::UNIQUE:
+        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
+        {
+            *this = invalidItem;
+            return;
+        }
+        break;
+
+    case EnumItemQuality::SET:
+        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
+        {
+            *this = invalidItem;
+            return;
+        }
+        break;
+
+    default:
+        if (itemType.isQuestItem())
+        {
+            if (!ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
+            {
+                *this = invalidItem;
+                return;
+            }
+        }
+        break;
+    }
+
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = current_bit_offset;
+    GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
+    switch (quality)
+    {
+    case EnumItemQuality::MAGIC:
+        GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
+        value = generated_magic_affixes.Affixes.PrefixId;
+        bitSize = MAGICAL_AFFIX_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        value = generated_magic_affixes.Affixes.SuffixId;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+
+    case EnumItemQuality::SET:
+    case EnumItemQuality::UNIQUE:
+        GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
+        value = itemType.getId();
+
+        bitSize = SET_UNIQUE_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+    }
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_ID_BIT_OFFSET_MARKER) = current_bit_offset;
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER) = current_bit_offset;
+
+    bool isArmor = itemType.isArmor();
+    bool isWeapon = itemType.isWeapon();
+    bool isTome = itemType.isBook();
+    bool isStackable = itemType.isStackable();
+
+    if (isTome)
+    {
+        // If the item is a tome, it will contain 5 extra bits, we're not
+        // interested in these bits, the value is usually 1, but not sure
+        // what it is.
+        GET_BIT_OFFSET(ItemOffsets::TOME_BIT_OFFSET) = current_bit_offset;
+        value = strcode[0] == 'i' ? 1 : 0;
+        bitSize = 5;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+    else if (itemType.isBodyPart())
+    {
+        // If the item is a body part, it will contain 10 extra bits, we're not
+        // interested in these bits, the value is usually 0, but not sure
+        // what it is.
+        GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
+        value = 0;
+        bitSize = MONSTER_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // Realm Data Flag
+    GET_BIT_OFFSET(ItemOffsets::REALM_BIT_OFFSET) = current_bit_offset;
+    value = 0;
+    bitSize = 1;
+    if (!setBits(current_bit_offset, bitSize, value))
+    {
+        *this = invalidItem;
+        return;
+    }
+
+    if (isArmor || isWeapon)
+    {
+        if (isArmor)
+        {
+            // Defense rating
+            const auto& stat = ItemHelpers::getItemStat(getVersion(), "armorclass");
+            GET_BIT_OFFSET(ItemOffsets::DEFENSE_RATING_BIT_OFFSET) = current_bit_offset;
+            value = stat.saveAdd;
+            bitSize = (ItemVersion >= EnumItemVersion::v110) ? DEFENSE_RATING_NUM_BITS : DEFENSE_RATING_NUM_BITS_108;
+            value += std::max(itemType.ac.Min, itemType.ac.Max);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+
+        // Some armor/weapons like phase blades don't have durability
+        GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = current_bit_offset;
+        value = itemType.durability.Base;
+        bitSize = DURABILITY_MAX_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        if (value > 0)
+        {
+            // current durability value (8 bits + unknown single bit)
+            bitSize = (ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+    }
+
+    if (isStackable)
+    {
+        // If the item is a stacked item, e.g. a javelin or something, these 9
+        // bits will contain the quantity.
+        GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET) = current_bit_offset;
+        value = itemType.stackable.Max;
+        bitSize = STACKABLE_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SOCKET_COUNT_BIT_OFFSET_MARKER) = current_bit_offset;
+
+    // If the item is part of a set, these bit will tell us how many lists
+    // of magical properties follow the one regular magical property list.
+    std::uint8_t setBonusBits = 0;
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::BONUS_BITS_BIT_OFFSET_MARKER) = current_bit_offset;
+    if (quality == EnumItemQuality::SET) // TODO
+    {
+        GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) = current_bit_offset;
+        setBonusBits = std::uint8_t(itemType.getSetBonusBits());
+        value = setBonusBits;
+        bitSize = 5;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+    }
+
+    // magical properties
+    GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET) = current_bit_offset;
+    if (!updatePropertyList(current_bit_offset, generated_magic_affixes.MagicalAttributes))
+    {
+        *this = invalidItem;
+        return;
+    }
+
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER) = current_bit_offset;
+    if (setBonusBits > 0) // TODO
+    {
+        // Item has more magical property lists due to being a set item
+        /*GET_BIT_OFFSET(ItemOffsets::SET_BONUS_PROPS_BIT_OFFSET) = current_bit_offset;
+        Json::Value setAttribs = itemRoot[bSerializedFormat ? "StatLists" : "set_attributes"];
+        if (setAttribs.isNull() || !setAttribs.isArray())
+        {
+            return false;
+        }
+
+        auto iter_end = setAttribs.end();
+        auto iter = setAttribs.begin();
+        if (bSerializedFormat)
+        {
+            ++iter;
+            if (iter == iter_end)
+            {
+                return false;
+            }
+
+            if (isRuneword())
+            {
+                ++iter;
+                if (iter == iter_end)
+                {
+                    return false;
+                }
+            }
+        }
+
+        size_t i = 0;
+        for (; i < 5 && iter != iter_end; ++iter, ++i)
+        {
+            node.clear();
+            if (!iter->isNull())
+            {
+                node = bSerializedFormat ? iter->operator[]("Stats") : *iter;
+            }
+
+            if (!parsePropertyList(node, bSerializedFormat, current_bit_offset))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }*/
+    }
+
+    GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER) = current_bit_offset;
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = max_bit_offset;
+}
+//---------------------------------------------------------------------------
+d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion)
+{
+    static Item invalidItem;
+    GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) = 0;
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        break;
+    }
+
+    // We only support simple items
+    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+    if (!itemType.isSimpleItem())
+    {
+        *this = invalidItem;
+        return;
+    }
+
+    if (!isExpansion && itemType.isExpansionItem())
+    {
+        // unsupported item
+        *this = invalidItem;
+        return;
+    }
+
+    *this = Item(itemVersion, itemType, isExpansion);
 }
 //---------------------------------------------------------------------------
 d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path)
@@ -1079,7 +1924,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         if (isExpansion && bIsResurrected)
         {
             if (readItem(itemVersion, isExpansion, charfile) && verifyItemConsistency())
@@ -1099,18 +1945,23 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
     auto importFromVersion = EnumItemVersion::v110;
     if (bIsResurrected)
     {
-        importFromVersion = EnumItemVersion::v120;
+        importFromVersion = EnumItemVersion::v140;
         if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
-        {
-            // try D2R v1.0.x - v1.1.x
-            std::rewind(charfile);
-            convertFrom.clear();
-            importFromVersion = EnumItemVersion::v100R;
+        { 
+            // try D2R PTR 2.4
+            importFromVersion = EnumItemVersion::v120;
             if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
             {
-                // failed to import
-                std::fclose(charfile);
-                return;
+                // try D2R v1.0.x - v1.1.x
+                std::rewind(charfile);
+                convertFrom.clear();
+                importFromVersion = EnumItemVersion::v100R;
+                if (!convertFrom.readItem(importFromVersion, isExpansion, charfile) && !convertFrom.verifyItemConsistency())
+                {
+                    // failed to import
+                    std::fclose(charfile);
+                    return;
+                }
             }
         }
         std::fclose(charfile);
@@ -1193,7 +2044,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         itemRoot["Version"] = "101";
         if (itemRoot.isMember("IsV104"))
         {
@@ -2859,7 +3711,8 @@ void d2ce::Item::updateSocketedItemCount()
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
             nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
@@ -3082,7 +3935,8 @@ d2ce::EnumItemLocation d2ce::Item::getLocation() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         loc = (std::uint8_t)readBits(GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET), 3);
 
@@ -3138,7 +3992,8 @@ std::uint8_t d2ce::Item::getPositionX() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         return (std::uint8_t)readBits(GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET), 4);
     }
@@ -3169,7 +4024,8 @@ std::uint8_t d2ce::Item::getPositionY() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         return (std::uint8_t)readBits(GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) + 4, 4);
     }
@@ -3292,7 +4148,8 @@ d2ce::EnumAltItemLocation d2ce::Item::getAltPositionId() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         loc = (std::uint8_t)readBits(GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET), 3);
         if (loc > static_cast<std::underlying_type_t<EnumAltItemLocation>>(EnumAltItemLocation::STASH))
@@ -3381,7 +4238,8 @@ bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
         return true;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         ItemHelpers::getResurrectedItemCode(data, GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET), strcode);
         return true;
@@ -3496,7 +4354,8 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4>& newgem)
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         ItemHelpers::encodeResurrectedItem(newgem, code, numBitsSet);
         break;
@@ -3513,7 +4372,8 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4>& newgem)
         return true;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         updateResurrectedItemCode(code, numBitsSet);
         return true;
@@ -4139,7 +4999,8 @@ std::uint32_t d2ce::Item::getId() const
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + 95;
             break;
@@ -4211,7 +5072,8 @@ std::uint8_t d2ce::Item::getLevel() const
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + 127;
             break;
@@ -4269,7 +5131,8 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if (isSimpleItem())
         {
@@ -4421,7 +5284,7 @@ std::uint16_t d2ce::Item::getSetItemId() const
                 return 0ui16;
             }
 
-            auto id = itemType.getSetItemId();
+            auto id = itemType.getId();
             return (id >= MAXUINT16) ? 0 : id;
         }
     }
@@ -4718,7 +5581,8 @@ bool d2ce::Item::hasMultipleGraphics() const
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::MULTI_GRAPHIC_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + 138;
             break;
@@ -4765,7 +5629,8 @@ bool d2ce::Item::isAutoAffix() const
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::AUTOAFFIX_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + 139;
             if (hasMultipleGraphics())
@@ -5855,7 +6720,8 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
 
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         durability.Max = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET), DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
@@ -5925,7 +6791,8 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if (!updateBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET), DURABILITY_MAX_NUM_BITS, attrib.Max))
         {
@@ -6204,7 +7071,8 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SOCKET_COUNT_BIT_OFFSET_MARKER) == 0)
         {
@@ -6729,7 +7597,8 @@ bool d2ce::Item::upgradeTier(const CharStats& cs)
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         ItemHelpers::encodeResurrectedItem(strcode, code, numBitsSet);
         break;
@@ -6750,7 +7619,8 @@ bool d2ce::Item::upgradeTier(const CharStats& cs)
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if(!updateResurrectedItemCode(code, numBitsSet))
         {
@@ -8193,7 +9063,8 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
         break;
 
-    case EnumItemVersion::v120: // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if (isExpansionItem())
         {
@@ -8315,7 +9186,8 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         itemRoot["Version"] = "101";
         if (itemRoot.isMember("IsV104"))
         {
@@ -8735,7 +9607,8 @@ std::uint8_t d2ce::Item::getSocketCount() const
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         if (GET_BIT_OFFSET(ItemOffsets::SOCKET_COUNT_BIT_OFFSET) == 0)
         {
@@ -8777,7 +9650,8 @@ std::uint8_t d2ce::Item::getSocketedItemCount() const
         case EnumItemVersion::v109:  // v1.09 item
         case EnumItemVersion::v110:  // v1.10 - v1.14d item
         case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-        case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
         default:
             GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET);
             nr_of_items_in_sockets_bits = isSimpleItem() ? 1 : 3;
@@ -12194,6 +13068,7 @@ bool d2ce::Item::verifyItemConsistency() const
 
     case EnumItemVersion::v100R:
     case EnumItemVersion::v120:
+    case EnumItemVersion::v140:
         switch (getRawVersion())
         {
         case 4:
@@ -12492,7 +13367,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     {
         if (ItemVersion == EnumItemVersion::v100)
         {
-            // Check unknown bits that indicate it's an 1.04 - 1.06 not 1.03 or older
+            // Check unknown bits that indicate it's an 1.04 - 1.06 not 1.03 or less
             if (readBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + ITEM_TYPE_BIT_OFFSET, 2) != 0)
             {
                 ItemVersion = EnumItemVersion::v104; // v1.04 - v1.06 item
@@ -12859,7 +13734,8 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         ItemHelpers::encodeResurrectedItem(strcode, value64, numBitsSet);
         bitSize = numBitsSet;
@@ -12923,7 +13799,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 node = itemRoot[bSerializedFormat ? "QuestDifficulty" : "quest_difficulty"];
                 if (!node.isNull())
                 {
-                    // can hold up to 4095 gold pieces
                     value = std::uint32_t(node.asInt64());
                 }
 
@@ -13571,8 +14446,6 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         // what it is.
         GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
         value = 0;
-
-        value = 0;
         node = itemRoot[bSerializedFormat ? "FileIndex" : "file_index"];
         if (!node.isNull())
         {
@@ -13643,6 +14516,10 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
                 }
             }
         }
+    }
+    else if (!setBits(current_bit_offset, bitSize, value))
+    {
+        return false;
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
@@ -14037,7 +14914,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         break;
 
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         switch (rawVersion)
         {
@@ -16621,14 +17499,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
         GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (!getItemCode(strcode))
-    {
-        // should not happen
-        return false;
-    }
-
-    if (!ItemHelpers::generateMagicalAffixes(strcode, magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    if (!ItemHelpers::generateMagicalAffixes(getItemTypeHelper(), magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -16669,7 +17540,7 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
     }
 
 
-    attrib.Id = itemType.getSetItemId();
+    attrib.Id = itemType.getId();
     if (attrib.Id >= MAXUINT16)
     {
         attrib.Id = 0;
@@ -16776,14 +17647,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
-    if (!getItemCode(strcode))
-    {
-        // should not happen
-        return false;
-    }
-
-    if (!ItemHelpers::generateRareOrCraftedAffixes(strcode, rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (rare_affixes_v100.Id == MAXUINT16))
+    if (!ItemHelpers::generateRareOrCraftedAffixes(getItemTypeHelper(), rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }
@@ -16811,14 +17675,7 @@ bool d2ce::Item::hasMultipleGraphicsv100() const
     }
 
     const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-    switch (itemType.code_v100)
-    {
-    case 0x117: // amulet
-    case 0x119: // rings
-        return true;
-    }
-
-    return false;
+    return itemType.hasMultipleGraphics();
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::Item::getPictureIdv100() const
@@ -16829,19 +17686,10 @@ std::uint8_t d2ce::Item::getPictureIdv100() const
         return false;
     }
 
-    std::uint32_t modulo = 3;
     const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-    switch (itemType.code_v100)
+    std::uint32_t modulo = itemType.getNumPictureIds();
+    if (modulo == 0)
     {
-    case 0x117: // amulet
-        modulo = 3;
-        break;
-
-    case 0x119: // rings
-        modulo = 5;
-        break;
-
-    default:
         return 0;
     }
 
@@ -17078,11 +17926,9 @@ void d2ce::Items::findSharedStashItems()
     }
 
     ItemDimensions dimensions;
-    std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     for (auto& item : Inventory)
     {
-        item.getItemCode(strcode);
-        const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
+        const auto& itemType = item.getItemTypeHelper();
         if (itemType.isStackable())
         {
             Stackables.push_back(item);
@@ -18093,9 +18939,14 @@ bool d2ce::Items::readItems(const Character& charInfo, std::FILE* charfile)
         GameVersion = isExpansion ? 100 : 1;
         break;
 
-    case EnumCharVersion::v120: // v1.2.x+ Diablo II: Resurrected Patch 2.4
-    default:
+    case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
         Version = EnumItemVersion::v120;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    default:
+        Version = EnumItemVersion::v140;
         GameVersion = isExpansion ? 100 : 1;
         break;
     }
@@ -18159,9 +19010,14 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
         GameVersion = 100;
         break;
 
-    case EnumCharVersion::v120: // v1.2.x+ Diablo II: Resurrected Patch 2.4
-    default:
+    case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
         Version = EnumItemVersion::v120;
+        GameVersion = 100;
+        break;
+
+    case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    default:
+        Version = EnumItemVersion::v140;
         GameVersion = 100;
         break;
     }
@@ -18218,9 +19074,14 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, con
         GameVersion = isExpansion ? 100 : 1;
         break;
 
-    case EnumCharVersion::v120: // v1.2.x+ Diablo II: Resurrected Patch 2.4
-    default:
+    case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
         Version = EnumItemVersion::v120;
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+
+    case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    default:
+        Version = EnumItemVersion::v140;
         GameVersion = isExpansion ? 100 : 1;
         break;
     }
@@ -18262,7 +19123,8 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMerc
     case EnumItemVersion::v109:  // v1.09 item
     case EnumItemVersion::v110:  // v1.10 - v1.14d item
     case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
-    case EnumItemVersion::v120:  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         GameVersion = isExpansion ? 100 : 1;
         break;
@@ -18554,9 +19416,13 @@ void d2ce::Items::asJson(Json::Value& parent, std::uint32_t charLevel, EnumCharV
         itemVersion = EnumItemVersion::v100R;
         break;
 
-    case EnumCharVersion::v120: /// v1.2.x+ Diablo II: Resurrected Patch 2.4
-    default:
+    case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
         itemVersion = EnumItemVersion::v120;
+        break;
+
+    case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    default:
+        itemVersion = EnumItemVersion::v140;
         break;
     }
 

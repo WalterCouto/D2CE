@@ -34,10 +34,11 @@ namespace d2ce
         v109,  // v1.09 item
         v110,  // v1.10 - v1.14d item
         v100R, // v1.0.x - v1.1.x Diablo II: Resurrected item
-        v120,  // v1.2.x+ Diablo II: Resurrected Patch 2.4 item
+        v120,  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        v140,  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     };
 
-    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v120; // default item version used by application
+    constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v140; // default item version used by application
 
     // default game version used by application
     // refers to the "version" column in resource files used internally

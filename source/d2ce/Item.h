@@ -113,6 +113,7 @@ namespace d2ce
 
         std::uint16_t getRawVersion() const;
 
+        Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isExpansion = true);
         Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
         Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path); // read D2I item
 

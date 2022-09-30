@@ -6387,7 +6387,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"不浄なるヴェンター\",\n";
                 ss << u8"    \"ptBR\": \"Ventar, o Profano\",\n";
                 ss << u8"    \"ruRU\": \"Вентар Нечестивый\",\n";
-                ss << u8"    \"zhCN\": \"凡塔·不洁者\"\n";
+                ss << u8"    \"zhCN\": \"温塔尔·不洁者\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 21855,\n";

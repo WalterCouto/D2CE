@@ -301,6 +301,12 @@ namespace d2ce
                 ss << u8"state\t1\t24\tstate\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tState\t1\t1\tApplies a State on the unit\t0\n";
                 ss << u8"randclassskill\t1\t36\titem_addclassskills\t\t3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t+# to [Class] Skill Levels\t\tMin Class ID\tMax Class ID\tval1 = # of Skill levels\t0\n";
                 ss << u8"noconsume\t\t1\titem_noconsume\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t+# to not Consume Quantity\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-cold\t1\t1\titem_pierce_cold_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Cold Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-fire\t1\t1\titem_pierce_fire_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Fire Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-light\t1\t1\titem_pierce_light_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Lightning Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-poison\t1\t1\titem_pierce_poison_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Poison Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-damage\t1\t1\titem_pierce_damage_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Physical Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"pierce-immunity-magic\t1\t1\titem_pierce_magic_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Magic Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
                 defaultTxt = ss.str();
             }
             return defaultTxt;

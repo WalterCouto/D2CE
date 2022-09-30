@@ -2206,7 +2206,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
-      "transform_color": "lred",
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 7,

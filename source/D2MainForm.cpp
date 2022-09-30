@@ -3279,19 +3279,25 @@ void CD2MainForm::OnFileSaveAsVersion()
         if (version != d2ce::EnumCharVersion::v110)
         {
             convertToVersion = d2ce::EnumCharVersion::v110;
-            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("1.10 - 1.14d"));
         }
 
         if (version != d2ce::EnumCharVersion::v100R)
         {
             convertToVersion = d2ce::EnumCharVersion::v100R;
-            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v100R), _T("D2R 1.0.x - 1.1.x"));
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R 1.0.x - 1.1.x"));
         }
 
         if (version != d2ce::EnumCharVersion::v120)
         {
             convertToVersion = d2ce::EnumCharVersion::v120;
-            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v120), _T("D2R PTR 2.4+"));
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R PTR 2.4"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v140)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v140;
+            fileDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R PTR 2.5+"));
         }
         fileDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
         fileDialog.EndVisualGroup();
@@ -3322,19 +3328,25 @@ void CD2MainForm::OnFileSaveAsVersion()
         if (version != d2ce::EnumCharVersion::v110)
         {
             convertToVersion = d2ce::EnumCharVersion::v110;
-            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v110), _T("1.10 - 1.14d"));
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("1.10 - 1.14d"));
         }
 
         if (version != d2ce::EnumCharVersion::v100R)
         {
             convertToVersion = d2ce::EnumCharVersion::v100R;
-            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v100R), _T("D2R 1.0.x - 1.1.x"));
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R 1.0.x - 1.1.x"));
         }
 
         if (version != d2ce::EnumCharVersion::v120)
         {
             convertToVersion = d2ce::EnumCharVersion::v120;
-            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(d2ce::EnumCharVersion::v120), _T("D2R PTR 2.4+"));
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R PTR 2.4"));
+        }
+
+        if (version != d2ce::EnumCharVersion::v140)
+        {
+            convertToVersion = d2ce::EnumCharVersion::v140;
+            folderDialog.AddControlItem(combo_id, static_cast<DWORD>(convertToVersion), _T("D2R PTR 2.5+"));
         }
         folderDialog.SetSelectedControlItem(combo_id, static_cast<DWORD>(convertToVersion));
         folderDialog.EndVisualGroup();
@@ -3734,6 +3746,9 @@ void CD2MainForm::UpdateAppTitle()
             }
             switch (CharInfo.getVersion())
             {
+            case d2ce::EnumCharVersion::v120:
+                newAppTitle += _T(" (PTR 2.4)");
+                break;
             case d2ce::EnumCharVersion::v100R:
                 newAppTitle += _T(" (Version 1.0.x - 1.1.x)");
                 break;

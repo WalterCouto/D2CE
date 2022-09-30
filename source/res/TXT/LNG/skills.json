@@ -4094,7 +4094,7 @@
     "jaJP": "ファイアゴーレム",
     "ptBR": "Golem de Fogo",
     "ruRU": "Огненный голем",
-    "zhCN": "火焰魔像"
+    "zhCN": "火焰傀儡"
   },
   {
     "id": 3123,
@@ -4111,7 +4111,7 @@
     "jaJP": "アイアンゴーレム",
     "ptBR": "Golem de Ferro",
     "ruRU": "Железный голем",
-    "zhCN": "钢铁魔像"
+    "zhCN": "钢铁傀儡"
   },
   {
     "id": 3124,
@@ -4128,7 +4128,7 @@
     "jaJP": "ブラッドゴーレム",
     "ptBR": "Golem de Sangue",
     "ruRU": "Кровяной голем",
-    "zhCN": "鲜血魔像"
+    "zhCN": "鲜血傀儡"
   },
   {
     "id": 3125,
@@ -4145,7 +4145,7 @@
     "jaJP": "クレイゴーレム",
     "ptBR": "Golem de Barro",
     "ruRU": "Глиняный голем",
-    "zhCN": "黏土魔像"
+    "zhCN": "黏土傀儡"
   },
   {
     "id": 3179,
@@ -5046,7 +5046,7 @@
     "jaJP": "ゴーレムのレベル: ",
     "ptBR": "Nível do golem: ",
     "ruRU": "Уровень голема: ",
-    "zhCN": "魔像等级:"
+    "zhCN": "傀儡等级:"
   },
   {
     "id": 4300,
@@ -6601,15 +6601,15 @@
     "enUS": "Left Throw",
     "zhTW": "左手投擲",
     "deDE": "Wurf links",
-    "esES": "Lanzamiento izquierdo",
+    "esES": "Lanzamiento izq.",
     "frFR": "Jet main gauche",
     "itIT": "Lancio Sinistro",
     "koKR": "왼손 투척",
     "plPL": "Rzut z lewej ręki",
-    "esMX": "Arrojar con la mano izquierda",
+    "esMX": "Arrojar con izq.",
     "jaJP": "左手投げ",
     "ptBR": "Arremesso Esquerdo",
-    "ruRU": "Бросок левой рукой",
+    "ruRU": "Бросок левой",
     "zhCN": "左手投掷"
   },
   {
@@ -6831,7 +6831,7 @@
     "jaJP": "内なる目",
     "ptBR": "Visão Interior",
     "ruRU": "Внутреннее зрение",
-    "zhCN": "内视"
+    "zhCN": "心眼"
   },
   {
     "id": 4406,
@@ -6882,7 +6882,7 @@
     "jaJP": "内なる目",
     "ptBR": "Visão Interior",
     "ruRU": "Внутреннее зрение",
-    "zhCN": "内视"
+    "zhCN": "心眼"
   },
   {
     "id": 4409,
@@ -11055,12 +11055,12 @@
     "enUS": "Raise Skeleton",
     "zhTW": "復生骷髏",
     "deDE": "Skelett erwecken",
-    "esES": "Resurrección de esqueletos",
+    "esES": "Res. de esqueletos",
     "frFR": "Lever squelette",
     "itIT": "Schel. Risorti",
     "koKR": "해골 되살리기",
     "plPL": "Ożywienie Szkieletu",
-    "esMX": "Resurrección de esqueletos",
+    "esMX": "Res. de esqueletos",
     "jaJP": "スケルトン召喚",
     "ptBR": "Reviver Esqueleto",
     "ruRU": "Скелет",
@@ -11327,7 +11327,7 @@
     "enUS": "Corpse Exp.",
     "zhTW": "屍爆",
     "deDE": "Kadaverexplosion",
-    "esES": "Explosión de cadáveres",
+    "esES": "Expl. de cadáveres",
     "frFR": "Expl. macabre",
     "itIT": "Espl. Cadaver.",
     "koKR": "시체 폭발",
@@ -11353,7 +11353,7 @@
     "jaJP": "クレイゴーレム",
     "ptBR": "Golem de Barro",
     "ruRU": "Глиняный голем",
-    "zhCN": "黏土魔像"
+    "zhCN": "黏土傀儡"
   },
   {
     "id": 4674,
@@ -11370,7 +11370,7 @@
     "jaJP": "土のゴーレムを作って戦わせる",
     "ptBR": "cria um golem para lutar por você",
     "ruRU": "Создает голема, который помогает вам в бою.",
-    "zhCN": "制造一个魔像为你而战"
+    "zhCN": "制造一个傀儡为你而战"
   },
   {
     "id": 4675,
@@ -11387,7 +11387,7 @@
     "jaJP": "土からゴーレムを\n作り出して戦わせる",
     "ptBR": "cria um golem da terra\npara lutar ao seu lado",
     "ruRU": "Создает из земли голема.",
-    "zhCN": "用黏土制造一个魔像\n和你并肩战斗"
+    "zhCN": "用黏土制造一个傀儡\n和你并肩战斗"
   },
   {
     "id": 4676,
@@ -11404,7 +11404,7 @@
     "jaJP": "クレイゴーレム",
     "ptBR": "Golem de Barro",
     "ruRU": "Глиняный голем",
-    "zhCN": "黏土魔像"
+    "zhCN": "黏土傀儡"
   },
   {
     "id": 4677,
@@ -11625,7 +11625,7 @@
     "jaJP": "ゴーレムマスター",
     "ptBR": "Maestria do Golem",
     "ruRU": "Мастер големов",
-    "zhCN": "魔像精通"
+    "zhCN": "傀儡精通"
   },
   {
     "id": 4690,
@@ -11642,7 +11642,7 @@
     "jaJP": "ゴーレムのライフと移動速度が上がる",
     "ptBR": "Aumenta a velocidade e os pontos de vida dos golens",
     "ruRU": "Увеличивает скорость и здоровье големов.",
-    "zhCN": "强化所有魔像的速度和生命"
+    "zhCN": "强化所有傀儡的速度和生命"
   },
   {
     "id": 4691,
@@ -11659,7 +11659,7 @@
     "jaJP": "召喚するゴーレムのライフと移動速度が上がる",
     "ptBR": "Aumenta a velocidade e os pontos de vida de todos os seus golens",
     "ruRU": "Увеличивает скорость и здоровье големов.",
-    "zhCN": "提高所有魔像的速度和生命"
+    "zhCN": "提高所有傀儡的速度和生命"
   },
   {
     "id": 4692,
@@ -11676,7 +11676,7 @@
     "jaJP": "ゴーレムマスター",
     "ptBR": "Maestria do Golem",
     "ruRU": "Мастер големов",
-    "zhCN": "魔像精通"
+    "zhCN": "傀儡精通"
   },
   {
     "id": 4693,
@@ -11734,8 +11734,8 @@
     "Key": "skillan80",
     "enUS": "Skeletal Mage",
     "zhTW": "骷髏法師",
-    "deDE": "Skelettmagier erwecken",
-    "esES": "Resurrección de magos esqueléticos",
+    "deDE": "Skelettmagier",
+    "esES": "Mago esquelético",
     "frFR": "Mage squelette",
     "itIT": "Maghi Risorti",
     "koKR": "해골 마법학자",
@@ -12033,7 +12033,7 @@
     "jaJP": "ブラッドゴーレム",
     "ptBR": "Golem de Sangue",
     "ruRU": "Кровяной голем",
-    "zhCN": "鲜血魔像"
+    "zhCN": "鲜血傀儡"
   },
   {
     "id": 4714,
@@ -12050,7 +12050,7 @@
     "jaJP": "奪ったライフを術者と共有するゴーレムを作る",
     "ptBR": "um golem que compartilha os pontos de vida que ele rouba",
     "ruRU": "Голем, который похищает здоровье и передает его некроманту.",
-    "zhCN": "一个可以窃取并分享生命力的魔像"
+    "zhCN": "一个可以窃取并分享生命力的傀儡"
   },
   {
     "id": 4715,
@@ -12067,7 +12067,7 @@
     "jaJP": "敵から奪ったライフを術者と共有する\nゴーレムを作り出す",
     "ptBR": "cria um golem que compartilha com você os pontos de vida que\nele rouba",
     "ruRU": "Создает голема, который передает\nвам похищаемое им здоровье.",
-    "zhCN": "制造一个魔像, 与你分享\n它所偷取的生命"
+    "zhCN": "制造一个傀儡, 与你分享\n它所偷取的生命"
   },
   {
     "id": 4716,
@@ -12084,7 +12084,7 @@
     "jaJP": "ブラッドゴーレム",
     "ptBR": "Golem de Sangue",
     "ruRU": "Кровяной голем",
-    "zhCN": "鲜血魔像"
+    "zhCN": "鲜血傀儡"
   },
   {
     "id": 4717,
@@ -12373,7 +12373,7 @@
     "jaJP": "アイアンゴーレム",
     "ptBR": "Golem de Ferro",
     "ruRU": "Железный голем",
-    "zhCN": "钢铁魔像"
+    "zhCN": "钢铁傀儡"
   },
   {
     "id": 4734,
@@ -12390,7 +12390,7 @@
     "jaJP": "金属製のアイテムからゴーレムを作る",
     "ptBR": "transforma um item em um golem",
     "ruRU": "Создает голема из предмета.",
-    "zhCN": "从一个物品中制造出魔像"
+    "zhCN": "从一个物品中制造出傀儡"
   },
   {
     "id": 4735,
@@ -12407,7 +12407,7 @@
     "jaJP": "金属製のアイテムをゴーレムに変異させる\nゴーレムは媒体となるアイテムの性質を受け継ぐ",
     "ptBR": "transforma um item metálico em um golem que ganha\nas propriedades do item",
     "ruRU": "Превращает металлический предмет в голема.\nкоторый получает свойства этого предмета.",
-    "zhCN": "将一个金属物品变为魔像\n获得物品上的属性"
+    "zhCN": "将一个金属物品变为傀儡\n获得物品上的属性"
   },
   {
     "id": 4736,
@@ -12424,7 +12424,7 @@
     "jaJP": "アイアンゴーレム",
     "ptBR": "Golem de Ferro",
     "ruRU": "Железный голем",
-    "zhCN": "钢铁魔像"
+    "zhCN": "钢铁傀儡"
   },
   {
     "id": 4737,
@@ -12482,16 +12482,16 @@
     "Key": "skillan91",
     "enUS": "Lower Resist",
     "zhTW": "降低抗性",
-    "deDE": "Widerstandsschwund",
-    "esES": "Reducción de resistencia",
+    "deDE": "Wid.-Schwund",
+    "esES": "Red. de resistencia",
     "frFR": "Résist. moindre",
     "itIT": "Resist. Ridotte",
     "koKR": "저항 감소",
     "plPL": "Zmniejszenie Odprn.",
-    "esMX": "Reducción de resistencia",
+    "esMX": "Reducción de resist.",
     "jaJP": "耐性低下",
     "ptBR": "Diminuir Resistência",
-    "ruRU": "Снижение сопротивления",
+    "ruRU": "Снижение сопр.",
     "zhCN": "降低抗性"
   },
   {
@@ -12645,7 +12645,7 @@
     "jaJP": "ファイアゴーレム",
     "ptBR": "Golem de Fogo",
     "ruRU": "Огненный голем",
-    "zhCN": "火焰魔像"
+    "zhCN": "火焰傀儡"
   },
   {
     "id": 4750,
@@ -12662,7 +12662,7 @@
     "jaJP": "炎のゴーレムを作る",
     "ptBR": "cria um golem de fogo",
     "ruRU": "Создает огненного голема.",
-    "zhCN": "制造一个火焰魔像"
+    "zhCN": "制造一个火焰傀儡"
   },
   {
     "id": 4751,
@@ -12679,7 +12679,7 @@
     "jaJP": "受ける火炎ダメージをライフに\n変換するゴーレムを作り出す",
     "ptBR": "cria um golem que converte o dano ígneo\nque recebe em pontos de vida",
     "ruRU": "Создает голема, который восполняет\nздоровье, получая урон от огня.",
-    "zhCN": "制造出魔像, 将受到的火焰伤害\n转化为生命"
+    "zhCN": "制造出傀儡, 将受到的火焰伤害\n转化为生命"
   },
   {
     "id": 4752,
@@ -12696,7 +12696,7 @@
     "jaJP": "ファイアゴーレム",
     "ptBR": "Golem de Fogo",
     "ruRU": "Огненный голем",
-    "zhCN": "火焰魔像"
+    "zhCN": "火焰傀儡"
   },
   {
     "id": 4753,
@@ -13094,8 +13094,8 @@
     "Key": "skillan100",
     "enUS": "Resist Fire",
     "zhTW": "抗火",
-    "deDE": "Widerstand gegen Feuer",
-    "esES": "Resistencia al fuego",
+    "deDE": "Wid. gegen Feuer",
+    "esES": "Res. al fuego",
     "frFR": "Résist. au feu",
     "itIT": "Resist. Fuoco",
     "koKR": "화염 저항",
@@ -13103,7 +13103,7 @@
     "esMX": "Resistencia al fuego",
     "jaJP": "火炎耐性",
     "ptBR": "Resistência a Fogo",
-    "ruRU": "Сопротивление огню",
+    "ruRU": "Сопр. огню",
     "zhCN": "抗火"
   },
   {
@@ -13434,8 +13434,8 @@
     "Key": "skillan105",
     "enUS": "Resist Cold",
     "zhTW": "抗寒",
-    "deDE": "Widerstand gegen Kälte",
-    "esES": "Resistencia al frío",
+    "deDE": "Wid. gegen Kälte",
+    "esES": "Res. al frío",
     "frFR": "Résist. au froid",
     "itIT": "Resist. Freddo",
     "koKR": "냉기 저항",
@@ -13443,7 +13443,7 @@
     "esMX": "Resistencia al frío",
     "jaJP": "冷気耐性",
     "ptBR": "Resistência a Gelo",
-    "ruRU": "Сопротивление льду",
+    "ruRU": "Сопр. льду",
     "zhCN": "抗冰"
   },
   {
@@ -13774,8 +13774,8 @@
     "Key": "skillan110",
     "enUS": "R. Lightning",
     "zhTW": "抗電",
-    "deDE": "Widerstand gegen Blitze",
-    "esES": "Resistencia a los rayos",
+    "deDE": "Wid. gegen Blitze",
+    "esES": "Res. a los rayos",
     "frFR": "Rés. à la foudre",
     "itIT": "Resist. Fulmine",
     "koKR": "번개 저항",
@@ -13783,7 +13783,7 @@
     "esMX": "Resistencia al rayo",
     "jaJP": "電撃耐性",
     "ptBR": "Resist. Elétrica",
-    "ruRU": "Сопротивление молнии",
+    "ruRU": "Сопр. молнии",
     "zhCN": "抗雷"
   },
   {
@@ -16818,7 +16818,7 @@
     "enUS": "Battle Cmd",
     "zhTW": "戰鬥指揮",
     "deDE": "Kampfaufruf",
-    "esES": "Instrucción de batalla",
+    "esES": "Instr. de batalla",
     "frFR": "Cmd. de bataille",
     "itIT": "Comando Batt.",
     "koKR": "전투 명령",
@@ -16886,12 +16886,12 @@
     "enUS": "Identify",
     "zhTW": "鑑定",
     "deDE": "Identifizieren",
-    "esES": "Pergamino de identificación",
+    "esES": "Ident.",
     "frFR": "Identifier",
     "itIT": "Identificazione",
     "koKR": "감별",
     "plPL": "Identyfikacja",
-    "esMX": "Pergamino de identificación",
+    "esMX": "Identif.",
     "jaJP": "鑑定",
     "ptBR": "Identificação",
     "ruRU": "Распознание предметов",
@@ -16954,15 +16954,15 @@
     "enUS": "Identify",
     "zhTW": "鑑定",
     "deDE": "Identifizieren",
-    "esES": "Tomo de identificación",
+    "esES": "Identificar",
     "frFR": "Identifier",
     "itIT": "Identificazione",
     "koKR": "감별",
     "plPL": "Identyfikacja",
-    "esMX": "Tomo de identificación",
+    "esMX": "Tomo de identif.",
     "jaJP": "鑑定",
     "ptBR": "Identificação",
-    "ruRU": "Распознание предметов",
+    "ruRU": "Распознание",
     "zhCN": "鉴定"
   },
   {
@@ -17022,15 +17022,15 @@
     "enUS": "Town Portal",
     "zhTW": "城鎮傳送",
     "deDE": "Stadtportal",
-    "esES": "Pergamino del portal de la ciudad",
+    "esES": "Portal",
     "frFR": "Portail retour",
     "itIT": "Portale Cittad.",
     "koKR": "마을 차원문",
     "plPL": "Miejski portal",
-    "esMX": "Portal al poblado",
+    "esMX": "Portal",
     "jaJP": "タウン・ポータル",
     "ptBR": "Portal da Cidade",
-    "ruRU": "Возвращение",
+    "ruRU": "Портал в город",
     "zhCN": "城镇传送门"
   },
   {
@@ -17039,7 +17039,7 @@
     "enUS": "Tome of Town Portal",
     "zhTW": "城鎮傳送之書",
     "deDE": "Foliant des Stadtportals",
-    "esES": "Tomo del portal de la ciudad",
+    "esES": "Tomo del portal",
     "frFR": "Tome de portail de retour en ville",
     "itIT": "Tomo del Portale Cittadino",
     "koKR": "마을 차원문의 고서",
@@ -17090,7 +17090,7 @@
     "enUS": "Town Portal",
     "zhTW": "城鎮傳送",
     "deDE": "Stadtportal",
-    "esES": "Tomo del portal de la ciudad",
+    "esES": "Tomo del portal",
     "frFR": "Portail retour",
     "itIT": "Portale Cittad.",
     "koKR": "마을 차원문",
@@ -28523,7 +28523,7 @@
     "jaJP": "コープスエクスプロージョンのダメージ: 死体のライフの%d - %d%%",
     "ptBR": "Dano de Explodir Cadáver: %d-%d%% de pontos de vida de cadáver",
     "ruRU": "Урон от взрыва трупа: %d–%d%% здоровья убитого монстра",
-    "zhCN": "尸爆伤害: 尸体生命值的%d-%d%%"
+    "zhCN": "邪爆伤害: 尸体生命值的%d-%d%%"
   },
   {
     "id": 10997,
@@ -29908,12 +29908,12 @@
     "enUS": "Sum Spt Wolf",
     "zhTW": "召喚幽靈狼",
     "deDE": "Geisterwolf",
-    "esES": "Invocar lobo espíritu",
+    "esES": "Inv. lobo esp.",
     "frFR": "Inv. espr. loup",
     "itIT": "Spirito di Lupo",
     "koKR": "영혼 늑대 소환",
     "plPL": "Duch Wilk",
-    "esMX": "Invocar lobo espiritual",
+    "esMX": "Invocar lobo espirit.",
     "jaJP": "スピリットウルフ…",
     "ptBR": "Ev. Lobo Espiritual",
     "ruRU": "Призрачный волк",
@@ -31948,15 +31948,15 @@
     "enUS": "Blade Sentinel",
     "zhTW": "戒衛旋刃",
     "deDE": "Klingenwächter",
-    "esES": "Centinela de cuchillas",
+    "esES": "Cent. cuchillas",
     "frFR": "Sent. lame",
     "itIT": "Lama Sentinella",
     "koKR": "파수꾼의 칼날",
     "plPL": "Wartownik Ostrzy",
-    "esMX": "Centinela de cuchillas",
+    "esMX": "Cent. de cuchillas",
     "jaJP": "ブレイドセンチネル",
     "ptBR": "Sentinela Afiada",
-    "ruRU": "Летающий клинок",
+    "ruRU": "Летучий клинок",
     "zhCN": "刀刃守卫"
   },
   {
@@ -32220,7 +32220,7 @@
     "enUS": "Charged Bolt",
     "zhTW": "電能衛哨",
     "deDE": "Comboblitz",
-    "esES": "Centinela de descargas de energía",
+    "esES": "Desc. de energía",
     "frFR": "T. de foudre",
     "itIT": "Sent. Elettrica",
     "koKR": "번개 줄기",
@@ -32228,7 +32228,7 @@
     "esMX": "Centella",
     "jaJP": "チャージドボルト…\n",
     "ptBR": "Seta Carregada",
-    "ruRU": "Грозовая турель",
+    "ruRU": "Залп молнии",
     "zhCN": "电能守卫"
   },
   {
@@ -32696,15 +32696,15 @@
     "enUS": "Shdw Warrior",
     "zhTW": "影子戰士",
     "deDE": "Schattenkrieger",
-    "esES": "Guerrera de las sombras",
+    "esES": "G. sombras",
     "frFR": "Guer. ombre",
     "itIT": "Guerr. d'Ombra",
     "koKR": "그림자 전사",
     "plPL": "Wojownik Cienia",
-    "esMX": "Guerrera de las sombras",
+    "esMX": "Guer. de las sombras",
     "jaJP": "シャドウウォリアー",
     "ptBR": "Guerr. Sombria",
-    "ruRU": "Смертоносная тень",
+    "ruRU": "Тень воина",
     "zhCN": "影身战士"
   },
   {
@@ -33308,12 +33308,12 @@
     "enUS": "Blade Shield",
     "zhTW": "利刃之盾",
     "deDE": "Klingenschild",
-    "esES": "Escudo de cuchillas",
+    "esES": "Esc. cuchillas",
     "frFR": "Boucl. lames",
     "itIT": "Scudo di Lame",
     "koKR": "칼날 방패",
     "plPL": "Tarcza Ostrzy",
-    "esMX": "Escudo de cuchillas",
+    "esMX": "Escudo cuchillas",
     "jaJP": "ブレイドシールド",
     "ptBR": "Escudo Afiado",
     "ruRU": "Щит из клинков",
@@ -33444,12 +33444,12 @@
     "enUS": "Shdw Master",
     "zhTW": "暗影宗師",
     "deDE": "Schattenmeister",
-    "esES": "Maestra de las sombras",
+    "esES": "M. sombras",
     "frFR": "Maître ombre",
     "itIT": "Maestra d'Ombra",
     "koKR": "그림자 지배자",
     "plPL": "Mistrz Cienia",
-    "esMX": "Maestra de las sombras",
+    "esMX": "Maestra de sombras",
     "jaJP": "シャドウ・マスター",
     "ptBR": "Mest. Sombria",
     "ruRU": "Тень мастера",
@@ -35316,7 +35316,7 @@
     "deDE": "%+d%% Chance pro Stufe",
     "esES": "%+d%% de probabilidad por nivel",
     "frFR": "%+d%% de chances par niveau",
-    "itIT": "Probabilità per livello: %+d%%",
+    "itIT": "%+d%% di probabilità per livello",
     "koKR": "레벨당 확률 %+d%%",
     "plPL": "%+d%% do szansy na poziom",
     "esMX": "%+d%% de probabilidad por nivel",
@@ -35715,5 +35715,22 @@
     "ptBR": "Reabastece a quantidade com Golpe Crítico",
     "ruRU": "Критические удары восполняют снаряды",
     "zhCN": "暴击时补充数量"
+  },
+  {
+    "id": 27239,
+    "Key": "StrSkillSkillChancePerLevel",
+    "enUS": "%s: %+d%% Chance per level",
+    "zhTW": "%s：每等級 %+d%% 機率",
+    "deDE": "%s: %+d%% Chance pro Stufe",
+    "esES": "%s: %+d%% de probabilidad por nivel",
+    "frFR": "%s : %+d%% de chances par niveau",
+    "itIT": "%s: %+d%% di probabilità per livello",
+    "koKR": "%s: 레벨당 확률 %+d%%",
+    "plPL": "%s: %+d%% do szansy na poziom",
+    "esMX": "%s: %+d%% de probabilidad por nivel",
+    "jaJP": "%s: レベルごとに発生率増加（%+d%%）",
+    "ptBR": "%s: %+d%% de chance por nível",
+    "ruRU": "%s: %+d%% к вероятности за уровень",
+    "zhCN": "%s: 每等级几率 %+d%%"
   }
 ]

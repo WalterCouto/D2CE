@@ -3539,7 +3539,12 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
         return EnumCharVersion::v100R;
     }
 
-    return EnumCharVersion::v120;
+    if (Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v140))
+    {
+        return EnumCharVersion::v120;
+    }
+
+    return EnumCharVersion::v140;
 }
 //---------------------------------------------------------------------------
 const std::array<char, d2ce::NAME_LENGTH>& d2ce::Character::getName() const

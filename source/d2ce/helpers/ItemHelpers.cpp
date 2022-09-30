@@ -58,13 +58,13 @@ namespace d2ce
 
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
-        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
-        bool generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
-        bool generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0);
+        bool generateMagicalAffixes(const ItemType& itemType, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
+        bool generateRareOrCraftedAffixes(const ItemType& itemType, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
         std::uint32_t generarateRandomDW();
@@ -1171,6 +1171,104 @@ namespace d2ce
                 s_ExpansionStringTxtInfo[idx][index] = strValue;
                 s_ExpansionStringTxtIdxInfo[index] = idx;
             }
+
+            idx = 27339;
+            index = "ModItemMonColdSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Cold Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27340;
+            index = "ModItemMonFireSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Fire Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27341;
+            index = "ModItemMonLightSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Lightning Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27342;
+            index = "ModItemMonPoisonSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Poison Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27343;
+            index = "ModItemMonPhysicalSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Physical Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27344;
+            index = "ModItemMonMagicSunder";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Monster Magic Immunity is Sundered";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 27351;
+            index = "ModStr2uPercentNegative";
+            if (s_ExpansionStringTxtIdxInfo.find(index) == s_ExpansionStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Damage Increased by %d%%";
+                if (s_ExpansionStringTxtInfo.find(idx) != s_ExpansionStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_ExpansionStringTxtInfo.rbegin()->first + 1);
+                }
+                s_ExpansionStringTxtInfo[idx][index] = strValue;
+                s_ExpansionStringTxtIdxInfo[index] = idx;
+            }
         }
     }
 
@@ -1730,6 +1828,7 @@ namespace d2ce
             break;
 
         case 19: // [value] [string1] [string2]
+        case 29:
             ConvertPlaceHolders(descstrpos, descstrneg, bGenerateNeg);
             if (!descstr2.empty())
             {
@@ -2253,8 +2352,60 @@ namespace d2ce
 
             if (saveBits109ColumnIdx >= 0)
             {
+                auto& newValue3 = itemStatsInfo[d2ce::EnumCharVersion::v140][id];
+                newValue3 = newValue;
+
+                if (newValue.name.compare("damageresist") == 0 ||
+                    newValue.name.compare("magicresist") == 0)
+                {
+                    newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
+                    newValue.saveAdd = doc.GetCellString(saveAdd109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveAdd109ColumnIdx, i);
+                }
+                else if (newValue.name.compare("fireresist") == 0 ||
+                    newValue.name.compare("lightresist") == 0 ||
+                    newValue.name.compare("coldresist") == 0 ||
+                    newValue.name.compare("poisonresist") == 0)
+                {
+                    newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
+                    newValue.saveAdd = 50;
+                }
+                else if (newValue.name.compare("lasthitreactframe") == 0)
+                {
+                    newValue.name = "unused183";
+                }
+                else if (newValue.name.compare("create_season") == 0)
+                {
+                    newValue.name = "unused184";
+                }
+                else if (newValue.name.compare("item_pierce_cold_immunity") == 0)
+                {
+                    newValue.name = "unused187";
+                    newValue.saveBits = 14;
+                    newValue.saveAdd = 0;
+                }
+                else if (newValue.name.compare("item_pierce_fire_immunity") == 0)
+                {
+                    newValue.name = "unused189";
+                }
+                else if (newValue.name.compare("item_pierce_light_immunity") == 0)
+                {
+                    newValue.name = "unused190";
+                }
+                else if (newValue.name.compare("item_pierce_poison_immunity") == 0)
+                {
+                    newValue.name = "unused191";
+                }
+                else if (newValue.name.compare("item_pierce_damage_immunity") == 0)
+                {
+                    newValue.name = "unused192";
+                }
+                else if (newValue.name.compare("item_pierce_magic_immunity") == 0)
+                {
+                    newValue.name = "unused193";
+                }
                 auto& newValue2 = itemStatsInfo[d2ce::EnumCharVersion::v109][id];
                 newValue2 = newValue;
+
                 newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
                 newValue.saveAdd = doc.GetCellString(saveAdd109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveAdd109ColumnIdx, i);
             }
@@ -2893,6 +3044,12 @@ namespace d2ce
             return;
         }
 
+        const SSIZE_T autoprefixColumnIdx = doc.GetColumnIdx("auto prefix");
+        if (autoprefixColumnIdx < 0)
+        {
+            return;
+        }
+
         const SSIZE_T reqstrColumnIdx = doc.GetColumnIdx("reqstr");
         if (reqstrColumnIdx < 0)
         {
@@ -3129,6 +3286,12 @@ namespace d2ce
             if (!strValue.empty())
             {
                 itemType.level.Magic = doc.GetCellUInt16(magiclvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(autoprefixColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.auto_prefix = doc.GetCellUInt16(autoprefixColumnIdx, i);
             }
 
             strValue = doc.GetCellString(reqstrColumnIdx, i);
@@ -3450,6 +3613,12 @@ namespace d2ce
             return;
         }
 
+        const SSIZE_T autoprefixColumnIdx = doc.GetColumnIdx("auto prefix");
+        if (autoprefixColumnIdx < 0)
+        {
+            return;
+        }
+
         const SSIZE_T reqstrColumnIdx = doc.GetColumnIdx("reqstr");
         if (reqstrColumnIdx < 0)
         {
@@ -3644,6 +3813,12 @@ namespace d2ce
             if (!strValue.empty())
             {
                 itemType.level.Magic = doc.GetCellUInt16(magiclvlColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(autoprefixColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.auto_prefix = doc.GetCellUInt16(autoprefixColumnIdx, i);
             }
 
             strValue = doc.GetCellString(reqstrColumnIdx, i);
@@ -4969,7 +5144,7 @@ namespace d2ce
             return true;
         }
 
-        std::uint16_t getUniqueItemId() const override
+        std::uint16_t getId() const override
         {
             return id;
         }
@@ -4983,6 +5158,7 @@ namespace d2ce
             durability = parent.durability;
             code_v100 = parent.code_v100;
             level = parent.level;
+            auto_prefix = parent.auto_prefix;
             dimensions = parent.dimensions;
             stackable = parent.stackable;
             max_sockets = parent.max_sockets;
@@ -5624,10 +5800,10 @@ namespace d2ce
 
         // Different variable modifiers a set item can grant you (Green attributes)
         std::vector<ItemAffixModType> a1ModType; // when any second set item is also equipped.
-        std::vector<ItemAffixModType> a2ModType; // when any second set item is also equipped.
-        std::vector<ItemAffixModType> a3ModType; // when any third set item is also equipped.
-        std::vector<ItemAffixModType> a4ModType; // when any fourth set item is also equipped.
-        std::vector<ItemAffixModType> a5ModType; // when any fifth set item is also equipped.
+        std::vector<ItemAffixModType> a2ModType; // when any third set item is also equipped.
+        std::vector<ItemAffixModType> a3ModType; // when any fourth set item is also equipped.
+        std::vector<ItemAffixModType> a4ModType; // when any fifth set item is also equipped.
+        std::vector<ItemAffixModType> a5ModType; // when any sixth set item is also equipped.
 
         std::uint32_t dwbCode = 0; // used for items with EnumItemVersion::v100 and EnumItemVersion::v104
 
@@ -5636,7 +5812,7 @@ namespace d2ce
             return true;
         }
 
-        std::uint16_t getSetItemId() const override
+        std::uint16_t getId() const override
         {
             return id;
         }
@@ -5644,6 +5820,37 @@ namespace d2ce
         std::uint32_t getSetItemDWBCode() const override
         {
             return dwbCode;
+        }
+
+        std::uint16_t getSetBonusBits() const override
+        {
+            std::bitset<5> bonusBits = 0;
+            if (!a1ModType.empty())
+            {
+                bonusBits[0] = 1;
+            }
+
+            if (!a2ModType.empty())
+            {
+                bonusBits[1] = 1;
+            }
+
+            if (!a3ModType.empty())
+            {
+                bonusBits[2] = 1;
+            }
+
+            if (!a4ModType.empty())
+            {
+                bonusBits[3] = 1;
+            }
+
+            if (!a5ModType.empty())
+            {
+                bonusBits[4] = 1;
+            }
+
+            return std::uint16_t(bonusBits.to_ulong());
         }
 
         void CopyParentItem(const ItemType& parent)
@@ -5655,6 +5862,7 @@ namespace d2ce
             durability = parent.durability;
             code_v100 = parent.code_v100;
             level = parent.level;
+            auto_prefix = parent.auto_prefix;
             dimensions = parent.dimensions;
             stackable = parent.stackable;
             max_sockets = parent.max_sockets;
@@ -7312,13 +7520,11 @@ namespace d2ce
 
         return static_cast<const ItemType&>(setItem);
     }
-
-    bool GenerateMagicalAffixesBuffer(const std::array<std::uint8_t, 4>& strcode, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t gameVersion, std::uint16_t level)
+    
+    bool GenerateMagicalAffixesBuffer(const ItemType& itemType, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t gameVersion, std::uint16_t level)
     {
         prefixes.clear();
         suffixes.clear();
-
-        const auto& itemType = GetItemTypeHelper(strcode);
         if (&itemType == &s_invalidItemType)
         {
             return false;
@@ -7331,7 +7537,7 @@ namespace d2ce
                 continue;
             }
 
-            
+
             if (std::min(prefix.second.level.level, 2ui16) - 2 > level)
             {
                 continue;
@@ -7422,12 +7628,11 @@ namespace d2ce
         return true;
     }
 
-    bool GenerateRareOrCraftedAffixesBuffer(const std::array<std::uint8_t, 4>& strcode, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t gameVersion)
+    bool GenerateRareOrCraftedAffixesBuffer(const ItemType& itemType, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t gameVersion)
     {
         prefixes.clear();
         suffixes.clear();
 
-        const auto& itemType = GetItemTypeHelper(strcode);
         if (&itemType == &s_invalidItemType)
         {
             return false;
@@ -7805,6 +8010,11 @@ bool d2ce::ItemType::isBodyPart() const
     return hasCategoryCode("body");
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemType::isPlayerBodyPart() const
+{
+    return hasCategoryCode("play");
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemType::isSimpleItem() const
 {
     return compactsave;
@@ -7835,17 +8045,12 @@ bool d2ce::ItemType::isUniqueItem() const
     return false;
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::ItemType::getUniqueItemId() const
-{
-    return MAXUINT16;
-}
-//---------------------------------------------------------------------------
 bool d2ce::ItemType::isSetItem() const
 {
     return false;
 }
 //---------------------------------------------------------------------------
-std::uint16_t d2ce::ItemType::getSetItemId() const
+std::uint16_t d2ce::ItemType::getId() const
 {
     return MAXUINT16;
 }
@@ -7854,6 +8059,41 @@ std::uint32_t d2ce::ItemType::getSetItemDWBCode() const
 {
     return 0ui32;
 }
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ItemType::getSetBonusBits() const
+{
+    return 0ui16;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::hasMultipleGraphics() const
+{
+    if (isRing() || isAmulet() || isCharm() || isJewel())
+    {
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::ItemType::getNumPictureIds() const
+{
+    if (isRing())
+    {
+        return 5ui32;
+    }
+
+    if (isAmulet() || isCharm())
+    {
+        return 3ui32;
+    }
+
+    if (isJewel())
+    {
+        return 6ui32;
+    }
+
+    return 0ui32;
+}
+
 //---------------------------------------------------------------------------
 std::optional<d2ce::EnumCharClass> d2ce::ItemType::getClass() const
 {
@@ -8303,27 +8543,41 @@ const std::string& d2ce::ItemHelpers::setLanguage(const std::string& lang)
 //---------------------------------------------------------------------------
 const d2ce::ItemStat& d2ce::ItemHelpers::getItemStat(EnumItemVersion itemVersion, size_t idx)
 {
-    EnumCharVersion fileVersion = (itemVersion < EnumItemVersion::v109) ? EnumCharVersion::v100 : EnumCharVersion::v109;
     static d2ce::ItemStat badItemStat = { MAXUINT16 };
-    auto itemStatsMapIter = s_ItemStatsInfo.find(fileVersion);
-    if (itemStatsMapIter == s_ItemStatsInfo.end())
+    static std::initializer_list<EnumItemVersion> all_versions = { EnumItemVersion::v140, EnumItemVersion::v109, EnumItemVersion::v100 };
+    for (auto version : all_versions)
     {
-        // should not happend
-        itemStatsMapIter = s_ItemStatsInfo.begin();
+        if (itemVersion < version)
+        {
+            continue;
+        }
+
+        EnumCharVersion fileVersion = EnumCharVersion::v100;
+        switch (version)
+        {
+        case EnumItemVersion::v109:
+            fileVersion = EnumCharVersion::v109;
+            break;
+
+        case EnumItemVersion::v140:
+            fileVersion = EnumCharVersion::v140;
+            break;
+        }
+
+        auto itemStatsMapIter = s_ItemStatsInfo.find(fileVersion);
         if (itemStatsMapIter == s_ItemStatsInfo.end())
         {
-            return badItemStat;
+            // should not happend
+            continue;
         }
+
+        auto itemStatsIdIter = itemStatsMapIter->second.find((std::uint16_t)idx);
+        return (itemStatsIdIter == itemStatsMapIter->second.end()) ? badItemStat : itemStatsIdIter->second;
     }
 
+    auto itemStatsMapIter = s_ItemStatsInfo.begin();
     auto itemStatsIdIter = itemStatsMapIter->second.find((std::uint16_t)idx);
-    if (itemStatsIdIter == itemStatsMapIter->second.end())
-    {
-        // should not happend
-        return badItemStat;
-    }
-
-    return itemStatsIdIter->second;
+    return (itemStatsIdIter == itemStatsMapIter->second.end()) ? badItemStat : itemStatsIdIter->second;
 }
 //---------------------------------------------------------------------------
 const d2ce::ItemStat& d2ce::ItemHelpers::getItemStat(EnumItemVersion itemVersion, const std::string& name)
@@ -8345,19 +8599,40 @@ const d2ce::ItemStat& d2ce::ItemHelpers::getItemStat(const MagicalAttribute& att
 //---------------------------------------------------------------------------
 const bool d2ce::ItemHelpers::hasItemStat(EnumItemVersion itemVersion, size_t idx)
 {
-    EnumCharVersion fileVersion = (itemVersion < EnumItemVersion::v109) ? EnumCharVersion::v100 : EnumCharVersion::v109;
     static d2ce::ItemStat badItemStat = { MAXUINT16 };
-    auto itemStatsMapIter = s_ItemStatsInfo.find(fileVersion);
-    if (itemStatsMapIter == s_ItemStatsInfo.end())
+    static std::initializer_list<EnumItemVersion> all_versions = { EnumItemVersion::v140, EnumItemVersion::v109, EnumItemVersion::v100 };
+    for (auto version : all_versions)
     {
-        // should not happend
-        itemStatsMapIter = s_ItemStatsInfo.begin();
+        if (itemVersion < version)
+        {
+            continue;
+        }
+
+        EnumCharVersion fileVersion = EnumCharVersion::v100;
+        switch (version)
+        {
+        case EnumItemVersion::v109:
+            fileVersion = EnumCharVersion::v109;
+            break;
+
+        case EnumItemVersion::v140:
+            fileVersion = EnumCharVersion::v140;
+            break;
+        }
+
+        auto itemStatsMapIter = s_ItemStatsInfo.find(fileVersion);
         if (itemStatsMapIter == s_ItemStatsInfo.end())
         {
-            return false;
+            // should not happend
+            continue;
         }
+
+        auto itemStatsIdIter = itemStatsMapIter->second.find((std::uint16_t)idx);
+        return (itemStatsIdIter == itemStatsMapIter->second.end()) ? false : true;
     }
 
+    // should not happend
+    auto itemStatsMapIter = s_ItemStatsInfo.begin();
     auto itemStatsIdIter = itemStatsMapIter->second.find((std::uint16_t)idx);
     return (itemStatsIdIter == itemStatsMapIter->second.end()) ? false : true;
 }
@@ -8885,8 +9160,8 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::v
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
-    if (!item.getItemCode(strcode))
+    const auto& itemType = item.getItemTypeHelper();
+    if(&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
         return false;
     }
@@ -8912,7 +9187,7 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::v
 
     std::vector<ItemAffixType> affixPrefixes;
     std::vector<ItemAffixType> affixSuffixes;
-    if (!GenerateMagicalAffixesBuffer(strcode, affixPrefixes, affixSuffixes, gameVersion, item.getLevel()))
+    if (!GenerateMagicalAffixesBuffer(itemType, affixPrefixes, affixSuffixes, gameVersion, item.getLevel()))
     {
         return false;
     }
@@ -8938,8 +9213,8 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
         return false;
     }
 
-    std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
-    if (!item.getItemCode(strcode))
+    const auto& itemType = item.getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
         return false;
     }
@@ -8967,7 +9242,7 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
 
     std::vector<ItemAffixType> affixPrefixes;
     std::vector<ItemAffixType> affixSuffixes;
-    if (!GenerateRareOrCraftedAffixesBuffer(strcode, affixPrefixes, affixSuffixes, gameVersion))
+    if (!GenerateRareOrCraftedAffixesBuffer(itemType, affixPrefixes, affixSuffixes, gameVersion))
     {
         return false;
     }
@@ -9129,7 +9404,7 @@ bool d2ce::ItemHelpers::getRareOrCraftedAttribs(const d2ce::RareAttributes& rare
     return attribs.empty() ? false : true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
+bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
     attribs.clear();
     auto iter = s_ItemSetItemsType.find(id);
@@ -9164,11 +9439,11 @@ bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<Magical
 
     ItemRandStruct rnd = { dwb, 666 };
     InitalizeItemRandomization(dwb, level, EnumItemQuality::MAGIC, rnd);
-    ProcessMagicalProperites(setitem.modType, attribs, rnd, version, gameVersion);
+    ProcessMagicalProperites(setitem.modType, attribs, rnd, version, gameVersion, bMaxAlways);
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
+bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
     attribs.clear();
     auto iter = s_ItemUniqueItemsType.find(id);
@@ -9197,11 +9472,11 @@ bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<Magi
 
     ItemRandStruct rnd = { dwb, 666 };
     InitalizeItemRandomization(dwb, level, EnumItemQuality::MAGIC, rnd);
-    ProcessMagicalProperites(uniqueitem.modType, attribs, rnd, version, gameVersion);
+    ProcessMagicalProperites(uniqueitem.modType, attribs, rnd, version, gameVersion, bMaxAlways);
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
+bool d2ce::ItemHelpers::getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
     attribs.clear();
 
@@ -9215,7 +9490,7 @@ bool d2ce::ItemHelpers::getUniqueQuestMagicAttribs(const std::array<std::uint8_t
         return false;
     }
 
-    return getUniqueMagicAttribs(iter->second, attribs, version, gameVersion, level, dwb);
+    return getUniqueMagicAttribs(iter->second, attribs, version, gameVersion, level, dwb, bMaxAlways);
 }
 //---------------------------------------------------------------------------
 std::uint8_t d2ce::ItemHelpers::generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb)
@@ -9230,11 +9505,11 @@ std::uint8_t d2ce::ItemHelpers::generateInferiorQualityId(std::uint16_t level, s
     return std::uint8_t(GenerateRandom(rnd) % 4);
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::generateMagicalAffixes(const std::array<std::uint8_t, 4>& strcode, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
+bool d2ce::ItemHelpers::generateMagicalAffixes(const ItemType& itemType, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
     std::vector<ItemAffixType> prefixes;
     std::vector<ItemAffixType> suffixes;
-    if (!GenerateMagicalAffixesBuffer(strcode, prefixes, suffixes, gameVersion, level))
+    if (!GenerateMagicalAffixesBuffer(itemType, prefixes, suffixes, gameVersion, level))
     {
         return false;
     }
@@ -9259,7 +9534,7 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(const std::array<std::uint8_t, 4>
         auto& prefix = prefixes[GenerateRandom(rnd) % prefixes.size()];
         cache.Affixes.PrefixId = prefix.code;
         cache.Affixes.PrefixName = prefix.name;
-        ProcessMagicalProperites(prefix.modType, cache.MagicalAttributes, rnd, version, gameVersion);
+        ProcessMagicalProperites(prefix.modType, cache.MagicalAttributes, rnd, version, gameVersion, bMaxAlways);
     }
 
     // Do we have a suffix
@@ -9274,15 +9549,14 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(const std::array<std::uint8_t, 4>
         auto& suffix = suffixes[GenerateRandom(rnd) % suffixes.size()];
         cache.Affixes.SuffixId = suffix.code;
         cache.Affixes.SuffixName = suffix.name;
-        ProcessMagicalProperites(suffix.modType, cache.MagicalAttributes, rnd, version, gameVersion);
+        ProcessMagicalProperites(suffix.modType, cache.MagicalAttributes, rnd, version, gameVersion, bMaxAlways);
     }
 
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8_t, 4>& strcode, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb)
+bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const ItemType& itemType, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
-    const auto& itemType = getItemTypeHelper(strcode);
     if (&itemType == &s_invalidItemType)
     {
         return false;
@@ -9290,7 +9564,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
 
     std::vector<ItemAffixType> prefixes;
     std::vector<ItemAffixType> suffixes;
-    if (!GenerateMagicalAffixesBuffer(strcode, prefixes, suffixes, gameVersion, level))
+    if (!GenerateMagicalAffixesBuffer(itemType, prefixes, suffixes, gameVersion, level))
     {
         return false;
     }
@@ -9302,7 +9576,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
 
     std::vector<ItemAffixType> rarePrefixes;
     std::vector<ItemAffixType> rareSuffixes;
-    if (!GenerateRareOrCraftedAffixesBuffer(strcode, rarePrefixes, rareSuffixes, gameVersion))
+    if (!GenerateRareOrCraftedAffixesBuffer(itemType, rarePrefixes, rareSuffixes, gameVersion))
     {
         return false;
     }
@@ -9419,7 +9693,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
                 affixItem.Affixes.SuffixId = 0;
             }
 
-            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, version, gameVersion);
+            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, version, gameVersion, bMaxAlways);
         }
         else
         {
@@ -9433,7 +9707,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(const std::array<std::uint8
                 affixItem.Affixes.PrefixId = 0;
             }
 
-            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, version, gameVersion);
+            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, version, gameVersion, bMaxAlways);
         }
     }
 
@@ -10246,7 +10520,13 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     }
     else if (attrib.Values.size() == 1 && attrib.Values[0] < 0)
     {
-        attrib.Desc = stat.descNeg;
+        attrib.Desc = stat.descNeg; 
+        switch (stat.descFunc)
+        {
+        case 29: // [value] [string1] [string2]
+            attrib.Values[0] = -attrib.Values[0];
+            break;
+        }
     }
 
     auto maxIdx = attrib.Values.size();
@@ -10255,6 +10535,7 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     case 27: // +[value] to [skill] ([class] Only)
         ++maxIdx;
         break;
+
     }
 
     for (size_t idx = 0; idx < maxIdx; ++idx)
@@ -10400,7 +10681,7 @@ bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char
     }
 }
 //---------------------------------------------------------------------------
-std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::getPossibleItems(std::uint16_t gameVersion, d2ce::EnumCharClass charClass, const d2ce::CharStats& cs)
+std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::getPossibleItems(EnumItemVersion version, std::uint16_t gameVersion, d2ce::EnumCharClass charClass, const d2ce::CharStats& cs)
 {
     std::vector<std::reference_wrapper<const d2ce::ItemType>> result;
     for (const auto& item : s_ItemWeaponType)
@@ -10473,18 +10754,37 @@ std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::get
 
     for (const auto& item : s_ItemMiscType)
     {
-        if (item.second.isCharm() || item.second.isJewel() || 
-            item.second.isAmulet() || item.second.isRing())
+        // make sure it's spawnable in this version
+        if (item.second.version > gameVersion)
+        {
+            continue;
+        }
+
+        if (item.second.isCharm() || item.second.isJewel())
         {
             // this are special magical items not handled as a regular
             // item
             continue;
         }
 
-        // make sure it's spawnable in this version
-        if (item.second.version > gameVersion)
+        if (item.second.isPlayerBodyPart())
         {
+            // this means it's an ear, which is not supported with this method
             continue;
+        }
+
+        if (item.second.isAmulet() || item.second.isRing())
+        {
+            switch (version)
+            {
+            case EnumItemVersion::v100:
+            case EnumItemVersion::v104:
+                break;
+
+            default:
+                // rings or amulets are not supported with this method
+                continue;
+            }
         }
 
         // make sure the requirements are met

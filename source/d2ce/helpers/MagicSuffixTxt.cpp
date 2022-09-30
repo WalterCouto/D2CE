@@ -715,8 +715,8 @@ namespace d2ce
                 ss << u8"of Craftsmanship\t100\t1\t1\t85\t\t77\t\t\t\t4\t14\tdmg-max\t\t1\t1\t\t\t\t\t\t\t\t\t\tscha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Blight\t100\t1\t1\t1\t\t1\t\t\t\t2\t16\tdmg-pois\t75\t21\t21\t\t\t\t\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Venom\t100\t1\t1\t6\t\t4\t\t\t\t1\t16\tdmg-pois\t100\t39\t39\t\t\t\t\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Pestilence\t100\t1\t1\t14\t\t10\t\t\t\t1\t16\tdmg-pois\t125\t52\t52\t\t\t\t\t\t\t\t\tdgrn\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Anthrax\t100\t1\t\t21\t\t15\t\t\t\t1\t16\tdmg-pois\t150\t86\t86\t\t\t\t\t\t\t\t\tdgrn\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Pestilence\t100\t1\t1\t14\t\t10\t\t\t\t1\t16\tdmg-pois\t125\t52\t52\t\t\t\t\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Anthrax\t100\t1\t\t21\t\t15\t\t\t\t1\t16\tdmg-pois\t150\t86\t86\t\t\t\t\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Blight\t100\t1\t1\t5\t\t3\t\t\t\t2\t16\tdmg-pois\t75\t21\t21\t\t\t\t\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Venom\t100\t1\t1\t13\t\t9\t\t\t\t1\t16\tdmg-pois\t100\t39\t39\t\t\t\t\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Pestilence\t100\t1\t1\t23\t\t17\t\t\t\t1\t16\tdmg-pois\t125\t52\t52\t\t\t\t\t\t\t\t\tdgrn\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
@@ -727,8 +727,8 @@ namespace d2ce
                 ss << u8"of Anthrax\t100\t1\t\t44\t\t36\t\t\t\t1\t16\tdmg-pois\t150\t86\t86\t\t\t\t\t\t\t\t\tdgrn\tscha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Frost\t100\t1\t1\t5\t\t3\t\t\t\t2\t10\tcold-min\t\t1\t1\tcold-max\t\t2\t2\tcold-len\t\t25\t25\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of the Icicle\t100\t1\t1\t8\t\t6\t\t\t\t1\t10\tcold-min\t\t2\t2\tcold-max\t\t3\t4\tcold-len\t\t25\t25\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of the Glacier\t100\t1\t1\t15\t\t11\t\t\t\t1\t10\tcold-min\t\t3\t3\tcold-max\t\t5\t7\tcold-len\t\t25\t25\tdblu\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Winter\t100\t1\t\t23\t\t17\t\t\t\t1\t10\tcold-min\t\t4\t6\tcold-max\t\t8\t11\tcold-len\t\t25\t25\tdblu\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of the Glacier\t100\t1\t1\t15\t\t11\t\t\t\t1\t10\tcold-min\t\t3\t3\tcold-max\t\t5\t7\tcold-len\t\t25\t25\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Winter\t100\t1\t\t23\t\t17\t\t\t\t1\t10\tcold-min\t\t4\t6\tcold-max\t\t8\t11\tcold-len\t\t25\t25\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Frost\t100\t1\t1\t9\t\t6\t\t\t\t2\t10\tcold-min\t\t1\t1\tcold-max\t\t2\t3\tcold-len\t\t25\t25\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of the Icicle\t100\t1\t1\t15\t\t11\t\t\t\t1\t10\tcold-min\t\t2\t2\tcold-max\t\t4\t5\tcold-len\t\t25\t25\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of the Glacier\t100\t1\t1\t25\t\t18\t\t\t\t1\t10\tcold-min\t\t3\t3\tcold-max\t\t6\t8\tcold-len\t\t25\t25\tdblu\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
@@ -739,8 +739,8 @@ namespace d2ce
                 ss << u8"of Winter\t100\t1\t\t46\t\t38\t\t\t\t1\t10\tcold-min\t\t4\t5\tcold-max\t\t7\t9\tcold-len\t\t25\t25\tdblu\tscha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Flame\t100\t1\t1\t3\t\t2\t\t\t\t2\t12\tfire-min\t\t1\t1\tfire-max\t\t2\t2\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Fire\t100\t1\t1\t8\t\t6\t\t\t\t1\t12\tfire-min\t\t1\t2\tfire-max\t\t3\t3\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Burning\t100\t1\t1\t14\t\t10\t\t\t\t1\t12\tfire-min\t\t2\t3\tfire-max\t\t4\t7\t\t\t\t\tdred\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Incineration\t100\t1\t\t22\t\t16\t\t\t\t1\t12\tfire-min\t\t4\t7\tfire-max\t\t8\t14\t\t\t\t\tdred\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Burning\t100\t1\t1\t14\t\t10\t\t\t\t1\t12\tfire-min\t\t2\t3\tfire-max\t\t4\t7\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Incineration\t100\t1\t\t22\t\t16\t\t\t\t1\t12\tfire-min\t\t4\t7\tfire-max\t\t8\t14\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Flame\t100\t1\t1\t7\t\t5\t\t\t\t2\t12\tfire-min\t\t1\t1\tfire-max\t\t2\t2\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Fire\t100\t1\t1\t14\t\t10\t\t\t\t1\t12\tfire-min\t\t2\t2\tfire-max\t\t3\t5\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Burning\t100\t1\t1\t24\t\t18\t\t\t\t1\t12\tfire-min\t\t3\t5\tfire-max\t\t6\t11\t\t\t\t\tdred\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
@@ -751,8 +751,8 @@ namespace d2ce
                 ss << u8"of Incineration\t100\t1\t\t45\t\t37\t\t\t\t1\t12\tfire-min\t\t5\t7\tfire-max\t\t9\t13\t\t\t\t\tdred\tscha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Shock\t100\t1\t1\t4\t\t3\t\t\t\t2\t13\tltng-min\t\t1\t1\tltng-max\t\t2\t3\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Lightning\t100\t1\t1\t7\t\t5\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t4\t7\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Thunder\t100\t1\t1\t15\t\t11\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t8\t21\t\t\t\t\tdyel\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
-                ss << u8"of Storms\t100\t1\t\t22\t\t16\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t22\t33\t\t\t\t\tdyel\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Thunder\t100\t1\t1\t15\t\t11\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t8\t21\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
+                ss << u8"of Storms\t100\t1\t\t22\t\t16\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t22\t33\t\t\t\t\t\tlcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Shock\t100\t1\t1\t7\t\t5\t\t\t\t2\t13\tltng-min\t\t1\t1\tltng-max\t\t3\t5\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Lightning\t100\t1\t1\t14\t\t10\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t6\t13\t\t\t\t\t\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";
                 ss << u8"of Thunder\t100\t1\t1\t24\t\t18\t\t\t\t1\t13\tltng-min\t\t1\t1\tltng-max\t\t14\t25\t\t\t\t\tdyel\tmcha\t\t\t\t\t\t\t\t\t\t\t\t0\t0\n";

@@ -1263,6 +1263,9 @@ namespace d2ce
         // Base Item Level (also known as Quality Level - qlvl) and Additional Magic Level (also known as mlvl)
         ItemLevel level;
 
+        // Class specific value
+        std::uint16_t auto_prefix = 0;
+
         // width and height in inventory cells
         // For Belts and Cubes, also holds the width and height of those inventories
         ItemDimensions dimensions;
@@ -1341,17 +1344,20 @@ namespace d2ce
         virtual bool isRing() const;
         virtual bool isAmulet() const;
         virtual bool isBodyPart() const;
+        virtual bool isPlayerBodyPart() const;
         virtual bool isSimpleItem() const;
         virtual bool isUnusedItem() const;
         virtual bool isExpansionItem() const;
         virtual bool isSecondHand() const;
         virtual bool isClassSpecific() const;
         virtual bool isUniqueItem() const;
-        virtual std::uint16_t getUniqueItemId() const;
         virtual bool isSetItem() const;
-        virtual std::uint16_t getSetItemId() const;
+        virtual std::uint16_t getId() const;
         virtual std::uint32_t getSetItemDWBCode() const;
+        virtual std::uint16_t getSetBonusBits() const;
         std::optional<d2ce::EnumCharClass> getClass() const;
+        virtual bool hasMultipleGraphics() const;
+        virtual std::uint32_t getNumPictureIds() const;
 
         virtual bool hasUndeadBonus() const;
 
