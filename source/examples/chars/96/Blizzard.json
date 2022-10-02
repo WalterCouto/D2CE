@@ -5123,10 +5123,11 @@
         {
           "id": 21,
           "values": [
-            15
+            15,
+            25
           ],
           "name": "mindamage",
-          "description": "+15 to Minimum Damage"
+          "description": "Adds 15-25 damage"
         },
         {
           "id": 22,
@@ -5134,7 +5135,8 @@
             25
           ],
           "name": "maxdamage",
-          "description": "+25 to Maximum Damage"
+          "description": "+25 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 23,
@@ -5350,10 +5352,11 @@
         {
           "id": 21,
           "values": [
-            15
+            15,
+            25
           ],
           "name": "mindamage",
-          "description": "+15 to Minimum Damage"
+          "description": "Adds 15-25 damage"
         },
         {
           "id": 22,
@@ -5361,7 +5364,8 @@
             25
           ],
           "name": "maxdamage",
-          "description": "+25 to Maximum Damage"
+          "description": "+25 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 23,

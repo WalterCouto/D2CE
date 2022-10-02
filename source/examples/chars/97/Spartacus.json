@@ -10589,10 +10589,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -10600,7 +10601,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -13026,10 +13028,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -13037,7 +13040,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -15462,10 +15466,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -15473,7 +15478,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -17867,10 +17873,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -17878,7 +17885,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -20279,10 +20287,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -20290,7 +20299,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -22204,10 +22214,11 @@
         {
           "id": 23,
           "values": [
-            50
+            50,
+            100
           ],
           "name": "secondary_mindamage",
-          "description": "+50 to Minimum Damage"
+          "description": "Adds 50-100 damage"
         },
         {
           "id": 24,
@@ -22215,7 +22226,8 @@
             100
           ],
           "name": "secondary_maxdamage",
-          "description": "+100 to Maximum Damage"
+          "description": "+100 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 225,
@@ -22574,10 +22586,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -22585,7 +22598,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -38086,10 +38100,11 @@
         {
           "id": 21,
           "values": [
-            50
+            50,
+            100
           ],
           "name": "mindamage",
-          "description": "+50 to Minimum Damage"
+          "description": "Adds 50-100 damage"
         },
         {
           "id": 22,
@@ -38097,7 +38112,8 @@
             100
           ],
           "name": "maxdamage",
-          "description": "+100 to Maximum Damage"
+          "description": "+100 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 23,
@@ -40468,10 +40484,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -40479,7 +40496,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 115,
@@ -42757,10 +42775,11 @@
         {
           "id": 21,
           "values": [
-            50
+            50,
+            100
           ],
           "name": "mindamage",
-          "description": "+50 to Minimum Damage"
+          "description": "Adds 50-100 damage"
         },
         {
           "id": 22,
@@ -42768,7 +42787,8 @@
             100
           ],
           "name": "maxdamage",
-          "description": "+100 to Maximum Damage"
+          "description": "+100 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 23,
@@ -47576,10 +47596,11 @@
         {
           "id": 23,
           "values": [
-            100
+            100,
+            200
           ],
           "name": "secondary_mindamage",
-          "description": "+100 to Minimum Damage"
+          "description": "Adds 100-200 damage"
         },
         {
           "id": 24,
@@ -47587,7 +47608,8 @@
             200
           ],
           "name": "secondary_maxdamage",
-          "description": "+200 to Maximum Damage"
+          "description": "+200 to Maximum Damage",
+          "visible": false
         },
         {
           "id": 119,

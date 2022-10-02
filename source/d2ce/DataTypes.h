@@ -1193,25 +1193,24 @@ namespace d2ce
     //---------------------------------------------------------------------------
     struct ItemStat
     {
-        std::uint16_t id = 0;            // internal ID
-        std::string name;                // An Id pointer used in other *.txt files (Properties.txt, Skills.txt, States.txt and also within ItemStatCost.txt) to refer to this stat, this field must be unique, otherwise you're looking into a world of glitches and bugs.
-        std::uint16_t charSaveBits = 0;  // How many bits of data are allocated to the value of this stat within the *.d2s file stat section when the stat is saved
-        std::uint8_t encode = 0;         // This field tells the game whenever to encode the stat (and in this case in what way to encode it) when it is saved to conserve space
-        std::uint16_t saveBits = 0;      // These fields control how many bits of data are allocated to the value of this stat within the *.d2s fil
-        std::int16_t saveAdd = 0;
-        std::uint16_t saveParamBits = 0; // This field controls how many bits of data are allocated to the parameter of this stat when it is saved on items
-        OpAttributes opAttribs;          // These fields control special forms of stat assignment used for example for stats that add a bonus depending on cLvl
-        std::uint8_t descPriority = 0;   // The higher this value is the further up in the item description this stat will be listed
-        std::uint8_t descFunc = 0;       // The function used for generating the description for this stat, this works like the descfuncs in SkillDesc.txt pretty much
-        std::uint8_t descVal = 0;        // Controls whenever and if so in what way the stat value is shown, 0 = doesn't show the value of the stat, 1 = shows the value of the stat infront of the description, 2 = shows the value of the stat after the description.
-        std::string desc;                // base description string
-        std::string descNeg;             // The string used for the description when the stat value is negative.
-        std::string descGrp;             // When all stats in this group are present on the same item and they all have the same value, replace their description with the associated group description.
-        std::string descGrpNeg;          // The string used for the description when the stat value is negative for the group
-        std::string descRange;           // The description used for range stats (i.e. fire damage)
-        std::string descNoRange;         // The description used for ragne stats when the min/max value is the same
-        std::uint16_t nextInChain = 0;   // stat that follows this one (i.e. firemaxdam follows firemindam)
-        bool isRootInChain = false;      // is this the root of the chain?
+        std::uint16_t id = 0;                   // internal ID
+        std::string name;                       // An Id pointer used in other *.txt files (Properties.txt, Skills.txt, States.txt and also within ItemStatCost.txt) to refer to this stat, this field must be unique, otherwise you're looking into a world of glitches and bugs.
+        std::uint16_t charSaveBits = 0;         // How many bits of data are allocated to the value of this stat within the *.d2s file stat section when the stat is saved
+        std::uint8_t encode = 0;                // This field tells the game whenever to encode the stat (and in this case in what way to encode it) when it is saved to conserve space
+        std::uint16_t saveBits = 0;             // These fields control how many bits of data are allocated to the value of this stat within the *.d2s fil
+        std::int16_t saveAdd = 0;               
+        std::uint16_t saveParamBits = 0;        // This field controls how many bits of data are allocated to the parameter of this stat when it is saved on items
+        OpAttributes opAttribs;                 // These fields control special forms of stat assignment used for example for stats that add a bonus depending on cLvl
+        std::uint8_t descPriority = 0;          // The higher this value is the further up in the item description this stat will be listed
+        std::uint8_t descFunc = 0;              // The function used for generating the description for this stat, this works like the descfuncs in SkillDesc.txt pretty much
+        std::uint8_t descVal = 0;               // Controls whenever and if so in what way the stat value is shown, 0 = doesn't show the value of the stat, 1 = shows the value of the stat infront of the description, 2 = shows the value of the stat after the description.
+        std::string desc;                       // base description string
+        std::string descNeg;                    // The string used for the description when the stat value is negative.
+        std::string descGrp;                    // When all stats in this group are present on the same item and they all have the same value, replace their description with the associated group description.
+        std::string descGrpNeg;                 // The string used for the description when the stat value is negative for the group
+        std::string descRange;                  // The description used for range stats (i.e. fire damage)
+        std::string descNoRange;                // The description used for ragne stats when the min/max value is the same
+        std::vector<std::uint16_t> nextInChain; // stats that follows this one (i.e. firemaxdam follows firemindam)
     };
 
     //---------------------------------------------------------------------------

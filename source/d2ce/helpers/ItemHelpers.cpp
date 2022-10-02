@@ -860,6 +860,34 @@ namespace d2ce
                 s_PatchStringTxtIdxInfo[index] = idx;
             }
 
+            idx = 10036;
+            index = "strModMinDamage";
+            if (s_PatchStringTxtIdxInfo.find(index) == s_PatchStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "%+d damage";
+                if (s_PatchStringTxtInfo.find(idx) != s_PatchStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_PatchStringTxtInfo.rbegin()->first + 1);
+                }
+                s_PatchStringTxtInfo[idx][index] = strValue;
+                s_PatchStringTxtIdxInfo[index] = idx;
+            }
+
+            idx = 10037;
+            index = "strModMinDamageRange";
+            if (s_PatchStringTxtIdxInfo.find(index) == s_PatchStringTxtIdxInfo.end())
+            {
+                // support classic txt files
+                strValue = "Adds %d-%d damage";
+                if (s_PatchStringTxtInfo.find(idx) != s_PatchStringTxtInfo.end())
+                {
+                    idx = std::uint32_t(s_PatchStringTxtInfo.rbegin()->first + 1);
+                }
+                s_PatchStringTxtInfo[idx][index] = strValue;
+                s_PatchStringTxtIdxInfo[index] = idx;
+            }
+
             idx = 11214;
             index = "BeltStorageModifierInfo";
             if (s_PatchStringTxtIdxInfo.find(index) == s_PatchStringTxtIdxInfo.end())
@@ -2185,15 +2213,12 @@ namespace d2ce
                 newValue.name.compare("lightmindam") == 0 ||
                 newValue.name.compare("magicmindam") == 0 ||
                 newValue.name.compare("coldmindam") == 0 ||
-                newValue.name.compare("coldmaxdam") == 0 ||
-                newValue.name.compare("poisonmindam") == 0 ||
-                newValue.name.compare("poisonmaxdam") == 0)
+                newValue.name.compare("poisonmindam") == 0)
             {
-                newValue.nextInChain = newValue.id + 1;
+                newValue.nextInChain.push_back(newValue.id + 1);
 
                 if (newValue.name.compare("item_maxdamage_percent") == 0)
                 {
-                    newValue.isRootInChain = true;
                     strValue = "strModEnhancedDamage";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "%+d%% Enhanced Damage");
                     ConvertPlaceHolders(strValue2);
@@ -2202,7 +2227,6 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("firemindam") == 0)
                 {
-                    newValue.isRootInChain = true;
                     strValue = "strModFireDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d fire damage");
                     ConvertPlaceHolders(strValue2);
@@ -2215,7 +2239,6 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("lightmindam") == 0)
                 {
-                    newValue.isRootInChain = true;
                     strValue = "strModLightningDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d lightning damage");
                     ConvertPlaceHolders(strValue2);
@@ -2228,7 +2251,6 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("magicmindam") == 0)
                 {
-                    newValue.isRootInChain = true;
                     strValue = "strModMagicDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d magic damage");
                     ConvertPlaceHolders(strValue2);
@@ -2241,7 +2263,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("coldmindam") == 0)
                 {
-                    newValue.isRootInChain = true;
+                    newValue.nextInChain.push_back(newValue.nextInChain.back() + 1);
                     strValue = "strModColdDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d cold damage");
                     ConvertPlaceHolders(strValue2);
@@ -2254,7 +2276,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("poisonmindam") == 0)
                 {
-                    newValue.isRootInChain = true;
+                    newValue.nextInChain.push_back(newValue.nextInChain.back() + 1);
                     strValue = "strModPoisonDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d poison damage over %d seconds");
                     ConvertPlaceHolders(strValue2);
@@ -2264,11 +2286,6 @@ namespace d2ce
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "%+d poison damage over %d seconds");
                     ConvertPlaceHolders(strValue2, 1);
                     newValue.descNoRange = strValue2;
-                }
-                else if (newValue.name.compare("coldmaxdam") == 0 ||
-                         newValue.name.compare("poisonmaxdam") == 0)
-                {
-                    strValue = "strModPoisonDamage";
                 }
             }
 
@@ -2359,6 +2376,18 @@ namespace d2ce
             {
                 newValue.desc = newValue.descRange;
                 newValue.descNeg = newValue.desc;
+            }
+            else if (newValue.name.compare("mindamage") == 0)
+            {
+                strValue = "strModMinDamageRange";
+                LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d damage");
+                ConvertPlaceHolders(strValue2);
+                newValue.descRange = strValue2;
+
+                strValue = "strModMinDamage";
+                LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "%+d damage");
+                ConvertPlaceHolders(strValue2);
+                newValue.descNoRange = strValue2;
             }
 
             if (saveBits109ColumnIdx >= 0)
@@ -6579,11 +6608,23 @@ namespace d2ce
                 auto& stat = ItemHelpers::getItemStat(attrib);
                 if (stat.id == attrib.Id)
                 {
-                    if (stat.nextInChain != 0)
+                    auto chainedIter = chainedAttribs.find(stat.id);
+                    if (!stat.nextInChain.empty())
                     {
-                        auto chainedIter = chainedAttribs.find(stat.id);
                         if (chainedIter != chainedAttribs.end())
                         {
+                            if (chainedIter->second.count == 0)
+                            {
+                                attrib.Name = stat.name;
+                                attrib.Desc = stat.desc;
+                                attrib.Version = version;
+                                attrib.GameVersion = gameVersion;
+                                attrib.DescPriority = stat.descPriority;
+                                attrib.encode = stat.encode;
+                                magicalAttributes.push_back(attrib);
+                                chainedIter->second.count = 1;
+                            }
+
                             magicalAttributes[chainedIter->second.idx].Values[0] += attrib.Values[0];
                         }
                         else
@@ -6595,39 +6636,26 @@ namespace d2ce
                             attrib.DescPriority = stat.descPriority;
                             attrib.encode = stat.encode;
                             magicalAttributes.push_back(attrib);
-                            chainedAttribs[stat.id] = { 1, stat.nextInChain, magicalAttributes.size() - 1 };
+                            auto nextInChain = stat.nextInChain.front();
+                            auto curStatId = stat.id;
+                            auto idx = magicalAttributes.size() - 1;
+                            chainedAttribs[curStatId] = { 1, nextInChain, idx };
+                            auto nextInChainIter = stat.nextInChain.begin() + 1;
+                            auto nextInChainIterEnd = stat.nextInChain.end();
+                            ++idx;
+                            curStatId = nextInChain;
+                            for (; nextInChainIter != nextInChainIterEnd; ++nextInChainIter, ++idx)
+                            {
+                                nextInChain = *nextInChainIter;
+                                chainedAttribs[curStatId] = { 0, nextInChain, idx };
+                                curStatId = nextInChain;
+                            }
+                            chainedAttribs[curStatId] = { 0, 0, idx };
                         }
                     }
-                    else if (attrib.Id > 0)
+                    else if (chainedIter != chainedAttribs.end())
                     {
-                        auto& prevStat = ItemHelpers::getItemStat(attrib.Version, attrib.Id - 1);
-                        if (prevStat.nextInChain == attrib.Id)
-                        {
-                            auto chainedIter = chainedAttribs.find(stat.id);
-                            if (chainedIter != chainedAttribs.end())
-                            {
-                                // Cold and posion length are averaged
-                                if (stat.name.compare("coldlength") == 0 ||
-                                    stat.name.compare("poisonlength") == 0)
-                                {
-                                    chainedIter->second.count += 1;
-                                }
-
-                                magicalAttributes[chainedIter->second.idx].Values[0] += attrib.Values[0];
-                            }
-                            else
-                            {
-                                attrib.Name = stat.name;
-                                attrib.Desc = stat.desc;
-                                attrib.Version = version;
-                                attrib.GameVersion = gameVersion;
-                                attrib.DescPriority = stat.descPriority;
-                                attrib.encode = stat.encode;
-                                magicalAttributes.push_back(attrib);
-                                chainedAttribs[stat.id] = { 1, 0, magicalAttributes.size() - 1 };
-                            }
-                        }
-                        else
+                        if (chainedIter->second.count == 0)
                         {
                             attrib.Name = stat.name;
                             attrib.Desc = stat.desc;
@@ -6636,6 +6664,18 @@ namespace d2ce
                             attrib.DescPriority = stat.descPriority;
                             attrib.encode = stat.encode;
                             magicalAttributes.push_back(attrib);
+                            chainedIter->second.count = 1;
+                        }
+                        else
+                        {
+                            // Cold and posion length are averaged
+                            if (stat.name.compare("coldlength") == 0 ||
+                                stat.name.compare("poisonlength") == 0)
+                            {
+                                chainedIter->second.count += 1;
+                            }
+
+                            magicalAttributes[chainedIter->second.idx].Values[0] += attrib.Values[0];
                         }
                     }
                     else
@@ -10082,8 +10122,8 @@ void d2ce::ItemHelpers::checkForRelatedMagicalAttributes(std::vector<MagicalAttr
         return;
     }
 
-    bool minDamageVisible = true;
-    bool maxDamageVisible = true;
+    MagicalAttribute* pMinDamage = nullptr;
+    MagicalAttribute* pMaxDamage = nullptr;
     for (auto& prop : relatedPropIdMap)
     {
         auto& attrib = prop.second.get();
@@ -10110,22 +10150,133 @@ void d2ce::ItemHelpers::checkForRelatedMagicalAttributes(std::vector<MagicalAttr
         {
             if (validProps[2])
             {
-                if (!minDamageVisible)
+                if (pMinDamage != nullptr)
                 {
                     attrib.Visible = false;
                 }
-                minDamageVisible = false;
+                else
+                {
+                    pMinDamage = &attrib;
+                    if (pMaxDamage != nullptr)
+                    {
+                        if (pMaxDamage->Values[0] > attrib.Values[0])
+                        {
+                            attrib.Values.push_back(pMaxDamage->Values.front());
+                            pMaxDamage->Visible = false;
+
+                            const auto& stat = getItemStat(attrib.Version, mindamageId);
+                            if (stat.id == mindamageId)
+                            {
+                                attrib.Desc = stat.descRange;
+                            }
+                        }
+                        else if (pMaxDamage->Values[0] == attrib.Values[0])
+                        {
+                            pMaxDamage->Visible = false;
+
+                            const auto& stat = getItemStat(attrib.Version, mindamageId);
+                            if (stat.id == mindamageId)
+                            {
+                                attrib.Desc = stat.descNoRange;
+                            }
+                        }
+                    }
+                }
             }
+            else if (numRelatedProps[2] == 1)
+            {
+                pMinDamage = &attrib;
+                if (pMaxDamage != nullptr)
+                {
+                    if (pMaxDamage->Values[0] > attrib.Values[0])
+                    {
+                        attrib.Values.push_back(pMaxDamage->Values.front());
+                        pMaxDamage->Visible = false;
+
+                        const auto& stat = getItemStat(attrib.Version, mindamageId);
+                        if (stat.id == mindamageId)
+                        {
+                            attrib.Desc = stat.descRange;
+                        }
+                    }
+                    else if(pMaxDamage->Values[0] == attrib.Values[0])
+                    {
+                        pMaxDamage->Visible = false;
+
+                        const auto& stat = getItemStat(attrib.Version, mindamageId);
+                        if (stat.id == mindamageId)
+                        {
+                            attrib.Desc = stat.descNoRange;
+                        }
+                    }
+                }
+            }
+
         }
         else if ((attrib.Id == maxdamageId) || (attrib.Id == secondary_maxdamageId) || (attrib.Id == item_throw_maxdamageId))
         {
-            if (validProps[2])
+            if (validProps[3])
             {
-                if (!maxDamageVisible)
+                if (pMaxDamage != nullptr)
                 {
                     attrib.Visible = false;
                 }
-                maxDamageVisible = false;
+                else
+                {
+                    pMaxDamage = &attrib;
+                    if (pMinDamage != nullptr)
+                    {
+                        if (attrib.Values[0] > pMinDamage->Values[0])
+                        {
+                            pMinDamage->Values.push_back(attrib.Values.front());
+                            attrib.Visible = false;
+
+                            const auto& stat = getItemStat(pMinDamage->Version, mindamageId);
+                            if (stat.id == mindamageId)
+                            {
+                                pMinDamage->Desc = stat.descRange;
+                            }
+                        }
+                        else if (attrib.Values[0] == pMinDamage->Values[0])
+                        {
+                            attrib.Visible = false;
+
+                            const auto& stat = getItemStat(pMinDamage->Version, mindamageId);
+                            if (stat.id == mindamageId)
+                            {
+                                pMinDamage->Desc = stat.descNoRange;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (numRelatedProps[3] == 1)
+            {
+                pMaxDamage = &attrib;
+                if (pMinDamage != nullptr)
+                {
+                    if (attrib.Values[0] > pMinDamage->Values[0])
+                    {
+                        pMinDamage->Values.push_back(attrib.Values.front());
+                        attrib.Visible = false;
+
+                        const auto& stat = getItemStat(pMinDamage->Version, mindamageId);
+                        if (stat.id == mindamageId)
+                        {
+                            pMinDamage->Desc = stat.descRange;
+                        }
+                    }
+                    else if (attrib.Values[0] == pMinDamage->Values[0])
+                    {
+                        attrib.Visible = false;
+
+                        const auto& stat = getItemStat(pMinDamage->Version, mindamageId);
+                        if (stat.id == mindamageId)
+                        {
+                            pMinDamage->Desc = stat.descNoRange;
+                        }
+                    }
+                }
             }
         }
     }
@@ -10140,10 +10291,9 @@ std::int64_t d2ce::ItemHelpers::getMagicalAttributeValue(MagicalAttribute& attri
 
     auto value = attrib.Values[idx];
     std::stringstream ssValue;
-    auto nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
     auto descFunc = stat.descFunc;
     auto* pOpAttribs = &stat.opAttribs;
-    if (stat.nextInChain != 0)
+    if (!stat.nextInChain.empty())
     {
         if (stat.name.compare("poisonmindam") == 0)
         {
@@ -10167,11 +10317,12 @@ std::int64_t d2ce::ItemHelpers::getMagicalAttributeValue(MagicalAttribute& attri
         }
 
         // group stat, get the stat information we are looking for
-        while ((idx > 0) && (nextInChain != 0))
+        auto nextInChainIter = stat.nextInChain.begin();
+        auto nextInChainIterEnd = stat.nextInChain.end();
+        for (; nextInChainIter != nextInChainIterEnd && idx > 0; ++nextInChainIter)
         {
             --idx;
-            const auto& stat2 = getItemStat(attrib.Version, nextInChain);
-            nextInChain = stat2.nextInChain;
+            const auto& stat2 = getItemStat(attrib.Version, *nextInChainIter);
             descFunc = stat2.descFunc;
             pOpAttribs = &stat2.opAttribs;
         }
@@ -10518,7 +10669,7 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     size_t repIdx = 0;
     std::string replaceStr;
     const auto& stat = getItemStat(attrib.Version, attrib.Id);
-    if (stat.nextInChain != 0 && stat.isRootInChain)
+    if (!stat.nextInChain.empty())
     {
         if (attrib.Values.size() >= 2 && attrib.Values[0] == attrib.Values[1])
         {
