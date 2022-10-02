@@ -601,6 +601,11 @@ namespace D2EditorTests
             TestOpenBase("immun_charm.d2s", d2ce::EnumCharVersion::v140, true);
         }
 
+        TEST_METHOD(TestOpen39)
+        {
+            TestOpenBase("Konan.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
@@ -830,6 +835,11 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonExport46)
         {
             TestJsonExportBase("immun_charm.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport47)
+        {
+            TestJsonExportBase("Konan.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
@@ -1109,6 +1119,12 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadCharFile("immun_charm.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen49)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Konan.json", character, d2ce::EnumCharVersion::v140, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

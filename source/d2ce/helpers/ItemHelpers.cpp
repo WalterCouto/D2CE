@@ -2193,6 +2193,7 @@ namespace d2ce
 
                 if (newValue.name.compare("item_maxdamage_percent") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModEnhancedDamage";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "%+d%% Enhanced Damage");
                     ConvertPlaceHolders(strValue2);
@@ -2201,6 +2202,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("firemindam") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModFireDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d fire damage");
                     ConvertPlaceHolders(strValue2);
@@ -2213,6 +2215,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("lightmindam") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModLightningDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d lightning damage");
                     ConvertPlaceHolders(strValue2);
@@ -2225,6 +2228,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("magicmindam") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModMagicDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d magic damage");
                     ConvertPlaceHolders(strValue2);
@@ -2237,6 +2241,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("coldmindam") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModColdDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d cold damage");
                     ConvertPlaceHolders(strValue2);
@@ -2249,6 +2254,7 @@ namespace d2ce
                 }
                 else if (newValue.name.compare("poisonmindam") == 0)
                 {
+                    newValue.isRootInChain = true;
                     strValue = "strModPoisonDamageRange";
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "Adds %d-%d poison damage over %d seconds");
                     ConvertPlaceHolders(strValue2);
@@ -2258,6 +2264,11 @@ namespace d2ce
                     LocalizationHelpers::GetStringTxtValue(strValue, strValue2, "%+d poison damage over %d seconds");
                     ConvertPlaceHolders(strValue2, 1);
                     newValue.descNoRange = strValue2;
+                }
+                else if (newValue.name.compare("coldmaxdam") == 0 ||
+                         newValue.name.compare("poisonmaxdam") == 0)
+                {
+                    strValue = "strModPoisonDamage";
                 }
             }
 
@@ -10129,7 +10140,7 @@ std::int64_t d2ce::ItemHelpers::getMagicalAttributeValue(MagicalAttribute& attri
 
     auto value = attrib.Values[idx];
     std::stringstream ssValue;
-    auto nextInChain = stat.nextInChain;
+    auto nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
     auto descFunc = stat.descFunc;
     auto* pOpAttribs = &stat.opAttribs;
     if (stat.nextInChain != 0)
@@ -10507,7 +10518,7 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     size_t repIdx = 0;
     std::string replaceStr;
     const auto& stat = getItemStat(attrib.Version, attrib.Id);
-    if (stat.nextInChain != 0)
+    if (stat.nextInChain != 0 && stat.isRootInChain)
     {
         if (attrib.Values.size() >= 2 && attrib.Values[0] == attrib.Values[1])
         {

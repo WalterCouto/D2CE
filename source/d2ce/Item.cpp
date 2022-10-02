@@ -16347,7 +16347,7 @@ bool d2ce::Item::parsePropertyList(std::FILE* charfile, size_t& current_bit_offs
             numParms = 1;
         }
 
-        nextInChain = stat.nextInChain;
+        nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
         while (nextInChain && numParms < 4)
         {
             const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
@@ -16479,7 +16479,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
                 node = iter->operator[]("Value");
                 values.push_back(SafeGetNodeValue(node));
 
-                nextInChain = stat.nextInChain;
+                nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
                 while (nextInChain && values.size() < 4)
                 {
                     ++iter;
@@ -16766,7 +16766,7 @@ bool d2ce::Item::parsePropertyList(const Json::Value& propListRoot, bool bSerial
             }
         }
 
-        nextInChain = stat.nextInChain;
+        nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
         while (nextInChain && valueIdx < 4)
         {
             const auto& statNext = ItemHelpers::getItemStat(getVersion(), nextInChain);
@@ -16841,7 +16841,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
 
         magicalAttrib.Id = stat.id;
         magicalAttrib.Name = stat.name;
-        magicalAttrib.Desc = stat.nextInChain != 0 ? stat.descRange : stat.desc;
+        magicalAttrib.Desc = stat.nextInChain != 0 && stat.isRootInChain ? stat.descRange : stat.desc;
         magicalAttrib.Version = itemVersion;
         magicalAttrib.GameVersion = gameVersion;
         magicalAttrib.DescPriority = stat.descPriority;
@@ -16938,7 +16938,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
             current_bit_offset += stat.saveBits;
         }
 
-        nextInChain = stat.nextInChain;
+        nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
         while (nextInChain && magicalAttrib.Values.size() < 4)
         {
             const auto& statNext = ItemHelpers::getItemStat(itemVersion, nextInChain);
@@ -17249,7 +17249,7 @@ bool d2ce::Item::updatePropertyList(size_t& current_bit_offset, const std::vecto
             std::advance(iterValue, 1);
         }
 
-        nextInChain = stat.nextInChain;
+        nextInChain = stat.isRootInChain ? stat.nextInChain : 0;
         while (nextInChain)
         {
             if (iterValue == iterValueEnd)

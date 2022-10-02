@@ -1211,6 +1211,7 @@ namespace d2ce
         std::string descRange;           // The description used for range stats (i.e. fire damage)
         std::string descNoRange;         // The description used for ragne stats when the min/max value is the same
         std::uint16_t nextInChain = 0;   // stat that follows this one (i.e. firemaxdam follows firemindam)
+        bool isRootInChain = false;      // is this the root of the chain?
     };
 
     //---------------------------------------------------------------------------
