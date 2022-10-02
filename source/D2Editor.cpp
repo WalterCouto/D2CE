@@ -18,6 +18,10 @@
 
 Revision History
 ================
+Version 2.18 (October 2, 2022)
+   - Updated: allow poison and cold max attribute to be specified on it's own
+   - Updated: Fix up tooltip display when min and max damage are both present
+
 Version 2.17 (September 30, 2022)
    - Updated: fix up reading of character files for PTR 2.5
    - Updated: fix issue with renaming character missing one file

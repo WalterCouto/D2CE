@@ -76,6 +76,11 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.18 (October 2, 2022)**
+- Updated: allow poison and cold max attribute to be specified on it's own<br>
+- Updated: Fix up tooltip display when min and max damage are both present<br>
+<br>
+
 **Version 2.17 (September 30, 2022)**
 - Updated: fix up reading of character files for PTR 2.5<br>
 - Updated: fix issue with renaming character missing one file<br>
