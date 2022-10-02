@@ -1906,6 +1906,186 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Blizzard.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Blizzard.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Fire.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Fire.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\JavaZone.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\JavaZone.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Loradiel.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Loradiel.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Rui.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Rui.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Spartacus.d2s">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Spartacus.json">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "%(FullPath)" "$(OutDir)examples\char\99\"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy %(FullPath) To $(OutDir)examples\char\99\</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)examples\char\99\%(Filename)%(Extension);%(Outputs)</Outputs>
+    </CustomBuild>
     <None Include="d2ce\thirdparty\rapidcsv\LICENSE" />
     <CustomBuild Include="..\examples\chars\96\WhirlWind_serialized.json">
       <FileType>Document</FileType>

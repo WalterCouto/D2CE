@@ -685,6 +685,43 @@
     <CustomBuild Include="..\examples\chars\99\Konan.d2s">
       <Filter>examples\char\99</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Walter.json" />
+    <CustomBuild Include="..\examples\chars\99\Blizzard.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Blizzard.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Fire.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Fire.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\JavaZone.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\JavaZone.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Loradiel.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Loradiel.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Rui.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Rui.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Spartacus.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Spartacus.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl">
@@ -698,9 +735,6 @@
     </None>
     <None Include="..\d2ce\thirdparty\utf8\include\utf8\LICENSE">
       <Filter>Header Files\utf8</Filter>
-    </None>
-    <None Include="..\examples\chars\99\Walter.json">
-      <Filter>examples\char\99</Filter>
     </None>
   </ItemGroup>
 </Project>

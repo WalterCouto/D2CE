@@ -606,6 +606,36 @@ namespace D2EditorTests
             TestOpenBase("Konan.d2s", d2ce::EnumCharVersion::v140, true);
         }
 
+        TEST_METHOD(TestOpen40)
+        {
+            TestOpenBase("Blizzard.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen41)
+        {
+            TestOpenBase("Fire.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen42)
+        {
+            TestOpenBase("JavaZone.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen43)
+        {
+            TestOpenBase("Loradiel.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen44)
+        {
+            TestOpenBase("Rui.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen45)
+        {
+            TestOpenBase("Spartacus.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
@@ -840,6 +870,36 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonExport47)
         {
             TestJsonExportBase("Konan.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport48)
+        {
+            TestJsonExportBase("Blizzard.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport49)
+        {
+            TestJsonExportBase("Fire.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport50)
+        {
+            TestJsonExportBase("JavaZone.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport51)
+        {
+            TestJsonExportBase("Loradiel.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport52)
+        {
+            TestJsonExportBase("Rui.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport53)
+        {
+            TestJsonExportBase("Spartacus.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
@@ -1125,6 +1185,42 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadCharFile("Konan.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen50)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Blizzard.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen51)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Fire.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen52)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("JavaZone.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen53)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Loradiel.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen54)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Rui.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen55)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Spartacus.json", character, d2ce::EnumCharVersion::v140, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
