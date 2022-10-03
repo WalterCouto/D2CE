@@ -6697,6 +6697,12 @@ namespace d2ce
         auto iterChainedEnd = chainedAttribs.end();
         for (; iterChained != iterChainedEnd; )
         {
+            if (iterChained->second.idx >= magicalAttributes.size())
+            {
+                // should not happend
+                break;
+            }
+
             auto nextInChain = iterChained->second.nextInChain;
             auto& parentAttrib = magicalAttributes[iterChained->second.idx];
 
@@ -6708,15 +6714,11 @@ namespace d2ce
             }
 
             ++iterChained;
-            if ((iterChained == iterChainedEnd) && (nextInChain == 0))
-            {
-                // should not happend
-                continue;
-            }
-
             for (; iterChained != iterChainedEnd && nextInChain != 0; ++iterChained)
             {
-                if (iterChained->first != nextInChain)
+                if (iterChained->first != nextInChain || 
+                    iterChained->second.count == 0 ||
+                    iterChained->second.idx >= magicalAttributes.size())
                 {
                     // should not happen
                     break;
