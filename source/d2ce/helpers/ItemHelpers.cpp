@@ -92,7 +92,7 @@ namespace d2ce
 #define read_uint32_bits(start,size) \
     ((*((std::uint32_t *) &data[(start) / 8]) >> ((start) & 7))& (((std::uint32_t)1 << (size)) - 1))
 
-    void ConvertPlaceHolders(std::string& descstr, size_t idxOffset = 0)
+    void ConvertPlaceHolders(std::string& descstr, size_t idxOffset = 0, bool negative = false)
     {
         static std::regex re{ "(%([+]?[id]|s))" };
         static std::regex reAlt{ "(%[+]?[0-9])" };
@@ -119,7 +119,7 @@ namespace d2ce
             while (strPos != descstr.npos)
             {
                 std::stringstream ss2;
-                if (strFind.find("+") != strFind.npos)
+                if (strFind.find("+") != strFind.npos && !negative)
                 {
                     ss2 << "+";
                 }
@@ -156,9 +156,17 @@ namespace d2ce
     void ConvertPlaceHolders(std::string& descstrpos, std::string& descstrneg, bool bGenerateNeg = false, size_t idxOffset = 0)
     {
         ConvertPlaceHolders(descstrpos, idxOffset);
+        if (!bGenerateNeg)
+        {
+            if (descstrpos.find("+{") != descstrpos.npos)
+            {
+                bGenerateNeg = true;
+            }
+        }
+
         if (bGenerateNeg)
         {
-            ConvertPlaceHolders(descstrneg, idxOffset);
+            ConvertPlaceHolders(descstrneg, idxOffset, true);
         }
         else
         {
@@ -5171,6 +5179,8 @@ namespace d2ce
 
     struct ItemUniqueType : public ItemType
     {
+        std::string typeName; // name of the parent type
+
         std::uint16_t id = 0; // index of the unique item
 
         std::string index; // The ID pointer that is referenced by the game in TreasureClassEx.txt and CubeMain.txt, this also controls the string that will be used to display the item's name in-game.
@@ -5189,8 +5199,14 @@ namespace d2ce
             return id;
         }
 
+        const std::string& getTypeName() const override // return the parent type name
+        {
+            return typeName;
+        }
+
         void CopyParentItem(const ItemType& parent)
         {
+            typeName = parent.name;
             compactsave = parent.compactsave;
             ac = parent.ac;
             dam = parent.dam;
@@ -5207,7 +5223,7 @@ namespace d2ce
             inv_file = parent.inv_file;
             nameable = parent.nameable;
             beltable = parent.beltable;
-            skipName = parent.skipName;
+            skipName = typeName.empty() ? true : parent.skipName;
             spellDesc = parent.spellDesc;
             bodyLocations = parent.bodyLocations;
             quiverCode = parent.quiverCode;
@@ -5415,7 +5431,11 @@ namespace d2ce
                 }
             }
 
-            itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
+            strValue = doc.GetCellString(invfileColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.inv_file = strValue;
+            }
             itemType.transform_color = doc.GetCellString(invtransformColumnIdx, i);
 
             for (size_t idx = 0; idx < modParamSize; ++idx)
@@ -5768,6 +5788,8 @@ namespace d2ce
 
     struct ItemSetItemType : public ItemType
     {
+        std::string typeName; // name of the parent type
+
         std::uint16_t id = 0; // index of the set item
 
         std::string index; // string key to item's name
@@ -5893,8 +5915,14 @@ namespace d2ce
             return std::uint16_t(bonusBits.to_ulong());
         }
 
+        const std::string& getTypeName() const override // return the parent type name
+        {
+            return typeName;
+        }
+
         void CopyParentItem(const ItemType& parent)
         {
+            typeName = parent.name;
             compactsave = parent.compactsave;
             ac = parent.ac;
             dam = parent.dam;
@@ -5911,7 +5939,7 @@ namespace d2ce
             inv_file = parent.inv_file;
             nameable = parent.nameable;
             beltable = parent.beltable;
-            skipName = parent.skipName;
+            skipName = typeName.empty() ? true : parent.skipName;
             spellDesc = parent.spellDesc;
             bodyLocations = parent.bodyLocations;
             quiverCode = parent.quiverCode;
@@ -8530,6 +8558,11 @@ const std::string& d2ce::ItemType::getRuneLetter() const
     }
 
     return iter->second.letter;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::ItemType::getTypeName() const
+{
+    return name;
 }
 //---------------------------------------------------------------------------
 

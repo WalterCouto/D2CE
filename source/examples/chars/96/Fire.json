@@ -17521,7 +17521,7 @@
                 -20
               ],
               "name": "item_req_percent",
-              "description": "Requirements +-20%"
+              "description": "Requirements -20%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -17542,7 +17542,7 @@
                 -20
               ],
               "name": "item_req_percent",
-              "description": "Requirements +-20%"
+              "description": "Requirements -20%"
             }
           ]
         },
@@ -18279,7 +18279,7 @@
             -20
           ],
           "name": "item_req_percent",
-          "description": "Requirements +-20%"
+          "description": "Requirements -20%"
         }
       ]
     }

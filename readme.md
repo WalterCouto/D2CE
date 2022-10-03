@@ -76,6 +76,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.19 (October 3, 2022)**
+- Updated: fix up bugs for unique items that incorrectly showed incorrect in some cases, like the new 2.5 Charms<br>
+<br>
+
 **Version 2.18 (October 2, 2022)**
 - Updated: allow poison and cold max attribute to be specified on it's own<br>
 - Updated: Fix up tooltip display when min and max damage are both present<br>

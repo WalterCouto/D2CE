@@ -636,6 +636,16 @@ namespace D2EditorTests
             TestOpenBase("Spartacus.d2s", d2ce::EnumCharVersion::v140, true);
         }
 
+        TEST_METHOD(TestOpen46)
+        {
+            TestOpenBase("Charming.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
+        TEST_METHOD(TestOpen47)
+        {
+            TestOpenBase("HCharming.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
@@ -900,6 +910,16 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonExport53)
         {
             TestJsonExportBase("Spartacus.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport54)
+        {
+            TestJsonExportBase("Charming.d2s", d2ce::EnumCharVersion::v140, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport55)
+        {
+            TestJsonExportBase("HCharming.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
@@ -1221,6 +1241,18 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadCharFile("Spartacus.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen56)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Charming.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen57)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("HCharming.json", character, d2ce::EnumCharVersion::v140, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

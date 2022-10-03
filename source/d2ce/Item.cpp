@@ -9409,18 +9409,18 @@ std::string d2ce::Item::getDisplayedItemName() const
                 ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, setAttrib.Name);
             }
 
-            ss << '\n' << itemType.name;
+            ss << '\n' << itemType.getTypeName();
         }
         else
         {
             if (personalizedName.empty())
             {
-                ss << itemType.name;
+                ss << itemType.getTypeName();
             }
             else
             {
                 LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
-                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.getTypeName());
             }
         }
         break;
@@ -9517,7 +9517,7 @@ std::string d2ce::Item::getDisplayedItemName() const
 
             if (!itemType.skipName)
             {
-                ss << '\n' << itemType.name;
+                ss << '\n' << itemType.getTypeName();
             }
         }
         else
@@ -9526,12 +9526,12 @@ std::string d2ce::Item::getDisplayedItemName() const
             ss << itemType.name;
             if (personalizedName.empty())
             {
-                ss << itemType.name;
+                ss << itemType.getTypeName();
             }
             else
             {
                 LocalizationHelpers::GetStringTxtValue("ChampionFormat", strFormat, "%0 %1");
-                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.name);
+                ss << LocalizationHelpers::string_formatDiablo(strFormat, personalizedName, itemType.getTypeName());
             }
         }
         break;

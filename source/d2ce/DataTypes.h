@@ -1375,6 +1375,8 @@ namespace d2ce
         virtual std::string getPotionDesc(EnumCharClass charClass) const;
 
         virtual const std::string& getRuneLetter() const;
+        virtual const std::string& getTypeName() const; // return the parent type name, or if no parent it's name
+
     };
 
     struct RunewordType

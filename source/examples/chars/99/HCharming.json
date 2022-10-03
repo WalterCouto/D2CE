@@ -1,0 +1,4029 @@
+{
+  "header": {
+    "identifier": "aa55aa55",
+    "version": 99,
+    "filesize": 1257,
+    "checksum": "de752dbb",
+    "name": "HCharming",
+    "status": {
+      "hardcore": true,
+      "died": false,
+      "expansion": true
+    },
+    "progression": 0,
+    "active_arms": 0,
+    "class": "Paladin",
+    "class_id": 3,
+    "level": 3,
+    "created": 0,
+    "last_played": 1664518840,
+    "assigned_skills": [],
+    "left_skill": "Attack",
+    "right_skill": "Attack",
+    "left_swap_skill": "Attack",
+    "right_swap_skill": "Attack",
+    "menu_appearance": {
+      "head": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "torso": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "legs": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "right_arm": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "left_arm": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "right_hand": {
+        "graphic": 17,
+        "tint": 255
+      },
+      "left_hand": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "shield": {
+        "graphic": 79,
+        "tint": 255
+      },
+      "special1": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special2": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special3": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special4": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special5": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special6": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special7": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special8": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "ssd ",
+          "tint": 255,
+          "quality": 2,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "buc ",
+          "tint": 255,
+          "quality": 2,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "",
+          "tint": 0,
+          "quality": 0,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
+      }
+    },
+    "difficulty": {
+      "Normal": 128,
+      "Nightmare": 0,
+      "Hell": 0
+    },
+    "map_id": 587782271,
+    "dead_merc": 0,
+    "merc_id": "0",
+    "merc_name_id": 0,
+    "merc_type": 0,
+    "merc_experience": 0,
+    "quests_normal": {
+      "act_i": {
+        "introduced": true,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_ii": {
+        "introduced": false,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iii": {
+        "introduced": false,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iv": {
+        "introduced": false,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "quests_nm": {
+      "act_i": {
+        "introduced": false,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_ii": {
+        "introduced": false,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iii": {
+        "introduced": false,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iv": {
+        "introduced": false,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "quests_hell": {
+      "act_i": {
+        "introduced": false,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_ii": {
+        "introduced": false,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iii": {
+        "introduced": false,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iv": {
+        "introduced": false,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "waypoints": {
+      "normal": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": true,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": false,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": false,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": false,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      },
+      "nm": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": false,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": false,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": false,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      },
+      "hell": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": false,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": false,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": false,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      }
+    },
+    "npcs": {
+      "normal": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": true,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": true,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "nm": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": false,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": false,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "hell": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": false,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": false,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      }
+    }
+  },
+  "attributes": {
+    "strength": 25,
+    "energy": 15,
+    "dexterity": 20,
+    "vitality": 25,
+    "unused_stats": 10,
+    "unused_skill_points": 2,
+    "current_hp": 59,
+    "max_hp": 59,
+    "current_mana": 18,
+    "max_mana": 18,
+    "current_stamina": 91,
+    "max_stamina": 91,
+    "level": 3,
+    "experience": 1545,
+    "gold": 447
+  },
+  "skills": [
+    {
+      "id": 96,
+      "points": 0,
+      "name": "Sacrifice"
+    },
+    {
+      "id": 97,
+      "points": 0,
+      "name": "Smite"
+    },
+    {
+      "id": 98,
+      "points": 0,
+      "name": "Might"
+    },
+    {
+      "id": 99,
+      "points": 0,
+      "name": "Prayer"
+    },
+    {
+      "id": 100,
+      "points": 0,
+      "name": "Resist Fire"
+    },
+    {
+      "id": 101,
+      "points": 0,
+      "name": "Holy Bolt"
+    },
+    {
+      "id": 102,
+      "points": 0,
+      "name": "Holy Fire"
+    },
+    {
+      "id": 103,
+      "points": 0,
+      "name": "Thorns"
+    },
+    {
+      "id": 104,
+      "points": 0,
+      "name": "Defiance"
+    },
+    {
+      "id": 105,
+      "points": 0,
+      "name": "Resist Cold"
+    },
+    {
+      "id": 106,
+      "points": 0,
+      "name": "Zeal"
+    },
+    {
+      "id": 107,
+      "points": 0,
+      "name": "Charge"
+    },
+    {
+      "id": 108,
+      "points": 0,
+      "name": "Blessed Aim"
+    },
+    {
+      "id": 109,
+      "points": 0,
+      "name": "Cleansing"
+    },
+    {
+      "id": 110,
+      "points": 0,
+      "name": "Resist Lightning"
+    },
+    {
+      "id": 111,
+      "points": 0,
+      "name": "Vengeance"
+    },
+    {
+      "id": 112,
+      "points": 0,
+      "name": "Blessed Hammer"
+    },
+    {
+      "id": 113,
+      "points": 0,
+      "name": "Concentration"
+    },
+    {
+      "id": 114,
+      "points": 0,
+      "name": "Holy Freeze"
+    },
+    {
+      "id": 115,
+      "points": 0,
+      "name": "Vigor"
+    },
+    {
+      "id": 116,
+      "points": 0,
+      "name": "Conversion"
+    },
+    {
+      "id": 117,
+      "points": 0,
+      "name": "Holy Shield"
+    },
+    {
+      "id": 118,
+      "points": 0,
+      "name": "Holy Shock"
+    },
+    {
+      "id": 119,
+      "points": 0,
+      "name": "Sanctuary"
+    },
+    {
+      "id": 120,
+      "points": 0,
+      "name": "Meditation"
+    },
+    {
+      "id": 121,
+      "points": 0,
+      "name": "Fist of the Heavens"
+    },
+    {
+      "id": 122,
+      "points": 0,
+      "name": "Fanaticism"
+    },
+    {
+      "id": 123,
+      "points": 0,
+      "name": "Conviction"
+    },
+    {
+      "id": 124,
+      "points": 0,
+      "name": "Redemption"
+    },
+    {
+      "id": 125,
+      "points": 0,
+      "name": "Salvation"
+    }
+  ],
+  "items": [
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "tsc",
+      "categories": [
+        "Scroll",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Scroll of Town Portal",
+      "inv_file": "invbsc",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 2,
+      "alt_position_id": 1,
+      "type": "isc",
+      "categories": [
+        "Scroll",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Scroll of Identify",
+      "inv_file": "invrsc",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 8,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "lbl",
+      "categories": [
+        "Belt",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 3879279339,
+      "level": 1,
+      "quality": 1,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "low_quality_id": 0,
+      "timestamp": 0,
+      "defense_rating": 1,
+      "max_durability": 3,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "type_name": "Sash",
+      "inv_file": "invlbl",
+      "inv_height": 1,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp1",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Mana Potion",
+      "inv_file": "invmp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp1",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Healing Potion",
+      "inv_file": "invhp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "vps",
+      "categories": [
+        "Stamina Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Stamina Potion",
+      "inv_file": "invwps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "isc",
+      "categories": [
+        "Scroll",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Scroll of Identify",
+      "inv_file": "invrsc",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 2,
+      "alt_position_id": 1,
+      "type": "isc",
+      "categories": [
+        "Scroll",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Scroll of Identify",
+      "inv_file": "invrsc",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "vps",
+      "categories": [
+        "Stamina Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Stamina Potion",
+      "inv_file": "invwps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp1",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Mana Potion",
+      "inv_file": "invmp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp1",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Minor Mana Potion",
+      "inv_file": "invmp1",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 5,
+      "type": "sbw",
+      "categories": [
+        "Bow",
+        "Missile Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3196373263,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "max_durability": 20,
+      "current_durability": 19,
+      "total_nr_of_sockets": 3,
+      "magic_attributes": [],
+      "base_damage": {
+        "twohandmindam": 1,
+        "twohandmaxdam": 4
+      },
+      "socketed_items": [],
+      "type_name": "Short Bow",
+      "reqdex": 15,
+      "inv_file": "invsbw",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 2062521934,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 401,
+      "unique_name": "Cold Rupture",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 43,
+          "values": [
+            -75
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 187,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_cold_immunity",
+          "description": "Monster Cold Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "lblu",
+      "displayed_magic_attributes": [
+        {
+          "id": 187,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_cold_immunity",
+          "description": "Monster Cold Immunity is Sundered"
+        },
+        {
+          "id": 43,
+          "values": [
+            -75
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist -75%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 43,
+          "values": [
+            -75
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 187,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_cold_immunity",
+          "description": "Monster Cold Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 187,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_cold_immunity",
+          "description": "Monster Cold Immunity is Sundered"
+        },
+        {
+          "id": 43,
+          "values": [
+            -75
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist -75%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1821085363,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 402,
+      "unique_name": "Flame Rift",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            -75
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 189,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_fire_immunity",
+          "description": "Monster Fire Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "lred",
+      "displayed_magic_attributes": [
+        {
+          "id": 189,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_fire_immunity",
+          "description": "Monster Fire Immunity is Sundered"
+        },
+        {
+          "id": 39,
+          "values": [
+            -75
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist -75%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 39,
+          "values": [
+            -75
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 189,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_fire_immunity",
+          "description": "Monster Fire Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 189,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_fire_immunity",
+          "description": "Monster Fire Immunity is Sundered"
+        },
+        {
+          "id": 39,
+          "values": [
+            -75
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist -75%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 538952841,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 403,
+      "unique_name": "Crack of the Heavens",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 41,
+          "values": [
+            -75
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 190,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_light_immunity",
+          "description": "Monster Lightning Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "lyel",
+      "displayed_magic_attributes": [
+        {
+          "id": 190,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_light_immunity",
+          "description": "Monster Lightning Immunity is Sundered"
+        },
+        {
+          "id": 41,
+          "values": [
+            -75
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist -75%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 41,
+          "values": [
+            -75
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 190,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_light_immunity",
+          "description": "Monster Lightning Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 190,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_light_immunity",
+          "description": "Monster Lightning Immunity is Sundered"
+        },
+        {
+          "id": 41,
+          "values": [
+            -75
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist -75%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1664680289,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 404,
+      "unique_name": "Rotting Fissure",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 45,
+          "values": [
+            -75
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 191,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_poison_immunity",
+          "description": "Monster Poison Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "lgrn",
+      "displayed_magic_attributes": [
+        {
+          "id": 191,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_poison_immunity",
+          "description": "Monster Poison Immunity is Sundered"
+        },
+        {
+          "id": 45,
+          "values": [
+            -75
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist -75%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 45,
+          "values": [
+            -75
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 191,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_poison_immunity",
+          "description": "Monster Poison Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 191,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_poison_immunity",
+          "description": "Monster Poison Immunity is Sundered"
+        },
+        {
+          "id": 45,
+          "values": [
+            -75
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist -75%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 3131424241,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 405,
+      "unique_name": "Bone Break",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 36,
+          "values": [
+            -25
+          ],
+          "name": "damageresist",
+          "description": "Damage Reduced by {0}%"
+        },
+        {
+          "id": 192,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_damage_immunity",
+          "description": "Monster Physical Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "whit",
+      "displayed_magic_attributes": [
+        {
+          "id": 192,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_damage_immunity",
+          "description": "Monster Physical Immunity is Sundered"
+        },
+        {
+          "id": 36,
+          "values": [
+            25
+          ],
+          "name": "damageresist",
+          "description": "Damage Increased by 25%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 36,
+          "values": [
+            -25
+          ],
+          "name": "damageresist",
+          "description": "Damage Reduced by {0}%"
+        },
+        {
+          "id": 192,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_damage_immunity",
+          "description": "Monster Physical Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 192,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_damage_immunity",
+          "description": "Monster Physical Immunity is Sundered"
+        },
+        {
+          "id": 36,
+          "values": [
+            25
+          ],
+          "name": "damageresist",
+          "description": "Damage Increased by 25%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "box",
+      "categories": [
+        "Quest"
+      ],
+      "type_id": 4,
+      "quest_difficulty": 0,
+      "nr_of_items_in_sockets": 0,
+      "id": 1999821017,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "magic_attributes": [],
+      "type_name": "Horadric Cube",
+      "inv_file": "invbox",
+      "inv_height": 2,
+      "inv_width": 2,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "cm3",
+      "categories": [
+        "Large Charm",
+        "Charm",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 3735491772,
+      "level": 75,
+      "quality": 7,
+      "multiple_pictures": 1,
+      "picture_id": 0,
+      "class_specific": 0,
+      "unique_id": 406,
+      "unique_name": "Black Cleft",
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 37,
+          "values": [
+            -50
+          ],
+          "name": "magicresist",
+          "description": "Magic Resist +{0}%"
+        },
+        {
+          "id": 193,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_magic_immunity",
+          "description": "Monster Magic Immunity is Sundered"
+        }
+      ],
+      "type_name": "Grand Charm",
+      "levelreq": 75,
+      "inv_file": "invchm3",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 8,
+      "transform_color": "lgry",
+      "displayed_magic_attributes": [
+        {
+          "id": 193,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_magic_immunity",
+          "description": "Monster Magic Immunity is Sundered"
+        },
+        {
+          "id": 37,
+          "values": [
+            -50
+          ],
+          "name": "magicresist",
+          "description": "Magic Resist -50%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 37,
+          "values": [
+            -50
+          ],
+          "name": "magicresist",
+          "description": "Magic Resist +{0}%"
+        },
+        {
+          "id": 193,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_magic_immunity",
+          "description": "Monster Magic Immunity is Sundered"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 193,
+          "values": [
+            300
+          ],
+          "name": "item_pierce_magic_immunity",
+          "description": "Monster Magic Immunity is Sundered"
+        },
+        {
+          "id": 37,
+          "values": [
+            -50
+          ],
+          "name": "magicresist",
+          "description": "Magic Resist -50%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 4,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "ssd",
+      "categories": [
+        "Sword",
+        "Swords and Knives",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3827885819,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "max_durability": 24,
+      "current_durability": 21,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 2,
+        "maxdam": 7
+      },
+      "type_name": "Short Sword",
+      "inv_file": "invssd",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 2,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 1,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 5,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "buc",
+      "categories": [
+        "Shield",
+        "Any Shield",
+        "Any Armor",
+        "Second Hand"
+      ],
+      "type_id": 2,
+      "nr_of_items_in_sockets": 0,
+      "id": 424984722,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "defense_rating": 4,
+      "max_durability": 12,
+      "current_durability": 12,
+      "magic_attributes": [],
+      "type_name": "Buckler",
+      "reqstr": 12,
+      "inv_file": "invbuc",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    }
+  ],
+  "corpse_items": [],
+  "is_dead": 0,
+  "merc_items": [],
+  "item_bonuses": [
+    {
+      "id": 43,
+      "values": [
+        -75
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
+      "id": 39,
+      "values": [
+        -75
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
+      "id": 41,
+      "values": [
+        -75
+      ],
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
+    },
+    {
+      "id": 45,
+      "values": [
+        -75
+      ],
+      "name": "poisonresist",
+      "description": "Poison Resist +{0}%"
+    },
+    {
+      "id": 36,
+      "values": [
+        -25
+      ],
+      "name": "damageresist",
+      "description": "Damage Reduced by {0}%"
+    },
+    {
+      "id": 37,
+      "values": [
+        -50
+      ],
+      "name": "magicresist",
+      "description": "Magic Resist +{0}%"
+    }
+  ]
+}

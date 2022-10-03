@@ -4697,7 +4697,7 @@
             -25
           ],
           "name": "item_req_percent",
-          "description": "Requirements +-25%"
+          "description": "Requirements -25%"
         },
         {
           "id": 92,
@@ -4842,7 +4842,7 @@
             -25
           ],
           "name": "item_req_percent",
-          "description": "Requirements +-25%"
+          "description": "Requirements -25%"
         },
         {
           "id": 92,

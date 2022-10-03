@@ -6461,7 +6461,7 @@
             -1
           ],
           "name": "item_lightradius",
-          "description": "+-1 to Light Radius"
+          "description": "-1 to Light Radius"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -6562,7 +6562,7 @@
             -1
           ],
           "name": "item_lightradius",
-          "description": "+-1 to Light Radius"
+          "description": "-1 to Light Radius"
         }
       ]
     },
