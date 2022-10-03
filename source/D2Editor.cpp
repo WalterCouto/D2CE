@@ -19,7 +19,7 @@
 Revision History
 ================
 Version 2.19 (October 3, 2022)
-   - Updated: fix up bugs for unique items that incorrectly showed incorrect 
+   - Updated: fix up bugs for unique items that incorrectly showed up 
               in some cases, like the new 2.5 Charms
 
 Version 2.18 (October 2, 2022)
