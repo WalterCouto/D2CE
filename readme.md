@@ -76,6 +76,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.20 (October 2, 2022)**
+- Updated: Set Items now display all the possible Bonus attribues in the tooltip<br>
+<br>
+
 **Version 2.19 (October 3, 2022)**
 - Updated: fix up bugs for unique items that incorrectly showed up in some cases, like the new 2.5 Charms<br>
 <br>

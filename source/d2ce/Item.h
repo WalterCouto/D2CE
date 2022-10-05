@@ -203,6 +203,8 @@ namespace d2ce
         std::uint8_t getTomeValue() const; // used in serialization
         std::uint16_t getSetItemId() const;
         bool getSetAttributes(SetAttributes& attrib) const;
+        bool getCombinedSetAttributes(std::vector<MagicalAttribute>& attribs) const;
+        bool getFullSetAttributes(std::vector<MagicalAttribute>& attribs) const;
         bool getRareOrCraftedAttributes(RareAttributes& attrib) const;
         bool getUniqueAttributes(UniqueAttributes& attrib) const;
         bool getMagicalAttributes(std::vector<MagicalAttribute>& attribs) const;
@@ -311,6 +313,9 @@ namespace d2ce
         std::string getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const;
         bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
+        bool getDisplayedSetItemAttributes(SetAttributes& attribs, std::uint32_t charLevel) const;
+        bool getDisplayedFullSetAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
+        bool getDisplayedCombinedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
 
     public:

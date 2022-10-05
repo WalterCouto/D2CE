@@ -361,6 +361,8 @@ namespace d2ce
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getSetBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
@@ -5353,6 +5355,33 @@ bool d2ce::Item::getSetAttributes(SetAttributes& attrib) const
     }
 
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getCombinedSetAttributes(std::vector<MagicalAttribute>& attribs) const
+{
+    d2ce::SetAttributes setAttrib;
+    if (!getSetAttributes(setAttrib))
+    {
+        return false;
+    }
+
+    for (const auto& setAttribs : setAttrib.SetAttributes)
+    {
+        attribs.insert(attribs.end(), setAttribs.begin(), setAttribs.end());
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getFullSetAttributes(std::vector<MagicalAttribute>& attribs) const
+{
+    d2ce::SetAttributes setAttrib;
+    if (!getSetAttributes(setAttrib))
+    {
+        return false;
+    }
+
+    return ItemHelpers::getFullSetBonusAttribs(setAttrib.Id, attribs, ItemVersion, GameVersion, getLevel(), 0, true);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
@@ -10437,6 +10466,48 @@ bool d2ce::Item::getDisplayedRunewordAttributes(RunewordAttributes& attribs, std
     }
 
     return d2ce::ItemHelpers::formatMagicalAttributes(attribs.MagicalAttributes, charLevel);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedSetItemAttributes(SetAttributes& attribs, std::uint32_t charLevel) const
+{
+    if (!getSetAttributes(attribs))
+    {
+        return false;
+    }
+
+    bool bFormatted = false;
+    for (auto& setAttribs : attribs.SetAttributes)
+    {
+        bFormatted |= d2ce::ItemHelpers::formatMagicalAttributes(setAttribs, charLevel);
+    }
+
+    return bFormatted;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedFullSetAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
+{
+    if (!getFullSetAttributes(attribs))
+    {
+        return false;
+    }
+
+    return d2ce::ItemHelpers::formatMagicalAttributes(attribs, charLevel);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::getDisplayedCombinedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
+{
+    SetAttributes setAttrib;
+    if (!getDisplayedSetItemAttributes(setAttrib, charLevel))
+    {
+        return false;
+    }
+
+    for (const auto& setAttribs : setAttrib.SetAttributes)
+    {
+        attribs.insert(attribs.end(), setAttribs.begin(), setAttribs.end());
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const

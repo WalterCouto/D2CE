@@ -1397,15 +1397,5 @@ namespace d2ce
         std::uint16_t levelreq = 0;
         d2ce::EnumItemVersion version = d2ce::EnumItemVersion::v107; // min required version
     };
-
-    struct UniqueItemType
-    {
-        std::uint16_t id = 0; // index of the unique item
-        std::string name; // what string will be displayed in-game for this unique item
-
-        d2ce::ItemType& baseItemType; // the base type of this unique item
-
-        std::vector<MagicalAttribute> attribs; // The modifiers this item has
-    };
 }
 //---------------------------------------------------------------------------

@@ -59,6 +59,8 @@ namespace d2ce
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
         bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getSetBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
@@ -6218,13 +6220,6 @@ namespace d2ce
                 continue;
             }
 
-            strValue = doc.GetCellString(setColumnIdx, i);
-            if (strValue.empty())
-            {
-                // skip
-                continue;
-            }
-
             if (idColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(idColumnIdx, i);
@@ -6239,6 +6234,13 @@ namespace d2ce
             itemType.index = index;
             LocalizationHelpers::GetStringTxtValue(itemType.index, itemType.name);
             itemSetItemsIndex[itemType.index] = itemType.id;
+
+            strValue = doc.GetCellString(setColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
 
             itemType.setIndex = strValue;
             {
@@ -9527,6 +9529,87 @@ bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<Magical
     InitalizeItemRandomization(dwb, level, EnumItemQuality::MAGIC, rnd);
     ProcessMagicalProperites(setitem.modType, attribs, rnd, version, gameVersion, bMaxAlways);
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getSetBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
+{
+    attribs.clear();
+    auto iter = s_ItemSetItemsType.find(id);
+    if (iter == s_ItemSetItemsType.end())
+    {
+        return false;
+    }
+
+    auto& setitem = iter->second;
+    if (setitem.version > gameVersion)
+    {
+        return false;
+    }
+
+    auto setIter = s_ItemSetsIndex.find(setitem.setIndex);
+    if (setIter == s_ItemSetsIndex.end())
+    {
+        return false;
+    }
+
+    auto& setInfo = s_ItemSetsType[setIter->second];
+
+    ItemRandStruct rnd = { dwb, 666 };
+    InitalizeItemRandomization(dwb, level, EnumItemQuality::MAGIC, rnd);
+
+    if (!setInfo.p2ModType.empty())
+    {
+        std::vector<MagicalAttribute> tempAttribs;
+        ProcessMagicalProperites(setInfo.p2ModType, tempAttribs, rnd, version, gameVersion, bMaxAlways);
+        attribs.emplace_back(tempAttribs);
+        tempAttribs.clear();
+
+        if (!setInfo.p3ModType.empty())
+        {
+            ProcessMagicalProperites(setInfo.p3ModType, tempAttribs, rnd, version, gameVersion, bMaxAlways);
+            attribs.emplace_back(tempAttribs);
+            tempAttribs.clear();
+
+            if (!setInfo.p4ModType.empty())
+            {
+                ProcessMagicalProperites(setInfo.p4ModType, tempAttribs, rnd, version, gameVersion, bMaxAlways);
+                attribs.emplace_back(tempAttribs);
+                tempAttribs.clear();
+
+                if (!setInfo.p5ModType.empty())
+                {
+                    ProcessMagicalProperites(setInfo.p5ModType, tempAttribs, rnd, version, gameVersion, bMaxAlways);
+                    attribs.emplace_back(tempAttribs);
+                    tempAttribs.clear();
+                }
+            }
+        }
+    }
+
+    if (!setInfo.fModType.empty())
+    {
+        std::vector<MagicalAttribute> tempAttribs;
+        ProcessMagicalProperites(setInfo.fModType, tempAttribs, rnd, version, gameVersion, bMaxAlways);
+        attribs.emplace_back(tempAttribs);
+    }
+
+    return !attribs.empty();
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
+{
+    std::vector < std::vector<MagicalAttribute>> setBonuses;
+    if (!getSetBonusAttribs(id, setBonuses, version, gameVersion, level, dwb, bMaxAlways))
+    {
+        return false;
+    }
+
+    for (const auto& setBonus : setBonuses)
+    {
+        attribs.insert(attribs.end(), setBonus.begin(), setBonus.end());
+    }
+
+    return !attribs.empty();
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)

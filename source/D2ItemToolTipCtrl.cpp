@@ -252,6 +252,67 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
 
+    // Green Set props
+    std::vector<d2ce::MagicalAttribute> setAttributes;
+    if (CurrItem->getDisplayedCombinedSetItemAttributes(setAttributes, charLevel))
+    {
+        for (const auto& attrib : setAttributes)
+        {
+            if (!attrib.Visible)
+            {
+                continue;
+            }
+
+            uText = utf8::utf8to16(attrib.Desc);
+            strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+            if (strText.IsEmpty())
+            {
+                continue;
+            }
+
+            CSize prevSizeText = sizeText;
+            pDC->SetTextColor(colors[GREEN]);
+
+            sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+            sizeText.cy += prevSizeText.cy;
+            sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+        }
+    }
+
+    // Green Set props
+    std::vector<d2ce::MagicalAttribute> setBonus;
+    if (CurrItem->getDisplayedFullSetAttributes(setBonus, charLevel))
+    {
+        bool bFirst = true;
+        for (const auto& attrib : setBonus)
+        {
+            if (!attrib.Visible)
+            {
+                continue;
+            }
+
+            uText = utf8::utf8to16(attrib.Desc);
+            strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+            if (strText.IsEmpty())
+            {
+                continue;
+            }
+
+            if (bFirst)
+            {
+                bFirst = false;
+                strText.Insert(0, L"\n");
+            }
+
+            CSize prevSizeText = sizeText;
+            pDC->SetTextColor(colors[UNIQUE]);
+
+            sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+            sizeText.cy += prevSizeText.cy;
+            sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+        }
+    }
+
     return sizeText;
 }
 //---------------------------------------------------------------------------
