@@ -5365,11 +5365,19 @@ bool d2ce::Item::getCombinedSetAttributes(std::vector<MagicalAttribute>& attribs
         return false;
     }
 
+    std::vector<MagicalAttribute> tempAttribs;
     for (const auto& setAttribs : setAttrib.SetAttributes)
     {
-        attribs.insert(attribs.end(), setAttribs.begin(), setAttribs.end());
+        tempAttribs.insert(tempAttribs.end(), setAttribs.begin(), setAttribs.end());
     }
 
+    if (tempAttribs.empty())
+    {
+        return false;
+    }
+
+    std::multimap<size_t, size_t> itemIndexMap;
+    ItemHelpers::combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
     return true;
 }
 //---------------------------------------------------------------------------
@@ -5391,7 +5399,6 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     {
         return false;
     }
-
 
     switch (getQuality())
     {
@@ -6406,7 +6413,6 @@ bool d2ce::Item::canAddRareAffixes() const
     case d2ce::EnumItemQuality::CRAFT:
     case d2ce::EnumItemQuality::TEMPERED:
         break;
-
 
     case d2ce::EnumItemQuality::MAGIC:
     case d2ce::EnumItemQuality::SET:
@@ -10468,20 +10474,22 @@ bool d2ce::Item::getDisplayedRunewordAttributes(RunewordAttributes& attribs, std
     return d2ce::ItemHelpers::formatMagicalAttributes(attribs.MagicalAttributes, charLevel);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::getDisplayedSetItemAttributes(SetAttributes& attribs, std::uint32_t charLevel) const
+bool d2ce::Item::getDisplayedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
 {
-    if (!getSetAttributes(attribs))
+    SetAttributes setAttribs;
+    if (!getSetAttributes(setAttribs))
     {
         return false;
     }
 
     bool bFormatted = false;
-    for (auto& setAttribs : attribs.SetAttributes)
+    for (auto& setItemAttribs : setAttribs.SetAttributes)
     {
-        bFormatted |= d2ce::ItemHelpers::formatMagicalAttributes(setAttribs, charLevel);
+        bFormatted |= d2ce::ItemHelpers::formatMagicalAttributes(setItemAttribs, charLevel);
+        attribs.insert(attribs.end(), setItemAttribs.begin(), setItemAttribs.end());
     }
 
-    return bFormatted;
+    return !attribs.empty();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedFullSetAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
@@ -10492,22 +10500,6 @@ bool d2ce::Item::getDisplayedFullSetAttributes(std::vector<MagicalAttribute>& at
     }
 
     return d2ce::ItemHelpers::formatMagicalAttributes(attribs, charLevel);
-}
-//---------------------------------------------------------------------------
-bool d2ce::Item::getDisplayedCombinedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
-{
-    SetAttributes setAttrib;
-    if (!getDisplayedSetItemAttributes(setAttrib, charLevel))
-    {
-        return false;
-    }
-
-    for (const auto& setAttribs : setAttrib.SetAttributes)
-    {
-        attribs.insert(attribs.end(), setAttribs.begin(), setAttribs.end());
-    }
-
-    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const
@@ -17617,7 +17609,6 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
         return false;
     }
 
-
     attrib.Id = itemType.getId();
     if (attrib.Id >= MAXUINT16)
     {
@@ -19737,7 +19728,6 @@ void d2ce::Items::verifyHoradricCube()
         // nothing changed
         return;
     }
-
 
     ItemDimensions dimensions;
     auto itemLoaction = d2ce::EnumItemLocation::STORED;

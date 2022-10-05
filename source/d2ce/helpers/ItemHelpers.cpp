@@ -9598,18 +9598,27 @@ bool d2ce::ItemHelpers::getSetBonusAttribs(std::uint16_t id, std::vector<std::ve
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
-    std::vector < std::vector<MagicalAttribute>> setBonuses;
+    std::vector<std::vector<MagicalAttribute>> setBonuses;
     if (!getSetBonusAttribs(id, setBonuses, version, gameVersion, level, dwb, bMaxAlways))
     {
         return false;
     }
 
+
+    std::vector<MagicalAttribute> tempAttribs;
     for (const auto& setBonus : setBonuses)
     {
-        attribs.insert(attribs.end(), setBonus.begin(), setBonus.end());
+        tempAttribs.insert(tempAttribs.end(), setBonus.begin(), setBonus.end());
     }
 
-    return !attribs.empty();
+    if (tempAttribs.empty())
+    {
+        return false;
+    }
+
+    std::multimap<size_t, size_t> itemIndexMap;
+    combineMagicalAttribute(itemIndexMap, tempAttribs, attribs);
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)

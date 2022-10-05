@@ -313,9 +313,8 @@ namespace d2ce
         std::string getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const;
         bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
-        bool getDisplayedSetItemAttributes(SetAttributes& attribs, std::uint32_t charLevel) const;
+        bool getDisplayedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedFullSetAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
-        bool getDisplayedCombinedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedCombinedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
 
     public:

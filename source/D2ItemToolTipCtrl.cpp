@@ -254,7 +254,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // Green Set props
     std::vector<d2ce::MagicalAttribute> setAttributes;
-    if (CurrItem->getDisplayedCombinedSetItemAttributes(setAttributes, charLevel))
+    if (CurrItem->getDisplayedSetItemAttributes(setAttributes, charLevel))
     {
         for (const auto& attrib : setAttributes)
         {
