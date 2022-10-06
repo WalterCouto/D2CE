@@ -1534,7 +1534,7 @@
       ],
       "type_id": 3,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 326191941,
       "level": 1,
       "dwa": 326191941,
       "dwb": 1912823919,
@@ -1543,8 +1543,6 @@
       "class_specific": 0,
       "timestamp": 0,
       "quantity": 57,
-      "max_durability": 14,
-      "current_durability": 14,
       "magic_attributes": [],
       "base_damage": {
         "mindam": 1,
@@ -1628,7 +1626,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1351972249,
       "level": 1,
       "dwa": 1351972249,
       "dwb": 791120579,
@@ -1715,7 +1713,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 592257023,
       "level": 84,
       "dwa": 592257023,
       "dwb": 2094334420,
@@ -2104,7 +2102,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1000894503,
       "level": 89,
       "dwa": 1000894503,
       "dwb": 1230514803,
@@ -2145,7 +2143,7 @@
         {
           "id": 16,
           "values": [
-            115
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2178,10 +2176,10 @@
         {
           "id": 16,
           "values": [
-            115
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+115% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         },
         {
           "id": 89,
@@ -2221,7 +2219,7 @@
         {
           "id": 16,
           "values": [
-            115
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2247,10 +2245,10 @@
         {
           "id": 16,
           "values": [
-            115
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+115% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         },
         {
           "id": 89,
@@ -2326,7 +2324,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 145717325,
       "level": 75,
       "dwa": 145717325,
       "dwb": 1059537252,
@@ -2343,7 +2341,7 @@
         {
           "id": 16,
           "values": [
-            142
+            150
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2416,10 +2414,10 @@
         {
           "id": 16,
           "values": [
-            142
+            150
           ],
           "name": "item_armor_percent",
-          "description": "+142% Enhanced Defense"
+          "description": "+150% Enhanced Defense"
         },
         {
           "id": 43,
@@ -2486,7 +2484,7 @@
         {
           "id": 16,
           "values": [
-            142
+            150
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2552,10 +2550,10 @@
         {
           "id": 16,
           "values": [
-            142
+            150
           ],
           "name": "item_armor_percent",
-          "description": "+142% Enhanced Defense"
+          "description": "+150% Enhanced Defense"
         },
         {
           "id": 43,
@@ -2682,7 +2680,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 938756702,
       "level": 15,
       "dwa": 938756702,
       "dwb": 1103458015,
@@ -2905,7 +2903,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1630738020,
       "level": 50,
       "dwa": 1630738020,
       "dwb": 1564218144,
@@ -2930,7 +2928,7 @@
         {
           "id": 16,
           "values": [
-            109
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2988,10 +2986,10 @@
         {
           "id": 16,
           "values": [
-            109
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+109% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3007,7 +3005,7 @@
         {
           "id": 16,
           "values": [
-            109
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3057,10 +3055,10 @@
         {
           "id": 16,
           "values": [
-            109
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+109% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         }
       ]
     },
@@ -3128,7 +3126,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1921457871,
       "level": 17,
       "dwa": 1921457871,
       "dwb": 116086424,
@@ -3177,7 +3175,7 @@
         {
           "id": 16,
           "values": [
-            73
+            80
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3203,10 +3201,10 @@
         {
           "id": 16,
           "values": [
-            73
+            80
           ],
           "name": "item_armor_percent",
-          "description": "+73% Enhanced Defense"
+          "description": "+80% Enhanced Defense"
         },
         {
           "id": 43,
@@ -3270,7 +3268,7 @@
         {
           "id": 16,
           "values": [
-            73
+            80
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3288,10 +3286,10 @@
         {
           "id": 16,
           "values": [
-            73
+            80
           ],
           "name": "item_armor_percent",
-          "description": "+73% Enhanced Defense"
+          "description": "+80% Enhanced Defense"
         },
         {
           "id": 43,
@@ -3383,7 +3381,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 398805298,
       "level": 63,
       "dwa": 398805298,
       "dwb": 478615315,
@@ -3432,7 +3430,7 @@
         {
           "id": 16,
           "values": [
-            78
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3450,10 +3448,10 @@
         {
           "id": 16,
           "values": [
-            78
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+78% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 46,
@@ -3525,7 +3523,7 @@
         {
           "id": 16,
           "values": [
-            78
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3535,10 +3533,10 @@
         {
           "id": 16,
           "values": [
-            78
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+78% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 46,
@@ -3638,7 +3636,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 665066036,
       "level": 12,
       "dwa": 665066036,
       "dwb": 1530146170,
@@ -3655,7 +3653,7 @@
         {
           "id": 16,
           "values": [
-            77
+            85
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3672,7 +3670,7 @@
         {
           "id": 128,
           "values": [
-            13
+            14
           ],
           "name": "item_attackertakeslightdamage",
           "description": "Attacker Takes Lightning Damage of {0}"
@@ -3707,10 +3705,10 @@
         {
           "id": 16,
           "values": [
-            77
+            85
           ],
           "name": "item_armor_percent",
-          "description": "+77% Enhanced Defense"
+          "description": "+85% Enhanced Defense"
         },
         {
           "id": 41,
@@ -3723,10 +3721,10 @@
         {
           "id": 128,
           "values": [
-            13
+            14
           ],
           "name": "item_attackertakeslightdamage",
-          "description": "Attacker Takes Lightning Damage of 13"
+          "description": "Attacker Takes Lightning Damage of 14"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3734,7 +3732,7 @@
         {
           "id": 16,
           "values": [
-            77
+            85
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3751,7 +3749,7 @@
         {
           "id": 128,
           "values": [
-            13
+            14
           ],
           "name": "item_attackertakeslightdamage",
           "description": "Attacker Takes Lightning Damage of {0}"
@@ -3778,10 +3776,10 @@
         {
           "id": 16,
           "values": [
-            77
+            85
           ],
           "name": "item_armor_percent",
-          "description": "+77% Enhanced Defense"
+          "description": "+85% Enhanced Defense"
         },
         {
           "id": 41,
@@ -3794,10 +3792,10 @@
         {
           "id": 128,
           "values": [
-            13
+            14
           ],
           "name": "item_attackertakeslightdamage",
-          "description": "Attacker Takes Lightning Damage of 13"
+          "description": "Attacker Takes Lightning Damage of 14"
         }
       ]
     }

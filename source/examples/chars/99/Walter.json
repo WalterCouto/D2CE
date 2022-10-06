@@ -13600,7 +13600,7 @@
             255
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 37,
@@ -13920,7 +13920,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -14248,7 +14248,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -14314,7 +14314,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -14638,7 +14638,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -14777,7 +14777,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -15105,7 +15105,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -15171,7 +15171,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -15495,7 +15495,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -15634,7 +15634,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -15962,7 +15962,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -16028,7 +16028,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -16352,7 +16352,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -16491,7 +16491,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -16819,7 +16819,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -16885,7 +16885,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -17209,7 +17209,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -17348,7 +17348,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -17676,7 +17676,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -17742,7 +17742,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -18066,7 +18066,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -18205,7 +18205,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -18533,7 +18533,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -18599,7 +18599,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             },
             {
               "id": 37,
@@ -18923,7 +18923,7 @@
                 255
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 255%"
+              "description": "Physical Damage Received Reduced by 255%"
             },
             {
               "id": 35,
@@ -19139,7 +19139,7 @@
             255
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 255%"
+          "description": "Physical Damage Received Reduced by 255%"
         },
         {
           "id": 110,
@@ -19232,7 +19232,7 @@
             1785
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 37,
@@ -19659,7 +19659,7 @@
             1785
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 1785%"
+          "description": "Physical Damage Received Reduced by 1785%"
         },
         {
           "id": 35,

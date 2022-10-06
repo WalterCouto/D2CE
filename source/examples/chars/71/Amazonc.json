@@ -1534,7 +1534,7 @@
       ],
       "type_id": 3,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 326191941,
       "level": 1,
       "dwa": 326191941,
       "dwb": 1912823919,
@@ -1543,8 +1543,6 @@
       "class_specific": 0,
       "timestamp": 0,
       "quantity": 57,
-      "max_durability": 14,
-      "current_durability": 14,
       "magic_attributes": [],
       "base_damage": {
         "mindam": 1,
@@ -1628,7 +1626,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1351972249,
       "level": 1,
       "dwa": 1351972249,
       "dwb": 791120579,
@@ -1717,7 +1715,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 223039212,
       "level": 8,
       "dwa": 223039212,
       "dwb": 296035979,
@@ -1807,7 +1805,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1688168857,
       "level": 41,
       "dwa": 1688168857,
       "dwb": 1179060911,
@@ -1897,7 +1895,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1034774269,
       "level": 28,
       "dwa": 1034774269,
       "dwb": 1474788935,
@@ -1987,7 +1985,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1430466444,
       "level": 87,
       "dwa": 1430466444,
       "dwb": 1170932584,
@@ -2077,7 +2075,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1130239169,
       "level": 65,
       "dwa": 1130239169,
       "dwb": 1885277146,
@@ -2167,7 +2165,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 832123814,
       "level": 42,
       "dwa": 832123814,
       "dwb": 1881500574,
@@ -2208,14 +2206,14 @@
         {
           "id": 140,
           "values": [
-            3
+            5
           ],
           "name": "item_extrablood"
         },
         {
           "id": 16,
           "values": [
-            50
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2264,10 +2262,10 @@
         {
           "id": 16,
           "values": [
-            50
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+50% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -2296,7 +2294,7 @@
         {
           "id": 140,
           "values": [
-            3
+            5
           ],
           "name": "item_extrablood"
         }
@@ -2330,14 +2328,14 @@
         {
           "id": 140,
           "values": [
-            3
+            5
           ],
           "name": "item_extrablood"
         },
         {
           "id": 16,
           "values": [
-            50
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2371,10 +2369,10 @@
         {
           "id": 16,
           "values": [
-            50
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+50% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -2395,7 +2393,7 @@
         {
           "id": 140,
           "values": [
-            3
+            5
           ],
           "name": "item_extrablood"
         }
@@ -2467,7 +2465,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 542643876,
       "level": 63,
       "dwa": 542643876,
       "dwb": 318667171,
@@ -2516,7 +2514,7 @@
         {
           "id": 16,
           "values": [
-            33
+            40
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2557,10 +2555,10 @@
         {
           "id": 16,
           "values": [
-            33
+            40
           ],
           "name": "item_armor_percent",
-          "description": "+33% Enhanced Defense"
+          "description": "+40% Enhanced Defense"
         },
         {
           "id": 31,
@@ -2624,7 +2622,7 @@
         {
           "id": 16,
           "values": [
-            33
+            40
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2658,10 +2656,10 @@
         {
           "id": 16,
           "values": [
-            33
+            40
           ],
           "name": "item_armor_percent",
-          "description": "+33% Enhanced Defense"
+          "description": "+40% Enhanced Defense"
         },
         {
           "id": 31,
@@ -2755,7 +2753,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 423060484,
       "level": 20,
       "dwa": 423060484,
       "dwb": 1287089842,
@@ -2812,7 +2810,7 @@
         {
           "id": 39,
           "values": [
-            38
+            50
           ],
           "name": "fireresist",
           "description": "Fire Resist +{0}%"
@@ -2820,7 +2818,7 @@
         {
           "id": 41,
           "values": [
-            38
+            50
           ],
           "name": "lightresist",
           "description": "Lightning Resist +{0}%"
@@ -2828,7 +2826,7 @@
         {
           "id": 43,
           "values": [
-            38
+            50
           ],
           "name": "coldresist",
           "description": "Cold Resist +{0}%"
@@ -2836,7 +2834,7 @@
         {
           "id": 45,
           "values": [
-            38
+            50
           ],
           "name": "poisonresist",
           "description": "Poison Resist +{0}%"
@@ -2885,37 +2883,37 @@
         {
           "id": 43,
           "values": [
-            38
+            50
           ],
           "name": "coldresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 41,
           "values": [
-            38
+            50
           ],
           "name": "lightresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 39,
           "values": [
-            38
+            50
           ],
           "name": "fireresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 45,
           "values": [
-            38
+            50
           ],
           "name": "poisonresist",
-          "description": "All Resistances +38"
+          "description": "All Resistances +50"
         },
         {
           "id": 35,
@@ -2971,7 +2969,7 @@
         {
           "id": 39,
           "values": [
-            38
+            50
           ],
           "name": "fireresist",
           "description": "Fire Resist +{0}%"
@@ -2979,7 +2977,7 @@
         {
           "id": 41,
           "values": [
-            38
+            50
           ],
           "name": "lightresist",
           "description": "Lightning Resist +{0}%"
@@ -2987,7 +2985,7 @@
         {
           "id": 43,
           "values": [
-            38
+            50
           ],
           "name": "coldresist",
           "description": "Cold Resist +{0}%"
@@ -2995,7 +2993,7 @@
         {
           "id": 45,
           "values": [
-            38
+            50
           ],
           "name": "poisonresist",
           "description": "Poison Resist +{0}%"
@@ -3037,37 +3035,37 @@
         {
           "id": 43,
           "values": [
-            38
+            50
           ],
           "name": "coldresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 41,
           "values": [
-            38
+            50
           ],
           "name": "lightresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 39,
           "values": [
-            38
+            50
           ],
           "name": "fireresist",
-          "description": "All Resistances +38",
+          "description": "All Resistances +50",
           "visible": false
         },
         {
           "id": 45,
           "values": [
-            38
+            50
           ],
           "name": "poisonresist",
-          "description": "All Resistances +38"
+          "description": "All Resistances +50"
         },
         {
           "id": 35,
@@ -3145,7 +3143,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 994775598,
       "level": 89,
       "dwa": 994775598,
       "dwb": 387265976,
@@ -3194,7 +3192,7 @@
         {
           "id": 16,
           "values": [
-            82
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3210,7 +3208,7 @@
         {
           "id": 73,
           "values": [
-            81
+            100
           ],
           "name": "maxdurability"
         }
@@ -3234,10 +3232,10 @@
         {
           "id": 16,
           "values": [
-            82
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+82% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         },
         {
           "id": 31,
@@ -3274,7 +3272,7 @@
         {
           "id": 73,
           "values": [
-            81
+            100
           ],
           "name": "maxdurability"
         }
@@ -3316,7 +3314,7 @@
         {
           "id": 16,
           "values": [
-            82
+            120
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -3332,7 +3330,7 @@
         {
           "id": 73,
           "values": [
-            81
+            100
           ],
           "name": "maxdurability"
         }
@@ -3349,10 +3347,10 @@
         {
           "id": 16,
           "values": [
-            82
+            120
           ],
           "name": "item_armor_percent",
-          "description": "+82% Enhanced Defense"
+          "description": "+120% Enhanced Defense"
         },
         {
           "id": 31,
@@ -3389,7 +3387,7 @@
         {
           "id": 73,
           "values": [
-            81
+            100
           ],
           "name": "maxdurability"
         }

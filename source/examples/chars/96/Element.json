@@ -5469,7 +5469,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "type_name": "Ber Rune",
@@ -5484,7 +5484,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -5495,7 +5495,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5505,7 +5505,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ]
         }
@@ -5690,7 +5690,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -5761,7 +5761,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 8%"
+          "description": "Physical Damage Received Reduced by 8%"
         },
         {
           "id": 86,
@@ -14744,7 +14744,7 @@
         8
       ],
       "name": "damageresist",
-      "description": "Damage Reduced by {0}%"
+      "description": "Physical Damage Received Reduced by {0}%"
     },
     {
       "id": 107,

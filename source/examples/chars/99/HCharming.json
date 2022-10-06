@@ -3487,7 +3487,7 @@
             -25
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 192,
@@ -3520,7 +3520,7 @@
             25
           ],
           "name": "damageresist",
-          "description": "Damage Increased by 25%"
+          "description": "Physical Damage Received Increased by 25%"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3531,7 +3531,7 @@
             -25
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 192,
@@ -3557,7 +3557,7 @@
             25
           ],
           "name": "damageresist",
-          "description": "Damage Increased by 25%"
+          "description": "Physical Damage Received Increased by 25%"
         }
       ]
     },
@@ -4015,7 +4015,7 @@
         -25
       ],
       "name": "damageresist",
-      "description": "Damage Reduced by {0}%"
+      "description": "Physical Damage Received Reduced by {0}%"
     },
     {
       "id": 37,

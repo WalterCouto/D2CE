@@ -2854,7 +2854,7 @@
                "magic_attributes":[
                   {
                      "id":36,
-                     "name":"Damage Reduced by {0}%",
+                     "name":"Physical Damage Received Reduced by {0}%",
                      "values":[
                         8
                      ]
@@ -3710,7 +3710,7 @@
          "magic_attributes":[
             {
                "id":34,
-               "name":"Damage Reduced by {0}",
+               "name":"Physical Damage Received Reduced by {0}",
                "values":[
                   7
                ]

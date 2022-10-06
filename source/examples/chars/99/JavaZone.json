@@ -4689,7 +4689,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "type_name": "Ber Rune",
@@ -4704,7 +4704,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -4715,7 +4715,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -4725,7 +4725,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ]
         }
@@ -4910,7 +4910,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -4981,7 +4981,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 8%"
+          "description": "Physical Damage Received Reduced by 8%"
         },
         {
           "id": 86,
@@ -14830,7 +14830,7 @@
             35
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 41,
@@ -15171,7 +15171,7 @@
             35
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 35%"
+          "description": "Physical Damage Received Reduced by 35%"
         },
         {
           "id": 128,
@@ -15206,7 +15206,7 @@
             35
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 41,
@@ -15356,7 +15356,7 @@
             35
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 35%"
+          "description": "Physical Damage Received Reduced by 35%"
         },
         {
           "id": 128,
@@ -15516,7 +15516,7 @@
         43
       ],
       "name": "damageresist",
-      "description": "Damage Reduced by {0}%"
+      "description": "Physical Damage Received Reduced by {0}%"
     },
     {
       "id": 42,

@@ -1534,7 +1534,7 @@
       ],
       "type_id": 3,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 326191941,
       "level": 1,
       "dwa": 326191941,
       "dwb": 1912823919,
@@ -1543,8 +1543,6 @@
       "class_specific": 0,
       "timestamp": 0,
       "quantity": 57,
-      "max_durability": 14,
-      "current_durability": 14,
       "magic_attributes": [],
       "base_damage": {
         "mindam": 1,
@@ -1628,7 +1626,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1351972249,
       "level": 1,
       "dwa": 1351972249,
       "dwb": 791120579,
@@ -1715,7 +1713,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 324167371,
       "level": 80,
       "dwa": 324167371,
       "dwb": 946030731,
@@ -1723,87 +1721,88 @@
       "multiple_pictures": 1,
       "picture_id": 2,
       "class_specific": 0,
-      "magic_prefix": 48,
-      "magic_prefix_name": "Glimmering",
-      "magic_suffix": 53,
-      "magic_suffix_name": "of Dexterity",
+      "magic_prefix": 58,
+      "magic_prefix_name": "Dragon's",
+      "magic_suffix": 110,
+      "magic_suffix_name": "of the Titan",
       "timestamp": 0,
       "magic_attributes": [
         {
-          "id": 89,
+          "id": 9,
           "values": [
-            1
+            33
           ],
-          "name": "item_lightradius",
-          "description": "+{0} to Light Radius"
+          "name": "maxmana",
+          "description": "+{0} to Mana"
         },
         {
-          "id": 2,
+          "id": 0,
           "values": [
-            2
+            16
           ],
-          "name": "dexterity",
-          "description": "+{0} to Dexterity"
+          "name": "strength",
+          "description": "+{0} to Strength"
         }
       ],
       "type_name": "Amulet",
-      "levelreq": 3,
+      "levelreq": 22,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
+      "transform_color": "dgld",
       "displayed_magic_attributes": [
         {
-          "id": 2,
+          "id": 0,
           "values": [
-            2
+            16
           ],
-          "name": "dexterity",
-          "description": "+2 to Dexterity"
+          "name": "strength",
+          "description": "+16 to Strength"
         },
         {
-          "id": 89,
+          "id": 9,
           "values": [
-            1
+            33
           ],
-          "name": "item_lightradius",
-          "description": "+1 to Light Radius"
+          "name": "maxmana",
+          "description": "+33 to Mana"
         }
       ],
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
-          "id": 89,
+          "id": 9,
           "values": [
-            1
+            33
           ],
-          "name": "item_lightradius",
-          "description": "+{0} to Light Radius"
+          "name": "maxmana",
+          "description": "+{0} to Mana"
         },
         {
-          "id": 2,
+          "id": 0,
           "values": [
-            2
+            16
           ],
-          "name": "dexterity",
-          "description": "+{0} to Dexterity"
+          "name": "strength",
+          "description": "+{0} to Strength"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
-          "id": 2,
+          "id": 0,
           "values": [
-            2
+            16
           ],
-          "name": "dexterity",
-          "description": "+2 to Dexterity"
+          "name": "strength",
+          "description": "+16 to Strength"
         },
         {
-          "id": 89,
+          "id": 9,
           "values": [
-            1
+            33
           ],
-          "name": "item_lightradius",
-          "description": "+1 to Light Radius"
+          "name": "maxmana",
+          "description": "+33 to Mana"
         }
       ]
     },
@@ -1871,7 +1870,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1420066458,
       "level": 39,
       "dwa": 1420066458,
       "dwb": 1143744129,
@@ -2125,7 +2124,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1849836429,
       "level": 85,
       "dwa": 1849836429,
       "dwb": 821837498,
@@ -2140,7 +2139,7 @@
         {
           "id": 32,
           "values": [
-            25
+            40
           ],
           "name": "armorclass_vs_missile",
           "description": "+{0} Defense vs. Missile"
@@ -2148,7 +2147,7 @@
         {
           "id": 89,
           "values": [
-            4
+            5
           ],
           "name": "item_lightradius",
           "description": "+{0} to Light Radius"
@@ -2164,7 +2163,7 @@
         {
           "id": 60,
           "values": [
-            5
+            7
           ],
           "name": "lifedrainmindam",
           "description": "{0}% Life stolen per hit"
@@ -2172,9 +2171,9 @@
         {
           "id": 54,
           "values": [
-            1,
-            4,
-            75
+            2,
+            5,
+            250
           ],
           "name": "coldmindam",
           "description": "Adds {0}-{1} cold damage"
@@ -2197,36 +2196,36 @@
         {
           "id": 54,
           "values": [
-            1,
-            4,
-            75
+            2,
+            5,
+            250
           ],
           "name": "coldmindam",
-          "description": "Adds 1-4 cold damage"
+          "description": "Adds 2-5 cold damage"
         },
         {
           "id": 60,
           "values": [
-            5
+            7
           ],
           "name": "lifedrainmindam",
-          "description": "5% Life stolen per hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 32,
           "values": [
-            25
+            40
           ],
           "name": "armorclass_vs_missile",
-          "description": "+25 Defense vs. Missile"
+          "description": "+40 Defense vs. Missile"
         },
         {
           "id": 89,
           "values": [
-            4
+            5
           ],
           "name": "item_lightradius",
-          "description": "+4 to Light Radius"
+          "description": "+5 to Light Radius"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -2234,7 +2233,7 @@
         {
           "id": 32,
           "values": [
-            25
+            40
           ],
           "name": "armorclass_vs_missile",
           "description": "+{0} Defense vs. Missile"
@@ -2242,7 +2241,7 @@
         {
           "id": 89,
           "values": [
-            4
+            5
           ],
           "name": "item_lightradius",
           "description": "+{0} to Light Radius"
@@ -2258,7 +2257,7 @@
         {
           "id": 60,
           "values": [
-            5
+            7
           ],
           "name": "lifedrainmindam",
           "description": "{0}% Life stolen per hit"
@@ -2266,9 +2265,9 @@
         {
           "id": 54,
           "values": [
-            1,
-            4,
-            75
+            2,
+            5,
+            250
           ],
           "name": "coldmindam",
           "description": "Adds {0}-{1} cold damage"
@@ -2286,36 +2285,36 @@
         {
           "id": 54,
           "values": [
-            1,
-            4,
-            75
+            2,
+            5,
+            250
           ],
           "name": "coldmindam",
-          "description": "Adds 1-4 cold damage"
+          "description": "Adds 2-5 cold damage"
         },
         {
           "id": 60,
           "values": [
-            5
+            7
           ],
           "name": "lifedrainmindam",
-          "description": "5% Life stolen per hit"
+          "description": "7% Life stolen per hit"
         },
         {
           "id": 32,
           "values": [
-            25
+            40
           ],
           "name": "armorclass_vs_missile",
-          "description": "+25 Defense vs. Missile"
+          "description": "+40 Defense vs. Missile"
         },
         {
           "id": 89,
           "values": [
-            4
+            5
           ],
           "name": "item_lightradius",
-          "description": "+4 to Light Radius"
+          "description": "+5 to Light Radius"
         }
       ]
     },
@@ -2383,7 +2382,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1355970590,
       "level": 37,
       "dwa": 1355970590,
       "dwb": 865563120,
@@ -2837,7 +2836,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 729237793,
       "level": 81,
       "dwa": 729237793,
       "dwb": 572731625,
@@ -2997,7 +2996,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1939097473,
       "level": 58,
       "dwa": 1939097473,
       "dwb": 1157510656,
@@ -3028,7 +3027,7 @@
         {
           "id": 19,
           "values": [
-            70
+            75
           ],
           "name": "tohit",
           "description": "+{0} to Attack Rating"
@@ -3036,7 +3035,7 @@
         {
           "id": 80,
           "values": [
-            26
+            30
           ],
           "name": "item_magicbonus",
           "description": "{0}% Better Chance of Getting Magic Items"
@@ -3051,10 +3050,10 @@
         {
           "id": 19,
           "values": [
-            70
+            75
           ],
           "name": "tohit",
-          "description": "+70 to Attack Rating"
+          "description": "+75 to Attack Rating"
         },
         {
           "id": 35,
@@ -3075,10 +3074,10 @@
         {
           "id": 80,
           "values": [
-            26
+            30
           ],
           "name": "item_magicbonus",
-          "description": "26% Better Chance of Getting Magic Items"
+          "description": "30% Better Chance of Getting Magic Items"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -3102,7 +3101,7 @@
         {
           "id": 19,
           "values": [
-            70
+            75
           ],
           "name": "tohit",
           "description": "+{0} to Attack Rating"
@@ -3110,7 +3109,7 @@
         {
           "id": 80,
           "values": [
-            26
+            30
           ],
           "name": "item_magicbonus",
           "description": "{0}% Better Chance of Getting Magic Items"
@@ -3120,10 +3119,10 @@
         {
           "id": 19,
           "values": [
-            70
+            75
           ],
           "name": "tohit",
-          "description": "+70 to Attack Rating"
+          "description": "+75 to Attack Rating"
         },
         {
           "id": 35,
@@ -3144,10 +3143,10 @@
         {
           "id": 80,
           "values": [
-            26
+            30
           ],
           "name": "item_magicbonus",
-          "description": "26% Better Chance of Getting Magic Items"
+          "description": "30% Better Chance of Getting Magic Items"
         }
       ]
     },
@@ -3215,7 +3214,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1332306247,
       "level": 54,
       "dwa": 1332306247,
       "dwb": 723006597,
@@ -3230,7 +3229,7 @@
         {
           "id": 62,
           "values": [
-            5
+            7
           ],
           "name": "manadrainmindam",
           "description": "{0}% Mana stolen per hit"
@@ -3238,7 +3237,7 @@
         {
           "id": 74,
           "values": [
-            6
+            8
           ],
           "name": "hpregen",
           "description": "Replenish Life +{0}"
@@ -3269,10 +3268,10 @@
         {
           "id": 62,
           "values": [
-            5
+            7
           ],
           "name": "manadrainmindam",
-          "description": "5% Mana stolen per hit"
+          "description": "7% Mana stolen per hit"
         },
         {
           "id": 7,
@@ -3285,10 +3284,10 @@
         {
           "id": 74,
           "values": [
-            6
+            8
           ],
           "name": "hpregen",
-          "description": "Replenish Life +6"
+          "description": "Replenish Life +8"
         },
         {
           "id": 27,
@@ -3304,7 +3303,7 @@
         {
           "id": 62,
           "values": [
-            5
+            7
           ],
           "name": "manadrainmindam",
           "description": "{0}% Mana stolen per hit"
@@ -3312,7 +3311,7 @@
         {
           "id": 74,
           "values": [
-            6
+            8
           ],
           "name": "hpregen",
           "description": "Replenish Life +{0}"
@@ -3338,10 +3337,10 @@
         {
           "id": 62,
           "values": [
-            5
+            7
           ],
           "name": "manadrainmindam",
-          "description": "5% Mana stolen per hit"
+          "description": "7% Mana stolen per hit"
         },
         {
           "id": 7,
@@ -3354,10 +3353,10 @@
         {
           "id": 74,
           "values": [
-            6
+            8
           ],
           "name": "hpregen",
-          "description": "Replenish Life +6"
+          "description": "Replenish Life +8"
         },
         {
           "id": 27,
@@ -3433,7 +3432,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 647976367,
       "level": 26,
       "dwa": 647976367,
       "dwb": 934088772,
@@ -3465,18 +3464,18 @@
           "id": 50,
           "values": [
             1,
-            12
+            1
           ],
           "name": "lightmindam",
           "description": "Adds {0}-{1} lightning damage"
         },
         {
-          "id": 127,
+          "id": 51,
           "values": [
-            1
+            12
           ],
-          "name": "item_allskills",
-          "description": "+{0} to All Skills"
+          "name": "lightmaxdam",
+          "description": "+{0} to Maximum Lightning Damage"
         }
       ],
       "type_name": "Ring",
@@ -3486,21 +3485,21 @@
       "inv_width": 1,
       "displayed_magic_attributes": [
         {
-          "id": 127,
-          "values": [
-            1
-          ],
-          "name": "item_allskills",
-          "description": "+1 to All Skills"
-        },
-        {
           "id": 50,
           "values": [
             1,
-            12
+            1
           ],
           "name": "lightmindam",
-          "description": "Adds 1-12 lightning damage"
+          "description": "+1 lightning damage"
+        },
+        {
+          "id": 51,
+          "values": [
+            12
+          ],
+          "name": "lightmaxdam",
+          "description": "+12 to Maximum Lightning Damage"
         },
         {
           "id": 9,
@@ -3541,37 +3540,37 @@
           "id": 50,
           "values": [
             1,
-            12
+            1
           ],
           "name": "lightmindam",
           "description": "Adds {0}-{1} lightning damage"
         },
         {
-          "id": 127,
+          "id": 51,
           "values": [
-            1
+            12
           ],
-          "name": "item_allskills",
-          "description": "+{0} to All Skills"
+          "name": "lightmaxdam",
+          "description": "+{0} to Maximum Lightning Damage"
         }
       ],
       "displayed_combined_magic_attributes": [
         {
-          "id": 127,
-          "values": [
-            1
-          ],
-          "name": "item_allskills",
-          "description": "+1 to All Skills"
-        },
-        {
           "id": 50,
           "values": [
             1,
-            12
+            1
           ],
           "name": "lightmindam",
-          "description": "Adds 1-12 lightning damage"
+          "description": "+1 lightning damage"
+        },
+        {
+          "id": 51,
+          "values": [
+            12
+          ],
+          "name": "lightmaxdam",
+          "description": "+12 to Maximum Lightning Damage"
         },
         {
           "id": 9,
@@ -3655,7 +3654,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1148792269,
       "level": 88,
       "dwa": 1148792269,
       "dwb": 1031684876,
@@ -3979,7 +3978,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 393287486,
       "level": 71,
       "dwa": 393287486,
       "dwb": 667639411,
@@ -4022,7 +4021,7 @@
         {
           "id": 16,
           "values": [
-            24
+            30
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4065,10 +4064,10 @@
         {
           "id": 16,
           "values": [
-            24
+            30
           ],
           "name": "item_armor_percent",
-          "description": "+24% Enhanced Defense"
+          "description": "+30% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4134,7 +4133,7 @@
         {
           "id": 16,
           "values": [
-            24
+            30
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4170,10 +4169,10 @@
         {
           "id": 16,
           "values": [
-            24
+            30
           ],
           "name": "item_armor_percent",
-          "description": "+24% Enhanced Defense"
+          "description": "+30% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4273,7 +4272,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1671914450,
       "level": 64,
       "dwa": 1671914450,
       "dwb": 1218596978,
@@ -4354,7 +4353,7 @@
         {
           "id": 16,
           "values": [
-            35
+            50
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4372,10 +4371,10 @@
         {
           "id": 16,
           "values": [
-            35
+            50
           ],
           "name": "item_armor_percent",
-          "description": "+35% Enhanced Defense"
+          "description": "+50% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4514,7 +4513,7 @@
         {
           "id": 16,
           "values": [
-            35
+            50
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4524,10 +4523,10 @@
         {
           "id": 16,
           "values": [
-            35
+            50
           ],
           "name": "item_armor_percent",
-          "description": "+35% Enhanced Defense"
+          "description": "+50% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4662,7 +4661,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 818239178,
       "level": 14,
       "dwa": 818239178,
       "dwb": 203507884,
@@ -4711,7 +4710,7 @@
         {
           "id": 16,
           "values": [
-            40
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4719,7 +4718,7 @@
         {
           "id": 79,
           "values": [
-            68
+            80
           ],
           "name": "item_goldbonus",
           "description": "{0}% Extra Gold from Monsters"
@@ -4745,10 +4744,10 @@
         {
           "id": 16,
           "values": [
-            40
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+40% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4761,10 +4760,10 @@
         {
           "id": 79,
           "values": [
-            68
+            80
           ],
           "name": "item_goldbonus",
-          "description": "68% Extra Gold from Monsters"
+          "description": "80% Extra Gold from Monsters"
         },
         {
           "id": 80,
@@ -4820,7 +4819,7 @@
         {
           "id": 16,
           "values": [
-            40
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -4828,7 +4827,7 @@
         {
           "id": 79,
           "values": [
-            68
+            80
           ],
           "name": "item_goldbonus",
           "description": "{0}% Extra Gold from Monsters"
@@ -4846,10 +4845,10 @@
         {
           "id": 16,
           "values": [
-            40
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+40% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -4862,10 +4861,10 @@
         {
           "id": 79,
           "values": [
-            68
+            80
           ],
           "name": "item_goldbonus",
-          "description": "68% Extra Gold from Monsters"
+          "description": "80% Extra Gold from Monsters"
         },
         {
           "id": 80,
@@ -4949,7 +4948,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 736442577,
       "level": 10,
       "dwa": 736442577,
       "dwb": 277227934,
@@ -5006,7 +5005,7 @@
         {
           "id": 16,
           "values": [
-            98
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -5040,10 +5039,10 @@
         {
           "id": 16,
           "values": [
-            98
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+98% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 31,
@@ -5131,7 +5130,7 @@
         {
           "id": 16,
           "values": [
-            98
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -5157,10 +5156,10 @@
         {
           "id": 16,
           "values": [
-            98
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+98% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 31,
@@ -5268,7 +5267,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 828002699,
       "level": 36,
       "dwa": 828002699,
       "dwb": 609171338,
@@ -5356,7 +5355,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 711027558,
       "level": 89,
       "dwa": 711027558,
       "dwb": 88880158,
@@ -5444,7 +5443,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1439391452,
       "level": 83,
       "dwa": 1439391452,
       "dwb": 977958183,
@@ -5532,7 +5531,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 87499230,
       "level": 63,
       "dwa": 87499230,
       "dwb": 1488214651,
@@ -5620,7 +5619,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1901399766,
       "level": 2,
       "dwa": 1901399766,
       "dwb": 845022533,
@@ -5708,7 +5707,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 191771415,
       "level": 56,
       "dwa": 191771415,
       "dwb": 180690134,
@@ -5796,7 +5795,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1370947881,
       "level": 62,
       "dwa": 1370947881,
       "dwb": 1728200753,
@@ -5884,7 +5883,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1882063418,
       "level": 59,
       "dwa": 1882063418,
       "dwb": 65041335,
@@ -5972,7 +5971,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1955757269,
       "level": 71,
       "dwa": 1955757269,
       "dwb": 1246248227,
@@ -6060,7 +6059,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1015772246,
       "level": 42,
       "dwa": 1015772246,
       "dwb": 1640694581,
@@ -6148,7 +6147,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 2029214332,
       "level": 43,
       "dwa": 2029214332,
       "dwb": 1286171675,
@@ -6229,7 +6228,7 @@
         {
           "id": 16,
           "values": [
-            65
+            80
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -6255,10 +6254,10 @@
         {
           "id": 16,
           "values": [
-            65
+            80
           ],
           "name": "item_armor_percent",
-          "description": "+65% Enhanced Defense"
+          "description": "+80% Enhanced Defense"
         },
         {
           "id": 31,
@@ -6389,7 +6388,7 @@
         {
           "id": 16,
           "values": [
-            65
+            80
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -6407,10 +6406,10 @@
         {
           "id": 16,
           "values": [
-            65
+            80
           ],
           "name": "item_armor_percent",
-          "description": "+65% Enhanced Defense"
+          "description": "+80% Enhanced Defense"
         },
         {
           "id": 31,
@@ -6537,7 +6536,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1516256995,
       "level": 70,
       "dwa": 1516256995,
       "dwb": 779359966,
@@ -6594,7 +6593,7 @@
         {
           "id": 16,
           "values": [
-            52
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -6620,10 +6619,10 @@
         {
           "id": 16,
           "values": [
-            52
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+52% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -6655,7 +6654,7 @@
             -1
           ],
           "name": "item_lightradius",
-          "description": "+-1 to Light Radius"
+          "description": "-1 to Light Radius"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -6703,7 +6702,7 @@
         {
           "id": 16,
           "values": [
-            52
+            60
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -6721,10 +6720,10 @@
         {
           "id": 16,
           "values": [
-            52
+            60
           ],
           "name": "item_armor_percent",
-          "description": "+52% Enhanced Defense"
+          "description": "+60% Enhanced Defense"
         },
         {
           "id": 31,
@@ -6756,7 +6755,7 @@
             -1
           ],
           "name": "item_lightradius",
-          "description": "+-1 to Light Radius"
+          "description": "-1 to Light Radius"
         }
       ]
     },
@@ -6824,7 +6823,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1710124632,
       "level": 24,
       "dwa": 1710124632,
       "dwb": 696071321,
@@ -6881,7 +6880,7 @@
         {
           "id": 16,
           "values": [
-            32
+            40
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -6907,10 +6906,10 @@
         {
           "id": 16,
           "values": [
-            32
+            40
           ],
           "name": "item_armor_percent",
-          "description": "+32% Enhanced Defense"
+          "description": "+40% Enhanced Defense"
         },
         {
           "id": 31,
@@ -6990,7 +6989,7 @@
         {
           "id": 16,
           "values": [
-            32
+            40
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -7008,10 +7007,10 @@
         {
           "id": 16,
           "values": [
-            32
+            40
           ],
           "name": "item_armor_percent",
-          "description": "+32% Enhanced Defense"
+          "description": "+40% Enhanced Defense"
         },
         {
           "id": 31,
@@ -7111,7 +7110,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 873230518,
       "level": 10,
       "dwa": 873230518,
       "dwb": 444535561,
@@ -7128,7 +7127,7 @@
         {
           "id": 140,
           "values": [
-            4
+            5
           ],
           "name": "item_extrablood"
         },
@@ -7167,7 +7166,7 @@
         {
           "id": 16,
           "values": [
-            25
+            30
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -7201,10 +7200,10 @@
         {
           "id": 16,
           "values": [
-            25
+            30
           ],
           "name": "item_armor_percent",
-          "description": "+25% Enhanced Defense"
+          "description": "+30% Enhanced Defense"
         },
         {
           "id": 31,
@@ -7225,7 +7224,7 @@
         {
           "id": 140,
           "values": [
-            4
+            5
           ],
           "name": "item_extrablood"
         }
@@ -7235,7 +7234,7 @@
         {
           "id": 140,
           "values": [
-            4
+            5
           ],
           "name": "item_extrablood"
         },
@@ -7274,7 +7273,7 @@
         {
           "id": 16,
           "values": [
-            25
+            30
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -7300,10 +7299,10 @@
         {
           "id": 16,
           "values": [
-            25
+            30
           ],
           "name": "item_armor_percent",
-          "description": "+25% Enhanced Defense"
+          "description": "+30% Enhanced Defense"
         },
         {
           "id": 31,
@@ -7324,7 +7323,7 @@
         {
           "id": 140,
           "values": [
-            4
+            5
           ],
           "name": "item_extrablood"
         }
@@ -7394,7 +7393,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1895263050,
       "level": 75,
       "dwa": 1895263050,
       "dwb": 1194330915,
@@ -7452,7 +7451,7 @@
         {
           "id": 16,
           "values": [
-            18
+            20
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -7478,10 +7477,10 @@
         {
           "id": 16,
           "values": [
-            18
+            20
           ],
           "name": "item_armor_percent",
-          "description": "+18% Enhanced Defense"
+          "description": "+20% Enhanced Defense"
         },
         {
           "id": 31,
@@ -7562,7 +7561,7 @@
         {
           "id": 16,
           "values": [
-            18
+            20
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -7581,10 +7580,10 @@
         {
           "id": 16,
           "values": [
-            18
+            20
           ],
           "name": "item_armor_percent",
-          "description": "+18% Enhanced Defense"
+          "description": "+20% Enhanced Defense"
         },
         {
           "id": 31,
@@ -7641,15 +7640,6 @@
       "description": "+{0} to Life"
     },
     {
-      "id": 48,
-      "values": [
-        3,
-        6
-      ],
-      "name": "firemindam",
-      "description": "Adds {0}-{1} fire damage"
-    },
-    {
       "id": 31,
       "values": [
         6
@@ -7668,7 +7658,7 @@
     {
       "id": 16,
       "values": [
-        18
+        20
       ],
       "name": "item_armor_percent",
       "description": "+{0}% Enhanced Defense"

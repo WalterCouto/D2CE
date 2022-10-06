@@ -1293,7 +1293,7 @@
       ],
       "type_id": 3,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 532966060,
       "level": 1,
       "dwa": 532966060,
       "dwb": 2119598038,
@@ -1384,7 +1384,7 @@
       ],
       "type_id": 2,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1558746368,
       "level": 1,
       "dwa": 1558746368,
       "dwb": 997894698,
@@ -1471,7 +1471,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 693919816,
       "level": 30,
       "dwa": 693919816,
       "dwb": 1736252372,
@@ -1488,7 +1488,7 @@
         {
           "id": 16,
           "values": [
-            92
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -1546,10 +1546,10 @@
         {
           "id": 16,
           "values": [
-            92
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+92% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 44,
@@ -1581,7 +1581,7 @@
         {
           "id": 16,
           "values": [
-            92
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -1631,10 +1631,10 @@
         {
           "id": 16,
           "values": [
-            92
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+92% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 44,
@@ -1726,7 +1726,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1453793248,
       "level": 70,
       "dwa": 1453793248,
       "dwb": 897595181,
@@ -1831,7 +1831,7 @@
         {
           "id": 16,
           "values": [
-            93
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -1857,10 +1857,10 @@
         {
           "id": 16,
           "values": [
-            93
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+93% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 33,
@@ -2039,7 +2039,7 @@
         {
           "id": 16,
           "values": [
-            93
+            100
           ],
           "name": "item_armor_percent",
           "description": "+{0}% Enhanced Defense"
@@ -2057,10 +2057,10 @@
         {
           "id": 16,
           "values": [
-            93
+            100
           ],
           "name": "item_armor_percent",
-          "description": "+93% Enhanced Defense"
+          "description": "+100% Enhanced Defense"
         },
         {
           "id": 33,
@@ -2211,7 +2211,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1461920870,
       "level": 15,
       "dwa": 1461920870,
       "dwb": 1619926082,
@@ -2498,7 +2498,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1736669650,
       "level": 42,
       "dwa": 1736669650,
       "dwb": 790569507,
@@ -2849,7 +2849,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1715866736,
       "level": 31,
       "dwa": 1715866736,
       "dwb": 1966351928,
@@ -3108,7 +3108,7 @@
       ],
       "type_id": 1,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 671422984,
       "level": 17,
       "dwa": 671422984,
       "dwb": 1752762326,
@@ -3395,7 +3395,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1458909212,
       "level": 73,
       "dwa": 1458909212,
       "dwb": 585902892,
@@ -3518,7 +3518,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 595682248,
       "level": 44,
       "dwa": 595682248,
       "dwb": 477777611,
@@ -3526,19 +3526,19 @@
       "multiple_pictures": 1,
       "picture_id": 2,
       "class_specific": 0,
-      "magic_prefix": 52,
-      "magic_prefix_name": "Lizard's",
+      "magic_prefix": 83,
+      "magic_prefix_name": "Ocher",
       "magic_suffix": 76,
       "magic_suffix_name": "of the Mind",
       "timestamp": 0,
       "magic_attributes": [
         {
-          "id": 9,
+          "id": 41,
           "values": [
-            3
+            9
           ],
-          "name": "maxmana",
-          "description": "+{0} to Mana"
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
         },
         {
           "id": 9,
@@ -3564,20 +3564,28 @@
           "description": "+8 to Mana"
         },
         {
-          "id": 9,
+          "id": 41,
           "values": [
-            3
+            9
           ],
-          "name": "maxmana",
-          "description": "+3 to Mana"
+          "name": "lightresist",
+          "description": "Lightning Resist +9%"
         }
       ],
       "displayed_runeword_attributes": [],
       "combined_magic_attributes": [
         {
+          "id": 41,
+          "values": [
+            9
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
           "id": 9,
           "values": [
-            11
+            8
           ],
           "name": "maxmana",
           "description": "+{0} to Mana"
@@ -3587,10 +3595,18 @@
         {
           "id": 9,
           "values": [
-            11
+            8
           ],
           "name": "maxmana",
-          "description": "+11 to Mana"
+          "description": "+8 to Mana"
+        },
+        {
+          "id": 41,
+          "values": [
+            9
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +9%"
         }
       ]
     },
@@ -3658,7 +3674,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1844133432,
       "level": 25,
       "dwa": 1844133432,
       "dwb": 1083470224,
@@ -4533,7 +4549,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1481515246,
       "level": 13,
       "dwa": 1481515246,
       "dwb": 964385095,
@@ -4617,7 +4633,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1528124407,
       "level": 61,
       "dwa": 1528124407,
       "dwb": 1617104883,
@@ -5179,7 +5195,7 @@
       "type_id": 4,
       "quest_difficulty": 0,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 855376782,
       "level": 46,
       "dwa": 855376782,
       "dwb": 1459494424,
@@ -5262,7 +5278,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 813117530,
       "level": 30,
       "dwa": 813117530,
       "dwb": 403964589,
@@ -5345,7 +5361,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 2141218169,
       "level": 78,
       "dwa": 2141218169,
       "dwb": 2102143643,
@@ -5428,7 +5444,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1837896309,
       "level": 80,
       "dwa": 1837896309,
       "dwb": 885145186,
@@ -5511,7 +5527,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 79252675,
       "level": 74,
       "dwa": 79252675,
       "dwb": 551306509,
@@ -5594,7 +5610,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1575434793,
       "level": 67,
       "dwa": 1575434793,
       "dwb": 592064775,
@@ -5677,7 +5693,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1762885599,
       "level": 29,
       "dwa": 1762885599,
       "dwb": 1305621132,
@@ -5760,7 +5776,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 941448017,
       "level": 36,
       "dwa": 941448017,
       "dwb": 1296058493,
@@ -5843,7 +5859,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 120735372,
       "level": 49,
       "dwa": 120735372,
       "dwb": 165230179,
@@ -5926,7 +5942,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 679303331,
       "level": 73,
       "dwa": 679303331,
       "dwb": 694962817,
@@ -6009,7 +6025,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1063392754,
       "level": 48,
       "dwa": 1063392754,
       "dwb": 1273043017,
@@ -6092,7 +6108,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 1568814688,
       "level": 77,
       "dwa": 1568814688,
       "dwb": 1020199385,
@@ -6175,7 +6191,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 728707820,
       "level": 8,
       "dwa": 728707820,
       "dwb": 711014863,
@@ -6258,7 +6274,7 @@
       ],
       "type_id": 4,
       "nr_of_items_in_sockets": 0,
-      "id": 0,
+      "id": 809664435,
       "level": 56,
       "dwa": 809664435,
       "dwb": 1064385423,
@@ -6313,14 +6329,6 @@
       "description": "+{0} to Dexterity"
     },
     {
-      "id": 60,
-      "values": [
-        5
-      ],
-      "name": "lifedrainmindam",
-      "description": "{0}% Life stolen per hit"
-    },
-    {
       "id": 31,
       "values": [
         20
@@ -6337,9 +6345,17 @@
       "description": "{0}% Better Chance of Getting Magic Items"
     },
     {
+      "id": 41,
+      "values": [
+        9
+      ],
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
+    },
+    {
       "id": 9,
       "values": [
-        11
+        8
       ],
       "name": "maxmana",
       "description": "+{0} to Mana"

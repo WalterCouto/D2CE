@@ -5237,7 +5237,7 @@
                 },
                 {
                     "id": 36,
-                    "name": "Damage Reduced by {0}%",
+                    "name": "Physical Damage Received Reduced by {0}%",
                     "values": [
                         19
                     ]

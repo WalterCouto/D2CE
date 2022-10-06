@@ -4415,7 +4415,7 @@ namespace d2ce
                 ss << u8"    \"jaJP\": \"切断\",\n";
                 ss << u8"    \"ptBR\": \"[fs]Fraturadora\",\n";
                 ss << u8"    \"ruRU\": \"[ms]раскалыватель\",\n";
-                ss << u8"    \"zhCN\": \"破碎者\"\n";
+                ss << u8"    \"zhCN\": \"碎击\"\n";
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 2339,\n";

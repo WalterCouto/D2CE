@@ -5140,7 +5140,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "type_name": "Ber Rune",
@@ -5155,7 +5155,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -5166,7 +5166,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by {0}%"
+              "description": "Physical Damage Received Reduced by {0}%"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -5176,7 +5176,7 @@
                 8
               ],
               "name": "damageresist",
-              "description": "Damage Reduced by 8%"
+              "description": "Physical Damage Received Reduced by 8%"
             }
           ]
         }
@@ -5361,7 +5361,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         }
       ],
       "displayed_combined_magic_attributes": [
@@ -5432,7 +5432,7 @@
             8
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 8%"
+          "description": "Physical Damage Received Reduced by 8%"
         },
         {
           "id": 86,
@@ -6988,7 +6988,7 @@
             -40
           ],
           "name": "item_req_percent",
-          "description": "Requirements +-40%"
+          "description": "Requirements -40%"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -7105,7 +7105,7 @@
             -40
           ],
           "name": "item_req_percent",
-          "description": "Requirements +-40%"
+          "description": "Requirements -40%"
         }
       ]
     },
@@ -7808,6 +7808,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -7971,6 +7972,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8134,6 +8136,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8297,6 +8300,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8460,6 +8464,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8623,6 +8628,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8786,6 +8792,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -8949,6 +8956,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -9268,6 +9276,7 @@
       "inv_file": "invchm3",
       "inv_height": 3,
       "inv_width": 1,
+      "inv_transform": 8,
       "displayed_magic_attributes": [
         {
           "id": 188,
@@ -9662,7 +9671,7 @@
             15
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 39,
@@ -10279,7 +10288,7 @@
             15
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 15%"
+          "description": "Physical Damage Received Reduced by 15%"
         }
       ],
       "displayed_runeword_attributes": [],
@@ -10306,7 +10315,7 @@
             15
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 39,
@@ -10519,7 +10528,7 @@
             15
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 15%"
+          "description": "Physical Damage Received Reduced by 15%"
         }
       ]
     },
@@ -10638,7 +10647,7 @@
             10
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 80,
@@ -10990,7 +10999,7 @@
             10
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 10%"
+          "description": "Physical Damage Received Reduced by 10%"
         },
         {
           "id": 80,
@@ -11041,7 +11050,7 @@
             10
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by {0}%"
+          "description": "Physical Damage Received Reduced by {0}%"
         },
         {
           "id": 80,
@@ -11222,7 +11231,7 @@
             10
           ],
           "name": "damageresist",
-          "description": "Damage Reduced by 10%"
+          "description": "Physical Damage Received Reduced by 10%"
         },
         {
           "id": 80,
@@ -15348,7 +15357,7 @@
         23
       ],
       "name": "damageresist",
-      "description": "Damage Reduced by {0}%"
+      "description": "Physical Damage Received Reduced by {0}%"
     },
     {
       "id": 83,
