@@ -358,17 +358,18 @@ namespace d2ce
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
 
-        bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
-        bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, bool bMaxAlways = true);
-        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
-        bool getSetBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
-        bool getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
-        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
-        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
+        bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
+        bool getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getSetItemBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getSetBonusAttribs(std::uint16_t id, std::vector<std::vector<MagicalAttribute>>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
-        bool generateMagicalAffixes(const ItemType& itemType, MagicalCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
-        bool generateRareOrCraftedAffixes(const ItemType& itemType, RareOrCraftedCachev100& cache, EnumItemVersion version, std::uint16_t gameVersion, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
+        bool generateMagicalAffixes(MagicalCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
+        bool generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
         std::uint32_t generarateRandomDW();
@@ -578,6 +579,441 @@ namespace d2ce
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams()
+{
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version)
+    : itemVersion(version)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::uint16_t gameVer)
+    : itemVersion(version), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, bool isExp)
+    : itemVersion(version), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type)
+    : itemVersion(version), itemType(std::ref(type))
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode)
+    : itemVersion(version)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, std::uint16_t gameVer)
+    : itemVersion(version), itemType(std::ref(type)), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, bool isExp)
+    : itemVersion(version), itemType(std::ref(type)), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, bool isExp)
+    : itemVersion(version), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff)
+    : itemVersion(version), difficulty(diff)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, std::uint16_t gameVer)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, std::uint16_t gameVer)
+    : itemVersion(version), difficulty(diff), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, bool isExp)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, bool isExp)
+    : itemVersion(version), difficulty(diff), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff), charClass(clazz)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz)
+    : itemVersion(version), difficulty(diff), charClass(clazz)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, std::uint16_t gameVer)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff), charClass(clazz), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, std::uint16_t gameVer)
+    : itemVersion(version), difficulty(diff), charClass(clazz), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, bool isExp)
+    : itemVersion(version), itemType(std::ref(type)), difficulty(diff), charClass(clazz), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+}
+//---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, bool isExp)
+    : itemVersion(version), difficulty(diff), charClass(clazz), isExpansion(isExp)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
 d2ce::Item::Item()
 {
 }
@@ -585,23 +1021,25 @@ d2ce::Item::Item()
 d2ce::Item::Item(size_t itemsize) : data(itemsize)
 {
 }
+//---------------------------------------------------------------------------
 d2ce::Item::Item(const Item& other)
 {
     *this = other;
 }
-d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isExpansion)
+//---------------------------------------------------------------------------
+d2ce::Item::Item(const ItemCreateParams& createParams)
 {
     static Item invalidItem;
     GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) = 0;
-    switch (itemVersion)
+    if (!createParams.itemType.has_value())
     {
-    case EnumItemVersion::v100:
-    case EnumItemVersion::v104:
-        isExpansion = false;
-        break;
+        // invalid params
+        *this = invalidItem;
+        return;
     }
 
-    if (!isExpansion && itemType.isExpansionItem())
+    const auto& itemType = createParams.itemType.value().get();
+    if (!createParams.isExpansion && itemType.isExpansionItem())
     {
         // unsupported item
         *this = invalidItem;
@@ -611,8 +1049,11 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
     if (itemType.isPlayerBodyPart() || itemType.isCharm() || itemType.isJewel())
     {
         // ears, jewels or charms can't be created with this method
-        *this = invalidItem;
-        return;
+        if (!itemType.isUniqueItem())
+        {
+            *this = invalidItem;
+            return;
+        }
     }
 
     std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
@@ -623,7 +1064,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
 
     std::uint64_t itemCode = 0;
     std::uint8_t itemCodeBitsSet = 0;
-    ItemVersion = itemVersion;
+    ItemVersion = createParams.itemVersion;
+    GameVersion = createParams.gameVersion;
     std::uint16_t rawVersion = 5;
     switch (ItemVersion)
     {
@@ -631,36 +1073,31 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
         itemCodeBitsSet = 10;
         itemCode = itemType.code_v100;
         rawVersion = 0;
-        GameVersion = 0;
         break;
 
     case EnumItemVersion::v104:
         itemCodeBitsSet = 30;
         itemCode = *((std::uint32_t*)strcode.data());
         rawVersion = 0;
-        GameVersion = 0;
         break;
 
     case EnumItemVersion::v107:
         itemCodeBitsSet = 32;
         itemCode = *((std::uint32_t*)strcode.data());
         rawVersion = 0;
-        GameVersion = isExpansion ? 100 : 0;
         break;
 
     case EnumItemVersion::v108:
     case EnumItemVersion::v109:
         itemCodeBitsSet = 32;
         itemCode = *((std::uint32_t*)strcode.data());
-        rawVersion = isExpansion ? 100 : 1;
-        GameVersion = isExpansion ? 100 : 1;
+        rawVersion = createParams.isExpansion ? 100 : 1;
         break;
 
     case EnumItemVersion::v110:
         itemCodeBitsSet = 32;
         itemCode = *((std::uint32_t*)strcode.data());
-        rawVersion = isExpansion ? 101 : 2;
-        GameVersion = isExpansion ? 100 : 1;
+        rawVersion = createParams.isExpansion ? 101 : 2;
         break;
 
     case EnumItemVersion::v100R:
@@ -668,8 +1105,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
     case EnumItemVersion::v140:
     default:
         ItemHelpers::encodeResurrectedItem(strcode, itemCode, itemCodeBitsSet);
-        rawVersion = isExpansion ? 5 : 4;
-        GameVersion = isExpansion ? 100 : 1;
+        rawVersion = createParams.isExpansion ? 5 : 4;
         break;
     }
 
@@ -1352,7 +1788,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
                 GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) + 2;
                 nr_of_items_in_sockets_bits = 1;
 
-                value = 0; // TODO need difficulty
+                value = static_cast<std::underlying_type_t<EnumDifficulty>>(createParams.difficulty);
                 bitSize = 2;
 
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET);
@@ -1376,7 +1812,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
         GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET) + 2;
         nr_of_items_in_sockets_bits = 1;
 
-        value = 0; // TODO need difficulty
+        value = static_cast<std::underlying_type_t<EnumDifficulty>>(createParams.difficulty);
         bitSize = 2;
 
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUEST_DIFFICULTY_OFFSET);
@@ -1490,7 +1926,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
-        if (!ItemHelpers::generateMagicalAffixes(itemType, generated_magic_affixes, itemVersion, GameVersion, getLevel(), 0, true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), 0, true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
         {
             *this = invalidItem;
             return;
@@ -1498,7 +1934,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
         break;
 
     case EnumItemQuality::UNIQUE:
-        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
+        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true))
         {
             *this = invalidItem;
             return;
@@ -1506,7 +1942,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
         break;
 
     case EnumItemQuality::SET:
-        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
+        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true))
         {
             *this = invalidItem;
             return;
@@ -1516,11 +1952,8 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
     default:
         if (itemType.isQuestItem())
         {
-            if (!ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, itemVersion, GameVersion, getLevel(), 0, true))
-            {
-                *this = invalidItem;
-                return;
-            }
+            // not all quest items are unqique, so allow empty list
+            ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true);
         }
         break;
     }
@@ -1674,19 +2107,36 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
     // If the item is part of a set, these bit will tell us how many lists
     // of magical properties follow the one regular magical property list.
     std::uint8_t setBonusBits = 0;
+    std::vector<std::vector<MagicalAttribute>> bonusAttribs;
     GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::BONUS_BITS_BIT_OFFSET_MARKER) = current_bit_offset;
-    if (quality == EnumItemQuality::SET) // TODO
+    if (quality == EnumItemQuality::SET)
     {
-        GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) = current_bit_offset;
         setBonusBits = std::uint8_t(itemType.getSetBonusBits());
-        value = setBonusBits;
-        bitSize = 5;
-        if (!setBits(current_bit_offset, bitSize, value))
+        if (setBonusBits > 0)
         {
-            *this = invalidItem;
-            return;
+            GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) = current_bit_offset;
+
+            if (!ItemHelpers::getSetItemBonusAttribs(itemType.getId(), bonusAttribs, createParams, getLevel(), 0, true))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            if (bonusAttribs.empty() || bonusAttribs.size() > 5)
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            value = setBonusBits;
+            bitSize = 5;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
         }
-        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
     }
 
     // magical properties
@@ -1696,87 +2146,34 @@ d2ce::Item::Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isE
         *this = invalidItem;
         return;
     }
+    max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER) = current_bit_offset;
-    if (setBonusBits > 0) // TODO
+    if (setBonusBits > 0)
     {
         // Item has more magical property lists due to being a set item
-        /*GET_BIT_OFFSET(ItemOffsets::SET_BONUS_PROPS_BIT_OFFSET) = current_bit_offset;
-        Json::Value setAttribs = itemRoot[bSerializedFormat ? "StatLists" : "set_attributes"];
-        if (setAttribs.isNull() || !setAttribs.isArray())
+        GET_BIT_OFFSET(ItemOffsets::SET_BONUS_PROPS_BIT_OFFSET) = current_bit_offset;
+        for (const auto& bonusAttrib : bonusAttribs)
         {
-            return false;
-        }
-
-        auto iter_end = setAttribs.end();
-        auto iter = setAttribs.begin();
-        if (bSerializedFormat)
-        {
-            ++iter;
-            if (iter == iter_end)
+            for (; setBonusBits != 0 && (setBonusBits & 1) == 0; setBonusBits >>= 1);
+            if (setBonusBits == 0)
             {
-                return false;
+                *this = invalidItem;
+                return;
             }
 
-            if (isRuneword())
+            if (!updatePropertyList(current_bit_offset, bonusAttrib))
             {
-                ++iter;
-                if (iter == iter_end)
-                {
-                    return false;
-                }
-            }
-        }
-
-        size_t i = 0;
-        for (; i < 5 && iter != iter_end; ++iter, ++i)
-        {
-            node.clear();
-            if (!iter->isNull())
-            {
-                node = bSerializedFormat ? iter->operator[]("Stats") : *iter;
-            }
-
-            if (!parsePropertyList(node, bSerializedFormat, current_bit_offset))
-            {
-                return false;
+                *this = invalidItem;
+                return;
             }
             max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-        }*/
+            setBonusBits >>= 1;
+        }
     }
 
     GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER) = current_bit_offset;
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = max_bit_offset;
-}
-//---------------------------------------------------------------------------
-d2ce::Item::Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion)
-{
-    static Item invalidItem;
-    GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) = 0;
-    switch (itemVersion)
-    {
-    case EnumItemVersion::v100:
-    case EnumItemVersion::v104:
-        isExpansion = false;
-        break;
-    }
-
-    // We only support simple items
-    const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
-    if (!itemType.isSimpleItem())
-    {
-        *this = invalidItem;
-        return;
-    }
-
-    if (!isExpansion && itemType.isExpansionItem())
-    {
-        // unsupported item
-        *this = invalidItem;
-        return;
-    }
-
-    *this = Item(itemVersion, itemType, isExpansion);
 }
 //---------------------------------------------------------------------------
 d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path)
@@ -5389,7 +5786,8 @@ bool d2ce::Item::getFullSetAttributes(std::vector<MagicalAttribute>& attribs) co
         return false;
     }
 
-    return ItemHelpers::getFullSetBonusAttribs(setAttrib.Id, attribs, ItemVersion, GameVersion, getLevel(), 0, true);
+    ItemCreateParams createParams(ItemVersion, getGameVersion());
+    return ItemHelpers::getFullSetBonusAttribs(setAttrib.Id, attribs, createParams, getLevel(), 0, true);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
@@ -7970,7 +8368,8 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     {
         strcode = ItemCodeStringConverter(runeCode);
         std::list<Item> runeItems;
-        runeItems.push_back(Item(version, strcode, isExpansion));
+        ItemCreateParams createParams(version, strcode, isExpansion);
+        runeItems.push_back(Item(createParams));
         auto iter = runeItems.begin();
         auto& runeItem = *iter;
         if (runeItem.data.empty() || !runeItem.isRune() || !canSocketItem(runeItem))
@@ -8099,8 +8498,9 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         return false;
     }
 
+    ItemCreateParams createParams(ItemVersion, getGameVersion());
     std::vector<MagicalAttribute> attribs;
-    if (!d2ce::ItemHelpers::getMagicAttribs(affixes, attribs, ItemVersion, getGameVersion()))
+    if (!d2ce::ItemHelpers::getMagicAttribs(affixes, attribs, createParams, getGameVersion()))
     {
         return false;
     }
@@ -8857,8 +9257,9 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         }
     }
 
+    ItemCreateParams createParams(ItemVersion, getGameVersion());
     std::vector<MagicalAttribute> attribs;
-    if (!d2ce::ItemHelpers::getRareOrCraftedAttribs(affixes, attribs, ItemVersion, getGameVersion()))
+    if (!d2ce::ItemHelpers::getRareOrCraftedAttribs(affixes, attribs, createParams, getGameVersion()))
     {
         return false;
     }
@@ -17569,7 +17970,8 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
         GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
     }
 
-    if (!ItemHelpers::generateMagicalAffixes(getItemTypeHelper(), magic_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -17624,6 +18026,7 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
 bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const
 {
     attribs.clear();
+    ItemCreateParams createParams(getVersion(), getGameVersion());
     d2ce::UniqueAttributes uniqueAttrib;
     d2ce::SetAttributes setAttrib;
     MagicalAffixes affixes;
@@ -17637,7 +18040,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
                 GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
             }
 
-            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
         }
         break;
 
@@ -17649,7 +18052,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
                 GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
             }
 
-            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
         }
         break;
 
@@ -17667,7 +18070,7 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
             std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
             if (getItemCode(strcode))
             {
-                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
             }
 
         }
@@ -17716,7 +18119,8 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
     }
 
-    if (!ItemHelpers::generateRareOrCraftedAffixes(getItemTypeHelper(), rare_affixes_v100, getVersion(), getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (rare_affixes_v100.Id == MAXUINT16))
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }
@@ -21567,7 +21971,8 @@ size_t d2ce::Items::setSuperiorAllItems(ItemFilter filter)
 //---------------------------------------------------------------------------
 bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
-    Item newItem(getDefaultItemVersion(), strcode, isExpansionItems());
+    d2ce::ItemCreateParams createParams(getDefaultItemVersion(), strcode, isExpansionItems());
+    Item newItem(createParams);
     if (newItem.data.empty())
     {
         // invalid item
@@ -21700,13 +22105,17 @@ size_t d2ce::Items::fillEmptySlots(EnumAltItemLocation altPositionId, std::array
 {
     return fillEmptySlots(EnumItemLocation::STORED, altPositionId, strcode);
 }
-
 //---------------------------------------------------------------------------
-bool d2ce::Items::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+bool d2ce::Items::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId)
 {
+    if (pImportedItem == nullptr)
+    {
+        return false;
+    }
+
     // import item
+    auto& importedItem = *const_cast<d2ce::Item*>(pImportedItem);
     pImportedItem = nullptr;
-    Item importedItem(Version, isExpansionItems(), path);
     if (importedItem.data.empty())
     {
         return false;
@@ -21740,6 +22149,14 @@ bool d2ce::Items::importItem(const std::filesystem::path& path, const d2ce::Item
     bufferItem.swap(importedItem);
     pImportedItem = &bufferItem;
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    // import item
+    Item importedItem(Version, isExpansionItems(), path);
+    pImportedItem = &importedItem;
+    return importItem(pImportedItem, bRandomizeId);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::exportItem(d2ce::Item& item, const std::filesystem::path& path) const

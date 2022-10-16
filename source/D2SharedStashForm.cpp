@@ -25,6 +25,7 @@
 #include "D2GemsForm.h"
 #include "D2AddGemsForm.h"
 #include "D2MercenaryForm.h"
+#include "D2NewItemForm.h"
 #include <deque>
 #include <utf8/utf8.h>
 
@@ -611,6 +612,7 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2SharedStashForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2SharedStashForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2SharedStashForm::OnItemContextApplyruneword)
+    ON_COMMAND(ID_ITEM_CONTEXT_CREATE_ITEM, &CD2SharedStashForm::OnItemContextCreateitem)
     ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2SharedStashForm::OnItemContextImportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2SharedStashForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2SharedStashForm::OnItemContextRemoveitem)
@@ -1326,6 +1328,12 @@ BOOL CD2SharedStashForm::OnInitDialog()
 
             StashPage.SetCurSel(0);
         }
+        else
+        {
+            AfxMessageBox(L"Bad shared stash", MB_ICONERROR | MB_OK);
+            EndDialog(IDCANCEL);
+            return TRUE;
+        }
 
         LoadGridItemImages();
     }
@@ -2034,6 +2042,31 @@ void CD2SharedStashForm::OnItemContextRemovePersonalization()
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextApplyruneword()
 {
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextCreateitem()
+{
+    CD2NewItemForm dlg(*this);
+    if (dlg.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    auto* pCreatedItem = dlg.GetCreatedItem();
+    if (pCreatedItem == nullptr)
+    {
+        return;
+    }
+
+    CBitmap image;
+    InvStashGrid.GetScaledItemBitmap(*pCreatedItem, image);
+
+    // swap for new drag item
+    ResetCursor();
+    CurrDragItem = const_cast<d2ce::Item*>(pCreatedItem);
+    ItemCursor = CreateItemCursor(image);
+    CurrCursor = ItemCursor;
+    ::SetCursor(CurrCursor);
 }
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnItemContextImportitem()

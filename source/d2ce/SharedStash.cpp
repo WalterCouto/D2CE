@@ -952,9 +952,25 @@ bool d2ce::SharedStash::refresh(std::FILE* charfile)
             return false;
         }
 
+        EnumCharVersion sharedShashCharVersion = EnumCharVersion::v140;
         if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v100R))
         {
             // corrupt file
+            Pages.pop_back();
+            return false;
+        }
+        else if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v120))
+        {
+            sharedShashCharVersion = EnumCharVersion::v100R;
+        }
+        else if (pageHeader.Version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v140))
+        {
+            sharedShashCharVersion = EnumCharVersion::v120;
+        }
+
+        if (CharVersion != sharedShashCharVersion)
+        {
+            // unsupported case
             Pages.pop_back();
             return false;
         }

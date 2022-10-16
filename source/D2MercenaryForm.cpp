@@ -1520,6 +1520,7 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu* pPopup = FindPopup(menu, 0);
         ENSURE(pPopup != NULL);
 
+        pPopup->DeleteMenu(ID_ITEM_CONTEXT_CREATE_ITEM, MF_BYCOMMAND);
         pPopup->DeleteMenu(ID_ITEM_CONTEXT_IMPORT_ITEM, MF_BYCOMMAND);
 
         if (!isStackable)

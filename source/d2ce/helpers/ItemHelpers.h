@@ -45,6 +45,8 @@ namespace d2ce
         const std::string& getLanguage();
         const std::string& setLanguage(const std::string& lang);
 
+        std::string getCategoryNameFromCode(const std::string& code);
+
         const d2ce::ItemStat& getItemStat(EnumItemVersion itemVersion, size_t idx);
         const d2ce::ItemStat& getItemStat(EnumItemVersion itemVersion, const std::string& name); // by stat name
         const d2ce::ItemStat& getItemStat(const MagicalAttribute& attrib);

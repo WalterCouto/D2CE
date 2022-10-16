@@ -288,6 +288,7 @@ namespace d2ce
         bool getSkillBonusPoints(std::vector<std::uint16_t>& points) const;
 
         // Items
+        EnumItemVersion getDefaultItemVersion() const;
         size_t getNumberOfItems() const;
 
         size_t getNumberOfEquippedItems() const;
@@ -345,6 +346,7 @@ namespace d2ce
         bool addItem(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         bool addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId = false);
         bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
         size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);

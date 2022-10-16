@@ -250,6 +250,7 @@
     <ClInclude Include="D2MainForm.h" />
     <ClInclude Include="D2MercenaryForm.h" />
     <ClInclude Include="D2MultiLineListCtrl.h" />
+    <ClInclude Include="D2NewItemForm.h" />
     <ClInclude Include="D2QuestsForm.h" />
     <ClInclude Include="D2RunewordForm.h" />
     <ClInclude Include="D2SharedStashForm.h" />
@@ -335,6 +336,7 @@
     <ClCompile Include="D2MainForm.cpp" />
     <ClCompile Include="D2MercenaryForm.cpp" />
     <ClCompile Include="D2MultiLineListCtrl.cpp" />
+    <ClCompile Include="D2NewItemForm.cpp" />
     <ClCompile Include="D2QuestsForm.cpp" />
     <ClCompile Include="D2RunewordForm.cpp" />
     <ClCompile Include="D2SharedStashForm.cpp" />

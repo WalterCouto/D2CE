@@ -45,8 +45,10 @@ public:
 
 // Overrides
 public:
+    static CSize DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, const d2ce::Item* currItem, const d2ce::Character* pCharInfo, bool isMerc);
     CSize OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly) override;
     void OnFillBackground(CDC* pDC, CRect rect, COLORREF& clrText, COLORREF& clrLine) override;
+
 
 // Implementation
 public:

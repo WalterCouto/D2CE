@@ -297,6 +297,9 @@
     <ClInclude Include="D2RunewordForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D2NewItemForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2Editor.cpp">
@@ -474,6 +477,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D2RunewordForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D2NewItemForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

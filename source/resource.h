@@ -579,6 +579,7 @@
 #define IDB_SKILL_UNK                   722
 #define IDR_HIRELING_TXT                723
 #define IDC_TRASH_CURSOR                724
+#define IDD_NEW_ITEM_DIALOG             725
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -877,6 +878,8 @@
 #define IDC_PAGE_COMBO                  1150
 #define IDC_SHARED_STASH_BUTTON         1151
 #define IDC_RUNEWORD_LIST               1152
+#define IDC_ITEM_TREE                   1153
+#define IDC_NEW_ITEM_TOOLTIP            1154
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -937,14 +940,15 @@
 #define ID_OPTIONS_ALLITEMSHIGHERTIER   32829
 #define ID_ITEM_CONTEXT_ADDMAGICALAFFIXES 32830
 #define ID_ITEM_CONTEXT_ADDRAREAFFIXES  32831
+#define ID_ITEM_CONTEXT_CREATE_ITEM     32832
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        725
-#define _APS_NEXT_COMMAND_VALUE         32832
-#define _APS_NEXT_CONTROL_VALUE         1153
+#define _APS_NEXT_RESOURCE_VALUE        727
+#define _APS_NEXT_COMMAND_VALUE         32833
+#define _APS_NEXT_CONTROL_VALUE         1155
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

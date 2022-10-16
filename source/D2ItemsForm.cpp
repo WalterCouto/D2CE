@@ -27,6 +27,7 @@
 #include "D2MercenaryForm.h"
 #include "D2SharedStashForm.h"
 #include "D2RunewordForm.h"
+#include "D2NewItemForm.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <deque>
 #include <utf8/utf8.h>
@@ -2262,6 +2263,7 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2ItemsForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2ItemsForm::OnItemContextApplyruneword)
+    ON_COMMAND(ID_ITEM_CONTEXT_CREATE_ITEM, &CD2ItemsForm::OnItemContextCreateitem)
     ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2ItemsForm::OnItemContextImportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2ItemsForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2ItemsForm::OnItemContextRemoveitem)
@@ -5037,6 +5039,31 @@ void CD2ItemsForm::OnItemContextApplyruneword()
     CD2RunewordForm dlg(*this);
     dlg.DoModal();
     SetFocus();
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextCreateitem()
+{
+    CD2NewItemForm dlg(*this);
+    if (dlg.DoModal() != IDOK)
+    {
+        return;
+    }
+
+    auto* pCreatedItem = dlg.GetCreatedItem();
+    if (pCreatedItem == nullptr)
+    {
+        return;
+    }
+
+    CBitmap image;
+    InvStashGrid.GetScaledItemBitmap(*pCreatedItem, image);
+
+    // swap for new drag item
+    ResetCursor();
+    CurrDragItem = const_cast<d2ce::Item*>(pCreatedItem);
+    ItemCursor = CreateItemCursor(image);
+    CurrCursor = ItemCursor;
+    ::SetCursor(CurrCursor);
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextImportitem()

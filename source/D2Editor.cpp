@@ -18,9 +18,11 @@
 
 Revision History
 ================
-Version 2.20 (October 5, 2022)
+Version 2.20 (October 16, 2022)
    - Added: Set Items now display all the possible Bonus attribues in the
             tooltip.
+   - Added: Add Create Item Form to allow creation of any item available 
+            in the game.
 
 Version 2.19 (October 3, 2022)
    - Updated: fix up bugs for unique items that incorrectly showed up 

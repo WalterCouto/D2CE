@@ -113,8 +113,6 @@ namespace d2ce
 
         std::uint16_t getRawVersion() const;
 
-        Item(EnumItemVersion itemVersion, const ItemType& itemType, bool isExpansion = true);
-        Item(EnumItemVersion itemVersion, std::array<std::uint8_t, 4>& strcode, bool isExpansion = true); // create a simple type
         Item(EnumItemVersion itemVersion, bool isExpansion, const std::filesystem::path& path); // read D2I item
 
         bool setLocation(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::uint16_t positionX, std::uint16_t positionY);
@@ -130,6 +128,7 @@ namespace d2ce
     public:
         Item();
         Item(size_t itemsize);
+        Item(const ItemCreateParams& createParms);
         Item(const Item& other);
         ~Item();
 
@@ -508,6 +507,7 @@ namespace d2ce
         size_t fillEmptySlots(EnumItemLocation locationId, EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
         size_t fillEmptySlots(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
+        bool importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId = false);
         bool importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId = true);
         bool exportItem(d2ce::Item& item, const std::filesystem::path& path) const;
 

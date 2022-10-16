@@ -4019,6 +4019,11 @@ bool d2ce::Character::getSkillBonusPoints(std::vector<std::uint16_t>& points) co
     return Cs.getSkillBonusPoints(points);
 }
 //---------------------------------------------------------------------------
+d2ce::EnumItemVersion d2ce::Character::getDefaultItemVersion() const
+{
+    return m_items.getDefaultItemVersion();
+}
+//---------------------------------------------------------------------------
 /*
    Returns the number of m_items belonging to the character
    Value returned excludes socketed gems/jewels/runes.
@@ -4292,6 +4297,11 @@ bool d2ce::Character::addItem(EnumItemLocation locationId, std::array<std::uint8
 bool d2ce::Character::addItem(EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
     return m_items.addItem(altPositionId, strcode);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId)
+{
+    return m_items.importItem(pImportedItem, bRandomizeId);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Character::importItem(const std::filesystem::path& path, const d2ce::Item*& pImportedItem, bool bRandomizeId)

@@ -1325,6 +1325,7 @@ namespace d2ce
         virtual bool isGem() const;
         virtual bool isQuestItem() const;
         virtual bool isGoldItem() const;
+        virtual bool isEar() const;
         virtual bool isRejuvenationPotion() const;
         virtual bool isHealingPotion() const;
         virtual bool isManaPotion() const;
@@ -1333,6 +1334,8 @@ namespace d2ce
         virtual bool isUpgradableRejuvenationPotion() const;
         virtual bool isUpgradablePotion() const;
         virtual bool isUpgradableItem() const;
+        virtual bool isExceptionalItem() const;
+        virtual bool isEliteItem() const;
         virtual bool isRune() const;
         virtual bool isCharm() const;
         virtual bool isBelt() const;
@@ -1352,6 +1355,7 @@ namespace d2ce
         virtual bool isClassSpecific() const;
         virtual bool isUniqueItem() const;
         virtual bool isSetItem() const;
+        virtual std::string getSetName() const;
         virtual std::uint16_t getId() const;
         virtual std::uint32_t getSetItemDWBCode() const;
         virtual std::uint16_t getSetBonusBits() const;
@@ -1379,6 +1383,16 @@ namespace d2ce
 
     };
 
+    struct AvailableItemType
+    {
+        enum class EnumFolderType : std::uint8_t { Item = 0, Category, Sets, Set, Unique, Regular, Exceptional, Elite, UnusedItems };
+
+        EnumFolderType folderType = EnumFolderType::Item;
+        const ItemType* pItemType = nullptr;               // non-null if Item node
+        std::string name;                                  // name of the item or folder
+        std::map<std::string, AvailableItemType> children; // children of this folder item by Folder anem
+    };
+
     struct RunewordType
     {
         std::uint16_t id = 0; // id of the runeword
@@ -1396,6 +1410,48 @@ namespace d2ce
         // The general level requirement that your character must meet before they can use this runeword.
         std::uint16_t levelreq = 0;
         d2ce::EnumItemVersion version = d2ce::EnumItemVersion::v107; // min required version
+    };
+
+    struct ItemCreateParams
+    {
+        EnumItemVersion itemVersion = APP_ITEM_VERSION;
+        std::uint16_t gameVersion = APP_ITEM_GAME_VERSION;
+        std::optional <std::reference_wrapper<const ItemType>> itemType;
+        d2ce::EnumDifficulty difficulty = d2ce::EnumDifficulty::Normal;
+        std::optional<d2ce::EnumCharClass> charClass;
+        bool isExpansion = true;
+
+        ItemCreateParams();
+        explicit ItemCreateParams(EnumItemVersion version);
+        explicit ItemCreateParams(EnumItemVersion version, std::uint16_t gameVer);
+        explicit ItemCreateParams(EnumItemVersion version, bool isExp);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, std::uint16_t gameVer);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, std::uint16_t gameVer);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, bool isExp);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, bool isExp);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, std::uint16_t gameVer);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, std::uint16_t gameVer);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, bool isExp);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, bool isExp);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, std::uint16_t gameVer);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, std::uint16_t gameVer);
+
+        explicit ItemCreateParams(EnumItemVersion version, const ItemType& type, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, bool isExp);
+        explicit ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, d2ce::EnumDifficulty diff, d2ce::EnumCharClass clazz, bool isExp);
     };
 }
 //---------------------------------------------------------------------------

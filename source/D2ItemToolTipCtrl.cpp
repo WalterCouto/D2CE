@@ -82,11 +82,11 @@ void CD2ItemToolTipCtrl::SetCallback(const CD2ItemToolTipCtrlCallback* callback)
     Callback = callback;
 }
 //---------------------------------------------------------------------------
-CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
+CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, const d2ce::Item* currItem, const d2ce::Character* pCharInfo, bool isMerc)
 {
-    if (CurrItem == nullptr)
+    if (currItem == nullptr)
     {
-        return __super::OnDrawLabel(pDC, rect, bCalcOnly);
+        return CSize(0, 0);
     }
 
     // color codes as described in the text files
@@ -95,22 +95,22 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // Get color of top text
     COLORREF color = colors[WHITE];
-    if (CurrItem->isIdentified())
+    if (currItem->isIdentified())
     {
-        if (CurrItem->isEthereal())
+        if (currItem->isEthereal())
         {
             color = colors[GRAY];
         }
-        else if (CurrItem->isQuestItem())
+        else if (currItem->isQuestItem())
         {
             color = colors[UNIQUE];
         }
-        else if (CurrItem->isRune())
+        else if (currItem->isRune())
         {
             color = colors[CRAFT];
         }
 
-        switch (CurrItem->getQuality())
+        switch (currItem->getQuality())
         {
         case d2ce::EnumItemQuality::MAGIC:
             color = colors[BLUE];
@@ -140,12 +140,12 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     }
     pDC->SetTextColor(color);
 
-    std::u16string uText = utf8::utf8to16(CurrItem->getDisplayedItemName());
+    std::u16string uText = utf8::utf8to16(currItem->getDisplayedItemName());
     CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
     CSize sizeText(CalcTextSize(pDC, strText, rect, bCalcOnly));
 
     // draw possible rune name
-    uText = utf8::utf8to16(CurrItem->getDisplayedSocketedRunes());
+    uText = utf8::utf8to16(currItem->getDisplayedSocketedRunes());
     strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
@@ -157,8 +157,9 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     }
 
     // Other non-magical
-    auto charLevel = IsMerc ? CharInfo.getMercenaryInfo().getLevel() : CharInfo.getLevel();
-    uText = utf8::utf8to16(CurrItem->getDisplayedItemAttributes(CharInfo.getClass(), charLevel));
+    auto charLevel = pCharInfo == nullptr ? 1 : (isMerc ? pCharInfo->getMercenaryInfo().getLevel() : pCharInfo->getLevel());
+    auto charClass = pCharInfo == nullptr ? d2ce::EnumCharClass::Amazon : pCharInfo->getClass();
+    uText = utf8::utf8to16(currItem->getDisplayedItemAttributes(charClass, charLevel));
     strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
@@ -170,7 +171,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     }
 
     d2ce::ItemDurability durability;
-    if (CurrItem->getDurability(durability) && durability.Max == 0)
+    if (currItem->getDurability(durability) && durability.Max == 0)
     {
         // Indestructible without the need for the magical attribute of indestructibility
         std::string u8Text;
@@ -187,7 +188,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // magical props
     std::vector<d2ce::MagicalAttribute> magicalAttributes;
-    if (CurrItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+    if (currItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
     {
         for (const auto& attrib : magicalAttributes)
         {
@@ -212,7 +213,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         }
     }
 
-    if (CurrItem->isEthereal())
+    if (currItem->isEthereal())
     {
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[BLUE]);
@@ -220,21 +221,21 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         std::string u8Text;
         uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetEtherealStringTxtValue(u8Text));
         strText = reinterpret_cast<LPCWSTR>(uText.c_str());
-        if (CurrItem->isSocketed())
+        if (currItem->isSocketed())
         {
             // Socketed text
             strText += _T(", ");
             uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetSocketedStringTxtValue(u8Text));
             CString socketedText(reinterpret_cast<LPCWSTR>(uText.c_str()));
             CString temp;
-            temp.Format(socketedText, (int)CurrItem->getDisplayedSocketCount());
+            temp.Format(socketedText, (int)currItem->getDisplayedSocketCount());
             strText += temp;
         }
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
-    else if (CurrItem->isSocketed())
+    else if (currItem->isSocketed())
     {
         // Socketed text
         CSize prevSizeText = sizeText;
@@ -244,7 +245,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetSocketedStringTxtValue(u8Text));
         CString socketedText(reinterpret_cast<LPCWSTR>(uText.c_str()));
         CString temp;
-        temp.Format(socketedText, (int)CurrItem->getDisplayedSocketCount());
+        temp.Format(socketedText, (int)currItem->getDisplayedSocketCount());
         strText = temp;
 
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
@@ -254,7 +255,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // Green Set props
     std::vector<d2ce::MagicalAttribute> setAttributes;
-    if (CurrItem->getDisplayedSetItemAttributes(setAttributes, charLevel))
+    if (currItem->getDisplayedSetItemAttributes(setAttributes, charLevel))
     {
         for (const auto& attrib : setAttributes)
         {
@@ -281,7 +282,7 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
 
     // Green Set props
     std::vector<d2ce::MagicalAttribute> setBonus;
-    if (CurrItem->getDisplayedFullSetAttributes(setBonus, charLevel))
+    if (currItem->getDisplayedFullSetAttributes(setBonus, charLevel))
     {
         bool bFirst = true;
         for (const auto& attrib : setBonus)
@@ -314,6 +315,16 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
     }
 
     return sizeText;
+}
+//---------------------------------------------------------------------------
+CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
+{
+    if (CurrItem == nullptr)
+    {
+        return __super::OnDrawLabel(pDC, rect, bCalcOnly);
+    }
+
+    return DoDrawItemInfo(pDC, rect, bCalcOnly, CurrItem, &CharInfo, IsMerc);
 }
 //---------------------------------------------------------------------------
 void CD2ItemToolTipCtrl::OnFillBackground(CDC* pDC, CRect rect, COLORREF& clrText, COLORREF& clrLine)

@@ -27,6 +27,7 @@
 class CD2SharedStashForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, public CD2ItemsGridCallback
 {
     friend class CD2ItemsGrid;
+    friend class CD2NewItemForm;
     friend class CD2GemsForm;
     friend class CD2AddGemsForm; 
     friend class CD2RunewordForm;
@@ -74,6 +75,7 @@ protected:
     afx_msg void OnItemContextPersonalize();
     afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextApplyruneword();
+    afx_msg void OnItemContextCreateitem();
     afx_msg void OnItemContextImportitem();
     afx_msg void OnItemContextExportitem();
     afx_msg void OnItemContextRemoveitem();
