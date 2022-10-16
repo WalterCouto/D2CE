@@ -3030,7 +3030,7 @@
             5
           ],
           "name": "item_skillonhit",
-          "description": "5% Chance to cast level 10 DiabWall on striking"
+          "description": "5% Chance to cast level 10 Firestorm on striking"
         },
         {
           "id": 83,
@@ -3245,7 +3245,7 @@
             5
           ],
           "name": "item_skillonhit",
-          "description": "5% Chance to cast level 10 DiabWall on striking"
+          "description": "5% Chance to cast level 10 Firestorm on striking"
         },
         {
           "id": 83,

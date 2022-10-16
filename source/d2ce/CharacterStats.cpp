@@ -743,7 +743,7 @@ namespace d2ce
         std::uint16_t Col = 0;
     };
 
-    std::map<std::string, std::uint16_t> s_SkillDescMap;
+    std::map<std::string, std::vector<std::uint16_t>> s_SkillDescMap;
     std::map<std::string, std::uint16_t> s_SkillIndexMap;
     std::map<std::uint16_t, SkillsInfoType> s_SkillInfoMap;
     void InitSkillDescData(const ITxtReader& txtReader)
@@ -811,69 +811,72 @@ namespace d2ce
                 continue;
             }
 
-            auto& skillInfo = s_SkillInfoMap[iter->second];
-
-            strValue = doc.GetCellString(strnameColumnColumnIdx, i);
-            if (!strValue.empty())
+            for (const auto& id : iter->second)
             {
-                LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.name, skillInfo.Skill.index.c_str());
-            }
+                auto& skillInfo = s_SkillInfoMap[id];
 
-            strValue = doc.GetCellString(strlongColumnColumnIdx, i);
-            if (!strValue.empty())
-            {
-                LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.longName);
-            }
-
-            if (skillInfo.Skill.classInfo.has_value())
-            {
-                strValue = doc.GetCellString(iconCelColumnIdx, i);
+                strValue = doc.GetCellString(strnameColumnColumnIdx, i);
                 if (!strValue.empty())
                 {
-                    skillInfo.Skill.classInfo.value().iconIndex = doc.GetCellUInt16(iconCelColumnIdx, i);
+                    LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.name, skillInfo.Skill.index.c_str());
                 }
 
-                strValue = doc.GetCellString(skillPageColumnIdx, i);
+                strValue = doc.GetCellString(strlongColumnColumnIdx, i);
                 if (!strValue.empty())
                 {
-                    skillInfo.Tab = doc.GetCellUInt16(skillPageColumnIdx, i);
+                    LocalizationHelpers::GetStringTxtValue(strValue, skillInfo.Skill.longName);
                 }
 
-                strValue = doc.GetCellString(skillRowColumnIdx, i);
-                if (!strValue.empty())
+                if (skillInfo.Skill.classInfo.has_value())
                 {
-                    skillInfo.Row = doc.GetCellUInt16(skillRowColumnIdx, i);
-                }
-
-                strValue = doc.GetCellString(skillColumnColumnIdx, i);
-                if (!strValue.empty())
-                {
-                    skillInfo.Col = doc.GetCellUInt16(skillColumnColumnIdx, i);
-                }
-
-                if ((skillInfo.Tab > 0) && (skillInfo.Tab <= 3)  && (skillInfo.Row > 0) && (skillInfo.Col > 0))
-                {
-                    auto iterIdx = s_CharClassEnumMap.find(skillInfo.Skill.classInfo.value().charClass);
-                    if (iterIdx != s_CharClassEnumMap.end())
+                    strValue = doc.GetCellString(iconCelColumnIdx, i);
+                    if (!strValue.empty())
                     {
-                        auto iterClass = s_CharClassInfo.find(iterIdx->second);
-                        if (iterClass != s_CharClassInfo.end())
+                        skillInfo.Skill.classInfo.value().iconIndex = doc.GetCellUInt16(iconCelColumnIdx, i);
+                    }
+
+                    strValue = doc.GetCellString(skillPageColumnIdx, i);
+                    if (!strValue.empty())
+                    {
+                        skillInfo.Tab = doc.GetCellUInt16(skillPageColumnIdx, i);
+                    }
+
+                    strValue = doc.GetCellString(skillRowColumnIdx, i);
+                    if (!strValue.empty())
+                    {
+                        skillInfo.Row = doc.GetCellUInt16(skillRowColumnIdx, i);
+                    }
+
+                    strValue = doc.GetCellString(skillColumnColumnIdx, i);
+                    if (!strValue.empty())
+                    {
+                        skillInfo.Col = doc.GetCellUInt16(skillColumnColumnIdx, i);
+                    }
+
+                    if ((skillInfo.Tab > 0) && (skillInfo.Tab <= 3) && (skillInfo.Row > 0) && (skillInfo.Col > 0))
+                    {
+                        auto iterIdx = s_CharClassEnumMap.find(skillInfo.Skill.classInfo.value().charClass);
+                        if (iterIdx != s_CharClassEnumMap.end())
                         {
-                            switch (skillInfo.Tab)
+                            auto iterClass = s_CharClassInfo.find(iterIdx->second);
+                            if (iterClass != s_CharClassInfo.end())
                             {
-                            case 1:
-                                skillInfo.Tab = 3;
-                                iterClass->second.SklTreeTab3[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
-                                break;
+                                switch (skillInfo.Tab)
+                                {
+                                case 1:
+                                    skillInfo.Tab = 3;
+                                    iterClass->second.SklTreeTab3[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                    break;
 
-                            case 2:
-                                iterClass->second.SklTreeTab2[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
-                                break;
+                                case 2:
+                                    iterClass->second.SklTreeTab2[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                    break;
 
-                            case 3:
-                                skillInfo.Tab = 1;
-                                iterClass->second.SklTreeTab1[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
-                                break;
+                                case 3:
+                                    skillInfo.Tab = 1;
+                                    iterClass->second.SklTreeTab1[skillInfo.Row][skillInfo.Col] = skillInfo.Skill.id;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -902,7 +905,7 @@ namespace d2ce
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetSkillsTxt());
         auto& doc = *pDoc;
-        std::map<std::string, std::uint16_t> skillDescMap;
+        std::map<std::string, std::vector<std::uint16_t>> skillDescMap;
         std::map<std::string, std::uint16_t> skillIndexMap;
         std::map<std::uint16_t, SkillsInfoType> skillInfoMap;
         size_t numRows = doc.GetRowCount();
@@ -981,7 +984,7 @@ namespace d2ce
             skill.Desc = doc.GetCellString(skilldescColumnIdx, i);
             if (!skill.Desc.empty())
             {
-                skillDescMap[skill.Desc] = id;
+                skillDescMap[skill.Desc].push_back(id);
             }
 
             if (!classCode.empty())
