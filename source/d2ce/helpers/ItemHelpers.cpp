@@ -2402,6 +2402,17 @@ namespace d2ce
                 ConvertPlaceHolders(strValue2);
                 newValue.descNoRange = strValue2;
             }
+            else if (newValue.name.compare("damagepercent") == 0)
+            {
+                auto iterName = itemStatsNameMap.find("item_maxdamage_percent");
+                if (iterName != itemStatsNameMap.end())
+                {
+                    auto& statInfo = itemStatsInfo[d2ce::EnumCharVersion::v109][iterName->second];
+                    newValue.descNoRange = statInfo.descNoRange;
+                    newValue.desc = newValue.descNoRange;
+                    newValue.descPriority = statInfo.descPriority;
+                }
+            }
 
             if (saveBits109ColumnIdx >= 0)
             {

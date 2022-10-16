@@ -10659,7 +10659,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             }
           ],
           "type_name": "Ohm Rune",
@@ -10673,7 +10674,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+50% Enhanced Damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -10683,7 +10685,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -10692,7 +10695,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+50% Enhanced Damage"
             }
           ]
         }
@@ -10895,7 +10899,8 @@
           "values": [
             50
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 122,
@@ -10931,6 +10936,14 @@
           ],
           "name": "item_maxdamage_percent",
           "description": "+240% Enhanced Damage"
+        },
+        {
+          "id": 25,
+          "values": [
+            50
+          ],
+          "name": "damagepercent",
+          "description": "+50% Enhanced Damage"
         },
         {
           "id": 48,
@@ -10999,13 +11012,6 @@
           ],
           "name": "item_magicbonus",
           "description": "30% Better Chance of Getting Magic Items"
-        },
-        {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 122,
@@ -17477,7 +17483,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             }
           ],
           "type_name": "Ohm Rune",
@@ -17491,7 +17498,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+50% Enhanced Damage"
             }
           ],
           "displayed_runeword_attributes": [],
@@ -17501,7 +17509,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             }
           ],
           "displayed_combined_magic_attributes": [
@@ -17510,7 +17519,8 @@
               "values": [
                 50
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+50% Enhanced Damage"
             }
           ]
         },
@@ -18077,7 +18087,8 @@
           "values": [
             50
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 115,
@@ -18138,6 +18149,14 @@
           ],
           "name": "item_maxdamage_percent",
           "description": "+295% Enhanced Damage"
+        },
+        {
+          "id": 25,
+          "values": [
+            50
+          ],
+          "name": "damagepercent",
+          "description": "+50% Enhanced Damage"
         },
         {
           "id": 115,
@@ -18229,13 +18248,6 @@
           ],
           "name": "item_maxdurability_percent",
           "description": "Increase Maximum Durability 15%"
-        },
-        {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent"
         }
       ]
     }
@@ -18468,7 +18480,8 @@
       "values": [
         50
       ],
-      "name": "damagepercent"
+      "name": "damagepercent",
+      "description": "+{0}% Enhanced Damage"
     },
     {
       "id": 102,

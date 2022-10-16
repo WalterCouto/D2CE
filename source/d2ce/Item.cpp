@@ -10291,6 +10291,13 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
             {
                 dmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
             }
+            else if (stat.name == "damagepercent")
+            {
+                auto value = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                eDmg += value;
+                eDmg2 += value; // should be the same as eDmg
+                eDmgThrow += value; // should be the same as eDmg
+            }
             else
             {
                 for (const auto& opStat : stat.opAttribs.op_stats)
@@ -10315,13 +10322,23 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         {
                         case 13:
                         case 5:
-                            eDmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            if (stat.name == "item_maxdamage_percent")
+                            {
+                                // this stat is chainged
+                                eDmg += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            }
+                            else
+                            {
+                                eDmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                            }
                             break;
 
                         case 4:
                             dmgMax += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
                             break;
                         }
+
+                        
                     }
                     else if (opStat == "secondary_mindamage")
                     {
@@ -10343,7 +10360,15 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         {
                         case 13:
                         case 5:
-                            eDmgMax2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            if (stat.name == "item_maxdamage_percent")
+                            {
+                                // this stat is chainged
+                                eDmg2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                            }
+                            else
+                            {
+                                eDmgMax2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            }
                             break;
 
                         case 4:
@@ -10371,7 +10396,15 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         {
                         case 13:
                         case 5:
-                            eDmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            if (stat.name == "item_maxdamage_percent")
+                            {
+                                // this stat is chainged
+                                eDmgThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                            }
+                            else
+                            {
+                                eDmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmgMax
+                            }
                             break;
 
                         case 4:

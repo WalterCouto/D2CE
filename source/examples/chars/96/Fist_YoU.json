@@ -5433,7 +5433,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -5612,6 +5613,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -5650,13 +5659,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -5716,7 +5718,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -5891,6 +5894,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -5929,13 +5940,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -6068,7 +6072,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -6247,6 +6252,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -6285,13 +6298,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -6351,7 +6357,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -6526,6 +6533,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -6564,13 +6579,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -6703,7 +6711,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -6882,6 +6891,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -6920,13 +6937,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -6986,7 +6996,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -7161,6 +7172,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -7199,13 +7218,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -7629,7 +7641,8 @@
           "values": [
             765
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -7802,6 +7815,14 @@
           ],
           "name": "item_pierce",
           "description": "+127% Piercing Attack"
+        },
+        {
+          "id": 25,
+          "values": [
+            765
+          ],
+          "name": "damagepercent",
+          "description": "+765% Enhanced Damage"
         },
         {
           "id": 115,
@@ -7982,13 +8003,6 @@
           ],
           "op_value": 779,
           "description": "779% Better Chance of Getting Magic Items (Based on Character Level)"
-        },
-        {
-          "id": 25,
-          "values": [
-            765
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -8818,7 +8832,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 31,
@@ -8958,6 +8973,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -9074,13 +9097,6 @@
           "name": "item_reanimate"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -9149,7 +9165,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 31,
@@ -9282,6 +9299,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -9396,13 +9421,6 @@
             5
           ],
           "name": "item_reanimate"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 67,
@@ -12979,7 +12997,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -13158,6 +13177,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -13196,13 +13223,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 53%"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -13262,7 +13282,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -13437,6 +13458,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -13475,13 +13504,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 53%"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -19601,7 +19623,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -19780,6 +19803,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -19818,13 +19849,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 53%"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -19884,7 +19908,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -20059,6 +20084,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             205
@@ -20097,13 +20130,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 53%"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -24356,7 +24382,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -24535,6 +24562,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -24573,13 +24608,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -24639,7 +24667,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -24814,6 +24843,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -24852,13 +24889,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -24991,7 +25021,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -25170,6 +25201,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -25208,13 +25247,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -25274,7 +25306,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -25449,6 +25482,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -25487,13 +25528,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -25626,7 +25660,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -25805,6 +25840,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -25843,13 +25886,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -25909,7 +25945,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -26084,6 +26121,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -26122,13 +26167,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -26261,7 +26299,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -26440,6 +26479,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -26478,13 +26525,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -26544,7 +26584,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -26719,6 +26760,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -26757,13 +26806,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -26896,7 +26938,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -27075,6 +27118,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -27113,13 +27164,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -27179,7 +27223,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -27354,6 +27399,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -27392,13 +27445,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -27531,7 +27577,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -27710,6 +27757,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -27748,13 +27803,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -27814,7 +27862,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -27989,6 +28038,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -28027,13 +28084,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -28163,7 +28213,8 @@
           "values": [
             1530
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -28331,6 +28382,14 @@
           "description": "+642% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            1530
+          ],
+          "name": "damagepercent",
+          "description": "+1530% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             1230
@@ -28369,13 +28428,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 371%"
-        },
-        {
-          "id": 25,
-          "values": [
-            1530
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -28633,7 +28685,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -28812,6 +28865,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -28850,13 +28911,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -28916,7 +28970,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -29091,6 +29146,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -29129,13 +29192,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -29268,7 +29324,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -29447,6 +29504,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -29485,13 +29550,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -29551,7 +29609,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -29726,6 +29785,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -29764,13 +29831,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -29903,7 +29963,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -30082,6 +30143,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -30120,13 +30189,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -30186,7 +30248,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -30361,6 +30424,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -30399,13 +30470,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -30538,7 +30602,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -30717,6 +30782,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -30755,13 +30828,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -30821,7 +30887,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -30996,6 +31063,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -31034,13 +31109,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -31198,7 +31266,8 @@
           "values": [
             1020
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -31374,6 +31443,14 @@
           "description": "+428% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            1020
+          ],
+          "name": "damagepercent",
+          "description": "+1020% Enhanced Damage"
+        },
+        {
           "id": 307,
           "values": [
             820
@@ -31439,13 +31516,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 212%"
-        },
-        {
-          "id": 25,
-          "values": [
-            1020
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -31748,7 +31818,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -31927,6 +31998,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -31965,13 +32044,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -32031,7 +32103,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -32206,6 +32279,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -32244,13 +32325,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -32383,7 +32457,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -32562,6 +32637,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -32600,13 +32683,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -32666,7 +32742,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -32841,6 +32918,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -32879,13 +32964,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -33018,7 +33096,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -33197,6 +33276,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -33235,13 +33322,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -33301,7 +33381,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -33476,6 +33557,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -33514,13 +33603,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -33653,7 +33735,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -33832,6 +33915,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -33870,13 +33961,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -33936,7 +34020,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -34111,6 +34196,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -34149,13 +34242,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -34402,7 +34488,8 @@
           "values": [
             1020
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -34649,6 +34736,14 @@
           "description": "+511% Enhanced Damage"
         },
         {
+          "id": 25,
+          "values": [
+            1020
+          ],
+          "name": "damagepercent",
+          "description": "+1020% Enhanced Damage"
+        },
+        {
           "id": 111,
           "values": [
             491
@@ -34695,13 +34790,6 @@
           ],
           "name": "item_maxhp_percent",
           "description": "Increase Maximum Life 212%"
-        },
-        {
-          "id": 25,
-          "values": [
-            1020
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 26,
@@ -35060,7 +35148,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -35239,6 +35328,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -35277,13 +35374,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -35343,7 +35433,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -35518,6 +35609,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -35556,13 +35655,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -35695,7 +35787,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -35874,6 +35967,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -35912,13 +36013,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -35978,7 +36072,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -36153,6 +36248,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -36191,13 +36294,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -36330,7 +36426,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -36509,6 +36606,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -36547,13 +36652,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -36613,7 +36711,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -36788,6 +36887,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -36826,13 +36933,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -36965,7 +37065,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -37144,6 +37245,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -37182,13 +37291,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -37248,7 +37350,8 @@
               "values": [
                 255
               ],
-              "name": "damagepercent"
+              "name": "damagepercent",
+              "description": "+{0}% Enhanced Damage"
             },
             {
               "id": 26,
@@ -37423,6 +37526,14 @@
               "description": "+107% Faster Block Rate"
             },
             {
+              "id": 25,
+              "values": [
+                255
+              ],
+              "name": "damagepercent",
+              "description": "+255% Enhanced Damage"
+            },
+            {
               "id": 307,
               "values": [
                 205
@@ -37461,13 +37572,6 @@
               ],
               "name": "item_maxhp_percent",
               "description": "Increase Maximum Life 53%"
-            },
-            {
-              "id": 25,
-              "values": [
-                255
-              ],
-              "name": "damagepercent"
             },
             {
               "id": 26,
@@ -37817,7 +37921,8 @@
           "values": [
             1020
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 26,
@@ -37974,6 +38079,14 @@
           ],
           "name": "item_fasterblockrate",
           "description": "+428% Faster Block Rate"
+        },
+        {
+          "id": 25,
+          "values": [
+            1020
+          ],
+          "name": "damagepercent",
+          "description": "+1020% Enhanced Damage"
         },
         {
           "id": 307,
@@ -38143,13 +38256,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            1020
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 26,
           "values": [
             1020
@@ -38227,7 +38333,8 @@
       "values": [
         5610
       ],
-      "name": "damagepercent"
+      "name": "damagepercent",
+      "description": "+{0}% Enhanced Damage"
     },
     {
       "id": 93,

@@ -2423,7 +2423,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 32,
@@ -2683,6 +2684,14 @@
           "description": "+100% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 305,
           "values": [
             205
@@ -2844,13 +2853,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -2909,7 +2911,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 32,
@@ -3162,6 +3165,14 @@
           "description": "+100% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 305,
           "values": [
             205
@@ -3323,13 +3334,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -3463,7 +3467,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 27,
@@ -3751,6 +3756,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 115,
           "values": [
             1
@@ -3898,13 +3911,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 109,
           "values": [
             511
@@ -3979,7 +3985,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 27,
@@ -4261,6 +4268,14 @@
           "description": "+107% Faster Block Rate"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 115,
           "values": [
             1
@@ -4406,13 +4421,6 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 109,
@@ -7925,7 +7933,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 31,
@@ -8212,6 +8221,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 305,
           "values": [
             205
@@ -8379,13 +8396,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -8503,7 +8513,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 31,
@@ -8785,6 +8796,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 305,
           "values": [
             205
@@ -8950,13 +8969,6 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 67,
@@ -9141,7 +9153,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 36,
@@ -9425,6 +9438,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 62,
           "values": [
             127
@@ -9591,13 +9612,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -9700,7 +9714,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 36,
@@ -9980,6 +9995,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 62,
           "values": [
             127
@@ -10144,13 +10167,6 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 67,
@@ -10328,7 +10344,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 36,
@@ -10612,6 +10629,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 62,
           "values": [
             127
@@ -10778,13 +10803,6 @@
           "description": "155% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
-        },
-        {
           "id": 67,
           "values": [
             97
@@ -10887,7 +10905,8 @@
           "values": [
             255
           ],
-          "name": "damagepercent"
+          "name": "damagepercent",
+          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 36,
@@ -11167,6 +11186,14 @@
           "description": "+127% Piercing Attack"
         },
         {
+          "id": 25,
+          "values": [
+            255
+          ],
+          "name": "damagepercent",
+          "description": "+255% Enhanced Damage"
+        },
+        {
           "id": 62,
           "values": [
             127
@@ -11331,13 +11358,6 @@
           ],
           "name": "item_magicbonus",
           "description": "155% Better Chance of Getting Magic Items"
-        },
-        {
-          "id": 25,
-          "values": [
-            255
-          ],
-          "name": "damagepercent"
         },
         {
           "id": 67,
@@ -46559,7 +46579,8 @@
       "values": [
         1275
       ],
-      "name": "damagepercent"
+      "name": "damagepercent",
+      "description": "+{0}% Enhanced Damage"
     },
     {
       "id": 36,
