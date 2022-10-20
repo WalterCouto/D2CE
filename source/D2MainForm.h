@@ -427,6 +427,7 @@ public:
     bool setItemIndestructible(d2ce::Item& item);
     bool makeItemSuperior(d2ce::Item& item);
     bool upgradeItemTier(d2ce::Item& item);
+    bool changeItemEthereal(d2ce::Item& item);
     bool addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumItemLocation locationId, std::array<std::uint8_t, 4>& strcode);
     bool addItem(d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode);

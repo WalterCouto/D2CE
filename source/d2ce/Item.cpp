@@ -6709,6 +6709,50 @@ bool d2ce::Item::canMakeSuperior() const
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::canMakeEthereal() const
+{
+    if (!isExpansionItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!result.isArmor() && !result.isWeapon())
+    {
+        return false;
+    }
+
+    return isEthereal() ? false : true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canRemoveEthereal() const
+{
+    if (!isExpansionItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!result.isArmor() && !result.isWeapon())
+    {
+        return false;
+    }
+
+    return isEthereal();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::canAddMagicalAffixes() const
 {
     const auto& result = getItemTypeHelper();
@@ -9023,6 +9067,60 @@ bool d2ce::Item::makeNormal()
     return false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::makeEthereal()
+{
+    if (isEthereal())
+    {
+        return true;
+    }
+
+    if (!isExpansionItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!result.isArmor() && !result.isWeapon())
+    {
+        return false;
+    }
+
+    return updateBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + IS_ETHEREAL_FLAG_OFFSET, 1, 1);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::removeEthereal()
+{
+    if (!isEthereal())
+    {
+        return true;
+    }
+
+    if (!isExpansionItem())
+    {
+        return false;
+    }
+
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    if (!result.isArmor() && !result.isWeapon())
+    {
+        return false;
+    }
+
+    return updateBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + IS_ETHEREAL_FLAG_OFFSET, 1, 0);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::removeMagicalAffixes()
 {
     if (isSimpleItem() || isSocketFiller())
@@ -10324,8 +10422,19 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         case 5:
                             if (stat.name == "item_maxdamage_percent")
                             {
-                                // this stat is chainged
-                                eDmg += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                                auto maxDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                                auto minDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 1, stat);
+                                if (minDmg > maxDmg)
+                                {
+                                    maxDmg = minDmg;
+                                }
+
+                                // this stat is chained
+                                eDmg += minDmg;
+                                if (maxDmg > minDmg)
+                                {
+                                    eDmgMax += (maxDmg - minDmg);
+                                }
                             }
                             else
                             {
@@ -10362,8 +10471,19 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         case 5:
                             if (stat.name == "item_maxdamage_percent")
                             {
-                                // this stat is chainged
-                                eDmg2 += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                                auto maxDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                                auto minDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 1, stat);
+                                if (minDmg > maxDmg)
+                                {
+                                    maxDmg = minDmg;
+                                }
+
+                                // this stat is chained
+                                eDmg2 += minDmg; // should be the same as eDmg
+                                if (maxDmg > minDmg)
+                                {
+                                    eDmgMax2 += (maxDmg - minDmg); // // should be the same as eDmgMax
+                                }
                             }
                             else
                             {
@@ -10398,8 +10518,19 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
                         case 5:
                             if (stat.name == "item_maxdamage_percent")
                             {
-                                // this stat is chainged
-                                eDmgThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as eDmg
+                                auto maxDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
+                                auto minDmg = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 1, stat);
+                                if (minDmg > maxDmg)
+                                {
+                                    maxDmg = minDmg;
+                                }
+
+                                // this stat is chained
+                                eDmgThrow += minDmg; // should be the same as eDmg
+                                if (maxDmg > minDmg)
+                                {
+                                    eDmgMaxThrow += (maxDmg - minDmg); // // should be the same as eDmgMax
+                                }
                             }
                             else
                             {
@@ -24638,6 +24769,16 @@ bool d2ce::Items::upgradeItemTier(d2ce::Item& item, const CharStats& cs)
         verifyBeltSlots();
     }
     return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::changeItemEthereal(d2ce::Item& item)
+{
+    if (item.isEthereal())
+    {
+        return item.removeEthereal();
+    }
+
+    return item.makeEthereal();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::getItemBonuses(std::vector<MagicalAttribute>& attribs) const

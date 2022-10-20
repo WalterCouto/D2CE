@@ -69,6 +69,7 @@ protected:
     afx_msg void OnItemContextUnsocket();
     afx_msg void OnItemContextMakesuperiorquality();
     afx_msg void OnItemContextUpgradehighertier();
+    afx_msg void OnItemContextChangeEthereal();
     afx_msg void OnItemContextMaxsocketsforallitems();
     afx_msg void OnItemContextSuperiorforallitems();
     afx_msg void OnItemContextHigherTierforallitems();
@@ -149,6 +150,7 @@ protected:
     bool setItemIndestructible(d2ce::Item& item);
     bool makeItemSuperior(d2ce::Item& item);
     bool upgradeItemTier(d2ce::Item& item);
+    bool changeItemEthereal(d2ce::Item& item);
 
     bool addItem(std::array<std::uint8_t, 4>& strcode, size_t page);
     size_t fillEmptySlots(std::array<std::uint8_t, 4>& strcode);

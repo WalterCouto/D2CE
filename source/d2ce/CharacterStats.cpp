@@ -3283,6 +3283,39 @@ const d2ce::SkillType& d2ce::CharClassHelper::getSkillByIndex(const std::string&
         return getSkillById(iter->second);
     }
 
+    // There is a bug in some case for the "Enchant" skill that shows up as "enchant"
+    // in the txt properties file.  To cover this case, if the skill index lookup fails
+    // search for the description (it's the lower case version of index) and get the skill
+    // via that method
+    auto iterDesc = s_SkillDescMap.find(index);
+    if (iterDesc != s_SkillDescMap.end())
+    {
+        if (!iterDesc->second.empty())
+        {
+            if (iterDesc->second.size() > 1)
+            {
+                // Currenlty only FireStorm and DiabWall share a description.
+                // do a case insensitive compare of the skill index to determine the right one.
+                for (const auto& skill : iterDesc->second)
+                {
+                    auto iterSkill = s_SkillInfoMap.find(skill);
+                    if (iterSkill != s_SkillInfoMap.end())
+                    {
+                        if (_stricmp(index.c_str(), iterSkill->second.Skill.index.c_str()) == 0)
+                        {
+                            return iterSkill->second.Skill;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // must be the right skill
+                return getSkillById(iterDesc->second.front());
+            }
+        }
+    }
+
     static d2ce::SkillType badValue;
     return badValue;
 }

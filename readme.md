@@ -76,9 +76,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.20 (October 16, 2022)**
+**Version 2.20 (October 20, 2022)**
 - Added: Set Items now display all the possible Bonus attribues in the tooltip<br>
 - Added: Add Create Item Form to allow creation of any item available in the game.<br>
+- Added: Add ability to make items Ethereal or not in item forms.<br>
 <br>
 
 **Version 2.19 (October 3, 2022)**

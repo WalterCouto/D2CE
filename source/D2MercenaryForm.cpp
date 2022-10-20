@@ -369,6 +369,8 @@ BEGIN_MESSAGE_MAP(CD2MercenaryForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2MercenaryForm::OnItemContextRemoveitem)
     ON_COMMAND(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, &CD2MercenaryForm::OnItemContextMakesuperiorquality) 
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADEITEMTIER, &CD2MercenaryForm::OnItemContextUpgradehighertier)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAKEETHEREAL, &CD2MercenaryForm::OnItemContextChangeEthereal)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVEETHEREAL, &CD2MercenaryForm::OnItemContextChangeEthereal)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -1507,11 +1509,11 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
     bool canMakeSuperior = CurrItem->canMakeSuperior();
-    bool canAddMagicalAffixes = CurrItem->canAddMagicalAffixes();
-    bool canAddRareAffixes = CurrItem->canAddRareAffixes();
     bool canUpgradeTier = CurrItem->isUpgradableItem();
+    bool canMakeEthereal = CurrItem->canMakeEthereal();
+    bool canRemoveEthereal = CurrItem->canRemoveEthereal();
 
-    bool removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior && !canUpgradeTier;
+    bool removeQualityMenu = !canMakeEthereal && !canRemoveEthereal && !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1604,7 +1606,7 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             }
         }
 
-        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_MAKESUPERIORQUALITY);
         if (pos >= 0)
         {
             if (removeQualityMenu)
@@ -1626,14 +1628,14 @@ void CD2MercenaryForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                         pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
                     }
 
-                    if (!canAddMagicalAffixes)
+                    if (!canMakeEthereal)
                     {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKEETHEREAL, MF_BYCOMMAND);
                     }
 
-                    if (!canAddRareAffixes)
+                    if (!canRemoveEthereal)
                     {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVEETHEREAL, MF_BYCOMMAND);
                     }
                 }
             }
@@ -1817,6 +1819,20 @@ void CD2MercenaryForm::OnItemContextUpgradehighertier()
     }
 
     if (MainForm.upgradeItemTier(*CurrItem))
+    {
+        refreshEquipped(*CurrItem);
+    }
+    CurrItem = nullptr;
+}
+//---------------------------------------------------------------------------
+void CD2MercenaryForm::OnItemContextChangeEthereal()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.changeItemEthereal(*CurrItem))
     {
         refreshEquipped(*CurrItem);
     }

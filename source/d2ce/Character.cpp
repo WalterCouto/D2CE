@@ -4336,6 +4336,11 @@ bool d2ce::Character::upgradeItemTier(d2ce::Item& item)
     return m_items.upgradeItemTier(item, cs);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::changeItemEthereal(d2ce::Item& item)
+{
+    return m_items.changeItemEthereal(item);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Character::getItemBonuses(std::vector<MagicalAttribute>& attribs) const
 {
     return m_items.getItemBonuses(attribs);

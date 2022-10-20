@@ -215,6 +215,7 @@ protected:
     afx_msg void OnItemContextUnsocket();
     afx_msg void OnItemContextMakesuperiorquality();
     afx_msg void OnItemContextUpgradehighertier();
+    afx_msg void OnItemContextChangeEthereal();
     afx_msg void OnItemContextMaxsocketsforallitems();
     afx_msg void OnItemContextSuperiorforallitems();
     afx_msg void OnItemContextHigherTierforallitems();

@@ -82,6 +82,7 @@ protected:
     afx_msg void OnBnClickedOk();
     afx_msg void OnTvnSelchangedItemtree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMDblclkItemtree(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnBnClickedEtherealCheck();
 
 	DECLARE_MESSAGE_MAP()
 
@@ -105,5 +106,6 @@ private:
     CTreeCtrl ItemTree;
     std::list<d2ce::Item> AvailableItems;
     const d2ce::Item* CreatedItem = nullptr;
+    CButton Ethereal;
 };
 //---------------------------------------------------------------------------

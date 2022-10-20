@@ -2593,13 +2593,20 @@ namespace d2ce
             }
             else
             {
-                maxSocketsLevelThreshold[idx - 1] = doc.GetColumnIdx("MaxSocketsLevelThreshold" + std::to_string(idx));
-                if (maxSocketsLevelThreshold[idx - 1] < 0)
+                if (idx == 1)
                 {
-                    maxSocketParamSize = idx - 1;
-                    maxSockets.resize(maxSocketParamSize);
-                    maxSocketsLevelThreshold.resize(maxSocketParamSize);
-                    break;
+                    maxSocketsLevelThreshold[idx - 1] = -1;
+                }
+                else
+                {
+                    maxSocketsLevelThreshold[idx - 1] = doc.GetColumnIdx("MaxSocketsLevelThreshold" + std::to_string(idx - 1));
+                    if (maxSocketsLevelThreshold[idx - 1] < 0)
+                    {
+                        maxSocketParamSize = idx - 1;
+                        maxSockets.resize(maxSocketParamSize);
+                        maxSocketsLevelThreshold.resize(maxSocketParamSize);
+                        break;
+                    }
                 }
             }
         }
@@ -7023,7 +7030,24 @@ namespace d2ce
             std::int64_t lastParam = 0;
             if (!modType.param.empty())
             {
-                lastParam = std::uint16_t(std::atoi(modType.param.c_str()));
+                if (modType.param.find_first_not_of("0123456789") == modType.param.npos)
+                {
+                    lastParam = std::uint16_t(std::atoi(modType.param.c_str()));
+                }
+                else if (modType.code == "aura" || 
+                    modType.code == "charged" ||
+                    modType.code == "death-skill" ||
+                    modType.code == "gethit-skill" ||
+                    modType.code == "hit-skill" ||
+                    modType.code == "kill-skill" ||
+                    modType.code == "levelup-skill" ||
+                    modType.code == "oskill" ||
+                    modType.code == "skill")
+                {
+                    // Skill text to convert
+                    const auto& skillInfo = CharClassHelper::getSkillByIndex(modType.param);
+                    lastParam = skillInfo.id;
+                }
             }
 
             for (auto& mod : prop.parameters)
@@ -11502,13 +11526,15 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     const auto& stat = getItemStat(attrib.Version, attrib.Id);
     if (!stat.nextInChain.empty())
     {
-        if (attrib.Values.size() >= 2 && attrib.Values[0] == attrib.Values[1])
+        attrib.Desc = stat.descRange;
+        if (attrib.Values.size() >= 2)
         {
-            attrib.Desc = stat.descNoRange;
-        }
-        else
-        {
-            attrib.Desc = stat.descRange;
+            if ((attrib.Values[0] == attrib.Values[1])
+                || (stat.name == "item_maxdamage_percent" && attrib.Values[1] > attrib.Values[0]))
+            {
+                attrib.Values[0] = attrib.Values[1];
+                attrib.Desc = stat.descNoRange;
+            }
         }
     }
     else if (attrib.Values.size() == 1 && attrib.Values[0] < 0)
@@ -11528,7 +11554,6 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     case 27: // +[value] to [skill] ([class] Only)
         ++maxIdx;
         break;
-
     }
 
     for (size_t idx = 0; idx < maxIdx; ++idx)

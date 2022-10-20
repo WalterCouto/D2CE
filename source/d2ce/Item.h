@@ -249,6 +249,8 @@ namespace d2ce
         bool canHaveSockets() const;
         bool canPersonalize() const;
         bool canMakeSuperior() const;
+        bool canMakeEthereal() const;
+        bool canRemoveEthereal() const;
         bool canAddMagicalAffixes() const;
         bool canAddRareAffixes() const;
         bool canEquip(EnumEquippedId equipId) const;
@@ -297,6 +299,8 @@ namespace d2ce
         bool makeSuperior(const std::vector<MagicalAttribute>& attribs);
         bool makeSuperior();
         bool makeNormal();
+        bool makeEthereal();
+        bool removeEthereal();
         bool removeMagicalAffixes();
         bool setRareOrCraftedAttributes(RareAttributes& attrib);
         bool removeRareOrCraftedAttributes();
@@ -519,6 +523,7 @@ namespace d2ce
         bool removeSocketedItems(d2ce::Item& item);
         bool setItemRuneword(d2ce::Item& item, std::uint16_t id);
         bool upgradeItemTier(d2ce::Item& item, const CharStats& cs);
+        bool changeItemEthereal(d2ce::Item& item);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;

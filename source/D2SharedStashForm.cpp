@@ -609,6 +609,8 @@ BEGIN_MESSAGE_MAP(CD2SharedStashForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_UNSOCKET, &CD2SharedStashForm::OnItemContextUnsocket)
     ON_COMMAND(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, &CD2SharedStashForm::OnItemContextMakesuperiorquality)
     ON_COMMAND(ID_ITEM_CONTEXT_UPGRADEITEMTIER, &CD2SharedStashForm::OnItemContextUpgradehighertier)
+    ON_COMMAND(ID_ITEM_CONTEXT_MAKEETHEREAL, &CD2SharedStashForm::OnItemContextChangeEthereal)
+    ON_COMMAND(ID_ITEM_CONTEXT_REMOVEETHEREAL, &CD2SharedStashForm::OnItemContextChangeEthereal)
     ON_COMMAND(ID_ITEM_CONTEXT_PERSONALIZE, &CD2SharedStashForm::OnItemContextPersonalize)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2SharedStashForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2SharedStashForm::OnItemContextApplyruneword)
@@ -1010,6 +1012,11 @@ bool CD2SharedStashForm::makeItemSuperior(d2ce::Item& item)
 bool CD2SharedStashForm::upgradeItemTier(d2ce::Item& item)
 {
     return MainForm.upgradeItemTier(item);
+}
+//---------------------------------------------------------------------------
+bool CD2SharedStashForm::changeItemEthereal(d2ce::Item& item)
+{
+    return MainForm.changeItemEthereal(item);
 }
 //---------------------------------------------------------------------------
 bool CD2SharedStashForm::addItem(std::array<std::uint8_t, 4>& strcode, size_t page)
@@ -1458,11 +1465,11 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
     bool canMakeSuperior = CurrItem->canMakeSuperior();
-    bool canAddMagicalAffixes = CurrItem->canAddMagicalAffixes();
-    bool canAddRareAffixes = CurrItem->canAddRareAffixes();
     bool canUpgradeTier = CurrItem->isUpgradableItem();
+    bool canMakeEthereal = CurrItem->canMakeEthereal();
+    bool canRemoveEthereal = CurrItem->canRemoveEthereal();
 
-    bool removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior && !canUpgradeTier;
+    bool removeQualityMenu = !canMakeEthereal && !canRemoveEthereal && !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1552,7 +1559,7 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             }
         }
 
-        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_MAKESUPERIORQUALITY);
         if (pos >= 0)
         {
             if (removeQualityMenu)
@@ -1574,14 +1581,14 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                         pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
                     }
 
-                    if (!canAddMagicalAffixes)
+                    if (!canMakeEthereal)
                     {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKEETHEREAL, MF_BYCOMMAND);
                     }
 
-                    if (!canAddRareAffixes)
+                    if (!canRemoveEthereal)
                     {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVEETHEREAL, MF_BYCOMMAND);
                     }
                 }
             }
@@ -1630,7 +1637,7 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     }
     else
     {
-        removeQualityMenu = !canAddRareAffixes && !canAddMagicalAffixes && !canMakeSuperior;
+        removeQualityMenu = !canMakeSuperior;
 
         CMenu menu;
         VERIFY(menu.LoadMenu(IDR_ITEM_MENU));
@@ -1638,7 +1645,7 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         CMenu* pPopup = FindPopup(menu, 3);
         ENSURE(pPopup != NULL);
 
-        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDMAGICALAFFIXES);
+        auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_MAKESUPERIORQUALITY);
         if (pos >= 0)
         {
             if (removeQualityMenu)
@@ -1653,16 +1660,6 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                     if (!canMakeSuperior)
                     {
                         pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKESUPERIORQUALITY, MF_BYCOMMAND);
-                    }
-
-                    if (!canAddMagicalAffixes)
-                    {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDMAGICALAFFIXES, MF_BYCOMMAND);
-                    }
-
-                    if (!canAddRareAffixes)
-                    {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_ADDRAREAFFIXES, MF_BYCOMMAND);
                     }
                 }
             }
@@ -1982,6 +1979,20 @@ void CD2SharedStashForm::OnItemContextUpgradehighertier()
     }
 
     if (upgradeItemTier(*CurrItem))
+    {
+        refreshGrid();
+    }
+    ClearCurrItemInfo();
+}
+//---------------------------------------------------------------------------
+void CD2SharedStashForm::OnItemContextChangeEthereal()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (changeItemEthereal(*CurrItem))
     {
         refreshGrid();
     }

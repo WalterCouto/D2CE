@@ -354,6 +354,7 @@ namespace d2ce
 
         bool removeSocketedItems(d2ce::Item& item);
         bool upgradeItemTier(d2ce::Item& item);
+        bool changeItemEthereal(d2ce::Item& item);
 
         bool getItemBonuses(std::vector<MagicalAttribute>& attribs) const;
         bool getDisplayedItemBonuses(std::vector<MagicalAttribute>& attribs) const;

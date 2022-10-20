@@ -41,43 +41,6 @@ namespace d2ce
 
 namespace
 {
-    CSize CalcTextSize(CDC* pDC, CString& strText, CRect& rect, BOOL bCalcOnly)
-    {
-        CSize sizeText(0, 0);
-
-        strText.Replace(_T("\t"), _T("    "));
-        if (strText.Find(_T('\n')) >= 0) // Multi-line text
-        {
-            UINT nFormat = DT_CENTER | DT_NOPREFIX;
-            if (bCalcOnly)
-            {
-                nFormat |= DT_CALCRECT;
-            }
-
-            int nHeight = pDC->DrawText(strText, rect, nFormat);
-            rect.top += nHeight;
-            rect.bottom += nHeight;
-            sizeText = CSize(rect.Width(), nHeight);
-        }
-        else
-        {
-            if (bCalcOnly)
-            {
-                sizeText = pDC->GetTextExtent(strText);
-            }
-            else
-            {
-                UINT nFormat = DT_CENTER | DT_NOCLIP | DT_SINGLELINE;
-                sizeText.cy = pDC->DrawText(strText, rect, nFormat);
-                rect.top += sizeText.cy;
-                rect.bottom += sizeText.cy;
-                sizeText.cx = (LONG)rect.Width();
-            }
-        }
-
-        return sizeText;
-    }
-
     struct AvailableItemFolder
     {
         CString name;
@@ -332,6 +295,7 @@ void CD2NewItemForm::DoDataExchange(CDataExchange* pDX)
     __super::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_ITEM_TREE, ItemTree);
     DDX_Control(pDX, IDC_NEW_ITEM_TOOLTIP, ItemTooltipBox);
+    DDX_Control(pDX, IDC_ETHEREAL_CHECK, Ethereal);
 }
 
 //---------------------------------------------------------------------------
@@ -339,6 +303,7 @@ BEGIN_MESSAGE_MAP(CD2NewItemForm, CDialogEx)
     ON_BN_CLICKED(IDOK, &CD2NewItemForm::OnBnClickedOk)
     ON_NOTIFY(TVN_SELCHANGED, IDC_ITEM_TREE, &CD2NewItemForm::OnTvnSelchangedItemtree)
     ON_NOTIFY(NM_DBLCLK, IDC_ITEM_TREE, &CD2NewItemForm::OnNMDblclkItemtree)
+    ON_BN_CLICKED(IDC_ETHEREAL_CHECK, &CD2NewItemForm::OnBnClickedEtherealCheck)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -386,6 +351,7 @@ BOOL CD2NewItemForm::OnInitDialog()
         }
     }
 
+    Ethereal.ShowWindow(FALSE);
     InitTree();
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -407,12 +373,54 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
 {
     *pResult = 0;
     ItemTooltipBox.RedrawWindow();
+
+    auto item = GetSelectedItem();
+    if (item != nullptr)
+    {
+        if (item->isArmor() || item->isWeapon())
+        {
+            if (item->isExpansionItem())
+            {
+                Ethereal.ShowWindow(TRUE);
+                Ethereal.SetCheck(item->isEthereal() ? 1 : 0);
+            }
+            else
+            {
+                Ethereal.ShowWindow(FALSE);
+            }
+        }
+        else
+        {
+            Ethereal.ShowWindow(FALSE);
+        }
+    }
+    else
+    {
+        Ethereal.ShowWindow(FALSE);
+    }
 }
 //---------------------------------------------------------------------------
 void CD2NewItemForm::OnNMDblclkItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
     *pResult = 0;
     OnBnClickedOk();
+}
+//---------------------------------------------------------------------------
+void CD2NewItemForm::OnBnClickedEtherealCheck()
+{
+    auto item = const_cast<d2ce::Item*>(GetSelectedItem());
+    if (item != nullptr)
+    {
+        if (item->isEthereal())
+        {
+            item->removeEthereal();
+        }
+        else
+        {
+            item->makeEthereal();
+        }
+        ItemTooltipBox.RedrawWindow();
+    }
 }
 //---------------------------------------------------------------------------
 void CD2NewItemForm::InitTree()
@@ -461,3 +469,4 @@ const d2ce::Item* CD2NewItemForm::GetCreatedItem()
     return CreatedItem;
 }
 //---------------------------------------------------------------------------
+

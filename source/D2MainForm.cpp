@@ -5519,6 +5519,18 @@ bool CD2MainForm::upgradeItemTier(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::changeItemEthereal(d2ce::Item& item)
+{
+    bool ret = CharInfo.changeItemEthereal(item);
+    if (ret)
+    {
+        ItemsChanged = true;
+        StatsChanged();
+    }
+
+    return ret;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::addItem(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, std::array<std::uint8_t, 4>& strcode)
 {
     if (!CharInfo.addItem(locationId, altPositionId, strcode))

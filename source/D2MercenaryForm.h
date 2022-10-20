@@ -77,6 +77,7 @@ protected:
     afx_msg void OnItemContextRemoveitem();
     afx_msg void OnItemContextMakesuperiorquality();
     afx_msg void OnItemContextUpgradehighertier();
+    afx_msg void OnItemContextChangeEthereal();
     DECLARE_MESSAGE_MAP()
     BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 

@@ -6855,11 +6855,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 52,
@@ -6976,11 +6976,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 52,
@@ -9862,11 +9862,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 115,
@@ -10366,11 +10366,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 115,
@@ -12176,11 +12176,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 62,
@@ -12356,11 +12356,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 62,
@@ -13038,11 +13038,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -13191,11 +13191,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -26276,11 +26276,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -26429,11 +26429,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -27566,11 +27566,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -28130,11 +28130,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -28283,11 +28283,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -29420,11 +29420,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -29991,11 +29991,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -30144,11 +30144,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -31402,11 +31402,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -32024,11 +32024,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -32177,11 +32177,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -33654,11 +33654,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -36252,11 +36252,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -36405,11 +36405,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -37543,11 +37543,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -38108,11 +38108,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -38261,11 +38261,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -39399,11 +39399,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 219,
@@ -44933,11 +44933,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -45086,11 +45086,11 @@
             {
               "id": 17,
               "values": [
-                100,
+                200,
                 200
               ],
               "name": "item_maxdamage_percent",
-              "description": "+100% Enhanced Damage"
+              "description": "+200% Enhanced Damage"
             },
             {
               "id": 219,
@@ -45862,11 +45862,11 @@
         {
           "id": 17,
           "values": [
-            100,
+            200,
             200
           ],
           "name": "item_maxdamage_percent",
-          "description": "+100% Enhanced Damage"
+          "description": "+200% Enhanced Damage"
         },
         {
           "id": 23,
@@ -46161,11 +46161,11 @@
         {
           "id": 17,
           "values": [
-            200,
+            400,
             400
           ],
           "name": "item_maxdamage_percent",
-          "description": "+200% Enhanced Damage"
+          "description": "+400% Enhanced Damage"
         },
         {
           "id": 219,
