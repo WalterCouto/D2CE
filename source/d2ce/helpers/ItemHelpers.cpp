@@ -72,7 +72,7 @@ namespace d2ce
         bool generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
-        std::uint32_t generarateRandomDW();
+        std::uint32_t generarateRandomDW(std::uint32_t itemDwbCode = 0, std::uint16_t level = 0);
         std::string getSetTCFromId(std::uint16_t id);
         const std::string& getRareNameFromId(std::uint16_t id);
         const std::string& getRareIndexFromId(std::uint16_t id);
@@ -80,6 +80,7 @@ namespace d2ce
         const std::string& getMagicalSuffixFromId(std::uint16_t id);
         const std::string& getMagicalPrefixTCFromId(std::uint16_t id);
         const std::string& getMagicalSuffixTCFromId(std::uint16_t id);
+        bool isAddSocketsMagicalPrefix(std::uint16_t id);
         std::uint16_t getIdFromRareIndex(const std::string& rareIndex);
         std::uint16_t getIdFromRareName(const std::string& rareName);
         std::string getUniqueTCFromId(std::uint16_t id);
@@ -4675,10 +4676,12 @@ namespace d2ce
 
     struct ItemAffixModType
     {
-        std::string code;  // The modifier(s) granted by this affix. This is an ID pointer from PROPERTIES.txt.
-        std::string param; // The parameter passed to the associated modifier
-        std::string min;   // The minimum value passed to the associated modifier
-        std::string max;   // The maximum value passed to the associated modifier
+        std::string   code;      // The modifier(s) granted by this affix. This is an ID pointer from PROPERTIES.txt.
+        std::string   param;     // The parameter passed to the associated modifier
+        std::string   min;       // The minimum value passed to the associated modifier
+        std::string   max;       // The maximum value passed to the associated modifier
+        std::uint16_t affix = 0; // index of the affix (if this mod was from an affix)
+        bool isPrefix = false;   // if affix is not zero, this flag indicates if it's a prefix or suffix
     };
 
     struct ItemAffixType
@@ -4707,8 +4710,10 @@ namespace d2ce
         std::vector<std::string> excluded_categories; // what item types this affix will never appear on
     };
 
+    std::map<std::uint16_t, ItemAffixType> s_ItemMagicPrefixType;
     void InitItemMagicAffixData(ITxtDocument& doc, std::map<std::uint16_t, ItemAffixType>& sItemMagicAffixType)
     {
+        bool isPrefix = (&sItemMagicAffixType == &s_ItemMagicPrefixType) ? true : false;
         std::map<std::uint16_t, ItemAffixType> itemMagicAffixType;
         size_t numRows = doc.GetRowCount();
         const SSIZE_T nameColumnIdx = doc.GetColumnIdx("Name");
@@ -4852,16 +4857,24 @@ namespace d2ce
 
         std::string strValue;
         std::uint16_t code = 0;
+        std::uint16_t codeOffset = 1;
         for (size_t i = 0; i < numRows; ++i)
         {
             strValue = doc.GetCellString(nameColumnIdx, i);
-            if (strValue.empty() || (strValue == "Expansion"))
+            if (strValue.empty())
             {
                 // skip
                 continue;
             }
 
-            code = std::uint16_t(i);
+            if (strValue == "Expansion")
+            {
+                // skip
+                codeOffset = 0;
+                continue;
+            }
+
+            code = std::uint16_t(i + codeOffset);
             auto& itemType = itemMagicAffixType[code];
             itemType.code = code;
             itemType.index = strValue;
@@ -4917,6 +4930,8 @@ namespace d2ce
                 itemType.modType.resize(itemType.modType.size() + 1);
                 auto& mod = itemType.modType.back();
                 mod.code = strValue;
+                mod.isPrefix = isPrefix;
+                mod.affix = itemType.code;
 
                 strValue = doc.GetCellString(modParam[idx], i);
                 if (!strValue.empty())
@@ -4989,7 +5004,6 @@ namespace d2ce
         sItemMagicAffixType.swap(itemMagicAffixType);
     }
 
-    std::map<std::uint16_t, ItemAffixType> s_ItemMagicPrefixType;
     void InitItemMagicPrefixData(const ITxtReader& txtReader)
     {
         static const ITxtReader* pCurTextReader = nullptr; 
@@ -6043,31 +6057,6 @@ namespace d2ce
         return rands;
     }
 
-    std::uint32_t GenerateSetItemDWBCode(std::uint32_t itemDwbCode, std::uint16_t level)
-    {
-        auto dwb = ItemHelpers::generarateRandomDW();
-        if (itemDwbCode == 0)
-        {
-            return dwb;
-        }
-
-        for (int z = 0; z < 20000; z++)
-        {
-            ItemRandStruct rnd = { dwb, 666 };
-            InitalizeItemRandomization(dwb, level, EnumItemQuality::SET, rnd);
-
-            std::uint32_t offset = GenerateRandom(rnd) % 0x10;
-            if ((itemDwbCode & (1 << offset)) != 0)
-            {
-                break;
-            }
-
-            dwb = ItemHelpers::generarateRandomDW();
-        }
-
-        return dwb;
-    }
-
     std::map<std::string, std::uint16_t> s_ItemSetItemsIndex;
     std::map<std::uint16_t, ItemSetItemType> s_ItemSetItemsType;
     std::map<std::string, AvailableItemType> s_AvailableItemsType;
@@ -6841,7 +6830,7 @@ namespace d2ce
                 auto iter = setItemsDWBCode.find(itemType.index);
                 if (iter != setItemsDWBCode.end())
                 {
-                    itemType.dwbCode = GenerateSetItemDWBCode(iter->second, itemType.level.Quality);
+                    itemType.dwbCode = ItemHelpers::generarateRandomDW(iter->second, itemType.level.Quality);
                 }
             }
 
@@ -7181,6 +7170,40 @@ namespace d2ce
                     break;
 
                 case 19: // Related to charged item.
+                    if (modMax < 0)
+                    {
+                        modMax = std::int16_t(std::abs(modMax));
+                        modMin = std::int16_t(std::abs(modMin));
+                        if (modType.affix > 0)
+                        {
+                            std::int16_t iLvl = 1i16;
+                            if (createParams.itemType.has_value())
+                            {
+                                iLvl = std::int16_t(std::max(1ui16, createParams.itemType.value().get().level.Quality));
+                            }
+
+                            std::int16_t skillReqLvl = 1i16;
+                            if (modType.isPrefix)
+                            {
+                                auto iterAffix = s_ItemMagicPrefixType.find(modType.affix);
+                                if (iterAffix != s_ItemMagicPrefixType.end())
+                                {
+                                    skillReqLvl = std::max(1i16, std::int16_t(iterAffix->second.classType.level));
+                                }
+                            }
+                            else
+                            {
+                                auto iterAffix = s_ItemMagicSuffixType.find(modType.affix);
+                                if (iterAffix != s_ItemMagicSuffixType.end())
+                                {
+                                    skillReqLvl = std::max(1i16, std::int16_t(iterAffix->second.classType.level));
+                                }
+                            }
+
+                            modMax = std::max(1i16, std::int16_t(((iLvl - skillReqLvl) / ((99i16 - skillReqLvl) / modMax))));
+                            modMin += (modMin * modMax) / 8i16;
+                        }
+                    }
                     attrib.Values.push_back(modMax);
                     attrib.Values.push_back(val);
                     attrib.Values.push_back(modMin);
@@ -8727,6 +8750,21 @@ bool d2ce::ItemType::isKey() const
 bool d2ce::ItemType::isHoradricCube() const
 {
     return code.compare("box") == 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isPhaseBlade() const
+{
+    return code.compare("7cr") == 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isBow() const
+{
+    return hasCategoryCode("bow");
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isCrossbow() const
+{
+    return hasCategoryCode("xbow");
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isRing() const
@@ -10652,12 +10690,30 @@ std::uint32_t d2ce::ItemHelpers::generateDWARandomOffset(std::uint32_t dwa, std:
     return rnd.seed;
 }
 //---------------------------------------------------------------------------
-std::uint32_t d2ce::ItemHelpers::generarateRandomDW()
+std::uint32_t d2ce::ItemHelpers::generarateRandomDW(std::uint32_t itemDwbCode, std::uint16_t level)
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     static std::uniform_int_distribution<std::uint32_t> spread(0, MAXUINT32);
-    return std::uint32_t(spread(gen) + (spread(gen) << 16));
+    auto dwb = std::uint32_t(spread(gen) + (spread(gen) << 16));
+    if (itemDwbCode != 0)
+    {
+        for (int z = 0; z < 20000; z++)
+        {
+            ItemRandStruct rnd = { dwb, 666 };
+            InitalizeItemRandomization(dwb, level, EnumItemQuality::SET, rnd);
+
+            std::uint32_t offset = GenerateRandom(rnd) % 0x10;
+            if ((itemDwbCode & (1 << offset)) != 0)
+            {
+                break;
+            }
+
+            dwb = ItemHelpers::generarateRandomDW();
+        }
+    }
+
+    return dwb;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getSetTCFromId(std::uint16_t id)
@@ -10729,6 +10785,18 @@ const std::string& d2ce::ItemHelpers::getMagicalSuffixTCFromId(std::uint16_t id)
 
     static std::string badValue;
     return badValue;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::isAddSocketsMagicalPrefix(std::uint16_t id)
+{
+    auto iter = s_ItemMagicPrefixType.find(id);
+    if (iter != s_ItemMagicPrefixType.end())
+    {
+        return (iter->second.modType.size() == 1 && iter->second.modType.front().code == "sock") ? true : false;
+    }
+
+    static std::string badValue;
+    return false;
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ItemHelpers::getIdFromRareIndex(const std::string& rareIndex)

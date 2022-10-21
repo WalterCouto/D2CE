@@ -1465,11 +1465,14 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     bool canPersonalize = CurrItem->canPersonalize();
     bool isSocketed = CurrItem->isSocketed();
     bool canMakeSuperior = CurrItem->canMakeSuperior();
+    bool canFixDurability = CurrItem->canFixDurability();
+    bool canMakeIndestructible = CurrItem->canMakeIndestructible();
     bool canUpgradeTier = CurrItem->isUpgradableItem();
     bool canMakeEthereal = CurrItem->canMakeEthereal();
-    bool canRemoveEthereal = CurrItem->canRemoveEthereal();
+    bool canRemoveEthereal = CurrItem->isEthereal();
 
-    bool removeQualityMenu = !canMakeEthereal && !canRemoveEthereal && !canMakeSuperior && !canUpgradeTier;
+    bool removeDurabilityMenu = !canFixDurability && !canMakeIndestructible && !canMakeEthereal && !canRemoveEthereal;
+    bool removeQualityMenu = !canMakeSuperior && !canUpgradeTier;
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -1550,12 +1553,39 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             }
         }
 
-        if ((!isArmor && !isWeapon) || CurrItem->isIndestructible())
+        pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_FIX);
+        if (pos >= 0)
         {
-            pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_FIX);
-            if (pos >= 0)
+            if (removeDurabilityMenu)
             {
                 pPopup->RemoveMenu(pos, MF_BYPOSITION);
+            }
+            else
+            {
+                CMenu* pSubPopup = pPopup->GetSubMenu(pos);
+                if (pSubPopup != nullptr)
+                {
+                    if (!canFixDurability)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_FIX, MF_BYCOMMAND);
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAXDURABILITY, MF_BYCOMMAND);
+                    }
+
+                    if (!canMakeIndestructible)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_INDESTRUCTIBLE, MF_BYCOMMAND);
+                    }
+
+                    if (!canMakeEthereal)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKEETHEREAL, MF_BYCOMMAND);
+                    }
+
+                    if (!canRemoveEthereal)
+                    {
+                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVEETHEREAL, MF_BYCOMMAND);
+                    }
+                }
             }
         }
 
@@ -1579,16 +1609,6 @@ void CD2SharedStashForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                     if (!canUpgradeTier)
                     {
                         pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_UPGRADEITEMTIER, MF_BYCOMMAND);
-                    }
-
-                    if (!canMakeEthereal)
-                    {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_MAKEETHEREAL, MF_BYCOMMAND);
-                    }
-
-                    if (!canRemoveEthereal)
-                    {
-                        pSubPopup->DeleteMenu(ID_ITEM_CONTEXT_REMOVEETHEREAL, MF_BYCOMMAND);
                     }
                 }
             }

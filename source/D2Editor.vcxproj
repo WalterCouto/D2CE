@@ -247,6 +247,7 @@
     <ClInclude Include="D2ItemsForm.h" />
     <ClInclude Include="D2ItemToolTipCtrl.h" />
     <ClInclude Include="D2LevelInfoForm.h" />
+    <ClInclude Include="D2MagicalAffixesForm.h" />
     <ClInclude Include="D2MainForm.h" />
     <ClInclude Include="D2MercenaryForm.h" />
     <ClInclude Include="D2MultiLineListCtrl.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="D2ItemsForm.cpp" />
     <ClCompile Include="D2ItemToolTipCtrl.cpp" />
     <ClCompile Include="D2LevelInfoForm.cpp" />
+    <ClCompile Include="D2MagicalAffixesForm.cpp" />
     <ClCompile Include="D2MainForm.cpp" />
     <ClCompile Include="D2MercenaryForm.cpp" />
     <ClCompile Include="D2MultiLineListCtrl.cpp" />

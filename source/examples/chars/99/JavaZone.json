@@ -2940,7 +2940,7 @@
         }
       ],
       "type_name": "Ring",
-      "levelreq": 55,
+      "levelreq": 51,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,
@@ -3685,7 +3685,7 @@
         }
       ],
       "type_name": "Ring",
-      "levelreq": 55,
+      "levelreq": 51,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,

@@ -37,6 +37,7 @@ public:
 class CD2ItemInfoStatic : public CStatic
 {
     friend class CD2NewItemForm;
+    friend class CD2MagicalAffixesForm;
     DECLARE_DYNAMIC(CD2ItemInfoStatic)
 
     // Construction
@@ -66,6 +67,7 @@ protected:
 //---------------------------------------------------------------------------
 class CD2NewItemForm : public CDialogEx, public CD2ItemTooltipCallback
 {
+    friend class CD2MagicalAffixesForm;
 	DECLARE_DYNAMIC(CD2NewItemForm)
 
 public:
@@ -95,8 +97,10 @@ private:
     void InitTree();
     void DrawItem(HTREEITEM hTreeItem);
 
-    const d2ce::Character* GetCharacterInfo() const override;
     const d2ce::Item* GetSelectedItem() const override;
+
+protected:
+    const d2ce::Character* GetCharacterInfo() const override;
 
 private:
     CD2ItemInfoStatic ItemTooltipBox;
@@ -107,5 +111,7 @@ private:
     std::list<d2ce::Item> AvailableItems;
     const d2ce::Item* CreatedItem = nullptr;
     CButton Ethereal;
+    CStatic QualityStatic;
+    CComboBox Quality;
 };
 //---------------------------------------------------------------------------

@@ -372,7 +372,7 @@ namespace d2ce
         bool generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
         std::uint32_t generateDWARandomOffset(std::uint32_t dwa, std::uint16_t numRndCalls);
-        std::uint32_t generarateRandomDW();
+        std::uint32_t generarateRandomDW(std::uint32_t itemDwbCode = 0, std::uint16_t level = 0);
         std::string getSetTCFromId(std::uint16_t id);
         const std::string& getRareNameFromId(std::uint16_t id);
         const std::string& getRareIndexFromId(std::uint16_t id);
@@ -380,6 +380,7 @@ namespace d2ce
         const std::string& getMagicalSuffixFromId(std::uint16_t id);
         const std::string& getMagicalPrefixTCFromId(std::uint16_t id);
         const std::string& getMagicalSuffixTCFromId(std::uint16_t id);
+        bool isAddSocketsMagicalPrefix(std::uint16_t id);
         std::uint16_t getIdFromRareIndex(const std::string& rareIndex);
         std::uint16_t getIdFromRareName(const std::string& rareName);
         std::string getUniqueTCFromId(std::uint16_t id);
@@ -1926,7 +1927,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
-        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), 0, true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
         {
             *this = invalidItem;
             return;
@@ -1934,7 +1935,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::UNIQUE:
-        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true))
+        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true))
         {
             *this = invalidItem;
             return;
@@ -1942,7 +1943,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::SET:
-        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true))
+        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true))
         {
             *this = invalidItem;
             return;
@@ -1953,7 +1954,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         if (itemType.isQuestItem())
         {
             // not all quest items are unqique, so allow empty list
-            ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, createParams, getLevel(), 0, true);
+            ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true);
         }
         break;
     }
@@ -2116,7 +2117,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         {
             GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) = current_bit_offset;
 
-            if (!ItemHelpers::getSetItemBonusAttribs(itemType.getId(), bonusAttribs, createParams, getLevel(), 0, true))
+            if (!ItemHelpers::getSetItemBonusAttribs(itemType.getId(), bonusAttribs, createParams, getLevel(), getDWBCode(), true))
             {
                 *this = invalidItem;
                 return;
@@ -5409,6 +5410,73 @@ std::uint32_t d2ce::Item::getId() const
     return readBits(GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET), 32);
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Item::getDWBCode() const
+{
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        break;
+
+    default:
+        switch (getQuality())
+        {
+        case EnumItemQuality::SET:
+            return ItemHelpers::getSetItemTypeHelper(getSetItemId()).getSetItemDWBCode();
+
+        default:
+            return ItemHelpers::generarateRandomDW();
+        }
+    }
+
+    if (GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) == 0)
+    {
+        return 0;
+    }
+
+    if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
+    {
+        GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
+    }
+
+    return readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setDWBCode(std::uint32_t dwb)
+{
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        break;
+
+    default:
+        return false;
+    }
+
+    if (GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) == 0)
+    {
+        return false;
+    }
+
+    if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
+    {
+        GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
+    }
+
+    if (dwb == 0)
+    {
+        dwb = ItemHelpers::generarateRandomDW();
+    }
+
+    cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
+
+    auto current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
+    return setBits(current_bit_offset, 32, dwb);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::randomizeId()
 {
     if (isSimpleItem() || (getVersion() < EnumItemVersion::v107))
@@ -5786,8 +5854,8 @@ bool d2ce::Item::getFullSetAttributes(std::vector<MagicalAttribute>& attribs) co
         return false;
     }
 
-    ItemCreateParams createParams(ItemVersion, getGameVersion());
-    return ItemHelpers::getFullSetBonusAttribs(setAttrib.Id, attribs, createParams, getLevel(), 0, true);
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    return ItemHelpers::getFullSetBonusAttribs(setAttrib.Id, attribs, createParams, getLevel(), getDWBCode(), true);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
@@ -6525,6 +6593,42 @@ bool d2ce::Item::isHoradricCube() const
     return result.isHoradricCube();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isPhaseBlade() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isPhaseBlade();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isBow() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isBow();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isCrossbow() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isCrossbow();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isIndestructible() const
 {
     d2ce::ItemDurability durability;
@@ -6709,9 +6813,32 @@ bool d2ce::Item::canMakeSuperior() const
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::canFixDurability() const
+{
+    // Stackable weapon have secret durablity that we don't fix
+    ItemDurability attrib;
+    if (isStackable() || isIndestructible() || !getDurability(attrib) || attrib.Max == 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::canMakeIndestructible() const
+{
+    // Stackable weapon have secret durablity that we don't fix
+    if (isSimpleItem() || isStackable() || isIndestructible() || isEthereal() || (GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) == 0))
+    {
+        return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::canMakeEthereal() const
 {
-    if (!isExpansionItem())
+    if (!isExpansionItem() || isIndestructible())
     {
         return false;
     }
@@ -6723,34 +6850,14 @@ bool d2ce::Item::canMakeEthereal() const
         return false;
     }
 
-    if (!result.isArmor() && !result.isWeapon())
+    if ((!result.isArmor() && !result.isWeapon()) || 
+        result.isPhaseBlade() || result.isSetItem() ||
+        result.isBow() || result.isCrossbow())
     {
         return false;
     }
 
     return isEthereal() ? false : true;
-}
-//---------------------------------------------------------------------------
-bool d2ce::Item::canRemoveEthereal() const
-{
-    if (!isExpansionItem())
-    {
-        return false;
-    }
-
-    const auto& result = getItemTypeHelper();
-    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
-    {
-        // should not happen
-        return false;
-    }
-
-    if (!result.isArmor() && !result.isWeapon())
-    {
-        return false;
-    }
-
-    return isEthereal();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::canAddMagicalAffixes() const
@@ -7231,7 +7338,7 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
         return setIndestructible();
     }
 
-    // Stackable weapon  have secret durablity that we don't fix
+    // Stackable weapon have secret durablity that we don't fix
     ItemDurability oldAttrib;
     if (isStackable() || !getDurability(oldAttrib) || oldAttrib.Max == 0)
     {
@@ -7289,9 +7396,9 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
 //---------------------------------------------------------------------------
 bool d2ce::Item::fixDurability()
 {
-    // Stackable weapon  have secret durablity that we don't fix
+    // Stackable weapon have secret durablity that we don't fix
     ItemDurability attrib;
-    if (isStackable() || !getDurability(attrib) || attrib.Max == 0)
+    if (isStackable() || isIndestructible() || !getDurability(attrib) || attrib.Max == 0)
     {
         return false;
     }
@@ -7303,14 +7410,21 @@ bool d2ce::Item::fixDurability()
         maxDurability = std::max(result.durability.Max, maxDurability);
     }
 
-    if ((attrib.Current == attrib.Max) && (maxDurability == attrib.Max))
+    auto maxCurDurability = maxDurability; // Current Durability may be higher then Max if it boosted
+    ItemDurability displayedAttrib;
+    if (getDisplayedDurability(displayedAttrib, 1) && (displayedAttrib.Max > maxCurDurability))
+    {
+        maxCurDurability = displayedAttrib.Max;
+    }
+
+    if ((maxCurDurability == attrib.Current) && (maxDurability == attrib.Max))
     {
         // nothing to do
         return false;
     }
 
     attrib.Max = maxDurability;
-    attrib.Current = attrib.Max;
+    attrib.Current = maxCurDurability;
     return setDurability(attrib);
 }
 //---------------------------------------------------------------------------
@@ -7820,8 +7934,8 @@ bool d2ce::Item::removePersonalization()
 //---------------------------------------------------------------------------
 bool d2ce::Item::setIndestructible()
 {
-    // Stackable weapon  have secret durablity that we don't fix
-    if (isSimpleItem() || isStackable() || isIndestructible() || (GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) == 0))
+    // Stackable weapon have secret durablity that we don't fix
+    if (isSimpleItem() || isStackable() || isIndestructible() || isEthereal() || (GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) == 0))
     {
         return false;
     }
@@ -8542,7 +8656,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         return false;
     }
 
-    ItemCreateParams createParams(ItemVersion, getGameVersion());
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     std::vector<MagicalAttribute> attribs;
     if (!d2ce::ItemHelpers::getMagicAttribs(affixes, attribs, createParams, getGameVersion()))
     {
@@ -8553,6 +8667,28 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     size_t diff = 0;
     d2ce::Item origItem(*this);
     const auto& origData = origItem.data;
+
+    auto numSockets = getSocketCount();
+    auto origNumSockets = getSocketCount();
+    if (d2ce::ItemHelpers::isAddSocketsMagicalPrefix(affixes.PrefixId))
+    {
+        // item_numsockets makes the item socketable
+        for (auto iter = attribs.begin(); iter != attribs.end(); ++iter)
+        {
+            auto& attrib = *iter;
+            if (attrib.Name == "item_numsockets")
+            {
+                if (!attrib.Values.empty())
+                {
+                    numSockets = std::uint8_t(numSockets + attrib.Values.front());
+                }
+
+                iter = attribs.erase(iter);
+                break;
+            }
+        }
+    }
+
     size_t current_bit_offset = 0;
     if (bMagical)
     {
@@ -8650,6 +8786,11 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
     size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
     data.resize(newSize, 0);
+
+    if (numSockets != origNumSockets)
+    {
+        setSocketCount(numSockets);
+    }
 
     cachedCombinedMagicalAttributes.clear();
     return true;
@@ -8848,6 +8989,7 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
     data.resize(newSize, 0);
 
     cachedCombinedMagicalAttributes.clear();
+    fixDurability();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -9355,7 +9497,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         }
     }
 
-    ItemCreateParams createParams(ItemVersion, getGameVersion());
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     std::vector<MagicalAttribute> attribs;
     if (!d2ce::ItemHelpers::getRareOrCraftedAttribs(affixes, attribs, createParams, getGameVersion()))
     {
@@ -15748,25 +15890,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         auto quality = getQuality();
         item["Id"] = id;
         item["ItemLevel"] = std::uint16_t(getLevel());
-        if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) != 0)
-        {
-            item["Dwa"] = readBits(GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET), 32);
-            item["Dwb"] = readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32);
-        }
-        else if (version < EnumItemVersion::v107)
-        {
-            item["Dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
-            if (quality == EnumItemQuality::SET)
-            {
-                // Find correct DWB value for the SET
-                const auto& setItemType = ItemHelpers::getSetItemTypeHelper(getSetItemId());
-                item["Dwb"] = setItemType.getSetItemDWBCode();
-            }
-            else
-            {
-                item["Dwb"] = ItemHelpers::generarateRandomDW();
-            }
-        }
+        item["Dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
+        item["Dwb"] = getDWBCode();
 
         item["Quality"] = std::uint16_t(quality);
         item["HasMultipleGraphics"] = hasMultipleGraphics();
@@ -18098,12 +18223,7 @@ std::uint8_t d2ce::Item::getInferiorQualityIdv100() const
         return 0;
     }
 
-    if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
-    {
-        GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
-    }
-
-    return ItemHelpers::generateInferiorQualityId(getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+    return ItemHelpers::generateInferiorQualityId(getLevel(), getDWBCode());
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
@@ -18135,7 +18255,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getGameVersion(), getLevel(), getDWBCode()) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -18190,7 +18310,7 @@ bool d2ce::Item::getSetAttributesv100(SetAttributes& attrib) const
 bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs) const
 {
     attribs.clear();
-    ItemCreateParams createParams(getVersion(), getGameVersion());
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     d2ce::UniqueAttributes uniqueAttrib;
     d2ce::SetAttributes setAttrib;
     MagicalAffixes affixes;
@@ -18199,24 +18319,14 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
     case EnumItemQuality::SET:
         if (getSetAttributes(setAttrib))
         {
-            if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
-            {
-                GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
-            }
-
-            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+            return ItemHelpers::getSetMagicAttribs(setAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), getDWBCode());
         }
         break;
 
     case EnumItemQuality::UNIQUE:
         if (getUniqueAttributes(uniqueAttrib) && !uniqueAttrib.Name.empty())
         {
-            if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
-            {
-                GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
-            }
-
-            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+            return ItemHelpers::getUniqueMagicAttribs(uniqueAttrib.Id, attribs, createParams, getGameVersion(), getLevel(), getDWBCode());
         }
         break;
 
@@ -18234,9 +18344,8 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
             std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
             if (getItemCode(strcode))
             {
-                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32));
+                return ItemHelpers::getUniqueQuestMagicAttribs(strcode, attribs, createParams, getGameVersion(), getLevel(), getDWBCode());
             }
-
         }
         break;
     }
@@ -18278,13 +18387,8 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         return true;
     }
 
-    if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) == 0)
-    {
-        GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
-    }
-
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getGameVersion(), getLevel(), readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32)) || (rare_affixes_v100.Id == MAXUINT16))
+    if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getGameVersion(), getLevel(), getDWBCode()) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }

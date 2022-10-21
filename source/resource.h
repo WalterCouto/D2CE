@@ -580,6 +580,7 @@
 #define IDR_HIRELING_TXT                723
 #define IDC_TRASH_CURSOR                724
 #define IDD_NEW_ITEM_DIALOG             725
+#define IDD_MAGICAL_AFFIXES_DIALOG      727
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -610,11 +611,20 @@
 #define IDC_EXPANSION_CHECK             1029
 #define IDC_LADDER_CHECK                1030
 #define IDC_ATTRIBUTE                   1031
+#define IDC_RUNEWORD_LIST               1031
+#define IDC_ITEM_TREE                   1031
+#define IDC_PREFIX1_COMBO               1031
 #define IDC_QUIT_BTN                    1032
+#define IDC_SUFFIX1_COMBO               1032
+#define IDC_ETHEREAL_CHECK              1032
 #define IDC_ABOUT_VERSION               1033
 #define IDC_CHAR_DEFENSE                1033
+#define IDC_QUALITY_COMBO               1033
+#define IDC_PREFIX1_STATIC              1033
 #define IDC_APP_COPYRIGHT               1034
 #define IDC_CHAR_DAMAGE                 1034
+#define IDC_QUALITY_STATIC              1034
+#define IDC_SUFFIX1_STATIC              1034
 #define IDC_LEVELINFO_GRID              1035
 #define IDC_EDIT_SET_ALL_SKILLS         1035
 #define IDC_APP_COPYRIGHT2              1035
@@ -877,10 +887,8 @@
 #define IDC_BUTTON_TREE_3_ROW_6_COL_3   1147
 #define IDC_PAGE_COMBO                  1150
 #define IDC_SHARED_STASH_BUTTON         1151
-#define IDC_RUNEWORD_LIST               1152
-#define IDC_ITEM_TREE                   1153
-#define IDC_NEW_ITEM_TOOLTIP            1154
-#define IDC_ETHEREAL_CHECK              1155
+#define IDC_TOOLTIP_RECT                1152
+#define IDC_GAMBLE_BUTTON               1153
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774
@@ -947,9 +955,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        727
+#define _APS_NEXT_RESOURCE_VALUE        729
 #define _APS_NEXT_COMMAND_VALUE         32831
-#define _APS_NEXT_CONTROL_VALUE         1156
+#define _APS_NEXT_CONTROL_VALUE         1154
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

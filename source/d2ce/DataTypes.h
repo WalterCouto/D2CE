@@ -1344,6 +1344,9 @@ namespace d2ce
         virtual bool isScroll() const;
         virtual bool isKey() const;
         virtual bool isHoradricCube() const;
+        virtual bool isPhaseBlade() const;
+        virtual bool isBow() const;
+        virtual bool isCrossbow() const;
         virtual bool isRing() const;
         virtual bool isAmulet() const;
         virtual bool isBodyPart() const;

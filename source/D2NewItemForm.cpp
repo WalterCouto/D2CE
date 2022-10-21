@@ -23,6 +23,7 @@
 #include "d2ce/helpers/ItemHelpers.h"
 #include "d2ce/item.h"
 #include "D2ItemToolTipCtrl.h"
+#include "D2MagicalAffixesForm.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
 
@@ -176,7 +177,6 @@ namespace
     }
 }
 
-
 //---------------------------------------------------------------------------
 // CD2ItemInfoStatic
 
@@ -260,7 +260,13 @@ const d2ce::Item* CD2ItemInfoStatic::GetSelectedItem() const
 //---------------------------------------------------------------------------
 CD2ItemTooltipCallback* CD2ItemInfoStatic::GetCallback() const
 {
-    return dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2NewItemForm, GetParent()));
+    auto pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2NewItemForm, GetParent()));
+    if (pCallback == nullptr)
+    {
+        pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalAffixesForm, GetParent()));
+    }
+
+    return pCallback;
 }
 //---------------------------------------------------------------------------
 
@@ -294,8 +300,10 @@ void CD2NewItemForm::DoDataExchange(CDataExchange* pDX)
 {
     __super::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_ITEM_TREE, ItemTree);
-    DDX_Control(pDX, IDC_NEW_ITEM_TOOLTIP, ItemTooltipBox);
+    DDX_Control(pDX, IDC_TOOLTIP_RECT, ItemTooltipBox);
     DDX_Control(pDX, IDC_ETHEREAL_CHECK, Ethereal);
+    DDX_Control(pDX, IDC_QUALITY_STATIC, QualityStatic);
+    DDX_Control(pDX, IDC_QUALITY_COMBO, Quality);
 }
 
 //---------------------------------------------------------------------------
@@ -332,6 +340,8 @@ BOOL CD2NewItemForm::OnInitDialog()
                     uText = utf8::utf8to16(strValue);
                     pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
                 }
+
+                pWnd->EnableWindow(FALSE);
             }
         }
 
@@ -351,7 +361,12 @@ BOOL CD2NewItemForm::OnInitDialog()
         }
     }
 
+    Ethereal.EnableWindow(FALSE);
     Ethereal.ShowWindow(FALSE);
+    QualityStatic.EnableWindow(FALSE);
+    QualityStatic.ShowWindow(FALSE);
+    Quality.EnableWindow(FALSE);
+    Quality.ShowWindow(FALSE);
     InitTree();
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -360,7 +375,32 @@ BOOL CD2NewItemForm::OnInitDialog()
 //---------------------------------------------------------------------------
 void CD2NewItemForm::OnBnClickedOk()
 {
+    UpdateData(TRUE); // save results
     CreatedItem = GetSelectedItem();
+
+    CD2MagicalAffixesForm magicAffixes(*this);
+    if (Quality.IsWindowEnabled())
+    {
+        auto idx = Quality.GetCurSel();
+        if (idx >= 0)
+        {
+            auto quality = static_cast<d2ce::EnumItemQuality>(Quality.GetItemData(idx));
+            switch (quality)
+            {
+            case d2ce::EnumItemQuality::SUPERIOR:
+                const_cast<d2ce::Item*>(CreatedItem)->makeSuperior();
+                break;
+
+            case d2ce::EnumItemQuality::MAGIC:
+                if (magicAffixes.DoModal() != IDOK)
+                {
+                    return;
+                }
+                break;
+            }
+        }
+    }
+
     if (!MainForm.getCharacterInfo().importItem(CreatedItem, false) || CreatedItem == nullptr)
     {
         return;
@@ -375,28 +415,109 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
     ItemTooltipBox.RedrawWindow();
 
     auto item = GetSelectedItem();
+    auto pWnd = GetDlgItem(IDOK);
+    if (pWnd != nullptr)
+    {
+        pWnd->EnableWindow(item == nullptr ? FALSE : TRUE);
+    }
+
     if (item != nullptr)
     {
         if (item->isArmor() || item->isWeapon())
         {
-            if (item->isExpansionItem())
+            if (item->isEthereal() || item->canMakeEthereal())
             {
+                Ethereal.EnableWindow(TRUE);
                 Ethereal.ShowWindow(TRUE);
                 Ethereal.SetCheck(item->isEthereal() ? 1 : 0);
             }
             else
             {
+                Ethereal.EnableWindow(FALSE);
                 Ethereal.ShowWindow(FALSE);
+            }
+
+            if (!item->isQuestItem())
+            {
+                switch (item->getQuality())
+                {
+                case d2ce::EnumItemQuality::NORMAL:
+                    Quality.ResetContent();
+                    {
+                        auto idx = Quality.AddString(_T("Normal"));
+                        if (idx >= 0)
+                        {
+                            Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::NORMAL));
+                            Quality.SetCurSel(idx);
+                        }
+
+                        if (item->canMakeSuperior())
+                        {
+                            idx = Quality.AddString(_T("Superior"));
+                            if (idx >= 0)
+                            {
+                                Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::SUPERIOR));
+                            }
+                        }
+
+                        // Check if the prefix and/or suffix is allowed
+                        std::vector<std::uint16_t> prefixes;
+                        std::vector<std::uint16_t> suffixes;
+                        if (item->getPossibleMagicalAffixes(prefixes, suffixes))
+                        {
+                            idx = Quality.AddString(_T("Magical"));
+                            if (idx >= 0)
+                            {
+                                Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::MAGIC));
+                            }
+                        }
+
+                        idx = Quality.AddString(_T("Rare"));
+                        if (idx >= 0)
+                        {
+                            Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::RARE));
+                        }
+                    }
+                    QualityStatic.EnableWindow(TRUE);
+                    QualityStatic.ShowWindow(TRUE);
+                    Quality.EnableWindow(TRUE);
+                    Quality.ShowWindow(TRUE);
+                    break;
+
+                default:
+                    QualityStatic.EnableWindow(FALSE);
+                    QualityStatic.ShowWindow(FALSE);
+                    Quality.EnableWindow(FALSE);
+                    Quality.ShowWindow(FALSE);
+                    break;
+                }
+            }
+            else
+            {
+                QualityStatic.EnableWindow(FALSE);
+                QualityStatic.ShowWindow(FALSE);
+                Quality.EnableWindow(FALSE);
+                Quality.ShowWindow(FALSE);
             }
         }
         else
         {
+            Ethereal.EnableWindow(FALSE);
             Ethereal.ShowWindow(FALSE);
+            QualityStatic.EnableWindow(FALSE);
+            QualityStatic.ShowWindow(FALSE);
+            Quality.EnableWindow(FALSE);
+            Quality.ShowWindow(FALSE);
         }
     }
     else
     {
+        Ethereal.EnableWindow(FALSE);
         Ethereal.ShowWindow(FALSE);
+        QualityStatic.EnableWindow(FALSE);
+        QualityStatic.ShowWindow(FALSE);
+        Quality.EnableWindow(FALSE);
+        Quality.ShowWindow(FALSE);
     }
 }
 //---------------------------------------------------------------------------

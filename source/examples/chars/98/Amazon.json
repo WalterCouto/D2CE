@@ -1547,7 +1547,7 @@
       "magic_prefix": 374,
       "magic_prefix_name": "Ruby",
       "magic_suffix": 60,
-      "magic_suffix_name": "of Balance",
+      "magic_suffix_name": "of Perfection",
       "timestamp": 0,
       "magic_attributes": [
         {
@@ -1568,11 +1568,11 @@
         }
       ],
       "type_name": "Amulet",
-      "levelreq": 18,
+      "levelreq": 22,
       "inv_file": "invamu",
       "inv_height": 1,
       "inv_width": 1,
-      "transform_color": "lred",
+      "transform_color": "dgld",
       "displayed_magic_attributes": [
         {
           "id": 2,
@@ -2683,7 +2683,7 @@
         }
       ],
       "type_name": "Ring",
-      "levelreq": 26,
+      "levelreq": 9,
       "inv_file": "invrin",
       "inv_height": 1,
       "inv_width": 1,

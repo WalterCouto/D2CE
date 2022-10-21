@@ -193,6 +193,8 @@ namespace d2ce
 
         // Extended information
         std::uint32_t getId() const;
+        std::uint32_t getDWBCode() const; // random number for v1.07+ items
+        bool setDWBCode(std::uint32_t dwb); // return false for v1.07+ items
         bool randomizeId();
         std::uint8_t getLevel() const;
         EnumItemQuality getQuality() const;
@@ -239,6 +241,9 @@ namespace d2ce
         bool isBeltable() const;
         bool isQuestItem() const;
         bool isHoradricCube() const;
+        bool isPhaseBlade() const;
+        bool isBow() const;
+        bool isCrossbow() const;
         bool isIndestructible() const;
         bool isUnusedItem() const;
         bool isSecondHand() const;
@@ -249,8 +254,9 @@ namespace d2ce
         bool canHaveSockets() const;
         bool canPersonalize() const;
         bool canMakeSuperior() const;
+        bool canFixDurability() const;
+        bool canMakeIndestructible() const;
         bool canMakeEthereal() const;
-        bool canRemoveEthereal() const;
         bool canAddMagicalAffixes() const;
         bool canAddRareAffixes() const;
         bool canEquip(EnumEquippedId equipId) const;
