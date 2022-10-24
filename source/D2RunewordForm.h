@@ -23,10 +23,10 @@
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
 #include "D2MercenaryForm.h"
-#include "D2MultiLineListCtrl.h"
+#include "D2ItemToolTipCtrl.h"
 
 //---------------------------------------------------------------------------
-class CD2RunewordForm : public CDialogEx
+class CD2RunewordForm : public CDialogEx, public CD2ItemTooltipCallback
 {
     DECLARE_DYNAMIC(CD2RunewordForm)
 
@@ -47,17 +47,27 @@ protected:
     // Generated message map functions
     virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedOk();
+    afx_msg void OnCbnSelchangeRunewordCombo();
 
     DECLARE_MESSAGE_MAP()
 
-    void FillCells();
+private:
+    void InitRunewords();
+
+    const d2ce::Item* GetSelectedItem() const override;
+
+protected:
+    const d2ce::Character* GetCharacterInfo() const override;
 
 private:
+    CD2ItemInfoStatic ItemTooltipBox;
     CD2MainForm& MainForm;
     CD2ItemsForm* ItemsFormPtr = nullptr;
     CD2MercenaryForm* MercenaryFormPtr = nullptr;
     CD2SharedStashForm* SharedStashFormPtr = nullptr;
     d2ce::Item* ItemPtr = nullptr;
-    CD2MultiLineListCtrl RunewordGrid;
+    CStatic RunewordStatic;
+    CComboBox  Runeword;
+    d2ce::Item CurrentItem;
 };
 //---------------------------------------------------------------------------

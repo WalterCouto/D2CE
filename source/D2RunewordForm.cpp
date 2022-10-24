@@ -24,28 +24,6 @@
 #include "d2ce/helpers/ItemHelpers.h"
 #include <utf8/utf8.h>
 
-namespace
-{
-    void AddListColData(CD2MultiLineListCtrl& ctrl, std::uint32_t row, std::uint32_t col, const std::string& u8string)
-    {
-        std::u16string uText = utf8::utf8to16(u8string);
-        CString str(reinterpret_cast<LPCWSTR>(uText.c_str()));
-        LVITEM lv;
-        lv.iItem = row;
-        lv.iSubItem = col;
-        lv.pszText = (LPTSTR)(LPCTSTR)str;
-        lv.mask = LVIF_TEXT;
-        if (col == 0)
-        {
-            ctrl.InsertItem(&lv);
-        }
-        else
-        {
-            ctrl.SetItem(&lv);
-        }
-    }
-}
-
 //---------------------------------------------------------------------------
 // CD2RunewordForm dialog
 
@@ -55,16 +33,28 @@ IMPLEMENT_DYNAMIC(CD2RunewordForm, CDialogEx)
 CD2RunewordForm::CD2RunewordForm(CD2ItemsForm& form)
     : CDialogEx(CD2RunewordForm::IDD, (CWnd*)&form), MainForm(form.MainForm), ItemsFormPtr(&form), ItemPtr(form.CurrItem)
 {
+    if (ItemPtr != nullptr)
+    {
+        CurrentItem = *ItemPtr;
+    }
 }
 //---------------------------------------------------------------------------
 CD2RunewordForm::CD2RunewordForm(CD2MercenaryForm& form)
     : CDialogEx(CD2RunewordForm::IDD, (CWnd*)&form), MainForm(form.MainForm), MercenaryFormPtr(&form), ItemPtr(form.CurrItem)
 {
+    if (ItemPtr != nullptr)
+    {
+        CurrentItem = *ItemPtr;
+    }
 }
 //---------------------------------------------------------------------------
 CD2RunewordForm::CD2RunewordForm(CD2SharedStashForm& form)
     : CDialogEx(CD2RunewordForm::IDD, (CWnd*)&form), MainForm(form.MainForm), SharedStashFormPtr(&form), ItemPtr(form.CurrItem)
 {
+    if (ItemPtr != nullptr)
+    {
+        CurrentItem = *ItemPtr;
+    }
 }
 //---------------------------------------------------------------------------
 CD2RunewordForm::~CD2RunewordForm()
@@ -74,11 +64,14 @@ CD2RunewordForm::~CD2RunewordForm()
 void CD2RunewordForm::DoDataExchange(CDataExchange* pDX)
 {
     __super::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_RUNEWORD_LIST, RunewordGrid);
+    DDX_Control(pDX, IDC_RUNEWORD_STATIC, RunewordStatic);
+    DDX_Control(pDX, IDC_RUNEWORD_LIST, Runeword);
+    DDX_Control(pDX, IDC_TOOLTIP_RECT, ItemTooltipBox);
 }
 //---------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CD2RunewordForm, CDialogEx)
     ON_BN_CLICKED(IDOK, &CD2RunewordForm::OnBnClickedOk)
+    ON_CBN_SELCHANGE(IDC_PREFIX1_COMBO, &CD2RunewordForm::OnCbnSelchangeRunewordCombo)
 END_MESSAGE_MAP()
 
 // CD2RunewordForm message handlers
@@ -88,136 +81,126 @@ BOOL CD2RunewordForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
-    RunewordGrid.SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
-    RunewordGrid.InsertColumn(0, _T("Runeword"), LVCFMT_RIGHT, LVSCW_AUTOSIZE_USEHEADER);
-    RunewordGrid.InsertColumn(1, _T("Runes"), LVCFMT_RIGHT, LVSCW_AUTOSIZE_USEHEADER);
-    RunewordGrid.InsertColumn(2, _T("Attributes"), LVCFMT_CENTER, LVSCW_AUTOSIZE_USEHEADER);
+    {
+        std::string strValue;
+        std::u16string uText;
+        CString text;
+        CStringA textA;
+        CWnd* pWnd = nullptr;
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("ok", strValue))
+        {
+            pWnd = GetDlgItem(IDOK);
+            if (pWnd != nullptr)
+            {
+                pWnd->GetWindowText(text);
+                textA = text;
+                if (textA.CompareNoCase(strValue.c_str()) != 0)
+                {
+                    uText = utf8::utf8to16(strValue);
+                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                }
+            }
+        }
 
-    FillCells();
-    return 0;
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("cancel", strValue))
+        {
+            pWnd = GetDlgItem(IDCANCEL);
+            if (pWnd != nullptr)
+            {
+                pWnd->GetWindowText(text);
+                textA = text;
+                if (textA.CompareNoCase(strValue.c_str()) != 0)
+                {
+                    uText = utf8::utf8to16(strValue);
+                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                }
+            }
+        }
+    }
+
+    InitRunewords();
+    return TRUE;  // return TRUE unless you set the focus to a control
 }
 //---------------------------------------------------------------------------
 void CD2RunewordForm::OnBnClickedOk()
 {
     if (ItemPtr != nullptr)
     {
-        auto posSelection = RunewordGrid.GetFirstSelectedItemPosition();
-        if (posSelection)
+        auto runwordId = std::uint16_t(Runeword.GetItemData(Runeword.GetCurSel()));
+        if (SharedStashFormPtr != nullptr)
         {
-            auto nCurrentSelection = RunewordGrid.GetNextSelectedItem(posSelection);
-            auto runwordId = std::uint16_t(RunewordGrid.GetItemData(nCurrentSelection));
-            if (SharedStashFormPtr != nullptr)
-            {
-                SharedStashFormPtr->setItemRuneword(*ItemPtr, runwordId);
-            }
-            else if (ItemsFormPtr != nullptr)
-            {
-                ItemsFormPtr->setItemRuneword(*ItemPtr, runwordId);
-            }
-            else if (MercenaryFormPtr != nullptr)
-            {
-                MercenaryFormPtr->setItemRuneword(*ItemPtr, runwordId);
-            }
+            SharedStashFormPtr->setItemRuneword(*ItemPtr, runwordId);
+        }
+        else if (ItemsFormPtr != nullptr)
+        {
+            ItemsFormPtr->setItemRuneword(*ItemPtr, runwordId);
+        }
+        else if (MercenaryFormPtr != nullptr)
+        {
+            MercenaryFormPtr->setItemRuneword(*ItemPtr, runwordId);
         }
     }
     __super::OnOK();
 }
 //---------------------------------------------------------------------------
-void CD2RunewordForm::FillCells()
+void CD2RunewordForm::OnCbnSelchangeRunewordCombo()
+{
+    UpdateData(TRUE); // save results
+    if (ItemPtr != nullptr)
+    {
+        CurrentItem = *ItemPtr;
+    }
+    CurrentItem.setRuneword(std::uint16_t(Runeword.GetItemData(Runeword.GetCurSel())));
+    ItemTooltipBox.RedrawWindow();
+}
+//---------------------------------------------------------------------------
+void CD2RunewordForm::InitRunewords()
 {
     if (ItemPtr == nullptr)
     {
+        EndDialog(IDCANCEL);
         return;
     }
 
-    auto charLevel = MainForm.getCharacterLevel();
-
-    TCHAR name[255];
-    LVCOLUMN col;
-    col.mask = LVCF_TEXT;
-    col.pszText = name;
-    col.cchTextMax = sizeof(name) / sizeof(TCHAR);
-
     std::u16string uText;
-    std::uint32_t row = 0;
-    for (auto& runeword : ItemPtr->getPossibleRunewords())
+    CString strText;
+    int idx = -1;
+    int runewordIdx = 0;
+    d2ce::RunewordAttributes runeAttrib;
+    auto bHasRuneword = CurrentItem.getRunewordAttributes(runeAttrib);
+    for (auto& runeword : CurrentItem.getPossibleRunewords())
     {
-        row = RunewordGrid.GetItemCount();
-        AddListColData(RunewordGrid, row, 0, runeword.name);
-
+        uText = utf8::utf8to16(runeword.name);
+        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+        idx = Runeword.AddString(strText);
+        if (idx >= 0)
         {
-            std::stringstream ss;
-            bool bFirstItem = true;
-            std::string quoteStr;
-            d2ce::LocalizationHelpers::GetStringTxtValue("RuneQuote", quoteStr, "'");
-            for (const auto& runeCode : runeword.runeCodes)
+            if (bHasRuneword && runeAttrib.Id == runeword.id)
             {
-                const auto& item = d2ce::ItemHelpers::getItemTypeHelper(runeCode);
-                if (!item.isRune())
-                {
-                    continue;
-                }
-
-                if (bFirstItem)
-                {
-                    ss << quoteStr;
-                    bFirstItem = false;
-                }
-
-                ss << item.getRuneLetter();
+                runewordIdx = idx;
             }
-
-            if (!bFirstItem)
-            {
-                ss << quoteStr;
-            }
-
-            AddListColData(RunewordGrid, row, 1, ss.str());
+            Runeword.SetItemData(idx, runeword.id);
         }
-
-        std::vector<d2ce::MagicalAttribute> attribs;
-        for (const auto& runeCode : runeword.runeCodes)
-        {
-            const auto& runeItemType = d2ce::ItemHelpers::getItemTypeHelper(runeCode);
-            if (runeItemType.getRuneMagicalAttributes(*ItemPtr, attribs))
-            {
-                runeword.attribs.reserve(std::max(runeword.attribs.capacity(), runeword.attribs.size() + attribs.size()));
-                for (auto& value : attribs)
-                {
-                    runeword.attribs.emplace_back(std::move(value));
-                }
-            }
-        }
-
-        d2ce::ItemHelpers::formatMagicalAttributes(runeword.attribs, charLevel);
-        {
-            std::stringstream ss;
-            bool bFirstItem = true;
-            for (const auto& attrib : runeword.attribs)
-            {
-                if (!attrib.Visible)
-                {
-                    continue;
-                }
-
-                if (!bFirstItem)
-                {
-                    ss << "\n";
-                }
-                bFirstItem = false;
-
-                ss << attrib.Desc;
-            }
-
-            AddListColData(RunewordGrid, row, 2, ss.str());
-        }
-
-        RunewordGrid.SetItemData(row, runeword.id);
     }
 
-    if (RunewordGrid.GetItemCount() > 0)
+    if (Runeword.GetCount() == 0)
     {
-        RunewordGrid.AdjustColumnWidths();
-        RunewordGrid.SetItemState(0, LVIS_SELECTED, LVIS_SELECTED);
+        EndDialog(IDCANCEL);
+        return;
     }
+
+    Runeword.SetCurSel(runewordIdx);
+    CurrentItem.setRuneword(std::uint16_t(Runeword.GetItemData(Runeword.GetCurSel())));
+    ItemTooltipBox.RedrawWindow();
 }
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2RunewordForm::GetSelectedItem() const
+{
+    return &CurrentItem;
+}
+//---------------------------------------------------------------------------
+const d2ce::Character* CD2RunewordForm::GetCharacterInfo() const
+{
+    return &MainForm.getCharacterInfo();
+}
+//---------------------------------------------------------------------------

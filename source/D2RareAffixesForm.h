@@ -22,24 +22,46 @@
 #include "D2NewItemForm.h"
 
 //---------------------------------------------------------------------------
-class CD2MagicalAffixesForm : public CDialogEx, public CD2ItemTooltipCallback
+class CD2RareAffixesForm : public CDialogEx, public CD2ItemTooltipCallback
 {
-	DECLARE_DYNAMIC(CD2MagicalAffixesForm)
+    DECLARE_DYNAMIC(CD2RareAffixesForm)
+
+    struct AffixControl
+    {
+        CStatic PrefixStatic;
+        CComboBox Prefix;
+        CStatic SuffixStatic;
+        CComboBox Suffix;
+    };
+
+    struct AffixChoice
+    {
+        std::uint16_t prefix = 0;
+        std::uint16_t prefixGroup = 0;
+        std::uint16_t suffix = 0;
+        std::uint16_t suffixGroup = 0;
+    };
 
 public:
-	CD2MagicalAffixesForm(CD2NewItemForm& form);   // standard constructor
-	virtual ~CD2MagicalAffixesForm();
+    CD2RareAffixesForm(CD2NewItemForm& form);   // standard constructor
+    virtual ~CD2RareAffixesForm();
 
-	enum { IDD = IDD_MAGICAL_AFFIXES_DIALOG };
+    enum { IDD = IDD_RARE_AFFIXES_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedGambleButton();
+    afx_msg void OnCbnSelchangeNamePrefixCombo();
+    afx_msg void OnCbnSelchangeNameSuffixCombo();
     afx_msg void OnCbnSelchangePrefix1Combo();
     afx_msg void OnCbnSelchangeSuffix1Combo();
+    afx_msg void OnCbnSelchangePrefix2Combo();
+    afx_msg void OnCbnSelchangeSuffix2Combo();
+    afx_msg void OnCbnSelchangePrefix3Combo();
+    afx_msg void OnCbnSelchangeSuffix3Combo();
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 
 public:
     virtual BOOL OnInitDialog();
@@ -47,7 +69,12 @@ public:
 private:
     void InitAffixes();
     void SyncAffixes();
+    void UpdatePrefixChoices();
+    void UpdateSuffixChoices();
+    void UpdateAffixChoices();
     void UpdateCurrentAttribs();
+    void HandleCbnSelchangePrefixCombo(CComboBox& combo, AffixChoice& affix);
+    void HandleCbnSelchangeSuffixCombo(CComboBox& combo, AffixChoice& affix);
 
     const d2ce::Item* GetSelectedItem() const override;
 
@@ -57,13 +84,19 @@ protected:
 private:
     CD2ItemInfoStatic ItemTooltipBox;
     CD2NewItemForm& NewItemForm;
-    CStatic PrefixStatic;
-    CComboBox  Prefix;
-    CStatic SuffixStatic;
-    CComboBox  Suffix;
+    CStatic NamePrefixStatic;
+    CComboBox NamePrefix;
+    CStatic NameSuffixStatic;
+    CComboBox NameSuffix;
+    std::array<AffixControl, 3> AffixControls;
+
     d2ce::ItemCreateParams CreateParams;
-    d2ce::MagicalAffixes CurrentAffixes;
     std::uint32_t CurrentDWBCode = 0;
     d2ce::Item CurrentItem;
+    d2ce::RareAttributes CurrentAffixes;
+    std::map<std::uint16_t, std::vector<std::uint16_t>> PrefixMap;
+    std::map<std::uint16_t, std::vector<std::uint16_t>> SuffixMap;
+    std::array<AffixChoice, 3> CurrentAffixChoices;
+
 };
 //---------------------------------------------------------------------------

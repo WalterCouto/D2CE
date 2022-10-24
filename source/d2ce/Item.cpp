@@ -356,7 +356,10 @@ namespace d2ce
         std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
         std::vector<d2ce::RunewordType> getPossibleRunewords(const d2ce::Item& item, std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true);
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
+        bool getPossibleMagicalAffixes(const d2ce::Item& item, std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
+        bool findDWForMagicalAffixes(const MagicalAffixes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
+        bool findDWForRareOrCraftedAffixes(const d2ce::RareAttributes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
 
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
@@ -1170,7 +1173,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     }
 
     size_t bitSize = 0;
-    if (ItemVersion < EnumItemVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
         switch (ItemVersion)
         {
@@ -1304,7 +1307,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 if (itemType.isKey())
                 {
                     // we need at lease one key
-                    if (ItemVersion < EnumItemVersion::v107)
+                    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
                     {
                         // TODO: should be handled by loading of file
                         value = std::min(value, MAX_KEY_QUANTITY_100);
@@ -1534,7 +1537,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                     if (itemType.isKey())
                     {
                         // we need at lease one key
-                        if (ItemVersion < EnumItemVersion::v107)
+                        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
                         {
                             // TODO: should be handled by loading of file
                             value = std::min(value, MAX_KEY_QUANTITY_100);
@@ -4221,7 +4224,7 @@ bool d2ce::Item::isEthereal() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isPersonalized() const
 {
-    if (ItemVersion < EnumItemVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
         // v1.00 - v1.06 item
         return false;
@@ -4232,7 +4235,7 @@ bool d2ce::Item::isPersonalized() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isRuneword() const
 {
-    if (ItemVersion < EnumItemVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
         // v1.00 - v1.06 item
         return false;
@@ -7075,7 +7078,7 @@ std::uint32_t d2ce::Item::getQuantity() const
 
     if (GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) != 0)
     {
-        if (ItemVersion < EnumItemVersion::v107)
+        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
         {
             return readBits(GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET), GLD_STACKABLE_NUM_BITS);
         }
@@ -7108,7 +7111,7 @@ std::uint32_t d2ce::Item::getMaxQuantity() const
     if (itemType.isKey())
     {
         // we need at lease one key
-        if (ItemVersion < EnumItemVersion::v107)
+        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
         {
             return MAX_KEY_QUANTITY_100;
         }
@@ -7140,7 +7143,7 @@ bool d2ce::Item::setQuantity(std::uint32_t quantity)
     if (itemType.isKey())
     {
         // we need at lease one key
-        if (ItemVersion < EnumItemVersion::v107)
+        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
         {
             // TODO: should be handled by loading of file
             quantity = std::min(quantity, MAX_KEY_QUANTITY_100);
@@ -7152,7 +7155,7 @@ bool d2ce::Item::setQuantity(std::uint32_t quantity)
     {
         if (GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) != 0)
         {
-            if (ItemVersion < EnumItemVersion::v107)
+            if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
             {
                 return updateBits(GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET), GLD_STACKABLE_NUM_BITS, quantity);
             }
@@ -8570,6 +8573,11 @@ bool d2ce::Item::getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes,
     return ItemHelpers::getPossibleMagicalAffixes(*this, prefixes, suffixes);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::getPossibleMagicalAffixes(std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes) const
+{
+    return ItemHelpers::getPossibleMagicalAffixes(*this, prefixes, suffixes);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const
 {
     return ItemHelpers::getPossibleRareAffixes(*this, prefixes, suffixes);
@@ -8577,15 +8585,78 @@ bool d2ce::Item::getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, st
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 {
-    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
+    if (isSimpleItem() || isSocketFiller() || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
     {
-        // you can't pick your affixes, they are generated by using the value of DWB
         return false;
     }
 
-    if (isSimpleItem() || isSocketFiller())
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
-        return false;
+        // you can't pick your affixes, they are generated by using the value of DWB
+        switch (getQuality())
+        {
+        case EnumItemQuality::NORMAL:
+            break;
+
+        case EnumItemQuality::MAGIC:
+            return true;
+
+        default:
+            // magical affixes do not work with these
+            return false;
+        }
+
+        size_t numBits = 4;
+        switch (ItemVersion)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isEar())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
+            }
+
+            numBits = 3;
+            break;
+
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+            if (isSimpleItem())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
+            }
+
+            numBits = 4;
+            break;
+
+        default:
+            return false;
+        }
+
+        std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::MAGIC);
+        if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
+        {
+            return false;
+        }
+
+        // We need to find a DWB code that is able to produce the prefix/suffix values selected
+        auto dwb = getDWBCode();
+        ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+        bool bRet = d2ce::ItemHelpers::findDWForMagicalAffixes(affixes, createParams, getLevel(), dwb);
+        if (!setDWBCode(dwb))
+        {
+            return false;
+        }
+
+        return bRet;
     }
 
     bool bMagical = false;
@@ -8669,7 +8740,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     const auto& origData = origItem.data;
 
     auto numSockets = getSocketCount();
-    auto origNumSockets = getSocketCount();
+    auto origNumSockets = numSockets;
     if (d2ce::ItemHelpers::isAddSocketsMagicalPrefix(affixes.PrefixId))
     {
         // item_numsockets makes the item socketable
@@ -9336,15 +9407,80 @@ bool d2ce::Item::removeMagicalAffixes()
 //---------------------------------------------------------------------------
 bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
 {
-    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
-    {
-        // you can't pick your affixes, they are generated by using the value of DWB
-        return false;
-    }
-
     if (isSimpleItem() || isSocketFiller())
     {
         return false;
+    }
+
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
+    {
+        // you can't pick your affixes, they are generated by using the value of DWB
+        switch (getQuality())
+        {
+        case EnumItemQuality::NORMAL:
+            break;
+
+        case EnumItemQuality::RARE:
+        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::TEMPERED:
+            return true;
+
+        default:
+            // magical affixes do not work with these
+            return false;
+        }
+
+        size_t numBits = 4;
+        switch (ItemVersion)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isEar())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
+            }
+
+            numBits = 3;
+            break;
+
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+            if (isSimpleItem())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
+            }
+
+            numBits = 4;
+            break;
+
+        default:
+            return false;
+        }
+
+        std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::RARE);
+        if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
+        {
+            return false;
+        }
+
+        // We need to find a DWB code that is able to produce the prefix/suffix values selected
+        auto dwb = getDWBCode();
+        ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+        bool bRet = d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(affixes, createParams, getLevel(), dwb);
+        if (!setDWBCode(dwb))
+        {
+            return false;
+        }
+
+        return bRet;
     }
 
     bool bRareOrCrafted = false;
@@ -14068,7 +14204,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     node = itemRoot[bSerializedFormat ? "IsEthereal" : "ethereal"];
     SetFlagBit(node, IS_ETHEREAL_FLAG_OFFSET, flags);
 
-    if (ItemVersion >= EnumItemVersion::v107)
+    if (ItemVersion >= EnumItemVersion::v107) // pre-1.07 character file
     {
         flags[23] = 1; // unknown but always one as far as I have noticed
 
@@ -14133,7 +14269,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     }
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
-    if (ItemVersion < EnumItemVersion::v107)
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
     {
         if (ItemVersion == EnumItemVersion::v100)
         {
@@ -16090,17 +16226,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             auto id = getId();
             item["id"] = id;
             item["level"] = std::uint16_t(getLevel());
-
-            if (GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) != 0)
-            {
-                item["dwa"] = readBits(GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET), 32);
-                item["dwb"] = readBits(GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET), 32);
-            }
-            else if (version < EnumItemVersion::v107)
-            {
-                item["dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
-                item["dwb"] = ItemHelpers::generarateRandomDW();
-            }
+            item["dwa"] = id == 0 ? ItemHelpers::generarateRandomDW() : id;
+            item["dwb"] = getDWBCode();
 
             auto quality = getQuality();
             item["quality"] = std::uint16_t(quality);
@@ -18255,7 +18382,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getGameVersion(), getLevel(), getDWBCode()) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getLevel(), getDWBCode()) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
     {
         return false;
     }
@@ -18388,7 +18515,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getGameVersion(), getLevel(), getDWBCode()) || (rare_affixes_v100.Id == MAXUINT16))
+    if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getLevel(), getDWBCode()) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
     }

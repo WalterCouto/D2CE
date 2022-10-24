@@ -22,52 +22,14 @@
 #include "D2MainForm.h"
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
+#include "D2ItemToolTipCtrl.h"
 #include <list>
-
-//---------------------------------------------------------------------------
-class CD2ItemTooltipCallback
-{
-public:
-    virtual ~CD2ItemTooltipCallback() = default;
-    virtual const d2ce::Character* GetCharacterInfo() const = 0;
-    virtual const d2ce::Item* GetSelectedItem() const = 0;
-};
-
-//---------------------------------------------------------------------------
-class CD2ItemInfoStatic : public CStatic
-{
-    friend class CD2NewItemForm;
-    friend class CD2MagicalAffixesForm;
-    DECLARE_DYNAMIC(CD2ItemInfoStatic)
-
-    // Construction
-public:
-    CD2ItemInfoStatic();
-
-public:
-    virtual ~CD2ItemInfoStatic();
-
-    // Generated message map functions
-protected:
-    //{{AFX_MSG(CCharNameEdit)
-    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-    //}}AFX_MSG
-
-    DECLARE_MESSAGE_MAP()
-
-protected:
-    virtual void PreSubclassWindow();
-    virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-
-    const d2ce::Character* GetCharacterInfo() const;
-    const d2ce::Item* GetSelectedItem() const;
-    CD2ItemTooltipCallback* GetCallback() const;
-};
 
 //---------------------------------------------------------------------------
 class CD2NewItemForm : public CDialogEx, public CD2ItemTooltipCallback
 {
     friend class CD2MagicalAffixesForm;
+    friend class CD2RareAffixesForm;
 	DECLARE_DYNAMIC(CD2NewItemForm)
 
 public:

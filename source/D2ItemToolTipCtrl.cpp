@@ -22,6 +22,10 @@
 #include "resource.h"		// main symbols
 #include <utf8/utf8.h>
 #include "helpers/ItemHelpers.h"
+#include "D2NewItemForm.h"
+#include "D2MagicalAffixesForm.h"
+#include "D2RareAffixesForm.h"
+#include "D2RunewordForm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -437,5 +441,106 @@ LRESULT CD2ItemToolTipCtrl::OnRelayEvent(WPARAM wParam, LPARAM lParam)
         break;
     }
     return DefWindowProc(TTM_RELAYEVENT, wParam, lParam);
+}
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+// CD2ItemInfoStatic
+
+IMPLEMENT_DYNAMIC(CD2ItemInfoStatic, CStatic)
+
+CD2ItemInfoStatic::CD2ItemInfoStatic()
+{
+}
+//---------------------------------------------------------------------------
+CD2ItemInfoStatic::~CD2ItemInfoStatic()
+{
+}
+
+//---------------------------------------------------------------------------
+BEGIN_MESSAGE_MAP(CD2ItemInfoStatic, CStatic)
+    //{{AFX_MSG_MAP(CD2ItemInfoStatic)
+    ON_WM_ERASEBKGND()
+    //}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+//---------------------------------------------------------------------------
+void CD2ItemInfoStatic::PreSubclassWindow()
+{
+    __super::PreSubclassWindow();
+    ModifyStyle(0, SS_OWNERDRAW);
+}
+//---------------------------------------------------------------------------
+void CD2ItemInfoStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
+{
+}
+//---------------------------------------------------------------------------
+BOOL CD2ItemInfoStatic::OnEraseBkgnd(CDC* pDC)
+{
+    CRect rect;
+    GetClientRect(&rect);
+
+    auto currItem = GetSelectedItem();
+    if (currItem == nullptr)
+    {
+        CBrush backBrush(::GetSysColor(COLOR_3DFACE)); // (this is meant for dialogs)
+        CBrush* pOldBrush = pDC->SelectObject(&backBrush);
+
+        pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
+        pDC->SelectObject(pOldBrush);
+        return TRUE;
+    }
+
+    CBrush backBrush(RGB(0, 0, 0));
+    CBrush* pOldBrush = pDC->SelectObject(&backBrush);
+
+    pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
+    pDC->SelectObject(pOldBrush);
+
+    pDC->SetBkColor(RGB(0, 0, 0));
+    pDC->SetBkMode(TRANSPARENT);
+    CD2ItemToolTipCtrl::DoDrawItemInfo(pDC, rect, false, currItem, GetCharacterInfo(), false);
+    return TRUE;
+}
+//---------------------------------------------------------------------------
+const d2ce::Character* CD2ItemInfoStatic::GetCharacterInfo() const
+{
+    auto pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return nullptr;
+    }
+
+    return pCallback->GetCharacterInfo();
+}
+//---------------------------------------------------------------------------
+const d2ce::Item* CD2ItemInfoStatic::GetSelectedItem() const
+{
+    auto pCallback = GetCallback();
+    if (pCallback == nullptr)
+    {
+        return nullptr;
+    }
+
+    return pCallback->GetSelectedItem();
+}
+//---------------------------------------------------------------------------
+CD2ItemTooltipCallback* CD2ItemInfoStatic::GetCallback() const
+{
+    auto pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2NewItemForm, GetParent()));
+    if (pCallback == nullptr)
+    {
+        pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalAffixesForm, GetParent()));
+        if (pCallback == nullptr)
+        {
+            pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RareAffixesForm, GetParent()));
+            if (pCallback == nullptr)
+            {
+                pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RunewordForm, GetParent()));
+            }
+        }
+    }
+
+    return pCallback;
 }
 //---------------------------------------------------------------------------

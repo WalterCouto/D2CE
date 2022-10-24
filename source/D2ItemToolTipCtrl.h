@@ -29,7 +29,6 @@ public:
     virtual ~CD2ItemToolTipCtrlCallback() = default;
     virtual const d2ce::Item* InvHitTest(UINT id, CPoint point, TOOLINFO* pTI = nullptr) const = 0;
     virtual const d2ce::Item* GetInvItem(UINT id, UINT offset) const = 0;
-    
 };
 
 //---------------------------------------------------------------------------
@@ -64,5 +63,46 @@ protected:
     bool IsMerc = false;
     const d2ce::Item* CurrItem = nullptr;
     const CD2ItemToolTipCtrlCallback* Callback = nullptr;
+};
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+class CD2ItemTooltipCallback
+{
+public:
+    virtual ~CD2ItemTooltipCallback() = default;
+    virtual const d2ce::Character* GetCharacterInfo() const = 0;
+    virtual const d2ce::Item* GetSelectedItem() const = 0;
+};
+
+//---------------------------------------------------------------------------
+class CD2ItemInfoStatic : public CStatic
+{
+    friend class CD2NewItemForm;
+    friend class CD2MagicalAffixesForm;
+    DECLARE_DYNAMIC(CD2ItemInfoStatic)
+
+    // Construction
+public:
+    CD2ItemInfoStatic();
+
+public:
+    virtual ~CD2ItemInfoStatic();
+
+    // Generated message map functions
+protected:
+    //{{AFX_MSG(CD2ItemInfoStatic)
+    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+    //}}AFX_MSG
+
+    DECLARE_MESSAGE_MAP()
+
+protected:
+    virtual void PreSubclassWindow();
+    virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
+    const d2ce::Character* GetCharacterInfo() const;
+    const d2ce::Item* GetSelectedItem() const;
+    CD2ItemTooltipCallback* GetCallback() const;
 };
 //---------------------------------------------------------------------------

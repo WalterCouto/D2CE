@@ -22,8 +22,8 @@
 #include "D2NewItemForm.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include "d2ce/item.h"
-#include "D2ItemToolTipCtrl.h"
 #include "D2MagicalAffixesForm.h"
+#include "D2RareAffixesForm.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
 
@@ -178,99 +178,6 @@ namespace
 }
 
 //---------------------------------------------------------------------------
-// CD2ItemInfoStatic
-
-IMPLEMENT_DYNAMIC(CD2ItemInfoStatic, CStatic)
-
-CD2ItemInfoStatic::CD2ItemInfoStatic()
-{
-}
-//---------------------------------------------------------------------------
-CD2ItemInfoStatic::~CD2ItemInfoStatic()
-{
-}
-
-//---------------------------------------------------------------------------
-BEGIN_MESSAGE_MAP(CD2ItemInfoStatic, CStatic)
-    //{{AFX_MSG_MAP(CD2ItemInfoStatic)
-    ON_WM_ERASEBKGND()
-    //}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-//---------------------------------------------------------------------------
-void CD2ItemInfoStatic::PreSubclassWindow()
-{
-    __super::PreSubclassWindow();
-    ModifyStyle(0, SS_OWNERDRAW);
-}
-//---------------------------------------------------------------------------
-void CD2ItemInfoStatic::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
-{
-}
-//---------------------------------------------------------------------------
-BOOL CD2ItemInfoStatic::OnEraseBkgnd(CDC* pDC)
-{
-    CRect rect;
-    GetClientRect(&rect);
-
-    auto currItem = GetSelectedItem();
-    if (currItem == nullptr)
-    {
-        CBrush backBrush(::GetSysColor(COLOR_3DFACE)); // (this is meant for dialogs)
-        CBrush* pOldBrush = pDC->SelectObject(&backBrush);
-
-        pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
-        pDC->SelectObject(pOldBrush);
-        return TRUE;
-    }
-
-    CBrush backBrush(RGB(0, 0, 0));
-    CBrush* pOldBrush = pDC->SelectObject(&backBrush);
-
-    pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
-    pDC->SelectObject(pOldBrush);
-
-    pDC->SetBkColor(RGB(0, 0, 0));
-    pDC->SetBkMode(TRANSPARENT);
-    CD2ItemToolTipCtrl::DoDrawItemInfo(pDC, rect, false, currItem, GetCharacterInfo(), false);
-    return TRUE;
-}
-//---------------------------------------------------------------------------
-const d2ce::Character* CD2ItemInfoStatic::GetCharacterInfo() const
-{
-    auto pCallback = GetCallback();
-    if (pCallback == nullptr)
-    {
-        return nullptr;
-    }
-
-    return pCallback->GetCharacterInfo();
-}
-//---------------------------------------------------------------------------
-const d2ce::Item* CD2ItemInfoStatic::GetSelectedItem() const
-{
-    auto pCallback = GetCallback();
-    if (pCallback == nullptr)
-    {
-        return nullptr;
-    }
-
-    return pCallback->GetSelectedItem();
-}
-//---------------------------------------------------------------------------
-CD2ItemTooltipCallback* CD2ItemInfoStatic::GetCallback() const
-{
-    auto pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2NewItemForm, GetParent()));
-    if (pCallback == nullptr)
-    {
-        pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalAffixesForm, GetParent()));
-    }
-
-    return pCallback;
-}
-//---------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------
 // CD2NewItemForm dialog
 
 IMPLEMENT_DYNAMIC(CD2NewItemForm, CDialogEx)
@@ -379,6 +286,7 @@ void CD2NewItemForm::OnBnClickedOk()
     CreatedItem = GetSelectedItem();
 
     CD2MagicalAffixesForm magicAffixes(*this);
+    CD2RareAffixesForm rareAffixes(*this);
     if (Quality.IsWindowEnabled())
     {
         auto idx = Quality.GetCurSel();
@@ -393,6 +301,15 @@ void CD2NewItemForm::OnBnClickedOk()
 
             case d2ce::EnumItemQuality::MAGIC:
                 if (magicAffixes.DoModal() != IDOK)
+                {
+                    return;
+                }
+                break;
+
+            case d2ce::EnumItemQuality::RARE:
+            case d2ce::EnumItemQuality::CRAFT:
+            case d2ce::EnumItemQuality::TEMPERED:
+                if (rareAffixes.DoModal() != IDOK)
                 {
                     return;
                 }

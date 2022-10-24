@@ -299,6 +299,7 @@ namespace d2ce
         std::vector<d2ce::RunewordType> getPossibleRunewords(std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
         bool setRuneword(std::uint16_t id);
         bool getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
+        bool getPossibleMagicalAffixes(std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes) const;
         bool getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
         bool setMagicalAffixes(const d2ce::MagicalAffixes& affixes);
         bool getPossibleSuperiorAttributes(std::vector<MagicalAttribute>& attribs) const;

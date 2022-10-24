@@ -50,7 +50,7 @@ IMPLEMENT_DYNAMIC(CD2MagicalAffixesForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2MagicalAffixesForm::CD2MagicalAffixesForm(CD2NewItemForm& form)
-	: CDialogEx(IDD_MAGICAL_AFFIXES_DIALOG, &form), NewItemForm(form)
+	: CDialogEx(CD2MagicalAffixesForm::IDD, &form), NewItemForm(form)
 {
     auto pItem = form.GetCreatedItem();
     if (pItem != nullptr)
@@ -171,48 +171,10 @@ void CD2MagicalAffixesForm::OnBnClickedGambleButton()
 {
     // Generate the starting affixes
     CurrentDWBCode = d2ce::ItemHelpers::generarateRandomDW();
-    d2ce::MagicalCachev100 generated_magic_affixes;
-    if (d2ce::ItemHelpers::generateMagicalAffixes(generated_magic_affixes, CreateParams, CurrentItem.getLevel(), CurrentDWBCode, true))
     {
-        CurrentAffixes = generated_magic_affixes.Affixes;
+        CWaitCursor wait;
+        SyncAffixes();
     }
-
-    bool bFound = false;
-    auto idx_end = Prefix.GetCount();
-    for (int idx = 0; idx < idx_end; ++idx)
-    {
-        if (std::uint16_t(Prefix.GetItemData(idx)) == CurrentAffixes.PrefixId)
-        {
-            bFound = true;
-            Prefix.SetCurSel(idx);
-            break;
-        }
-    }
-
-    if (!bFound)
-    {
-        CurrentAffixes.PrefixId = std::uint16_t(Prefix.GetItemData(Prefix.GetCurSel()));
-        CurrentAffixes.PrefixName = d2ce::ItemHelpers::getMagicalPrefixFromId(CurrentAffixes.PrefixId);
-    }
-
-    bFound = false;
-    idx_end = Suffix.GetCount();
-    for (int idx = 0; idx < idx_end; ++idx)
-    {
-        if (std::uint16_t(Suffix.GetItemData(idx)) == CurrentAffixes.SuffixId)
-        {
-            bFound = true;
-            Suffix.SetCurSel(idx);
-            break;
-        }
-    }
-
-    if (!bFound)
-    {
-        CurrentAffixes.SuffixId = std::uint16_t(Suffix.GetItemData(Suffix.GetCurSel()));
-        CurrentAffixes.SuffixName = d2ce::ItemHelpers::getMagicalSuffixFromId(CurrentAffixes.SuffixId);
-    }
-
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
@@ -236,9 +198,18 @@ void CD2MagicalAffixesForm::InitAffixes()
 {
     // Generate the starting affixes
     d2ce::MagicalCachev100 generated_magic_affixes;
-    if (d2ce::ItemHelpers::generateMagicalAffixes(generated_magic_affixes, CreateParams, CurrentItem.getLevel(), CurrentDWBCode, true))
+    switch (CurrentItem.getQuality())
     {
-        CurrentAffixes = generated_magic_affixes.Affixes;
+    case d2ce::EnumItemQuality::MAGIC:
+        CurrentItem.getMagicalAffixes(CurrentAffixes);
+        break;
+
+    default:
+        if (d2ce::ItemHelpers::generateMagicalAffixes(generated_magic_affixes, CreateParams, CurrentItem.getLevel(), CurrentDWBCode, true))
+        {
+            CurrentAffixes = generated_magic_affixes.Affixes;
+        }
+        break;
     }
 
     // Check if the prefix and/or suffix is allowed
@@ -306,6 +277,51 @@ void CD2MagicalAffixesForm::InitAffixes()
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
+void CD2MagicalAffixesForm::SyncAffixes()
+{
+    d2ce::MagicalCachev100 generated_magic_affixes;
+    if (d2ce::ItemHelpers::generateMagicalAffixes(generated_magic_affixes, CreateParams, CurrentItem.getLevel(), CurrentDWBCode, true))
+    {
+        CurrentAffixes = generated_magic_affixes.Affixes;
+    }
+
+    bool bFound = false;
+    auto idx_end = Prefix.GetCount();
+    for (int idx = 0; idx < idx_end; ++idx)
+    {
+        if (std::uint16_t(Prefix.GetItemData(idx)) == CurrentAffixes.PrefixId)
+        {
+            bFound = true;
+            Prefix.SetCurSel(idx);
+            break;
+        }
+    }
+
+    if (!bFound)
+    {
+        CurrentAffixes.PrefixId = std::uint16_t(Prefix.GetItemData(Prefix.GetCurSel()));
+        CurrentAffixes.PrefixName = d2ce::ItemHelpers::getMagicalPrefixFromId(CurrentAffixes.PrefixId);
+    }
+
+    bFound = false;
+    idx_end = Suffix.GetCount();
+    for (int idx = 0; idx < idx_end; ++idx)
+    {
+        if (std::uint16_t(Suffix.GetItemData(idx)) == CurrentAffixes.SuffixId)
+        {
+            bFound = true;
+            Suffix.SetCurSel(idx);
+            break;
+        }
+    }
+
+    if (!bFound)
+    {
+        CurrentAffixes.SuffixId = std::uint16_t(Suffix.GetItemData(Suffix.GetCurSel()));
+        CurrentAffixes.SuffixName = d2ce::ItemHelpers::getMagicalSuffixFromId(CurrentAffixes.SuffixId);
+    }
+}
+//---------------------------------------------------------------------------
 void CD2MagicalAffixesForm::UpdateCurrentAttribs()
 {
     // Rest attributes for item
@@ -316,30 +332,47 @@ void CD2MagicalAffixesForm::UpdateCurrentAttribs()
         CurrentItem.setDWBCode(CurrentDWBCode);
     }
 
-    CurrentAttribs.clear();
-
-    auto charInfo = NewItemForm.GetCharacterInfo();
-    std::uint32_t charLevel = charInfo == nullptr ? 1 : charInfo->getLevel();
-    if (d2ce::ItemHelpers::getMagicAttribs(CurrentAffixes, CurrentAttribs, CreateParams, CurrentItem.getGameVersion()))
-    {
-        d2ce::ItemHelpers::formatMagicalAttributes(CurrentAttribs, charLevel);
-    }
-
     auto pWnd = GetDlgItem(IDOK);
-    if (CurrentAttribs.empty())
+    if (CurrentAffixes.PrefixId == 0 && CurrentAffixes.SuffixId == 0)
     {
         if (pWnd != nullptr)
         {
             pWnd->EnableWindow(FALSE);
         }
+
+        ItemTooltipBox.RedrawWindow();
+        return;
     }
-    else
+
     {
-        CurrentItem.setMagicalAffixes(CurrentAffixes);
-        if (pWnd != nullptr)
+        CWaitCursor wait;
+        auto result = CurrentItem.setMagicalAffixes(CurrentAffixes);
+        if (CurrentItem.getVersion() < d2ce::EnumItemVersion::v107) // pre-1.07 character file
         {
-            pWnd->EnableWindow(TRUE);
+            // the DWBCode was changed for the item
+            CurrentDWBCode = CurrentItem.getDWBCode();
+            if (!result)
+            {
+                // should not happen, but if it does, we need to make sure we are showing the right affixes
+                SyncAffixes();
+
+                if (CurrentAffixes.PrefixId == 0 && CurrentAffixes.SuffixId == 0)
+                {
+                    if (pWnd != nullptr)
+                    {
+                        pWnd->EnableWindow(FALSE);
+                    }
+
+                    ItemTooltipBox.RedrawWindow();
+                    return;
+                }
+            }
         }
+    }
+
+    if (pWnd != nullptr)
+    {
+        pWnd->EnableWindow(TRUE);
     }
 
     ItemTooltipBox.RedrawWindow();
