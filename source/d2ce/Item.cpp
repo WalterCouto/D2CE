@@ -1050,7 +1050,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         return;
     }
 
-    if (itemType.isPlayerBodyPart() || itemType.isCharm() || itemType.isJewel())
+    if (itemType.isPlayerBodyPart() || itemType.isJewel())
     {
         // ears, jewels or charms can't be created with this method
         if (!itemType.isUniqueItem())
@@ -1169,7 +1169,32 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     }
     else if (itemType.isRing() || itemType.isAmulet())
     {
+        switch (createParams.createQualityOption)
+        {
+        case  EnumItemQuality::MAGIC:
+        case  EnumItemQuality::RARE:
+            quality = createParams.createQualityOption;
+            break;
+
+        default:
+            quality = (ItemHelpers::generarateRandomDW() % 2 == 0) ? EnumItemQuality::MAGIC : EnumItemQuality::RARE;
+            break;
+
+        }
+    }
+    else if (itemType.isCharm())
+    {
         quality = EnumItemQuality::MAGIC;
+    }
+    else
+    {
+        switch (createParams.createQualityOption)
+        {
+        case  EnumItemQuality::MAGIC:
+        case  EnumItemQuality::RARE:
+            quality = createParams.createQualityOption;
+            break;
+        }
     }
 
     size_t bitSize = 0;
@@ -1927,13 +1952,27 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     }
 
     MagicalCachev100 generated_magic_affixes;
+    RareOrCraftedCachev100 generated_rare_affixes;
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
-        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
         {
             *this = invalidItem;
             return;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+        if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
+        {
+            *this = invalidItem;
+            return;
+        }
+
+        for (const auto& affix : generated_rare_affixes.affixes)
+        {
+            generated_magic_affixes.MagicalAttributes.insert(generated_magic_affixes.MagicalAttributes.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
         }
         break;
 
@@ -1984,6 +2023,79 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             return;
         }
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::TEMPERED:
+        GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
+        value = generated_rare_affixes.Id;
+        bitSize = RARE_CRAFTED_ID_NUM_BITS;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+        value = generated_rare_affixes.Id2;
+        if (!setBits(current_bit_offset, bitSize, value))
+        {
+            *this = invalidItem;
+            return;
+        }
+
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        for (auto& affix : generated_rare_affixes.affixes)
+        {
+            value = affix.Affixes.PrefixId;
+            if (!setBits(current_bit_offset, 1, (value != 0) ? 1 : 0))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+            if (value != 0)
+            {
+                if (!setBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+
+            value = affix.Affixes.SuffixId;
+            if (!setBits(current_bit_offset, 1, (value == 0) ? 0 : 1))
+            {
+                *this = invalidItem;
+                return;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+
+            if (value != 0)
+            {
+                if (!setBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+            }
+        }
+
+        // Fill in any missing affix missing flags
+        value = 0;
+        bitSize = size_t((3ui64 - generated_rare_affixes.affixes.size()) * 2ui64);
+        if (bitSize > 0)
+        {
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+        }
         break;
 
     case EnumItemQuality::SET:
@@ -6632,6 +6744,30 @@ bool d2ce::Item::isCrossbow() const
     return result.isCrossbow();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isRing() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isRing();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isAmulet() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isAmulet();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isIndestructible() const
 {
     d2ce::ItemDurability durability;
@@ -8598,8 +8734,13 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         case EnumItemQuality::NORMAL:
             break;
 
+        case EnumItemQuality::RARE:      // converting to MAGIC
+        case EnumItemQuality::TEMPERED:
+        case EnumItemQuality::CRAFT:
+            break;
+
         case EnumItemQuality::MAGIC:
-            return true;
+            break;
 
         default:
             // magical affixes do not work with these
@@ -8671,6 +8812,11 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         }
         break;
 
+    case EnumItemQuality::RARE:     // converting to MAGIC
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        break;
+
     case EnumItemQuality::MAGIC:
         if (!getMagicalAffixes(curAffixes))
         {
@@ -8738,6 +8884,15 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     size_t diff = 0;
     d2ce::Item origItem(*this);
     const auto& origData = origItem.data;
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::RARE:     // converting to MAGIC
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        makeNormal();
+        break;
+    }
 
     auto numSockets = getSocketCount();
     auto origNumSockets = numSockets;
@@ -9277,7 +9432,137 @@ bool d2ce::Item::makeNormal()
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::makeMagical()
+{
+    switch (getQuality())
+    {
+    case EnumItemQuality::NORMAL:
+        break;
+
+    case EnumItemQuality::INFERIOR:
+    case EnumItemQuality::SUPERIOR:
+        if (!makeNormal())
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        if (!isRing() && !isAmulet())
+        {
+            if (!removeRareOrCraftedAttributes())
+            {
+                return false;
+            }
+        }
+        break;
+
+    case EnumItemQuality::MAGIC:
+        return true;
+
+    default:
+        // not able to make it normal
+        return false;
+    }
+
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    if (isRing() || isAmulet())
+    {
+        createParams.createQualityOption = EnumItemQuality::MAGIC;
+        d2ce::Item newItem(createParams);
+        if (newItem.data.empty())
+        {
+            return false;
+        }
+
+        swap(newItem);
+        return true;
+    }
+
+    MagicalCachev100 generated_magic_affixes;
+    if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
+    {
+        return false;
+    }
+
+    return setMagicalAffixes(generated_magic_affixes.Affixes);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::makeRare()
+{
+    switch (getQuality())
+    {
+    case EnumItemQuality::NORMAL:
+        break;
+
+    case EnumItemQuality::INFERIOR:
+    case EnumItemQuality::SUPERIOR:
+        if (!makeNormal())
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        return true;
+
+    case EnumItemQuality::MAGIC:
+        if (!isRing() && !isAmulet())
+        {
+            if (!removeMagicalAffixes())
+            {
+                return false;
+            }
+        }
+        break;
+
+    default:
+        // not able to make it normal
+        return false;
+    }
+
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    if (isRing() || isAmulet())
+    {
+        createParams.createQualityOption = EnumItemQuality::RARE;
+        d2ce::Item newItem(createParams);
+        if (newItem.data.empty())
+        {
+            return false;
+        }
+
+        swap(newItem);
+        return true;
+    }
+
+    RareOrCraftedCachev100 generated_rare_affixes;
+    if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
+    {
+        return false;
+    }
+
+    RareAttributes affixes;
+    affixes.Id = generated_rare_affixes.Id;
+    affixes.Name = generated_rare_affixes.Name;
+    affixes.Index = generated_rare_affixes.Index;
+    affixes.Id2 = generated_rare_affixes.Id2;
+    affixes.Name2 = generated_rare_affixes.Name2;
+    affixes.Index2 = generated_rare_affixes.Index2;
+    for (auto& item : generated_rare_affixes.affixes)
+    {
+        affixes.Affixes.push_back(item.Affixes);
+    }
+
+    return setRareOrCraftedAttributes(affixes);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::makeEthereal()
@@ -9341,6 +9626,12 @@ bool d2ce::Item::removeMagicalAffixes()
         return true; // doest't have magical affixes
     }
 
+    if (isRing() || isAmulet())
+    {
+        // can't remove magical attributes
+        return false;
+    }
+
     switch (getQuality())
     {
     case EnumItemQuality::MAGIC:
@@ -9402,6 +9693,8 @@ bool d2ce::Item::removeMagicalAffixes()
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -9420,10 +9713,13 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         case EnumItemQuality::NORMAL:
             break;
 
+        case EnumItemQuality::MAGIC: // converting to RARE
+            break;
+
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFT:
         case EnumItemQuality::TEMPERED:
-            return true;
+            break;
 
         default:
             // magical affixes do not work with these
@@ -9493,6 +9789,9 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
             // magical affixes do not work with these
             return false;
         }
+        break;
+
+    case EnumItemQuality::MAGIC:  // converted to RARE
         break;
 
     case EnumItemQuality::RARE:
@@ -9644,6 +9943,13 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     d2ce::Item origItem(*this);
     const auto& origData = origItem.data;
 
+    switch (getQuality())
+    {
+    case EnumItemQuality::MAGIC: // converting to RARE
+        makeNormal();
+        break;
+    }
+
     // complex change: make item have magical quality
     if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
     {
@@ -9687,42 +9993,33 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     for (auto& affix : affixes.Affixes)
     {
         value = affix.PrefixId;
+        if (!updateBits(current_bit_offset, 1, (value == 0) ? 0 : 1))
+        {
+            swap(origItem);
+            return false;
+        }
+        current_bit_offset += 1;
+
         if (value != 0)
         {
-            if (!updateBits(current_bit_offset, 1, 1))
-            {
-                swap(origItem);
-                return false;
-            }
-            current_bit_offset += 1;
-
             if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
             {
                 swap(origItem);
                 return false;
             }
             current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
-        }
-        else
-        {
-            if (!updateBits(current_bit_offset, 1, 0))
-            {
-                swap(origItem);
-                return false;
-            }
-            current_bit_offset += 1;
         }
 
         value = affix.SuffixId;
+        if (!updateBits(current_bit_offset, 1, (value == 0) ? 0 : 1))
+        {
+            swap(origItem);
+            return false;
+        }
+        current_bit_offset += 1;
+
         if (value != 0)
         {
-            if (!updateBits(current_bit_offset, 1, 1))
-            {
-                swap(origItem);
-                return false;
-            }
-            current_bit_offset += 1;
-
             if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
             {
                 swap(origItem);
@@ -9730,21 +10027,25 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
             }
             current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
         }
-        else
+    }
+
+    // Fill in any missing affix missing flags
+    value = 0;
+    size_t valueBitSize = size_t((3ui64 - affixes.Affixes.size()) * 2ui64);
+    if (valueBitSize > 0)
+    {
+        if (!updateBits(current_bit_offset, valueBitSize, value))
         {
-            if (!updateBits(current_bit_offset, 1, 0))
-            {
-                swap(origItem);
-                return false;
-            }
-            current_bit_offset += 1;
+            swap(origItem);
+            return false;
         }
+        current_bit_offset += valueBitSize;
     }
 
     GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
 
     // now copy the remaining bits
-    size_t valueBitSize = sizeof(value) * 8;
+    valueBitSize = sizeof(value) * 8;
     std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     while (bitsToCopy > 0)
     {
@@ -9771,6 +10072,8 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     data.resize(newSize, 0);
 
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -9779,6 +10082,12 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
     if (isSimpleItem() || isSocketFiller())
     {
         return true; // doest't have magical affixes
+    }
+
+    if (isRing() || isAmulet())
+    {
+        // can't remove magical attributes
+        return false;
     }
 
     switch (getQuality())
@@ -9844,6 +10153,8 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -11448,6 +11759,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
     data.clear();
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
 
     GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = 0;
     magic_affixes_v100.clear();
@@ -14006,6 +14319,8 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     data.clear();
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
 
     GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = 0;
     magic_affixes_v100.clear();
@@ -18440,7 +18755,8 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     d2ce::UniqueAttributes uniqueAttrib;
     d2ce::SetAttributes setAttrib;
-    MagicalAffixes affixes;
+    d2ce::MagicalCachev100 magicalAffixes;
+    d2ce::RareOrCraftedCachev100 rareAffixes;
     switch (getQuality())
     {
     case EnumItemQuality::SET:
@@ -18458,9 +18774,22 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
         break;
 
     case EnumItemQuality::MAGIC:
-        if (getMagicalAffixesv100(affixes) && (magic_affixes_v100.Affixes.PrefixId != MAXUINT16))
+        if (ItemHelpers::generateMagicalAffixes(magicalAffixes, createParams, getLevel(), getDWBCode(), true))
         {
-            attribs = magic_affixes_v100.MagicalAttributes;
+            attribs = magicalAffixes.MagicalAttributes;
+            return true;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::TEMPERED:
+        if (ItemHelpers::generateRareOrCraftedAffixes(rareAffixes, createParams, getLevel(), getDWBCode(), true) && !rareAffixes.affixes.empty())
+        {
+            for (const auto& affix : rareAffixes.affixes)
+            {
+                attribs.insert(attribs.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
+            }
             return true;
         }
         break;

@@ -68,10 +68,12 @@ public:
 
 private:
     void InitAffixes();
+    void SyncNameAffixes();
     void SyncAffixes();
     void UpdatePrefixChoices();
     void UpdateSuffixChoices();
     void UpdateAffixChoices();
+    void UpdateCurrentAffixesValues();
     void UpdateCurrentAttribs();
     void HandleCbnSelchangePrefixCombo(CComboBox& combo, AffixChoice& affix);
     void HandleCbnSelchangeSuffixCombo(CComboBox& combo, AffixChoice& affix);

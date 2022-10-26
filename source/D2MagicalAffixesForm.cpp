@@ -60,7 +60,8 @@ CD2MagicalAffixesForm::CD2MagicalAffixesForm(CD2NewItemForm& form)
         d2ce::EnumCharClass clazz = charInfo == nullptr ? d2ce::EnumCharClass::Amazon : charInfo->getClass();
         CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionItem());
         CurrentItem = *pItem;
-        CurrentDWBCode = pItem->getDWBCode();
+        CurrentItem.makeMagical();
+        CurrentDWBCode = CurrentItem.getDWBCode();
     }
 }
 //---------------------------------------------------------------------------
@@ -238,7 +239,7 @@ void CD2MagicalAffixesForm::InitAffixes()
         idx = Prefix.AddString(strText);
         if (idx >= 0)
         {
-            if (generated_magic_affixes.Affixes.PrefixId == prefix)
+            if (CurrentAffixes.PrefixId == prefix)
             {
                 prefixIdx = idx;
             }
@@ -264,7 +265,7 @@ void CD2MagicalAffixesForm::InitAffixes()
         idx = Suffix.AddString(strText);
         if (idx >= 0)
         {
-            if (generated_magic_affixes.Affixes.SuffixId == suffix)
+            if (CurrentAffixes.SuffixId == suffix)
             {
                 suffixIdx = idx;
             }
@@ -329,6 +330,7 @@ void CD2MagicalAffixesForm::UpdateCurrentAttribs()
     if (pItem != nullptr)
     {
         CurrentItem = *pItem;
+        CurrentItem.makeMagical();
         CurrentItem.setDWBCode(CurrentDWBCode);
     }
 

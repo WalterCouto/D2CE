@@ -6479,11 +6479,6 @@ namespace d2ce
 
         if (itemType.isRing())
         {
-            if (!itemType.isUniqueItem())
-            {
-                return false;
-            }
-
             pRootItem = &s_AvailableItemsType["ring"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "ring";
@@ -6498,11 +6493,6 @@ namespace d2ce
 
         if (itemType.isAmulet())
         {
-            if (!itemType.isUniqueItem())
-            {
-                return false;
-            }
-
             pRootItem = &s_AvailableItemsType["amul"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "amul";
@@ -6517,11 +6507,6 @@ namespace d2ce
 
         if (itemType.isCharm())
         {
-            if (!itemType.isUniqueItem())
-            {
-                return false;
-            }
-
             pRootItem = &s_AvailableItemsType["char"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "char";
@@ -9995,6 +9980,11 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::v
     case d2ce::EnumItemQuality::MAGIC:
         break;
 
+    case EnumItemQuality::RARE:      // Rare items use magical affixes
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
+        break;
+
     default:
         // magical affixes do not work with these
         return false;
@@ -10047,6 +10037,11 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::m
         break;
 
     case d2ce::EnumItemQuality::MAGIC:
+        break;
+
+    case EnumItemQuality::RARE:      // Rare items use magical affixes
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFT:
         break;
 
     default:
@@ -10562,11 +10557,11 @@ bool d2ce::ItemHelpers::findDWForMagicalAffixes(const MagicalAffixes& affixes, c
         bExceptional = itemType.isExceptionalItem();
     }
 
+    ItemRandStruct rndDwb = { dwb, 666 };
+    InitalizeItemRandomization(dwb, level, rndDwb, bExceptional);
+
     bool bPreferPrefix = affixes.PrefixId == 0 ? false : true;
     std::uint32_t possibleDwb = 0;
-    std::uint32_t prevStart = dwb;
-    std::uint32_t prevDwb = prevStart;
-    std::uint32_t stepSize = 100000ui32;
     for (std::uint32_t z = 0; z < 100000ui32; ++z)
     {
         MagicalCachev100 cache;
@@ -10627,14 +10622,10 @@ bool d2ce::ItemHelpers::findDWForMagicalAffixes(const MagicalAffixes& affixes, c
             possibleDwb = dwb;
         }
 
-        prevDwb = dwb;
-        dwb = std::uint32_t((std::uint64_t(prevDwb) + stepSize) % MAXUINT32);
-        if (prevDwb < prevStart && dwb > prevStart)
+        dwb = GenerateRandom(rndDwb);
+        if (dwb == 0)
         {
-            // we have cycled, move over 1
-            ++prevStart;
-            dwb = prevStart;
-            prevDwb = dwb;
+            dwb = GenerateRandom(rndDwb);
         }
     }
 
@@ -10771,11 +10762,12 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
         return false;
     }
 
+    ItemRandStruct rndDwb = { dwb, 666 };
+    InitalizeItemRandomization(dwb, level, rndDwb, itemType.isExceptionalItem());
+
+    bool bFirst = true;
     std::uint32_t possibleDwb = 0;
-    std::uint32_t prevStart = dwb;
-    std::uint32_t prevDwb = prevStart;
     size_t prevAffixMatchCount = 0;
-    std::uint32_t stepSize = 100000ui32;
     for (std::uint32_t z = 0; z < 100000ui32; ++z)
     {
         RareOrCraftedCachev100 cache;
@@ -10898,7 +10890,6 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
                 ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams);
             }
         }
-
         
         cacheMaxAffixMatchCount = 0;
         for (const auto& affix : cache.affixes)
@@ -10940,16 +10931,19 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
             {
                 return true;
             }
+            else if (bFirst)
+            {
+                // The original DWB was not a perfect match so do not mark it as a possible value
+                bFirst = false;
+                prevAffixMatchCount = 0;
+                possibleDwb = 0;
+            }
         }
 
-        prevDwb = dwb;
-        dwb = std::uint32_t((std::uint64_t(prevDwb) + stepSize) % MAXUINT32);
-        if (prevDwb < prevStart && dwb > prevStart)
+        dwb = GenerateRandom(rndDwb);
+        if (dwb == 0)
         {
-            // we have cycled, move over 1
-            ++prevStart;
-            dwb = prevStart;
-            prevDwb = dwb;
+            dwb = GenerateRandom(rndDwb);
         }
     }
 
@@ -12258,7 +12252,7 @@ bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char
     }
 }
 //---------------------------------------------------------------------------
-std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::getPossibleItems(EnumItemVersion version, std::uint16_t gameVersion, d2ce::EnumCharClass charClass, const d2ce::CharStats& cs)
+std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::getPossibleItems(EnumItemVersion /*version*/, std::uint16_t gameVersion, d2ce::EnumCharClass charClass, const d2ce::CharStats& cs)
 {
     std::vector<std::reference_wrapper<const d2ce::ItemType>> result;
     for (const auto& item : s_ItemWeaponType)
@@ -12348,20 +12342,6 @@ std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::get
         {
             // this means it's an ear, which is not supported with this method
             continue;
-        }
-
-        if (item.second.isAmulet() || item.second.isRing())
-        {
-            switch (version)
-            {
-            case EnumItemVersion::v100:
-            case EnumItemVersion::v104:
-                break;
-
-            default:
-                // rings or amulets are not supported with this method
-                continue;
-            }
         }
 
         // make sure the requirements are met

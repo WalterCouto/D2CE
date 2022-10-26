@@ -1423,6 +1423,7 @@ namespace d2ce
         d2ce::EnumDifficulty difficulty = d2ce::EnumDifficulty::Normal;
         std::optional<d2ce::EnumCharClass> charClass;
         bool isExpansion = true;
+        EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create random magical or random rare
 
         ItemCreateParams();
         explicit ItemCreateParams(EnumItemVersion version);

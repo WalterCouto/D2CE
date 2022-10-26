@@ -98,8 +98,25 @@ namespace
                             }
                         }
 
-                        std::u16string uText = utf8::utf8to16(bufferItem.getItemTypeName());
+                        std::u16string uText;
+                        if (bufferItem.isRing() || bufferItem.isAmulet() || bufferItem.isCharm())
+                        {
+                            uText = utf8::utf8to16(bufferItem.getDisplayedItemName());
+                        }
+                        else
+                        {
+                            uText = utf8::utf8to16(bufferItem.getItemTypeName());
+                        }
+
                         CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+
+                        // Check for Multi-line text
+                        auto idx = strText.Find(_T('\n'));
+                        if (idx >= 0) 
+                        {
+                            strText = strText.Left(idx);
+                        }
+
                         HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
                         if (hItem == NULL)
                         {
@@ -317,6 +334,13 @@ void CD2NewItemForm::OnBnClickedOk()
             }
         }
     }
+    else if (CreatedItem->isCharm())
+    {
+        if (magicAffixes.DoModal() != IDOK)
+        {
+            return;
+        }
+    }
 
     if (!MainForm.getCharacterInfo().importItem(CreatedItem, false) || CreatedItem == nullptr)
     {
@@ -415,6 +439,52 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                 QualityStatic.ShowWindow(FALSE);
                 Quality.EnableWindow(FALSE);
                 Quality.ShowWindow(FALSE);
+            }
+        }
+        else if (item->isRing() || item->isAmulet())
+        {
+            Ethereal.EnableWindow(FALSE);
+            Ethereal.ShowWindow(FALSE);
+            switch (item->getQuality())
+            {
+            case d2ce::EnumItemQuality::MAGIC:
+            case d2ce::EnumItemQuality::RARE:
+            case d2ce::EnumItemQuality::CRAFT:
+            case d2ce::EnumItemQuality::TEMPERED:
+                Quality.ResetContent();
+                {
+                    // Check if the prefix and/or suffix is allowed
+                    int idx = -1;
+                    std::vector<std::uint16_t> prefixes;
+                    std::vector<std::uint16_t> suffixes;
+                    if (item->getPossibleMagicalAffixes(prefixes, suffixes))
+                    {
+                        idx = Quality.AddString(_T("Magical"));
+                        if (idx >= 0)
+                        {
+                            Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::MAGIC));
+                            Quality.SetCurSel(idx);
+                        }
+                    }
+
+                    idx = Quality.AddString(_T("Rare"));
+                    if (idx >= 0)
+                    {
+                        Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::RARE));
+                    }
+                }
+                QualityStatic.EnableWindow(TRUE);
+                QualityStatic.ShowWindow(TRUE);
+                Quality.EnableWindow(TRUE);
+                Quality.ShowWindow(TRUE);
+                break;
+
+            default:
+                QualityStatic.EnableWindow(FALSE);
+                QualityStatic.ShowWindow(FALSE);
+                Quality.EnableWindow(FALSE);
+                Quality.ShowWindow(FALSE);
+                break;
             }
         }
         else

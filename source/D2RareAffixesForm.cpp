@@ -63,7 +63,8 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
         d2ce::EnumCharClass clazz = charInfo == nullptr ? d2ce::EnumCharClass::Amazon : charInfo->getClass();
         CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionItem());
         CurrentItem = *pItem;
-        CurrentDWBCode = pItem->getDWBCode();
+        CurrentItem.makeRare();
+        CurrentDWBCode = CurrentItem.getDWBCode();
 
     }
 }
@@ -262,27 +263,7 @@ void CD2RareAffixesForm::HandleCbnSelchangePrefixCombo(CComboBox& combo, AffixCh
         UpdatePrefixChoices();
     }
 
-    CurrentAffixes.Affixes.clear();
-    for (auto& currentAffix : CurrentAffixChoices)
-    {
-        if (currentAffix.prefix != 0 || currentAffix.suffix != 0)
-        {
-            d2ce::MagicalAffixes affixes;
-            if (currentAffix.prefix != 0)
-            {
-                affixes.PrefixId = currentAffix.prefix;
-                affixes.PrefixName = d2ce::ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
-            }
-
-            if (currentAffix.suffix != 0)
-            {
-                affixes.SuffixId = currentAffix.suffix;
-                affixes.SuffixName = d2ce::ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
-            }
-
-            CurrentAffixes.Affixes.push_back(affixes);
-        }
-    }
+    UpdateCurrentAffixesValues();
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
@@ -297,27 +278,7 @@ void CD2RareAffixesForm::HandleCbnSelchangeSuffixCombo(CComboBox& combo, AffixCh
         UpdateSuffixChoices();
     }
 
-    CurrentAffixes.Affixes.clear();
-    for (auto& currentAffix : CurrentAffixChoices)
-    {
-        if (currentAffix.prefix != 0 || currentAffix.suffix != 0)
-        {
-            d2ce::MagicalAffixes affixes;
-            if (currentAffix.prefix != 0)
-            {
-                affixes.PrefixId = currentAffix.prefix;
-                affixes.PrefixName = d2ce::ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
-            }
-
-            if (currentAffix.suffix != 0)
-            {
-                affixes.SuffixId = currentAffix.suffix;
-                affixes.SuffixName = d2ce::ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
-            }
-
-            CurrentAffixes.Affixes.push_back(affixes);
-        }
-    }
+    UpdateCurrentAffixesValues();
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
@@ -425,6 +386,48 @@ void CD2RareAffixesForm::InitAffixes()
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
+void CD2RareAffixesForm::SyncNameAffixes()
+{
+    CWaitCursor wait;
+    bool bFound = false;
+    auto idx_end = NamePrefix.GetCount();
+    for (int idx = 0; idx < idx_end; ++idx)
+    {
+        if (std::uint16_t(NamePrefix.GetItemData(idx)) == CurrentAffixes.Id)
+        {
+            bFound = true;
+            NamePrefix.SetCurSel(idx);
+            break;
+        }
+    }
+
+    if (!bFound)
+    {
+        CurrentAffixes.Id = std::uint16_t(NamePrefix.GetItemData(NamePrefix.GetCurSel()));
+        CurrentAffixes.Name = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id);
+        CurrentAffixes.Index = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id);
+    }
+
+    bFound = false;
+    idx_end = NameSuffix.GetCount();
+    for (int idx = 0; idx < idx_end; ++idx)
+    {
+        if (std::uint16_t(NameSuffix.GetItemData(idx)) == CurrentAffixes.Id2)
+        {
+            bFound = true;
+            NameSuffix.SetCurSel(idx);
+            break;
+        }
+    }
+
+    if (!bFound)
+    {
+        CurrentAffixes.Id2 = std::uint16_t(NameSuffix.GetItemData(NameSuffix.GetCurSel()));
+        CurrentAffixes.Name2 = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id2);
+        CurrentAffixes.Index2 = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id2);
+    }
+}
+//---------------------------------------------------------------------------
 void CD2RareAffixesForm::SyncAffixes()
 {
     {
@@ -455,47 +458,8 @@ void CD2RareAffixesForm::SyncAffixes()
             currAffix.suffix = affix.SuffixId;
             currAffix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.SuffixId);
         }
-
-
-
-        bool bFound = false;
-        auto idx_end = NamePrefix.GetCount();
-        for (int idx = 0; idx < idx_end; ++idx)
-        {
-            if (std::uint16_t(NamePrefix.GetItemData(idx)) == CurrentAffixes.Id)
-            {
-                bFound = true;
-                NamePrefix.SetCurSel(idx);
-                break;
-            }
-        }
-
-        if (!bFound)
-        {
-            CurrentAffixes.Id = std::uint16_t(NamePrefix.GetItemData(NamePrefix.GetCurSel()));
-            CurrentAffixes.Name = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id);
-            CurrentAffixes.Index = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id);
-        }
-
-        bFound = false;
-        idx_end = NameSuffix.GetCount();
-        for (int idx = 0; idx < idx_end; ++idx)
-        {
-            if (std::uint16_t(NameSuffix.GetItemData(idx)) == CurrentAffixes.Id2)
-            {
-                bFound = true;
-                NameSuffix.SetCurSel(idx);
-                break;
-            }
-        }
-
-        if (!bFound)
-        {
-            CurrentAffixes.Id2 = std::uint16_t(NameSuffix.GetItemData(NameSuffix.GetCurSel()));
-            CurrentAffixes.Name2 = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id2);
-            CurrentAffixes.Index2 = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id2);
-        }
     }
+    SyncNameAffixes();
     UpdateAffixChoices();
 }
 //---------------------------------------------------------------------------
@@ -626,7 +590,11 @@ void CD2RareAffixesForm::UpdateAffixChoices()
 {
     UpdatePrefixChoices();
     UpdateSuffixChoices();
-
+    UpdateCurrentAffixesValues();
+}
+//---------------------------------------------------------------------------
+void CD2RareAffixesForm::UpdateCurrentAffixesValues()
+{
     CurrentAffixes.Affixes.clear();
     for (auto& affix : CurrentAffixChoices)
     {
@@ -657,6 +625,7 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
     if (pItem != nullptr)
     {
         CurrentItem = *pItem;
+        CurrentItem.makeRare();
         CurrentItem.setDWBCode(CurrentDWBCode);
     }
 
@@ -694,6 +663,11 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
                     ItemTooltipBox.RedrawWindow();
                     return;
                 }
+            }
+            else
+            {
+                // Name affixes may have changed
+                SyncNameAffixes();
             }
         }
     }

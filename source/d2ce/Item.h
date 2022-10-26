@@ -244,6 +244,8 @@ namespace d2ce
         bool isPhaseBlade() const;
         bool isBow() const;
         bool isCrossbow() const;
+        bool isRing() const;
+        bool isAmulet() const;
         bool isIndestructible() const;
         bool isUnusedItem() const;
         bool isSecondHand() const;
@@ -306,6 +308,8 @@ namespace d2ce
         bool makeSuperior(const std::vector<MagicalAttribute>& attribs);
         bool makeSuperior();
         bool makeNormal();
+        bool makeMagical(); // randoom magical
+        bool makeRare();    // random rare
         bool makeEthereal();
         bool removeEthereal();
         bool removeMagicalAffixes();
