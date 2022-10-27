@@ -23,6 +23,7 @@
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
 #include "D2ItemToolTipCtrl.h"
+#include "D2TreeCtrl.h"
 #include <list>
 
 //---------------------------------------------------------------------------
@@ -57,7 +58,6 @@ public:
 
 private:
     void InitTree();
-    void DrawItem(HTREEITEM hTreeItem);
 
     const d2ce::Item* GetSelectedItem() const override;
 
@@ -69,11 +69,13 @@ private:
     CD2MainForm& MainForm;
     CD2ItemsForm* ItemsFormPtr = nullptr;
     CD2SharedStashForm* SharedStashFormPtr = nullptr;
-    CTreeCtrl ItemTree;
-    std::list<d2ce::Item> AvailableItems;
+    mutable CD2TreeCtrl ItemTree;
     const d2ce::Item* CreatedItem = nullptr;
     CButton Ethereal;
     CStatic QualityStatic;
     CComboBox Quality;
+
+    std::map<HTREEITEM, d2ce::AvailableItemType> AvailableItemTypes;
+    mutable std::list<d2ce::Item> AvailableItems;
 };
 //---------------------------------------------------------------------------

@@ -36,12 +36,14 @@ namespace d2ce
 {
     namespace ItemHelpers
     {
-        const std::map<std::string, d2ce::AvailableItemType>& getAvailableItems();
+        void getAvailableItems(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion);
     }
 }
 
 namespace
 {
+    D2TreeCtrlPath g_LastSelection;
+
     struct AvailableItemFolder
     {
         CString name;
@@ -53,6 +55,7 @@ namespace
         std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter,
         const std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter_end,
         std::list<d2ce::Item>& bufferItems,
+        std::map<HTREEITEM, d2ce::AvailableItemType>& availableItemTypes,
         bool isSharedStash)
     {
         if (iter == iter_end)
@@ -66,66 +69,74 @@ namespace
 
         for (; iter != iter_end; ++iter)
         {
-            if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Item)
+            const auto& availItemType = iter->second;
+            if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Item)
             {
                 // can't add quest items to shared stash
-                if (iter->second.pItemType != nullptr)
+                if (availItemType.pItemType != nullptr)
                 {
                     // we found an item, add it to the tree
-                    d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), *iter->second.pItemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
-                    d2ce::Item newItem(createParams);
+                    const auto& itemType = *(availItemType.pItemType);
                     HTREEITEM hParent = TVI_ROOT;
-                    if (newItem.size() > 0)
+                    // First make sure all the parent folders exist
+                    for (auto& folder : parent)
                     {
-                        bufferItems.resize(bufferItems.size() + 1);
-                        auto& bufferItem = bufferItems.back();
-                        bufferItem.swap(newItem);
-
-                        // First make sure all the parent folders exist
-                        for (auto& folder : parent)
+                        if (folder.hItem == NULL)
                         {
-                            if (folder.hItem == NULL)
-                            {
-                                folder.hItem = tree.InsertItem(folder.name, hParent, TVI_SORT);
-                                if (folder.hItem != NULL)
-                                {
-                                    hParent = folder.hItem;
-                                }
-                            }
-                            else
+                            folder.hItem = tree.InsertItem(folder.name, hParent, TVI_SORT);
+                            if (folder.hItem != NULL)
                             {
                                 hParent = folder.hItem;
                             }
                         }
-
-                        std::u16string uText;
-                        if (bufferItem.isRing() || bufferItem.isAmulet() || bufferItem.isCharm() || bufferItem.isJewel())
+                        else
                         {
+                            hParent = folder.hItem;
+                        }
+                    }
+
+                    DWORD_PTR itemData = 0;
+                    std::u16string uText;
+                    if (itemType.isRing() || itemType.isAmulet() || itemType.isCharm() || itemType.isJewel())
+                    {
+                        d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), itemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
+                        d2ce::Item newItem(createParams);
+                        if (newItem.size() > 0)
+                        {
+                            bufferItems.resize(bufferItems.size() + 1);
+                            auto& bufferItem = bufferItems.back();
+                            bufferItem.swap(newItem);
+                            itemData = (DWORD_PTR)&bufferItem;
                             uText = utf8::utf8to16(bufferItem.getDisplayedItemName());
                         }
                         else
                         {
-                            uText = utf8::utf8to16(bufferItem.getItemTypeName());
+                            uText = utf8::utf8to16(itemType.name);
                         }
+                    }
+                    else
+                    {
+                        uText = utf8::utf8to16(itemType.name);
+                    }
 
-                        CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                    CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
 
-                        // Check for Multi-line text
-                        auto idx = strText.Find(_T('\n'));
-                        if (idx >= 0) 
-                        {
-                            strText = strText.Left(idx);
-                        }
+                    // Check for Multi-line text
+                    auto idx = strText.Find(_T('\n'));
+                    if (idx >= 0)
+                    {
+                        strText = strText.Left(idx);
+                    }
 
-                        HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
-                        if (hItem == NULL)
-                        {
-                            bufferItems.pop_back();
-                        }
-                        else
-                        {
-                            tree.SetItemData(hItem, (DWORD_PTR)&bufferItem);
-                        }
+                    HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
+                    if (hItem == NULL)
+                    {
+                        bufferItems.pop_back();
+                    }
+                    else
+                    {
+                        tree.SetItemData(hItem, itemData);
+                        availableItemTypes[hItem] = availItemType;
                     }
                 }
             }
@@ -133,10 +144,10 @@ namespace
             {
                 // we found an folder, delay the add until an item is found
                 std::u16string uText;
-                if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Category)
+                if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Category)
                 {
                     bool bBadItemCategory = false;
-                    if (isSharedStash && iter->second.name.compare("ques") == 0)
+                    if (isSharedStash && availItemType.name.compare("ques") == 0)
                     {
                         // can't add quest items to shared stash
                         bBadItemCategory = true;
@@ -144,45 +155,51 @@ namespace
 
                     if (!bBadItemCategory)
                     {
-                        uText = utf8::utf8to16(d2ce::ItemHelpers::getCategoryNameFromCode(iter->second.name));
+                        uText = utf8::utf8to16(d2ce::ItemHelpers::getCategoryNameFromCode(availItemType.name));
                     }
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Sets)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::ResourceString)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    std::string strValue;
+                    d2ce::LocalizationHelpers::GetStringTxtValue(availItemType.name, strValue);
+                    uText = utf8::utf8to16(strValue);
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Set)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Sets)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Unique)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Set)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Regular)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Unique)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Exceptional)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Regular)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::Elite)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Exceptional)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
-                else if (iter->second.folderType == d2ce::AvailableItemType::EnumFolderType::UnusedItems)
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Elite)
                 {
-                    uText = utf8::utf8to16(iter->second.name); // TODO: translate
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
+                }
+                else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::UnusedItems)
+                {
+                    uText = utf8::utf8to16(availItemType.name); // TODO: translate
                 }
 
                 CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
                 if (!strText.IsEmpty())
                 {
                     parent.push_back({ strText, NULL });
-                    auto childIter = iter->second.children.begin();
-                    auto childIter_end = iter->second.children.end();
-                    InitTreeControl(tree, charInfo, parent, childIter, childIter_end, bufferItems, isSharedStash);
+                    auto childIter = availItemType.children.begin();
+                    auto childIter_end = availItemType.children.end();
+                    InitTreeControl(tree, charInfo, parent, childIter, childIter_end, bufferItems, availableItemTypes, isSharedStash);
                 }
             }
         }
@@ -245,6 +262,8 @@ END_MESSAGE_MAP()
 BOOL CD2NewItemForm::OnInitDialog()
 {
     __super::OnInitDialog();
+
+    ::SetWindowTheme(ItemTree.GetSafeHwnd(), L"Explorer", NULL);
 
     {
         std::string strValue;
@@ -347,6 +366,7 @@ void CD2NewItemForm::OnBnClickedOk()
         return;
     }
 
+    ItemTree.BuildSelectionPath(g_LastSelection);
     __super::OnOK();
 }
 //---------------------------------------------------------------------------
@@ -541,21 +561,16 @@ void CD2NewItemForm::OnBnClickedEtherealCheck()
 //---------------------------------------------------------------------------
 void CD2NewItemForm::InitTree()
 {
+    auto& charInfo = MainForm.getCharacterInfo();
+    std::map<std::string, d2ce::AvailableItemType> availableItemTypeMap;
+    d2ce::ItemHelpers::getAvailableItems(availableItemTypeMap, charInfo.getDefaultItemVersion(), charInfo.isExpansionCharacter());
+    auto iter = availableItemTypeMap.begin();
+    auto iter_end = availableItemTypeMap.end();
+
     bool isSharedStash = SharedStashFormPtr != nullptr ? true : false;
     std::deque<AvailableItemFolder> parent;
-    const auto& allItems = d2ce::ItemHelpers::getAvailableItems();
-    auto iter = allItems.begin();
-    auto iter_end = allItems.end();
-    InitTreeControl(ItemTree, MainForm.getCharacterInfo(), parent, iter, iter_end, AvailableItems, isSharedStash);
-}
-//---------------------------------------------------------------------------
-void CD2NewItemForm::DrawItem(HTREEITEM hTreeItem)
-{
-    auto itemData = ItemTree.GetItemData(hTreeItem);
-    if (itemData == 0)
-    {
-        return;
-    }
+    InitTreeControl(ItemTree, MainForm.getCharacterInfo(), parent, iter, iter_end, AvailableItems, AvailableItemTypes, isSharedStash);
+    ItemTree.OpenPath(g_LastSelection);
 }
 //---------------------------------------------------------------------------
 const d2ce::Character* CD2NewItemForm::GetCharacterInfo() const
@@ -568,13 +583,39 @@ const d2ce::Item* CD2NewItemForm::GetSelectedItem() const
     auto hTreeItem = ItemTree.GetSelectedItem();
     if (hTreeItem == NULL)
     {
-        return nullptr;;
+        return nullptr;
     }
 
     auto itemData = ItemTree.GetItemData(hTreeItem);
     if (itemData == 0)
     {
-        return nullptr;
+        auto iter = AvailableItemTypes.find(hTreeItem);
+        if (iter == AvailableItemTypes.end())
+        {
+            return nullptr;
+        }
+
+        if (iter->second.pItemType == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto& itemType = *iter->second.pItemType;
+        auto& charInfo = MainForm.getCharacterInfo();
+        d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), itemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
+        d2ce::Item newItem(createParams);
+        if (newItem.size() > 0)
+        {
+            AvailableItems.resize(AvailableItems.size() + 1);
+            auto& bufferItem = AvailableItems.back();
+            bufferItem.swap(newItem);
+            itemData = (DWORD_PTR)&bufferItem;
+            ItemTree.SetItemData(hTreeItem, itemData);
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     return (d2ce::Item*)itemData;

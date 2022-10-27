@@ -256,6 +256,7 @@
     <ClInclude Include="D2RunewordForm.h" />
     <ClInclude Include="D2SharedStashForm.h" />
     <ClInclude Include="D2SkillTreeForm.h" />
+    <ClInclude Include="D2TreeCtrl.h" />
     <ClInclude Include="D2WaypointsForm.h" />
     <ClInclude Include="d2ce\DataTypes.h" />
     <ClInclude Include="d2ce\ExperienceConstants.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="D2RunewordForm.cpp" />
     <ClCompile Include="D2SharedStashForm.cpp" />
     <ClCompile Include="D2SkillTreeForm.cpp" />
+    <ClCompile Include="D2TreeCtrl.cpp" />
     <ClCompile Include="D2WaypointsForm.cpp" />
     <ClCompile Include="d2ce\Item.cpp" />
     <ClCompile Include="pch.cpp">

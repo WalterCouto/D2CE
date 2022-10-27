@@ -1367,7 +1367,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             }
 
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-            bitSize = 16;
+            bitSize = 8;
             value = 0;
             if (!setBits(current_bit_offset, bitSize, value))
             {
@@ -1409,7 +1409,6 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 0;
                 GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = 0;
                 GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
-                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = 0;
                 GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = 0;
                 GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = 0;
                 GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = 0;
@@ -1451,7 +1450,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000004);
+                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000003);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     *this = invalidItem;
@@ -1620,7 +1619,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 }
 
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-                bitSize = 16;
+                bitSize = 8;
                 value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
@@ -3399,7 +3398,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
             }
 
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-            bitSize = 16;
+            bitSize = 8;
             value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
             if (!setBits(current_bit_offset, bitSize, value))
             {
@@ -3438,7 +3437,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
             }
 
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-            bitSize = 16;
+            bitSize = 8;
             value = 0;
             if (!setBits(current_bit_offset, bitSize, value))
             {
@@ -3678,7 +3677,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
 
                 current_bit_offset = ITEM_V104_SM_ITEMCODE_BIT_OFFSET;
                 bitSize = 32;
-                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000004);
+                value = ((std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC) | 0x00000003);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
                     return false;
@@ -3853,7 +3852,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
                 }
 
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-                bitSize = 16;
+                bitSize = 8;
                 value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
@@ -3908,7 +3907,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
                 }
 
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-                bitSize = 16;
+                bitSize = 8;
                 value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
                 if (!setBits(current_bit_offset, bitSize, value))
                 {
@@ -13117,7 +13116,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-        bitSize = 16;
+        bitSize = 8;
         value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
         if (!setBits(current_bit_offset, bitSize, value))
         {
@@ -14129,7 +14128,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
         }
 
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-        bitSize = 16;
+        bitSize = 8;
         value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
         if (!setBits(current_bit_offset, bitSize, value))
         {

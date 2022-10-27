@@ -48,7 +48,8 @@ namespace d2ce
 
         const ItemType& getInvalidItemTypeHelper();
 
-        const std::map<std::string, AvailableItemType>& getAvailableItems();
+        void getAvailableItemsHelper(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion, std::deque<const d2ce::AvailableItemType*>& parent, std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter, const std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter_end);
+        void getAvailableItems(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion);
 
         void initRunewordData();
         std::string getRunewordNameFromId(std::uint16_t id);
@@ -6134,6 +6135,37 @@ namespace d2ce
                 pRootItem = &(pRootItem->children["gem"]);
                 pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
                 pRootItem->name = "gem";
+
+                if (itemType.hasCategoryCode("gem0"))
+                {
+                    pRootItem = &(pRootItem->children["gem0"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                    pRootItem->name = "gem0";
+                }
+                else if (itemType.hasCategoryCode("gem1"))
+                {
+                    pRootItem = &(pRootItem->children["gem1"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                    pRootItem->name = "gem1";
+                }
+                else if (itemType.hasCategoryCode("gem2"))
+                {
+                    pRootItem = &(pRootItem->children["gem2"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                    pRootItem->name = "gem2";
+                }
+                else if (itemType.hasCategoryCode("gem3"))
+                {
+                    pRootItem = &(pRootItem->children["gem3"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                    pRootItem->name = "gem3";
+                }
+                else if (itemType.hasCategoryCode("gem4"))
+                {
+                    pRootItem = &(pRootItem->children["gem4"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                    pRootItem->name = "gem4";
+                }
             }
             else if (itemType.isRune())
             {
@@ -6292,6 +6324,41 @@ namespace d2ce
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "ques";
 
+            if (itemType.code == "bkd" || itemType.code == "hdm" || itemType.code == "bks")
+            {
+                pRootItem = &(pRootItem->children["act1"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
+                pRootItem->name = "act1";
+            }
+            else if (itemType.code == "hst" || itemType.code == "msf" || itemType.code == "box" ||
+                itemType.code == "tr1" || itemType.code == "vip" || itemType.code == "ass")
+            {
+                pRootItem = &(pRootItem->children["act2"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
+                pRootItem->name = "act2";
+            }
+            else if (itemType.code == "j34" || itemType.code == "bks" || itemType.code == "g34" ||
+                itemType.code == "d33" || itemType.code == "g33" || itemType.code == "qey" ||
+                itemType.code == "bbb" || itemType.code == "qhr" || itemType.code == "qbr" ||
+                itemType.code == "qf1" || itemType.code == "qf2" || itemType.code == "xyz")
+            {
+                pRootItem = &(pRootItem->children["act3"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
+                pRootItem->name = "act3";
+            }
+            else if (itemType.code == "hfh" || itemType.code == "mss")
+            {
+                pRootItem = &(pRootItem->children["act4"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
+                pRootItem->name = "act4";
+            }
+            else if (itemType.code == "ice" || itemType.code == "tr2")
+            {
+                pRootItem = &(pRootItem->children["act5"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
+                pRootItem->name = "act5";
+            }
+            
             auto& item = pRootItem->children[itemType.code];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
@@ -6535,6 +6602,25 @@ namespace d2ce
             pRootItem = &s_AvailableItemsType["poti"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "poti";
+
+            if (itemType.hasCategoryCode("rpot"))
+            {
+                pRootItem = &(pRootItem->children["rpot"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                pRootItem->name = "rpot";
+            }
+            else if (itemType.hasCategoryCode("mpot"))
+            {
+                pRootItem = &(pRootItem->children["mpot"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                pRootItem->name = "mpot";
+            }
+            else if (itemType.hasCategoryCode("hpot"))
+            {
+                pRootItem = &(pRootItem->children["hpot"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
+                pRootItem->name = "hpot";
+            }
 
             auto& item = pRootItem->children[itemType.name];
             item.folderType = AvailableItemType::EnumFolderType::Item;
@@ -9790,9 +9876,110 @@ const d2ce::ItemType& d2ce::ItemHelpers::getInvalidItemTypeHelper()
     return s_invalidItemType;
 }
 //---------------------------------------------------------------------------
-const std::map<std::string, d2ce::AvailableItemType>& d2ce::ItemHelpers::getAvailableItems()
+void d2ce::ItemHelpers::getAvailableItemsHelper(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion, std::deque<const AvailableItemType*>& parent, std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter, const std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter_end)
 {
-    return s_AvailableItemsType;
+    if (iter == iter_end)
+    {
+        if (!parent.empty())
+        {
+            parent.pop_back();
+        }
+        return;
+    }
+
+    for (; iter != iter_end; ++iter)
+    {
+        const auto& availItemType = iter->second;
+        if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Item)
+        {
+            if (availItemType.pItemType != nullptr)
+            {
+                // we found an item, add it to the tree
+                const auto& itemType = *(availItemType.pItemType);
+
+                bool bValid = true;
+                if (itemType.isExpansionItem() && !isExpansion)
+                {
+                    // not a valid item
+                    bValid = false;
+                }
+                else
+                {
+                    switch (itemVersion)
+                    {
+                    case EnumItemVersion::v100:
+                    case EnumItemVersion::v104:
+                        if (itemType.code_v100 == MAXUINT16)
+                        {
+                            // not a valid item
+                            bValid = false;
+                        }
+                    }
+                }
+
+                if (bValid)
+                {
+                    // First make sure all the parent folders exist
+                    d2ce::AvailableItemType* pPrevParent = nullptr;
+                    for (auto& folder : parent)
+                    {
+                        if (folder != nullptr)
+                        {
+                            if (pPrevParent != nullptr)
+                            {
+                                pPrevParent = &(pPrevParent->children[folder->name]);
+                            }
+                            else
+                            {
+                                pPrevParent = &availItems[folder->name];
+                            }
+                            pPrevParent->folderType = folder->folderType;
+                            pPrevParent->name = folder->name;
+                        }
+                    }
+
+                    if (pPrevParent != nullptr)
+                    {
+                        pPrevParent->children[iter->first] = iter->second;
+                    }
+                    else
+                    {
+                        availItems[iter->first] = iter->second;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // we found a folder, delay the add until an item is found
+            parent.push_back(&availItemType);
+            auto childIter = availItemType.children.begin();
+            auto childIter_end = availItemType.children.end();
+            getAvailableItemsHelper(availItems, itemVersion, isExpansion, parent, childIter, childIter_end);
+        }
+    }
+
+    if (!parent.empty())
+    {
+        parent.pop_back();
+    }
+}
+//---------------------------------------------------------------------------
+void d2ce::ItemHelpers::getAvailableItems(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion)
+{
+    availItems.clear();
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        break;
+    }
+
+    std::deque<const d2ce::AvailableItemType*> parent;
+    auto iter = s_AvailableItemsType.begin();
+    auto iter_end = s_AvailableItemsType.end();
+    getAvailableItemsHelper(availItems, itemVersion, isExpansion, parent, iter, iter_end);
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getCategoryNameFromCode(const std::string& code)

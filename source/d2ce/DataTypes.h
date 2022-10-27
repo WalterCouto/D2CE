@@ -1257,7 +1257,7 @@ namespace d2ce
         // This is a 3-letter code
         std::string code;
 
-        // v1.00 to 1.03 used an Id instad of a 3-letter code
+        // v1.00 to 1.03 used an Id instead of a 3-letter code
         std::uint16_t code_v100 = MAXUINT16;
 
         // Base Item Level (also known as Quality Level - qlvl) and Additional Magic Level (also known as mlvl)
@@ -1383,12 +1383,11 @@ namespace d2ce
 
         virtual const std::string& getRuneLetter() const;
         virtual const std::string& getTypeName() const; // return the parent type name, or if no parent it's name
-
     };
 
     struct AvailableItemType
     {
-        enum class EnumFolderType : std::uint8_t { Item = 0, Category, Sets, Set, Unique, Regular, Exceptional, Elite, UnusedItems };
+        enum class EnumFolderType : std::uint8_t { Item = 0, Category, Sets, Set, Unique, Regular, Exceptional, Elite, UnusedItems, ResourceString };
 
         EnumFolderType folderType = EnumFolderType::Item;
         const ItemType* pItemType = nullptr;               // non-null if Item node
