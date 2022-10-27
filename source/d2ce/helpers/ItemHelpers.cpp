@@ -6153,6 +6153,12 @@ namespace d2ce
                     pRootItem->folderType = AvailableItemType::EnumFolderType::Unique;
                     pRootItem->name = "Unique";
                 }
+                else
+                {
+                    pRootItem = &(pRootItem->children["Regular"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::Regular;
+                    pRootItem->name = "Regular";
+                }
             }
 
             return pRootItem;
@@ -6542,12 +6548,10 @@ namespace d2ce
             std::string idx = itemType.name;
             if (itemType.isJewel())
             {
-                if (!itemType.isUniqueItem())
+                if (itemType.isUniqueItem())
                 {
-                    return false;
+                    idx += "_" + std::to_string(itemType.getId());
                 }
-
-                idx += "_" + std::to_string(itemType.getId());
             }
 
             pRootItem = &s_AvailableItemsType["sock"];
@@ -11011,13 +11015,20 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
     cache.Name2 = affix2.name;
     cache.Index2 = affix2.name;
 
-    std::uint32_t nTotalPreSuffixes = (GenerateRandom(rnd) % 3) + 4;
+    std::uint32_t nTotalPreSuffixes = (GenerateRandom(rnd) % 3ui32) + 4;
+    std::uint32_t nMaxAffixes = nTotalPreSuffixes;
+    if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
+    {
+        // Post-1.09, Rare jewels can have up to 4 total affixes
+        nMaxAffixes = std::min(nMaxAffixes, 4ui32);
+    }
     std::uint32_t nPrefixes = 0;
     std::uint32_t nSuffixes = 0;
+    std::uint32_t nAffixes = 0;
     std::uint32_t infiniteGuard = 1000000; // no more loops then this
     std::vector<ItemAffixType> curPreSuffix;
     std::vector<bool> isPrefix;
-    for (size_t nCurPreSuffix = 0; nCurPreSuffix < nTotalPreSuffixes; ++nCurPreSuffix)
+    for (size_t nCurPreSuffix = 0; (nCurPreSuffix < nTotalPreSuffixes) && (nAffixes < nMaxAffixes); ++nCurPreSuffix)
     {
         // Do we have a prefix?
         auto PreSuf = GenerateRandom(rnd) % 2;
@@ -11050,6 +11061,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
             curPreSuffix.push_back(prefixes[idx]);
             isPrefix.push_back(true);
             ++nPrefixes;
+            ++nAffixes;
         }
         else
         {
@@ -11079,6 +11091,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
             curPreSuffix.push_back(suffixes[idx]);
             isPrefix.push_back(false);
             ++nSuffixes;
+            ++nAffixes;
         }
     }
 
@@ -12328,13 +12341,6 @@ std::vector<std::reference_wrapper<const d2ce::ItemType>> d2ce::ItemHelpers::get
         // make sure it's spawnable in this version
         if (item.second.version > gameVersion)
         {
-            continue;
-        }
-
-        if (item.second.isCharm() || item.second.isJewel())
-        {
-            // this are special magical items not handled as a regular
-            // item
             continue;
         }
 

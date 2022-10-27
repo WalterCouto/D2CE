@@ -99,6 +99,7 @@ private:
     std::map<std::uint16_t, std::vector<std::uint16_t>> PrefixMap;
     std::map<std::uint16_t, std::vector<std::uint16_t>> SuffixMap;
     std::array<AffixChoice, 3> CurrentAffixChoices;
+    std::uint32_t NumAllowedAffixes = 0ui32; // zero indicates not to check
 
 };
 //---------------------------------------------------------------------------

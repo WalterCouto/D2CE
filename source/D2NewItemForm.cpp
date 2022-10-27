@@ -99,7 +99,7 @@ namespace
                         }
 
                         std::u16string uText;
-                        if (bufferItem.isRing() || bufferItem.isAmulet() || bufferItem.isCharm())
+                        if (bufferItem.isRing() || bufferItem.isAmulet() || bufferItem.isCharm() || bufferItem.isJewel())
                         {
                             uText = utf8::utf8to16(bufferItem.getDisplayedItemName());
                         }
@@ -441,7 +441,7 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                 Quality.ShowWindow(FALSE);
             }
         }
-        else if (item->isRing() || item->isAmulet())
+        else if (item->isRing() || item->isAmulet() || item->isJewel())
         {
             Ethereal.EnableWindow(FALSE);
             Ethereal.ShowWindow(FALSE);
@@ -471,6 +471,14 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                     if (idx >= 0)
                     {
                         Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::RARE));
+                        switch (item->getQuality())
+                        {
+                        case d2ce::EnumItemQuality::RARE:
+                        case d2ce::EnumItemQuality::CRAFT:
+                        case d2ce::EnumItemQuality::TEMPERED:
+                            Quality.SetCurSel(idx);
+                            break;
+                        }
                     }
                 }
                 QualityStatic.EnableWindow(TRUE);

@@ -65,6 +65,11 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
         CurrentItem = *pItem;
         CurrentItem.makeRare();
         CurrentDWBCode = CurrentItem.getDWBCode();
+        if (CurrentItem.isJewel() && CreateParams.itemVersion >= d2ce::EnumItemVersion::v109)
+        {
+            // Post-1.09, Rare jewels can have up to 4 total affixes
+            NumAllowedAffixes = 4ui32;
+        }
 
     }
 }
@@ -311,6 +316,7 @@ void CD2RareAffixesForm::InitAffixes()
         break;
     }
 
+    CurrentAffixChoices.fill(AffixChoice());
     auto iterCurAffix = CurrentAffixChoices.begin();
     for (const auto& affix : CurrentAffixes.Affixes)
     {
@@ -448,6 +454,7 @@ void CD2RareAffixesForm::SyncAffixes()
             }
         }
 
+        CurrentAffixChoices.fill(AffixChoice());
         auto iterCurAffix = CurrentAffixChoices.begin();
         for (const auto& affix : CurrentAffixes.Affixes)
         {
@@ -470,6 +477,7 @@ void CD2RareAffixesForm::UpdatePrefixChoices()
     CString strText;
     bool badGroup = false;
     auto iterControls = AffixControls.begin();
+    if(CurrentItem.isJewel())
     for (auto& affix : CurrentAffixChoices)
     {
         auto& affixControls = *iterControls;
@@ -595,6 +603,7 @@ void CD2RareAffixesForm::UpdateAffixChoices()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateCurrentAffixesValues()
 {
+    std::uint32_t count = 0;
     CurrentAffixes.Affixes.clear();
     for (auto& affix : CurrentAffixChoices)
     {
@@ -603,17 +612,30 @@ void CD2RareAffixesForm::UpdateCurrentAffixesValues()
             d2ce::MagicalAffixes affixes;
             if (affix.prefix != 0)
             {
+                ++count;
                 affixes.PrefixId = affix.prefix;
                 affixes.PrefixName = d2ce::ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
             }
 
             if (affix.suffix != 0)
             {
+                ++count;
                 affixes.SuffixId = affix.suffix;
                 affixes.SuffixName = d2ce::ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
             }
 
             CurrentAffixes.Affixes.push_back(affixes);
+        }
+    }
+
+    if (NumAllowedAffixes != 0)
+    {
+        // disable any comboboxes that do not have a value if we have full count
+        BOOL bEnable = count >= NumAllowedAffixes ? FALSE : TRUE;
+        for (auto& affixControl : AffixControls)
+        {
+            affixControl.Prefix.EnableWindow((bEnable || affixControl.Prefix.GetCurSel() != 0) ? TRUE : FALSE);
+            affixControl.Suffix.EnableWindow((bEnable || affixControl.Suffix.GetCurSel() != 0) ? TRUE : FALSE);
         }
     }
 }

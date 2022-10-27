@@ -1050,9 +1050,9 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         return;
     }
 
-    if (itemType.isPlayerBodyPart() || itemType.isJewel())
+    if (itemType.isPlayerBodyPart())
     {
-        // ears, jewels or charms can't be created with this method
+        // ears can't be created with this method
         if (!itemType.isUniqueItem())
         {
             *this = invalidItem;
@@ -1167,7 +1167,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     {
         quality = EnumItemQuality::SET;
     }
-    else if (itemType.isRing() || itemType.isAmulet())
+    else if (itemType.isRing() || itemType.isAmulet() || itemType.isJewel())
     {
         switch (createParams.createQualityOption)
         {
@@ -8721,7 +8721,7 @@ bool d2ce::Item::getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, st
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 {
-    if (isSimpleItem() || isSocketFiller() || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
+    if (isSimpleItem() || (isSocketFiller() && !isJewel()) || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
     {
         return false;
     }
@@ -9455,7 +9455,7 @@ bool d2ce::Item::makeMagical()
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
     case EnumItemQuality::CRAFT:
-        if (!isRing() && !isAmulet())
+        if (!isRing() && !isAmulet() && !isJewel())
         {
             if (!removeRareOrCraftedAttributes())
             {
@@ -9473,7 +9473,7 @@ bool d2ce::Item::makeMagical()
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (isRing() || isAmulet())
+    if (isRing() || isAmulet() || isJewel())
     {
         createParams.createQualityOption = EnumItemQuality::MAGIC;
         d2ce::Item newItem(createParams);
@@ -9516,7 +9516,7 @@ bool d2ce::Item::makeRare()
         return true;
 
     case EnumItemQuality::MAGIC:
-        if (!isRing() && !isAmulet())
+        if (!isRing() && !isAmulet() && !isJewel())
         {
             if (!removeMagicalAffixes())
             {
@@ -9531,7 +9531,7 @@ bool d2ce::Item::makeRare()
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (isRing() || isAmulet())
+    if (isRing() || isAmulet() || isJewel())
     {
         createParams.createQualityOption = EnumItemQuality::RARE;
         d2ce::Item newItem(createParams);
@@ -9626,7 +9626,7 @@ bool d2ce::Item::removeMagicalAffixes()
         return true; // doest't have magical affixes
     }
 
-    if (isRing() || isAmulet())
+    if (isRing() || isAmulet() || isJewel())
     {
         // can't remove magical attributes
         return false;
@@ -9700,7 +9700,7 @@ bool d2ce::Item::removeMagicalAffixes()
 //---------------------------------------------------------------------------
 bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
 {
-    if (isSimpleItem() || isSocketFiller())
+    if (isSimpleItem() || (isSocketFiller() && !isJewel()))
     {
         return false;
     }
@@ -10084,7 +10084,7 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
         return true; // doest't have magical affixes
     }
 
-    if (isRing() || isAmulet())
+    if (isRing() || isAmulet() || isJewel())
     {
         // can't remove magical attributes
         return false;
