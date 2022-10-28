@@ -263,8 +263,6 @@ BOOL CD2NewItemForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
-    ::SetWindowTheme(ItemTree.GetSafeHwnd(), L"Explorer", NULL);
-
     {
         std::string strValue;
         std::u16string uText;
@@ -320,6 +318,10 @@ void CD2NewItemForm::OnBnClickedOk()
 {
     UpdateData(TRUE); // save results
     CreatedItem = GetSelectedItem();
+    if (CreatedItem == nullptr)
+    {
+        return;
+    }
 
     CD2MagicalAffixesForm magicAffixes(*this);
     CD2RareAffixesForm rareAffixes(*this);

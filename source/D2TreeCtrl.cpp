@@ -26,6 +26,8 @@
 
 //---------------------------------------------------------------------------
 // CD2TreeCtrl
+IMPLEMENT_DYNAMIC(CD2TreeCtrl, CTreeCtrl)
+
 CD2TreeCtrl::CD2TreeCtrl()
 {
 }
@@ -36,6 +38,7 @@ CD2TreeCtrl::~CD2TreeCtrl()
 //---------------------------------------------------------------------------
 
 BEGIN_MESSAGE_MAP(CD2TreeCtrl, CTreeCtrl)
+    ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -106,4 +109,23 @@ void CD2TreeCtrl::OpenPath(const D2TreeCtrlPath& selection)
     }
 }
 //---------------------------------------------------------------------------
+void CD2TreeCtrl::PreSubclassWindow()
+{
+    __super::PreSubclassWindow();
+
+    ::SetWindowTheme(this->GetSafeHwnd(), L"Explorer", nullptr);
+}
+//---------------------------------------------------------------------------
 // CD2AddGemsForm message handlers
+//---------------------------------------------------------------------------
+int CD2TreeCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+    if (__super::OnCreate(lpCreateStruct) == -1)
+    {
+        return -1;
+    }
+
+    ::SetWindowTheme(this->GetSafeHwnd(), L"Explorer", nullptr);
+    return 0;
+}
+//---------------------------------------------------------------------------

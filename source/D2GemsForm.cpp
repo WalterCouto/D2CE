@@ -33,7 +33,7 @@ namespace
     CString GetGPSNameFromCode(const std::array<std::uint8_t, 4>& gemCode)
     {
         const auto& itemType = d2ce::ItemHelpers::getItemTypeHelper(gemCode);
-        if (!itemType.isPotion() && !itemType.isGem() && !itemType.isRune())
+        if (!itemType.isGPSItem())
         {
             // unknown GPS
             return _T("");

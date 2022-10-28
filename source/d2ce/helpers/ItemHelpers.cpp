@@ -8695,6 +8695,11 @@ bool d2ce::ItemType::isGem() const
     return hasCategoryCode("gem");
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemType::isGPSItem() const
+{
+    return (isPotion() || isGem() || isRune());
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemType::isQuestItem() const
 {
     return hasCategoryCode("ques");

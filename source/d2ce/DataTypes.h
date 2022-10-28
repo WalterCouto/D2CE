@@ -1323,6 +1323,7 @@ namespace d2ce
         virtual bool isPotion() const;
         virtual bool isJewel() const;
         virtual bool isGem() const;
+        virtual bool isGPSItem() const; // is item a Gem, Potion, Skill or Rune
         virtual bool isQuestItem() const;
         virtual bool isGoldItem() const;
         virtual bool isEar() const;

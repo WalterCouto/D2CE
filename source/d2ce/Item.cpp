@@ -6552,6 +6552,18 @@ bool d2ce::Item::isGem() const
     return result.isGem();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isGPSItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isGPSItem();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isUpgradableGem() const
 {
     const auto& result = getItemTypeHelper();
@@ -20957,7 +20969,7 @@ void d2ce::Items::verifyHoradricCube()
                 {
                     Armor.push_back(item);
                 }
-                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                else if (itemType.isGPSItem())
                 {
                     GPSs.push_back(item);
                 }
@@ -21012,7 +21024,7 @@ void d2ce::Items::verifyHoradricCube()
             {
                 d2ce::removeItem_if(Armor, ItemPredicate(itemRef.get()));
             }
-            else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            else if (itemType.isGPSItem())
             {
                 d2ce::removeItem_if(GPSs, ItemPredicate(itemRef.get()));
             }
@@ -23069,7 +23081,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     {
                         d2ce::removeItem_if(Armor, ItemPredicate(item));
                     }
-                    else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                    else if (itemType.isGPSItem())
                     {
                         d2ce::removeItem_if(GPSs, ItemPredicate(item));
                     }
@@ -23181,7 +23193,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     {
                         d2ce::removeItem_if(Armor, ItemPredicate(item));
                     }
-                    else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                    else if (itemType.isGPSItem())
                     {
                         d2ce::removeItem_if(GPSs, ItemPredicate(item));
                     }
@@ -24043,7 +24055,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
         {
             Armor.push_back(item);
         }
-        else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+        else if (itemType.isGPSItem())
         {
             GPSs.push_back(item);
         }
@@ -24417,7 +24429,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 {
                     d2ce::removeItem_if(Armor, ItemPredicate(item));
                 }
-                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                else if (itemType.isGPSItem())
                 {
                     d2ce::removeItem_if(GPSs, ItemPredicate(item));
                 }
@@ -24515,7 +24527,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 {
                     d2ce::removeItem_if(Armor, ItemPredicate(item));
                 }
-                else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+                else if (itemType.isGPSItem())
                 {
                     d2ce::removeItem_if(GPSs, ItemPredicate(item));
                 }
@@ -25172,7 +25184,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
             {
                 Armor.push_back(item);
             }
-            else if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
+            else if (itemType.isGPSItem())
             {
                 GPSs.push_back(item);
             }
@@ -25254,7 +25266,7 @@ bool d2ce::Items::removeSocketedItems(d2ce::Item& item)
             ++NumOfItems;
 
             const auto& itemType = itemToMove.getItemTypeHelper();
-            if (itemType.isGem() || itemType.isRune())
+            if (itemType.isGPSItem())
             {
                 GPSs.push_back(itemToMove);
             }

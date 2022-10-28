@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by D2Editor.rc
 //
+#define IDOK2                           3
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
@@ -627,11 +628,13 @@
 #define IDC_CHAR_DAMAGE                 1034
 #define IDC_QUALITY_STATIC              1034
 #define IDC_SUFFIX1_STATIC              1034
+#define IDC_TO_STATIC                   1034
 #define IDC_LEVELINFO_GRID              1035
 #define IDC_EDIT_SET_ALL_SKILLS         1035
 #define IDC_APP_COPYRIGHT2              1035
 #define IDC_CHAR_RESIST_FIRE            1035
 #define IDC_PREFIX2_COMBO               1035
+#define IDC_TO_STATIC2                  1035
 #define IDC_RADIO_DIFFICULTY_NORMAL     1036
 #define IDC_STATIC_TREE_1               1036
 #define IDC_CHAR_RESIST_COLD            1036
@@ -813,6 +816,7 @@
 #define IDC_LOCATION_STATIC             1103
 #define IDC_ENERGY_PLUS_BTN             1103
 #define IDC_BUTTON_TREE_1_ROW_4_COL_1   1103
+#define IDC_LOCATION_COMBO2             1103
 #define IDC_VITALITY_PLUS_BTN           1104
 #define IDC_BUTTON_TREE_1_ROW_4_COL_2   1104
 #define IDC_STRENGTH_PLUS_BTN           1105
@@ -901,6 +905,7 @@
 #define IDC_BUTTON_TREE_3_ROW_6_COL_2   1146
 #define IDC_FILL_BUTTON                 1147
 #define IDC_BUTTON_TREE_3_ROW_6_COL_3   1147
+#define IDC_FILL_BUTTON2                1148
 #define IDC_PAGE_COMBO                  1150
 #define IDC_SHARED_STASH_BUTTON         1151
 #define ID_VIEW_REFRESH                 32772

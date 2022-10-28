@@ -23,9 +23,10 @@
 #include "D2MainForm.h"
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
+#include "D2TreeCtrl.h"
 
 //---------------------------------------------------------------------------
-class CD2AddGemsForm : public CDialogEx
+class CD2AddGemsForm : public CDialogEx, public CD2ItemTooltipCallback
 {
 	DECLARE_DYNAMIC(CD2AddGemsForm)
 
@@ -40,20 +41,36 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
     afx_msg void OnBnClickedAdd();
     afx_msg void OnBnClickedFill();
+    afx_msg void OnTvnSelchangedItemtree(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnNMDblclkItemtree(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
+public:
+    virtual BOOL OnInitDialog();
+
 private:
+    void InitTree(bool mustBeBeltable);
+
+    const d2ce::Item* GetSelectedItem() const override;
+
+protected:
+    const d2ce::Character* GetCharacterInfo() const override;
+
+private:
+    CD2ItemInfoStatic ItemTooltipBox;
     CD2MainForm& MainForm;
     std::map<size_t, std::uint64_t> GemIdxMap;
     std::map<std::uint64_t, size_t> NumGemMap;
     CD2ItemsForm* ItemsFormPtr = nullptr;
     CD2SharedStashForm* SharedStashFormPtr = nullptr;
+    mutable CD2TreeCtrl ItemTree;
     d2ce::Item * ItemPtr = nullptr;
 
+    std::map<HTREEITEM, d2ce::AvailableItemType> AvailableItemTypes;
+    mutable std::list<d2ce::Item> AvailableItems;
+
 public:
-    virtual BOOL OnInitDialog();
 };
 //---------------------------------------------------------------------------

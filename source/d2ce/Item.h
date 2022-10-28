@@ -230,6 +230,7 @@ namespace d2ce
         bool isStackable() const;
         bool isPotion() const;
         bool isGem() const;
+        bool isGPSItem() const;
         bool isUpgradableGem() const;
         bool isUpgradablePotion() const;
         bool isUpgradableItem() const;

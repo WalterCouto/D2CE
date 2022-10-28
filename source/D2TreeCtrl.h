@@ -36,18 +36,23 @@ typedef std::deque<D2TreeCtrlPathElement> D2TreeCtrlPath;
 //---------------------------------------------------------------------------
 class CD2TreeCtrl :  public CTreeCtrl
 {
+    DECLARE_DYNAMIC(CD2TreeCtrl)
+
 public:
     CD2TreeCtrl();
     ~CD2TreeCtrl();
 
 protected:
+    afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     DECLARE_MESSAGE_MAP()
+
+protected:
+    virtual void PreSubclassWindow();
 
 public:
     HTREEITEM FindByName(HTREEITEM hParent, LPCTSTR nodeName);
     void  BuildSelectionPath(D2TreeCtrlPath& selection);
     void  BuildPath(HTREEITEM hItem, D2TreeCtrlPath& selection);
     void  OpenPath(const D2TreeCtrlPath& selection);
-
 };
 //---------------------------------------------------------------------------

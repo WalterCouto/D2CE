@@ -26,6 +26,7 @@
 #include "D2MagicalAffixesForm.h"
 #include "D2RareAffixesForm.h"
 #include "D2RunewordForm.h"
+#include "D2AddGemsForm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -528,19 +529,29 @@ const d2ce::Item* CD2ItemInfoStatic::GetSelectedItem() const
 CD2ItemTooltipCallback* CD2ItemInfoStatic::GetCallback() const
 {
     auto pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2NewItemForm, GetParent()));
-    if (pCallback == nullptr)
+    if (pCallback != nullptr)
     {
-        pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalAffixesForm, GetParent()));
-        if (pCallback == nullptr)
-        {
-            pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RareAffixesForm, GetParent()));
-            if (pCallback == nullptr)
-            {
-                pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RunewordForm, GetParent()));
-            }
-        }
+        return pCallback;
     }
 
-    return pCallback;
+    pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalAffixesForm, GetParent()));
+    if (pCallback != nullptr)
+    {
+        return pCallback;
+    }
+
+    pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RareAffixesForm, GetParent()));
+    if (pCallback != nullptr)
+    {
+        return pCallback;
+    }
+
+    pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2RunewordForm, GetParent()));
+    if (pCallback != nullptr)
+    {
+        return pCallback;
+    }
+
+    return dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2AddGemsForm, GetParent()));
 }
 //---------------------------------------------------------------------------
