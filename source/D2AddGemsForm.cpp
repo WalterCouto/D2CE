@@ -94,6 +94,18 @@ namespace
                             folder.hItem = tree.InsertItem(folder.name, hParent, TVI_SORT);
                             if (folder.hItem != NULL)
                             {
+                                HTREEITEM hFirstVisible = tree.GetSelectedItem();
+                                if (hFirstVisible == NULL)
+                                {
+                                    hFirstVisible = tree.GetFirstVisibleItem();
+                                }
+
+                                tree.Expand(hParent, TVE_EXPAND);
+                                if (hFirstVisible != NULL)
+                                {
+                                    tree.EnsureVisible(hFirstVisible);
+                                }
+
                                 hParent = folder.hItem;
                             }
                         }
@@ -121,6 +133,18 @@ namespace
                     }
                     else
                     {
+                        HTREEITEM hFirstVisible = tree.GetSelectedItem();
+                        if (hFirstVisible == NULL)
+                        {
+                            hFirstVisible = tree.GetFirstVisibleItem();
+                        }
+
+                        tree.Expand(hParent, TVE_EXPAND);
+                        if (hFirstVisible != NULL)
+                        {
+                            tree.EnsureVisible(hFirstVisible);
+                        }
+
                         tree.SetItemData(hItem, itemData);
                         availableItemTypes[hItem] = availItemType;
                         if (sourceItemTypePtr != nullptr && sourceItemTypePtr->code == itemType.code)

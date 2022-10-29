@@ -1360,6 +1360,7 @@ namespace d2ce
         virtual bool isUniqueItem() const;
         virtual bool isSetItem() const;
         virtual std::string getSetName() const;
+        virtual std::uint16_t getSetId() const;
         virtual std::uint16_t getId() const;
         virtual std::uint32_t getSetItemDWBCode() const;
         virtual std::uint16_t getSetBonusBits() const;

@@ -5959,6 +5959,18 @@ namespace d2ce
             return setInfo.name;
         }
 
+        virtual std::uint16_t getSetId() const override
+        {
+            auto setIter = s_ItemSetsIndex.find(setIndex);
+            if (setIter == s_ItemSetsIndex.end())
+            {
+                return 0;
+            }
+
+            auto& setInfo = s_ItemSetsType[setIter->second];
+            return setInfo.id;
+        }
+
         std::uint16_t getId() const override
         {
             return id;
@@ -8927,6 +8939,11 @@ bool d2ce::ItemType::isSetItem() const
 std::string d2ce::ItemType::getSetName() const
 {
     return "";
+}
+//---------------------------------------------------------------------------
+std::uint16_t d2ce::ItemType::getSetId() const
+{
+    return 0;
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ItemType::getId() const

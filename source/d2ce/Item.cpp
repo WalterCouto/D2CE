@@ -1246,6 +1246,17 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             switch (quality)
             {
             case EnumItemQuality::SET:
+                value = itemType.getSetId();
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                break;
+
             case EnumItemQuality::UNIQUE:
                 value = itemType.getId();
 
@@ -1498,6 +1509,17 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 switch (quality)
                 {
                 case EnumItemQuality::SET:
+                    value = itemType.getSetId();
+
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                    bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                    break;
+
                 case EnumItemQuality::UNIQUE:
                     value = itemType.getId();
 
