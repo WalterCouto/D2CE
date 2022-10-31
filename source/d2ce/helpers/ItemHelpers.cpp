@@ -6624,11 +6624,7 @@ namespace d2ce
 
         if (itemType.isPotion())
         {
-            if (itemType.isUnusedItem())
-            {
-                return false;
-            }
-
+            auto typeName = itemType.name;
             pRootItem = &s_AvailableItemsType["poti"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "poti";
@@ -6638,24 +6634,55 @@ namespace d2ce
                 pRootItem = &(pRootItem->children["rpot"]);
                 pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
                 pRootItem->name = "rpot";
+
+                if (itemType.isUnusedItem())
+                {
+                    pRootItem = &(pRootItem->children["Unused"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::UnusedItems;
+                    pRootItem->name = "Unused";
+                    typeName += "_" + itemType.code;
+                }
             }
             else if (itemType.hasCategoryCode("mpot"))
             {
                 pRootItem = &(pRootItem->children["mpot"]);
                 pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
                 pRootItem->name = "mpot";
+
+                if (itemType.isUnusedItem())
+                {
+                    pRootItem = &(pRootItem->children["Unused"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::UnusedItems;
+                    pRootItem->name = "Unused";
+                    typeName += "_" + itemType.code;
+                }
             }
             else if (itemType.hasCategoryCode("hpot"))
             {
                 pRootItem = &(pRootItem->children["hpot"]);
                 pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
                 pRootItem->name = "hpot";
+
+                if (itemType.isUnusedItem())
+                {
+                    pRootItem = &(pRootItem->children["Unused"]);
+                    pRootItem->folderType = AvailableItemType::EnumFolderType::UnusedItems;
+                    pRootItem->name = "Unused";
+                    typeName += "_" + itemType.code;
+                }
+            }
+            else if (itemType.isUnusedItem())
+            {
+                pRootItem = &(pRootItem->children["Unused"]);
+                pRootItem->folderType = AvailableItemType::EnumFolderType::UnusedItems;
+                pRootItem->name = "Unused";
+                typeName += "_" + itemType.code;
             }
 
-            auto& item = pRootItem->children[itemType.name];
+            auto& item = pRootItem->children[typeName];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
-            item.name = itemType.name;
+            item.name = typeName;
             return true;
         }
 

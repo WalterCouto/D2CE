@@ -184,6 +184,7 @@ namespace d2ce
         bool upgradeToFullRejuvenationPotion();
         std::uint8_t getQuestDifficulty() const;
         bool getEarAttributes(EarAttributes& attrib) const;
+        bool setEarAttributes(const EarAttributes& attrib);
         bool getRequirements(ItemRequirements& req) const;
         bool getCategories(std::vector<std::string>& categories) const;
         bool getDimensions(ItemDimensions& dimensions) const;

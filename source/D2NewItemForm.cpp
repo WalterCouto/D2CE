@@ -25,6 +25,7 @@
 #include "D2MagicalAffixesForm.h"
 #include "D2RareAffixesForm.h"
 #include "D2RunewordForm.h"
+#include "D2EarAttributesForm.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
 
@@ -114,6 +115,10 @@ namespace
                         {
                             uText = utf8::utf8to16(itemType.name);
                         }
+                    }
+                    else if(itemType.isPotion() && itemType.isUnusedItem())
+                    {
+                        uText = utf8::utf8to16(itemType.code);
                     }
                     else
                     {
@@ -400,6 +405,14 @@ void CD2NewItemForm::OnBnClickedOk()
     {
         CD2MagicalAffixesForm magicAffixes(*this);
         if (magicAffixes.DoModal() != IDOK)
+        {
+            return;
+        }
+    }
+    else if (CreatedItem->isEar())
+    {
+        CD2EarAttributesForm earAttributes(*this);
+        if (earAttributes.DoModal() != IDOK)
         {
             return;
         }

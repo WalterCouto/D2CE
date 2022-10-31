@@ -583,6 +583,7 @@
 #define IDD_NEW_ITEM_DIALOG             725
 #define IDD_MAGICAL_AFFIXES_DIALOG      727
 #define IDD_RARE_AFFIXES_DIALOG         728
+#define IDD_EAR_DIALOG                  729
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -975,7 +976,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        729
+#define _APS_NEXT_RESOURCE_VALUE        731
 #define _APS_NEXT_COMMAND_VALUE         32831
 #define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           103

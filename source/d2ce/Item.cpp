@@ -5437,6 +5437,63 @@ bool d2ce::Item::getEarAttributes(d2ce::EarAttributes& attrib) const
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
+{
+    if (!isEar())
+    {
+        return false;
+    }
+
+    size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+    size_t bitSize = 3;
+    if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Class)))
+    {
+        return false;
+    }
+    current_bit_offset += bitSize;
+
+    bitSize = 7;
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+        current_bit_offset = ITEM_V100_EAR_LEVEL_BIT_OFFSET;
+        bitSize = 8;
+        break;
+
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+        bitSize = 8;
+        break;
+    }
+
+    if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Level)))
+    {
+        return false;
+    }
+    current_bit_offset += bitSize;
+
+    // up to 15 7/8 bit characters
+    bitSize = (ItemVersion >= EnumItemVersion::v120) ? 8 : 7;
+    for (size_t idx = 0; idx <= 15; ++idx)
+    {
+        if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Name[idx])))
+        {
+            return false;
+        }
+
+        current_bit_offset += bitSize;
+        if (attrib.Name[idx] == 0)
+        {
+            for (; idx <= 15; ++idx)
+            {
+                updateBits(current_bit_offset, bitSize, 0ui32);
+                current_bit_offset += bitSize;
+            }
+            break;
+        }
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::getRequirements(ItemRequirements& req) const
 {
     req.clear();
@@ -8289,6 +8346,11 @@ bool d2ce::Item::addPersonalization(const std::string& name)
         current_bit_offset += bitSize;
         if (playerName[idx] == 0)
         {
+            for (; idx <= 15; ++idx)
+            {
+                updateBits(current_bit_offset, bitSize, 0ui32);
+                current_bit_offset += bitSize;
+            }
             break;
         }
     }

@@ -32,6 +32,7 @@ class CD2NewItemForm : public CDialogEx, public CD2ItemTooltipCallback
     friend class CD2MagicalAffixesForm;
     friend class CD2RareAffixesForm;
     friend class CD2RunewordForm;
+    friend class CD2EarAttributesForm;
 	DECLARE_DYNAMIC(CD2NewItemForm)
 
 public:
