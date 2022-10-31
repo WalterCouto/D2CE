@@ -47,6 +47,11 @@ namespace d2ce
     // 100 - Expansion LoD
     constexpr std::uint16_t APP_ITEM_GAME_VERSION = 100; 
 
+
+    constexpr std::uint32_t MAX_KEY_QUANTITY_100 = 6ui32;   // max # of keys stacked (verion 1.06 and lower)
+    constexpr std::uint32_t MAX_GLD_QUANTITY = 4095ui32;    // max gld amount
+    constexpr std::uint32_t MAX_STACKED_QUANTITY = 511ui32; // max # of items in a stack
+
     enum class EnumItemQuality : std::uint8_t
     {
         UNKNOWN = 0,

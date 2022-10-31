@@ -24,9 +24,6 @@
 
 namespace d2ce
 {
-    constexpr std::uint32_t GOLD_IN_BELT_LIMIT = 990000;
-    constexpr std::uint32_t GOLD_IN_STASH_LIMIT = 2500000;
-
     // This bit field indicates the presence or absence of each particular statistic.
     // If the bit is 0, the corresponding statistic is zero and not stored in the file.
     // If the bit is 1, the statistic has a long value stored in the file.  

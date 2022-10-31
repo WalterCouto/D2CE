@@ -3334,23 +3334,24 @@ namespace d2ce
             strValue = doc.GetCellString(stackableColumnIdx, i);
             if (!strValue.empty())
             {
+                std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Min = doc.GetCellUInt32(minstackColumnIdx, i) % 512ui32;
+                        itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Max = std::max(itemType.stackable.Min, doc.GetCellUInt32(maxstackColumnIdx, i) % 512ui32);
+                        itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
                     else
                     {
                         // should not happen
-                        itemType.stackable.Max = 511ui32;
+                        itemType.stackable.Max = maxStackable;
                     }
                 }
             }
@@ -3863,23 +3864,24 @@ namespace d2ce
             strValue = doc.GetCellString(stackableColumnIdx, i);
             if (!strValue.empty())
             {
+                std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Min = doc.GetCellUInt32(minstackColumnIdx, i) % 512ui32;
+                        itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Max = std::max(itemType.stackable.Min, doc.GetCellUInt32(maxstackColumnIdx, i) % 512ui32);
+                        itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
                     else
                     {
                         // should not happen
-                        itemType.stackable.Max = 511ui32;
+                        itemType.stackable.Max = maxStackable;
                     }
                 }
             }
@@ -4330,7 +4332,7 @@ namespace d2ce
             {
                 // mark unused items
                 static std::set<std::string> unusedItems = { "Heart", "Brain", "Jawbone", "Eye", "Horn",
-                    "Tail", "Flag", "Fang", "Quill", "Soul", "Scalp", "Spleen", "Herb", "Torch"};
+                    "Tail", "Flag", "Fang", "Quill", "Soul", "Scalp", "Spleen", "Herb", "Torch", "Gold"};
                 if (unusedItems.find(itemType.name) != unusedItems.end())
                 {
                     bAddUnused = true;
@@ -4377,23 +4379,24 @@ namespace d2ce
             strValue = doc.GetCellString(stackableColumnIdx, i);
             if (!strValue.empty())
             {
+                std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Min = doc.GetCellUInt32(minstackColumnIdx, i) % 512ui32;
+                        itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
                     if (!strValue.empty())
                     {
-                        itemType.stackable.Max = std::max(itemType.stackable.Min, doc.GetCellUInt32(maxstackColumnIdx, i) % 512ui32);
+                        itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
                     else
                     {
                         // should not happen
-                        itemType.stackable.Max = 511ui32;
+                        itemType.stackable.Max = maxStackable;
                     }
                 }
             }
@@ -5257,6 +5260,18 @@ namespace d2ce
             return true;
         }
 
+        bool isSunderedCharms() const override
+        {
+            if (!isCharm())
+            {
+                return false;
+            }
+
+            return ((index == "Cold Rupture") || (index == "Flame Rift") ||
+                (index == "Crack of the Heavens") || (index == "Rotting Fissure") ||
+                (index == "Bone Break") || (index == "Black Cleft")) ? true : false;
+        }
+
         std::uint16_t getId() const override
         {
             return id;
@@ -5266,7 +5281,6 @@ namespace d2ce
         {
             return typeName;
         }
-
         void CopyParentItem(const ItemType& parent)
         {
             typeName = parent.name;
@@ -6197,12 +6211,6 @@ namespace d2ce
                     pRootItem->folderType = AvailableItemType::EnumFolderType::Unique;
                     pRootItem->name = "Unique";
                 }
-                else
-                {
-                    pRootItem = &(pRootItem->children["Regular"]);
-                    pRootItem->folderType = AvailableItemType::EnumFolderType::Regular;
-                    pRootItem->name = "Regular";
-                }
             }
 
             return pRootItem;
@@ -6258,8 +6266,9 @@ namespace d2ce
 
     bool addItemToSimpleCache(const ItemType& itemType)
     {
-        if (itemType.code.empty() || itemType.isGoldItem() || itemType.isEar())
+        if (itemType.code.empty() || itemType.isGoldItem())
         {
+            // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
             return false;
         }
 
@@ -6567,8 +6576,11 @@ namespace d2ce
             pRootItem = &s_AvailableItemsType["ring"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "ring";
+            if (itemType.isUniqueItem())
+            {
+                pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
+            }
 
-            pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
             auto& item = pRootItem->children[itemType.name];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
@@ -6581,8 +6593,11 @@ namespace d2ce
             pRootItem = &s_AvailableItemsType["amul"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "amul";
+            if (itemType.isUniqueItem())
+            {
+                pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
+            }
 
-            pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
             auto& item = pRootItem->children[itemType.name];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
@@ -6595,8 +6610,11 @@ namespace d2ce
             pRootItem = &s_AvailableItemsType["char"];
             pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
             pRootItem->name = "char";
+            if (itemType.isUniqueItem())
+            {
+                pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
+            }
 
-            pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
             auto& item = pRootItem->children[itemType.name];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
@@ -6667,8 +6685,11 @@ namespace d2ce
         pRootItem = &s_AvailableItemsType["misc"];
         pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
         pRootItem->name = "misc";
-
-        pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
+        if (itemType.isUnusedItem())
+        {
+            pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
+        }
+       
         auto& item = pRootItem->children[itemType.name];
         item.folderType = AvailableItemType::EnumFolderType::Item;
         item.pItemType = &itemType;
@@ -8836,6 +8857,11 @@ bool d2ce::ItemType::isCharm() const
     return hasCategoryCode("char");
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemType::isSunderedCharms() const
+{
+    return false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemType::isBelt() const
 {
     return hasCategoryCode("belt");
@@ -9936,6 +9962,28 @@ void d2ce::ItemHelpers::getAvailableItemsHelper(std::map<std::string, d2ce::Avai
                             // not a valid item
                             bValid = false;
                         }
+
+                        if (itemType.isSunderedCharms())
+                        {
+                            // should not happen
+                            // Saundered Charms are only valid for D2R PTR 2.5 or higher
+                            bValid = false;
+                        }
+                        break;
+
+                    case EnumItemVersion::v107: // v1.07 item
+                    case EnumItemVersion::v108:  // v1.08 item
+                    case EnumItemVersion::v109:  // v1.09 item
+                    case EnumItemVersion::v110:  // v1.10 - v1.14d item
+                    case EnumItemVersion::v100R:  // v1.0.x - v1.1.x Diablo II: Resurrected item
+                    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+                        if (itemType.isSunderedCharms())
+                        {
+                            // should not happen
+                            // Saundered Charms are only valid for D2R PTR 2.5 or higher
+                            bValid = false;
+                        }
+                        break;
                     }
                 }
 

@@ -26,112 +26,109 @@
 #include "helpers/ItemHelpers.h"
 #include "SkillConstants.h"
 #include "Character.h"
+#include <utf8/utf8.h>
 
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint32_t NUM_OF_LEVELS = 99; // max level (game limit)
-
-    constexpr std::uint32_t MAX_KEY_QUANTITY_100 = 6; // max # of keys stacked (verion 1.06 and lower)
-    constexpr std::uint32_t MAX_GLD_QUANTITY = 4095; // max gld amount
-    constexpr std::uint32_t MAX_STACKED_QUANTITY = 511; // max # of items in a stack
+    constexpr std::uint32_t NUM_OF_LEVELS = 99ui32; // max level (game limit)
     constexpr std::uint16_t MAX_DURABILITY = 0xFF; // max durability of an item (0 is Indestructible)
 
     constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };  // alternatively "jf"
     constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "kf"
 
-    constexpr std::uint32_t MIN_START_STATS_POS = 641;
+    constexpr std::uint32_t MIN_START_STATS_POS = 64ui32;
 
-    constexpr std::uint32_t IS_IDENTIFIED_FLAG_OFFSET = 4;
-    constexpr std::uint32_t IS_DISABLED_FLAG_OFFSET = 8;
-    constexpr std::uint32_t IS_SOCKETED_FLAG_OFFSET = 11;
-    constexpr std::uint32_t IS_NEW_FLAG_OFFSET = 13;
-    constexpr std::uint32_t IS_BAD_EQUIPPED_FLAG_OFFSET = 14;
-    constexpr std::uint32_t IS_EAR_FLAG_OFFSET = 16;
-    constexpr std::uint32_t IS_STARTER_FLAG_OFFSET = 17;
-    constexpr std::uint32_t IS_SIMPLE_FLAG_OFFSET = 21;
-    constexpr std::uint32_t IS_ETHEREAL_FLAG_OFFSET = 22;
-    constexpr std::uint32_t IS_PERSONALIZED_FLAG_OFFSET = 24;
-    constexpr std::uint32_t IS_RUNEWORD_FLAG_OFFSET = 26;
+    constexpr std::uint32_t IS_IDENTIFIED_FLAG_OFFSET = 4ui32;
+    constexpr std::uint32_t IS_DISABLED_FLAG_OFFSET = 8ui32;
+    constexpr std::uint32_t IS_SOCKETED_FLAG_OFFSET = 11ui32;
+    constexpr std::uint32_t IS_NEW_FLAG_OFFSET = 13ui32;
+    constexpr std::uint32_t IS_BAD_EQUIPPED_FLAG_OFFSET = 14ui32;
+    constexpr std::uint32_t IS_EAR_FLAG_OFFSET = 16ui32;
+    constexpr std::uint32_t IS_STARTER_FLAG_OFFSET = 17ui32;
+    constexpr std::uint32_t IS_SIMPLE_FLAG_OFFSET = 21ui32;
+    constexpr std::uint32_t IS_ETHEREAL_FLAG_OFFSET = 22ui32;
+    constexpr std::uint32_t IS_PERSONALIZED_FLAG_OFFSET = 24ui32;
+    constexpr std::uint32_t IS_RUNEWORD_FLAG_OFFSET = 26ui32;
 
-    constexpr std::uint32_t ITEM_TYPE_BIT_OFFSET = 19; // for v1.00 to 1.06, these two bits tell us the item version (non-zero means 1.04 - 1.06 items)
+    constexpr std::uint32_t ITEM_TYPE_BIT_OFFSET = 19ui32; // for v1.00 to 1.06, these two bits tell us the item version (non-zero means 1.04 - 1.06 items)
 
-    constexpr std::uint32_t QUALITY_BIT_OFFSET = 134;
-    constexpr std::uint32_t QUALITY_BIT_OFFSET_100 = 65;
-    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 = 97;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET = 134ui32;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET_100 = 65ui32;
+    constexpr std::uint32_t QUALITY_BIT_OFFSET_104 = 97ui32;
 
-    constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69;
-    constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101;
+    constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69ui32;
+    constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101ui32;
 
-    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS = 4;
-    constexpr std::uint16_t REAL_DATA_NUM_BITS_110 = 96; // realm data prior to D2R
-    constexpr std::uint16_t REAL_DATA_NUM_BITS = 128;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS = 11;
-    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108 = 10; // 1.09 or older
-    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS = 8;
-    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS = 8;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS = 9;
-    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108 = 8; // 1.09 or older
-    constexpr std::uint16_t STACKABLE_NUM_BITS = 9;
-    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS = 12;
-    constexpr std::uint16_t GLD_STACKABLE_LARGE_NUM_BITS = 32;
-    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS = 12;
-    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS = 4;
-    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS = 11;
-    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS = 12;
-    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS = 3;
-    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS = 8;
-    constexpr std::uint16_t PROPERTY_ID_NUM_BITS = 9;
-    constexpr std::uint16_t MONSTER_ID_NUM_BITS = 10;
+    constexpr std::uint16_t SOCKET_COUNT_NUM_BITS = 4ui16;
+    constexpr std::uint16_t REAL_DATA_NUM_BITS_110 = 96ui16; // realm data prior to D2R
+    constexpr std::uint16_t REAL_DATA_NUM_BITS = 128ui16;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS = 11ui16;
+    constexpr std::uint16_t DEFENSE_RATING_NUM_BITS_108 = 10ui16; // 1.09 or older
+    constexpr std::uint16_t DURABILITY_MAX_NUM_BITS = 8ui16;
+    constexpr std::uint16_t DURABILITY_CURRENT_READ_NUM_BITS = 8ui16;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS = 9ui16;
+    constexpr std::uint16_t DURABILITY_CURRENT_NUM_BITS_108 = 8ui16; // 1.09 or older
+    constexpr std::uint16_t STACKABLE_NUM_BITS = 9ui16;
+    constexpr std::uint16_t GLD_STACKABLE_NUM_BITS = 12ui16;
+    constexpr std::uint16_t GLD_STACKABLE_LARGE_NUM_BITS = 32ui16;
+    constexpr std::uint16_t RUNEWORD_ID_NUM_BITS = 12ui16;
+    constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS = 4ui16;
+    constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS = 11ui16;
+    constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS = 12ui16;
+    constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS = 3ui16;
+    constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS = 8ui16;
+    constexpr std::uint16_t PROPERTY_ID_NUM_BITS = 9ui16;
+    constexpr std::uint16_t MONSTER_ID_NUM_BITS = 10ui16;
 
-    constexpr std::uint16_t ITEM_V100_NUM_BITS = 216;
-    constexpr std::uint16_t ITEM_V100_UNIQUE_ID_NUM_BITS = 8;
-    constexpr std::uint16_t ITEM_V104_EAR_NUM_BITS = 208;
-    constexpr std::uint16_t ITEM_V104_SM_NUM_BITS = 120;
-    constexpr std::uint16_t ITEM_V104_EX_NUM_BITS = 248;
+    constexpr std::uint16_t ITEM_V100_NUM_BITS = 216ui16;
+    constexpr std::uint16_t ITEM_V100_UNIQUE_ID_NUM_BITS = 8ui16;
+    constexpr std::uint16_t ITEM_V104_EAR_NUM_BITS = 208ui16;
+    constexpr std::uint16_t ITEM_V104_SM_NUM_BITS = 120ui16;
+    constexpr std::uint16_t ITEM_V104_EX_NUM_BITS = 248ui16;
 
-    constexpr std::uint32_t ITEM_V100_COORDINATES_BIT_OFFSET = 120;
-    constexpr std::uint32_t ITEM_V100_SPECIALITEMCODE_BIT_OFFSET = 129;
-    constexpr std::uint32_t ITEM_V100_EAR_COORDINATES_BIT_OFFSET = 64;
-    constexpr std::uint32_t ITEM_V104_SM_COORDINATES_BIT_OFFSET = 64;
-    constexpr std::uint32_t ITEM_V104_EX_COORDINATES_BIT_OFFSET = 152;
-    constexpr std::uint32_t ITEM_V104_EX_UNIQUECODE_BIT_OFFSET = 161;
-    constexpr std::uint32_t ITEM_V104_EAR_COORDINATES_BIT_OFFSET = 64;
+    constexpr std::uint32_t ITEM_V100_COORDINATES_BIT_OFFSET = 120ui32;
+    constexpr std::uint32_t ITEM_V100_SPECIALITEMCODE_BIT_OFFSET = 129ui32;
+    constexpr std::uint32_t ITEM_V100_EAR_COORDINATES_BIT_OFFSET = 64ui32;
+    constexpr std::uint32_t ITEM_V104_SM_COORDINATES_BIT_OFFSET = 64ui32;
+    constexpr std::uint32_t ITEM_V104_EX_COORDINATES_BIT_OFFSET = 152ui32;
+    constexpr std::uint32_t ITEM_V104_EX_UNIQUECODE_BIT_OFFSET = 161ui32;
+    constexpr std::uint32_t ITEM_V104_EAR_COORDINATES_BIT_OFFSET = 64ui32;
 
-    constexpr std::uint32_t ITEM_V100_CONTAINER_BIT_OFFSET = 200;
-    constexpr std::uint32_t ITEM_V100_EAR_CONTAINER_BIT_OFFSET = 80;
-    constexpr std::uint32_t ITEM_V104_EX_CONTAINER_BIT_OFFSET = 232;
+    constexpr std::uint32_t ITEM_V100_CONTAINER_BIT_OFFSET = 200ui32;
+    constexpr std::uint32_t ITEM_V100_EAR_CONTAINER_BIT_OFFSET = 80ui32;
+    constexpr std::uint32_t ITEM_V104_EX_CONTAINER_BIT_OFFSET = 232ui32;
 
-    constexpr std::uint32_t ITEM_V100_ITEMCODE_BIT_OFFSET = 64;
-    constexpr std::uint32_t ITEM_V100_EAR_ITEMCODE_BIT_OFFSET = 48;
-    constexpr std::uint32_t ITEM_V100_EAR_ATTRIBE_BIT_OFFSET = 74;
-    constexpr std::uint32_t ITEM_V100_EAR_LEVEL_BIT_OFFSET = 100;
-    constexpr std::uint32_t ITEM_V100_TYPECODE_BIT_OFFSET = 68;
-    constexpr std::uint32_t ITEM_V100_DURABILITY_BIT_OFFSET = 105;
-    constexpr std::uint32_t ITEM_V100_DWA_BIT_OFFSET = 139;
-    constexpr std::uint32_t ITEM_V104_EX_TYPECODE_BIT_OFFSET = 58;
-    constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET = 80;
-    constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET = 82;
-    constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET = 82;
-    constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 137;
-    constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET = 171;
+    constexpr std::uint32_t ITEM_V100_ITEMCODE_BIT_OFFSET = 64ui32;
+    constexpr std::uint32_t ITEM_V100_EAR_ITEMCODE_BIT_OFFSET = 48ui32;
+    constexpr std::uint32_t ITEM_V100_EAR_ATTRIBE_BIT_OFFSET = 74ui32;
+    constexpr std::uint32_t ITEM_V100_EAR_LEVEL_BIT_OFFSET = 92ui32;
+    constexpr std::uint32_t ITEM_V100_TYPECODE_BIT_OFFSET = 68ui32;
+    constexpr std::uint32_t ITEM_V100_DURABILITY_BIT_OFFSET = 105ui32;
+    constexpr std::uint32_t ITEM_V100_DWA_BIT_OFFSET = 139ui32;
+    constexpr std::uint32_t ITEM_V104_EX_TYPECODE_BIT_OFFSET = 58ui32;
+    constexpr std::uint32_t ITEM_V104_SM_ITEMCODE_BIT_OFFSET = 80ui32;
+    constexpr std::uint32_t ITEM_V104_SM_TYPECODE_BIT_OFFSET = 82ui32;
+    constexpr std::uint32_t ITEM_V104_EAR_ATTRIBE_BIT_OFFSET = 82ui32;
+    constexpr std::uint32_t ITEM_V104_EX_DURABILITY_BIT_OFFSET = 137ui32;
+    constexpr std::uint32_t ITEM_V104_EX_DWA_BIT_OFFSET = 171ui32;
 
-    constexpr std::uint32_t ITEM_V100_BITFIELD3_BIT_OFFSET = 48;
-    constexpr std::uint32_t ITEM_V100_NUM_SOCKETED_BIT_OFFSET = 53;
-    constexpr std::uint32_t ITEM_V100_LEVEL_BIT_OFFSET = 56;
-    constexpr std::uint32_t ITEM_V104_EX_EQUIP_ID_BIT_OFFSET = 90;
-    constexpr std::uint32_t ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET = 95;
-    constexpr std::uint32_t ITEM_V104_EX_LEVEL_BIT_OFFSET = 98;
+    constexpr std::uint32_t ITEM_V100_BITFIELD3_BIT_OFFSET = 48ui32;
+    constexpr std::uint32_t ITEM_V100_NUM_SOCKETED_BIT_OFFSET = 53ui32;
+    constexpr std::uint32_t ITEM_V100_LEVEL_BIT_OFFSET = 56ui32;
+    constexpr std::uint32_t ITEM_V104_EX_EQUIP_ID_BIT_OFFSET = 90ui32;
+    constexpr std::uint32_t ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET = 95ui32;
+    constexpr std::uint32_t ITEM_V104_EX_LEVEL_BIT_OFFSET = 98ui32;
 
-    constexpr std::uint32_t ITEM_V107_EXTENDED_DATA_BIT_OFFSET = 108;
-    constexpr std::uint32_t ITEM_V107_START_BIT_OFFSET = 23; // 16 bit for item header + 7 bits for the item version
-    constexpr std::uint32_t ITEM_V115_LOCATION_BIT_OFFSET = 35;
-    constexpr std::uint32_t ITEM_V115_EQUIPPED_ID_BIT_OFFSET = 38;
-    constexpr std::uint32_t ITEM_V115_POSITION_BIT_OFFSET = 42;
-    constexpr std::uint32_t ITEM_V115_ALT_POSITION_ID_BIT_OFFSET = 50;
-    constexpr std::uint32_t ITEM_V115_TYPE_CODE_BIT_OFFSET = 53;
+    constexpr std::uint32_t ITEM_V107_EXTENDED_DATA_BIT_OFFSET = 108ui32;
+    constexpr std::uint32_t ITEM_V107_START_BIT_OFFSET = 23ui32; // 16 bit for item header + 7 bits for the item version
+    constexpr std::uint32_t ITEM_V115_LOCATION_BIT_OFFSET = 35ui32;
+    constexpr std::uint32_t ITEM_V115_EQUIPPED_ID_BIT_OFFSET = 38ui32;
+    constexpr std::uint32_t ITEM_V115_POSITION_BIT_OFFSET = 42ui32;
+    constexpr std::uint32_t ITEM_V115_ALT_POSITION_ID_BIT_OFFSET = 50ui32;
+    constexpr std::uint32_t ITEM_V115_TYPE_CODE_BIT_OFFSET = 53ui32;
 
-    constexpr std::uint16_t ATTRIBUTE_ID_INDESTRUCTIBLE = 152;
+    constexpr std::uint16_t ATTRIBUTE_ID_INDESTRUCTIBLE = 152ui16;
 
     enum class ItemOffsets : std::uint32_t
     {
@@ -1050,14 +1047,12 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         return;
     }
 
-    if (itemType.isPlayerBodyPart())
+    if (itemType.isGoldItem())
     {
-        // ears can't be created with this method
-        if (!itemType.isUniqueItem())
-        {
-            *this = invalidItem;
-            return;
-        }
+        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+        // D2R will crash if we create this unused item
+        *this = invalidItem;
+        return;
     }
 
     std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
@@ -1131,6 +1126,11 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     std::bitset<32> flags = 0;
     flags[IS_IDENTIFIED_FLAG_OFFSET] = 1;
 
+    if (itemType.isEar())
+    {
+        flags[IS_EAR_FLAG_OFFSET] = 1;
+    }
+
     if (ItemVersion > EnumItemVersion::v100)
     {
         if (itemType.isSimpleItem())
@@ -1162,6 +1162,25 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     if (itemType.isUniqueItem())
     {
         quality = EnumItemQuality::UNIQUE;
+        switch (ItemVersion)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+        case EnumItemVersion::v107: // v1.07 item
+        case EnumItemVersion::v108:  // v1.08 item
+        case EnumItemVersion::v109:  // v1.09 item
+        case EnumItemVersion::v110:  // v1.10 - v1.14d item
+        case EnumItemVersion::v100R:  // v1.0.x - v1.1.x Diablo II: Resurrected item
+        case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+            if (itemType.isSunderedCharms())
+            {
+                // should not happen
+                // Saundered Charms are only valid for D2R PTR 2.5 or higher
+                *this = invalidItem;
+                return;
+            }
+            break;
+        }
     }
     else if (itemType.isSetItem())
     {
@@ -1206,9 +1225,96 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             // 27 bytes total
             data.resize((ITEM_V100_NUM_BITS + 7) / 8, 0);
 
+            GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V100_NUM_BITS;
+
+            if (itemType.isEar())
+            {
+                GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = 0;
+                GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = 0;
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V100_EAR_COORDINATES_BIT_OFFSET + 2;
+                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V100_EAR_ATTRIBE_BIT_OFFSET;
+
+                bitSize = 10;
+                current_bit_offset = ITEM_V100_EAR_ITEMCODE_BIT_OFFSET + 5;
+                if (!setBits(current_bit_offset, bitSize, 0x13B))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                auto dw = ItemHelpers::generarateRandomDW();
+                EarAttributes earAttrib;
+                earAttrib.Class = static_cast<EnumCharClass>(dw % NUM_OF_CLASSES_NO_EXPANSION);
+                earAttrib.Level = dw % MAX_NUM_LEVELS + 1;
+                strcpy_s(earAttrib.Name.data(), earAttrib.Name.size(), "SOMEONE");
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+                bitSize = 3;
+                if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Class)))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = ITEM_V100_EAR_LEVEL_BIT_OFFSET;
+                bitSize = 8;
+                if (!setBits(current_bit_offset, bitSize, earAttrib.Level))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                // up to 15 7 bit characters
+                for (size_t idx = 0; idx <= 15; ++idx)
+                {
+                    if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+
+                    if (earAttrib.Name[idx] == 0)
+                    {
+                        break;
+                    }
+                }
+
+                current_bit_offset = ITEM_V100_EAR_CONTAINER_BIT_OFFSET;
+                bitSize = 8;
+                value = (std::uint8_t)((readBits(current_bit_offset, bitSize) & 0x9F) | 0x08);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                return;
+            }
+
             GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 58;
             GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
-            GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V100_NUM_BITS;
             GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = ITEM_V100_BITFIELD3_BIT_OFFSET;
             GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = ITEM_V100_NUM_SOCKETED_BIT_OFFSET;
             nr_of_items_in_sockets_bits = 2;
@@ -1318,6 +1424,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
             if (itemType.isGoldItem())
             {
+                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
                 GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
                 value = MAX_GLD_QUANTITY;
@@ -1406,10 +1513,92 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
             GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V100_NUM_BITS;
             max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
-            break;
+            return;
 
         case EnumItemVersion::v104:
-            if (isSimpleItem())
+            if (itemType.isEar())
+            {
+                GET_BIT_OFFSET(ItemOffsets::LOCATION_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ALT_POSITION_ID_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = 0;
+                GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = 0;
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
+                GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = 0;
+
+                GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_EAR_COORDINATES_BIT_OFFSET + 2;
+                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_EAR_ATTRIBE_BIT_OFFSET;
+
+                // 26 bytes total
+                data.resize((ITEM_V104_EAR_NUM_BITS + 7) / 8, 0);
+                GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_EAR_NUM_BITS;
+
+                auto dw = ItemHelpers::generarateRandomDW();
+                EarAttributes earAttrib;
+                earAttrib.Class = static_cast<EnumCharClass>(dw % NUM_OF_CLASSES_NO_EXPANSION);
+                earAttrib.Level = dw % MAX_NUM_LEVELS + 1;
+                strcpy_s(earAttrib.Name.data(), earAttrib.Name.size(), "SOMEONE");
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+                bitSize = 3;
+                if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Class)))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                bitSize = 8;
+                if (!setBits(current_bit_offset, bitSize, earAttrib.Level))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                // up to 15 7 bit characters
+                for (size_t idx = 0; idx <= 15; ++idx)
+                {
+                    if (!setBits(current_bit_offset, 7, std::uint32_t(earAttrib.Name[idx])))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+
+                    if (earAttrib.Name[idx] == 0)
+                    {
+                        break;
+                    }
+                }
+
+                current_bit_offset = ITEM_V104_EAR_COORDINATES_BIT_OFFSET;
+                bitSize = 16;
+                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xE3FF) | 0x0100);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+                bitSize = 5;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) + bitSize;
+                bitSize = 2;
+                if (!setBits(current_bit_offset, bitSize, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                return;
+            }
+
+            if (itemType.isSimpleItem())
             {
                 // 15 bytes total
                 data.resize((ITEM_V104_SM_NUM_BITS + 7) / 8, 0);
@@ -1470,233 +1659,231 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
                 GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_SM_NUM_BITS;
                 max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+                return;
+            }
+
+            GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_EX_TYPECODE_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
+            nr_of_items_in_sockets_bits = 3;
+            GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
+            GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
+            GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
+            GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = ITEM_V104_EX_LEVEL_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) = ITEM_V104_EX_DWA_BIT_OFFSET;
+            GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
+
+            // 31 bytes total
+            data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
+            GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_EX_NUM_BITS;
+
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+            if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            value = static_cast<std::underlying_type_t<EnumItemQuality>>(quality);
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
+            bitSize = 4;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            switch (quality)
+            {
+            case EnumItemQuality::SET:
+                value = itemType.getSetId();
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                break;
+
+            case EnumItemQuality::UNIQUE:
+                value = itemType.getId();
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
+                bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+                break;
+            }
+
+            if (itemType.isArmor() || itemType.isWeapon())
+            {
+                value = itemType.durability.Max;
+                bitSize = DURABILITY_MAX_NUM_BITS;
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                if (value > 0)
+                {
+                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET);
+                    bitSize = DURABILITY_CURRENT_NUM_BITS_108;
+                    if (!setBits(current_bit_offset, bitSize, value))
+                    {
+                        *this = invalidItem;
+                        return;
+                    }
+                }
+            }
+
+            if (itemType.isGoldItem())
+            {
+                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
+                value = MAX_GLD_QUANTITY;
+                if (!setBits(current_bit_offset, 1, 0))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+
+                bitSize = GLD_STACKABLE_NUM_BITS;
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+            }
+            else if (itemType.isStackable())
+            {
+                GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
+
+                bitSize = STACKABLE_NUM_BITS;
+                value = std::max(1ui32, itemType.stackable.Max);
+                if (itemType.isKey())
+                {
+                    // we need at lease one key
+                    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
+                    {
+                        // TODO: should be handled by loading of file
+                        value = std::min(value, MAX_KEY_QUANTITY_100);
+                    }
+                    value = std::max(1ui32, value);
+                }
+
+                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET);
+                if (!setBits(current_bit_offset, bitSize, value))
+                {
+                    *this = invalidItem;
+                    return;
+                }
+            }
+
+            value = std::min(1ui16, itemType.level.Quality);
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
+            if (!setBits(current_bit_offset, 8, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            value = ItemHelpers::generarateRandomDW();
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET);
+            if (!setBits(current_bit_offset, 32, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            if (quality == EnumItemQuality::SET)
+            {
+                value = itemType.getSetItemDWBCode();
             }
             else
             {
-                GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = ITEM_V104_EX_TYPECODE_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET) = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::NR_OF_ITEMS_IN_SOCKETS_OFFSET) = ITEM_V104_EX_NUM_SOCKETED_BIT_OFFSET;
-                nr_of_items_in_sockets_bits = 3;
-                GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) = ITEM_V104_EX_DURABILITY_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET) = ITEM_V104_EX_COORDINATES_BIT_OFFSET + 1;
-                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
-                GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER) = ITEM_V104_EX_UNIQUECODE_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
-                GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = ITEM_V104_EX_LEVEL_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) = ITEM_V104_EX_DWA_BIT_OFFSET;
-                GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET) + 32;
-
-                // 31 bytes total
-                data.resize((ITEM_V104_EX_NUM_BITS + 7) / 8, 0);
-                GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) = ITEM_V104_EX_NUM_BITS;
-
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
-                if (!setBits(current_bit_offset, itemCodeBitsSet, std::uint32_t(itemCode)))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                value = static_cast<std::underlying_type_t<EnumItemQuality>>(quality);
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
-                bitSize = 4;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                switch (quality)
-                {
-                case EnumItemQuality::SET:
-                    value = itemType.getSetId();
-
-                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
-                    bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-                    break;
-
-                case EnumItemQuality::UNIQUE:
-                    value = itemType.getId();
-
-                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
-                    bitSize = ITEM_V100_UNIQUE_ID_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-                    break;
-                }
-
-                if (itemType.isArmor() || itemType.isWeapon())
-                {
-                    value = itemType.durability.Max;
-                    bitSize = DURABILITY_MAX_NUM_BITS;
-                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-
-                    if (value > 0)
-                    {
-                        current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET);
-                        bitSize = DURABILITY_CURRENT_NUM_BITS_108;
-                        if (!setBits(current_bit_offset, bitSize, value))
-                        {
-                            *this = invalidItem;
-                            return;
-                        }
-                    }
-                }
-
-                if (itemType.isGoldItem())
-                {
-                    GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
-                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
-                    value = MAX_GLD_QUANTITY;
-                    if (!setBits(current_bit_offset, 1, 0))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-
-                    bitSize = GLD_STACKABLE_NUM_BITS;
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-                }
-                else if (itemType.isStackable())
-                {
-                    GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
-
-                    bitSize = STACKABLE_NUM_BITS;
-                    value = std::max(1ui32, itemType.stackable.Max);
-                    if (itemType.isKey())
-                    {
-                        // we need at lease one key
-                        if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
-                        {
-                            // TODO: should be handled by loading of file
-                            value = std::min(value, MAX_KEY_QUANTITY_100);
-                        }
-                        value = std::max(1ui32, value);
-                    }
-
-                    current_bit_offset = GET_BIT_OFFSET(ItemOffsets::STACKABLE_BIT_OFFSET);
-                    if (!setBits(current_bit_offset, bitSize, value))
-                    {
-                        *this = invalidItem;
-                        return;
-                    }
-                }
-
-                value = std::min(1ui16, itemType.level.Quality);
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
-                if (!setBits(current_bit_offset, 8, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
                 value = ItemHelpers::generarateRandomDW();
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_ID_BIT_OFFSET);
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                if (quality == EnumItemQuality::SET)
-                {
-                    value = itemType.getSetItemDWBCode();
-                }
-                else
-                {
-                    value = ItemHelpers::generarateRandomDW();
-                }
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
-                if (!setBits(current_bit_offset, 32, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                // Place item in the buffer
-                current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
-                bitSize = 16;
-                value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
-                bitSize = 8;
-                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
-                bitSize = 8;
-                value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                current_bit_offset = GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET);
-                bitSize = 4;
-                value = 0;
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
-                bitSize = 32;
-                value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
-                bitSize = 16;
-                value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
-                if (!setBits(current_bit_offset, bitSize, value))
-                {
-                    *this = invalidItem;
-                    return;
-                }
-
-                GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_EX_NUM_BITS;
-                max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
             }
-            break;
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
+            if (!setBits(current_bit_offset, 32, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            // Place item in the buffer
+            current_bit_offset = ITEM_V104_EX_CONTAINER_BIT_OFFSET;
+            bitSize = 16;
+            value = (std::uint16_t)((readBits(current_bit_offset, bitSize) & 0xF807) | 0x07F8);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::POSITION_OFFSET);
+            bitSize = 8;
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0x01);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = ITEM_V104_EX_EQUIP_ID_BIT_OFFSET - 2;
+            bitSize = 8;
+            value = (std::uint32_t)(readBits(current_bit_offset, bitSize) & 0xC3);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = GET_BIT_OFFSET(ItemOffsets::EQUIPPED_ID_OFFSET);
+            bitSize = 4;
+            value = 0;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = ITEM_V104_EX_TYPECODE_BIT_OFFSET - 2;
+            bitSize = 32;
+            value = (std::uint32_t)(readBits64(current_bit_offset, bitSize) & 0xFFFFFFFC);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            current_bit_offset = ITEM_V104_EX_LEVEL_BIT_OFFSET - 2;
+            bitSize = 16;
+            value = (std::uint16_t)(readBits(current_bit_offset, bitSize) & 0xBFFF);
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = ITEM_V104_EX_NUM_BITS;
+            max_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
+            return;
 
         default: // should not happen
             *this = invalidItem;
             max_bit_offset = 0;
-            break;
+            return;
         }
-
-        return;
     }
 
     value = rawVersion;
@@ -1761,6 +1948,46 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
     // type code
     GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) = current_bit_offset;
+    if (itemType.isEar())
+    {
+        auto dw = ItemHelpers::generarateRandomDW();
+        EarAttributes earAttrib;
+        earAttrib.Class = static_cast<EnumCharClass>(dw % NUM_OF_CLASSES_NO_EXPANSION);
+        earAttrib.Level = dw % MAX_NUM_LEVELS + 1;
+        strcpy_s(earAttrib.Name.data(), earAttrib.Name.size(), "SOMEONE");
+
+        current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
+        if (!setBits(current_bit_offset, 3, std::uint32_t(earAttrib.Class)))
+        {
+            *this = invalidItem;
+            return;
+        }
+
+        if (!setBits(current_bit_offset, 7, earAttrib.Level))
+        {
+            *this = invalidItem;
+            return;
+        }
+
+        // up to 15 7/8 bit characters
+        bitSize = (ItemVersion >= EnumItemVersion::v120) ? 8 : 7;
+        for (size_t idx = 0; idx <= 15; ++idx)
+        {
+            if (!setBits(current_bit_offset, bitSize, std::uint32_t(earAttrib.Name[idx])))
+            {
+                *this = invalidItem;
+                return;
+            }
+
+            if (earAttrib.Name[idx] == 0)
+            {
+                break;
+            }
+        }
+        max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = max_bit_offset;
+        return;
+    }
 
     std::uint8_t numBitsSet = 0;
     switch (ItemVersion)
@@ -1809,6 +2036,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     {
         if (itemType.isGoldItem())
         {
+            // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
             GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) + 1;
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
             value = MAX_GLD_QUANTITY;
@@ -2603,7 +2831,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
         // check for personaliztion string
         if (convertFrom.isPersonalized())
         {
-            // personalization has change, make sure they are all 7 bit characters
+            // personalization has changed, make sure they are all 7 bit characters
             for (std::uint8_t singleChar : convertFrom.getPersonalizedName())
             {
                 if (singleChar > 0x7F)
@@ -2616,7 +2844,7 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
         }
         else if (convertFrom.isEar())
         {
-            // player name has change, make sure they are all 7 bit characters
+            // player name has changed, make sure they are all 7 bit characters
             EarAttributes earAttrib;
             if (convertFrom.getEarAttributes(earAttrib))
             {
@@ -4752,9 +4980,15 @@ const d2ce::ItemType& d2ce::Item::getItemTypeHelper() const
 bool d2ce::Item::getItemCode(std::array<std::uint8_t, 4>& strcode) const
 {
     strcode.fill(0);
-    if (isEar() || (GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) == 0))
+    if (GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET) == 0)
     {
         return false;
+    }
+
+    if (isEar())
+    {
+        strcode = ItemCodeStringConverter("ear");
+        return true;
     }
 
     switch (getVersion())
@@ -6115,6 +6349,25 @@ bool d2ce::Item::getUniqueAttributes(UniqueAttributes& attrib) const
         return false;
     }
 
+    switch (getVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108:  // v1.08 item
+    case EnumItemVersion::v109:  // v1.09 item
+    case EnumItemVersion::v110:  // v1.10 - v1.14d item
+    case EnumItemVersion::v100R:  // v1.0.x - v1.1.x Diablo II: Resurrected item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+        if (itemType.isSunderedCharms())
+        {
+            // should not happen
+            // Saundered Charms are only valid for D2R PTR 2.5 or higher
+            return false;
+        }
+        break;
+    }
+
     attrib.Name = itemType.name;
     attrib.ReqLevel = itemType.req.Level;
     return true;
@@ -6535,7 +6788,7 @@ bool d2ce::Item::isBodyPart() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::isStackable() const
 {
-    if (isSimpleItem())
+    if (isSimpleItem() && !isGoldItem())
     {
         return false;
     }
@@ -6693,6 +6946,18 @@ bool d2ce::Item::isCharm() const
     return result.isCharm();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isSunderedCharms() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isSunderedCharms();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::isBelt() const
 {
     const auto& result = getItemTypeHelper();
@@ -6727,6 +6992,18 @@ bool d2ce::Item::isQuestItem() const
     }
 
     return result.isQuestItem();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isGoldItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isGoldItem();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isHoradricCube() const
@@ -7322,6 +7599,7 @@ bool d2ce::Item::setQuantity(std::uint32_t quantity)
 
     if (itemType.isGoldItem())
     {
+        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
         if (GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) != 0)
         {
             if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
@@ -10384,10 +10662,11 @@ std::string d2ce::Item::getDisplayedItemName() const
             LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstringX", strFormat, "%s'");
         }
         strValue = d2ce::LocalizationHelpers::string_format(strFormat, strValue.c_str());
-
         LocalizationHelpers::GetStringTxtValue("PlayerBodyPartFormat", strFormat, "%0 %1");
-        ss << d2ce::LocalizationHelpers::string_formatDiablo(strFormat, strValue, LocalizationHelpers::GetStringTxtValue("ear", strFormat, "Ear"));
-        ss << "\n";
+        std::string earStr;
+        LocalizationHelpers::GetStringTxtValue("ear", earStr, "Ear");
+        ss << d2ce::LocalizationHelpers::string_formatDiablo(strFormat, strValue, earStr);
+        ss << "\n" << earAttrib.getClassName() << "\n";
         LocalizationHelpers::GetStringTxtValue("strChatLevel", strFormat, "Level %d");
         ss << d2ce::LocalizationHelpers::string_format(strFormat, earAttrib.getLevel());
         return ss.str();
@@ -11906,6 +12185,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
 
                 if (itemType.isGoldItem())
                 {
+                    // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
                     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
                 }
                 else if (isStackable())
@@ -11982,6 +12262,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
 
                 if (itemType.isGoldItem())
                 {
+                    // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
                     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
                 }
                 else if (isStackable())
@@ -12058,7 +12339,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
         {
             if (itemType.isGoldItem())
             {
-                // Is this correct for gld items? It's not currently used, so is it even needed?
+                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                // Is this correct for gld items? is it even needed?
                 GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) + 1;
                 if (readBits(charfile, current_bit_offset, 1) != 0)
                 {
@@ -12538,6 +12820,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
             return false;
         }
 
+        current_bit_offset = ITEM_V100_EAR_LEVEL_BIT_OFFSET;
         bitSize = 8;
         if (!setBits(current_bit_offset, bitSize, earAttrib.Level))
         {
@@ -12854,6 +13137,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = 0;
     if (itemType.isGoldItem())
     {
+        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
         GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
 
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
@@ -13895,6 +14179,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
     if (itemType.isGoldItem())
     {
+        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
         GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
 
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
@@ -16239,7 +16524,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             {
                 if (bIsPersonalized)
                 {
-                    // personalization has change, make sure they are all 7 bit characters
+                    // personalization has changed, make sure they are all 7 bit characters
                     for (std::uint8_t singleChar : getPersonalizedName())
                     {
                         if (singleChar > 0x7F)
@@ -16251,13 +16536,13 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
                 }
                 else if (bIsEar)
                 {
-                    // player name has change, make sure they are all 7 bit characters
+                    // player name has changed, make sure they are all 7 bit characters
                     for (std::uint8_t singleChar : earAttrib.Name)
                     {
                         if (singleChar > 0x7F)
                         {
                             earAttrib.Name.fill(0);
-                            strcpy_s(earAttrib.Name.data(), 7, "SOMEONE");
+                            strcpy_s(earAttrib.Name.data(), earAttrib.Name.size(), "SOMEONE");
                             break;
                         }
                     }

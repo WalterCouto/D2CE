@@ -245,11 +245,11 @@ namespace d2ce
         std::uint32_t Experience = 0;
         std::uint32_t GoldInBelt = 0;
         std::uint32_t GoldInStash = 0;
-        std::uint32_t MaxLevel = 99ui32;
+        std::uint32_t MaxLevel = d2ce::MAX_NUM_LEVELS;
         std::uint32_t MinExperienceLevel = 0ui32;
         std::uint32_t NextExperienceLevel = 500ui32;
-        std::uint32_t MaxExperience = 3600000000ui32;
-        std::uint32_t MaxGoldInBelt = 10000ui32;
+        std::uint32_t MaxExperience = d2ce::MAX_EXPERIENCE;
+        std::uint32_t MaxGoldInBelt = d2ce::GOLD_IN_BELT_LIMIT;
         std::uint32_t MaxGoldInStash = d2ce::GOLD_IN_STASH_LIMIT;
 
         void clear()
@@ -270,11 +270,11 @@ namespace d2ce
             Experience = 0;
             GoldInBelt = 0;
             GoldInStash = 0;
-            MaxLevel = 99ui32;
+            MaxLevel = d2ce::MAX_NUM_LEVELS;
             MinExperienceLevel = 0ui32;
             NextExperienceLevel = 500ui32;
-            MaxExperience = 3600000000ui32;
-            MaxGoldInBelt = 10000ui32;
+            MaxExperience = d2ce::MAX_EXPERIENCE;
+            MaxGoldInBelt = d2ce::GOLD_IN_BELT_LIMIT;
             MaxGoldInStash = d2ce::GOLD_IN_STASH_LIMIT;
         }
     };
@@ -1339,6 +1339,7 @@ namespace d2ce
         virtual bool isEliteItem() const;
         virtual bool isRune() const;
         virtual bool isCharm() const;
+        virtual bool isSunderedCharms() const;
         virtual bool isBelt() const;
         virtual bool isBoots() const;
         virtual bool isBeltable() const;

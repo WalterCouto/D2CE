@@ -27,8 +27,6 @@
 //---------------------------------------------------------------------------
 namespace d2ce
 {
-    constexpr std::uint32_t MAX_EXPERIENCE = 3600000000ui32; // experience max value (game limit)
-    constexpr std::uint32_t MAX_NUM_LEVELS = 99ui32;         // level max value (game limit)
 
     constexpr std::array<std::uint8_t, 2> STATS_MARKER = { 0x67, 0x66 };              // alternatively "gf"
     constexpr std::uint16_t STAT_MAX = 16;
@@ -132,7 +130,7 @@ namespace d2ce
                 // first row is the MaxLvl row, so initialize vector to fit size
                 for (auto colIdx : classColumnIndex)
                 {
-                    level = 99ui32;
+                    level = d2ce::MAX_NUM_LEVELS;
                     strValue = doc.GetCellString(colIdx.second, i);
                     if (!strValue.empty())
                     {

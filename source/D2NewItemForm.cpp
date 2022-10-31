@@ -97,7 +97,7 @@ namespace
 
                     DWORD_PTR itemData = 0;
                     std::u16string uText;
-                    if (itemType.isRing() || itemType.isAmulet() || itemType.isCharm() || itemType.isJewel())
+                    if (((itemType.isRing() || itemType.isAmulet()|| itemType.isCharm() || itemType.isJewel()) && !itemType.isUniqueItem()) || itemType.isEar())
                     {
                         d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), itemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
                         d2ce::Item newItem(createParams);

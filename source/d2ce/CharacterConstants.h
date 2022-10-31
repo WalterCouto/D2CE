@@ -45,6 +45,12 @@ namespace d2ce
 
     constexpr EnumCharVersion APP_CHAR_VERSION = EnumCharVersion::v140; // default version used by application
 
+    constexpr std::uint32_t MAX_NUM_LEVELS = 99ui32;         // level max value (game limit)
+    constexpr std::uint32_t MAX_EXPERIENCE = 3600000000ui32; // experience max value (game limit
+
+    constexpr std::uint32_t GOLD_IN_BELT_LIMIT = 990000;
+    constexpr std::uint32_t GOLD_IN_STASH_LIMIT = 2500000;
+
     // character class
     enum class EnumCharClass : std::uint8_t { Amazon, Sorceress, Necromancer, Paladin, Barbarian, Druid, Assassin };
 

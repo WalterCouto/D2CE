@@ -75,8 +75,8 @@ namespace d2ce
 
         std::uint32_t min_vitality = 1, min_energy = 1, min_dexterity = 1, min_strength = 1;
         std::uint32_t min_stat_points_used = 80;
-        std::uint32_t max_levels = 99ui32;
-        std::uint32_t max_experience = 3600000000ui32;
+        std::uint32_t max_levels = d2ce::MAX_NUM_LEVELS;
+        std::uint32_t max_experience = d2ce::MAX_EXPERIENCE;
         void updateStartStats();
         
         void updateSkillChoices(std::uint16_t skillPointsEarned);

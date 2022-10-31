@@ -238,9 +238,11 @@ namespace d2ce
         bool isRune() const;
         bool isJewel() const;
         bool isCharm() const;
+        bool isSunderedCharms() const;
         bool isBelt() const;
         bool isBeltable() const;
         bool isQuestItem() const;
+        bool isGoldItem() const;
         bool isHoradricCube() const;
         bool isPhaseBlade() const;
         bool isBow() const;
