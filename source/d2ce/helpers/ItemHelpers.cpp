@@ -6268,7 +6268,7 @@ namespace d2ce
     {
         if (itemType.code.empty() || itemType.isGoldItem())
         {
-            // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+            // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
             return false;
         }
 

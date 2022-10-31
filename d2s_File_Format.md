@@ -488,11 +488,11 @@ and are described by their bit position and sizes.
 | 82     | 74     |  3   | Opponent Class
 |        | 77     |  8   | ? 0x00
 |        | 85     |  3   | [Stash](#parent)
-|        | 88     |  2   | ? 0x00
-| 85     |100     |  8   | Opponent Level
-| 93     |108     |105   | Opponent Name
+|        | 88     |  4   | ? 0x00
+| 85     | 92     |  8   | Opponent Level
+| 93     |100     |105   | Opponent Name
 |198     |        | 10   | ? 0x00
-|        |213     |  3   | ? 0x00
+|        |205     | 11   | ? 0x00
 
 |Bit<br>'87' - '96'|Bit | Size | Desc
 |-----------|----|------|------

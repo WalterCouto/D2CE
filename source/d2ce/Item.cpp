@@ -1049,7 +1049,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
     if (itemType.isGoldItem())
     {
-        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+        // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
         // D2R will crash if we create this unused item
         *this = invalidItem;
         return;
@@ -1424,7 +1424,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
             if (itemType.isGoldItem())
             {
-                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
                 GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
                 value = MAX_GLD_QUANTITY;
@@ -1747,7 +1747,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
             if (itemType.isGoldItem())
             {
-                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
                 GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
                 current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
                 value = MAX_GLD_QUANTITY;
@@ -2036,7 +2036,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     {
         if (itemType.isGoldItem())
         {
-            // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+            // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
             GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) + 1;
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET);
             value = MAX_GLD_QUANTITY;
@@ -7599,7 +7599,7 @@ bool d2ce::Item::setQuantity(std::uint32_t quantity)
 
     if (itemType.isGoldItem())
     {
-        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+        // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
         if (GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) != 0)
         {
             if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
@@ -12185,7 +12185,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
 
                 if (itemType.isGoldItem())
                 {
-                    // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                    // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
                     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
                 }
                 else if (isStackable())
@@ -12262,7 +12262,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
 
                 if (itemType.isGoldItem())
                 {
-                    // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                    // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
                     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
                 }
                 else if (isStackable())
@@ -12339,7 +12339,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
         {
             if (itemType.isGoldItem())
             {
-                // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+                // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
                 // Is this correct for gld items? is it even needed?
                 GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET) + 1;
                 if (readBits(charfile, current_bit_offset, 1) != 0)
@@ -13137,7 +13137,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = 0;
     if (itemType.isGoldItem())
     {
-        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+        // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
         GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_100;
 
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
@@ -14179,7 +14179,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     const auto& itemType = ItemHelpers::getItemTypeHelper(strcode);
     if (itemType.isGoldItem())
     {
-        // Gold Items should not exist in the inventory as it is a place holder for what the gold dropped in the game
+        // Gold Items should not exist in the inventory as it is a place holder for the gold dropped in the game
         GET_BIT_OFFSET(ItemOffsets::GLD_STACKABLE_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUANTITY_BIT_OFFSET_104;
 
         node = itemRoot[bSerializedFormat ? "Quantity" : "quantity"];
