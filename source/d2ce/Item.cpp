@@ -8026,7 +8026,7 @@ bool d2ce::Item::removeEmptySockets()
     return setSocketCount(numSocketed);
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::removeSocket()
+bool d2ce::Item::removeSockets()
 {
     if (!isSocketed())
     {

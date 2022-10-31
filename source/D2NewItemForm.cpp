@@ -24,6 +24,7 @@
 #include "d2ce/item.h"
 #include "D2MagicalAffixesForm.h"
 #include "D2RareAffixesForm.h"
+#include "D2RunewordForm.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
 
@@ -245,6 +246,9 @@ void CD2NewItemForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_ETHEREAL_CHECK, Ethereal);
     DDX_Control(pDX, IDC_QUALITY_STATIC, QualityStatic);
     DDX_Control(pDX, IDC_QUALITY_COMBO, Quality);
+    DDX_Control(pDX, IDC_SOCKETS_STATIC, SocketsStatic);
+    DDX_Control(pDX, IDC_SOCKETS_EDIT, SocketsEdit);
+    DDX_Control(pDX, IDC_SOCKETS_SPIN, SocketsSpinner);
 }
 
 //---------------------------------------------------------------------------
@@ -253,6 +257,7 @@ BEGIN_MESSAGE_MAP(CD2NewItemForm, CDialogEx)
     ON_NOTIFY(TVN_SELCHANGED, IDC_ITEM_TREE, &CD2NewItemForm::OnTvnSelchangedItemtree)
     ON_NOTIFY(NM_DBLCLK, IDC_ITEM_TREE, &CD2NewItemForm::OnNMDblclkItemtree)
     ON_BN_CLICKED(IDC_ETHEREAL_CHECK, &CD2NewItemForm::OnBnClickedEtherealCheck)
+    ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -300,6 +305,22 @@ BOOL CD2NewItemForm::OnInitDialog()
                 }
             }
         }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("ModStre8c", strValue))
+        {
+            strValue += " ";
+            pWnd = GetDlgItem(IDCANCEL);
+            if (pWnd != nullptr)
+            {
+                pWnd->GetWindowText(text);
+                textA = text;
+                if (textA.CompareNoCase(strValue.c_str()) != 0)
+                {
+                    uText = utf8::utf8to16(strValue);
+                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                }
+            }
+        }
     }
 
     Ethereal.EnableWindow(FALSE);
@@ -308,6 +329,10 @@ BOOL CD2NewItemForm::OnInitDialog()
     QualityStatic.ShowWindow(FALSE);
     Quality.EnableWindow(FALSE);
     Quality.ShowWindow(FALSE);
+    SocketsStatic.ShowWindow(FALSE);
+    SocketsEdit.ShowWindow(FALSE);
+    SocketsEdit.SetLimitText(1);
+    SocketsSpinner.ShowWindow(FALSE);
     InitTree();
 
     return TRUE;  // return TRUE unless you set the focus to a control
@@ -323,40 +348,57 @@ void CD2NewItemForm::OnBnClickedOk()
         return;
     }
 
-    CD2MagicalAffixesForm magicAffixes(*this);
-    CD2RareAffixesForm rareAffixes(*this);
     if (Quality.IsWindowEnabled())
     {
         auto idx = Quality.GetCurSel();
         if (idx >= 0)
         {
-            auto quality = static_cast<d2ce::EnumItemQuality>(Quality.GetItemData(idx));
-            switch (quality)
+            auto qualityIntValue = std::int16_t(Quality.GetItemData(idx));
+            if (qualityIntValue == -1)
             {
-            case d2ce::EnumItemQuality::SUPERIOR:
-                const_cast<d2ce::Item*>(CreatedItem)->makeSuperior();
-                break;
-
-            case d2ce::EnumItemQuality::MAGIC:
-                if (magicAffixes.DoModal() != IDOK)
+                CD2RunewordForm dlg(*this);
+                if (dlg.DoModal() != IDOK)
                 {
                     return;
                 }
-                break;
-
-            case d2ce::EnumItemQuality::RARE:
-            case d2ce::EnumItemQuality::CRAFT:
-            case d2ce::EnumItemQuality::TEMPERED:
-                if (rareAffixes.DoModal() != IDOK)
+            }
+            else
+            {
+                auto quality = static_cast<d2ce::EnumItemQuality>(qualityIntValue);
+                switch (quality)
                 {
-                    return;
+                case d2ce::EnumItemQuality::SUPERIOR:
+                    const_cast<d2ce::Item*>(CreatedItem)->makeSuperior();
+                    break;
+
+                case d2ce::EnumItemQuality::MAGIC:
+                {
+                    CD2MagicalAffixesForm magicAffixes(*this);
+                    if (magicAffixes.DoModal() != IDOK)
+                    {
+                        return;
+                    }
                 }
-                break;
+                    break;
+
+                case d2ce::EnumItemQuality::RARE:
+                case d2ce::EnumItemQuality::CRAFT:
+                case d2ce::EnumItemQuality::TEMPERED:
+                {
+                    CD2RareAffixesForm rareAffixes(*this);
+                    if (rareAffixes.DoModal() != IDOK)
+                    {
+                        return;
+                    }
+                }
+                    break;
+                }
             }
         }
     }
     else if (CreatedItem->isCharm())
     {
+        CD2MagicalAffixesForm magicAffixes(*this);
         if (magicAffixes.DoModal() != IDOK)
         {
             return;
@@ -412,6 +454,15 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                         {
                             Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::NORMAL));
                             Quality.SetCurSel(idx);
+                        }
+
+                        if(item->canHaveSockets() && !item->getPossibleRunewords().empty())
+                        {
+                            idx = Quality.AddString(_T("Runeword"));
+                            if (idx >= 0)
+                            {
+                                Quality.SetItemData(idx, DWORD_PTR(-1));
+                            }
                         }
 
                         if (item->canMakeSuperior())
@@ -526,6 +577,27 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
             Quality.EnableWindow(FALSE);
             Quality.ShowWindow(FALSE);
         }
+
+        if (item->canHaveSockets())
+        {
+            SocketsSpinner.SetRange32(0, item->getMaxSocketCount());
+            SocketsSpinner.SetPos32(item->getSocketCount());
+            SocketsStatic.EnableWindow(TRUE);
+            SocketsStatic.ShowWindow(TRUE);
+            SocketsEdit.EnableWindow(TRUE);
+            SocketsEdit.ShowWindow(TRUE);
+            SocketsSpinner.EnableWindow(TRUE);
+            SocketsSpinner.ShowWindow(TRUE);
+        }
+        else
+        {
+            SocketsStatic.EnableWindow(FALSE);
+            SocketsStatic.ShowWindow(FALSE);
+            SocketsEdit.EnableWindow(FALSE);
+            SocketsEdit.ShowWindow(FALSE);
+            SocketsSpinner.EnableWindow(FALSE);
+            SocketsSpinner.ShowWindow(FALSE);
+        }
     }
     else
     {
@@ -535,6 +607,12 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
         QualityStatic.ShowWindow(FALSE);
         Quality.EnableWindow(FALSE);
         Quality.ShowWindow(FALSE);
+        SocketsStatic.EnableWindow(FALSE);
+        SocketsStatic.ShowWindow(FALSE);
+        SocketsEdit.EnableWindow(FALSE);
+        SocketsEdit.ShowWindow(FALSE);
+        SocketsSpinner.EnableWindow(FALSE);
+        SocketsSpinner.ShowWindow(FALSE);
     }
 }
 //---------------------------------------------------------------------------
@@ -558,6 +636,20 @@ void CD2NewItemForm::OnBnClickedEtherealCheck()
             item->makeEthereal();
         }
         ItemTooltipBox.RedrawWindow();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2NewItemForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+    __super::OnVScroll(nSBCode, nPos, pScrollBar);
+    if (pScrollBar != NULL && (pScrollBar->GetDlgCtrlID() == IDC_SOCKETS_SPIN))
+    {
+        auto item = const_cast<d2ce::Item*>(GetSelectedItem());
+        if (item != nullptr)
+        {
+            item->setSocketCount(std::uint8_t(SocketsSpinner.GetPos32()));
+            ItemTooltipBox.RedrawWindow();
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -628,4 +720,3 @@ const d2ce::Item* CD2NewItemForm::GetCreatedItem()
     return CreatedItem;
 }
 //---------------------------------------------------------------------------
-

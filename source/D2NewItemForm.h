@@ -31,6 +31,7 @@ class CD2NewItemForm : public CDialogEx, public CD2ItemTooltipCallback
 {
     friend class CD2MagicalAffixesForm;
     friend class CD2RareAffixesForm;
+    friend class CD2RunewordForm;
 	DECLARE_DYNAMIC(CD2NewItemForm)
 
 public:
@@ -48,6 +49,7 @@ protected:
     afx_msg void OnTvnSelchangedItemtree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMDblclkItemtree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnBnClickedEtherealCheck();
+    afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -64,7 +66,7 @@ private:
 protected:
     const d2ce::Character* GetCharacterInfo() const override;
 
-private:
+protected:
     CD2ItemInfoStatic ItemTooltipBox;
     CD2MainForm& MainForm;
     CD2ItemsForm* ItemsFormPtr = nullptr;
@@ -74,6 +76,9 @@ private:
     CButton Ethereal;
     CStatic QualityStatic;
     CComboBox Quality;
+    CStatic SocketsStatic;
+    CEdit SocketsEdit;
+    CSpinButtonCtrl SocketsSpinner;
 
     std::map<HTREEITEM, d2ce::AvailableItemType> AvailableItemTypes;
     mutable std::list<d2ce::Item> AvailableItems;

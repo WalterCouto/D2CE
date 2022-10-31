@@ -289,7 +289,7 @@ namespace d2ce
         bool addMaxSocketCount();
         bool addSocket();
         bool removeEmptySockets();
-        bool removeSocket(); // can only remove empty sockets
+        bool removeSockets(); // can only remove empty sockets
         bool setSocketCount(std::uint8_t numSockets);
         bool addPersonalization(const std::string& name);
         bool removePersonalization();

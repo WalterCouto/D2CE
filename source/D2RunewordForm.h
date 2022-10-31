@@ -23,6 +23,7 @@
 #include "D2ItemsForm.h"
 #include "D2SharedStashForm.h"
 #include "D2MercenaryForm.h"
+#include "D2NewItemForm.h"
 #include "D2ItemToolTipCtrl.h"
 
 //---------------------------------------------------------------------------
@@ -34,6 +35,7 @@ public:
     CD2RunewordForm(CD2ItemsForm& form);
     CD2RunewordForm(CD2MercenaryForm& form);
     CD2RunewordForm(CD2SharedStashForm& form);
+    CD2RunewordForm(CD2NewItemForm& form);
     virtual ~CD2RunewordForm();
 
     // Dialog Data
@@ -65,6 +67,7 @@ private:
     CD2ItemsForm* ItemsFormPtr = nullptr;
     CD2MercenaryForm* MercenaryFormPtr = nullptr;
     CD2SharedStashForm* SharedStashFormPtr = nullptr;
+    CD2NewItemForm* NewItemFormPtr = nullptr;
     d2ce::Item* ItemPtr = nullptr;
     CStatic RunewordStatic;
     CComboBox  Runeword;
