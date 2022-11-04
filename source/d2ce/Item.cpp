@@ -4373,7 +4373,6 @@ void d2ce::Item::verifyRuneword()
             }
 
             // add bonus magical attributes from runeword id
-            cachedCombinedMagicalAttributes.clear();
             GET_BIT_OFFSET(ItemOffsets::RUNEWORD_PROPS_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER);
             size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::RUNEWORD_PROPS_BIT_OFFSET);
             if (!updatePropertyList(current_bit_offset, runeword.attribs))
@@ -4385,6 +4384,8 @@ void d2ce::Item::verifyRuneword()
             GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
             size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
             data.resize(newSize, 0);
+
+            cachedCombinedMagicalAttributes.clear();
             return;
         }
     }
@@ -9077,6 +9078,43 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     return (id == runeAttrib.Id) ? true : false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::setRunewordPropertyList(const std::vector<MagicalAttribute>& attribs)
+{
+    if (attribs.empty() || !isRuneword() || (GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET) == 0))
+    {
+        return false;
+    }
+
+    // make a copy first
+    d2ce::Item origItem(*this);
+
+    // truncate bonus list
+    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER);
+    if ((GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) % 8) > 0)
+    {
+        auto bits = (std::uint8_t)(8 - (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) % 8));
+        updateBits(GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET), bits, 0);
+    }
+    size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
+    data.resize(newSize, 0);
+
+    // add bonus magical attributes from runeword id
+    GET_BIT_OFFSET(ItemOffsets::RUNEWORD_PROPS_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER);
+    size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::RUNEWORD_PROPS_BIT_OFFSET);
+    if (!updatePropertyList(current_bit_offset, attribs))
+    {
+        swap(origItem);
+        return false;
+    }
+
+    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
+    newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
+    data.resize(newSize, 0);
+
+    cachedCombinedMagicalAttributes.clear();
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const
 {
     return ItemHelpers::getPossibleMagicalAffixes(*this, prefixes, suffixes);
@@ -9390,6 +9428,149 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     {
         setSocketCount(numSockets);
     }
+
+    cachedCombinedMagicalAttributes.clear();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setMagicalPropertyList(const std::vector<MagicalAttribute>& attribs)
+{
+    if (attribs.empty() || isSimpleItem() || (isSocketFiller() && !isJewel()) || (ItemVersion < EnumItemVersion::v107))
+    {
+        return false;
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::NORMAL:
+    case EnumItemQuality::INFERIOR:
+    case EnumItemQuality::UNKNOWN:
+        return false; // no posibility of magical properties
+
+    default:
+        break;
+    }
+
+    // make a copy first
+    d2ce::Item origItem(*this);
+    const auto& origData = origItem.data;
+
+    size_t old_current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER);
+    size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER);
+
+    // write out new data
+    size_t old_magic_bit_offset = GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET);
+    size_t current_bit_offset = old_magic_bit_offset;
+    if (!updatePropertyList(current_bit_offset, attribs))
+    {
+        swap(origItem);
+        return false;
+    }
+
+    ptrdiff_t diff = ptrdiff_t(current_bit_offset) - ptrdiff_t(old_magic_bit_offset);
+    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset + bitsToCopy;
+    size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
+    data.resize(newSize, 0);
+
+    // now copy the remaining bits
+    std::uint32_t value = 0;
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    while (bitsToCopy > 0)
+    {
+        bitsToCopy -= bits;
+        value = readtemp_bits(origData, old_current_bit_offset, bits);
+        old_current_bit_offset += bits;
+        updateBits(current_bit_offset, bits, value);
+        current_bit_offset += bits;
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    }
+
+    updateOffset(GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET), diff);
+
+    cachedCombinedMagicalAttributes.clear();
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setSetBonusPropertyLists(const std::vector<std::vector<MagicalAttribute>>& attribs)
+{
+    if (attribs.empty() || (GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) == 0) || 
+        (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER) == 0) ||
+        (ItemVersion < EnumItemVersion::v107))
+    {
+        return false;
+    }
+
+    for (const auto& attrib : attribs)
+    {
+        if (attrib.empty())
+        {
+            return false;
+        }
+    }
+
+    size_t numBonusLists = 0;
+    std::uint16_t setBonusBits = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET), 5);
+    if (setBonusBits > 0)
+    {
+        // Item has more magical property lists due to being a set item
+        for (size_t i = 0; i < 5 && setBonusBits > 0; ++i, setBonusBits >>= 1)
+        {
+            if ((setBonusBits & 0x01) != 0)
+            {
+                ++numBonusLists;
+            }
+        }
+    }
+
+    if (numBonusLists > attribs.size())
+    {
+        // missing some attributes
+        return false;
+    }
+
+
+    // make a copy first
+    d2ce::Item origItem(*this);
+    const auto& origData = origItem.data;
+
+    size_t old_current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER);
+    size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_PROPS_BIT_OFFSET_MARKER);
+
+    // write out new data
+    size_t old_set_bit_offset = GET_BIT_OFFSET(ItemOffsets::SET_BONUS_PROPS_BIT_OFFSET);
+    size_t current_bit_offset = old_set_bit_offset;
+
+    auto attribIter = attribs.begin();
+    for (size_t i = 0; i < numBonusLists; ++i, ++attribIter)
+    {
+        if (!updatePropertyList(current_bit_offset, *attribIter))
+        {
+            swap(origItem);
+            return false;
+        }
+    }
+
+    ptrdiff_t diff = ptrdiff_t(current_bit_offset) - ptrdiff_t(old_set_bit_offset);
+    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset + bitsToCopy;
+    size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
+    data.resize(newSize, 0);
+
+    // now copy the remaining bits
+    std::uint32_t value = 0;
+    size_t valueBitSize = sizeof(value) * 8;
+    std::uint8_t bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    while (bitsToCopy > 0)
+    {
+        bitsToCopy -= bits;
+        value = readtemp_bits(origData, old_current_bit_offset, bits);
+        old_current_bit_offset += bits;
+        updateBits(current_bit_offset, bits, value);
+        current_bit_offset += bits;
+        bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
+    }
+
+    updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SET_BONUS_PROPS_BIT_OFFSET_MARKER), diff);
 
     cachedCombinedMagicalAttributes.clear();
     return true;

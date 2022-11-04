@@ -304,10 +304,13 @@ namespace d2ce
         std::vector<d2ce::RunewordType> getPossibleRunewords(bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
         std::vector<d2ce::RunewordType> getPossibleRunewords(std::uint32_t level, bool bUseCurrentSocketCount = false, bool bExcludeServerOnly = true) const;
         bool setRuneword(std::uint16_t id);
+        bool setRunewordPropertyList(const std::vector<MagicalAttribute>& attribs);
         bool getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
         bool getPossibleMagicalAffixes(std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes) const;
         bool getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
         bool setMagicalAffixes(const d2ce::MagicalAffixes& affixes);
+        bool setMagicalPropertyList(const std::vector<MagicalAttribute>& attribs);
+        bool setSetBonusPropertyLists(const std::vector<std::vector<MagicalAttribute>>& attribs);
         bool getPossibleSuperiorAttributes(std::vector<MagicalAttribute>& attribs) const;
         bool makeSuperior(const std::vector<MagicalAttribute>& attribs);
         bool makeSuperior();
