@@ -394,7 +394,6 @@ namespace d2ce
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
         bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
 
-        const std::map<std::uint16_t, std::string>& getMonsterNameMap();
         const std::string& getMonsterNameFromId(std::uint16_t id);
     }
 
@@ -2394,19 +2393,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         // the monster Id from monstat.txt
         GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
 
-        value = 0;
-        const auto& monsterMap = ItemHelpers::getMonsterNameMap();
-        std::uint32_t modulo = std::uint32_t(monsterMap.size());
-        if (modulo > 0)
-        {
-            auto iter = monsterMap.begin();
-            std::advance(iter, ItemHelpers::generateDWARandomOffset(dwa, 1) % modulo);
-            if (iter != monsterMap.end())
-            {
-                value = iter->first;
-            }
-        }
-
+        value = 0; // Skeleton
         bitSize = MONSTER_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
