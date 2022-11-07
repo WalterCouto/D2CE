@@ -628,7 +628,7 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
             SocketsSpinner.ShowWindow(FALSE);
         }
 
-        if (item->isBodyPart())
+        if (item->isBodyPart() && (item->getVersion() >= d2ce::EnumItemVersion::v107))
         {
             MonstersStatic.EnableWindow(TRUE);
             MonstersStatic.ShowWindow(TRUE);
