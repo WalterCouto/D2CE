@@ -478,32 +478,27 @@ Items are stored in lists described by this header:
 
 After this come N items, where N is the item count given above. This item count does not include any items occupying sockets in another item. Those socketed items immediatly follow the item they are socketed into. Each item starts with a basic 14-byte structure. Many fields in this structure are not "byte-aligned" and are described by their bit position and sizes.
 
-|Bit<br>'71'<br>15 bytes|Bit<br>'71'<br>26 bytes|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes|Bit<br>'87' - '96'|Bit | Size | Desc                                               |
-|--------|--------|--------|--------|-----------|----|------|----------------------------------------------------|
-|  0     |  0     |  0     |  0     |  0        |    | 16   | "JM" (separate from the list header)               |
-| 16     | 16     | 16     | 16     | 16        |  0 |  4   | ? 0x00                                             |
-| 20     | 20     | 20     | 20     | 20        |  4 |  1   | Identified                                         |
-| 21     | 21     | 21     | 21     | 21        |  5 |  6   | ? 0x00                                             |
-| 27     | 27     | 27     | 27     | 27        | 11 |  1   | Socketed (If socketed, then following this item<br>are any items occuping those sockets) |
-| 28     | 28     | 28     | 28     | 28        | 12 |  1   | ? 0x00                                             |
-| 29     | 29     | 29     | 29     | 29        | 13 |  1   | Picked up since last save                          |
-| 30     | 30     | 30     | 30     | 30        | 14 |  2   | ? 0x00                                             |
-|        | 32     | 32     |        | 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes    |
-| 32     |        |        | 32     |           |    |  1   | ? 0x00                                             |
-| 33     | 33     | 33     | 33     | 33        | 17 |  1   | Starter Gear                                       |
-| 34     | 34     | 34     | 34     | 34        | 18 |  1   | ? 0x00                                             |
-| 35     | 35     |        | 35     |           |    |  2   | ? 0x03                                             |
-|        |        | 35     |        | 35        | 19 |  2   | ? 0x00                                             |
-| 37     | 37     |        | 37     | 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes|
-|        |        | 37     |        |           |    |  1   | ? 0x00                                             |
-| 38     | 38     | 38     | 38     | 38        | 22 |  1   | Ethereal                                           |
-| 39     | 39     | 39     | 39     | 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00          |
-|        |        |        |        | 40        | 24 |  1   | Personalized                                       |
-| 40     | 40     | 40     | 40     |           |    |  1   | ? 0x00                                             |
-| 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00                                             |
-|        |        |        |        | 42        | 26 |  1   | Runeword                                           |
-| 41     | 41     | 41     | 41     | 41        | 25 |  1   | ? 0x00                                             |
-| 43     | 43     | 43     | 43     | 43        | 27 |  5   | ? 0x00                                             |
+|Bit<br>'71' - '96'|Bit | Size | Desc                                                   |
+|-----------|----|------|--------------------------------------------------------|
+|  0        |    | 16   | "JM" (separate from the list header)                   |
+| 16        |  0 |  4   | ? 0x00                                                 |
+| 20        |  4 |  1   | Identified                                             |
+| 21        |  5 |  6   | ? 0x00                                                 |
+| 27        | 11 |  1   | Socketed (If socketed, then following this item<br>are any items occuping those sockets)|
+| 28        | 12 |  1   | ? 0x00                                                 |
+| 29        | 13 |  1   | Picked up since last save                              |
+| 30        | 14 |  2   | ? 0x00                                                 |
+| 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes,<br>always ? 0x00 for Version '71' with 15 and 31 bytes|
+| 33        | 17 |  1   | Starter Gear                                           |
+| 34        | 18 |  1   | ? 0x00                                                 |
+| 35        | 19 |  2   | ? 0x03 for version '71' with 15, 26 or 31 bytes,<br>otherwise 0x00|
+| 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes,<br>? 0x00 always for version '71' with 27 bytes|
+| 38        | 22 |  1   | Ethereal                                               |
+| 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00              |
+| 40        | 24 |  1   | Personalized, ? 0x00 always for version '71'           |
+| 41        | 25 |  1   | ? 0x00                                                 |
+| 42        | 26 |  1   | Runeword, ? 0x00 always for version '71'               |
+| 43        | 27 |  5   | ? 0x00                                                 |
 
 
 #### Ear Item:
@@ -745,7 +740,7 @@ Inferior items have a 3-bit integer follow the quality value.
 
 | Size | Desc                                                                                              |
 |------|---------------------------------------------------------------------------------------------------|
-|  8   | First word of name from the `RarePrefix.txtt` file                                                |
+|  8   | First word of name from the `RarePrefix.txt` file                                                 |
 |  8   | Second word of name from the `RareSuffix.txt` file                                                |
 |1 - 12| if first bit is set, then ll bits follow for the first Prefix Id from the `MagicPrefix.txt` file  |
 |1 - 12| if first bit is set, then ll bits follow for the first Suffix Id from the `MagicSuffix.txt` file  |
