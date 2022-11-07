@@ -136,6 +136,7 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetRunesTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSkillsTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSkillDescTxt() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetMonStatsTxt() const = 0;
     };
 
     const ITxtReader& getDefaultTxtReader();

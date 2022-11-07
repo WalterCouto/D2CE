@@ -51,6 +51,9 @@ namespace d2ce
         void getAvailableItemsHelper(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion, std::deque<const d2ce::AvailableItemType*>& parent, std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter, const std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter_end);
         void getAvailableItems(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion);
 
+        const std::map<std::uint16_t, std::string>& getMonsterNameMap();
+        const std::string& getMonsterNameFromId(std::uint16_t id);
+
         void initRunewordData();
         std::string getRunewordNameFromId(std::uint16_t id);
         const d2ce::RunewordType& getRunewordFromId(std::uint16_t id);
@@ -7904,6 +7907,129 @@ namespace d2ce
         s_ItemGemsType.swap(itemGemsType);
     }
 
+
+    struct MonStatsType
+    {
+        std::string index;     // The ID pointer that is referenced by the game in levels.txt, monstat2.txt and superuniques.txt
+        std::uint16_t id = 0;  // id of the monster
+        std::string nameIndex; // The ID pointer that is referenced by the game to get the localized name
+        std::string name;      // what string will be displayed in-game for this monster
+        std::string monType;   // Monster Type
+        bool enabled = false;  // is monster enabled?
+    };
+
+    std::map<std::uint16_t, MonStatsType> s_MonStatsType;
+    std::map<std::uint16_t, std::string> s_MonNamesType;
+    void InitMonStatsTypeData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_MonStatsType.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_MonStatsType.clear();
+            s_MonNamesType.clear();
+        }
+
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetMonStatsTxt());
+        auto& doc = *pDoc;
+        std::map<std::uint16_t, MonStatsType> monStatsType;
+        std::map<std::uint16_t, std::string> monNamesType;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T indexColumnIdx = doc.GetColumnIdx("Id");
+        if (indexColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T nameStrColumnIdx = doc.GetColumnIdx("NameStr");
+        if (nameStrColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T enabledColumnIdx = doc.GetColumnIdx("enabled");
+        if (enabledColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T monTypeColumnIdx = doc.GetColumnIdx("MonType");
+        if (monTypeColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T killableColumnIdx = doc.GetColumnIdx("killable");
+        if (monTypeColumnIdx < 0)
+        {
+            return;
+        }
+        
+        std::string strValue;
+        std::string index;
+        std::string nameIndex;
+        std::string monTypeIndex;
+        std::uint16_t id = 0;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            index = doc.GetCellString(indexColumnIdx, i);
+            if (index.empty() || index == "Expansion")
+            {
+                // skip
+                continue;
+            }
+
+            strValue = doc.GetCellString(killableColumnIdx, i);
+            if (strValue.empty() || strValue == "0")
+            {
+                // skip, only want killable monsters
+                ++id;
+                continue;
+            }
+
+            monTypeIndex = doc.GetCellString(monTypeColumnIdx, i);
+            if (monTypeIndex.empty() || monTypeIndex == "human" || monTypeIndex == "construct")
+            {
+                // skip, only want monsters
+                ++id;
+                continue;
+            }
+
+            nameIndex = doc.GetCellString(nameStrColumnIdx, i);
+            if (nameIndex.empty() || nameIndex == "unused" ||
+                nameIndex == "Dummy" || nameIndex == "dummy")
+            {
+                // skip, (should not happen as covered by the above checks
+                ++id;
+                continue;
+            }
+
+            auto& monType = monStatsType[id];
+            monType.id = id;
+            ++id;
+            monType.index = index;
+            monType.monType = monTypeIndex;
+            monType.nameIndex = nameIndex;
+            LocalizationHelpers::GetStringTxtValue(monType.nameIndex, monType.name, nameIndex);
+
+            strValue = doc.GetCellString(enabledColumnIdx, i);
+            if (!strValue.empty() && strValue != "0")
+            {
+                monType.enabled = true;
+                monNamesType[monType.id] = monType.name;
+            }
+        }
+
+        s_MonStatsType.swap(monStatsType);
+        s_MonNamesType.swap(monNamesType);
+    }
+
     std::map<std::uint16_t, RunewordType> s_ItemRunewordsType;
     std::map<std::uint8_t, std::vector<std::uint16_t>> s_ItemNumRunesRunewordsMap;
     void InitRunewordData(const ITxtReader& txtReader)
@@ -7921,6 +8047,7 @@ namespace d2ce
             s_ItemRunewordsType.clear();
         }
 
+        InitMonStatsTypeData(txtReader);
         InitItemGemsTypeData(txtReader);
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetRunesTxt());
@@ -10077,6 +10204,23 @@ void d2ce::ItemHelpers::getAvailableItems(std::map<std::string, d2ce::AvailableI
     auto iter = s_AvailableItemsType.begin();
     auto iter_end = s_AvailableItemsType.end();
     getAvailableItemsHelper(availItems, itemVersion, isExpansion, parent, iter, iter_end);
+}
+//---------------------------------------------------------------------------
+const std::map<std::uint16_t, std::string>& d2ce::ItemHelpers::getMonsterNameMap()
+{
+    return s_MonNamesType;
+}
+//---------------------------------------------------------------------------
+const std::string& d2ce::ItemHelpers::getMonsterNameFromId(std::uint16_t id)
+{
+    static std::string badValue;
+    auto iter = s_MonNamesType.find(id);
+    if (iter == s_MonNamesType.end())
+    {
+        return badValue;
+    }
+
+    return iter->second;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemHelpers::getCategoryNameFromCode(const std::string& code)

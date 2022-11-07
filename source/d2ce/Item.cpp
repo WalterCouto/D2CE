@@ -393,6 +393,9 @@ namespace d2ce
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
         bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
+
+        const std::map<std::uint16_t, std::string>& getMonsterNameMap();
+        const std::string& getMonsterNameFromId(std::uint16_t id);
     }
 
     void FilterMagicalAttribsForBonus(const std::vector<MagicalAttribute>& unfilteredAttribs, std::vector<MagicalAttribute>& attribs)
@@ -1813,6 +1816,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             {
                 value = ItemHelpers::generarateRandomDW();
             }
+
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
             if (!setBits(current_bit_offset, 32, value))
             {
@@ -2200,12 +2204,13 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
     }
 
+    auto dwb = ItemHelpers::generarateRandomDW();
     MagicalCachev100 generated_magic_affixes;
     RareOrCraftedCachev100 generated_rare_affixes;
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
-        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
+        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), dwb, true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
         {
             *this = invalidItem;
             return;
@@ -2213,7 +2218,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::RARE:
-        if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
+        if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), dwb, true))
         {
             *this = invalidItem;
             return;
@@ -2226,7 +2231,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::UNIQUE:
-        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true))
+        if (!ItemHelpers::getUniqueMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), dwb, true))
         {
             *this = invalidItem;
             return;
@@ -2234,7 +2239,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::SET:
-        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true))
+        if (!ItemHelpers::getSetMagicAttribs(itemType.getId(), generated_magic_affixes.MagicalAttributes, createParams, getLevel(), dwb, true))
         {
             *this = invalidItem;
             return;
@@ -2245,7 +2250,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         if (itemType.isQuestItem())
         {
             // not all quest items are unqique, so allow empty list
-            ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, createParams, getLevel(), getDWBCode(), true);
+            ItemHelpers::getUniqueQuestMagicAttribs(strcode, generated_magic_affixes.MagicalAttributes, createParams, getLevel(), dwb, true);
         }
         break;
     }
@@ -2371,9 +2376,8 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
     if (isTome)
     {
-        // If the item is a tome, it will contain 5 extra bits, we're not
-        // interested in these bits, the value is usually 1, but not sure
-        // what it is.
+        // If the item is a tome, it will contain 5 extra bits, indicating
+        // the spell ID. Town Portal = 0, Indentify = 1
         GET_BIT_OFFSET(ItemOffsets::TOME_BIT_OFFSET) = current_bit_offset;
         value = strcode[0] == 'i' ? 1 : 0;
         bitSize = 5;
@@ -2386,11 +2390,23 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     }
     else if (itemType.isBodyPart())
     {
-        // If the item is a body part, it will contain 10 extra bits, we're not
-        // interested in these bits, the value is usually 0, but not sure
-        // what it is.
+        // If the item is a body part, it will contain 10 extra bits indicating
+        // the monster Id from monstat.txt
         GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
+
         value = 0;
+        const auto& monsterMap = ItemHelpers::getMonsterNameMap();
+        std::uint32_t modulo = std::uint32_t(monsterMap.size());
+        if (modulo > 0)
+        {
+            auto iter = monsterMap.begin();
+            std::advance(iter, ItemHelpers::generateDWARandomOffset(dwa, 1) % modulo);
+            if (iter != monsterMap.end())
+            {
+                value = iter->first;
+            }
+        }
+
         bitSize = MONSTER_ID_NUM_BITS;
         if (!setBits(current_bit_offset, bitSize, value))
         {
@@ -2481,7 +2497,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         {
             GET_BIT_OFFSET(ItemOffsets::BONUS_BITS_BIT_OFFSET) = current_bit_offset;
 
-            if (!ItemHelpers::getSetItemBonusAttribs(itemType.getId(), bonusAttribs, createParams, getLevel(), getDWBCode(), true))
+            if (!ItemHelpers::getSetItemBonusAttribs(itemType.getId(), bonusAttribs, createParams, getLevel(), dwb, true))
             {
                 *this = invalidItem;
                 return;
@@ -10887,6 +10903,32 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
     return exportItem.exportItem(path);
 }
 //---------------------------------------------------------------------------
+std::uint16_t d2ce::Item::getMonsterId() const
+{
+    if (!isBodyPart() || GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) == 0)
+    {
+        return 0;
+    }
+
+    return (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET), MONSTER_ID_NUM_BITS);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setMonsterId(std::uint16_t id)
+{
+    if (!isBodyPart() || GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) == 0)
+    {
+        return false;
+    }
+
+    if (ItemHelpers::getMonsterNameFromId(id).empty())
+    {
+        // invalid monster name
+        return false;
+    }
+
+    return updateBits(GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET), MONSTER_ID_NUM_BITS, id);
+}
+//---------------------------------------------------------------------------
 std::string d2ce::Item::getDisplayedItemName() const
 {
     std::string strValue;
@@ -10999,6 +11041,19 @@ std::string d2ce::Item::getDisplayedItemName() const
             LocalizationHelpers::GetStringTxtValue("GemmedNormalName", strFormat, "%0 %1");
             LocalizationHelpers::GetStringTxtValue("Gemmed", strValue);
             strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+        }
+        else if (isBodyPart())
+        {
+            const auto& monsterName = ItemHelpers::getMonsterNameFromId(getMonsterId());
+            if (monsterName.empty())
+            {
+                strValue = itemType.name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("BodyPartsFormat", strFormat, "%0 %1");
+                strValue = LocalizationHelpers::string_formatDiablo(strFormat, monsterName, itemType.name);
+            }
         }
         else
         {
@@ -12789,9 +12844,8 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
         }
         else if (itemType.isBodyPart())
         {
-            // If the item is a body part, it will contain 10 extra bits, we're not
-            // interested in these bits, the value is usually 0, but not sure
-            // what it is.
+            // If the item is a body part, it will contain 10 extra bits indicating
+            // the monster Id from monstat.txt
             GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
             if (!skipBits(charfile, current_bit_offset, MONSTER_ID_NUM_BITS))
             {
@@ -16223,9 +16277,8 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
     }
     else if (itemType.isBodyPart())
     {
-        // If the item is a body part, it will contain 10 extra bits, we're not
-        // interested in these bits, the value is usually 0, but not sure
-        // what it is.
+        // If the item is a body part, it will contain 10 extra bits indicating
+        // the monster Id from monstat.txt
         GET_BIT_OFFSET(ItemOffsets::BODY_PART_BIT_OFFSET) = current_bit_offset;
         value = 0;
         node = itemRoot[bSerializedFormat ? "FileIndex" : "file_index"];

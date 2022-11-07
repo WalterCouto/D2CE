@@ -68,6 +68,7 @@ namespace d2ce
         const std::string& GetSkills();
         const std::string& GetUniqueItems();
         const std::string& GetWeapons();
+        const std::string& GetMonStats();
     }
 
     class CsvTxtDocument : public ITxtDocument
@@ -546,6 +547,11 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetSkillDescTxt() const override
         {
             return LoadTxtStream(TxtReaderHelper::GetSkillDesc);
+        }
+
+        virtual std::unique_ptr<ITxtDocument> GetMonStatsTxt() const override
+        {
+            return LoadTxtStream(TxtReaderHelper::GetMonStats);
         }
     };
 

@@ -649,10 +649,12 @@
 #define IDC_STATIC_TREE_3               1038
 #define IDC_CHAR_RESIST_POISON          1038
 #define IDC_SUFFIX2_STATIC              1038
+#define IDC_MONSTERS_STATIC             1038
 #define IDC_ACTIVATE_ALL                1039
 #define IDC_COMPLETE_ALL                1039
 #define IDC_SET_ALL_SKILLS              1039
 #define IDC_PREFIX3_COMBO               1039
+#define IDC_MONSTERS_COMBO              1039
 #define IDC_CHECK_ACTI_1                1040
 #define IDC_CHECK_ACTI_QUEST_1          1040
 #define IDC_EDIT_TREE_1_ROW_1_COL_1     1040

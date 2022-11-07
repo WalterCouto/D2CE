@@ -187,6 +187,7 @@
     <ClCompile Include="..\d2ce\helpers\MagicSuffixTxt.cpp" />
     <ClCompile Include="..\d2ce\helpers\MercenariesJson.cpp" />
     <ClCompile Include="..\d2ce\helpers\MiscTxt.cpp" />
+    <ClCompile Include="..\d2ce\helpers\MonStatsTxt.cpp" />
     <ClCompile Include="..\d2ce\helpers\MonstersJson.cpp" />
     <ClCompile Include="..\d2ce\helpers\PlayerClassTxt.cpp" />
     <ClCompile Include="..\d2ce\helpers\PropertiesTxt.cpp" />

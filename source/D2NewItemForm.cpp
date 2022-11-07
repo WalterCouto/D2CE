@@ -39,6 +39,7 @@ namespace d2ce
     namespace ItemHelpers
     {
         void getAvailableItems(std::map<std::string, d2ce::AvailableItemType>& availItems, EnumItemVersion itemVersion, bool isExpansion);
+        const std::map<std::uint16_t, std::string>& getMonsterNameMap();
     }
 }
 
@@ -251,6 +252,8 @@ void CD2NewItemForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_ETHEREAL_CHECK, Ethereal);
     DDX_Control(pDX, IDC_QUALITY_STATIC, QualityStatic);
     DDX_Control(pDX, IDC_QUALITY_COMBO, Quality);
+    DDX_Control(pDX, IDC_MONSTERS_STATIC, MonstersStatic);
+    DDX_Control(pDX, IDC_MONSTERS_COMBO, Monsters);
     DDX_Control(pDX, IDC_SOCKETS_STATIC, SocketsStatic);
     DDX_Control(pDX, IDC_SOCKETS_EDIT, SocketsEdit);
     DDX_Control(pDX, IDC_SOCKETS_SPIN, SocketsSpinner);
@@ -262,6 +265,7 @@ BEGIN_MESSAGE_MAP(CD2NewItemForm, CDialogEx)
     ON_NOTIFY(TVN_SELCHANGED, IDC_ITEM_TREE, &CD2NewItemForm::OnTvnSelchangedItemtree)
     ON_NOTIFY(NM_DBLCLK, IDC_ITEM_TREE, &CD2NewItemForm::OnNMDblclkItemtree)
     ON_BN_CLICKED(IDC_ETHEREAL_CHECK, &CD2NewItemForm::OnBnClickedEtherealCheck)
+    ON_CBN_SELCHANGE(IDC_MONSTERS_COMBO, &CD2NewItemForm::OnCbnSelchangeMonstersCombo)
     ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
@@ -314,16 +318,24 @@ BOOL CD2NewItemForm::OnInitDialog()
         if (d2ce::LocalizationHelpers::GetStringTxtValue("ModStre8c", strValue))
         {
             strValue += " ";
-            pWnd = GetDlgItem(IDCANCEL);
-            if (pWnd != nullptr)
+            SocketsStatic.GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
             {
-                pWnd->GetWindowText(text);
-                textA = text;
-                if (textA.CompareNoCase(strValue.c_str()) != 0)
-                {
-                    uText = utf8::utf8to16(strValue);
-                    pWnd->SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
-                }
+                uText = utf8::utf8to16(strValue);
+                SocketsStatic.SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+            }
+        }
+
+        if (d2ce::LocalizationHelpers::GetStringTxtValue("Monsters", strValue))
+        {
+            strValue += " ";
+            MonstersStatic.GetWindowText(text);
+            textA = text;
+            if (textA.CompareNoCase(strValue.c_str()) != 0)
+            {
+                uText = utf8::utf8to16(strValue);
+                MonstersStatic.SetWindowText(reinterpret_cast<LPCWSTR>(uText.c_str()));
             }
         }
     }
@@ -334,6 +346,10 @@ BOOL CD2NewItemForm::OnInitDialog()
     QualityStatic.ShowWindow(FALSE);
     Quality.EnableWindow(FALSE);
     Quality.ShowWindow(FALSE);
+    MonstersStatic.EnableWindow(FALSE);
+    MonstersStatic.ShowWindow(FALSE);
+    Monsters.EnableWindow(FALSE);
+    Monsters.ShowWindow(FALSE);
     SocketsStatic.ShowWindow(FALSE);
     SocketsEdit.ShowWindow(FALSE);
     SocketsEdit.SetLimitText(1);
@@ -611,6 +627,31 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
             SocketsSpinner.EnableWindow(FALSE);
             SocketsSpinner.ShowWindow(FALSE);
         }
+
+        if (item->isBodyPart())
+        {
+            MonstersStatic.EnableWindow(TRUE);
+            MonstersStatic.ShowWindow(TRUE);
+            Monsters.EnableWindow(TRUE);
+            Monsters.ShowWindow(TRUE);
+
+            auto iter = MonsterIDToIndexMap.find(item->getMonsterId());
+            if (iter != MonsterIDToIndexMap.end())
+            {
+                Monsters.SetCurSel(iter->second);
+            }
+            else
+            {
+                Monsters.SetCurSel(0);
+            }
+        }
+        else
+        {
+            MonstersStatic.EnableWindow(FALSE);
+            MonstersStatic.ShowWindow(FALSE);
+            Monsters.EnableWindow(FALSE);
+            Monsters.ShowWindow(FALSE);
+        }
     }
     else
     {
@@ -620,6 +661,10 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
         QualityStatic.ShowWindow(FALSE);
         Quality.EnableWindow(FALSE);
         Quality.ShowWindow(FALSE);
+        MonstersStatic.EnableWindow(FALSE);
+        MonstersStatic.ShowWindow(FALSE);
+        Monsters.EnableWindow(FALSE);
+        Monsters.ShowWindow(FALSE);
         SocketsStatic.EnableWindow(FALSE);
         SocketsStatic.ShowWindow(FALSE);
         SocketsEdit.EnableWindow(FALSE);
@@ -652,6 +697,21 @@ void CD2NewItemForm::OnBnClickedEtherealCheck()
     }
 }
 //---------------------------------------------------------------------------
+void CD2NewItemForm::OnCbnSelchangeMonstersCombo()
+{
+    UpdateData(TRUE); // save results
+    auto monsterID = std::uint16_t(Monsters.GetItemData(Monsters.GetCurSel()));
+    if (monsterID >= 0)
+    {
+        auto item = const_cast<d2ce::Item*>(GetSelectedItem());
+        if (item != nullptr)
+        {
+            item->setMonsterId(monsterID);
+            ItemTooltipBox.RedrawWindow();
+        }
+    }
+}
+//---------------------------------------------------------------------------
 void CD2NewItemForm::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
     __super::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -678,6 +738,27 @@ void CD2NewItemForm::InitTree()
     std::deque<AvailableItemFolder> parent;
     InitTreeControl(ItemTree, MainForm.getCharacterInfo(), parent, iter, iter_end, AvailableItems, AvailableItemTypes, isSharedStash);
     ItemTree.OpenPath(g_LastSelection);
+
+    // populate Monsters combo
+    MonsterIDToIndexMap.clear();
+    Monsters.ResetContent();
+    DWORD_PTR itemData = 0;
+    std::u16string uText;
+    CString strText;
+    int idx = 0;
+    const auto& monsterMap = d2ce::ItemHelpers::getMonsterNameMap();
+    for (const auto& monster : monsterMap)
+    {
+        uText = utf8::utf8to16(monster.second.c_str());
+        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+        itemData = (DWORD_PTR)monster.first;
+        idx = Monsters.AddString(strText);
+        if (idx >= 0)
+        {
+            Monsters.SetItemData(idx, itemData);
+            MonsterIDToIndexMap[monster.first] = idx;
+        }
+    }
 }
 //---------------------------------------------------------------------------
 const d2ce::Character* CD2NewItemForm::GetCharacterInfo() const

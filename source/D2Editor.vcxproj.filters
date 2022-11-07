@@ -500,6 +500,9 @@
     <ClCompile Include="D2EarAttributesForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="d2ce\helpers\MonStatsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2Editor.rc">

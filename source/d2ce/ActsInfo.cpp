@@ -194,6 +194,7 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
         std::fseek(charfile, 28, SEEK_CUR);
     }
 
+    std::fseek(charfile, 12, SEEK_CUR);
     return true;
 }
 //---------------------------------------------------------------------------

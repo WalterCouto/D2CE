@@ -323,6 +323,8 @@ namespace d2ce
         bool setRareOrCraftedAttributes(RareAttributes& attrib);
         bool removeRareOrCraftedAttributes();
         bool exportItem(const std::filesystem::path& path) const;
+        std::uint16_t getMonsterId() const; // only valid for when isBodyPart() return true
+        bool setMonsterId(std::uint16_t id); // only valid isBodyPart() return true 
 
         // Helper methods that return the text displayed on tooltips
         std::string getDisplayedItemName() const;

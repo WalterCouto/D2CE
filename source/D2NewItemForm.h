@@ -50,6 +50,7 @@ protected:
     afx_msg void OnTvnSelchangedItemtree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnNMDblclkItemtree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnBnClickedEtherealCheck();
+    afx_msg void OnCbnSelchangeMonstersCombo();
     afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 	DECLARE_MESSAGE_MAP()
@@ -77,11 +78,14 @@ protected:
     CButton Ethereal;
     CStatic QualityStatic;
     CComboBox Quality;
+    CStatic MonstersStatic;
+    CComboBox Monsters;
     CStatic SocketsStatic;
     CEdit SocketsEdit;
     CSpinButtonCtrl SocketsSpinner;
 
     std::map<HTREEITEM, d2ce::AvailableItemType> AvailableItemTypes;
     mutable std::list<d2ce::Item> AvailableItems;
+    std::map<std::uint16_t, int> MonsterIDToIndexMap;
 };
 //---------------------------------------------------------------------------
