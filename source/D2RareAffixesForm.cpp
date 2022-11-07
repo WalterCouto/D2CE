@@ -53,7 +53,7 @@ IMPLEMENT_DYNAMIC(CD2RareAffixesForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
-    : CDialogEx(CD2RareAffixesForm::IDD, &form), NewItemForm(form)
+    : CDialogEx(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? CD2RareAffixesForm::IDD_V100 : CD2RareAffixesForm::IDD, &form), NewItemForm(form), SimpleDialog(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? TRUE : FALSE)
 {
     auto pItem = form.GetCreatedItem();
     if (pItem != nullptr)
@@ -65,12 +65,17 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
         CurrentItem = *pItem;
         CurrentItem.makeRare();
         CurrentDWBCode = CurrentItem.getDWBCode();
+        if (SimpleDialog)
+        {
+            CurrentDWBCodeIndex = 0;
+            GeneratedDWBCode.push_back(CurrentDWBCode);
+        }
+
         if (CurrentItem.isJewel() && CreateParams.itemVersion >= d2ce::EnumItemVersion::v109)
         {
             // Post-1.09, Rare jewels can have up to 4 total affixes
             NumAllowedAffixes = 4ui32;
         }
-
     }
 }
 //---------------------------------------------------------------------------
@@ -81,22 +86,25 @@ CD2RareAffixesForm::~CD2RareAffixesForm()
 void CD2RareAffixesForm::DoDataExchange(CDataExchange* pDX)
 {
     __super::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_RARE_PREFIX_STATIC, NamePrefixStatic);
-    DDX_Control(pDX, IDC_RARE_PREFIX_COMBO, NamePrefix);
-    DDX_Control(pDX, IDC_RARE_SUFFIX_STATIC, NameSuffixStatic);
-    DDX_Control(pDX, IDC_RARE_SUFFIX_COMBO, NameSuffix);
-    DDX_Control(pDX, IDC_PREFIX1_STATIC, AffixControls[0].PrefixStatic);
-    DDX_Control(pDX, IDC_PREFIX1_COMBO, AffixControls[0].Prefix);
-    DDX_Control(pDX, IDC_SUFFIX1_STATIC, AffixControls[0].SuffixStatic);
-    DDX_Control(pDX, IDC_SUFFIX1_COMBO, AffixControls[0].Suffix);
-    DDX_Control(pDX, IDC_PREFIX2_STATIC, AffixControls[1].PrefixStatic);
-    DDX_Control(pDX, IDC_PREFIX2_COMBO, AffixControls[1].Prefix);
-    DDX_Control(pDX, IDC_SUFFIX2_STATIC, AffixControls[1].SuffixStatic);
-    DDX_Control(pDX, IDC_SUFFIX2_COMBO, AffixControls[1].Suffix);
-    DDX_Control(pDX, IDC_PREFIX3_STATIC, AffixControls[2].PrefixStatic);
-    DDX_Control(pDX, IDC_PREFIX3_COMBO, AffixControls[2].Prefix);
-    DDX_Control(pDX, IDC_SUFFIX3_STATIC, AffixControls[2].SuffixStatic);
-    DDX_Control(pDX, IDC_SUFFIX3_COMBO, AffixControls[2].Suffix);
+    if (!SimpleDialog)
+    {
+        DDX_Control(pDX, IDC_RARE_PREFIX_STATIC, NamePrefixStatic);
+        DDX_Control(pDX, IDC_RARE_PREFIX_COMBO, NamePrefix);
+        DDX_Control(pDX, IDC_RARE_SUFFIX_STATIC, NameSuffixStatic);
+        DDX_Control(pDX, IDC_RARE_SUFFIX_COMBO, NameSuffix);
+        DDX_Control(pDX, IDC_PREFIX1_STATIC, AffixControls[0].PrefixStatic);
+        DDX_Control(pDX, IDC_PREFIX1_COMBO, AffixControls[0].Prefix);
+        DDX_Control(pDX, IDC_SUFFIX1_STATIC, AffixControls[0].SuffixStatic);
+        DDX_Control(pDX, IDC_SUFFIX1_COMBO, AffixControls[0].Suffix);
+        DDX_Control(pDX, IDC_PREFIX2_STATIC, AffixControls[1].PrefixStatic);
+        DDX_Control(pDX, IDC_PREFIX2_COMBO, AffixControls[1].Prefix);
+        DDX_Control(pDX, IDC_SUFFIX2_STATIC, AffixControls[1].SuffixStatic);
+        DDX_Control(pDX, IDC_SUFFIX2_COMBO, AffixControls[1].Suffix);
+        DDX_Control(pDX, IDC_PREFIX3_STATIC, AffixControls[2].PrefixStatic);
+        DDX_Control(pDX, IDC_PREFIX3_COMBO, AffixControls[2].Prefix);
+        DDX_Control(pDX, IDC_SUFFIX3_STATIC, AffixControls[2].SuffixStatic);
+        DDX_Control(pDX, IDC_SUFFIX3_COMBO, AffixControls[2].Suffix);
+    }
     DDX_Control(pDX, IDC_TOOLTIP_RECT, ItemTooltipBox);
 }
 
@@ -112,6 +120,8 @@ BEGIN_MESSAGE_MAP(CD2RareAffixesForm, CDialogEx)
     ON_CBN_SELCHANGE(IDC_PREFIX3_COMBO, &CD2RareAffixesForm::OnCbnSelchangePrefix3Combo)
     ON_CBN_SELCHANGE(IDC_SUFFIX3_COMBO, &CD2RareAffixesForm::OnCbnSelchangeSuffix3Combo)
     ON_BN_CLICKED(IDC_GAMBLE_BUTTON, &CD2RareAffixesForm::OnBnClickedGambleButton)
+    ON_BN_CLICKED(IDC_PREV_BUTTON, &CD2RareAffixesForm::OnBnClickedPrevButton)
+    ON_BN_CLICKED(IDC_NEXT_BUTTON, &CD2RareAffixesForm::OnBnClickedNextButton)
 END_MESSAGE_MAP()
 
 //---------------------------------------------------------------------------
@@ -199,8 +209,52 @@ void CD2RareAffixesForm::OnBnClickedGambleButton()
 {
     // Generate the starting affixes
     CurrentDWBCode = d2ce::ItemHelpers::generarateRandomDW();
+    if (SimpleDialog)
+    {
+        CurrentDWBCodeIndex = GeneratedDWBCode.size();
+        GeneratedDWBCode.push_back(CurrentDWBCode);
+    }
+    
     SyncAffixes();
     UpdateCurrentAttribs();
+}
+//---------------------------------------------------------------------------
+void CD2RareAffixesForm::OnBnClickedPrevButton()
+{
+    if (!SimpleDialog)
+    {
+        return;
+    }
+
+    if (CurrentDWBCodeIndex > 0)
+    {
+        --CurrentDWBCodeIndex;
+        if (CurrentDWBCodeIndex >= GeneratedDWBCode.size())
+        {
+            CurrentDWBCodeIndex = GeneratedDWBCode.size() - 1;
+        }
+        CurrentDWBCode = GeneratedDWBCode[CurrentDWBCodeIndex];
+        UpdateCurrentAttribs();
+    }
+}
+//---------------------------------------------------------------------------
+void CD2RareAffixesForm::OnBnClickedNextButton()
+{
+    if (!SimpleDialog)
+    {
+        return;
+    }
+
+    if (CurrentDWBCodeIndex < (GeneratedDWBCode.size() - 1))
+    {
+        ++CurrentDWBCodeIndex;
+        if (CurrentDWBCodeIndex >= GeneratedDWBCode.size())
+        {
+            CurrentDWBCodeIndex = GeneratedDWBCode.size() - 1;
+        }
+        CurrentDWBCode = GeneratedDWBCode[CurrentDWBCodeIndex];
+        UpdateCurrentAttribs();
+    }
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeNamePrefixCombo()
@@ -288,7 +342,7 @@ void CD2RareAffixesForm::HandleCbnSelchangeSuffixCombo(CComboBox& combo, AffixCh
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::InitAffixes()
-{   
+{
     // Generate the starting affixes
     d2ce::RareOrCraftedCachev100 generated_rare_affixes;
     switch (CurrentItem.getQuality())
@@ -316,84 +370,94 @@ void CD2RareAffixesForm::InitAffixes()
         break;
     }
 
-    CurrentAffixChoices.fill(AffixChoice());
-    auto iterCurAffix = CurrentAffixChoices.begin();
-    for (const auto& affix : CurrentAffixes.Affixes)
-    {
-        auto& currAffix = *iterCurAffix;
-        ++iterCurAffix;
-        currAffix.prefix = affix.PrefixId;
-        currAffix.prefixGroup = d2ce::ItemHelpers::getMagicalPrefixGroupFromId(affix.PrefixId);
-        currAffix.suffix = affix.SuffixId;
-        currAffix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.SuffixId);
-    }
 
-    // Check if the prefix and/or suffix is allowed
-    std::vector<std::uint16_t> prefixes;
-    std::vector<std::uint16_t> suffixes;
-    if (!CurrentItem.getPossibleRareAffixes(prefixes, suffixes))
+    if (!SimpleDialog)
     {
-        EndDialog(IDCANCEL);
-        return;
-    }
-
-    int idx = -1;
-    int prefixIdx = -1;
-    std::u16string uText;
-    CString strText;
-    for (const auto& prefix : prefixes)
-    {
-        uText = utf8::utf8to16(d2ce::ItemHelpers::getRareNameFromId(prefix));
-        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
-        idx = NamePrefix.AddString(strText);
-        if (idx >= 0)
+        CurrentAffixChoices.fill(AffixChoice());
+        auto iterCurAffix = CurrentAffixChoices.begin();
+        for (const auto& affix : CurrentAffixes.Affixes)
         {
-            if (CurrentAffixes.Id == prefix)
-            {
-                prefixIdx = idx;
-            }
-            NamePrefix.SetItemData(idx, prefix);
+            auto& currAffix = *iterCurAffix;
+            ++iterCurAffix;
+            currAffix.prefix = affix.PrefixId;
+            currAffix.prefixGroup = d2ce::ItemHelpers::getMagicalPrefixGroupFromId(affix.PrefixId);
+            currAffix.suffix = affix.SuffixId;
+            currAffix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.SuffixId);
         }
-    }
 
-    NamePrefix.SetCurSel(prefixIdx);
-    CurrentAffixes.Id = std::uint16_t(NamePrefix.GetItemData(prefixIdx));
-    CurrentAffixes.Name = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id);
-    CurrentAffixes.Index = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id);
-
-    int suffixIdx = -1;
-    for (const auto& suffix : suffixes)
-    {
-        uText = utf8::utf8to16(d2ce::ItemHelpers::getRareNameFromId(suffix));
-        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
-        idx = NameSuffix.AddString(strText);
-        if (idx >= 0)
+        // Check if the prefix and/or suffix is allowed
+        std::vector<std::uint16_t> prefixes;
+        std::vector<std::uint16_t> suffixes;
+        if (!CurrentItem.getPossibleRareAffixes(prefixes, suffixes))
         {
-            if (CurrentAffixes.Id2 == suffix)
-            {
-                suffixIdx = idx;
-            }
-            NameSuffix.SetItemData(idx, suffix);
+            EndDialog(IDCANCEL);
+            return;
         }
-    }
 
-    NameSuffix.SetCurSel(suffixIdx);
-    CurrentAffixes.Id2 = std::uint16_t(NameSuffix.GetItemData(suffixIdx));
-    CurrentAffixes.Name2 = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id2);
-    CurrentAffixes.Index2 = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id2);
+        int idx = -1;
+        int prefixIdx = -1;
+        std::u16string uText;
+        CString strText;
+        for (const auto& prefix : prefixes)
+        {
+            uText = utf8::utf8to16(d2ce::ItemHelpers::getRareNameFromId(prefix));
+            strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+            idx = NamePrefix.AddString(strText);
+            if (idx >= 0)
+            {
+                if (CurrentAffixes.Id == prefix)
+                {
+                    prefixIdx = idx;
+                }
+                NamePrefix.SetItemData(idx, prefix);
+            }
+        }
 
-    // Check if the prefix and/or suffix is allowed
-    if (!CurrentItem.getPossibleMagicalAffixes(PrefixMap, SuffixMap))
-    {
-        EndDialog(IDCANCEL);
-        return;
+        NamePrefix.SetCurSel(prefixIdx);
+        CurrentAffixes.Id = std::uint16_t(NamePrefix.GetItemData(prefixIdx));
+        CurrentAffixes.Name = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id);
+        CurrentAffixes.Index = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id);
+
+        int suffixIdx = -1;
+        for (const auto& suffix : suffixes)
+        {
+            uText = utf8::utf8to16(d2ce::ItemHelpers::getRareNameFromId(suffix));
+            strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+            idx = NameSuffix.AddString(strText);
+            if (idx >= 0)
+            {
+                if (CurrentAffixes.Id2 == suffix)
+                {
+                    suffixIdx = idx;
+                }
+                NameSuffix.SetItemData(idx, suffix);
+            }
+        }
+
+        NameSuffix.SetCurSel(suffixIdx);
+        CurrentAffixes.Id2 = std::uint16_t(NameSuffix.GetItemData(suffixIdx));
+        CurrentAffixes.Name2 = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id2);
+        CurrentAffixes.Index2 = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id2);
+
+        // Check if the prefix and/or suffix is allowed
+        if (!CurrentItem.getPossibleMagicalAffixes(PrefixMap, SuffixMap))
+        {
+            EndDialog(IDCANCEL);
+            return;
+        }
+        UpdateAffixChoices();
     }
-    UpdateAffixChoices();
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::SyncNameAffixes()
 {
+    if (SimpleDialog)
+    {
+        // thise controls do not exist
+        return;
+    }
+
     CWaitCursor wait;
     bool bFound = false;
     auto idx_end = NamePrefix.GetCount();
@@ -472,6 +536,12 @@ void CD2RareAffixesForm::SyncAffixes()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdatePrefixChoices()
 {
+    if (SimpleDialog)
+    {
+        // thise controls do not exist
+        return;
+    }
+
     CWaitCursor wait;
     std::u16string uText;
     CString strText;
@@ -535,6 +605,12 @@ void CD2RareAffixesForm::UpdatePrefixChoices()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateSuffixChoices()
 {
+    if (SimpleDialog)
+    {
+        // thise controls do not exist
+        return;
+    }
+
     CWaitCursor wait;
     std::u16string uText;
     CString strText;
@@ -603,6 +679,12 @@ void CD2RareAffixesForm::UpdateAffixChoices()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateCurrentAffixesValues()
 {
+    if (SimpleDialog)
+    {
+        // thise controls do not exist
+        return;
+    }
+
     std::uint32_t count = 0;
     CurrentAffixes.Affixes.clear();
     for (auto& affix : CurrentAffixChoices)
@@ -651,18 +733,33 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
         CurrentItem.setDWBCode(CurrentDWBCode);
     }
 
-    auto pWnd = GetDlgItem(IDOK);
+    auto pOkWnd = GetDlgItem(IDOK);
     if (CurrentAffixes.Affixes.empty())
     {
-        if (pWnd != nullptr)
+        if (pOkWnd != nullptr)
         {
-            pWnd->EnableWindow(FALSE);
+            pOkWnd->EnableWindow(FALSE);
         }
 
         ItemTooltipBox.RedrawWindow();
         return;
     }
 
+    if (SimpleDialog)
+    {
+        auto pWnd = GetDlgItem(IDC_PREV_BUTTON); 
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow((CurrentDWBCodeIndex > 0) ? TRUE : FALSE);
+        }
+
+        pWnd = GetDlgItem(IDC_NEXT_BUTTON);
+        if (pWnd != nullptr)
+        {
+            pWnd->EnableWindow((CurrentDWBCodeIndex < (GeneratedDWBCode.size() - 1)) ? TRUE : FALSE);
+        }
+    }
+    else
     {
         CWaitCursor wait;
         auto result = CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
@@ -677,9 +774,9 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
 
                 if (CurrentAffixes.Affixes.empty())
                 {
-                    if (pWnd != nullptr)
+                    if (pOkWnd != nullptr)
                     {
-                        pWnd->EnableWindow(FALSE);
+                        pOkWnd->EnableWindow(FALSE);
                     }
 
                     ItemTooltipBox.RedrawWindow();
@@ -694,9 +791,9 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
         }
     }
 
-    if (pWnd != nullptr)
+    if (pOkWnd != nullptr)
     {
-        pWnd->EnableWindow(TRUE);
+        pOkWnd->EnableWindow(TRUE);
     }
 
     ItemTooltipBox.RedrawWindow();

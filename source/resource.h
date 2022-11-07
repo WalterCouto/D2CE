@@ -584,6 +584,7 @@
 #define IDD_MAGICAL_AFFIXES_DIALOG      727
 #define IDD_RARE_AFFIXES_DIALOG         728
 #define IDD_EAR_DIALOG                  729
+#define IDD_RARE_AFFIXES_V100_DIALOG    730
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -895,8 +896,10 @@
 #define IDC_BUTTON_TREE_3_ROW_4_COL_1   1139
 #define IDC_CORPSE_GROUP                1140
 #define IDC_BUTTON_TREE_3_ROW_4_COL_2   1140
+#define IDC_PREV_BUTTON                 1140
 #define IDC_MERC_GROUP                  1141
 #define IDC_BUTTON_TREE_3_ROW_4_COL_3   1141
+#define IDC_NEXT_BUTTON                 1141
 #define IDC_GOLEM_GROUP                 1142
 #define IDC_BUTTON_TREE_3_ROW_5_COL_1   1142
 #define IDC_INV_WEAPON_I                1143

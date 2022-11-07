@@ -46,12 +46,14 @@ public:
     CD2RareAffixesForm(CD2NewItemForm& form);   // standard constructor
     virtual ~CD2RareAffixesForm();
 
-    enum { IDD = IDD_RARE_AFFIXES_DIALOG };
+    enum { IDD = IDD_RARE_AFFIXES_DIALOG, IDD_V100 = IDD_RARE_AFFIXES_V100_DIALOG };
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedGambleButton();
+    afx_msg void OnBnClickedPrevButton();
+    afx_msg void OnBnClickedNextButton();
     afx_msg void OnCbnSelchangeNamePrefixCombo();
     afx_msg void OnCbnSelchangeNameSuffixCombo();
     afx_msg void OnCbnSelchangePrefix1Combo();
@@ -100,6 +102,9 @@ private:
     std::map<std::uint16_t, std::vector<std::uint16_t>> SuffixMap;
     std::array<AffixChoice, 3> CurrentAffixChoices;
     std::uint32_t NumAllowedAffixes = 0ui32; // zero indicates not to check
+    BOOL SimpleDialog = FALSE;
+    std::deque<std::uint32_t> GeneratedDWBCode;
+    size_t CurrentDWBCodeIndex = 0;
 
 };
 //---------------------------------------------------------------------------
