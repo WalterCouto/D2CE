@@ -4345,7 +4345,7 @@ void d2ce::Item::verifyRuneword()
                 size_t old_current_bit_offset = current_bit_offset;
                 size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
 
-                // Set item as having a runword id
+                // Set item as having a runeword id
                 updateBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + IS_RUNEWORD_FLAG_OFFSET, 1, 1);
                 GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET) = current_bit_offset;
                 updateBits(GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET), diff, runeword.id);
@@ -11038,9 +11038,16 @@ std::string d2ce::Item::getDisplayedItemName() const
     case EnumItemQuality::NORMAL:
         if (getSocketedItemCount() > 0)
         {
-            LocalizationHelpers::GetStringTxtValue("GemmedNormalName", strFormat, "%0 %1");
-            LocalizationHelpers::GetStringTxtValue("Gemmed", strValue);
-            strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+            if (isRuneword())
+            {
+                strValue = itemType.name;
+            }
+            else
+            {
+                LocalizationHelpers::GetStringTxtValue("GemmedNormalName", strFormat, "%0 %1");
+                LocalizationHelpers::GetStringTxtValue("Gemmed", strValue);
+                strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+            }
         }
         else if (isBodyPart())
         {
@@ -11835,7 +11842,7 @@ bool d2ce::Item::getDisplayedRequirements(ItemRequirements& req, std::uint32_t c
     {
         ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
 
-        std::uint64_t eReq = 0;
+        std::int64_t eReq = 0;
         for (auto& attrib : magicalAttributes)
         {
             const auto& stat = ItemHelpers::getItemStat(attrib);
@@ -11863,11 +11870,17 @@ bool d2ce::Item::getDisplayedRequirements(ItemRequirements& req, std::uint32_t c
             req.Dexterity += std::uint16_t((req.Dexterity * eReq) / 100);
             req.Strength += std::uint16_t((req.Strength * eReq) / 100);
         }
+        else if (eReq < 0)
+        {
+            eReq *= -1;
+            req.Dexterity -= std::uint16_t((req.Dexterity * eReq) / 100);
+            req.Strength -= std::uint16_t((req.Strength * eReq) / 100);
+        }
     }
     return true;
 }
 //---------------------------------------------------------------------------
-std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const
+std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, const CharStats& cs, bool bAddColorChar) const
 {
     if (isEar())
     {
@@ -12027,7 +12040,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
     }
 
-    auto defenseRating = getDisplayedDefenseRating(charLevel);
+    auto defenseRating = getDisplayedDefenseRating(cs.Level);
     if (defenseRating > 0)
     {
         if (bFirst)
@@ -12040,6 +12053,17 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1h", temp, "Defense: %d");
+        auto baseDefenseRating = getDefenseRating();
+        if (bAddColorChar && baseDefenseRating != defenseRating)
+        {
+            auto pos = temp.find("%d");
+            if (pos != temp.npos)
+            {
+                temp.insert(pos + 2, "\f");
+                temp.insert(pos, "\f");
+            }
+        }
+
         ss << d2ce::LocalizationHelpers::string_format(temp, defenseRating);
     }
 
@@ -12069,7 +12093,11 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
     if (itemType.isWeapon())
     {
         ItemDamage dam;
-        getDisplayedDamage(dam, charLevel);
+        getDisplayedDamage(dam, cs.Level);
+
+        ItemDamage base;
+        bool bCheckBase = bAddColorChar && getDamage(base);
+
         if (dam.Missile.Max != 0 && dam.Missile.Min)
         {
             if (bFirst)
@@ -12084,11 +12112,47 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
             if (dam.Missile.Min != dam.Missile.Max)
             {
                 LocalizationHelpers::GetStringTxtValue("strItemStatThrowDamageRange", temp, "Throw Damage: %d to %d");
+                if (bCheckBase)
+                {
+                    if (base.Missile.Min != dam.Missile.Min)
+                    {
+                        auto pos = temp.find("%d");
+                        if (pos != temp.npos)
+                        {
+                            temp.insert(pos + 2, "\f");
+                            temp.insert(pos, "\f");
+                        }
+                    }
+
+                    if (base.Missile.Max != dam.Missile.Max)
+                    {
+                        auto pos = temp.rfind("%d");
+                        if (pos != temp.npos)
+                        {
+                            temp.insert(pos + 2, "\f");
+                            temp.insert(pos, "\f");
+                        }
+                    }
+                }
+
                 ss << d2ce::LocalizationHelpers::string_format(temp, dam.Missile.Min, dam.Missile.Max);
             }
             else
             {
                 LocalizationHelpers::GetStringTxtValue("ItemStats1n", temp, "Throw Damage: %d");
+                if (bCheckBase)
+                {
+                    if (base.Missile.Max != dam.Missile.Max)
+                    {
+                        auto pos = temp.rfind("%d");
+                        if (pos != temp.npos)
+                        {
+                            temp.insert(pos + 2, "\f");
+                            temp.insert(pos, "\f");
+                        }
+                    }
+                }
+
                 ss << d2ce::LocalizationHelpers::string_format(temp, dam.Missile.Max);
             }
         }
@@ -12105,6 +12169,29 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
             }
 
             LocalizationHelpers::GetStringTxtValue("ItemStats1l", temp, "One-Hand Damage: %d to %d");
+            if (bCheckBase)
+            {
+                if (base.OneHanded.Min != dam.OneHanded.Min)
+                {
+                    auto pos = temp.find("%d");
+                    if (pos != temp.npos)
+                    {
+                        temp.insert(pos + 2, "\f");
+                        temp.insert(pos, "\f");
+                    }
+                }
+
+                if (base.OneHanded.Max != dam.OneHanded.Max)
+                {
+                    auto pos = temp.rfind("%d");
+                    if (pos != temp.npos)
+                    {
+                        temp.insert(pos + 2, "\f");
+                        temp.insert(pos, "\f");
+                    }
+                }
+            }
+
             ss << d2ce::LocalizationHelpers::string_format(temp, dam.OneHanded.Min, dam.OneHanded.Max);
         }
 
@@ -12120,12 +12207,35 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
             }
 
             LocalizationHelpers::GetStringTxtValue("ItemStats1m", temp, "Two-Hand Damage: %d to %d");
+            if (bCheckBase)
+            {
+                if (base.TwoHanded.Min != dam.TwoHanded.Min)
+                {
+                    auto pos = temp.find("%d");
+                    if (pos != temp.npos)
+                    {
+                        temp.insert(pos + 2, "\f");
+                        temp.insert(pos, "\f");
+                    }
+                }
+
+                if (base.TwoHanded.Max != dam.TwoHanded.Max)
+                {
+                    auto pos = temp.rfind("%d");
+                    if (pos != temp.npos)
+                    {
+                        temp.insert(pos + 2, "\f");
+                        temp.insert(pos, "\f");
+                    }
+                }
+            }
+
             ss << d2ce::LocalizationHelpers::string_format(temp, dam.TwoHanded.Min, dam.TwoHanded.Max);
         }
     }
 
     ItemDurability durability;
-    if (getDisplayedDurability(durability, charLevel) && durability.Max > 0)
+    if (getDisplayedDurability(durability, cs.Level) && durability.Max > 0)
     {
         if (bFirst)
         {
@@ -12137,6 +12247,30 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1d", temp, "Durability: %i of %i");
+        ItemDurability base;
+        if (bAddColorChar && getDurability(base))
+        {
+            if (base.Current != durability.Current)
+            {
+                auto pos = temp.find("%i");
+                if (pos != temp.npos)
+                {
+                    temp.insert(pos + 2, "\f");
+                    temp.insert(pos, "\f");
+                }
+            }
+            
+            if (base.Max != durability.Max)
+            {
+                auto pos = temp.rfind("%i");
+                if (pos != temp.npos)
+                {
+                    temp.insert(pos + 2, "\f");
+                    temp.insert(pos, "\f");
+                }
+            }
+        }
+           
         ss << d2ce::LocalizationHelpers::string_format(temp, durability.Current, durability.Max);
     }
 
@@ -12155,8 +12289,64 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         ss << d2ce::LocalizationHelpers::string_format(temp, getQuantity(), getMaxQuantity());
     }
 
+    auto itemClass = getClass();
+    if (itemClass.has_value())
+    {
+        // class specific item
+        temp.clear();
+        switch (*itemClass)
+        {
+        case EnumCharClass::Amazon:
+            LocalizationHelpers::GetStringTxtValue("AmaOnly", temp, "(Amazon Only)");
+            break;
+
+        case EnumCharClass::Sorceress:
+            LocalizationHelpers::GetStringTxtValue("SorOnly", temp, "(Sorceress Only)");
+            break;
+
+        case EnumCharClass::Necromancer:
+            LocalizationHelpers::GetStringTxtValue("NecOnly", temp, "(Necromancer Only)");
+            break;
+
+        case EnumCharClass::Paladin:
+            LocalizationHelpers::GetStringTxtValue("PalOnly", temp, "(Paladin Only)");
+            break;
+
+        case EnumCharClass::Barbarian:
+            LocalizationHelpers::GetStringTxtValue("BarOnly", temp, "(Barbarian Only)");
+            break;
+
+        case EnumCharClass::Druid:
+            LocalizationHelpers::GetStringTxtValue("DruOnl", temp, "(Druid Only)");
+            break;
+
+        case EnumCharClass::Assassin:
+            LocalizationHelpers::GetStringTxtValue("AssOnly", temp, "(Assassin Only)");
+            break;
+        }
+
+        if (!temp.empty() )
+        {
+            if (bFirst)
+            {
+                bFirst = false;
+            }
+            else
+            {
+                ss << "\n";
+            }
+
+            if (bAddColorChar && charClass != *itemClass)
+            {
+                ss << "\b";  // red text
+            }
+
+            ss << temp;
+        }
+    }
+
     ItemRequirements req;
-    if (!getDisplayedRequirements(req, charLevel))
+    if (!getDisplayedRequirements(req, cs.Level))
     {
         req = itemType.req;
     }
@@ -12173,6 +12363,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1f", temp, "Required Dexterity: %d");
+        if (bAddColorChar && req.Dexterity > cs.Dexterity)
+        {
+            temp.insert(0, "\b"); // red text
+        }
         ss << d2ce::LocalizationHelpers::string_format(temp, req.Dexterity);
     }
 
@@ -12188,6 +12382,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1e", temp, "Required Strength: %d");
+        if (bAddColorChar && req.Strength > cs.Strength)
+        {
+            temp.insert(0, "\b"); // red text
+        }
         ss << d2ce::LocalizationHelpers::string_format(temp, req.Strength);
     }
 
@@ -12203,6 +12401,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, std:
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1p", temp, "Required Level: %d");
+        if (bAddColorChar && req.Level > cs.Level)
+        {
+            temp.insert(0, "\b"); // red text
+        }
         ss << d2ce::LocalizationHelpers::string_format(temp, req.Level);
     }
 

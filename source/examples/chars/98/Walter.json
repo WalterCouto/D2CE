@@ -12953,8 +12953,8 @@
         }
       ],
       "type_name": "Dimensional Blade",
-      "reqstr": 36759,
-      "reqdex": 36742,
+      "reqstr": 60,
+      "reqdex": 42,
       "levelreq": 63,
       "inv_file": "invcrs",
       "inv_height": 3,

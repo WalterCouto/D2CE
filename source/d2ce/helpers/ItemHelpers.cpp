@@ -9325,7 +9325,7 @@ bool d2ce::ItemType::isExceptionalItem() const
 {
     if (codes.size() <= 1)
     {
-        // no possible to be Exceptional
+        // not possible to be Exceptional
         return false;
     }
 
@@ -10669,8 +10669,8 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
         }
 
         auto iter = s_ItemRunewordsType.end();
-        const auto& runwordIds = iterNumSockets->second;
-        for (const auto& runewordId : runwordIds)
+        const auto& runewordIds = iterNumSockets->second;
+        for (const auto& runewordId : runewordIds)
         {
             iter = s_ItemRunewordsType.find(runewordId);
             if (iter != s_ItemRunewordsType.end())
@@ -10912,7 +10912,7 @@ bool d2ce::ItemHelpers::getPossibleSuperiorAttributes(const d2ce::Item& item, st
     }
 
     auto gameVersion = item.getGameVersion();
-    auto bExceptional = itemType.isExceptionalItem();
+    auto bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
 
     ItemCreateParams createParams(item.getVersion(), itemType, gameVersion);
     std::vector<ItemAffixType> affixes;
@@ -10999,7 +10999,7 @@ bool d2ce::ItemHelpers::getMagicAttribs(const d2ce::MagicalAffixes& magicalAffix
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
-        bExceptional = itemType.isExceptionalItem();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
 
     auto dwb = ItemHelpers::generarateRandomDW();
@@ -11066,7 +11066,7 @@ bool d2ce::ItemHelpers::getRareOrCraftedAttribs(const d2ce::RareAttributes& rare
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
-        bExceptional = itemType.isExceptionalItem();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
 
     auto dwb = ItemHelpers::generarateRandomDW();
@@ -11183,8 +11183,9 @@ bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<Magical
         dwb = setitem.dwbCode;
     }
 
+    bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, itemType.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
     ProcessMagicalProperites(setitem.modType, attribs, rnd, createParams, bMaxAlways);
     return true;
 }
@@ -11199,9 +11200,10 @@ bool d2ce::ItemHelpers::getSetItemBonusAttribs(std::uint16_t id, std::vector<std
     }
 
     auto& setInfo = iter->second;
+    bool bExceptional = setInfo.isExceptionalItem() || setInfo.isEliteItem();
 
     ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, setInfo.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
 
     std::vector<MagicalAttribute> tempAttribs;
     if (!setInfo.a1ModType.empty())
@@ -11264,9 +11266,10 @@ bool d2ce::ItemHelpers::getSetBonusAttribs(std::uint16_t id, std::vector<std::ve
     }
 
     auto& setInfo = s_ItemSetsType[setIter->second];
+    bool bExceptional = setitem.isExceptionalItem() || setitem.isEliteItem();
 
     ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, setitem.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
 
     if (!setInfo.p2ModType.empty())
     {
@@ -11359,8 +11362,9 @@ bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<Magi
         dwb = generarateRandomDW();
     }
 
+    bool bExceptional = uniqueitem.isExceptionalItem() || uniqueitem.isEliteItem();
     ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, uniqueitem.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
     ProcessMagicalProperites(uniqueitem.modType, attribs, rnd, createParams, bMaxAlways);
     return true;
 }
@@ -11418,7 +11422,7 @@ bool d2ce::ItemHelpers::findDWForMagicalAffixes(const MagicalAffixes& affixes, c
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
-        bExceptional = itemType.isExceptionalItem();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
 
     ItemRandStruct rndDwb = { dwb, 666 };
@@ -11518,7 +11522,7 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(MagicalCachev100& cache, const It
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
-        bExceptional = itemType.isExceptionalItem();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
 
     ItemRandStruct rnd = { dwb, 666 };
@@ -11573,7 +11577,7 @@ bool d2ce::ItemHelpers::generateSuperiorAttributes(std::vector<MagicalAttribute>
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
-        bExceptional = itemType.isExceptionalItem();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
 
     ItemRandStruct rnd = { dwb, 666 };
@@ -11653,8 +11657,9 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
         return false;
     }
 
+    bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     ItemRandStruct rndDwb = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rndDwb, itemType.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rndDwb, bExceptional);
 
     bool bFirst = true;
     std::uint32_t possibleDwb = 0;
@@ -11663,7 +11668,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
     {
         RareOrCraftedCachev100 cache;
         ItemRandStruct rnd = { dwb, 666 };
-        InitalizeItemRandomization(dwb, level, rnd, itemType.isExceptionalItem());
+        InitalizeItemRandomization(dwb, level, rnd, bExceptional);
 
         const auto& affix1 = rarePrefixes[GenerateRandom(rnd) % rarePrefixes.size()];
         cache.Id = affix1.code;
@@ -11889,8 +11894,9 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         dwb = generarateRandomDW();
     }
 
+    bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, itemType.isExceptionalItem());
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
 
     const auto& affix1 = rarePrefixes[GenerateRandom(rnd) % rarePrefixes.size()];
     cache.Id = affix1.code;

@@ -35,12 +35,114 @@
 
 namespace
 {
+#define TOOLTIP_BLUE RGB(94,94,255)
+
     CSize CalcTextSize(CDC* pDC, CString& strText, CRect& rect, BOOL bCalcOnly)
     {
         CSize sizeText(0, 0);
 
         strText.Replace(_T("\t"), _T("    "));
-        if (strText.Find(_T('\n')) >= 0) // Multi-line text
+
+        if (bCalcOnly && (strText.Find(_T('\f')) >= 0))
+        {
+            // don't care about color
+            strText.Remove(_T('\f'));
+        }
+
+        if (strText.Find(_T('\f')) >= 0) // Multi-color text
+        {
+            if (strText.Find(_T('\n')) >= 0) // Multi-line text
+            {
+                CSize lineSizeText(0, 0);
+                int curLinePos = 0;
+                CString strLineText = strText.Tokenize(_T("\n"), curLinePos);
+                while (!strLineText.IsEmpty())
+                {
+                    if (strLineText.Find(_T('\f')) >= 0) // Multi-color text
+                    {
+                        CSize colorSizeText(0, 0);
+                        CString strNoColorText = strLineText;
+                        strNoColorText.Remove(_T('\f'));
+
+                        auto lineRect = rect;
+                        colorSizeText = pDC->GetTextExtent(strNoColorText);
+                        lineRect.left += (rect.Width() - colorSizeText.cx) / 2;
+                        int curPos = 0;
+                        auto origColor = pDC->GetTextColor();
+                        bool bBlue = false;
+                        CString strColorText = strLineText.Tokenize(_T("\f"), curPos);
+                        while (!strColorText.IsEmpty())
+                        {
+                            colorSizeText = pDC->GetTextExtent(strColorText);
+                            lineSizeText.cy = std::max(colorSizeText.cy, lineSizeText.cy);
+                            if (bBlue)
+                            {
+                                pDC->SetTextColor(TOOLTIP_BLUE);
+                            }
+                            bBlue = !bBlue;
+
+                            UINT nFormat = DT_LEFT | DT_NOCLIP | DT_SINGLELINE;
+                            colorSizeText.cy = pDC->DrawText(strColorText, lineRect, nFormat);
+                            lineRect.left += colorSizeText.cx;
+                            lineSizeText.cx = (LONG)rect.Width();
+                            pDC->SetTextColor(origColor);
+                            strColorText = strLineText.Tokenize(_T("\f"), curPos);
+                        }
+                    }
+                    else
+                    {
+                        UINT nFormat = DT_CENTER | DT_NOCLIP | DT_SINGLELINE;
+                        lineSizeText.cy = pDC->DrawText(strLineText, rect, nFormat);
+                        lineSizeText.cx = (LONG)rect.Width();
+                    }
+
+                    sizeText.cx = std::max(sizeText.cx, lineSizeText.cx);
+                    sizeText.cy += lineSizeText.cy;
+                    rect.top += lineSizeText.cy;
+                    rect.bottom += lineSizeText.cy;
+                    strLineText = strText.Tokenize(_T("\n"), curLinePos);
+                }
+            }
+            else
+            {
+                CSize lineSizeText(0, 0);
+                CSize colorSizeText(0, 0);
+                CString strNoColorText = strText;
+                strNoColorText.Remove(_T('\f'));
+
+                auto lineRect = rect;
+                colorSizeText = pDC->GetTextExtent(strNoColorText);
+                lineRect.left += (rect.Width() - colorSizeText.cx) / 2;
+
+                int curPos = 0;
+                auto origColor = pDC->GetTextColor();
+                bool bBlue = false;
+                CString strColorText = strText.Tokenize(_T("\f"), curPos);
+                while (!strColorText.IsEmpty())
+                {
+                    colorSizeText = pDC->GetTextExtent(strColorText);
+                    lineSizeText.cy = std::max(colorSizeText.cy, lineSizeText.cy);
+                    if (bBlue)
+                    {
+                        pDC->SetTextColor(TOOLTIP_BLUE);
+                    }
+                    bBlue = !bBlue;
+
+                    UINT nFormat = DT_LEFT | DT_NOCLIP | DT_SINGLELINE;
+                    colorSizeText.cy = pDC->DrawText(strColorText, lineRect, nFormat);
+                    lineRect.left += colorSizeText.cx;
+                    lineSizeText.cx = (LONG)rect.Width();
+                    pDC->SetTextColor(origColor);
+                    strColorText = strText.Tokenize(_T("\f"), curPos);
+                }
+
+                sizeText.cx = std::max(sizeText.cx, lineSizeText.cx);
+                sizeText.cy = lineSizeText.cy;
+                rect.top += sizeText.cy;
+                rect.bottom += sizeText.cy;
+            }
+        }
+        else if (strText.Find(_T('\n')) >= 0) // Multi-line text
         {
             UINT nFormat = DT_CENTER | DT_NOPREFIX;
             if (bCalcOnly)
@@ -95,8 +197,10 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
         return CSize(0, 0);
     }
 
+    bool isRuneword = currItem->isRuneword();
+
     // color codes as described in the text files
-    static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), RGB(94,94,255), RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
+    static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), TOOLTIP_BLUE, RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
     enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, UNIQUE = 4, GRAY = 5, CRAFT = 8, RARE = 9 };
 
     // Get color of top text
@@ -114,6 +218,10 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
         else if (currItem->isRune())
         {
             color = colors[CRAFT];
+        }
+        else if (isRuneword)
+        {
+            color = colors[UNIQUE];
         }
 
         switch (currItem->getQuality())
@@ -148,7 +256,35 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     std::u16string uText = utf8::utf8to16(currItem->getDisplayedItemName());
     CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
-    CSize sizeText(CalcTextSize(pDC, strText, rect, bCalcOnly));
+
+    CSize sizeText(0, 0);
+    if (bCalcOnly || !isRuneword)
+    {
+        sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+    }
+    else
+    {
+        if (strText.Find(_T('\n')) >= 0) // Multi-line text
+        {
+            // only name is coloried as unqiue, type name is colored as gray
+            CSize prevSizeText = sizeText;
+            int curLinePos = 0;
+            CString strLineText = strText.Tokenize(_T("\n"), curLinePos);
+            while (!strLineText.IsEmpty())
+            {
+                sizeText = CalcTextSize(pDC, strLineText, rect, bCalcOnly);
+                sizeText.cy += prevSizeText.cy;
+                sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+                prevSizeText = sizeText;
+                pDC->SetTextColor(colors[GRAY]);
+                strLineText = strText.Tokenize(_T("\n"), curLinePos);
+            }
+        }
+        else
+        {
+            sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+        }
+    }
 
     // draw possible rune name
     uText = utf8::utf8to16(currItem->getDisplayedSocketedRunes());
@@ -163,17 +299,69 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
     }
 
     // Other non-magical
-    auto charLevel = pCharInfo == nullptr ? 1 : (isMerc ? pCharInfo->getMercenaryInfo().getLevel() : pCharInfo->getLevel());
+    d2ce::CharStats displayedCs;
+    if (pCharInfo != nullptr)
+    {
+        if (isMerc)
+        {
+            pCharInfo->getMercenaryInfo().fillMercStats(displayedCs);
+        }
+        else
+        {
+            pCharInfo->fillDisplayedCharacterStats(displayedCs);
+        }
+
+    }
+    else
+    {
+        displayedCs.Level = 1;
+    }
     auto charClass = pCharInfo == nullptr ? d2ce::EnumCharClass::Amazon : pCharInfo->getClass();
-    uText = utf8::utf8to16(currItem->getDisplayedItemAttributes(charClass, charLevel));
+    uText = utf8::utf8to16(currItem->getDisplayedItemAttributes(charClass, displayedCs, true));
     strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(colors[WHITE]);
-        sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
-        sizeText.cy += prevSizeText.cy;
-        sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+
+        if (strText.Find(_T('\b')) >= 0) // red text
+        {
+            if (strText.Find(_T('\n')) >= 0) // Multi-line text
+            {
+                int curLinePos = 0;
+                CString strLineText = strText.Tokenize(_T("\n"), curLinePos);
+                while (!strLineText.IsEmpty())
+                {
+                    if (strLineText.Find(_T('\b')) >= 0) // red text
+                    {
+                        pDC->SetTextColor(colors[RED]);
+                        strLineText.Remove(_T('\b'));
+                    }
+
+                    sizeText = CalcTextSize(pDC, strLineText, rect, bCalcOnly);
+                    sizeText.cy += prevSizeText.cy;
+                    sizeText.cy += prevSizeText.cy;
+                    sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+                    prevSizeText = sizeText;
+                    strLineText = strText.Tokenize(_T("\n"), curLinePos);
+                    pDC->SetTextColor(colors[WHITE]);
+                }
+            }
+            else
+            {
+                pDC->SetTextColor(colors[RED]);
+                strText.Remove(_T('\b'));
+                sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+                sizeText.cy += prevSizeText.cy;
+                sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+            }
+        }
+        else
+        {
+            sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+            sizeText.cy += prevSizeText.cy;
+            sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+        }
     }
 
     d2ce::ItemDurability durability;
@@ -194,7 +382,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     // magical props
     std::vector<d2ce::MagicalAttribute> magicalAttributes;
-    if (currItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, charLevel))
+    if (currItem->getDisplayedCombinedMagicalAttributes(magicalAttributes, displayedCs.Level))
     {
         for (const auto& attrib : magicalAttributes)
         {
@@ -261,7 +449,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     // Green Set props
     std::vector<d2ce::MagicalAttribute> setAttributes;
-    if (currItem->getDisplayedSetItemAttributes(setAttributes, charLevel))
+    if (currItem->getDisplayedSetItemAttributes(setAttributes, displayedCs.Level))
     {
         for (const auto& attrib : setAttributes)
         {
@@ -288,7 +476,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     // Green Set props
     std::vector<d2ce::MagicalAttribute> setBonus;
-    if (currItem->getDisplayedFullSetAttributes(setBonus, charLevel))
+    if (currItem->getDisplayedFullSetAttributes(setBonus, displayedCs.Level))
     {
         bool bFirst = true;
         for (const auto& attrib : setBonus)

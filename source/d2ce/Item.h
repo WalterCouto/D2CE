@@ -333,7 +333,7 @@ namespace d2ce
         bool getDisplayedDurability(ItemDurability& durability, std::uint32_t charLevel) const;
         bool getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel) const;
         bool getDisplayedRequirements(ItemRequirements& req, std::uint32_t charLevel) const;
-        std::string getDisplayedItemAttributes(EnumCharClass charClass, std::uint32_t charLevel) const;
+        std::string getDisplayedItemAttributes(EnumCharClass charClass, const CharStats& cs, bool bAddColorChar = false) const;
         bool getDisplayedMagicalAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;
         bool getDisplayedRunewordAttributes(RunewordAttributes& attrib, std::uint32_t charLevel) const;
         bool getDisplayedSetItemAttributes(std::vector<MagicalAttribute>& attribs, std::uint32_t charLevel) const;

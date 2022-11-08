@@ -13168,8 +13168,8 @@
         }
       ],
       "type_name": "Phase Blade",
-      "reqstr": 36717,
-      "reqdex": 36795,
+      "reqstr": 18,
+      "reqdex": 96,
       "levelreq": 63,
       "inv_file": "invcrs",
       "inv_height": 3,

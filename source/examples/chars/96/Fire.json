@@ -18002,8 +18002,8 @@
         }
       ],
       "type_name": "Cryptic Axe",
-      "reqstr": 36824,
-      "reqdex": 36774,
+      "reqstr": 124,
+      "reqdex": 75,
       "levelreq": 67,
       "inv_file": "invpax",
       "inv_height": 4,

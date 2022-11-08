@@ -135,22 +135,22 @@ void CD2RunewordForm::OnBnClickedOk()
 {
     if (ItemPtr != nullptr)
     {
-        auto runwordId = std::uint16_t(Runeword.GetItemData(Runeword.GetCurSel()));
+        auto runewordId = std::uint16_t(Runeword.GetItemData(Runeword.GetCurSel()));
         if (SharedStashFormPtr != nullptr)
         {
-            SharedStashFormPtr->setItemRuneword(*ItemPtr, runwordId);
+            SharedStashFormPtr->setItemRuneword(*ItemPtr, runewordId);
         }
         else if (ItemsFormPtr != nullptr)
         {
-            ItemsFormPtr->setItemRuneword(*ItemPtr, runwordId);
+            ItemsFormPtr->setItemRuneword(*ItemPtr, runewordId);
         }
         else if (MercenaryFormPtr != nullptr)
         {
-            MercenaryFormPtr->setItemRuneword(*ItemPtr, runwordId);
+            MercenaryFormPtr->setItemRuneword(*ItemPtr, runewordId);
         }
         else
         {
-            ItemPtr->setRuneword(runwordId);
+            ItemPtr->setRuneword(runewordId);
         }
     }
     __super::OnOK();
