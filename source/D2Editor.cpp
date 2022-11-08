@@ -18,7 +18,10 @@
 
 Revision History
 ================
-Version 2.20 (October 20, 2022)
+Version 2.20 (November 8, 2022)
+   - Updated: Item tooltip to display red for unmet requirements and blue
+              for magically enhanced attributes<br>
+
    - Added: Set Items now display all the possible Bonus attribues in the
             tooltip.
    - Added: Add Create Item Form to allow creation of any item available 
