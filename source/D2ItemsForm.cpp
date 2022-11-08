@@ -28,6 +28,7 @@
 #include "D2SharedStashForm.h"
 #include "D2RunewordForm.h"
 #include "D2NewItemForm.h"
+#include "D2MagicalPropsRandomizer.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <deque>
 #include <utf8/utf8.h>
@@ -2266,6 +2267,7 @@ BEGIN_MESSAGE_MAP(CD2ItemsForm, CDialogEx)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_PERSONALIZATION, &CD2ItemsForm::OnItemContextRemovePersonalization)
     ON_COMMAND(ID_ITEM_CONTEXT_APPLY_RUNEWORD, &CD2ItemsForm::OnItemContextApplyruneword)
     ON_COMMAND(ID_ITEM_CONTEXT_CREATE_ITEM, &CD2ItemsForm::OnItemContextCreateitem)
+    ON_COMMAND(ID_ITEM_CONTEXT_MODIFY_ITEM, &CD2ItemsForm::OnItemContextModifyitem)
     ON_COMMAND(ID_ITEM_CONTEXT_IMPORT_ITEM, &CD2ItemsForm::OnItemContextImportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_EXPORT_ITEM, &CD2ItemsForm::OnItemContextExportitem)
     ON_COMMAND(ID_ITEM_CONTEXT_REMOVE_ITEM, &CD2ItemsForm::OnItemContextRemoveitem)
@@ -4303,6 +4305,20 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
     bool removeDurabilityMenu = !canFixDurability && !canMakeIndestructible && !canMakeEthereal && !canRemoveEthereal;
     bool removeQualityMenu = !canMakeSuperior && !canUpgradeTier;
+
+    bool canModifyItem = false;
+    switch (CurrItem->getQuality())
+    {
+    case d2ce::EnumItemQuality::INFERIOR:
+    case d2ce::EnumItemQuality::NORMAL:
+        canModifyItem = false;
+        break;
+
+    default:
+        canModifyItem = (itemType.isUniqueItem() || itemType.isSetItem() || itemType.isQuestItem()) ? false : true;
+        break;
+    }
+
     if (isArmor || isWeapon || isStackable)
     {
         CMenu menu;
@@ -4314,6 +4330,11 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         if (!isStackable)
         {
             pPopup->DeleteMenu(ID_ITEM_CONTEXT_LOAD, MF_BYCOMMAND);
+        }
+
+        if (!canModifyItem)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MODIFY_ITEM, MF_BYCOMMAND);
         }
 
         auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_ADDSOCKET);
@@ -4516,6 +4537,11 @@ void CD2ItemsForm::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
         CMenu* pPopup = FindPopup(menu, 3);
         ENSURE(pPopup != NULL);
+
+        if (!canModifyItem)
+        {
+            pPopup->DeleteMenu(ID_ITEM_CONTEXT_MODIFY_ITEM, MF_BYCOMMAND);
+        }
 
         auto pos = FindPopupPosition(*pPopup, ID_ITEM_CONTEXT_MAKESUPERIORQUALITY);
         if (pos >= 0)
@@ -5098,6 +5124,33 @@ void CD2ItemsForm::OnItemContextCreateitem()
     ItemCursor = CreateItemCursor(image);
     CurrCursor = ItemCursor;
     ::SetCursor(CurrCursor);
+}
+//---------------------------------------------------------------------------
+void CD2ItemsForm::OnItemContextModifyitem()
+{
+    if (CurrItem == nullptr)
+    {
+        return;
+    }
+
+    if (MainForm.getCharacterVersion() < d2ce::EnumCharVersion::v107)
+    {
+        CD2MagicalPropsRandomizer dlg(*this);
+        if (dlg.DoModal() == IDOK)
+        {
+            switch (CurrItem->getLocation())
+            {
+            case d2ce::EnumItemLocation::EQUIPPED:
+                refreshEquipped(*CurrItem);
+                break;
+            }
+
+            // refresh all storage grids
+            refreshGrid(d2ce::EnumItemLocation::BUFFER, d2ce::EnumAltItemLocation::UNKNOWN);
+        }
+    }
+
+    ClearCurrItemInfo();
 }
 //---------------------------------------------------------------------------
 void CD2ItemsForm::OnItemContextImportitem()

@@ -424,6 +424,7 @@ public:
     bool removeSocketedItems(d2ce::Item& item);
     bool personalizeItem(d2ce::Item& item);
     bool removeItemPersonalization(d2ce::Item& item);
+    bool swapItems(d2ce::Item& item, d2ce::Item& newItem);
     bool setItemIndestructible(d2ce::Item& item);
     bool makeItemSuperior(d2ce::Item& item);
     bool upgradeItemTier(d2ce::Item& item);

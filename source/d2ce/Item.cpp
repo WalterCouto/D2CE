@@ -355,6 +355,7 @@ namespace d2ce
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
+        bool getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs);
         bool findDWForMagicalAffixes(const MagicalAffixes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
         bool findDWForRareOrCraftedAffixes(const d2ce::RareAttributes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
 
@@ -368,6 +369,7 @@ namespace d2ce
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
 
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
+        bool generateSuperiorAttributes(std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         bool generateMagicalAffixes(MagicalCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         bool generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
@@ -5905,7 +5907,12 @@ bool d2ce::Item::setDWBCode(std::uint32_t dwb)
     rare_affixes_v100.clear();
 
     auto current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DWB_BIT_OFFSET);
-    return setBits(current_bit_offset, 32, dwb);
+    if (!setBits(current_bit_offset, 32, dwb))
+    {
+        return false;
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::randomizeId()
@@ -7872,7 +7879,7 @@ bool d2ce::Item::setDurability(const ItemDurability& attrib)
             return false;
         }
 
-        if (!updateBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108, DURABILITY_MAX_NUM_BITS, attrib.Current))
+        if (!updateBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET) + DURABILITY_CURRENT_NUM_BITS_108, DURABILITY_MAX_NUM_BITS, attrib.Max))
         {
             return false;
         }
@@ -9607,39 +9614,7 @@ bool d2ce::Item::getPossibleSuperiorAttributes(std::vector<MagicalAttribute>& at
         return false;
     }
 
-    struct SuperiorMods
-    {
-        std::string Name;
-        std::vector<std::int64_t> Values;
-    };
-
-    static std::vector<SuperiorMods> weaponMods =
-    { {"item_maxdurability_percent", { 15 }}, {"item_maxdamage_percent", { 15, 15 }},
-      {"maxdamage", { 1 }}, {"tohit", { 3 }}
-    };
-
-    static std::vector<SuperiorMods> armorMods =
-    { {"item_maxdurability_percent", {15}}, {"item_armor_percent", { 15 }} };
-
-    const auto& mods = bIsArmor ? armorMods : weaponMods;
-    for (const auto& mod : mods)
-    {
-        const auto& stat = ItemHelpers::getItemStat(ItemVersion, mod.Name);
-        if (stat.name == mod.Name)
-        {
-            MagicalAttribute attrib;
-            attrib.Id = stat.id;
-            attrib.Desc = stat.desc;
-            attrib.Name = stat.name;
-            attrib.Version = ItemVersion;
-            attrib.GameVersion = GameVersion;
-            attrib.DescPriority = 0;
-            attrib.Values = mod.Values;
-            attribs.push_back(attrib);
-        }
-    }
-
-    return attribs.empty() ? false : true;
+    return ItemHelpers::getPossibleSuperiorAttributes(*this, attribs);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
@@ -9784,6 +9759,58 @@ bool d2ce::Item::makeSuperior()
         return false; // so we don't count it as a change
     }
 
+    if (ItemVersion < EnumItemVersion::v107) // pre-1.07 character file
+    {
+        // make a copy first
+        d2ce::Item origItem(*this);
+
+        size_t numBits = 4;
+        switch (ItemVersion)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.03 item
+            if (isEar())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
+            }
+
+            numBits = 3;
+            break;
+
+        case EnumItemVersion::v104: // v1.04 - v1.06 item
+            if (isSimpleItem())
+            {
+                return false;
+            }
+
+            if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
+            {
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
+            }
+
+            numBits = 4;
+            break;
+
+        default:
+            return false;
+        }
+
+        std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::SUPERIOR);
+        if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
+        {
+            swap(origItem);
+            return false;
+        }
+
+        cachedCombinedMagicalAttributes.clear();
+        fixDurability();
+        return true;
+    }
+
     std::vector<MagicalAttribute> attribs;
     if (!getPossibleSuperiorAttributes(attribs))
     {
@@ -9825,21 +9852,7 @@ bool d2ce::Item::makeSuperior()
                     }
                 }
 
-                if (!usesDurablility)
-                {
-                    // remove the durablilty option
-                    iter = attribs.begin();
-                    iter_end = attribs.end();
-                    for (; iter != iter_end; ++iter)
-                    {
-                        if (iter->Name == "item_maxdurability_percent")
-                        {
-                            attribs.erase(iter);
-                            break;
-                        }
-                    }
-                }
-                else
+                if (usesDurablility)
                 {
                     // remove the ac option
                     iter = attribs.begin();
@@ -19360,6 +19373,10 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
     d2ce::RareOrCraftedCachev100 rareAffixes;
     switch (getQuality())
     {
+    case EnumItemQuality::SUPERIOR:
+        return ItemHelpers::generateSuperiorAttributes(attribs, createParams, getLevel(), getDWBCode(), true);
+        break;
+
     case EnumItemQuality::SET:
         if (getSetAttributes(setAttrib))
         {

@@ -27,6 +27,7 @@
 #include "D2RareAffixesForm.h"
 #include "D2RunewordForm.h"
 #include "D2AddGemsForm.h"
+#include "D2MagicalPropsRandomizer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -552,6 +553,12 @@ CD2ItemTooltipCallback* CD2ItemInfoStatic::GetCallback() const
         return pCallback;
     }
 
-    return dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2AddGemsForm, GetParent()));
+    pCallback = dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2AddGemsForm, GetParent()));
+    if (pCallback != nullptr)
+    {
+        return pCallback;
+    }
+
+    return dynamic_cast<CD2ItemTooltipCallback*>(DYNAMIC_DOWNCAST(CD2MagicalPropsRandomizer, GetParent()));
 }
 //---------------------------------------------------------------------------

@@ -62,6 +62,7 @@ namespace d2ce
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
+        bool getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs);
 
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
@@ -75,6 +76,7 @@ namespace d2ce
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool findDWForMagicalAffixes(const MagicalAffixes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
         bool generateMagicalAffixes(MagicalCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
+        bool generateSuperiorAttributes(std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         bool findDWForRareOrCraftedAffixes(const d2ce::RareAttributes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
         bool generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = false);
         std::uint16_t generateDefenseRating(const std::array<std::uint8_t, 4>& strcode, std::uint32_t dwa = 0);
@@ -4722,6 +4724,294 @@ namespace d2ce
         std::vector<std::string> excluded_categories; // what item types this affix will never appear on
     };
 
+    std::map<std::uint16_t, ItemAffixType> s_SuperiorType;
+    void InitSuperiorModsData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_SuperiorType.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_SuperiorType.clear();
+        }
+
+        InitItemPropertiesData(txtReader);
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetSuperiorMods());
+        auto& doc = *pDoc;
+        std::map<std::uint16_t, ItemAffixType> superiorType;
+
+        std::map<std::uint16_t, ItemAffixType> itemMagicAffixType;
+        size_t numRows = doc.GetRowCount();
+        size_t modParamSize = 2;
+        std::vector<SSIZE_T> modCode(modParamSize, -1);
+        std::vector<SSIZE_T> modParam(modParamSize, -1);
+        std::vector<SSIZE_T> modMin(modParamSize, -1);
+        std::vector<SSIZE_T> modMax(modParamSize, -1);
+        for (size_t idx = 1; idx <= modParamSize; ++idx)
+        {
+            modCode[idx - 1] = doc.GetColumnIdx("mod" + std::to_string(idx) + "code");
+            if (modCode[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modParam[idx - 1] = doc.GetColumnIdx("mod" + std::to_string(idx) + "param");
+            if (modParam[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modMin[idx - 1] = doc.GetColumnIdx("mod" + std::to_string(idx) + "min");
+            if (modMin[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modMax[idx - 1] = doc.GetColumnIdx("mod" + std::to_string(idx) + "max");
+            if (modMax[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+        }
+
+        const SSIZE_T armorColumnIdx = doc.GetColumnIdx("armor");
+        if (armorColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T weaponColumnIdx = doc.GetColumnIdx("weapon");
+        if (weaponColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T shieldColumnIdx = doc.GetColumnIdx("shield");
+        if (shieldColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T scepterColumnIdx = doc.GetColumnIdx("scepter");
+        if (scepterColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T wandColumnIdx = doc.GetColumnIdx("wand");
+        if (wandColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T staffColumnIdx = doc.GetColumnIdx("staff");
+        if (staffColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T bowColumnIdx = doc.GetColumnIdx("bow");
+        if (bowColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T bootsColumnIdx = doc.GetColumnIdx("boots");
+        if (bootsColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T glovesColumnIdx = doc.GetColumnIdx("gloves");
+        if (glovesColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T beltColumnIdx = doc.GetColumnIdx("belt");
+        if (beltColumnIdx < 0)
+        {
+            return;
+        }
+
+        std::string strValue;
+        std::uint16_t code = 0;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            if (doc.GetCellString(modCode[0], i).empty())
+            {
+                // skip
+                continue;
+            }
+
+
+            auto& itemType = superiorType[code];
+            itemType.code = code;
+            ++code;
+
+            for (size_t idx = 0; idx < modParamSize; ++idx)
+            {
+                strValue = doc.GetCellString(modCode[idx], i);
+                if (strValue.empty())
+                {
+                    break;
+                }
+
+                itemType.modType.resize(itemType.modType.size() + 1);
+                auto& mod = itemType.modType.back();
+                mod.code = strValue;
+                mod.affix = itemType.code;
+
+                strValue = doc.GetCellString(modParam[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.param = strValue;
+                }
+
+                strValue = doc.GetCellString(modMin[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.min = strValue;
+                }
+
+                strValue = doc.GetCellString(modMax[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.max = strValue;
+                }
+            }
+
+            strValue = doc.GetCellString(armorColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("armo").name);
+
+                strValue = doc.GetCellString(shieldColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("shld").name);
+                }
+
+                strValue = doc.GetCellString(bootsColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("boot").name);
+                }
+
+                strValue = doc.GetCellString(glovesColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("glov").name);
+                }
+
+                strValue = doc.GetCellString(beltColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("belt").name);
+                }
+            }
+
+            strValue = doc.GetCellString(weaponColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("weap").name);
+
+                strValue = doc.GetCellString(scepterColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("rod").name);
+                }
+
+                strValue = doc.GetCellString(wandColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("wand").name);
+                }
+
+                strValue = doc.GetCellString(staffColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("staf").name);
+                }
+
+                strValue = doc.GetCellString(bowColumnIdx, i);
+                if (strValue.empty() || (strValue == "0"))
+                {
+                    itemType.excluded_categories.push_back(GetItemCategory("miss").name);
+                }
+            }
+
+            strValue = doc.GetCellString(scepterColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("rod").name);
+            }
+
+            strValue = doc.GetCellString(wandColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("wand").name);
+            }
+
+            strValue = doc.GetCellString(staffColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("staf").name);
+            }
+
+            strValue = doc.GetCellString(bowColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("miss").name);
+            }
+
+            strValue = doc.GetCellString(bootsColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("boot").name);
+            }
+
+            strValue = doc.GetCellString(glovesColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("glov").name);
+            }
+
+            strValue = doc.GetCellString(beltColumnIdx, i);
+            if (!strValue.empty() && (strValue != "0"))
+            {
+                itemType.included_categories.push_back(GetItemCategory("belt").name);
+            }
+        }
+
+        s_SuperiorType.swap(superiorType);
+    }
+
     std::map<std::uint16_t, ItemAffixType> s_ItemMagicPrefixType;
     void InitItemMagicAffixData(ITxtDocument& doc, std::map<std::uint16_t, ItemAffixType>& sItemMagicAffixType)
     {
@@ -5043,7 +5333,7 @@ namespace d2ce
             s_ItemMagicPrefixType.clear();
         }
 
-        InitItemPropertiesData(txtReader);
+        InitSuperiorModsData(txtReader);
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetMagicPrefixTxt());
         auto& doc = *pDoc;
@@ -5470,6 +5760,7 @@ namespace d2ce
                     id = doc.GetCellUInt16(idColumnIdx, i);
                 }
             }
+
             auto& itemType = itemUniqueItemsType[id];
             itemType.id = id;
             ++id;
@@ -8524,6 +8815,57 @@ namespace d2ce
 
         return static_cast<const ItemType&>(setItem);
     }
+
+    bool GenerateSuperiorAffixesBuffer(const ItemCreateParams& createParams, std::vector<ItemAffixType>& affixes)
+    {
+        affixes.clear();
+        if (!createParams.itemType.has_value())
+        {
+            return false;
+        }
+
+        const auto& itemType = createParams.itemType.value().get();
+        if (&itemType == &s_invalidItemType)
+        {
+            return false;
+        }
+
+        for (auto& affix : s_SuperiorType)
+        {
+            bool bIncluded = false;
+            for (auto& itype : affix.second.included_categories)
+            {
+                if (itemType.hasCategory(itype))
+                {
+                    bIncluded = true;
+                    break;
+                }
+            }
+
+            if (!bIncluded)
+            {
+                continue;
+            }
+
+            bool bExcluded = false;
+            for (auto& etype : affix.second.excluded_categories)
+            {
+                if (itemType.hasCategory(etype))
+                {
+                    bExcluded = true;
+                    break;
+                }
+            }
+
+            if (bExcluded)
+            {
+                continue;
+            }
+
+            affixes.push_back(affix.second);
+        }
+        return true;
+    }
     
     bool GenerateMagicalAffixesBuffer(const ItemCreateParams& createParams, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t level)
     {
@@ -10559,6 +10901,96 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
     return (!prefixes.empty() || !suffixes.empty()) ? true : false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<d2ce::MagicalAttribute>& attribs)
+{
+    attribs.clear();
+    
+    const auto& itemType = item.getItemTypeHelper();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        return false;
+    }
+
+    auto gameVersion = item.getGameVersion();
+    auto bExceptional = itemType.isExceptionalItem();
+
+    ItemCreateParams createParams(item.getVersion(), itemType, gameVersion);
+    std::vector<ItemAffixType> affixes;
+    if (!GenerateSuperiorAffixesBuffer(createParams, affixes))
+    {
+        return false;
+    }
+
+    for (auto iter = affixes.begin(); iter != affixes.end();)
+    {
+        if (iter->modType.size() > 1)
+        {
+            iter = affixes.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
+    auto dwb = item.getDWBCode();
+    if (dwb == 0)
+    {
+        dwb = generarateRandomDW();
+    }
+
+    for (const auto& affix : affixes)
+    {
+        ItemRandStruct rnd = { dwb, 666 };
+        InitalizeItemRandomization(dwb, item.getLevel(), rnd, bExceptional);
+        GenerateRandom(rnd); // skip the next random number
+        ProcessMagicalProperites(affix.modType, attribs, rnd, createParams, true);
+    }
+
+    if (itemType.isWeapon())
+    {
+        bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !item.isIndestructible();
+        if (usesDurablility)
+        {
+            ItemDurability durability;
+            if (!item.getDurability(durability) || durability.Max == 0)
+            {
+                usesDurablility = false;
+            }
+        }
+
+        if (!usesDurablility)
+        {
+            // remove the durablilty option
+            auto iter = attribs.begin();
+            auto iter_end = attribs.end();
+            for (; iter != iter_end; ++iter)
+            {
+                if (iter->Name == "item_maxdurability_percent")
+                {
+                    attribs.erase(iter);
+                    break;
+                }
+            }
+        }
+
+        // add dmg-max modifier
+        std::vector<ItemAffixModType> mods;
+        mods.resize(mods.size() + 1);
+        auto& mod = mods.back();
+        mod.code = "dmg-max";
+        mod.min = "1";
+        mod.max = "1";
+
+        ItemRandStruct rnd = { dwb, 666 };
+        InitalizeItemRandomization(dwb, item.getLevel(), rnd, bExceptional);
+        GenerateRandom(rnd); // skip the next random number
+        ProcessMagicalProperites(mods, attribs, rnd, createParams, true);
+    }
+
+    return attribs.empty() ? false : true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways)
 {
     attribs.clear();
@@ -11122,6 +11554,33 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(MagicalCachev100& cache, const It
         ProcessMagicalProperites(suffix.modType, cache.MagicalAttributes, rnd, createParams, bMaxAlways);
     }
 
+    return true;
+}
+bool d2ce::ItemHelpers::generateSuperiorAttributes(std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
+{
+    std::vector<ItemAffixType> affixes;
+    if (!GenerateSuperiorAffixesBuffer(createParams, affixes))
+    {
+        return false;
+    }
+
+    if (dwb == 0)
+    {
+        dwb = generarateRandomDW();
+    }
+
+    bool bExceptional = false;
+    if (createParams.itemType.has_value())
+    {
+        const auto& itemType = createParams.itemType.value().get();
+        bExceptional = itemType.isExceptionalItem();
+    }
+
+    ItemRandStruct rnd = { dwb, 666 };
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
+
+    auto& affix = affixes[GenerateRandom(rnd) % affixes.size()];
+    ProcessMagicalProperites(affix.modType, attribs, rnd, createParams, bMaxAlways);
     return true;
 }
 //---------------------------------------------------------------------------

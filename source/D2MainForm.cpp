@@ -5483,6 +5483,18 @@ bool CD2MainForm::removeItemPersonalization(d2ce::Item& item)
     return ret;
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::swapItems(d2ce::Item& item, d2ce::Item& newItem)
+{
+    if (&item != &newItem)
+    {
+        item.swap(newItem);
+        StatsChanged();
+        return true;
+    }
+
+    return false;
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::setItemIndestructible(d2ce::Item& item)
 {
     bool ret = item.setIndestructible();

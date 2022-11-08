@@ -31,6 +31,7 @@ class CD2SharedStashForm : public CDialogEx, public CD2ItemToolTipCtrlCallback, 
     friend class CD2GemsForm;
     friend class CD2AddGemsForm; 
     friend class CD2RunewordForm;
+    friend class CD2MagicalPropsRandomizer;
     DECLARE_DYNAMIC(CD2SharedStashForm)
 
 public:
@@ -77,6 +78,7 @@ protected:
     afx_msg void OnItemContextRemovePersonalization();
     afx_msg void OnItemContextApplyruneword();
     afx_msg void OnItemContextCreateitem();
+    afx_msg void OnItemContextModifyitem();
     afx_msg void OnItemContextImportitem();
     afx_msg void OnItemContextExportitem();
     afx_msg void OnItemContextRemoveitem();

@@ -585,6 +585,7 @@
 #define IDD_RARE_AFFIXES_DIALOG         728
 #define IDD_EAR_DIALOG                  729
 #define IDD_RARE_AFFIXES_V100_DIALOG    730
+#define IDD_HACK_PROPERTIES_V100_DIALOG 731
 #define IDC_DIFFICULTY                  1000
 #define IDC_CHAR_NAME                   1001
 #define IDC_CHAR_LEVEL                  1002
@@ -976,13 +977,14 @@
 #define ID_ITEM_CONTEXT_MAKEETHEREAL    32830
 #define ID_ITEM_CONTEXT_REMOVEETHEREAL  32831
 #define ID_ITEM_CONTEXT_CREATE_ITEM     32832
+#define ID_ITEM_CONTEXT_MODIFY_ITEM     32833
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        731
-#define _APS_NEXT_COMMAND_VALUE         32831
+#define _APS_NEXT_RESOURCE_VALUE        732
+#define _APS_NEXT_COMMAND_VALUE         32834
 #define _APS_NEXT_CONTROL_VALUE         1152
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

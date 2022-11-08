@@ -105,6 +105,5 @@ private:
     BOOL SimpleDialog = FALSE;
     std::deque<std::uint32_t> GeneratedDWBCode;
     size_t CurrentDWBCodeIndex = 0;
-
 };
 //---------------------------------------------------------------------------
