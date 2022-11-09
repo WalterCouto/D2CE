@@ -7294,7 +7294,7 @@ bool d2ce::Item::canHaveSockets() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::canPersonalize() const
 {
-    if (isSimpleItem() || (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER) == 0) || !isExpansionItem())
+    if (isSimpleItem() || isRuneword() || (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER) == 0) || !isExpansionItem())
     {
         return false;
     }
@@ -7346,7 +7346,7 @@ bool d2ce::Item::canMakeSuperior() const
         return false;
     }
 
-    return true;
+    return isRuneword() ? false : true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::canFixDurability() const
@@ -9062,7 +9062,82 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     }
 
     setSocketCount(runeSocketCount);
-    makeSuperior(); // might as well make it as good as possible
+
+    // might as well make it as good as possible by making it superior
+    std::vector<MagicalAttribute> superiorAttribs;
+    if (getPossibleSuperiorAttributes(superiorAttribs))
+    {
+        // remove conflicting attribs
+        for (const auto& attrib : runeword.attribs)
+        {
+            for (auto iter = superiorAttribs.begin(); iter != superiorAttribs.end(); ++iter)
+            {
+                if (iter->Id == attrib.Id)
+                {
+                    // found a conflict
+                    superiorAttribs.erase(iter);
+                    break;
+                }
+            }
+        }
+
+        if (superiorAttribs.size() > 2)
+        {
+            const auto& itemType = getItemTypeHelper();
+            if (itemType.isWeapon())
+            {
+                bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !isIndestructible();
+                if (usesDurablility)
+                {
+                    ItemDurability durability;
+                    if (!getDurability(durability) || durability.Max == 0)
+                    {
+                        usesDurablility = false;
+                    }
+                }
+
+                if (usesDurablility)
+                {
+                    // remove the ac option
+                    for (auto iter = superiorAttribs.begin(); iter != superiorAttribs.end(); ++iter)
+                    {
+                        if (iter->Name == "tohit")
+                        {
+                            superiorAttribs.erase(iter);
+                            break;
+                        }
+                    }
+                }
+
+                if (superiorAttribs.size() > 2)
+                {
+                    for (auto iter = superiorAttribs.begin(); iter != superiorAttribs.end(); ++iter)
+                    {
+                        // remove the max damage option
+                        if (iter->Name == "maxdamage")
+                        {
+                            superiorAttribs.erase(iter);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (superiorAttribs.size() > 2)
+            {
+                superiorAttribs.resize(2);
+            }
+        }
+
+        if (!superiorAttribs.empty())
+        {
+            if (makeNormal())
+            {
+                setMaxDefenseRating();
+                makeSuperior(superiorAttribs);
+            }
+        }
+    }
 
     auto version = getVersion();
     auto isExpansion = isExpansionItem();
@@ -11120,9 +11195,17 @@ std::string d2ce::Item::getDisplayedItemName() const
         break;
 
     case EnumItemQuality::SUPERIOR:
-        LocalizationHelpers::GetStringTxtValue("HiqualityFormat", strFormat, "%0 %1");
-        LocalizationHelpers::GetStringTxtValue("Hiquality", strValue, "Superior");
-        strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+        if (runewordAttrib.Name.empty())
+        {
+            LocalizationHelpers::GetStringTxtValue("HiqualityFormat", strFormat, "%0 %1");
+            LocalizationHelpers::GetStringTxtValue("Hiquality", strValue, "Superior");
+            strValue = LocalizationHelpers::string_formatDiablo(strFormat, strValue, itemType.name);
+        }
+        else
+        {
+            strValue = itemType.name;
+        }
+
         if (personalizedName.empty())
         {
             ss << strValue;
@@ -11635,13 +11718,6 @@ bool d2ce::Item::getDisplayedDamage(ItemDamage& damage, std::uint32_t charLevel)
             else if (stat.name == "item_throw_maxdamage")
             {
                 dmgMaxThrow += ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat); // should be the same as dmgMax
-            }
-            else if (stat.name == "damagepercent")
-            {
-                auto value = ItemHelpers::getMagicalAttributeValue(attrib, charLevel, 0, stat);
-                eDmg += value;
-                eDmg2 += value; // should be the same as eDmg
-                eDmgThrow += value; // should be the same as eDmg
             }
             else
             {

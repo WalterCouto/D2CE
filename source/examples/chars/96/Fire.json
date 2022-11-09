@@ -12690,11 +12690,12 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+{0}% Enhanced Damage"
             }
           ],
@@ -12705,32 +12706,35 @@
           "inv_width": 1,
           "displayed_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+50% Enhanced Damage"
             }
           ],
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+{0}% Enhanced Damage"
             }
           ],
           "displayed_combined_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+50% Enhanced Damage"
             }
           ]
@@ -12839,8 +12843,8 @@
         {
           "id": 17,
           "values": [
-            240,
-            240
+            290,
+            290
           ],
           "name": "item_maxdamage_percent",
           "description": "+{0}% Enhanced Damage"
@@ -12930,14 +12934,6 @@
           "description": "{0}% Better Chance of Getting Magic Items"
         },
         {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent",
-          "description": "+{0}% Enhanced Damage"
-        },
-        {
           "id": 122,
           "values": [
             50
@@ -12966,19 +12962,11 @@
         {
           "id": 17,
           "values": [
-            240,
-            240
+            290,
+            290
           ],
           "name": "item_maxdamage_percent",
-          "description": "+240% Enhanced Damage"
-        },
-        {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent",
-          "description": "+50% Enhanced Damage"
+          "description": "+290% Enhanced Damage"
         },
         {
           "id": 48,
@@ -17619,11 +17607,12 @@
           "nr_of_items_in_sockets": 0,
           "magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+{0}% Enhanced Damage"
             }
           ],
@@ -17634,32 +17623,35 @@
           "inv_width": 1,
           "displayed_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+50% Enhanced Damage"
             }
           ],
           "displayed_runeword_attributes": [],
           "combined_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+{0}% Enhanced Damage"
             }
           ],
           "displayed_combined_magic_attributes": [
             {
-              "id": 25,
+              "id": 17,
               "values": [
+                50,
                 50
               ],
-              "name": "damagepercent",
+              "name": "item_maxdamage_percent",
               "description": "+50% Enhanced Damage"
             }
           ]
@@ -18094,8 +18086,8 @@
         {
           "id": 17,
           "values": [
-            320,
-            320
+            370,
+            370
           ],
           "name": "item_maxdamage_percent",
           "description": "+{0}% Enhanced Damage"
@@ -18158,14 +18150,6 @@
           ],
           "name": "item_req_percent",
           "description": "Requirements +{0}%"
-        },
-        {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent",
-          "description": "+{0}% Enhanced Damage"
         },
         {
           "id": 135,
@@ -18231,19 +18215,11 @@
         {
           "id": 17,
           "values": [
-            320,
-            320
+            370,
+            370
           ],
           "name": "item_maxdamage_percent",
-          "description": "+320% Enhanced Damage"
-        },
-        {
-          "id": 25,
-          "values": [
-            50
-          ],
-          "name": "damagepercent",
-          "description": "+50% Enhanced Damage"
+          "description": "+370% Enhanced Damage"
         },
         {
           "id": 335,
@@ -18524,8 +18500,8 @@
     {
       "id": 17,
       "values": [
-        240,
-        240
+        290,
+        290
       ],
       "name": "item_maxdamage_percent",
       "description": "+{0}% Enhanced Damage"
@@ -18572,14 +18548,6 @@
       ],
       "name": "item_nonclassskill",
       "description": "+{1} to {0}"
-    },
-    {
-      "id": 25,
-      "values": [
-        50
-      ],
-      "name": "damagepercent",
-      "description": "+{0}% Enhanced Damage"
     },
     {
       "id": 102,

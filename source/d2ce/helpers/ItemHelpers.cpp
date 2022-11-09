@@ -2414,17 +2414,6 @@ namespace d2ce
                 ConvertPlaceHolders(strValue2);
                 newValue.descNoRange = strValue2;
             }
-            else if (newValue.name.compare("damagepercent") == 0)
-            {
-                auto iterName = itemStatsNameMap.find("item_maxdamage_percent");
-                if (iterName != itemStatsNameMap.end())
-                {
-                    auto& statInfo = itemStatsInfo[d2ce::EnumCharVersion::v109][iterName->second];
-                    newValue.descNoRange = statInfo.descNoRange;
-                    newValue.desc = newValue.descNoRange;
-                    newValue.descPriority = statInfo.descPriority;
-                }
-            }
 
             if (saveBits109ColumnIdx >= 0)
             {
@@ -7514,6 +7503,30 @@ namespace d2ce
                         break;
                     }
                     continue;
+                }
+                else if (mod.stat == "damagepercent")
+                {
+                    auto iterName = s_ItemStatsNameMap.find("item_maxdamage_percent");
+                    if (iterName != s_ItemStatsNameMap.end())
+                    {
+                        switch (func)
+                        {
+                        case 7:
+                            attrib.Id = iterName->second;
+                            attrib.Values.push_back(modMax);
+                            attrib.Values.push_back(modMin);
+                            {
+                                auto& stat = ItemHelpers::getItemStat(attrib);
+                                attrib.Name = stat.name;
+                                attrib.Desc = stat.desc;
+                                attrib.DescPriority = stat.descPriority;
+                                attrib.encode = stat.encode;
+                            }
+                            magicalAttributes.push_back(attrib);
+                            break;
+                        }
+                        continue;
+                    }
                 }
 
                 auto iterName = s_ItemStatsNameMap.find(mod.stat);

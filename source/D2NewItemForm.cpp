@@ -434,7 +434,7 @@ void CD2NewItemForm::OnBnClickedOk()
         }
     }
 
-    if (!MainForm.getCharacterInfo().importItem(CreatedItem, false) || CreatedItem == nullptr)
+    if (!MainForm.getCharacterInfo().importItem(CreatedItem, false))
     {
         return;
     }

@@ -922,6 +922,11 @@ namespace D2EditorTests
             TestJsonExportBase("HCharming.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
+        TEST_METHOD(TestJsonExport56)
+        {
+            TestJsonExportBase("Poison.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
         TEST_METHOD(TestJsonOpen01)
         {
             d2ce::Character character;
@@ -1253,6 +1258,12 @@ namespace D2EditorTests
         {
             d2ce::Character character;
             Assert::IsTrue(LoadCharFile("HCharming.json", character, d2ce::EnumCharVersion::v140, true));
+        }
+
+        TEST_METHOD(TestJsonOpen58)
+        {
+            d2ce::Character character;
+            Assert::IsTrue(LoadCharFile("Poison.json", character, d2ce::EnumCharVersion::v110, true));
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
