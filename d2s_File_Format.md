@@ -2,18 +2,12 @@
 
 **Orginal text at https://github.com/krisives/d2s-format**
 
-Diablo II stores your game character on disk as a .d2s file. This
-is a binary file format that encodes all of the stats, items, name,
-and other pieces of data.
+Diablo II stores your game character on disk as a .d2s file. This is a binary file format that encodes all of the stats, items, name, and other pieces of data.
 
-Integers are stored in [little endian](https://en.wikipedia.org/wiki/Endianness)
-byte order, which is the native byte ordering on a x86 architecture Diablo II
-is based on.
+Integers are stored in [little endian](https://en.wikipedia.org/wiki/Endianness) byte order, which is the native byte ordering on a x86 architecture Diablo II is based on.
 
 ## Header
-
-Each .d2s file starts with a 765 byte header, after which data
-is of variable length.
+Each .d2s file starts with a 765 byte header, after which data is of variable length.
 
 |Byte<br>'71' - '89'|Byte<br>'92' - '96'|Byte | Length | Desc                                                                                  |
 |-----------|-----------|-----|-------- |---------------------------------------------------------------------------------------|
@@ -76,7 +70,6 @@ is of variable length.
 |           |           |     |        | [Items](#items)                                                                       |
 
 ### Versions
-
 File version. The following values are known:
 
 * `71` is 1.00 through v1.06
@@ -88,12 +81,8 @@ File version. The following values are known:
 * `98` is D2R v1.2.x - v1.3.x (Patch 2.4)
 * `99` is D2R v1.4.x+ (Patch 2.5)
 
-
 ### Checksum
-
-To calculate the checksum set the value of it in the .d2s data
-to be zero and iterate through all the bytes in the data calculating
-a 32-bit checksum:
+To calculate the checksum set the value of it in the .d2s data to be zero and iterate through all the bytes in the data calculating a 32-bit checksum:
 
 <details><summary>code in C</summary>
 
@@ -260,10 +249,7 @@ Assigned skills section is a an array of 16 skill ids mapped to a hotkey, each a
 48 byte structure which defines how the character looks in the menu, extends the information given in pre-D2R versions. Does not change in-game look
 
 ### Difficulty
-3 bytes of data that indicates which of the three difficulties the character has unlocked.
-Each byte is representitive of one of the difficulties. In this order:
-Normal, Nightmare, and Hell.
-Each byte is a bitfield structured like this:
+3 bytes of data that indicates which of the three difficulties the character has unlocked. Each byte is representitive of one of the difficulties. In this order: Normal, Nightmare, and Hell. Each byte is a bitfield structured like this:
 
 | 7      | 6 | 5 | 4 | 3 | 2, 1, 0
 |--------|---|---|---|---|-----------
@@ -483,7 +469,9 @@ After this come N items, where N is the item count given above. This item count 
 |  0        |    | 16   | "JM" (separate from the list header)                   |
 | 16        |  0 |  4   | ? 0x00                                                 |
 | 20        |  4 |  1   | Identified                                             |
-| 21        |  5 |  6   | ? 0x00                                                 |
+| 21        |  5 |  3   | ? 0x00                                                 |
+| 24        |  8 |  1   | ? Broken                                               |
+| 25        |  9 |  2   | ? 0x00                                                 |
 | 27        | 11 |  1   | Socketed (If socketed, then following this item<br>are any items occuping those sockets)|
 | 28        | 12 |  1   | ? 0x00                                                 |
 | 29        | 13 |  1   | Picked up since last save                              |
@@ -491,7 +479,7 @@ After this come N items, where N is the item count given above. This item count 
 | 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes,<br>always ? 0x00 for Version '71' with 15 and 31 bytes|
 | 33        | 17 |  1   | Starter Gear                                           |
 | 34        | 18 |  1   | ? 0x00                                                 |
-| 35        | 19 |  2   | ? 0x03 for version '71' with 15, 26 or 31 bytes,<br>otherwise 0x00|
+| 35        | 19 |  2   | ? 0x03 for version '71' with 15, 26 or 31 bytes,<br> otherwise 0x00 |
 | 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes,<br>? 0x00 always for version '71' with 27 bytes|
 | 38        | 22 |  1   | Ethereal                                               |
 | 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00              |
@@ -677,10 +665,7 @@ extra 3-bit integer encoding how many sockets the item has.
 |           |         |  9+  | [Mods](#mods)                                                                                     |
 
 ### Custom Graphics
-
-Custom graphics are denoted by a single bit, which if
-set means a 3-bit number for the graphic index follows. If the
-bit is not set the 3-bits are not present.
+Custom graphics are denoted by a single bit, which if set means a 3-bit number for the graphic index follows. If the bit is not set the 3-bits are not present.
 
 | Bit | Size | Desc                     |
 |-----|------|--------------------------|
@@ -688,10 +673,7 @@ bit is not set the 3-bits are not present.
 | 1   | 3    | Alternate graphic index  |
 
 ### Class Specific
-
-Class items like Barbarian helms or Amazon bows have special
-properties specific to those kinds of items. If the first bit
-is empty the remaining 11 bits will not be present.
+Class items like Barbarian helms or Amazon bows have special properties specific to those kinds of items. If the first bit is empty the remaining 11 bits will not be present.
 
 | Bit | Size | Desc                         |
 |-----|------|------------------------------|
@@ -699,7 +681,6 @@ is empty the remaining 11 bits will not be present.
 | 1   | 11   | Class specific bits          |
 
 ### Quality
-
 Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 
 | Value | Size | Desc                                                                        |
@@ -715,7 +696,6 @@ Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 | 9     |  3   | [Tempered](#rare-craft-or-tempered)                                         |
 
 #### Inferior
-
 Inferior items have a 3-bit integer follow the quality value.
 
 | Value | Desc        |
@@ -726,7 +706,6 @@ Inferior items have a 3-bit integer follow the quality value.
 | 3     | Low Quality |
 
 #### Magically Enhanced
-
  Magically enhanced items have two 11-bit integers that follow each other.
 
 | Size | Desc                                      |
@@ -735,7 +714,6 @@ Inferior items have a 3-bit integer follow the quality value.
 |  11  | Suffix Id from the `MagicSuffix.txt` file |
 
 #### Rare, Craft or Tempered
-
  Tempered items are not enabled, however these three Quality values have the same structure and contain a name with two words and between 3 and 6 affixes.  The name values have no affect on the item's magical properties.
 
 | Size | Desc                                                                                              |
@@ -750,7 +728,6 @@ Inferior items have a 3-bit integer follow the quality value.
 |1 - 12| if first bit is set, then ll bits follow for the third Suffix Id from the `MagicSuffix.txt` file  |
 
 ### Mods
-
 After each item is a list of mods. The list is a series of key value pairs where the key is a 9-bit number and the value depends on the key. The list ends when key `511` (`0x1ff`) is found which is all 9-bits being set.
 
 Using the file `ItemStatCost.txt` as a tab-delimited CSV file you can extract the `ID` column which maps to the 9-bit keys. The columns `Save Bits` and `Param Bits` describe how large the mod is.
@@ -772,8 +749,7 @@ All items are located somewhere and have a "parent" which can be another item, s
 | 4     | Cursor   |
 | 6     | Item     |
 
-For items that are "stored" a 3-bit integer encoded starting at
-bit 73 describes where to store the item:
+For items that are "stored" a 3-bit integer encoded starting at bit 73 describes where to store the item:
 
 | Value | Desc          |
 |-------|---------------|

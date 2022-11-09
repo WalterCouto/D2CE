@@ -32,10 +32,10 @@
 namespace d2ce
 {
     constexpr std::uint32_t NUM_OF_LEVELS = 99ui32; // max level (game limit)
-    constexpr std::uint16_t MAX_DURABILITY = 0xFF; // max durability of an item (0 is Indestructible)
+    constexpr std::uint16_t MAX_DURABILITY = 0xFF;  // max durability of an item (0 is Indestructible)
 
     constexpr std::array<std::uint8_t, 2> MERC_ITEM_MARKER = { 0x6A, 0x66 };  // alternatively "jf"
-    constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 };  // alternatively "kf"
+    constexpr std::array<std::uint8_t, 2> GOLEM_ITEM_MARKER = { 0x6B, 0x66 }; // alternatively "kf"
 
     constexpr std::uint32_t MIN_START_STATS_POS = 64ui32;
 
@@ -4314,6 +4314,7 @@ void d2ce::Item::verifyRuneword()
             {
                 if (!updateBits(GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET), RUNEWORD_ID_NUM_BITS, runeword.id))
                 {
+                    swap(origItem);
                     return;
                 }
 
@@ -5450,10 +5451,14 @@ bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
         return false;
     }
 
+    // make a copy first
+    d2ce::Item origItem(*this);
+
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
     size_t bitSize = 3;
     if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Class)))
     {
+        swap(origItem);
         return false;
     }
     current_bit_offset += bitSize;
@@ -5473,6 +5478,7 @@ bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
 
     if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Level)))
     {
+        swap(origItem);
         return false;
     }
     current_bit_offset += bitSize;
@@ -5483,6 +5489,7 @@ bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
     {
         if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Name[idx])))
         {
+            swap(origItem);
             return false;
         }
 
@@ -7232,6 +7239,18 @@ std::optional<d2ce::EnumCharClass> d2ce::Item::getClass() const
     }
 
     return result.getClass();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isUniqueItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isUniqueItem();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
@@ -9033,6 +9052,9 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
         return false;
     }
 
+    // make a copy first
+    d2ce::Item origItem(*this);
+
     // remove any socketed items
     if (isSocketed())
     {
@@ -9040,6 +9062,7 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     }
 
     setSocketCount(runeSocketCount);
+    makeSuperior(); // might as well make it as good as possible
 
     auto version = getVersion();
     auto isExpansion = isExpansionItem();
@@ -9056,13 +9079,13 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
         if (runeItem.data.empty() || !runeItem.isRune() || !canSocketItem(runeItem))
         {
             // invalid item
-            cachedCombinedMagicalAttributes.clear();
+            swap(origItem);
             return false;
         }
 
         if (!runeItem.setLocation(d2ce::EnumItemLocation::SOCKET, std::uint16_t(SocketedItems.size()), 0ui16))
         {
-            cachedCombinedMagicalAttributes.clear();
+            swap(origItem);
             return false;
         }
 
@@ -9077,15 +9100,23 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
 
     if (!isRuneword())
     {
+        swap(origItem);
         return false;
     }
 
     if (!getRunewordAttributes(runeAttrib))
     {
+        swap(origItem);
         return false;
     }
 
-    return (id == runeAttrib.Id) ? true : false;
+    if (id != runeAttrib.Id)
+    {
+        swap(origItem);
+        return false;
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setRunewordPropertyList(const std::vector<MagicalAttribute>& attribs)
@@ -9203,9 +9234,13 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
             return false;
         }
 
+        // make a copy first
+        d2ce::Item origItem(*this);
+
         std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::MAGIC);
         if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
         {
+            swap(origItem);
             return false;
         }
 
@@ -9215,6 +9250,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         bool bRet = d2ce::ItemHelpers::findDWForMagicalAffixes(affixes, createParams, getLevel(), dwb);
         if (!setDWBCode(dwb))
         {
+            swap(origItem);
             return false;
         }
 
@@ -10330,10 +10366,14 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         default:
             return false;
         }
+        
+        // make a copy first
+        d2ce::Item origItem(*this);
 
         std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::RARE);
         if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
         {
+            swap(origItem);
             return false;
         }
 
@@ -10343,6 +10383,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         bool bRet = d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(affixes, createParams, getLevel(), dwb);
         if (!setDWBCode(dwb))
         {
+            swap(origItem);
             return false;
         }
 

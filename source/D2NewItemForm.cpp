@@ -417,7 +417,7 @@ void CD2NewItemForm::OnBnClickedOk()
             }
         }
     }
-    else if (CreatedItem->isCharm())
+    else if (CreatedItem->isCharm() && !CreatedItem->isUniqueItem())
     {
         CD2MagicalAffixesForm magicAffixes(*this);
         if (magicAffixes.DoModal() != IDOK)

@@ -256,6 +256,7 @@ namespace d2ce
         bool isSocketFiller() const;
         bool isClassSpecific() const;
         std::optional<d2ce::EnumCharClass> getClass() const;
+        bool isUniqueItem() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         bool canPersonalize() const;
