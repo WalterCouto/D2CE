@@ -690,10 +690,10 @@ Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 | 3     |  3   | Superior (bits that follow are set to 0)                                    |
 | 4     | 22   | [Magically Enhanced](#magically-enhanced)                                   |
 | 5     | 12   | Part of a Set (bit that follow are the Set Id from the `Sets.txt` file)     |
-| 6     |  3   | [Rare](#rare-craft-or-tempered)                                             |
+| 6     | 22+  | [Rare](#rare-craft-or-tempered)                                             |
 | 7     | 12   | Unique (bits that follow are the Unique Id from the `UniqueItems.txt` file) |
-| 8     |  3   | [Craft](#rare-craft-or-tempered)                                            |
-| 9     |  3   | [Tempered](#rare-craft-or-tempered)                                         |
+| 8     | 22+  | [Craft](#rare-craft-or-tempered)                                            |
+| 9     | 22+  | [Tempered](#rare-craft-or-tempered)                                         |
 
 #### Inferior
 Inferior items have a 3-bit integer follow the quality value.
