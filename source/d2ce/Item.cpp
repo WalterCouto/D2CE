@@ -12386,30 +12386,6 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1d", temp, "Durability: %i of %i");
-        ItemDurability base;
-        if (bAddColorChar && getDurability(base))
-        {
-            if (base.Current != durability.Current)
-            {
-                auto pos = temp.find("%i");
-                if (pos != temp.npos)
-                {
-                    temp.insert(pos + 2, "\f");
-                    temp.insert(pos, "\f");
-                }
-            }
-            
-            if (base.Max != durability.Max)
-            {
-                auto pos = temp.rfind("%i");
-                if (pos != temp.npos)
-                {
-                    temp.insert(pos + 2, "\f");
-                    temp.insert(pos, "\f");
-                }
-            }
-        }
-           
         ss << d2ce::LocalizationHelpers::string_format(temp, durability.Current, durability.Max);
     }
 
