@@ -4306,10 +4306,12 @@ void d2ce::Item::verifyRuneword()
             }
 
             // change runeword id
-            // make copy of originon incase of failure
+            // make copy of original incase of failure
             size_t diff = 0;
             d2ce::Item origItem(*this);
             const auto& origData = origItem.data;
+
+            randomizeId(); // change the item Id as we are making a new runeword
             if (isRuneword() && (GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET) != 0))
             {
                 if (!updateBits(GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET), RUNEWORD_ID_NUM_BITS, runeword.id))
@@ -4403,6 +4405,7 @@ void d2ce::Item::verifyRuneword()
     }
 
     // Complex change, remove runeword
+    randomizeId(); // change the item Id as we are removing a runeword
     GET_BIT_OFFSET(ItemOffsets::RUNEWORD_PROPS_BIT_OFFSET) = 0;
 
     // truncate data
@@ -7253,6 +7256,18 @@ bool d2ce::Item::isUniqueItem() const
     return result.isUniqueItem();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isSetItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isSetItem();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
 {
     if (isSimpleItem())
@@ -9055,13 +9070,20 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     // make a copy first
     d2ce::Item origItem(*this);
 
-    // remove any socketed items
-    if (isSocketed())
+    // remove any socketed items and change the item ID
+    if (isSocketed() && !SocketedItems.empty())
     {
         removeSocketedItems();
     }
+    else
+    {
+        randomizeId();
+    }
 
     setSocketCount(runeSocketCount);
+
+    // remove personalization
+    removePersonalization();
 
     // might as well make it as good as possible by making it superior
     std::vector<MagicalAttribute> superiorAttribs;
@@ -23782,13 +23804,14 @@ bool d2ce::Items::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId
         return false;
     }
 
-    if (HasHoradricCube && importedItem.isHoradricCube())
+    const auto& itemType = importedItem.getItemTypeHelper();
+    if (HasHoradricCube && itemType.isHoradricCube())
     {
         // can only have one Horadric Cube
         return false;
     }
 
-    if (IsSharedStash && importedItem.isQuestItem())
+    if (IsSharedStash && itemType.isQuestItem())
     {
         // can't add quest items to shared stash
         return false;
@@ -23798,6 +23821,12 @@ bool d2ce::Items::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId
     if (!importedItem.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0))
     {
         return false;
+    }
+
+    if (importedItem.isPersonalized() && (importedItem.isRuneword() || !itemType.canPersonalize()))
+    {
+        // Can't personalize this item, so remove personalization
+        importedItem.removePersonalization();
     }
 
     if (bRandomizeId)
@@ -26145,6 +26174,14 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
 //---------------------------------------------------------------------------
 bool d2ce::Items::removeSocketedItems(d2ce::Item& item)
 {
+    if (item.SocketedItems.empty())
+    {
+        return true;
+    }
+
+    // radomize the Ids as item has changed
+    item.randomizeId();
+
     // try to find spots for the items out of bounds still
     auto locationId = d2ce::EnumItemLocation::STORED;
     auto altPositionId = d2ce::EnumAltItemLocation::INVENTORY;

@@ -7233,6 +7233,7 @@ namespace d2ce
             itemType.setIndex = strValue;
             itemType.code = doc.GetCellString(itemColumnIdx, i);
             itemType.CopyParentItem(GetItemTypeHelper(itemType.code));
+            itemType.nameable = false; // Set Items can't be named
             
             {
                 auto iter = s_ItemSetsIndex.find(itemType.setIndex);
