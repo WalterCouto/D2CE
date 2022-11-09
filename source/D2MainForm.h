@@ -101,7 +101,6 @@ protected:
 
     UINT m_nIDTracking = 0;
     UINT m_nIDLastMessage = 0;
-    double m_dpiFactor = 1.0;
 
     CFont m_boldFont;
 

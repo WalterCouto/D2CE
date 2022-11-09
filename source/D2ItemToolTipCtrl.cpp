@@ -183,6 +183,14 @@ IMPLEMENT_DYNAMIC(CD2ItemToolTipCtrl, CMFCToolTipCtrl)
 //---------------------------------------------------------------------------
 CD2ItemToolTipCtrl::CD2ItemToolTipCtrl(d2ce::Character& charInfo, CMFCToolTipInfo* pParams/* = NULL*/) : CMFCToolTipCtrl(pParams), CharInfo(charInfo)
 {
+    //------------------
+    // Create tooltip font:
+    //------------------
+    LOGFONT lf;
+    memset(&lf, 0, sizeof(LOGFONT));
+    lf.lfHeight = -MulDiv(11, AfxGetMainWnd()->GetDC()->GetDeviceCaps(LOGPIXELSY), 72);
+    _tcscpy_s(lf.lfFaceName, _countof(lf.lfFaceName), _T("Tahoma"));
+    ToolTipFont.CreateFontIndirect(&lf);
 }
 //---------------------------------------------------------------------------
 void CD2ItemToolTipCtrl::SetCallback(const CD2ItemToolTipCtrlCallback* callback)
@@ -339,7 +347,6 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
                     }
 
                     sizeText = CalcTextSize(pDC, strLineText, rect, bCalcOnly);
-                    sizeText.cy += prevSizeText.cy;
                     sizeText.cy += prevSizeText.cy;
                     sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
                     prevSizeText = sizeText;
@@ -518,7 +525,10 @@ CSize CD2ItemToolTipCtrl::OnDrawLabel(CDC* pDC, CRect rect, BOOL bCalcOnly)
         return __super::OnDrawLabel(pDC, rect, bCalcOnly);
     }
 
-    return DoDrawItemInfo(pDC, rect, bCalcOnly, CurrItem, &CharInfo, IsMerc);
+    auto pOldFont = pDC->SelectObject(&ToolTipFont);
+    CSize ret = DoDrawItemInfo(pDC, rect, bCalcOnly, CurrItem, &CharInfo, IsMerc);
+    pDC->SelectObject(pOldFont);
+    return ret;
 }
 //---------------------------------------------------------------------------
 void CD2ItemToolTipCtrl::OnFillBackground(CDC* pDC, CRect rect, COLORREF& clrText, COLORREF& clrLine)
@@ -641,6 +651,14 @@ IMPLEMENT_DYNAMIC(CD2ItemInfoStatic, CStatic)
 
 CD2ItemInfoStatic::CD2ItemInfoStatic()
 {
+   //------------------
+   // Create tooltip font:
+   //------------------
+    LOGFONT lf;
+    memset(&lf, 0, sizeof(LOGFONT));
+    lf.lfHeight = -MulDiv(11, AfxGetMainWnd()->GetDC()->GetDeviceCaps(LOGPIXELSY), 72);
+    _tcscpy_s(lf.lfFaceName, _countof(lf.lfFaceName), _T("Tahoma"));
+    ToolTipFont.CreateFontIndirect(&lf);
 }
 //---------------------------------------------------------------------------
 CD2ItemInfoStatic::~CD2ItemInfoStatic()
@@ -689,7 +707,10 @@ BOOL CD2ItemInfoStatic::OnEraseBkgnd(CDC* pDC)
 
     pDC->SetBkColor(RGB(0, 0, 0));
     pDC->SetBkMode(TRANSPARENT);
+
+    auto pOldFont = pDC->SelectObject(&ToolTipFont);
     CD2ItemToolTipCtrl::DoDrawItemInfo(pDC, rect, false, currItem, GetCharacterInfo(), false);
+    pDC->SelectObject(pOldFont);
     return TRUE;
 }
 //---------------------------------------------------------------------------

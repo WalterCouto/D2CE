@@ -547,7 +547,6 @@ void CD2RareAffixesForm::UpdatePrefixChoices()
     CString strText;
     bool badGroup = false;
     auto iterControls = AffixControls.begin();
-    if(CurrentItem.isJewel())
     for (auto& affix : CurrentAffixChoices)
     {
         auto& affixControls = *iterControls;

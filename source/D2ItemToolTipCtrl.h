@@ -63,6 +63,8 @@ protected:
     bool IsMerc = false;
     const d2ce::Item* CurrItem = nullptr;
     const CD2ItemToolTipCtrlCallback* Callback = nullptr;
+
+    CFont ToolTipFont;
 };
 //---------------------------------------------------------------------------
 
@@ -104,5 +106,7 @@ protected:
     const d2ce::Character* GetCharacterInfo() const;
     const d2ce::Item* GetSelectedItem() const;
     CD2ItemTooltipCallback* GetCallback() const;
+
+    CFont ToolTipFont;
 };
 //---------------------------------------------------------------------------
