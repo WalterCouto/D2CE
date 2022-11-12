@@ -71,6 +71,7 @@ public:
 private:
     void InitAffixes();
     void SyncNameAffixes();
+    void SyncAffixesChoices();
     void SyncAffixes();
     void UpdatePrefixChoices();
     void UpdateSuffixChoices();
@@ -102,8 +103,10 @@ private:
     std::map<std::uint16_t, std::vector<std::uint16_t>> SuffixMap;
     std::array<AffixChoice, 3> CurrentAffixChoices;
     std::uint32_t NumAllowedAffixes = 0ui32; // zero indicates not to check
-    BOOL SimpleDialog = FALSE;
+
+    BOOL UseDWBCode = FALSE;
+    std::deque<d2ce::RareAttributes> GeneratedAffixes;
     std::deque<std::uint32_t> GeneratedDWBCode;
-    size_t CurrentDWBCodeIndex = 0;
+    size_t CurrentAffixesIndex = 0;
 };
 //---------------------------------------------------------------------------

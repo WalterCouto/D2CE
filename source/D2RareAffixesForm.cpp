@@ -44,6 +44,8 @@ namespace d2ce
         const std::string& getRareNameFromId(std::uint16_t id);
         const std::string& getRareIndexFromId(std::uint16_t id);
     }
+
+    constexpr std::uint32_t MAX_RARE_ATTRIB_HISTORY = 2097152ui32;
 }
 
 //---------------------------------------------------------------------------
@@ -53,7 +55,7 @@ IMPLEMENT_DYNAMIC(CD2RareAffixesForm, CDialogEx)
 
 //---------------------------------------------------------------------------
 CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
-    : CDialogEx(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? CD2RareAffixesForm::IDD_V100 : CD2RareAffixesForm::IDD, &form), NewItemForm(form), SimpleDialog(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? TRUE : FALSE)
+    : CDialogEx(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? CD2RareAffixesForm::IDD_V100 : CD2RareAffixesForm::IDD, &form), NewItemForm(form), UseDWBCode(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? TRUE : FALSE)
 {
     auto pItem = form.GetCreatedItem();
     if (pItem != nullptr)
@@ -65,11 +67,6 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
         CurrentItem = *pItem;
         CurrentItem.makeRare();
         CurrentDWBCode = CurrentItem.getDWBCode();
-        if (SimpleDialog)
-        {
-            CurrentDWBCodeIndex = 0;
-            GeneratedDWBCode.push_back(CurrentDWBCode);
-        }
 
         if (CurrentItem.isJewel() && CreateParams.itemVersion >= d2ce::EnumItemVersion::v109)
         {
@@ -86,7 +83,7 @@ CD2RareAffixesForm::~CD2RareAffixesForm()
 void CD2RareAffixesForm::DoDataExchange(CDataExchange* pDX)
 {
     __super::DoDataExchange(pDX);
-    if (!SimpleDialog)
+    if (!UseDWBCode)
     {
         DDX_Control(pDX, IDC_RARE_PREFIX_STATIC, NamePrefixStatic);
         DDX_Control(pDX, IDC_RARE_PREFIX_COMBO, NamePrefix);
@@ -209,110 +206,164 @@ void CD2RareAffixesForm::OnBnClickedGambleButton()
 {
     // Generate the starting affixes
     CurrentDWBCode = d2ce::ItemHelpers::generarateRandomDW();
-    if (SimpleDialog)
-    {
-        CurrentDWBCodeIndex = GeneratedDWBCode.size();
-        GeneratedDWBCode.push_back(CurrentDWBCode);
-    }
-    
     SyncAffixes();
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnBnClickedPrevButton()
 {
-    if (!SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
     {
+        if (CurrentAffixesIndex > 0)
+        {
+            --CurrentAffixesIndex;
+            if (CurrentAffixesIndex >= GeneratedDWBCode.size())
+            {
+                CurrentAffixesIndex = GeneratedDWBCode.size() - 1;
+            }
+            CurrentDWBCode = GeneratedDWBCode[CurrentAffixesIndex];
+            CurrentItem.setDWBCode(CurrentDWBCode);
+            UpdateCurrentAttribs();
+        }
         return;
     }
 
-    if (CurrentDWBCodeIndex > 0)
+    if (CurrentAffixesIndex > 0)
     {
-        --CurrentDWBCodeIndex;
-        if (CurrentDWBCodeIndex >= GeneratedDWBCode.size())
+        --CurrentAffixesIndex;
+        if (CurrentAffixesIndex >= GeneratedAffixes.size())
         {
-            CurrentDWBCodeIndex = GeneratedDWBCode.size() - 1;
+            CurrentAffixesIndex = GeneratedAffixes.size() - 1;
         }
-        CurrentDWBCode = GeneratedDWBCode[CurrentDWBCodeIndex];
+        CurrentAffixes = GeneratedAffixes[CurrentAffixesIndex]; 
+
+        {
+            CWaitCursor wait;
+            CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
+        }
+
+        SyncAffixesChoices();
         UpdateCurrentAttribs();
     }
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnBnClickedNextButton()
 {
-    if (!SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
     {
+        if (CurrentAffixesIndex < (GeneratedDWBCode.size() - 1))
+        {
+            ++CurrentAffixesIndex;
+            if (CurrentAffixesIndex >= GeneratedDWBCode.size())
+            {
+                CurrentAffixesIndex = GeneratedDWBCode.size() - 1;
+            }
+            CurrentDWBCode = GeneratedDWBCode[CurrentAffixesIndex];
+            CurrentItem.setDWBCode(CurrentDWBCode);
+            UpdateCurrentAttribs();
+        }
         return;
     }
 
-    if (CurrentDWBCodeIndex < (GeneratedDWBCode.size() - 1))
+    if (CurrentAffixesIndex < (GeneratedAffixes.size() - 1))
     {
-        ++CurrentDWBCodeIndex;
-        if (CurrentDWBCodeIndex >= GeneratedDWBCode.size())
+        ++CurrentAffixesIndex;
+        if (CurrentAffixesIndex >= GeneratedAffixes.size())
         {
-            CurrentDWBCodeIndex = GeneratedDWBCode.size() - 1;
+            CurrentAffixesIndex = GeneratedAffixes.size() - 1;
         }
-        CurrentDWBCode = GeneratedDWBCode[CurrentDWBCodeIndex];
+        CurrentAffixes = GeneratedAffixes[CurrentAffixesIndex];
+
+        {
+            CWaitCursor wait;
+            CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
+        }
+
+        SyncAffixesChoices();
         UpdateCurrentAttribs();
     }
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeNamePrefixCombo()
 {
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        // these controls do not exist
+        return;
+    }
+
     UpdateData(TRUE); // save results
     CurrentAffixes.Id = std::uint16_t(NamePrefix.GetItemData(NamePrefix.GetCurSel()));
     CurrentAffixes.Name = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id);
     CurrentAffixes.Index = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id);
+    if (GeneratedAffixes.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+    {
+        GeneratedAffixes.pop_front();
+    }
+    CurrentAffixesIndex = GeneratedAffixes.size();
+    GeneratedAffixes.push_back(CurrentAffixes);
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeNameSuffixCombo()
 {
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        // these controls do not exist
+        return;
+    }
+
     UpdateData(TRUE); // save results
     CurrentAffixes.Id2 = std::uint16_t(NameSuffix.GetItemData(NameSuffix.GetCurSel()));
     CurrentAffixes.Name2 = d2ce::ItemHelpers::getRareNameFromId(CurrentAffixes.Id2);
     CurrentAffixes.Index2 = d2ce::ItemHelpers::getRareIndexFromId(CurrentAffixes.Id2);
+    if (GeneratedAffixes.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+    {
+        GeneratedAffixes.pop_front();
+    }
+    CurrentAffixesIndex = GeneratedAffixes.size();
+    GeneratedAffixes.push_back(CurrentAffixes);
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangePrefix1Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangePrefixCombo(AffixControls[0].Prefix, CurrentAffixChoices[0]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeSuffix1Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangeSuffixCombo(AffixControls[0].Suffix, CurrentAffixChoices[0]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangePrefix2Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangePrefixCombo(AffixControls[1].Prefix, CurrentAffixChoices[1]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeSuffix2Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangeSuffixCombo(AffixControls[1].Suffix, CurrentAffixChoices[1]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangePrefix3Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangePrefixCombo(AffixControls[2].Prefix, CurrentAffixChoices[2]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::OnCbnSelchangeSuffix3Combo()
 {
-    UpdateData(TRUE); // save results
     HandleCbnSelchangeSuffixCombo(AffixControls[2].Suffix, CurrentAffixChoices[2]);
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::HandleCbnSelchangePrefixCombo(CComboBox& combo, AffixChoice& affix)
 {
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        // these controls do not exist
+        return;
+    }
+
     UpdateData(TRUE); // save results
     affix.prefix = std::uint16_t(combo.GetItemData(combo.GetCurSel()));
     auto oldGroup = affix.prefixGroup;
@@ -323,21 +374,43 @@ void CD2RareAffixesForm::HandleCbnSelchangePrefixCombo(CComboBox& combo, AffixCh
     }
 
     UpdateCurrentAffixesValues();
+
+    CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
+    if (GeneratedAffixes.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+    {
+        GeneratedAffixes.pop_front();
+    }
+    CurrentAffixesIndex = GeneratedAffixes.size();
+    GeneratedAffixes.push_back(CurrentAffixes);
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::HandleCbnSelchangeSuffixCombo(CComboBox& combo, AffixChoice& affix)
 {
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        // these controls do not exist
+        return;
+    }
+
     UpdateData(TRUE); // save results
     affix.suffix = std::uint16_t(combo.GetItemData(combo.GetCurSel()));
     auto oldGroup = affix.suffixGroup;
-    affix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.prefix);
+    affix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.suffix);
     if (oldGroup != affix.suffixGroup)
     {
         UpdateSuffixChoices();
     }
 
     UpdateCurrentAffixesValues();
+
+    CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
+    if (GeneratedAffixes.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+    {
+        GeneratedAffixes.pop_front();
+    }
+    CurrentAffixesIndex = GeneratedAffixes.size();
+    GeneratedAffixes.push_back(CurrentAffixes);
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
@@ -370,8 +443,12 @@ void CD2RareAffixesForm::InitAffixes()
         break;
     }
 
-
-    if (!SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        CurrentAffixesIndex = GeneratedDWBCode.size();
+        GeneratedDWBCode.push_back(CurrentDWBCode);
+    }
+    else
     {
         CurrentAffixChoices.fill(AffixChoice());
         auto iterCurAffix = CurrentAffixChoices.begin();
@@ -446,15 +523,18 @@ void CD2RareAffixesForm::InitAffixes()
             return;
         }
         UpdateAffixChoices();
+
+        CurrentAffixesIndex = GeneratedAffixes.size();
+        GeneratedAffixes.push_back(CurrentAffixes);
     }
     UpdateCurrentAttribs();
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::SyncNameAffixes()
 {
-    if (SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
     {
-        // thise controls do not exist
+        // these controls do not exist
         return;
     }
 
@@ -498,6 +578,26 @@ void CD2RareAffixesForm::SyncNameAffixes()
     }
 }
 //---------------------------------------------------------------------------
+void CD2RareAffixesForm::SyncAffixesChoices()
+{
+    {
+        CWaitCursor wait;
+        CurrentAffixChoices.fill(AffixChoice());
+        auto iterCurAffix = CurrentAffixChoices.begin();
+        for (const auto& affix : CurrentAffixes.Affixes)
+        {
+            auto& currAffix = *iterCurAffix;
+            ++iterCurAffix;
+            currAffix.prefix = affix.PrefixId;
+            currAffix.prefixGroup = d2ce::ItemHelpers::getMagicalPrefixGroupFromId(affix.PrefixId);
+            currAffix.suffix = affix.SuffixId;
+            currAffix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.SuffixId);
+        }
+    }
+    SyncNameAffixes();
+    UpdateAffixChoices();
+}
+//---------------------------------------------------------------------------
 void CD2RareAffixesForm::SyncAffixes()
 {
     {
@@ -517,28 +617,36 @@ void CD2RareAffixesForm::SyncAffixes()
                 CurrentAffixes.Affixes.push_back(item.Affixes);
             }
         }
-
-        CurrentAffixChoices.fill(AffixChoice());
-        auto iterCurAffix = CurrentAffixChoices.begin();
-        for (const auto& affix : CurrentAffixes.Affixes)
-        {
-            auto& currAffix = *iterCurAffix;
-            ++iterCurAffix;
-            currAffix.prefix = affix.PrefixId;
-            currAffix.prefixGroup = d2ce::ItemHelpers::getMagicalPrefixGroupFromId(affix.PrefixId);
-            currAffix.suffix = affix.SuffixId;
-            currAffix.suffixGroup = d2ce::ItemHelpers::getMagicalSuffixGroupFromId(affix.SuffixId);
-        }
     }
-    SyncNameAffixes();
-    UpdateAffixChoices();
+
+    SyncAffixesChoices();
+    if (UseDWBCode) // pre-1.07 character file
+    {
+        CurrentItem.setDWBCode(CurrentDWBCode);
+        if (GeneratedDWBCode.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+        {
+            GeneratedDWBCode.pop_front();
+        }
+        CurrentAffixesIndex = GeneratedDWBCode.size();
+        GeneratedDWBCode.push_back(CurrentDWBCode);
+    }
+    else
+    {
+        CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
+        if (GeneratedAffixes.size() >= d2ce::MAX_RARE_ATTRIB_HISTORY)
+        {
+            GeneratedAffixes.pop_front();
+        }
+        CurrentAffixesIndex = GeneratedAffixes.size();
+        GeneratedAffixes.push_back(CurrentAffixes);
+    }
 }
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdatePrefixChoices()
 {
-    if (SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
     {
-        // thise controls do not exist
+        // these controls do not exist
         return;
     }
 
@@ -604,9 +712,9 @@ void CD2RareAffixesForm::UpdatePrefixChoices()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateSuffixChoices()
 {
-    if (SimpleDialog)
+    if (UseDWBCode) // pre-1.07 character file
     {
-        // thise controls do not exist
+        // these controls do not exist
         return;
     }
 
@@ -678,9 +786,9 @@ void CD2RareAffixesForm::UpdateAffixChoices()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateCurrentAffixesValues()
 {
-    if (SimpleDialog)
+    if (UseDWBCode)// pre-1.07 character file
     {
-        // thise controls do not exist
+        // these controls do not exist
         return;
     }
 
@@ -723,15 +831,6 @@ void CD2RareAffixesForm::UpdateCurrentAffixesValues()
 //---------------------------------------------------------------------------
 void CD2RareAffixesForm::UpdateCurrentAttribs()
 {
-    // Rest attributes for item
-    auto pItem = NewItemForm.GetCreatedItem();
-    if (pItem != nullptr)
-    {
-        CurrentItem = *pItem;
-        CurrentItem.makeRare();
-        CurrentItem.setDWBCode(CurrentDWBCode);
-    }
-
     auto pOkWnd = GetDlgItem(IDOK);
     if (CurrentAffixes.Affixes.empty())
     {
@@ -744,49 +843,22 @@ void CD2RareAffixesForm::UpdateCurrentAttribs()
         return;
     }
 
-    if (SimpleDialog)
+    auto pWnd = GetDlgItem(IDC_PREV_BUTTON);
+    if (pWnd != nullptr)
     {
-        auto pWnd = GetDlgItem(IDC_PREV_BUTTON); 
-        if (pWnd != nullptr)
-        {
-            pWnd->EnableWindow((CurrentDWBCodeIndex > 0) ? TRUE : FALSE);
-        }
-
-        pWnd = GetDlgItem(IDC_NEXT_BUTTON);
-        if (pWnd != nullptr)
-        {
-            pWnd->EnableWindow((CurrentDWBCodeIndex < (GeneratedDWBCode.size() - 1)) ? TRUE : FALSE);
-        }
+        pWnd->EnableWindow((CurrentAffixesIndex > 0) ? TRUE : FALSE);
     }
-    else
+
+    pWnd = GetDlgItem(IDC_NEXT_BUTTON);
+    if (pWnd != nullptr)
     {
-        CWaitCursor wait;
-        auto result = CurrentItem.setRareOrCraftedAttributes(CurrentAffixes);
-        if (CurrentItem.getVersion() < d2ce::EnumItemVersion::v107) // pre-1.07 character file
+        if (UseDWBCode) // pre-1.07 character file
         {
-            // the DWBCode was changed for the item
-            CurrentDWBCode = CurrentItem.getDWBCode();
-            if (!result)
-            {
-                // should not happen, but if it does, we need to make sure we are showing the right affixes
-                SyncAffixes();
-
-                if (CurrentAffixes.Affixes.empty())
-                {
-                    if (pOkWnd != nullptr)
-                    {
-                        pOkWnd->EnableWindow(FALSE);
-                    }
-
-                    ItemTooltipBox.RedrawWindow();
-                    return;
-                }
-            }
-            else
-            {
-                // Name affixes may have changed
-                SyncNameAffixes();
-            }
+            pWnd->EnableWindow((CurrentAffixesIndex < (GeneratedDWBCode.size() - 1)) ? TRUE : FALSE);
+        }
+        else
+        {
+            pWnd->EnableWindow((CurrentAffixesIndex < (GeneratedAffixes.size() - 1)) ? TRUE : FALSE);
         }
     }
 

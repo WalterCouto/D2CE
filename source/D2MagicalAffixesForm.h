@@ -36,6 +36,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedGambleButton();
+    afx_msg void OnBnClickedPrevButton();
+    afx_msg void OnBnClickedNextButton();
     afx_msg void OnCbnSelchangePrefix1Combo();
     afx_msg void OnCbnSelchangeSuffix1Combo();
 
@@ -46,6 +48,7 @@ public:
 
 private:
     void InitAffixes();
+    void SyncAffixesCombo();
     void SyncAffixes();
     void UpdateCurrentAttribs();
 
@@ -65,5 +68,10 @@ private:
     d2ce::MagicalAffixes CurrentAffixes;
     std::uint32_t CurrentDWBCode = 0;
     d2ce::Item CurrentItem;
+
+    BOOL UseDWBCode = FALSE;
+    std::deque<d2ce::MagicalAffixes> GeneratedAffixes;
+    std::deque<std::uint32_t> GeneratedDWBCode;
+    size_t CurrentAffixesIndex = 0;
 };
 //---------------------------------------------------------------------------

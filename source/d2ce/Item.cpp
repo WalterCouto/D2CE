@@ -10606,7 +10606,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
                 bFoundMatch = false;
                 for (auto& affix : affixes.Affixes)
                 {
-                    if ((curAffix.PrefixId == curAffix.PrefixId) &&
+                    if ((curAffix.PrefixId == affix.PrefixId) &&
                         (curAffix.SuffixId == affix.SuffixId))
                     {
                         bFoundMatch = true;
