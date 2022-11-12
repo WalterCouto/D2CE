@@ -483,9 +483,14 @@ CCharNameEdit::~CCharNameEdit()
 {
 }
 //---------------------------------------------------------------------------
-void CCharNameEdit::SetASCIIOnly(BOOL bFlag)
+void CCharNameEdit::SetCharVersion(d2ce::EnumCharVersion version)
 {
-    m_bASCII = bFlag;
+    m_version = version;
+}
+//---------------------------------------------------------------------------
+void CCharNameEdit::SetItemVersion(d2ce::EnumItemVersion version)
+{
+    m_version = ConvertItemVersion(version);
 }
 
 //---------------------------------------------------------------------------
@@ -501,6 +506,8 @@ END_MESSAGE_MAP()
 //---------------------------------------------------------------------------
 void CCharNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+    bool bASCII = (m_version <= d2ce::EnumCharVersion::v100R) ? true : false;
+    bool bAllowUnderscore = (m_version > d2ce::EnumCharVersion::v108) ? true : false;
     switch (nChar)
     {
     case VK_CANCEL:
@@ -513,12 +520,18 @@ void CCharNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 
     if ((nChar >= 'a' && nChar <= 'z') || (nChar >= 'A' && nChar <= 'Z') ||
-        nChar == '_' || nChar == '-' || (!m_bASCII &&
+        nChar == '_' || nChar == '-' || (bASCII &&
             (nChar == 0x8A || nChar == 0x8C || nChar == 0x8E
              || nChar == 0x0A || nChar == 0x9C || nChar == 0x9E || nChar == 0x9F
              || (nChar >= 0xC0 && nChar <= 0xD0) || (nChar >= 0xD8 && nChar <= 0xF6) || nChar >= 0xF8)))
     {
-        if (nChar == '_' || nChar == '-')
+        
+        if(nChar == '_' && !bAllowUnderscore)
+        {
+            // don't accept underscore characters
+            return;
+        }
+        else if (nChar == '_' || nChar == '-')
         {
             CString sWindowText;
             GetWindowText(sWindowText);
@@ -598,7 +611,7 @@ CString CCharNameEdit::GetValidText(LPCTSTR value) const
 
     CStringW wValue(value);
     auto curName = utf8::utf16to8(reinterpret_cast<const char16_t*>(wValue.GetString()));
-    d2ce::LocalizationHelpers::CheckCharName(curName, (m_bASCII ? true : false));
+    d2ce::LocalizationHelpers::CheckCharName(curName, m_version);
     auto uText = utf8::utf8to16(curName);
     wValue = reinterpret_cast<LPCWSTR>(uText.c_str());
     return CString(wValue);
@@ -2180,6 +2193,7 @@ void CD2MainForm::OnCbnSelchangeDifficultyCmb()
 */
 void CD2MainForm::DisplayCharInfo()
 {
+    CharName.SetCharVersion(CharInfo.getVersion());
     CharTitle.SetCurSel(-1);
     SetupBasicStats();
 

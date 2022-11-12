@@ -198,7 +198,7 @@ This value is either 0 or 1 indicating which weapons/shield/spell setup is in us
 Character names are store as an array of 16 characters which contain a null terminated string padded with `0x00` for the remaining bytes. For for versions '98'+ characters are stored as UTF-8 while for older version it is stored as 7-bit ASCII. To be valid, they must follow these rules:
  * Must be 2-15 bytes in length
  * Must begin with a letter
- * May contain up to one hyphen (`-`) or underscore (`_`)
+ * May contain up to one hyphen (`-`) or, since versions '89', underscore (`_`)
  * For versions '71' - '97', contains 7-bit ASCII letters while for versions 98'+, contains utf-8 characters
 
 ### Character Status

@@ -146,6 +146,10 @@ BOOL CD2EarAttributesForm::OnInitDialog()
     
     // Set text limite on edit boxes
     CharName.SetLimitText(15);
+    if (ItemPtr != nullptr)
+    {
+        CharName.SetItemVersion(ItemPtr->getVersion());
+    }
     CharLevel.SetLimitText(2);
 
     SetUTF8Text(&CharName, EarAttrib.getName().data());

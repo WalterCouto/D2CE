@@ -34,7 +34,8 @@ public:
 
 public:
     virtual ~CCharNameEdit();
-    void SetASCIIOnly(BOOL bFlag);
+    void SetCharVersion(d2ce::EnumCharVersion version);
+    void SetItemVersion(d2ce::EnumItemVersion version);
 
     // Generated message map functions
 protected:
@@ -49,8 +50,7 @@ protected:
 
 protected:
     CString GetValidText(LPCTSTR value) const;
-    BOOL m_bASCII = FALSE;
-    UINT surrugate = 0;
+    d2ce::EnumCharVersion m_version = d2ce::APP_CHAR_VERSION;
 };
 
 class CStatsLeftImage : public CStatic

@@ -394,7 +394,7 @@ namespace d2ce
         std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
-        bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
+        bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version);
 
         const std::string& getMonsterNameFromId(std::uint16_t id);
     }
@@ -579,6 +579,90 @@ namespace d2ce
             }
             return;
         }
+    }
+
+    EnumCharVersion ConvertItemVersion(EnumItemVersion version)
+    {
+        auto charVersion = APP_CHAR_VERSION;
+        switch (version)
+        {
+        case EnumItemVersion::v100: // v1.00 - v1.06
+            charVersion = EnumCharVersion::v100;
+            break;
+
+        case EnumItemVersion::v107: // v1.07
+            charVersion = EnumCharVersion::v107;
+            break;
+
+        case EnumItemVersion::v108: // v1.08
+            charVersion = EnumCharVersion::v108;
+            break;
+
+        case EnumItemVersion::v109: // v1.09
+            charVersion = EnumCharVersion::v109;
+            break;
+
+        case EnumItemVersion::v110: // v1.10 - v1.14d
+            charVersion = EnumCharVersion::v110;
+            break;
+
+        case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
+            charVersion = EnumCharVersion::v100R;
+            break;
+
+        case EnumItemVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+            charVersion = EnumCharVersion::v120;
+            break;
+
+        case EnumItemVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+        default:
+            charVersion = EnumCharVersion::v140;
+            break;
+        }
+
+        return charVersion;
+    }
+
+    EnumItemVersion ConvertCharVersion(EnumCharVersion version)
+    {
+        auto itemVersion = APP_ITEM_VERSION;
+        switch (version)
+        {
+        case EnumCharVersion::v100: // v1.00 - v1.06
+            itemVersion = EnumItemVersion::v100;
+            break;
+
+        case EnumCharVersion::v107: // v1.07
+            itemVersion = EnumItemVersion::v107;
+            break;
+
+        case EnumCharVersion::v108: // v1.08
+            itemVersion = EnumItemVersion::v108;
+            break;
+
+        case EnumCharVersion::v109: // v1.09
+            itemVersion = EnumItemVersion::v109;
+            break;
+
+        case EnumCharVersion::v110: // v1.10 - v1.14d
+            itemVersion = EnumItemVersion::v110;
+            break;
+
+        case EnumCharVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
+            itemVersion = EnumItemVersion::v100R;
+            break;
+
+        case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+            itemVersion = EnumItemVersion::v120;
+            break;
+
+        case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+        default:
+            itemVersion = EnumItemVersion::v140;
+            break;
+        }
+
+        return itemVersion;
     }
 }
 //---------------------------------------------------------------------------
@@ -8350,7 +8434,7 @@ bool d2ce::Item::addPersonalization(const std::string& name)
 
     // Remove any invalid characters from the name
     std::string curName = name;
-    LocalizationHelpers::CheckCharName(curName);
+    LocalizationHelpers::CheckCharName(curName, ItemVersion);
 
     // up to 15 7/8 bit characters
     size_t bitSize = (ItemVersion >= EnumItemVersion::v120) ? 8 : 7;
@@ -13422,7 +13506,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
 
         // Check Name
         // Remove any invalid characters from the number
-        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
+        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name, d2ce::EnumItemVersion::v100))
         {
             return false;
         }
@@ -14254,7 +14338,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
 
         // Check Name
         // Remove any invalid characters from the number
-        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
+        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name, d2ce::EnumItemVersion::v104))
         {
             return false;
         }
@@ -15817,7 +15901,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
 
         // Check Name
         // Remove any invalid characters from the name
-        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name))
+        if (!ItemHelpers::ProcessNameNode(node, earAttrib.Name, ItemVersion))
         {
             return false;
         }
@@ -16534,7 +16618,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         // Check Name
         // Remove any invalid characters from the name
         std::array<char, NAME_LENGTH> playerName;
-        if (!ItemHelpers::ProcessNameNode(node, playerName))
+        if (!ItemHelpers::ProcessNameNode(node, playerName, ItemVersion))
         {
             return false;
         }
@@ -21039,46 +21123,24 @@ bool d2ce::Items::writeGolemItem(std::FILE* charfile) const
 bool d2ce::Items::readItems(const Character& charInfo, std::FILE* charfile)
 {
     bool isExpansion = charInfo.isExpansionCharacter();
+    Version = ConvertCharVersion(charInfo.getVersion());
     switch (charInfo.getVersion())
     {
     case EnumCharVersion::v100: // v1.00 - v1.06
-        Version = EnumItemVersion::v100;
         GameVersion = 0;
         break;
 
     case EnumCharVersion::v107: // v1.07
-        Version = EnumItemVersion::v107;
         GameVersion = isExpansion ? 100 : 0;
         break;
 
     case EnumCharVersion::v108: // v1.08
-        Version = EnumItemVersion::v108;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v109: // v1.09
-        Version = EnumItemVersion::v109;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v110: // v1.10 - v1.14d
-        Version = EnumItemVersion::v110;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
-        Version = EnumItemVersion::v100R;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
-        Version = EnumItemVersion::v120;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
-        Version = EnumItemVersion::v140;
         GameVersion = isExpansion ? 100 : 1;
         break;
     }
@@ -21110,46 +21172,21 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
 {
     clear();
     IsSharedStash = true;
+    Version = ConvertCharVersion(version);
     switch (version)
     {
     case EnumCharVersion::v100: // v1.00 - v1.06
-        Version = EnumItemVersion::v100;
         GameVersion = 0;
         break;
 
     case EnumCharVersion::v107: // v1.07
-        Version = EnumItemVersion::v107;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v108: // v1.08
-        Version = EnumItemVersion::v108;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v109: // v1.09
-        Version = EnumItemVersion::v109;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v110: // v1.10 - v1.14d
-        Version = EnumItemVersion::v110;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
-        Version = EnumItemVersion::v100R;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
-        Version = EnumItemVersion::v120;
-        GameVersion = 100;
-        break;
-
     case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
-        Version = EnumItemVersion::v140;
         GameVersion = 100;
         break;
     }
@@ -21174,46 +21211,24 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, con
 {
     clear();
     bool isExpansion = charInfo.isExpansionCharacter();
+    Version = ConvertCharVersion(charInfo.getVersion());
     switch (charInfo.getVersion())
     {
     case EnumCharVersion::v100: // v1.00 - v1.06
-        Version = EnumItemVersion::v100;
         GameVersion = 0;
         break;
 
     case EnumCharVersion::v107: // v1.07
-        Version = EnumItemVersion::v107;
         GameVersion = isExpansion ? 100 : 0;
         break;
 
     case EnumCharVersion::v108: // v1.08
-        Version = EnumItemVersion::v108;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v109: // v1.09
-        Version = EnumItemVersion::v109;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v110: // v1.10 - v1.14d
-        Version = EnumItemVersion::v110;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
-        Version = EnumItemVersion::v100R;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
-        Version = EnumItemVersion::v120;
-        GameVersion = isExpansion ? 100 : 1;
-        break;
-
     case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
-        Version = EnumItemVersion::v140;
         GameVersion = isExpansion ? 100 : 1;
         break;
     }

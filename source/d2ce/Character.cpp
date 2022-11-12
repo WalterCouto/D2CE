@@ -1156,7 +1156,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         // Check Name
         // Remove any invalid characters from the name
         std::string curName(jsonValue.asString());
-        LocalizationHelpers::CheckCharName(curName, true);
+        LocalizationHelpers::CheckCharName(curName, Bs.Version);
         Bs.Name.fill(0);
         strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
         Bs.Name[15] = 0; // must be zero
@@ -1485,7 +1485,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
                 // Check Name
                 // Remove any invalid characters from the name
                 std::string curName(jsonValue.asString());
-                LocalizationHelpers::CheckCharName(curName);
+                LocalizationHelpers::CheckCharName(curName, Bs.Version);
                 Bs.Name.fill(0);
                 strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
                 Bs.Name[15] = 0; // must be zero
@@ -3441,7 +3441,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     // Remove any invalid characters from the name
     bs.Name[15] = 0; // must be zero
     std::string curName(bs.Name.data());
-    LocalizationHelpers::CheckCharName(curName, ((bs.Version <= EnumCharVersion::v100R) ? true : false));
+    LocalizationHelpers::CheckCharName(curName, bs.Version);
     bs.Name.fill(0);
     strcpy_s(bs.Name.data(), curName.length() + 1, curName.c_str());
     bs.Name[15] = 0; // must be zero

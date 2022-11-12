@@ -103,7 +103,7 @@ namespace d2ce
         std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
-        bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name);
+        bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version);
     }
 
 #define read_uint32_bits(start,size) \
@@ -13153,7 +13153,7 @@ void d2ce::ItemHelpers::combineMagicalAttribute(std::multimap<size_t, size_t>& i
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name)
+bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version)
 {
     if (node.isNull())
     {
@@ -13164,7 +13164,7 @@ bool d2ce::ItemHelpers::ProcessNameNode(const Json::Value& node, std::array<char
         // Check Name
         // Remove any invalid characters from the name
         std::string curName(node.asString());
-        LocalizationHelpers::CheckCharName(curName);
+        LocalizationHelpers::CheckCharName(curName, version);
         name.fill(0);
         strcpy_s(name.data(), curName.length() + 1, curName.c_str());
         name[15] = 0; // must be zero
@@ -13582,8 +13582,10 @@ const std::string& d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(EnumDi
     }
     return outStr;
 }
-const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName, bool bASCII)
+const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName, EnumCharVersion version)
 {
+    bool bASCII = (version <= EnumCharVersion::v100R) ? true : false;
+    bool bAllowUnderscore = (version > EnumCharVersion::v108) ? true : false;
     auto uCurName = utf8::utf8to32(curName);
     std::u32string uNewText;
     for (size_t iPos = 0, numberOfUnderscores = 0, nLen = uCurName.size(); iPos < nLen; ++iPos)
@@ -13594,9 +13596,12 @@ const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName
                 || c == 0x0A || c == 0x9C || c == 0x9E || c == 0x9F
                 || (c >= 0xC0 && c <= 0xD0) || (c >= 0xD8 && c <= 0xF6) || c >= 0xF8)))
         {
-            uNewText += c;
+            if (bAllowUnderscore || c != '_')
+            {
+                uNewText += c;
+            }
         }
-        else if ((c == '_' || c == '-') && !uNewText.empty() && numberOfUnderscores < 1)
+        else if (((c == '_' && bAllowUnderscore) || c == '-') && !uNewText.empty() && numberOfUnderscores < 1)
         {
             uNewText += c;
             ++numberOfUnderscores;
@@ -13629,7 +13634,11 @@ const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName
 
     return curName;
 }
-
+//---------------------------------------------------------------------------
+const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName, d2ce::EnumItemVersion version)
+{
+    return LocalizationHelpers::CheckCharName(curName, ConvertItemVersion(version));
+}
 //---------------------------------------------------------------------------
 const std::vector<std::string> d2ce::LocalizationHelpers::GetCharacterTitles(bool isFemale, bool isHardcore, bool isExpansion)
 {

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "CharacterConstants.h"
+
 namespace d2ce
 {
     constexpr std::array<std::uint8_t, 2> ITEM_MARKER = { 0x4A, 0x4D };        // alternatively "JM"
@@ -38,6 +40,9 @@ namespace d2ce
         v140,  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     };
 
+    EnumCharVersion ConvertItemVersion(EnumItemVersion version);
+    EnumItemVersion ConvertCharVersion(EnumCharVersion version);
+
     constexpr EnumItemVersion APP_ITEM_VERSION = EnumItemVersion::v140; // default item version used by application
 
     // default game version used by application
@@ -46,7 +51,6 @@ namespace d2ce
     //   1 - Non-Expansion (post v1.08) (classic and LoD).
     // 100 - Expansion LoD
     constexpr std::uint16_t APP_ITEM_GAME_VERSION = 100; 
-
 
     constexpr std::uint32_t MAX_KEY_QUANTITY_100 = 6ui32;   // max # of keys stacked (verion 1.06 and lower)
     constexpr std::uint32_t MAX_GLD_QUANTITY = 4095ui32;    // max gld amount
