@@ -3477,6 +3477,8 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     }
 
     auto oldClass = Bs.Class;
+    auto oldTitle = Bs.Title;
+    auto oldStartingAct = Bs.StartingAct;
     std::memcpy(&Bs, &bs, sizeof(BasicStats));
     Bs.Name[15] = 0; // must be zero
 
@@ -3490,16 +3492,76 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     }
 
     Acts.validateActs();
+
+    if ((oldTitle < Bs.Title) || (oldTitle == Bs.Title) && (oldStartingAct < Bs.StartingAct))
+    {
+        // check minimum recommended level
+        auto minLevel = getRecommendedLevel();
+        if (minLevel > getLevel())
+        {
+            CharStats cs;
+            Cs.fillCharacterStats(cs);
+            cs.Level = minLevel;
+            updateCharacterStats(cs);
+        }
+    }
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::updateCharacterStats(CharStats& cs)
 {
+    auto oldLevel = Cs.getLevel();
     Cs.updateCharacterStats(cs);
     DisplayLevel = (std::uint8_t)Cs.getLevel(); // updates character's display level
     Cs.updatePointsEarned(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
 
     // update values sent in to reflect any updates made
     Cs.fillCharacterStats(cs);
+
+    if (oldLevel > Cs.getLevel())
+    {
+        // Check Stat points and skill points
+        bool bChanged = false;
+        std::uint32_t totalStatPoints = getTotalStatPoints();
+        std::uint32_t earnedStatPoints = getTotalStartStatPoints() + getStatPointsEarned();
+        if (totalStatPoints > earnedStatPoints)
+        {
+            bChanged = true;
+            auto diff = totalStatPoints - earnedStatPoints;
+            if (cs.StatsLeft <= diff)
+            {
+                cs.StatsLeft = 0;
+            }
+            else
+            {
+                cs.StatsLeft -= diff;
+            }
+        }
+
+        std::uint32_t totalPoints = getTotalSkillPoints();
+        std::uint32_t earnedPoints = getSkillPointsEarned();
+        if (totalPoints > earnedPoints)
+        {
+            bChanged = true;
+            auto diff = totalPoints - earnedPoints;
+            if (cs.SkillChoices <= diff)
+            {
+                cs.SkillChoices = 0;
+            }
+            else
+            {
+                cs.SkillChoices -= diff;
+            }
+        }
+
+        if (bChanged)
+        {
+            Cs.updateCharacterStats(cs);
+            Cs.updatePointsEarned(Acts.getLifePointsEarned(), Acts.getStatPointsEarned(), Acts.getSkillPointsEarned());
+
+            // update values sent in to reflect any updates made
+            Cs.fillCharacterStats(cs);
+        }
+    }
 }
 //---------------------------------------------------------------------------
 void d2ce::Character::resetStats()
@@ -3725,6 +3787,144 @@ bool d2ce::Character::isFemaleCharacter() const
 std::uint32_t d2ce::Character::getLevel() const
 {
     return Cs.getLevel();
+}
+//---------------------------------------------------------------------------
+std::uint32_t d2ce::Character::getRecommendedLevel() const
+{
+    auto lastAct = Bs.StartingAct;
+    auto title = Bs.getTitleDifficulty();
+    auto lastDiff = Bs.DifficultyLastPlayed;
+    if (title > lastDiff)
+    {
+        lastAct = EnumAct::I;
+    }
+    else if (title < lastDiff)
+    {
+        // this should not happen!
+        title = lastDiff;
+    }
+
+    if (isExpansionCharacter())
+    {
+        switch (title)
+        {
+        case EnumDifficulty::Normal:
+            switch (lastAct)
+            {
+            case EnumAct::I:
+                return 1ui32;
+
+            case EnumAct::II:
+                return 12ui32;
+
+            case EnumAct::III:
+                return 19ui32;
+
+            case EnumAct::IV:
+                return 24ui32;
+
+            case EnumAct::V:
+            default:
+                return 32ui32;
+            }
+
+        case EnumDifficulty::Nightmare:
+            switch (lastAct)
+            {
+            case EnumAct::I:
+                return 37ui32;
+
+            case EnumAct::II:
+                return 44ui32;
+
+            case EnumAct::III:
+                return 49ui32;
+
+            case EnumAct::IV:
+                return 53ui32;
+
+            case EnumAct::V:
+            default:
+                return 57ui32;
+            }
+
+        case EnumDifficulty::Hell:
+        default:
+            switch (lastAct)
+            {
+            case EnumAct::I:
+                return 63ui32;
+
+            case EnumAct::II:
+                return 74ui32;
+
+            case EnumAct::III:
+                return 81ui32;
+
+            case EnumAct::IV:
+                return 83ui32;
+
+            case EnumAct::V:
+            default:
+                return 95ui32;
+            }
+        }
+    }
+
+    switch (title)
+    {
+    case EnumDifficulty::Normal:
+        switch (lastAct)
+        {
+        case EnumAct::I:
+            return 1ui32;
+
+        case EnumAct::II:
+            return 12ui32;
+
+        case EnumAct::III:
+            return 19ui32;
+
+        case EnumAct::IV:
+        default:
+            return 24ui32;
+        }
+
+    case EnumDifficulty::Nightmare:
+        switch (lastAct)
+        {
+        case EnumAct::I:
+            return 32ui32;
+
+        case EnumAct::II:
+            return 37ui32;
+
+        case EnumAct::III:
+            return 44ui32;
+
+        case EnumAct::IV:
+        default:
+            return 49ui32;
+        }
+
+    case EnumDifficulty::Hell:
+    default:
+        switch (lastAct)
+        {
+        case EnumAct::I:
+            return 53ui32;
+
+        case EnumAct::II:
+            return 57ui32;
+
+        case EnumAct::III:
+            return 63ui32;
+
+        case EnumAct::IV:
+        default:
+            return 74ui32;
+        }
+    }
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMaxLevel() const

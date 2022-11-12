@@ -232,6 +232,7 @@ namespace d2ce
         void setNoDifficultyComplete();
 
         std::uint32_t getLevel() const;
+        std::uint32_t getRecommendedLevel() const;
         std::uint32_t getMaxLevel() const;
         std::uint32_t getExperience() const;
         std::uint32_t getMaxExperience() const;

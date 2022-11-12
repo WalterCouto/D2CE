@@ -1598,7 +1598,7 @@ void CD2MainForm::OnOptionsCheckChar()
     }
 
     // does a level-experience check
-    std::uint32_t expLevel = getCharacterLevelFromExperience((std::uint32_t)ToInt(&Experience));
+    auto expLevel = getCharacterLevelFromExperience((std::uint32_t)ToInt(&Experience));
     if (expLevel > cs.Level)
     {
         bFoundIssue = true;
@@ -1620,6 +1620,21 @@ void CD2MainForm::OnOptionsCheckChar()
             MB_ICONQUESTION | MB_YESNO) == IDYES)
         {
             cs.Experience = cs.MinExperienceLevel;
+            CharInfo.updateCharacterStats(cs);
+            UpdateCharInfo();
+            statChanged = true;
+        }
+    }
+
+    auto recommendedLevel = CharInfo.getRecommendedLevel();
+    if (recommendedLevel > cs.Level)
+    {
+        bFoundIssue = true;
+        if (AfxMessageBox(_T("Your character's level is too low for the progression achieved.\n")
+            _T("Would you like the amount changed to match your character's progression?"),
+            MB_ICONQUESTION | MB_YESNO) == IDYES)
+        {
+            cs.Level = recommendedLevel;
             CharInfo.updateCharacterStats(cs);
             UpdateCharInfo();
             statChanged = true;

@@ -76,8 +76,10 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.20 (November 8, 2022)**
+**Version 2.20 (November 11, 2022)**
 - Updated: Item tooltip to display red for unmet requirements and blue for magically enhanced attributes<br>
+- Updated: Character progression logic to adjust character level to at least match the recommended level.<br>
+- Updated: Updated logic for level change to reduce outstanding Stat/Skill points when level is reduced.<br>
 <br>
 
 - Added: Set Items now display all the possible Bonus attribues in the tooltip<br>
