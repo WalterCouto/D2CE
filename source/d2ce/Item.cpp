@@ -586,7 +586,8 @@ namespace d2ce
         auto charVersion = APP_CHAR_VERSION;
         switch (version)
         {
-        case EnumItemVersion::v100: // v1.00 - v1.06
+        case EnumItemVersion::v100: // v1.00 - v1.03
+        case EnumItemVersion::v104: // v1.04 - v1.06
             charVersion = EnumCharVersion::v100;
             break;
 
@@ -12759,14 +12760,6 @@ bool d2ce::Item::setBits64(size_t& current_bit_offset, size_t bits, std::uint64_
 //---------------------------------------------------------------------------
 bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* charfile)
 {
-    switch (version)
-    {
-    case EnumItemVersion::v100:
-    case EnumItemVersion::v104:
-        isExpansion = false;
-        break;
-    }
-
     data.clear();
     SocketedItems.clear();
     cachedCombinedMagicalAttributes.clear();
