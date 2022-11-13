@@ -3057,11 +3057,65 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         {
             errorMsg = _T("Not a valid Diablo II save file.");
         }
-        AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
 
-        Editted = false;
-        OnFileClose();
-        return;
+        CString backupname = GetLastBackupFile(filename);
+        if (backupname.IsEmpty())
+        {
+            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+
+        errorMsg += _T("  Would you like to restore from backup?");
+        if (AfxMessageBox(errorMsg, MB_YESNO | MB_ICONERROR) == IDNO)
+        {
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+
+        try
+        {
+            std::filesystem::remove(filename);
+
+            try
+            {
+                // rename temp file to character file
+                std::filesystem::rename(backupname.GetString(), filename);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+                CString msg;
+                msg.Format(_T("Failed to rename backup character file: %s"), backupname.GetString());
+                AfxMessageBox(CString(msg), MB_YESNO | MB_ICONERROR);
+                return;
+            }
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+            CString msg;
+            msg.Format(_T("Failed to delete existing character file: %s"), filename);
+            AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+
+            // just reopen it again
+        }
+
+        // return if open not successful
+        if (!CharInfo.open(filename))
+        {
+            errorMsg = CharInfo.getLastError().message().c_str();
+            if (errorMsg.IsEmpty())
+            {
+                errorMsg = _T("Not a valid Diablo II save file.");
+            }
+            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+            Editted = false;
+            OnFileClose();
+            return;
+        }
     }
 
     if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::InvalidChecksum)

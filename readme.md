@@ -18,26 +18,11 @@ ______________________________________________
 
 ### Notes
 
-You can edit the following stats:<br>
-- Character class<br>
-- Character name<br>
-- Character state<br>
-- Character title<br>
-- Starting act<br>
-- Level<br>
-- Strength<br>
-- Energy<br>
-- Dexterity<br>
-- Vitality<br>
-- Maximum Life<br>
-- Maximum Mana<br>
-- Maximum Stamina<br>
-- Mercenary state, class, name, Level and Experience<br>
-- Skills<br>
-- Quests<br>
-- Waypoints<br>
-- Gold in belt and stash<br>
-- Experience<br>
+You can do the following:<br>
+- Modify basic stats (Class, Name, Experience, Strength, Level, Gold in belt, etc.)
+- Modify Skills<br>
+- Modify Quests<br>
+- Modify Waypoints<br>
 - Upgrade Gems to perfect state<br>
 - Upgrade Potions to their highest level<br>
 - Upgrade Potions to Full Rejuvenation<br>
@@ -45,7 +30,7 @@ You can edit the following stats:<br>
 - Upgrade Quantity of all stackable items to the max value<br>
 - Convert a particular type and quality of Gem, Potion or Skull to another type or quality of Gem, Potion or Skull<br>
 - Modify number of Sockets or what is socketed<br>
-- Import and Export of items<br>
+- Create, Import and Export of items<br>
 
 ### Known Issues
 
@@ -67,19 +52,15 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 
 * https://github.com/zhaoleimxd/JamellaD2E<br>
 * https://github.com/daidodo/diablo_edit<br>
-* https://github.com/dschu012/D2SLib<br>
-* https://github.com/squeek502/d2itemreader<br>
-* https://github.com/nokka/d2s<br>
-* https://tristram-archives.github.io/diablo2_infodump//2013/just%20hosting%20these,%20Downloaded%20from%20Internet/documentation/d2s_save_file_format_1.13d.html<br>
-* https://github.com/andersgong/d2bin2txt/<br>
-* https://diablo.antikrist.org/item-codes/<br>
+* https://github.com/dschu012/d2s<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.20 (November 11, 2022)**
+**Version 2.20 (November 12, 2022)**
 - Updated: Item tooltip to display red for unmet requirements and blue for magically enhanced attributes<br>
 - Updated: Character progression logic to adjust character level to at least match the recommended level.<br>
 - Updated: Updated logic for level change to reduce outstanding Stat/Skill points when level is reduced.<br>
+- Updated: If file is corrupt on open and a back exists, ask if user would like to replace the file with the backup.<br>
 <br>
 
 - Added: Set Items now display all the possible Bonus attribues in the tooltip<br>

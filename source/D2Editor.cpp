@@ -18,13 +18,15 @@
 
 Revision History
 ================
-Version 2.20 (November 11, 2022)
+Version 2.20 (November 12, 2022)
    - Updated: Item tooltip to display red for unmet requirements and blue
               for magically enhanced attributes
    - Updated: Character progression logic to adjust character level to at
               least match the recommended level.
    - Updated: Updated logic for level change to reduce outstanding Stat/Skill
               points when level is reduced.
+   - Updated: If file is corrupt on open and a back exists, ask if user would
+              like to replace the file with the backup.
 
    - Added: Set Items now display all the possible Bonus attribues in the
             tooltip.
