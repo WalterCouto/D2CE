@@ -36,6 +36,8 @@ namespace d2ce
     {
         std::uint32_t generarateRandomDW(std::uint32_t itemDwbCode = 0, std::uint16_t level = 0);
     }
+
+    constexpr std::uint32_t MAX_DWB_ATTRIB_HISTORY = 2097152ui32;
 }
 
 //---------------------------------------------------------------------------
@@ -193,6 +195,10 @@ void CD2MagicalPropsRandomizer::OnBnClickedOk()
 void CD2MagicalPropsRandomizer::OnBnClickedGambleButton()
 {
     CurrentDWBCode = d2ce::ItemHelpers::generarateRandomDW();
+    if (GeneratedDWBCode.size() >= d2ce::MAX_DWB_ATTRIB_HISTORY)
+    {
+        GeneratedDWBCode.pop_front();
+    }
     CurrentDWBCodeIndex = GeneratedDWBCode.size();
     GeneratedDWBCode.push_back(CurrentDWBCode);
     UpdateCurrentAttribs();
