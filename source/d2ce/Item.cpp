@@ -7365,6 +7365,18 @@ bool d2ce::Item::isRestrictedItem() const
     return result.isRestrictedItem();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isRestrictedSharedStashItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isRestrictedSharedStashItem();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
 {
     if (isSimpleItem())
@@ -23872,7 +23884,7 @@ bool d2ce::Items::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId
         return false;
     }
 
-    if (IsSharedStash && itemType.isQuestItem())
+    if (IsSharedStash && itemType.isRestrictedSharedStashItem())
     {
         // can't add quest items to shared stash
         return false;

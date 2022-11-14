@@ -79,7 +79,8 @@ namespace
                 {
                     // we found an item, add it to the tree
                     const auto& itemType = *(availItemType.pItemType);
-                    if (!itemType.isRestrictedItem() || !charInfo.getHasRestrictedItem(itemType)) // make sure the item is not restricted from being created
+                    if ((isSharedStash && !itemType.isRestrictedSharedStashItem()) ||
+                        (!isSharedStash && (!itemType.isRestrictedItem() || !charInfo.getHasRestrictedItem(itemType)))) // make sure the item is not restricted from being created
                     {
                         HTREEITEM hParent = TVI_ROOT;
                         // First make sure all the parent folders exist
@@ -155,17 +156,7 @@ namespace
                 std::u16string uText;
                 if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Category)
                 {
-                    bool bBadItemCategory = false;
-                    if (isSharedStash && availItemType.name.compare("ques") == 0)
-                    {
-                        // can't add quest items to shared stash
-                        bBadItemCategory = true;
-                    }
-
-                    if (!bBadItemCategory)
-                    {
-                        uText = utf8::utf8to16(d2ce::ItemHelpers::getCategoryNameFromCode(availItemType.name));
-                    }
+                    uText = utf8::utf8to16(d2ce::ItemHelpers::getCategoryNameFromCode(availItemType.name));
                 }
                 else if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::ResourceString)
                 {

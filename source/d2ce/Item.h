@@ -259,6 +259,7 @@ namespace d2ce
         bool isUniqueItem() const; 
         bool isSetItem() const;
         bool isRestrictedItem() const;
+        bool isRestrictedSharedStashItem() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         bool canPersonalize() const;

@@ -5554,6 +5554,11 @@ namespace d2ce
                 (index == "Bone Break") || (index == "Black Cleft")) ? true : false;
         }
 
+        bool isRestrictedSharedStashItem() const override
+        {
+            return isQuestItem();
+        }
+
         bool isRestrictedItem() const override
         {
             if (isQuestItem())
@@ -9499,6 +9504,11 @@ bool d2ce::ItemType::isSetItem() const
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isRestrictedItem() const
+{
+    return isQuestItem();
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isRestrictedSharedStashItem() const
 {
     return isQuestItem();
 }
