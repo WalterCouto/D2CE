@@ -545,7 +545,7 @@ After this come N items, where N is the item count given above. This item count 
 |        |121     |  5   | Column<br>if socketed, then 0x00 always<br>if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column|
 |        |126     |  3   | Row, if socketed, 3 bits used otherwise 2 bits, 0x00 always if stored in belt. |
 |        |127     |  76  | ? 0x00 to pad to 120 bits                                                      |
-|        |203     |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|        |203     |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |        |211     |  5   | ? 0x00 to pad to 216 bits                                                      |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                                                           |
@@ -580,7 +580,7 @@ After this come N items, where N is the item count given above. This item count 
 |121     | 153    |  5   | Column                                                            |
 |126     | 158    |  3   | Row                                                               |
 |129     | 161    | 72   | ? 0x00                                                            |
-|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                     |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                               |
@@ -620,7 +620,7 @@ After this come N items, where N is the item count given above. This item count 
 |129     | 161    |  8   | Set ID, Unique ID, or 0x00 if not part of a Set or Unique                           |
 |139     | 171    | 32   | DWA                                                                                 |
 |171     | 203    | 32   | DWB                                                                                 |
-|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                                       |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                                      |
@@ -749,7 +749,7 @@ All items are located somewhere and have a "parent" which can be another item, s
 | 4     | Cursor   |
 | 6     | Item     |
 
-For items that are "stored" a 3-bit integer encoded starting at bit 73 describes where to store the item:
+For items that are "stored" a 3-bit integer encoded starting describes where to store the item:
 
 | Value | Desc          |
 |-------|---------------|
