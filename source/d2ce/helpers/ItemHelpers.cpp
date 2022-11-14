@@ -5554,6 +5554,22 @@ namespace d2ce
                 (index == "Bone Break") || (index == "Black Cleft")) ? true : false;
         }
 
+        bool isRestrictedItem() const override
+        {
+            if (isQuestItem())
+            {
+                return true;
+            }
+
+            if (!isCharm())
+            {
+                return false;
+            }
+
+            return ((index == "Annihilus") || (index == "Gheed's Fortune") ||
+                (index == "Hellfire Torch")) ? true : false;
+        }
+
         std::uint16_t getId() const override
         {
             return id;
@@ -9402,6 +9418,16 @@ bool d2ce::ItemType::isHoradricCube() const
     return code.compare("box") == 0 ? true : false;
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemType::isHoradricStaff() const
+{
+    return code.compare("hst") == 0 ? true : false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isHoradricStaffPart() const
+{
+    return (code.compare("msf") == 0 || code.compare("vip") == 0) ? true : false;
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemType::isPhaseBlade() const
 {
     return code.compare("7cr") == 0 ? true : false;
@@ -9470,6 +9496,11 @@ bool d2ce::ItemType::isUniqueItem() const
 bool d2ce::ItemType::isSetItem() const
 {
     return false;
+}
+//---------------------------------------------------------------------------
+bool d2ce::ItemType::isRestrictedItem() const
+{
+    return isQuestItem();
 }
 //---------------------------------------------------------------------------
 std::string d2ce::ItemType::getSetName() const

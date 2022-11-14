@@ -258,6 +258,7 @@ namespace d2ce
         std::optional<d2ce::EnumCharClass> getClass() const;
         bool isUniqueItem() const; 
         bool isSetItem() const;
+        bool isRestrictedItem() const;
         bool hasUndeadBonus() const;
         bool canHaveSockets() const;
         bool canPersonalize() const;
@@ -379,7 +380,7 @@ namespace d2ce
         mutable std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, std::vector<std::reference_wrapper<Item>>>> ItemLocationReference; // Iventory of items equipped or stored in the belt
         mutable std::map<d2ce::EnumItemLocation, std::map<d2ce::EnumAltItemLocation, std::set<std::uint16_t>>> ItemLocationEmptySpots; // a set of empty spots on body or belt
 
-        bool HasHoradricCube = false;
+        std::vector<std::reference_wrapper<ItemType>> HasRestrictedItem;
         bool HasBeltEquipped = false;
         size_t EquippedBeltSlots = 0;
         bool IsSharedStash = false;
@@ -446,7 +447,7 @@ namespace d2ce
         bool isExpansionItems() const;
 
         void verifyBeltSlots();
-        void verifyHoradricCube();
+        void verifyRestrictedItems();
 
     public:
         Items();
@@ -500,6 +501,9 @@ namespace d2ce
         bool getHasHoradricCube() const;
         size_t getNumberOfItemsInHoradricCube() const;
         const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const;
+
+        // Items restricted to one item in inventory
+        bool getHasRestrictedItem(const d2ce::ItemType& itemType) const;
 
         size_t getByteSize() const; // number of bytes to store all item sections
 

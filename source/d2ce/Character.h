@@ -309,6 +309,8 @@ namespace d2ce
         bool getHasHoradricCube() const;
         size_t getNumberOfItemsInHoradricCube() const;
         const std::vector<std::reference_wrapper<Item>>& getItemsInHoradricCube() const; 
+
+        bool getHasRestrictedItem(const d2ce::ItemType& itemType) const;
         
         bool getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const;
         bool getItemLocationDimensions(EnumItemLocation locationId, ItemDimensions& dimensions) const;

@@ -34,7 +34,7 @@ You can do the following:<br>
 
 ### Known Issues
 
-- Tested with Diablo II: Resurrected v1.4.71336 (PTR 2.5) and Diablo II Classic v1.14d **(It has unit test confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
+- Tested with Diablo II: Resurrected v1.4.71336 (PTR 2.5) and Diablo II Classic v1.14d **(It has unit tests confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - For changes to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
 

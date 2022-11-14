@@ -468,6 +468,8 @@ public:
     size_t getNumberOfItemsInHoradricCube() const;
     const std::vector<std::reference_wrapper<d2ce::Item>>& getItemsInHoradricCube() const;
 
+    bool getHasRestrictedItem(const d2ce::ItemType& itemType) const;
+
     bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;
     bool getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::ItemDimensions& dimensions) const;
     bool getItemLocationDimensions(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const;

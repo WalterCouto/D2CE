@@ -7353,6 +7353,18 @@ bool d2ce::Item::isSetItem() const
     return result.isSetItem();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::isRestrictedItem() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isRestrictedItem();
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::hasUndeadBonus() const
 {
     if (isSimpleItem())
@@ -19941,8 +19953,10 @@ void d2ce::Items::findItems()
     ItemLocationReference.clear();
     ItemLocationEmptySpots.clear();
     HasBeltEquipped = false;
-    HasHoradricCube = false;
+    HasRestrictedItem.clear();
     EquippedBeltSlots = 0;
+
+    bool hasHoradricCube = false;
 
     std::map<d2ce::EnumAltItemLocation, ItemDimensions> altItemDimensions;
     {
@@ -20027,14 +20041,19 @@ void d2ce::Items::findItems()
             switch (itemAltLocation)
             {
             case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
-                HasHoradricCube = true;
+                hasHoradricCube = true;
+                HasRestrictedItem.push_back(const_cast<d2ce::ItemType&>(item.getItemTypeHelper()));
                 break;
 
             case d2ce::EnumAltItemLocation::INVENTORY:
             case d2ce::EnumAltItemLocation::STASH:
-                if (!HasHoradricCube)
+                if (item.isRestrictedItem())
                 {
-                    HasHoradricCube = item.isHoradricCube();
+                    HasRestrictedItem.push_back(const_cast<d2ce::ItemType&>(item.getItemTypeHelper()));
+                    if (!hasHoradricCube)
+                    {
+                        hasHoradricCube = item.isHoradricCube();
+                    }
                 }
 
                 if (item.getDimensions(dimensions))
@@ -20075,7 +20094,7 @@ void d2ce::Items::findItems()
         }
     } // end for
 
-    if (HasHoradricCube)
+    if (hasHoradricCube)
     {
         itemAltLocation = EnumAltItemLocation::HORADRIC_CUBE;
         auto& emptySlots = ItemLocationEmptySpots[d2ce::EnumItemLocation::STORED][itemAltLocation];
@@ -20118,7 +20137,7 @@ void d2ce::Items::findSharedStashItems()
     ItemLocationReference.clear();
     ItemLocationEmptySpots.clear();
     HasBeltEquipped = false;
-    HasHoradricCube = false;
+    HasRestrictedItem.clear();
     EquippedBeltSlots = 0;
 
     ItemDimensions stashDimensions;
@@ -21782,19 +21801,25 @@ void d2ce::Items::verifyBeltSlots()
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::verifyHoradricCube()
+void d2ce::Items::verifyRestrictedItems()
 {
+    std::vector<std::reference_wrapper<ItemType>> foundRestrictedItem;
     bool bFoundCube = false;
+    bool bHadCube = getHasHoradricCube();
     for (const auto& item : Inventory)
     {
-        if (item.isHoradricCube())
+        if (item.isRestrictedItem())
         {
-            bFoundCube = true;
-            break;
+            foundRestrictedItem.push_back(const_cast<d2ce::ItemType&>(item.getItemTypeHelper()));
+            if (!bFoundCube && item.isHoradricCube())
+            {
+                bFoundCube = true;
+            }
         }
     }
 
-    if (HasHoradricCube == bFoundCube)
+    HasRestrictedItem.swap(foundRestrictedItem);
+    if (bHadCube == bFoundCube)
     {
         // nothing changed
         return;
@@ -21807,7 +21832,6 @@ void d2ce::Items::verifyHoradricCube()
     auto& invLocationReference = ItemLocationReference[itemLoaction][itemAltLocation];
     if (bFoundCube)
     {
-        HasHoradricCube = true;
         ItemDimensions cubeDimensions;
         ItemDimensions invItemDimensions;
         if (getItemLocationDimensions(itemAltLocation, cubeDimensions))
@@ -21926,7 +21950,6 @@ void d2ce::Items::verifyHoradricCube()
     }
 
     // Horadric Cube was removed, make sure any items located in there are removed as well
-    HasHoradricCube = false;
     std::list<Item> itemToMove; // non-empty if given Horadric Cube items need moving
 
     auto iter = Inventory.begin();
@@ -22312,7 +22335,15 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInSt
 //---------------------------------------------------------------------------
 bool d2ce::Items::getHasHoradricCube() const
 {
-    return HasHoradricCube;
+    for (const auto& itemType : HasRestrictedItem)
+    {
+        if (itemType.get().isHoradricCube())
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 size_t d2ce::Items::getNumberOfItemsInHoradricCube() const
@@ -22328,6 +22359,52 @@ size_t d2ce::Items::getNumberOfItemsInHoradricCube() const
 const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Items::getItemsInHoradricCube() const
 {
     return ItemLocationReference[d2ce::EnumItemLocation::STORED][d2ce::EnumAltItemLocation::HORADRIC_CUBE];
+}
+//---------------------------------------------------------------------------
+bool d2ce::Items::getHasRestrictedItem(const d2ce::ItemType& itemType) const
+{
+    if (!itemType.isRestrictedItem())
+    {
+        return false;
+    }
+
+    for (const auto& invItemType : HasRestrictedItem)
+    {
+        if (&itemType == &(invItemType.get()))
+        {
+            return true;
+        }
+
+        if (itemType.isQuestItem())
+        {
+            if (invItemType.get().isQuestItem())
+            {
+                if (itemType.code == invItemType.get().code)
+                {
+                    return true;
+                }
+
+                if ((invItemType.get().isHoradricStaff() && itemType.isHoradricStaffPart()) ||
+                    (invItemType.get().isHoradricStaffPart() && itemType.isHoradricStaff()))
+                {
+                    // once we have the staff and the other parts are not allowed to co-exist
+                    return true;
+                }
+            }
+        }
+        else if (itemType.isUniqueItem())
+        {
+            if (invItemType.get().isUniqueItem())
+            {
+                if (itemType.getId() == invItemType.get().getId())
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 //---------------------------------------------------------------------------
 // number of bytes to store all item sections
@@ -23789,9 +23866,9 @@ bool d2ce::Items::importItem(const d2ce::Item*& pImportedItem, bool bRandomizeId
     }
 
     const auto& itemType = importedItem.getItemTypeHelper();
-    if (HasHoradricCube && itemType.isHoradricCube())
+    if (itemType.isRestrictedItem() && getHasRestrictedItem(itemType))
     {
-        // can only have one Horadric Cube
+        // can only have one of this item
         return false;
     }
 
@@ -24605,10 +24682,10 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
             verifyBeltSlots();
         }
 
-        if (BufferItems.back().isHoradricCube())
+        if (BufferItems.back().isRestrictedItem())
         {
-            // we just place a Horadric Cube in our inventory
-            verifyHoradricCube();
+            // we just place a restricted item in our inventory
+            verifyRestrictedItems();
         }
         return true;
     }
@@ -24868,10 +24945,10 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
             return false;
         }
 
-        if (item.isHoradricCube())
+        if (item.isRestrictedItem())
         {
-            // we just place a Horadric Cube in our inventory
-            verifyHoradricCube();
+            // we just place a restricted item in our inventory
+            verifyRestrictedItems();
         }
 
         d2ce::removeItem_if(invLocationReference, ItemPredicate(*pItem2));
@@ -25016,10 +25093,10 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
         verifyBeltSlots();
     }
 
-    if (item.isHoradricCube())
+    if (item.isRestrictedItem())
     {
-        // we just place a Horadric Cube in our inventory
-        verifyHoradricCube();
+        // we just place a restricted item in our inventory
+        verifyRestrictedItems();
     }
     return true;
 }

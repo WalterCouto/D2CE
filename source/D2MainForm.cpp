@@ -5960,6 +5960,11 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& CD2MainForm::getItemsInHo
     return CharInfo.getItemsInHoradricCube();
 }
 //---------------------------------------------------------------------------
+bool CD2MainForm::getHasRestrictedItem(const d2ce::ItemType& itemType) const
+{
+    return CharInfo.getHasRestrictedItem(itemType);
+}
+//---------------------------------------------------------------------------
 bool CD2MainForm::getItemLocationDimensions(d2ce::EnumItemLocation locationId, d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions) const
 {
     return CharInfo.getItemLocationDimensions(locationId, altPositionId, dimensions);

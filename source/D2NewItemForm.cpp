@@ -75,75 +75,77 @@ namespace
             const auto& availItemType = iter->second;
             if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Item)
             {
-                // can't add quest items to shared stash
                 if (availItemType.pItemType != nullptr)
                 {
                     // we found an item, add it to the tree
                     const auto& itemType = *(availItemType.pItemType);
-                    HTREEITEM hParent = TVI_ROOT;
-                    // First make sure all the parent folders exist
-                    for (auto& folder : parent)
+                    if (!itemType.isRestrictedItem() || !charInfo.getHasRestrictedItem(itemType)) // make sure the item is not restricted from being created
                     {
-                        if (folder.hItem == NULL)
+                        HTREEITEM hParent = TVI_ROOT;
+                        // First make sure all the parent folders exist
+                        for (auto& folder : parent)
                         {
-                            folder.hItem = tree.InsertItem(folder.name, hParent, TVI_SORT);
-                            if (folder.hItem != NULL)
+                            if (folder.hItem == NULL)
+                            {
+                                folder.hItem = tree.InsertItem(folder.name, hParent, TVI_SORT);
+                                if (folder.hItem != NULL)
+                                {
+                                    hParent = folder.hItem;
+                                }
+                            }
+                            else
                             {
                                 hParent = folder.hItem;
                             }
                         }
-                        else
-                        {
-                            hParent = folder.hItem;
-                        }
-                    }
 
-                    DWORD_PTR itemData = 0;
-                    std::u16string uText;
-                    if (((itemType.isRing() || itemType.isAmulet()|| itemType.isCharm() || itemType.isJewel()) && !itemType.isUniqueItem()) || itemType.isEar())
-                    {
-                        d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), itemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
-                        d2ce::Item newItem(createParams);
-                        if (newItem.size() > 0)
+                        DWORD_PTR itemData = 0;
+                        std::u16string uText;
+                        if (((itemType.isRing() || itemType.isAmulet() || itemType.isCharm() || itemType.isJewel()) && !itemType.isUniqueItem()) || itemType.isEar())
                         {
-                            bufferItems.resize(bufferItems.size() + 1);
-                            auto& bufferItem = bufferItems.back();
-                            bufferItem.swap(newItem);
-                            itemData = (DWORD_PTR)&bufferItem;
-                            uText = utf8::utf8to16(bufferItem.getDisplayedItemName());
+                            d2ce::ItemCreateParams createParams(charInfo.getDefaultItemVersion(), itemType, charInfo.getTitleDifficulty(), charInfo.getClass(), charInfo.isExpansionCharacter());
+                            d2ce::Item newItem(createParams);
+                            if (newItem.size() > 0)
+                            {
+                                bufferItems.resize(bufferItems.size() + 1);
+                                auto& bufferItem = bufferItems.back();
+                                bufferItem.swap(newItem);
+                                itemData = (DWORD_PTR)&bufferItem;
+                                uText = utf8::utf8to16(bufferItem.getDisplayedItemName());
+                            }
+                            else
+                            {
+                                uText = utf8::utf8to16(itemType.name);
+                            }
+                        }
+                        else if (itemType.isPotion() && itemType.isUnusedItem())
+                        {
+                            uText = utf8::utf8to16(itemType.code);
                         }
                         else
                         {
                             uText = utf8::utf8to16(itemType.name);
                         }
-                    }
-                    else if(itemType.isPotion() && itemType.isUnusedItem())
-                    {
-                        uText = utf8::utf8to16(itemType.code);
-                    }
-                    else
-                    {
-                        uText = utf8::utf8to16(itemType.name);
-                    }
 
-                    CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
+                        CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
 
-                    // Check for Multi-line text
-                    auto idx = strText.Find(_T('\n'));
-                    if (idx >= 0)
-                    {
-                        strText = strText.Left(idx);
-                    }
+                        // Check for Multi-line text
+                        auto idx = strText.Find(_T('\n'));
+                        if (idx >= 0)
+                        {
+                            strText = strText.Left(idx);
+                        }
 
-                    HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
-                    if (hItem == NULL)
-                    {
-                        bufferItems.pop_back();
-                    }
-                    else
-                    {
-                        tree.SetItemData(hItem, itemData);
-                        availableItemTypes[hItem] = availItemType;
+                        HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
+                        if (hItem == NULL)
+                        {
+                            bufferItems.pop_back();
+                        }
+                        else
+                        {
+                            tree.SetItemData(hItem, itemData);
+                            availableItemTypes[hItem] = availItemType;
+                        }
                     }
                 }
             }

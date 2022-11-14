@@ -4314,6 +4314,11 @@ const std::vector<std::reference_wrapper<d2ce::Item>>& d2ce::Character::getItems
     return m_items.getItemsInHoradricCube();
 }
 //---------------------------------------------------------------------------
+bool d2ce::Character::getHasRestrictedItem(const d2ce::ItemType& itemType) const
+{
+    return m_items.getHasRestrictedItem(itemType);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Character::getItemLocationDimensions(EnumItemLocation locationId, EnumAltItemLocation altPositionId, ItemDimensions& dimensions) const
 {
     return m_items.getItemLocationDimensions(locationId, altPositionId, dimensions);

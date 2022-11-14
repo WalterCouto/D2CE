@@ -1346,6 +1346,8 @@ namespace d2ce
         virtual bool isScroll() const;
         virtual bool isKey() const;
         virtual bool isHoradricCube() const;
+        virtual bool isHoradricStaff() const;
+        virtual bool isHoradricStaffPart() const;
         virtual bool isPhaseBlade() const;
         virtual bool isBow() const;
         virtual bool isCrossbow() const;
@@ -1360,6 +1362,7 @@ namespace d2ce
         virtual bool isClassSpecific() const;
         virtual bool isUniqueItem() const;
         virtual bool isSetItem() const;
+        virtual bool isRestrictedItem() const;
         virtual std::string getSetName() const;
         virtual std::uint16_t getSetId() const;
         virtual std::uint16_t getId() const;
