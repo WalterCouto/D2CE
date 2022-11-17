@@ -30,21 +30,12 @@ namespace d2ce
     constexpr std::array<std::uint8_t, 4> QUESTS_VERSION = { 0x06, 0x00, 0x00, 0x00 };
     constexpr std::array<std::uint8_t, 2> QUESTS_SIZE_MARKER = { 0x2A, 0x01 };
 
-    constexpr std::uint32_t MIN_START_QUEST_POS = 335;
-    constexpr std::uint32_t MIN_START_QUEST_POS_v100 = 130;
-
     constexpr std::array<std::uint8_t, 2> WAYPOINTS_MARKER = { 0x57, 0x53 };          // alternatively "WS"
     constexpr std::array<std::uint8_t, 4> WAYPOINTS_VERSION = { 0x01, 0x00, 0x00, 0x00 };
     constexpr std::array<std::uint8_t, 2> WAYPOINTS_SIZE_MARKER = { 0x50, 0x00 };
 
-    constexpr std::uint32_t MIN_START_WAYPOINTS_POS = 633;
-    constexpr std::uint32_t MIN_START_WAYPOINTS_POS_v100 = 428;
-
     constexpr std::array<std::uint8_t, 2> NPC_MARKER = { 0x01, 0x77 };
     constexpr std::array<std::uint8_t, 2> NPC_SIZE_MARKER = { 0x34, 0x00 };
-
-    constexpr std::uint32_t MIN_START_NPC_POS = 713;
-    constexpr std::uint32_t MIN_START_NPC_POS_v100 = 508;
 
     constexpr std::uint16_t questNotStarted = 0x0000;
     constexpr std::uint16_t questStarted = 0x0004;
@@ -59,6 +50,10 @@ namespace d2ce
     } };
 
     constexpr std::uint16_t questMooMooFarm = 0x0400;
+
+    constexpr std::uint16_t QUESTS_NUM_BYTES = 298ui16;
+    constexpr std::uint16_t WAYPOINTS_NUM_BYTES = 80ui16;
+    constexpr std::uint16_t NPC_NUM_BYTES = 52ui16;
 }
 
 std::uint16_t& d2ce::ActsInfo::getQuestDataRef(EnumDifficulty diff, EnumAct act, std::uint8_t quest) const
@@ -89,84 +84,51 @@ std::uint16_t& d2ce::ActsInfo::getQuestDataRef(EnumDifficulty diff, EnumAct act,
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
 {
-    if (update_locations)
+    for (auto& extraBit : Quests_extraBits)
     {
-        // find stats location
-        quests_start_location = 0;
-        quests_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (CharInfo.getVersion() >= EnumCharVersion::v109)
-        {
-            if (cur_pos < (long)MIN_START_QUEST_POS)
-            {
-                cur_pos = MIN_START_QUEST_POS;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-        else
-        {
-            if (cur_pos < MIN_START_QUEST_POS_v100)
-            {
-                cur_pos = MIN_START_QUEST_POS_v100;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-
-        while (!feof(charfile))
-        {
-            quests_start_location = std::ftell(charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_MARKER[1])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_MARKER[2])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_MARKER[3])
-            {
-                continue;
-            }
-
-            // found quests marker (0x216F6F57). 
-            std::fread(quests_version.data(), quests_version.size(), 1, charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_SIZE_MARKER[0])
-            {
-                return false;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != QUESTS_SIZE_MARKER[1])
-            {
-                return false;
-            }
-
-            // found size marker (0x012A)
-            quests_location = std::ftell(charfile);
-            break;
-        }
+        extraBit.fill(0);
     }
+    Quests_unknown.fill(0);
+    Quests_version = { 0x06, 0x00, 0x00, 0x00 };
 
-    if (quests_location == 0)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_MARKER[0])
     {
-        quests_start_location = 0;
         return false;
     }
 
-    std::fseek(charfile, quests_location, SEEK_SET);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_MARKER[1])
+    {
+        return false;
+    }
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_MARKER[2])
+    {
+        return false;
+    }
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_MARKER[3])
+    {
+        return false;
+    }
+
+    // found quests marker (0x216F6F57). 
+    std::fread(Quests_version.data(), Quests_version.size(), 1, charfile);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_SIZE_MARKER[0])
+    {
+        return false;
+    }
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != QUESTS_SIZE_MARKER[1])
+    {
+        return false;
+    }
 
     if (feof(charfile))
     {
@@ -191,10 +153,26 @@ bool d2ce::ActsInfo::readQuests(std::FILE* charfile)
             return false;
         }
 
-        std::fseek(charfile, 28, SEEK_CUR);
+        if (feof(charfile))
+        {
+            return false;
+        }
+
+        if (std::fread(Quests_extraBits[i].data(), Quests_extraBits[i].size(), 1, charfile) != 1)
+        {
+            return false;
+        }
     }
 
-    std::fseek(charfile, 12, SEEK_CUR);
+    if (feof(charfile))
+    {
+        return false;
+    }
+
+    if (std::fread(Quests_unknown.data(), Quests_unknown.size(), 1, charfile) != 1)
+    {
+        return false;
+    }
     return true;
 }
 //---------------------------------------------------------------------------
@@ -467,8 +445,15 @@ void d2ce::ActsInfo::applyJsonQuests(const Json::Value& questsRoot, bool bSerial
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedFormat)
 {
+    for (auto& extraBit : Quests_extraBits)
+    {
+        extraBit.fill(0);
+    }
+    Quests_unknown.fill(0);
+    Quests_version = { 0x06, 0x00, 0x00, 0x00 };
+
     if (bSerializedFormat)
     {
         // If "Header" value is present, it needs to be valid
@@ -505,120 +490,45 @@ bool d2ce::ActsInfo::readQuests(const Json::Value& questsRoot, bool bSerializedF
         }
     }
 
-    quests_start_location = std::ftell(charfile);
-    std::fwrite(QUESTS_MARKER.data(), QUESTS_MARKER.size(), 1, charfile);
-    quests_version = QUESTS_VERSION;
-    std::fwrite(quests_version.data(), quests_version.size(), 1, charfile);
-    std::fwrite(QUESTS_SIZE_MARKER.data(), QUESTS_SIZE_MARKER.size(), 1, charfile);
-    quests_location = std::ftell(charfile);
     applyJsonQuests(questsRoot, bSerializedFormat);
-    if (CharInfo.getVersion() >= EnumCharVersion::v107)
-    {
-        bool ret = std::fwrite(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) != 1 ? false : true;
-        std::fflush(charfile);
-        return ret;
-    }
-    else
-    {
-        // Only copy 4 acts of Quest data for each difficulty
-        for (std::uint32_t i = 0; i < NUM_OF_DIFFICULTY; ++i)
-        {
-            if (std::fwrite(Acts[i].Act.data(), Acts[i].Act.size() * sizeof(ActInfo), 1, charfile) != 1)
-            {
-                return false;
-            }
-
-            static std::array<std::uint8_t, 28> unknown = {
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 
-            };
-            if (std::fwrite(unknown.data(), unknown.size(), 1, charfile) != 1)
-            {
-                return false;
-            }
-        }
-
-        static std::array<std::uint8_t, 12> unknownEnd = {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-        if (std::fwrite(unknownEnd.data(), unknownEnd.size(), 1, charfile) != 1)
-        {
-            return false;
-        }
-        std::fflush(charfile);
-    }
-
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
 {
-    if (update_locations)
+    Waypoints_unknown = { 0x0102, 0x0102, 0x0102 };
+    for (auto& extraBit : Waypoints_extraBits)
     {
-        // find stats location
-        waypoints_start_location = 0;
-        waypoints_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (CharInfo.getVersion() >= EnumCharVersion::v109)
-        {
-            if (cur_pos < (long)MIN_START_WAYPOINTS_POS)
-            {
-                cur_pos = MIN_START_WAYPOINTS_POS;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-        else
-        {
-            if (cur_pos < MIN_START_WAYPOINTS_POS_v100)
-            {
-                cur_pos = MIN_START_WAYPOINTS_POS_v100;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-
-        while (!feof(charfile))
-        {
-            waypoints_start_location = std::ftell(charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != WAYPOINTS_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != WAYPOINTS_MARKER[1])
-            {
-                continue;
-            }
-
-            // found waypoints marker (0x5357).
-            std::fread(waypoints_version.data(), waypoints_version.size(), 1, charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != WAYPOINTS_SIZE_MARKER[0])
-            {
-                return false;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != WAYPOINTS_SIZE_MARKER[1])
-            {
-                return false;
-            }
-
-            // found size marker (0x0050).
-            waypoints_location = std::ftell(charfile);
-            break;
-        }
+        extraBit.fill(0);
     }
+    Waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
 
-    if (waypoints_location == 0)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != WAYPOINTS_MARKER[0])
     {
-        waypoints_start_location = 0;
         return false;
     }
 
-    std::fseek(charfile, waypoints_location, SEEK_SET);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != WAYPOINTS_MARKER[1])
+    {
+        return false;
+    }
+
+    // found waypoints marker (0x5357).
+    std::fread(Waypoints_version.data(), Waypoints_version.size(), 1, charfile);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != WAYPOINTS_SIZE_MARKER[0])
+    {
+        return false;
+    }
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != WAYPOINTS_SIZE_MARKER[1])
+    {
+        return false;
+    }
 
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
     {
@@ -785,8 +695,15 @@ void d2ce::ActsInfo::applyJsonWaypoints(const Json::Value& waypointsRoot, bool b
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat)
 {
+    Waypoints_unknown = { 0x0102, 0x0102, 0x0102 };
+    for (auto& extraBit : Waypoints_extraBits)
+    {
+        extraBit.fill(0);
+    }
+    Waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
+
     if (bSerializedFormat)
     {
         // If "Header" value is present, it needs to be valid
@@ -823,89 +740,37 @@ bool d2ce::ActsInfo::readWaypoints(const Json::Value& waypointsRoot, bool bSeria
         }
     }
 
-    waypoints_start_location = std::ftell(charfile);
-    std::fwrite(WAYPOINTS_MARKER.data(), WAYPOINTS_MARKER.size(), 1, charfile);
-    waypoints_version = WAYPOINTS_VERSION;
-    std::fwrite(waypoints_version.data(), waypoints_version.size(), 1, charfile);
-    std::fwrite(WAYPOINTS_SIZE_MARKER.data(), WAYPOINTS_SIZE_MARKER.size(), 1, charfile);
-    waypoints_location = std::ftell(charfile);
     applyJsonWaypoints(waypointsRoot, bSerializedFormat);
-    for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
-    {
-        std::fwrite(&Waypoints_unknown[i], sizeof(Waypoints_unknown[i]), 1, charfile);
-        std::fwrite(&Waypoints[i], sizeof(Waypoints[i]), 1, charfile);
-        std::fwrite(Waypoints_extraBits[i].data(), Waypoints_extraBits[i].size(), 1, charfile);
-    }
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readNPC(std::FILE* charfile)
 {
-    if (update_locations)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != NPC_MARKER[0])
     {
-        // find stats location
-        npc_start_location = 0;
-        npc_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (CharInfo.getVersion() >= EnumCharVersion::v109)
-        {
-            if (cur_pos < (long)MIN_START_NPC_POS)
-            {
-                cur_pos = MIN_START_NPC_POS;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-        else
-        {
-            if (cur_pos < MIN_START_NPC_POS_v100)
-            {
-                cur_pos = MIN_START_NPC_POS_v100;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-
-        while (!feof(charfile))
-        {
-            npc_start_location = std::ftell(charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != NPC_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != NPC_MARKER[1])
-            {
-                continue;
-            }
-
-            // found NPC marker (0x7701).
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != NPC_SIZE_MARKER[0])
-            {
-                return false;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != NPC_SIZE_MARKER[1])
-            {
-                return false;
-            }
-
-            // found size marker (0x0034).
-            npc_location = std::ftell(charfile);
-            break;
-        }
-    }
-
-    if (npc_location == 0)
-    {
-        npc_start_location = 0;
         return false;
     }
 
-    std::fseek(charfile, npc_location, SEEK_SET);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != NPC_MARKER[1])
+    {
+        return false;
+    }
+
+    // found NPC marker (0x7701).
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != NPC_SIZE_MARKER[0])
+    {
+        return false;
+    }
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != NPC_SIZE_MARKER[1])
+    {
+        return false;
+    }
 
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
     {
@@ -1013,7 +878,7 @@ void d2ce::ActsInfo::applyJsonNPCs(const Json::Value& npcsRoot, bool bSerialized
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat)
 {
     if (bSerializedFormat)
     {
@@ -1040,67 +905,54 @@ bool d2ce::ActsInfo::readNPC(const Json::Value& npcsRoot, bool bSerializedFormat
         }
     }
 
-    npc_start_location = std::ftell(charfile);
-    std::fwrite(NPC_MARKER.data(), NPC_MARKER.size(), 1, charfile);
-    std::fwrite(NPC_SIZE_MARKER.data(), NPC_SIZE_MARKER.size(), 1, charfile);
-    npc_location = std::ftell(charfile);
     applyJsonNPCs(npcsRoot, bSerializedFormat);
-    for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
-    {
-        std::fwrite(&NPCIntroductions[i], sizeof(NPCIntroductions[i]), 1, charfile);
-    }
-
-    for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
-    {
-        std::fwrite(&NPCCongrats[i], sizeof(NPCCongrats[i]), 1, charfile);
-    }
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::writeQuests(std::FILE* charfile) const
 {
-    if (quests_start_location == 0)
+    std::fwrite(QUESTS_MARKER.data(), QUESTS_MARKER.size(), 1, charfile);
+    std::fwrite(Quests_version.data(), Quests_version.size(), 1, charfile);
+    std::fwrite(QUESTS_SIZE_MARKER.data(), QUESTS_SIZE_MARKER.size(), 1, charfile);
+    if (CharInfo.getVersion() >= EnumCharVersion::v107)
+    {
+        if (std::fwrite(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) != 1)
+        {
+            return false;
+        }
+
+        std::fflush(charfile);
+        return true;
+    }
+
+    // Only copy 4 acts of Quest data for each difficulty
+    for (std::uint32_t i = 0; i < NUM_OF_DIFFICULTY; ++i)
+    {
+        if (std::fwrite(Acts[i].Act.data(), Acts[i].Act.size() * sizeof(ActInfo), 1, charfile) != 1)
+        {
+            return false;
+        }
+
+        if (std::fwrite(Quests_extraBits[i].data(), Quests_extraBits[i].size(), 1, charfile) != 1)
+        {
+            return false;
+        }
+    }
+
+
+    if (std::fwrite(Quests_unknown.data(), Quests_unknown.size(), 1, charfile) != 1)
     {
         return false;
     }
 
-    std::fseek(charfile, quests_start_location, SEEK_SET);
-    std::fwrite(QUESTS_MARKER.data(), QUESTS_MARKER.size(), 1, charfile);
-    std::fwrite(quests_version.data(), quests_version.size(), 1, charfile);
-    std::fwrite(QUESTS_SIZE_MARKER.data(), QUESTS_SIZE_MARKER.size(), 1, charfile);
-    if (CharInfo.getVersion() >= EnumCharVersion::v107)
-    {
-        bool ret = std::fwrite(Acts.data(), Acts.size() * sizeof(ActsInfoData), 1, charfile) != 1 ? false : true;
-        std::fflush(charfile);
-        return ret;
-    }
-    else
-    {
-        // Only copy 4 acts of Quest data for each difficulty
-        for (std::uint32_t i = 0; i < NUM_OF_DIFFICULTY; ++i)
-        {
-            if (std::fwrite(Acts[i].Act.data(), Acts[i].Act.size() * sizeof(ActInfo), 1, charfile) != 1)
-            {
-                return false;
-            }
-            std::fseek(charfile, 28, SEEK_CUR);
-        }
-        std::fflush(charfile);
-    }
-
+    std::fflush(charfile);
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile) const
 {
-    if (waypoints_start_location == 0)
-    {
-        return false;
-    }
-
-    std::fseek(charfile, waypoints_start_location, SEEK_SET);
     std::fwrite(WAYPOINTS_MARKER.data(), WAYPOINTS_MARKER.size(), 1, charfile);
-    std::fwrite(waypoints_version.data(), waypoints_version.size(), 1, charfile);
+    std::fwrite(Waypoints_version.data(), Waypoints_version.size(), 1, charfile);
     std::fwrite(WAYPOINTS_SIZE_MARKER.data(), WAYPOINTS_SIZE_MARKER.size(), 1, charfile);
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
     {
@@ -1115,12 +967,6 @@ bool d2ce::ActsInfo::writeWaypoints(std::FILE* charfile) const
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::writeNPC(std::FILE* charfile) const
 {
-    if (npc_start_location == 0)
-    {
-        return false;
-    }
-
-    std::fseek(charfile, npc_start_location, SEEK_SET);
     std::fwrite(NPC_MARKER.data(), NPC_MARKER.size(), 1, charfile);
     std::fwrite(NPC_SIZE_MARKER.data(), NPC_SIZE_MARKER.size(), 1, charfile);
     for (int i = 0; i < NUM_OF_DIFFICULTY; ++i)
@@ -1260,50 +1106,45 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readActs(std::FILE* charfile)
 {
-    update_locations = quests_location == 0 ? true : false;
-    if (!readQuests(charfile) || quests_location == 0)
+    if (!readQuests(charfile))
     {
         return false;
     }
 
-    if (!readWaypoints(charfile) || waypoints_location == 0)
+    if (!readWaypoints(charfile))
     {
         return false;
     }
 
-    if (!readNPC(charfile) || npc_location == 0)
+    if (!readNPC(charfile))
     {
         return false;
     }
 
-    update_locations = false;
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat)
 {
-    update_locations = true;
-
     Json::Value childRoot = root[bSerializedFormat ? "Quests" : "header"];
-    if (!readQuests(childRoot, bSerializedFormat, charfile) || quests_location == 0)
+    if (!readQuests(childRoot, bSerializedFormat))
     {
         return false;
     }
 
     Json::Value header = root[bSerializedFormat ? "Header" : "header"];
     childRoot = bSerializedFormat ? root["Waypoints"] : header["waypoints"];
-    if (!readWaypoints(childRoot, bSerializedFormat, charfile) || waypoints_location == 0)
+    if (!readWaypoints(childRoot, bSerializedFormat))
     {
         return false;
     }
 
     childRoot = bSerializedFormat ? root["NPCDialog"] : header["npcs"];
-    if (!readNPC(childRoot, bSerializedFormat, charfile) || npc_location == 0)
+    if (!readNPC(childRoot, bSerializedFormat))
     {
         return false;
     }
 
-    update_locations = false;
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1331,7 +1172,7 @@ void d2ce::ActsInfo::questsAsJson(Json::Value& parent, bool bSerializedFormat) c
         Json::Value quests;
         quests["Magic"] = ((CharInfo.getVersion() < EnumCharVersion::v100R) ? "1" : "0");
         quests["Header"] = *((std::uint32_t*)QUESTS_MARKER.data());
-        quests["Version"] = *((std::uint32_t*)quests_version.data());
+        quests["Version"] = *((std::uint32_t*)Quests_version.data());
         quests["Length"] = *((std::uint16_t*)QUESTS_SIZE_MARKER.data());
 
         for (auto diff : all_diff)
@@ -1849,7 +1690,7 @@ void d2ce::ActsInfo::waypointsAsJson(Json::Value& parent, bool bSerializedFormat
     {
         Json::Value waypoints;
         waypoints["Header"] = *((std::uint32_t*)WAYPOINTS_MARKER.data());
-        waypoints["Version"] = *((std::uint32_t*)waypoints_version.data());
+        waypoints["Version"] = *((std::uint32_t*)Waypoints_version.data());
         waypoints["Length"] = *((std::uint16_t*)WAYPOINTS_SIZE_MARKER.data());
 
         for (auto diff : all_diff)
@@ -2289,17 +2130,13 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(const ActsInfo& other)
     }
 
     Acts = other.Acts;
-    quests_version = other.quests_version;
-    waypoints_version = other.waypoints_version;
+    Quests_version = other.Quests_version;
+    Quests_extraBits = other.Quests_extraBits;
+    Quests_unknown = other.Quests_unknown;
+    Waypoints_version = other.Waypoints_version;
     Waypoints_unknown = other.Waypoints_unknown;
     Waypoints = other.Waypoints;
     Waypoints_extraBits = other.Waypoints_extraBits;
-    quests_start_location = other.quests_start_location;
-    quests_location = other.quests_location;
-    waypoints_start_location = other.waypoints_start_location;
-    waypoints_location = other.waypoints_location;
-    npc_location = other.npc_location;
-    update_locations = other.update_locations;
     return *this;
 }
 d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
@@ -2312,9 +2149,17 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
 
     Acts = other.Acts;
     other.Acts.fill(ActsInfoData());
-    quests_version = other.quests_version;
-    waypoints_version = other.waypoints_version;
+    Quests_version = other.Quests_version;
+    Quests_extraBits = other.Quests_extraBits;
+    for (auto& extraBit : other.Quests_extraBits)
+    {
+        extraBit.fill(0);
+    }
+    Quests_unknown = other.Quests_unknown;
+    other.Quests_unknown.fill(0);
+    Waypoints_version = other.Waypoints_version;
     Waypoints_unknown = other.Waypoints_unknown;
+    other.Waypoints_unknown = { 0x0102, 0x0102, 0x0102 };
     Waypoints = other.Waypoints;
     other.Waypoints.fill(0);
     Waypoints_extraBits = other.Waypoints_extraBits;
@@ -2322,12 +2167,6 @@ d2ce::ActsInfo& d2ce::ActsInfo::operator=(ActsInfo&& other) noexcept
     {
         extraBit.fill(0);
     }
-    quests_start_location = std::exchange(other.quests_start_location, 0);
-    quests_location = std::exchange(other.quests_location, 0);
-    waypoints_start_location = std::exchange(other.waypoints_start_location, 0);
-    waypoints_location = std::exchange(other.waypoints_location, 0);
-    npc_location = std::exchange(other.npc_location, 0);
-    update_locations = std::exchange(other.update_locations, true);
     return *this;
 }
 //---------------------------------------------------------------------------
@@ -2339,6 +2178,11 @@ void d2ce::ActsInfo::swap(ActsInfo& other)
 void d2ce::ActsInfo::clear()
 {
     *this = ActsInfo(CharInfo);
+}
+//---------------------------------------------------------------------------
+size_t d2ce::ActsInfo::getByteSize() const
+{
+    return QUESTS_NUM_BYTES + WAYPOINTS_NUM_BYTES + NPC_NUM_BYTES;
 }
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ActsInfo::getActIntroducedData(EnumDifficulty diff, EnumAct act) const
@@ -2520,6 +2364,236 @@ void d2ce::ActsInfo::resetActs(EnumDifficulty diff)
     clearMooMooFarmComplete(diff);
 
     setWaypoints(diff, 1); // make sure Act I - Rogue Encampment is the only one active
+}
+//---------------------------------------------------------------------------
+/*
+   Thanks goes to Stoned2000 for making his checksum calculation source
+   available to the public.  The Visual Basic source for his editor can be
+   found at http://stoned.d2network.com.
+*/
+void d2ce::ActsInfo::calculateChecksum(long& checksum, std::uint8_t& overflow)
+{
+    if (CharInfo.getVersion() < EnumCharVersion::v109)
+    {
+        // checksum not supported
+        return;
+    }
+
+    // Iterate through Quest data
+    for (auto& byteValue : QUESTS_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : Quests_version)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : QUESTS_SIZE_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& acts : Acts)
+    {
+        auto* pBytes = (std::uint8_t*)&acts;
+        for (size_t i = 0; i < sizeof(ActsInfoData); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+    }
+
+    // Iterate through waypoint data
+    for (auto& byteValue : WAYPOINTS_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : Waypoints_version)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : WAYPOINTS_SIZE_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (int diff = 0; diff < NUM_OF_DIFFICULTY; ++diff)
+    {
+        auto* pBytes = (std::uint8_t*)&Waypoints_unknown[diff];
+        for (size_t i = 0; i < sizeof(Waypoints_unknown[diff]); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+        
+        pBytes = (std::uint8_t*)&Waypoints[diff];
+        for (size_t i = 0; i < sizeof(Waypoints[diff]); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        for (auto& byteValue : Waypoints_extraBits[diff])
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += byteValue + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+    }
+
+    // iterate through NPC data
+    for (auto& byteValue : NPC_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : NPC_SIZE_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (int diff = 0; diff < NUM_OF_DIFFICULTY; ++diff)
+    {
+        auto* pBytes = (std::uint8_t*)&NPCIntroductions[diff];
+        for (size_t i = 0; i < sizeof(NPCIntroductions[diff]); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+    }
+
+    for (int diff = 0; diff < NUM_OF_DIFFICULTY; ++diff)
+    {
+        auto* pBytes = (std::uint8_t*)&NPCCongrats[diff];
+        for (size_t i = 0; i < sizeof(NPCCongrats[diff]); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+    }
 }
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::getActCompleted(EnumDifficulty diff, EnumAct act) const

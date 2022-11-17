@@ -391,14 +391,28 @@ namespace D2EditorTests
         Assert::AreEqual(ConvertNewLines(json), GetCharExpectedJsonOutput(character, version, serialized));
     }
 
-    void TestJsonOpenBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum, bool serialized = false)
+    void TestJsonOpenBase(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum, bool serialized = false, bool bCheckJsonExport = true)
     {
-        std::filesystem::path expectedPath = GetCharPathName(version) / fileName;
-        auto expectedJson = GetJsonText(expectedPath);
+        std::string expectedJson;
+        if (bCheckJsonExport)
+        {
+            std::filesystem::path expectedPath = GetCharPathName(version) / fileName;
+            expectedJson = GetJsonText(expectedPath);
+        }
+
         d2ce::Character character;
         Assert::IsTrue(LoadCharFile(fileName, character, version, validateChecksum));
-        auto json = character.asJson(serialized, d2ce::Character::EnumCharSaveOp::NoSave);
-        Assert::AreEqual(ConvertNewLines(json), expectedJson);
+
+        if (bCheckJsonExport)
+        {
+            auto json = character.asJson(serialized, d2ce::Character::EnumCharSaveOp::NoSave);
+            Assert::AreEqual(ConvertNewLines(json), expectedJson);
+        }
+    }
+
+    void TestJsonOpenBaseNoOutputCheck(const std::filesystem::path& fileName, d2ce::EnumCharVersion version, bool validateChecksum, bool serialized = false)
+    {
+        TestJsonOpenBase(fileName, version, validateChecksum, serialized, false);
     }
 
     TEST_CLASS(D2EditorTests)
@@ -929,32 +943,27 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen01)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Merlina.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Merlina.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen02)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Walter.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Walter.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen03)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("WhirlWind.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("WhirlWind.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen04)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Scroll_Test.json", character, d2ce::EnumCharVersion::v100R, true));
+            TestJsonOpenBaseNoOutputCheck("Scroll_Test.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen05)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("testtt.json", character, d2ce::EnumCharVersion::v107, true));
+            TestJsonOpenBaseNoOutputCheck("testtt.json", d2ce::EnumCharVersion::v107, true);
         }
 
         TEST_METHOD(TestJsonOpen06)
@@ -964,20 +973,17 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen07)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("afa.json", character, d2ce::EnumCharVersion::v109, true));
+            TestJsonOpenBaseNoOutputCheck("afa.json", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestJsonOpen08)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("sdfsf.json", character, d2ce::EnumCharVersion::v109, true));
+            TestJsonOpenBaseNoOutputCheck("sdfsf.json", d2ce::EnumCharVersion::v109, true);
         }
 
         TEST_METHOD(TestJsonOpen09)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("MfBowzon.json", character, d2ce::EnumCharVersion::v100R, true));
+            TestJsonOpenBaseNoOutputCheck("MfBowzon.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen10)
@@ -987,8 +993,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen11)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("WhirlWind_serialized.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("WhirlWind_serialized.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen12)
@@ -998,32 +1003,27 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen13)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("NokkaSorc.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("NokkaSorc.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen14)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Complex.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Complex.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen15)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("DannyIsGreatII.json", character, d2ce::EnumCharVersion::v100R, true));
+            TestJsonOpenBaseNoOutputCheck("DannyIsGreatII.json", d2ce::EnumCharVersion::v100R, true);
         }
 
         TEST_METHOD(TestJsonOpen16)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Fist_YoU.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Fist_YoU.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen17)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("FukK_U.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("FukK_U.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen18)
@@ -1048,50 +1048,42 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen22)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazona.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazona.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen23)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazonb.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazonb.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen24)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazonc.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazonc.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen25)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazond.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazond.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen26)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazone.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazone.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen27)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazonf.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazonf.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen28)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Amazong.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Amazong.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen29)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Barbariana.json", character, d2ce::EnumCharVersion::v100, true));
+            TestJsonOpenBaseNoOutputCheck("Barbariana.json", d2ce::EnumCharVersion::v100, true);
         }
 
         TEST_METHOD(TestJsonOpen30)
@@ -1106,164 +1098,137 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen32)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Drui.json", character, d2ce::EnumCharVersion::v120, true));
+            TestJsonOpenBaseNoOutputCheck("Drui.json", d2ce::EnumCharVersion::v120, true);
         }
 
         TEST_METHOD(TestJsonOpen33)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Blizzard.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Blizzard.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen34)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("BowAma.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("BowAma.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen35)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Element.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Element.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen36)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Fire.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Fire.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen37)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("FireClaw.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBase("FireClaw.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen38)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Frenzy.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Frenzy.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen39)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Hammer.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Hammer.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen40)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("JavaZone.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("JavaZone.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen41)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Lightning.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Lightning.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen42)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Orb.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Orb.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen43)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Smiter.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Smiter.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen44)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Summon.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Summon.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen45)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("TollWut.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("TollWut.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen46)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Traps.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Traps.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonOpen47)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Walter.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Walter.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen48)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("immun_charm.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("immun_charm.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen49)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Konan.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Konan.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen50)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Blizzard.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Blizzard.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen51)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Fire.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Fire.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen52)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("JavaZone.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("JavaZone.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen53)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Loradiel.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Loradiel.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen54)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Rui.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Rui.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen55)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Spartacus.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Spartacus.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen56)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Charming.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("Charming.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen57)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("HCharming.json", character, d2ce::EnumCharVersion::v140, true));
+            TestJsonOpenBaseNoOutputCheck("HCharming.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonOpen58)
         {
-            d2ce::Character character;
-            Assert::IsTrue(LoadCharFile("Poison.json", character, d2ce::EnumCharVersion::v110, true));
+            TestJsonOpenBaseNoOutputCheck("Poison.json", d2ce::EnumCharVersion::v110, true);
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

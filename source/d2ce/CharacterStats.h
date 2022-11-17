@@ -33,10 +33,6 @@ namespace d2ce
 
     private:
         mutable std::vector<std::uint8_t> data;
-        mutable std::uint32_t stats_location = 0,
-            skills_location = 0,
-            pd2_skills_location = 0; // PD2 Skills
-        bool update_locations = true;
         bool has_pd2_skills = false; // PD2 Skills
 
         Character& CharInfo;
@@ -94,17 +90,15 @@ namespace d2ce
         size_t readStatBits(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat);
         bool readAllStats(std::FILE* charfile);
         void applyJsonStats(const Json::Value& statsRoot, bool bSerializedFormat);
-        bool readAllStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readAllStats(const Json::Value& statsRoot, bool bSerializedFormat);
         bool readAllStats_109(std::FILE* charfile);
         bool readSkills(std::FILE* charfile);
         void applyJsonSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat);
-        bool readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat);
 
         size_t updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value) const;
-        size_t updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat) const;
+        size_t updateStat(size_t& current_bit_offset, std::uint16_t stat) const;
         size_t updateStatBits(size_t& current_bit_offset, std::uint16_t stat) const;
-        size_t writeBufferBits(std::FILE* charfile) const;
-        bool writeStats_109(std::FILE* charfile) const;
         bool writeSkills(std::FILE* charfile) const;
 
         std::uint32_t getStatPointsPerLevel() const;
@@ -124,10 +118,10 @@ namespace d2ce
         void setTxtReader();
 
         bool readStats(std::FILE* charfile);
-        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readStats(const Json::Value& statsRoot, bool bSerializedFormat);
         bool writeStats(std::FILE* charfile) const;
-        std::uint32_t getHeaderLocation();
 
+        void updateDataBuffer();
         void resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned);
         void updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS> &updated_skills, std::uint16_t skillPointsEarned, std::uint32_t skillChoices);
         void resetSkills(std::uint16_t skillPointsEarned);
@@ -139,7 +133,7 @@ namespace d2ce
         void skillsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
         void asJson(Json::Value& parent, bool bSerializedFormat = false) const;
 
-
+        void calculateChecksum(long& checksum, std::uint8_t& overflow);
     protected:
         CharacterStats(Character& charInfo);
 
@@ -147,6 +141,8 @@ namespace d2ce
         ~CharacterStats();
 
         void clear();
+
+        size_t getByteSize() const; // number of bytes to store data
 
         void fillCharacterStats(CharStats& cs) const;
         void fillDisplayedCharacterStats(CharStats& cs) const;

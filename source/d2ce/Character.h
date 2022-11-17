@@ -37,39 +37,54 @@ namespace d2ce
     //---------------------------------------------------------------------------
     class Character
     {
+        friend class Mercenary;
+
     public:
         enum class EnumCharSaveOp : std::uint8_t { NoSave, SaveWithBackup, SaveOnly, BackupOnly };
+
+    private:
+        mutable std::vector<std::uint8_t> data;
+
+    protected:
+        std::uint64_t readBytes(std::FILE* charfile, size_t& current_byte_offset, size_t byte);
+        bool skipBytes(std::FILE* charfile, size_t& current_byte_offset, size_t byte);
+        bool setBytes(size_t& current_byte_offset, size_t bytes, std::uint8_t* value);
+        bool setBytes(size_t& current_byte_offset, size_t bytes, std::uint32_t value);
+        bool setBytes64(size_t& current_byte_offset, size_t bytes, std::uint64_t value);
+
+        std::uint32_t readBytes(size_t start, size_t size) const;
+        std::uint64_t readBytes64(size_t start, size_t size) const;
+        bool updateBytes(size_t start, size_t size, std::uint8_t* value);
+        bool updateBytes(size_t start, size_t size, std::uint32_t value);
+        bool updateBytes64(size_t start, size_t size, std::uint64_t value);
 
     protected:
         // the following variables are what would be found in the character file format
         // variables that are commented out means that no functions have been
         // declared that use them
-        std::array<std::uint8_t, HEADER_LENGTH> Header = { 0x55, 0xAA, 0x55, 0xAA };
-        std::uint32_t Version = 0;                                      // pos 4 in file, character file version
-        std::uint32_t FileSize = 0;                                     // pos 8 (1.09+ only), file's size
-        long Checksum = 0;                                              // pos 12 (1.09+ only), stores (possible) checksum
-        std::uint32_t WeaponSet = 0;                                    // pos 16 (1.09+, otherwise pos 26 uint16_t)
+        std::uint32_t getHeaderBytes() const;
+        std::uint32_t getVersionBytes() const;                          // pos 4 in file, character file version
+        bool setFileSizeBytes(std::uint32_t bytes);                     // pos 8 (1.09+ only), file's size
+        long getChecksumBytes() const;                                  // pos 12 (1.09+ only), stores (possible) checksum
+        bool setChecksumBytes(long checksum);
         mutable BasicStats Bs;                                          // Name:   pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8),
                                                                         //         name includes terminating NULL
-                                                                        // Status: pos 36 (1.09+, otherwise, pos 24), determines character status
-                                                                        // Title:  pos 37 (1.09+, otherwise pos 25), character's title
-                                                                        // Class:  pos 40 (1.09+, otherwise pos 34),
-        std::uint8_t DisplayLevel = 1;                                  // pos 43 (1.09+, otherwise pos 36),
-                                                                        // level displayed at character selection screen
-        std::uint32_t Created = 0;                                      // pos 44 (1.09+ only), file date and time
+        bool setStatusBytes(std::uint8_t status);                       // Status: pos 36 (1.09+, otherwise, pos 24), determines character status
+        bool setTitleBytes(std::uint8_t Title);                         // Title:  pos 37 (1.09+, otherwise pos 25), character's title
+                                                                        // Class:  pos 40 (1.09+, otherwise pos 34)
+        std::uint8_t getDisplayLevelBytes() const;                      // pos 43 (1.09+, otherwise pos 36)
+        bool setDisplayLevelBytes(std::uint8_t level);                  // level displayed at character selection screen
+        bool setDifficultyLastPlayedBytes(EnumDifficulty difficultyLastPlayed, EnumAct startingAct);
+        std::uint32_t getCreatedBytes() const;                          // pos 44 (1.09+ only), file date and time
                                                                         // using the Standard C time() function
-        std::uint32_t LastPlayed = 0;                                   // pos 48 (1.09+ only), file date and time
+        std::uint32_t getLastPlayedBytes() const;                       // pos 48 (1.09+ only), file date and time
                                                                         // using the Standard C time() function
-        std::array<std::uint32_t, NUM_OF_SKILL_HOTKEYS> AssignedSkills; // pos 56 (1.09+, otherwise pos 70 and size 8)
-        std::uint32_t LeftSkill = 0;                                    // pos 120 (1.09+, otherwise pos 86)
-        std::uint32_t RightSkill = 0;                                   // pos 124 (1.09+, otherwise pos 87)
-        std::uint32_t LeftSwapSkill = 0;                                // pos 128 (1.09+ only)
-        std::uint32_t RightSwapSkill = 0;                               // pos 132 (1.09+ only)
-        std::array<std::uint8_t, APPEARANCES_LENGTH> Appearances;       // pos 136 (1.09+, otherwise pos 38) Character menu appearance
-        std::array<std::uint8_t, NUM_OF_DIFFICULTY> StartingAct;        // pos 168 (normal, nightmare, hell; used in 1.09+ only)
-                                                                        // four MSBs value always 8 (hex, i.e. 0x80)
-                                                                        // four least significant bits = which act is character saved at
-        std::uint32_t MapID = 0;                                        // pos 171 (1.09+, otherwise 126)
+        std::uint32_t getLeftSkillBytes() const;                        // pos 120 (1.09+, otherwise pos 86)
+        std::uint32_t getRightSkillBytes() const;                       // pos 124 (1.09+, otherwise pos 87)
+        std::uint32_t getLeftSwapSkillBytes() const;;                   // pos 128 (1.09+ only)
+        std::uint32_t getRightSwapSkillBytes() const;                   // pos 132 (1.09+ only)
+       
+        std::uint32_t  getMapIDBytes() const;                           // pos 171 (1.09+, otherwise 126)
                                                                        
         mutable Mercenary Merc; // Dead:       pos 177 (1.09+ only)
                                 // Id:         pos 179 (1.09+ only)
@@ -77,7 +92,6 @@ namespace d2ce
                                 // Type:       pos 185 (1.09+ only)
                                 // Experience: pos 187 (1.09+ only), hireling's experience
 
-        std::array<std::uint8_t, D2R_APPEARANCES_LENGTH> D2RAppearances; // pos 219 - 266 (D2R only) Character menu appearance
 
         // normal act info starts at pos 345 (1.09+ only)
         // nightmare act info starts at pos 441 (1.09+ only)
@@ -89,25 +103,11 @@ namespace d2ce
 
         CharacterStats Cs; // pos 765 (1.09+, otherwise pos 562) 
         
-        mutable Items  m_items;
+        mutable Items m_items;
 
         // the following variables are not part of the character file format
-        std::FILE* m_charfile = nullptr;
         mutable std::filesystem::path m_d2sfilename, m_jsonfilename, m_tempfilename;
         std::error_code m_error_code;
-        std::uint32_t m_filesize_location,
-            m_checksum_location,
-            m_name_location = 0,
-            m_status_location = 0,
-            m_class_location = 0,
-            m_level_location = 0,
-            m_starting_location = 0,
-            m_assigned_skilled_location = 0,
-            m_appearances_location = 0,
-            m_difficulty_location = 0,
-            m_mapid_location = 0,
-            m_stats_header_location = 0;
-        bool m_update_locations = true;
         bool m_bJsonSerializedFormat = false;
 
         SharedStash m_shared_stash;
@@ -117,24 +117,24 @@ namespace d2ce
         void initialize();
         bool openD2S(const std::filesystem::path& path, bool validateChecksum = true);
         bool openJson(const std::filesystem::path& path);
-        void readHeader();
+        void readHeader(std::FILE* charFile);
         void readHeader(const Json::Value& root);
         bool isValidHeader() const;
+        bool refresh(std::FILE* charFile);
         bool refresh(const Json::Value& root);
-        void readBasicInfo();
+        void readBasicInfo(std::FILE* charFile);
         bool readBasicInfo(const Json::Value& root);
-        bool readActs();
+        bool readActs(std::FILE* charFile);
         bool readActs(const Json::Value& root);
-        bool readStats();
+        bool readStats(std::FILE* charFile);
         bool readStats(const Json::Value& root);
-        bool readItems();
+        bool readItems(std::FILE* charFile);
         bool readItems(const Json::Value& root);
 
-        void writeBasicInfo() const;
-        bool writeActs() const;
-        bool writeStats() const;
-        bool writeItems() const;
-        void writeTempFile() const;
+        void writeBasicInfo(std::FILE* charFile) const;
+        bool writeActs(std::FILE* charFile) const;
+        bool writeStats(std::FILE* charFile) const;
+        bool writeItems(std::FILE* charFile) const;
 
         void headerAsJson(Json::Value& parent, EnumCharVersion version, bool bSerializedFormat = false) const;
         void headerAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
@@ -169,6 +169,7 @@ namespace d2ce
         bool is_json() const;
         std::error_code getLastError() const;
         std::uint32_t getFileSize() const;
+        size_t getByteSize() const; // number of bytes to store all data
 
         // Mercenary Info
         bool hasMercenary() const;
@@ -289,6 +290,7 @@ namespace d2ce
         bool getSkillBonusPoints(std::vector<std::uint16_t>& points) const;
 
         // Items
+        std::uint32_t getItemsStartLocation() const;
         EnumItemVersion getDefaultItemVersion() const;
         size_t getNumberOfItems() const;
 

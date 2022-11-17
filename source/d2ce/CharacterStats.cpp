@@ -34,9 +34,6 @@ namespace d2ce
     constexpr size_t STAT_BITS = 9;
     constexpr std::array<size_t, 16> V110_BITS_PER_STAT = { 10,10,10,10,10,8,21,21,21,21,21,21,7,32,25,25 };
 
-    constexpr std::uint32_t MIN_START_STATS_POS = 765;
-    constexpr std::uint32_t MIN_START_STATS_POS_v100 = 560;
-
     constexpr std::array<std::uint8_t, 2> SKILLS_MARKER = { 0x69, 0x66 };             // alternatively "if"
 
     namespace ItemHelpers
@@ -1114,7 +1111,7 @@ namespace d2ce
 //---------------------------------------------------------------------------
 d2ce::CharacterStats::CharacterStats(Character& charInfo) : CharInfo(charInfo)
 {
-    data.reserve(54); // reserve the maximum byte length to reduce allocations
+    data.reserve(67); // reserve the maximum byte length to reduce allocations
 }
 //---------------------------------------------------------------------------
 d2ce::CharacterStats::~CharacterStats()
@@ -1408,56 +1405,21 @@ size_t d2ce::CharacterStats::readStatBits(std::FILE* charfile, size_t& current_b
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::readAllStats(std::FILE* charfile)
 {
-    if (update_locations)
-    {
-        // find stats location
-        stats_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (CharInfo.getVersion() >= EnumCharVersion::v109)
-        {
-            if (cur_pos < (long)MIN_START_STATS_POS)
-            {
-                cur_pos = MIN_START_STATS_POS;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-        else
-        {
-            if (cur_pos < MIN_START_STATS_POS_v100)
-            {
-                cur_pos = MIN_START_STATS_POS_v100;
-                std::fseek(charfile, cur_pos, SEEK_SET);
-            }
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != STATS_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != STATS_MARKER[1])
-            {
-                continue;
-            }
-
-            // found stats marker (0x6766). 
-            stats_location = std::ftell(charfile);
-            break;
-        }
-    }
-
-    if (stats_location == 0)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != STATS_MARKER[0])
     {
         return false;
     }
 
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != STATS_MARKER[1])
+    {
+        return false;
+    }
+
+    // found stats marker (0x6766).
     updateStartStats();
-    std::fseek(charfile, stats_location, SEEK_SET);
 
     // zero out all stats as zero value stats do not have to exists in the file
     Cs.Strength = 0;
@@ -1511,67 +1473,67 @@ bool d2ce::CharacterStats::readAllStats(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::readAllStats_109(std::FILE* charfile)
 {
-    std::uint16_t value;
-    std::fread(&value, sizeof(value), 1, charfile);
+    size_t current_bit_offset = 0;
+    std::uint16_t value = (std::uint16_t)readBits(charfile, current_bit_offset, sizeof(value) * 8);
     StatInfo = static_cast<EnumCharStatInfo>(value);
 
     // skip null byte if character version is less than 1.09
     if (CharInfo.getVersion() < EnumCharVersion::v109)
     {
-        std::fread(&nullByte, sizeof(nullByte), 1, charfile);
+        nullByte = (std::uint8_t)readBits(charfile, current_bit_offset, sizeof(nullByte) * 8);
     }
 
     // read basic stats
-    std::fread(&Cs.Strength, sizeof(Cs.Strength), 1, charfile);   // always present so no need to check StatInfo bits
-    std::fread(&Cs.Energy, sizeof(Cs.Energy), 1, charfile);       // always present so no need to check StatInfo bits
-    std::fread(&Cs.Dexterity, sizeof(Cs.Dexterity), 1, charfile); // always present so no need to check StatInfo bits
-    std::fread(&Cs.Vitality, sizeof(Cs.Vitality), 1, charfile);   // always present so no need to check StatInfo bits
-
+    Cs.Strength = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Strength) * 8);   // always present so no need to check StatInfo bits
+    Cs.Energy = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Energy) * 8);       // always present so no need to check StatInfo bits
+    Cs.Dexterity = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Dexterity) * 8); // always present so no need to check StatInfo bits
+    Cs.Vitality = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Vitality) * 8);   // always present so no need to check StatInfo bits
+   
     if ((StatInfo & EnumCharStatInfo::StatPoints) == EnumCharStatInfo::StatPoints)
     {
-        std::fread(&Cs.StatsLeft, sizeof(Cs.StatsLeft), 1, charfile);
+        Cs.StatsLeft = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.StatsLeft) * 8);
     }
 
     if ((StatInfo & EnumCharStatInfo::SkillChoices) == EnumCharStatInfo::SkillChoices)
     {
-        std::fread(&Cs.SkillChoices, sizeof(Cs.SkillChoices), 1, charfile);
+        Cs.SkillChoices = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.SkillChoices) * 8);
     }
 
     if ((StatInfo & EnumCharStatInfo::CurLife) == EnumCharStatInfo::CurLife)
     {
-        std::fread(&Cs.CurLife, sizeof(Cs.CurLife), 1, charfile);
+        Cs.CurLife = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.CurLife) * 8);
     }
 
-    std::fread(&Cs.MaxLife, sizeof(Cs.MaxLife), 1, charfile); // always present so no need to check StatInfo bits
+    Cs.MaxLife = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.MaxLife) * 8);   // always present so no need to check StatInfo bits
 
     if ((StatInfo & EnumCharStatInfo::CurMana) == EnumCharStatInfo::CurMana) // can be zero but should be always present
     {
-        std::fread(&Cs.CurMana, sizeof(Cs.CurMana), 1, charfile);
+        Cs.CurMana = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.CurMana) * 8);
     }
 
-    std::fread(&Cs.MaxMana, sizeof(Cs.MaxMana), 1, charfile); // always present so no need to check StatInfo bits
+    Cs.MaxMana = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.MaxMana) * 8);   // always present so no need to check StatInfo bits
 
     if ((StatInfo & EnumCharStatInfo::CurStamina) == EnumCharStatInfo::CurStamina) // can be zero but should be always present
     {
-        std::fread(&Cs.CurStamina, sizeof(Cs.CurStamina), 1, charfile);
+        Cs.CurStamina = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.CurStamina) * 8);
     }
 
-    std::fread(&Cs.MaxStamina, sizeof(Cs.MaxStamina), 1, charfile); // always present so no need to check StatInfo bits
-    std::fread(&Cs.Level, sizeof(Cs.Level), 1, charfile);           // always present so no need to check StatInfo bits
+    Cs.MaxStamina = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.MaxStamina) * 8); // always present so no need to check StatInfo bits
+    Cs.Level = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Level) * 8);           // always present so no need to check StatInfo bits
 
     if ((StatInfo & EnumCharStatInfo::Experience) == EnumCharStatInfo::Experience)
     {
-        std::fread(&Cs.Experience, sizeof(Cs.Experience), 1, charfile);
+        Cs.Experience = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.Experience) * 8);
     }
 
     if ((StatInfo & EnumCharStatInfo::GoldInBelt) == EnumCharStatInfo::GoldInBelt)
     {
-        std::fread(&Cs.GoldInBelt, sizeof(Cs.GoldInBelt), 1, charfile);
+        Cs.GoldInBelt = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.GoldInBelt) * 8);
     }
 
     if ((StatInfo & EnumCharStatInfo::GoldInStash) == EnumCharStatInfo::GoldInStash)
     {
-        std::fread(&Cs.GoldInStash, sizeof(Cs.GoldInStash), 1, charfile);
+        Cs.GoldInStash = (std::uint32_t)readBits(charfile, current_bit_offset, sizeof(Cs.GoldInStash) * 8);
     }
 
     updateMinStats();
@@ -1580,6 +1542,7 @@ bool d2ce::CharacterStats::readAllStats_109(std::FILE* charfile)
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSerializedFormat)
 {
+    data.clear();
     if (!statsRoot.isNull())
     {
         std::string key;
@@ -1682,94 +1645,34 @@ void d2ce::CharacterStats::applyJsonStats(const Json::Value& statsRoot, bool bSe
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readAllStats(const Json::Value& statsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::CharacterStats::readAllStats(const Json::Value& statsRoot, bool bSerializedFormat)
 {
     updateStartStats();
-
-    std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
-    stats_location = std::ftell(charfile);
     applyJsonStats(statsRoot, bSerializedFormat);
-
-    checkStatInfo();
-    if (CharInfo.getVersion() < EnumCharVersion::v110)
-    {
-        return writeStats_109(charfile);
-    }
-
-    size_t current_bit_offset = 0;
-    data.clear();
-
-    size_t totalBitsWritten = 0;
-    for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
-    {
-        totalBitsWritten += updateStat(charfile, current_bit_offset, stat);
-    }
-    totalBitsWritten += updateStat(charfile, current_bit_offset, STAT_END_MARKER);
-
-    std::fflush(charfile);
-    if (totalBitsWritten == 0)
-    {
-        return false;
-    }
-
+    updateDataBuffer();
     return true;
 }
 bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
 {
-    if (update_locations)
+    has_pd2_skills = false;
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != SKILLS_MARKER[0])
     {
-        // find stats location
-        skills_location = 0;
-        pd2_skills_location = 0;
-        has_pd2_skills = false;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)stats_location)
-        {
-            cur_pos = stats_location;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != SKILLS_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != SKILLS_MARKER[1])
-            {
-                continue;
-            }
-
-            // found skills marker (0x6669). 
-            skills_location = std::ftell(charfile);
-            break;
-        }
-
-        if (skills_location == 0)
-        {
-            return false;
-        }
+        return false;
     }
-    else
-    {
-        if (skills_location == 0)
-        {
-            return false;
-        }
 
-        std::fseek(charfile, skills_location, SEEK_SET);
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != SKILLS_MARKER[1])
+    {
+        return false;
     }
 
     std::fread(Skills.data(), Skills.size(), 1, charfile);
 
-    if (update_locations && (CharInfo.getVersion() == EnumCharVersion::v110))
+    if (CharInfo.getVersion() == EnumCharVersion::v110)
     {
         // Check for PD2 version
-        std::uint8_t value = 0;
         auto cur_pos = std::ftell(charfile);
         auto temp_pos = cur_pos;
         for (size_t num = 0; (num < 3) && !feof(charfile); ++num)
@@ -1822,9 +1725,8 @@ bool d2ce::CharacterStats::readSkills(std::FILE* charfile)
         }
 
         // we detected a PD2 file with 3 extra bytes for skills
-        pd2_skills_location = cur_pos;
         has_pd2_skills = true;
-        std::fseek(charfile, pd2_skills_location, SEEK_SET);
+        std::fseek(charfile, cur_pos, SEEK_SET);
         std::fread(PD2Skills.data(), PD2Skills.size(), 1, charfile);
     }
 
@@ -1869,7 +1771,6 @@ void d2ce::CharacterStats::applyJsonSkills(const Json::Value& /*root*/, const Js
         }
     }
 
-    pd2_skills_location = 0;
     has_pd2_skills = false;
     /*TODO:
     if (CharInfo.getVersion() == EnumCharVersion::v110)
@@ -1916,21 +1817,9 @@ void d2ce::CharacterStats::applyJsonSkills(const Json::Value& /*root*/, const Js
     */
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::CharacterStats::readSkills(const Json::Value& root, const Json::Value& skillsRoot, bool bSerializedFormat)
 {
-    std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
-    skills_location = std::ftell(charfile);
     applyJsonSkills(root, skillsRoot, bSerializedFormat);
-    std::fwrite(Skills.data(), Skills.size(), 1, charfile);
-    std::fflush(charfile);
-
-    if (isPD2Format())
-    {
-        pd2_skills_location = std::ftell(charfile);
-        std::fwrite(PD2Skills.data(), PD2Skills.size(), 1, charfile);
-        std::fflush(charfile);
-    }
-
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1961,7 +1850,7 @@ size_t d2ce::CharacterStats::updateBits(size_t& current_bit_offset, size_t size,
     return size;
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::updateStat(std::FILE* charfile, size_t& current_bit_offset, std::uint16_t stat) const
+size_t d2ce::CharacterStats::updateStat(size_t& current_bit_offset, std::uint16_t stat) const
 {
     if (stat >= STAT_MAX && (stat != STAT_END_MARKER))
     {
@@ -1983,7 +1872,6 @@ size_t d2ce::CharacterStats::updateStat(std::FILE* charfile, size_t& current_bit
 
     if (stat == STAT_END_MARKER)
     {
-        writeBufferBits(charfile);
         return totalBitsWritten + ((data.size() * 8) - current_bit_offset); // we wrote any bits we did not use as well
     }
 
@@ -2004,81 +1892,14 @@ size_t d2ce::CharacterStats::updateStatBits(size_t& current_bit_offset, std::uin
     return updateBits(current_bit_offset, numBits, *pStatValue);
 }
 //---------------------------------------------------------------------------
-size_t d2ce::CharacterStats::writeBufferBits(std::FILE* charfile) const
-{
-    std::fseek(charfile, stats_location, SEEK_SET);
-    std::fwrite(&data[0], data.size(), 1, charfile);
-    return data.size() * 8;
-}
-//---------------------------------------------------------------------------
-bool d2ce::CharacterStats::writeStats_109(std::FILE* charfile) const
-{
-    std::uint16_t value = StatInfo.bits();
-    std::fwrite(&value, sizeof(value), 1, charfile);
-
-    // skip null byte if character version is less than 1.09
-    if (CharInfo.getVersion() < EnumCharVersion::v109)
-    {
-        std::fwrite(&nullByte, sizeof(nullByte), 1, charfile);
-    }
-
-    // write basic stats
-    std::fwrite(&Cs.Strength, sizeof(Cs.Strength), 1, charfile);   // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.Energy, sizeof(Cs.Energy), 1, charfile);       // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.Dexterity, sizeof(Cs.Dexterity), 1, charfile); // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.Vitality, sizeof(Cs.Vitality), 1, charfile);   // always present so no need to check StatInfo bits
-
-    if ((StatInfo & EnumCharStatInfo::StatPoints) == EnumCharStatInfo::StatPoints)
-    {
-        std::fwrite(&Cs.StatsLeft, sizeof(Cs.StatsLeft), 1, charfile);
-    }
-
-    if ((StatInfo & EnumCharStatInfo::SkillChoices) == EnumCharStatInfo::SkillChoices)
-    {
-        std::fwrite(&Cs.SkillChoices, sizeof(Cs.SkillChoices), 1, charfile);
-    }
-
-    if ((StatInfo & EnumCharStatInfo::CurLife) == EnumCharStatInfo::CurLife)
-    {
-        std::fwrite(&Cs.CurLife, sizeof(Cs.CurLife), 1, charfile);
-    }
-
-    std::fwrite(&Cs.MaxLife, sizeof(Cs.MaxLife), 1, charfile);       // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.CurMana, sizeof(Cs.CurMana), 1, charfile);       // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.MaxMana, sizeof(Cs.MaxMana), 1, charfile);       // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.CurStamina, sizeof(Cs.CurStamina), 1, charfile); // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.MaxStamina, sizeof(Cs.MaxStamina), 1, charfile); // always present so no need to check StatInfo bits
-    std::fwrite(&Cs.Level, sizeof(Cs.Level), 1, charfile);           // always present so no need to check StatInfo bits
-
-    if ((StatInfo & EnumCharStatInfo::Experience) == EnumCharStatInfo::Experience)
-    {
-        std::fwrite(&Cs.Experience, sizeof(Cs.Experience), 1, charfile);
-    }
-
-    if ((StatInfo & EnumCharStatInfo::GoldInBelt) == EnumCharStatInfo::GoldInBelt)
-    {
-        std::fwrite(&Cs.GoldInBelt, sizeof(Cs.GoldInBelt), 1, charfile);
-    }
-
-    if ((StatInfo & EnumCharStatInfo::GoldInStash) == EnumCharStatInfo::GoldInStash)
-    {
-        std::fwrite(&Cs.GoldInStash, sizeof(Cs.GoldInStash), 1, charfile);
-    }
-    std::fflush(charfile);
-
-    return true;
-}
-//---------------------------------------------------------------------------
 bool d2ce::CharacterStats::writeSkills(std::FILE* charfile) const
 {
     std::fwrite(SKILLS_MARKER.data(), SKILLS_MARKER.size(), 1, charfile);
-    skills_location = std::ftell(charfile);
     std::fwrite(Skills.data(), Skills.size(), 1, charfile);
     std::fflush(charfile);
 
     if (isPD2Format())
     {
-        pd2_skills_location = std::ftell(charfile);
         std::fwrite(PD2Skills.data(), PD2Skills.size(), 1, charfile);
         std::fflush(charfile);
     }
@@ -2100,22 +1921,20 @@ void d2ce::CharacterStats::setTxtReader()
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::readStats(std::FILE* charfile)
 {
-    update_locations = stats_location == 0 ? true : false;
-    if (!readAllStats(charfile) || stats_location == 0)
+    if (!readAllStats(charfile))
     {
         return false;
     }
 
-    if (!readSkills(charfile) || skills_location == 0)
+    if (!readSkills(charfile))
     {
         return false;
     }
 
-    update_locations = false;
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFormat)
 {
     clear();
     Json::Value childRoot;
@@ -2128,8 +1947,7 @@ bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFo
         }
     }
 
-    update_locations = true;
-    if (!readAllStats(childRoot, bSerializedFormat, charfile) || stats_location == 0)
+    if (!readAllStats(childRoot, bSerializedFormat))
     {
         return false;
     }
@@ -2143,58 +1961,91 @@ bool d2ce::CharacterStats::readStats(const Json::Value& root, bool bSerializedFo
         }
     }
 
-    if (!readSkills(root, childRoot, bSerializedFormat, charfile) || skills_location == 0)
+    if (!readSkills(root, childRoot, bSerializedFormat))
     {
         return false;
     }
 
-    update_locations = false;
     return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::writeStats(std::FILE* charfile) const
 {
-    if (stats_location == 0)
-    {
-        return false;
-    }
+    std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
+    std::fwrite(&data[0], data.size(), 1, charfile);
+    return writeSkills(charfile);
+}
+//---------------------------------------------------------------------------
+void d2ce::CharacterStats::updateDataBuffer()
+{
+    data.clear();
+    size_t current_bit_offset = 0;
 
     checkStatInfo();
-
-    std::fseek(charfile, stats_location - std::uint32_t(STATS_MARKER.size()), SEEK_SET);
-    std::fwrite(STATS_MARKER.data(), STATS_MARKER.size(), 1, charfile);
     if (CharInfo.getVersion() < EnumCharVersion::v110)
     {
-        if (!writeStats_109(charfile))
+        std::uint16_t value = StatInfo.bits();
+        updateBits(current_bit_offset, sizeof(value) * 8, value);
+
+        // skip null byte if character version is less than 1.09
+        if (CharInfo.getVersion() < EnumCharVersion::v109)
         {
-            return false;
+            updateBits(current_bit_offset, sizeof(nullByte) * 8, nullByte);
+        }
+
+        // write basic stats
+        updateBits(current_bit_offset, sizeof(Cs.Strength) * 8, Cs.Strength);   // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.Energy) * 8, Cs.Energy);       // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.Dexterity) * 8, Cs.Dexterity); // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.Vitality) * 8, Cs.Vitality);   // always present so no need to check StatInfo bits
+
+        if ((StatInfo & EnumCharStatInfo::StatPoints) == EnumCharStatInfo::StatPoints)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.StatsLeft) * 8, Cs.StatsLeft);
+        }
+
+        if ((StatInfo & EnumCharStatInfo::SkillChoices) == EnumCharStatInfo::SkillChoices)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.SkillChoices) * 8, Cs.SkillChoices);
+        }
+
+        if ((StatInfo & EnumCharStatInfo::CurLife) == EnumCharStatInfo::CurLife)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.CurLife) * 8, Cs.CurLife);
+        }
+
+        updateBits(current_bit_offset, sizeof(Cs.MaxLife * 8), Cs.MaxLife);        // always present so no need to check StatInfo 
+        updateBits(current_bit_offset, sizeof(Cs.CurMana) * 8, Cs.CurMana);        // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.MaxMana) * 8, Cs.MaxMana);        // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.CurStamina) * 8, Cs.CurStamina);  // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.MaxStamina) * 8, Cs.MaxStamina);  // always present so no need to check StatInfo bits
+        updateBits(current_bit_offset, sizeof(Cs.Level) * 8, Cs.Level);            // always present so no need to check StatInfo bits
+
+        if ((StatInfo & EnumCharStatInfo::Experience) == EnumCharStatInfo::Experience)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.Experience) * 8, Cs.Experience);
+        }
+
+        if ((StatInfo & EnumCharStatInfo::GoldInBelt) == EnumCharStatInfo::GoldInBelt)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.GoldInBelt) * 8, Cs.GoldInBelt);
+        }
+
+        if ((StatInfo & EnumCharStatInfo::GoldInStash) == EnumCharStatInfo::GoldInStash)
+        {
+            updateBits(current_bit_offset, sizeof(Cs.GoldInStash) * 8, Cs.GoldInStash);
         }
     }
     else
     {
-        size_t current_bit_offset = 0;
         data.clear();
 
-        size_t totalBitsWritten = 0;
         for (std::uint16_t stat = 0; stat < STAT_MAX; ++stat)
         {
-            totalBitsWritten += updateStat(charfile, current_bit_offset, stat);
+            updateStat(current_bit_offset, stat);
         }
-        totalBitsWritten += updateStat(charfile, current_bit_offset, STAT_END_MARKER);
-
-        std::fflush(charfile);
-        if (totalBitsWritten == 0)
-        {
-            return false;
-        }
+        updateStat(current_bit_offset, STAT_END_MARKER);
     }
-
-    return writeSkills(charfile);
-}
-//---------------------------------------------------------------------------
-std::uint32_t d2ce::CharacterStats::getHeaderLocation()
-{
-    return stats_location >= 2 ? stats_location - 2 : 0;
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::resetStats(std::uint16_t lifePointsEarned, std::uint16_t statPointEarned, std::uint16_t skillPointsEarned)
@@ -2217,6 +2068,7 @@ void d2ce::CharacterStats::resetStats(std::uint16_t lifePointsEarned, std::uint1
     Cs.StatsLeft = (curLevel - 1) * 5 + statPointEarned;
 
     resetSkills(skillPointsEarned);
+    updateDataBuffer();
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateSkills(const std::array<std::uint8_t, NUM_OF_SKILLS>& updated_skills, std::uint16_t skillPointsEarned, std::uint32_t skillChoices)
@@ -2280,6 +2132,8 @@ void d2ce::CharacterStats::updateClass()
             Cs.CurMana = Cs.MaxMana;
         }
     }
+
+    updateDataBuffer();
 }
 //---------------------------------------------------------------------------
 std::string d2ce::CharacterStats::getAttributeJsonName(std::uint16_t stat, bool bSerializedFormat, bool bRemainder) const
@@ -2473,6 +2327,94 @@ void d2ce::CharacterStats::asJson(Json::Value& parent, bool bSerializedFormat) c
     skillsAsJson(parent, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
+/*
+   Thanks goes to Stoned2000 for making his checksum calculation source
+   available to the public.  The Visual Basic source for his editor can be
+   found at http://stoned.d2network.com.
+*/
+void d2ce::CharacterStats::calculateChecksum(long& checksum, std::uint8_t& overflow)
+{
+    if (CharInfo.getVersion() < EnumCharVersion::v109)
+    {
+        // checksum not supported
+        return;
+    }
+
+    for (auto& byteValue : STATS_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    std::uint32_t i = 0;
+    for (; i < data.size(); ++i)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += data[i] + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : SKILLS_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& byteValue : Skills)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    if (isPD2Format())
+    {
+        for (auto& byteValue : PD2Skills)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += byteValue + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
 void d2ce::CharacterStats::clear()
 {
     StatInfo = EnumCharStatInfo::All;
@@ -2500,8 +2442,6 @@ void d2ce::CharacterStats::clear()
     Cs.MaxGoldInStash = (CharInfo.getVersion() >= EnumCharVersion::v110) ? d2ce::GOLD_IN_STASH_LIMIT : 50000ui32;
     data.clear();
     Skills.fill(0);
-    stats_location = 0;
-    update_locations = true;
 
     min_hit_points = 0x100;
     min_stamina = 0x100;
@@ -2515,9 +2455,21 @@ void d2ce::CharacterStats::clear()
     max_experience = MAX_EXPERIENCE;
 }
 //---------------------------------------------------------------------------
+size_t d2ce::CharacterStats::getByteSize() const
+{
+    size_t totalSize = data.size() + STATS_MARKER.size() + SKILLS_MARKER.size() + Skills.size();
+    if (isPD2Format())
+    {
+        totalSize += PD2Skills.size();
+    }
+
+    return totalSize;
+}
+//---------------------------------------------------------------------------
 void d2ce::CharacterStats::clearSkillChoices()
 {
     Cs.SkillChoices = 0;
+    updateDataBuffer();
 }
 //---------------------------------------------------------------------------
 bool d2ce::CharacterStats::getSkillBonusPoints(std::vector<std::uint16_t>& points) const
@@ -2792,6 +2744,7 @@ void d2ce::CharacterStats::updateCharacterStats(const CharStats& cs)
             Cs.SkillChoices = maxSkills - curSkills;
         }
     }
+    updateDataBuffer();
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::CharacterStats::getLevel() const

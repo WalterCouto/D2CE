@@ -125,6 +125,8 @@ namespace d2ce
         void updateSocketedItemCount();
         void updateOffset(size_t& startOffset, ptrdiff_t diff);
 
+        void calculateChecksum(long& checksum, std::uint8_t& overflow);
+
     public:
         Item();
         Item(size_t itemsize);
@@ -363,14 +365,6 @@ namespace d2ce
         EnumItemVersion Version = APP_ITEM_VERSION;
         mutable std::uint16_t GameVersion = APP_ITEM_GAME_VERSION;
 
-        mutable std::uint32_t items_location = 0,
-            corpse_location = 0,
-            corpse_item_location = 0,
-            merc_location = 0,   // Expansion character only
-            golem_location = 0;  // Expansion character only
-
-        mutable std::uint16_t NumOfItems = 0; // # of items (according to file) in inventory excluding 
-                                              // gems in socketed items
         std::list<Item> Inventory;            // items in inventory
 
         std::vector<std::reference_wrapper<Item>> GPSs;       // inventory of all Gems, Potions or Skulls
@@ -387,7 +381,6 @@ namespace d2ce
         bool IsSharedStash = false;
 
         mutable CorpseHeader CorpseInfo;
-        mutable std::uint16_t NumOfCorpseItems = 0; // # of items included in the Corpse section (according to file), non-zero if you are currently dead
         mutable std::list<Item> CorpseItems;      // items on our Corpse
 
         // Expansion Character data
@@ -395,12 +388,10 @@ namespace d2ce
         mutable std::list<Item> MercItems;         // items mercenary is currently wearing.
         mutable std::uint64_t MercId_v100 = 0;     // 1.00 - 1.08
 
-        mutable std::uint8_t HasGolem = 0;         // Necromancer only, non-0 if you have a Golem
         mutable std::list<Item> GolemItem;         // Item for the Golem (only one item, but a list to keep memory stable)
 
         std::list<Item>& BufferItems;       // Buffer for items not in any inventory yet
 
-        bool update_locations = true;
         mutable bool isMercHired = false;
 
     private:
@@ -412,19 +403,19 @@ namespace d2ce
         void findItems();
         void findSharedStashItems();
 
-        bool readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
-        bool readSharedStashPage(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
-        bool fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<Item>& items);
+        bool readItems(std::FILE* charfile, std::list<Item>& items);
+        bool readSharedStashPage(std::FILE* charfile, std::list<Item>& items);
+        bool fillItemsArray(std::FILE* charfile, std::uint16_t numItems, std::list<Item>& items);
         bool readItemsList(const Json::Value& itemListroot, bool bSerializedFormat, std::list<Item>& items);
-        bool readItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items);
+        bool readItems(const Json::Value& root, bool bSerializedFormat, std::list<Item>& items);
         bool fillItemsArray(const Json::Value& itemsRoot, bool bSerializedFormat, std::list<Item>& items);
 
         bool readCorpseItems(std::FILE* charfile);
-        bool readCorpseItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
+        bool readCorpseItems(const Json::Value& root, bool bSerializedFormat);
         void readMercItems(std::FILE* charfile);
-        void readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
+        void readMercItems(const Json::Value& root, bool bSerializedFormat);
         void readGolemItem(std::FILE* charfile);
-        void readGolemItem(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
+        void readGolemItem(const Json::Value& root, bool bSerializedFormat);
 
         bool writeCorpseItems(std::FILE* charfile) const;
         bool writeMercItems(std::FILE* charfile) const;
@@ -432,7 +423,7 @@ namespace d2ce
 
         bool readItems(const Character& charInfo, std::FILE* charfile);
         bool readSharedStashPage(EnumCharVersion version, std::FILE* charfile);
-        bool readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo, std::FILE* charfile);
+        bool readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo);
         bool writeItems(std::FILE* charfile, bool isExpansion = false, bool hasMercID = false) const;
         bool writeSharedStashPage(std::FILE* charfile) const;
 
@@ -449,6 +440,8 @@ namespace d2ce
 
         void verifyBeltSlots();
         void verifyRestrictedItems();
+
+        void calculateChecksum(long& checksum, std::uint8_t& overflow, bool isExpansion, bool hasMercID);
 
     public:
         Items();

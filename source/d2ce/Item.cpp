@@ -1147,7 +1147,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
     std::memcpy(strcode.data(), itemType.code.c_str(), std::min(itemType.code.size(), size_t(3)));
 
-    // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80
+    // reserve enough space to reduce chance of reallocation (haven't seen an item size bigger then 80 bytes)
     data.reserve(80);
 
     std::uint64_t itemCode = 0;
@@ -2889,8 +2889,15 @@ d2ce::Item::Item(EnumItemVersion itemVersion, bool isExpansion, const std::files
 
     case EnumItemVersion::v108: // v1.08 item
     case EnumItemVersion::v109: // v1.09 item
-    case EnumItemVersion::v110: // v1.10 - v1.14d item 
         itemRoot["Version"] = "100";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
+    case EnumItemVersion::v110: // v1.10 - v1.14d item 
+        itemRoot["Version"] = "101";
         if (itemRoot.isMember("IsV104"))
         {
             itemRoot["IsV104"] = false;
@@ -4605,6 +4612,40 @@ void d2ce::Item::updateOffset(size_t& startOffset, ptrdiff_t diff)
         {
             CheckOffsetValue(GET_BIT_OFFSET(offsetIdx), startOffset, bFoundMatch, diff);
         }
+    }
+}
+//---------------------------------------------------------------------------
+/*
+   Thanks goes to Stoned2000 for making his checksum calculation source
+   available to the public.  The Visual Basic source for his editor can be
+   found at http://stoned.d2network.com.
+*/
+void d2ce::Item::calculateChecksum(long& checksum, std::uint8_t& overflow)
+{
+    if (ItemVersion < EnumItemVersion::v109)
+    {
+        // checksum not supported
+        return;
+    }
+
+    for (auto& byteValue : data)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    // now calculate checksum for child items
+    for (auto& item : SocketedItems)
+    {
+        item.calculateChecksum(checksum, overflow);
     }
 }
 //---------------------------------------------------------------------------
@@ -11117,8 +11158,15 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
 
     case EnumItemVersion::v108: // v1.08 item
     case EnumItemVersion::v109: // v1.09 item
+        itemRoot["Version"] = "100";
+        if (itemRoot.isMember("IsV104"))
+        {
+            itemRoot["IsV104"] = false;
+        }
+        break;
+
     case EnumItemVersion::v110: // v1.10 - v1.14d item 
-        itemRoot["Version"] = "100"; 
+        itemRoot["Version"] = "101"; 
         if (itemRoot.isMember("IsV104"))
         {
             itemRoot["IsV104"] = false;
@@ -15453,49 +15501,57 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
             else
             {
                 rawVersion = bSerializedFormat ? std::uint16_t(std::stoul(node.asString(), nullptr, 10)) : std::uint16_t(node.asInt64());
-                if (version < EnumItemVersion::v110) // pre-1.10 character file
+                switch (rawVersion)
                 {
-                    switch (rawVersion)
+                case 100:
+                case 101:
+                    if (version < EnumItemVersion::v110) // pre-1.10 character file
                     {
-                    case 100:
-                    case 101:
-                    case 5:
                         rawVersion = 100;
-                        break;
-
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 4:
-                        rawVersion = 1;
-                        break;
-
-                    default:
-                        rawVersion = isExpansion ? 100 : 1;
-                        break;
                     }
-                }
-                else
-                {
-                    switch (rawVersion)
+                    break;
+
+                case 5:
+                    if (version < EnumItemVersion::v110) // pre-1.10 character file
                     {
-                    case 100:
-                    case 101:
-                    case 5:
-                        rawVersion = 101;
-                        break;
-
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 4:
-                        rawVersion = 2;
-                        break;
-
-                    default:
-                        rawVersion = isExpansion ? 101 : 2;
-                        break;
+                        rawVersion = 100;
                     }
+                    else
+                    {
+                        rawVersion = 101;
+                    }
+                    break;
+
+                case 0:
+                case 1:
+                case 2:
+                    if (version < EnumItemVersion::v110) // pre-1.10 character file
+                    {
+                        rawVersion = 1;
+                    }
+                    break;
+
+                case 4:
+                    if (version < EnumItemVersion::v110) // pre-1.10 character file
+                    {
+                        rawVersion = 1;
+                    }
+                    else
+                    {
+                        rawVersion = 2;
+                    }
+                    break;
+
+                default:
+                    if (version < EnumItemVersion::v110) // pre-1.10 character file
+                    {
+                        rawVersion = isExpansion ? 100 : 1;
+                    }
+                    else
+                    {
+                        rawVersion = isExpansion ? 101 : 2;
+                    }
+                    break;
                 }
             }
         }
@@ -17141,7 +17197,6 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
 
     case EnumItemVersion::v108: // v1.08
     case EnumItemVersion::v109: // v1.09
-    case EnumItemVersion::v110: // v1.10 - v1.14d
         switch (rawVersion)
         {
         case 100:
@@ -17162,6 +17217,36 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         default:
             gameVersion = isExpansion ? 100 : 1;
             rawVersion = isExpansion ? 100 : 1;
+            break;
+        }
+        break;
+    case EnumItemVersion::v110: // v1.10 - v1.14d
+        switch (rawVersion)
+        {
+        case 100:
+        case 101:
+            gameVersion = 100;
+            break;
+
+        case 5:
+            gameVersion = 100;
+            rawVersion = 101;
+            break;
+
+        case 1:
+        case 2:
+            gameVersion = 1;
+            break;
+
+        case 0:
+        case 4:
+            gameVersion = 1;
+            rawVersion = 2;
+            break;
+
+        default:
+            gameVersion = isExpansion ? 100 : 1;
+            rawVersion = isExpansion ? 101 : 1;
             break;
         }
         break;
@@ -20209,67 +20294,30 @@ void d2ce::Items::findSharedStashItems()
     }
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<d2ce::Item>& items)
+bool d2ce::Items::readItems(std::FILE* charfile, std::list<d2ce::Item>& items)
 {
-    numItems = 0;
     items.clear();
-    if (update_locations)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[0])
     {
-        // find items location
-        location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)MIN_START_STATS_POS)
-        {
-            cur_pos = MIN_START_STATS_POS;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[1])
-            {
-                continue;
-            }
-
-            // found item marker
-            std::fread(&numItems, sizeof(numItems), 1, charfile);
-            location = std::ftell(charfile);
-            break;
-        }
-
-        if (location == 0)
-        {
-            return false;
-        }
-    }
-    else
-    {
-        if (location == 0)
-        {
-            return false;
-        }
-
-        std::fseek(charfile, location - sizeof(numItems), SEEK_SET);
-        std::fread(&numItems, sizeof(numItems), 1, charfile);
+        return false;
     }
 
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[1])
+    {
+        return false;
+    }
+
+    // found item marker
+    std::uint16_t numItems = 0;
+    std::fread(&numItems, sizeof(numItems), 1, charfile);
     if (numItems > 0)
     {
-        if (!fillItemsArray(charfile, location, numItems, items))
+        if (!fillItemsArray(charfile, numItems, items))
         {
             // Corrupt file
-            if (update_locations)
-            {
-                location = 0;
-            }
             return false;
         }
     }
@@ -20277,60 +20325,30 @@ bool d2ce::Items::readItems(std::FILE* charfile, std::uint32_t& location, std::u
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readSharedStashPage(std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<d2ce::Item>& items)
+bool d2ce::Items::readSharedStashPage(std::FILE* charfile, std::list<d2ce::Item>& items)
 {
-    numItems = 0;
     items.clear();
-    if (update_locations)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[0])
     {
-        // find items location
-        location = 0;
-        std::uint8_t value = 0;
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[1])
-            {
-                continue;
-            }
-
-            // found item marker
-            std::fread(&numItems, sizeof(numItems), 1, charfile);
-            location = std::ftell(charfile);
-            break;
-        }
-
-        if (location == 0)
-        {
-            return false;
-        }
-    }
-    else
-    {
-        if (location == 0)
-        {
-            return false;
-        }
-
-        std::fseek(charfile, location - sizeof(numItems), SEEK_SET);
-        std::fread(&numItems, sizeof(numItems), 1, charfile);
+        return false;
     }
 
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[1])
+    {
+        return false;
+    }
+
+    // found item marker
+    std::uint16_t numItems = 0;
+    std::fread(&numItems, sizeof(numItems), 1, charfile);
     if (numItems > 0)
     {
-        if (!fillItemsArray(charfile, location, numItems, items))
+        if (!fillItemsArray(charfile, numItems, items))
         {
             // Corrupt file
-            if (update_locations)
-            {
-                location = 0;
-            }
             return false;
         }
     }
@@ -20338,9 +20356,8 @@ bool d2ce::Items::readSharedStashPage(std::FILE* charfile, std::uint32_t& locati
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint32_t location, std::uint16_t numItems, std::list<d2ce::Item>& items)
+bool d2ce::Items::fillItemsArray(std::FILE* charfile, std::uint16_t numItems, std::list<d2ce::Item>& items)
 {
-    std::fseek(charfile, location, SEEK_SET);
     while (items.size() < numItems)
     {
         if (feof(charfile))
@@ -20381,9 +20398,8 @@ bool d2ce::Items::readItemsList(const Json::Value& itemListroot, bool bSerialize
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile, std::uint32_t& location, std::uint16_t& numItems, std::list<Item>& items)
+bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, std::list<Item>& items)
 {
-    numItems = 0;
     bool checkItemCount = false;
     std::uint16_t expectedNumOfItems = 0;
     Json::Value playerItemsRoot;
@@ -20399,7 +20415,6 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, std
                 if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
                 {
                     // bad header
-                    location = 0;
                     return false;
                 }
             }
@@ -20419,29 +20434,14 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, std
     if (!readItemsList(playerItemsRoot, bSerializedFormat, items))
     {
         // Corrupt file
-        location = 0;
         return false;
     }
 
-    numItems = std::uint16_t(items.size());
+    std::uint16_t numItems = std::uint16_t(items.size());
     if (checkItemCount && (numItems != expectedNumOfItems))
     {
         // Corrupt file
-        location = 0;
         return false;
-    }
-
-    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-    std::fwrite(&numItems, sizeof(numItems), 1, charfile);
-    location = std::ftell(charfile);
-    for (auto& item : items)
-    {
-        if (!item.writeItem(charfile))
-        {
-            // Corrupt file
-            location = 0;
-            return false;
-        }
     }
     return true;
 }
@@ -20477,62 +20477,24 @@ bool d2ce::Items::fillItemsArray(const Json::Value& itemsRoot, bool bSerializedF
 bool d2ce::Items::readCorpseItems(std::FILE* charfile)
 {
     CorpseInfo.clear();
-    if (update_locations)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[0])
     {
-        // find items location
-        corpse_location = 0;
-        corpse_item_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)MIN_START_STATS_POS)
-        {
-            cur_pos = MIN_START_STATS_POS;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[1])
-            {
-                continue;
-            }
-
-            // found item marker
-            std::fread(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
-            if (CorpseInfo.IsDead > 1)
-            {
-                return false;
-            }
-
-            corpse_location = std::ftell(charfile);
-            break;
-        }
-
-        if (corpse_location == 0)
-        {
-            return false;
-        }
+        return false;
     }
-    else
-    {
-        if (corpse_location == 0)
-        {
-            return false;
-        }
 
-        std::fseek(charfile, corpse_location - sizeof(CorpseInfo.IsDead), SEEK_SET);
-        std::fread(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
-        if (CorpseInfo.IsDead > 1)
-        {
-            return false;
-        }
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != ITEM_MARKER[1])
+    {
+        return false;
+    }
+
+    // found item marker
+    std::fread(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
+    if (CorpseInfo.IsDead > 1)
+    {
+        return false;
     }
 
     if (CorpseInfo.IsDead > 0)
@@ -20540,25 +20502,15 @@ bool d2ce::Items::readCorpseItems(std::FILE* charfile)
         std::fread(&CorpseInfo.Unknown, sizeof(CorpseInfo.Unknown), 1, charfile);
         std::fread(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
         std::fread(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
-        if (!readItems(charfile, corpse_item_location, NumOfCorpseItems, CorpseItems))
+        if (!readItems(charfile, CorpseItems))
         {
-            if (update_locations)
-            {
-                corpse_location = 0;
-            }
-
             return false;
         }
     }
-    else
-    {
-        corpse_item_location = 0;
-    }
-
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedFormat)
 {
     CorpseInfo.clear();
 
@@ -20615,7 +20567,6 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
                         if (std::uint16_t(value.asInt64()) != *((std::uint16_t*)ITEM_MARKER.data()))
                         {
                             // bad header
-                            corpse_location = 0;
                             return false;
                         }
                     }
@@ -20634,13 +20585,10 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
         }
     }
 
-    std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
     if (CorpseInfo.IsDead != 1)
     {
         CorpseInfo.clear();
-        NumOfCorpseItems = 0;
         CorpseItems.clear();
-        corpse_item_location = 0;
     }
     else if (!corpseLocationRoot.isNull())
     {
@@ -20663,45 +20611,31 @@ bool d2ce::Items::readCorpseItems(const Json::Value& root, bool bSerializedForma
         }
     }
 
-    std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
-    std::fflush(charfile);
-    corpse_location = std::ftell(charfile);
-
+    std::uint16_t numItems = 0;
     if (CorpseInfo.IsDead > 0)
     {
-        std::fwrite(&CorpseInfo.Unknown, sizeof(CorpseInfo.Unknown), 1, charfile);
-        std::fwrite(&CorpseInfo.X, sizeof(CorpseInfo.X), 1, charfile);
-        std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
-
         if (!corpseItemsRoot.isNull())
         {
             if (!readItemsList(corpseItemsRoot, bSerializedFormat, CorpseItems))
             {
                 // Corrupt file
-                corpse_location = 0;
                 return false;
             }
-
-            NumOfCorpseItems = std::uint16_t(CorpseItems.size());
-            std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-            std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
-            corpse_item_location = std::ftell(charfile);
-            for (auto& item : CorpseItems)
-            {
-                if (!item.writeItem(charfile))
-                {
-                    // Corrupt file
-                    corpse_item_location = 0;
-                    return false;
-                }
-            }
         }
+
+        numItems = (std::uint16_t)CorpseItems.size();
     }
 
-    if (checkItemCount && (NumOfCorpseItems != expectedNumOfItems))
+    if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
+    {
+        CorpseInfo.clear();
+        numItems = 0;
+        CorpseItems.clear();
+    }
+
+    if (checkItemCount && (numItems != expectedNumOfItems))
     {
         // Corrupt file
-        corpse_location = 0;
         return false;
     }
 
@@ -20739,71 +20673,36 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
     }
 
     bool bHasMercId = true;
-    if (update_locations)
+    MercItems.clear();
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != MERC_ITEM_MARKER[0])
     {
-        bool bFoundMercMarker = false;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)MIN_START_STATS_POS)
-        {
-            cur_pos = MIN_START_STATS_POS;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != MERC_ITEM_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != MERC_ITEM_MARKER[1])
-            {
-                continue;
-            }
-
-            // found merc Item marker
-            bFoundMercMarker = true;
-            break;
-        }
-
-        if (!bFoundMercMarker)
-        {
-            return;
-        }
-
-        // look ahead for no merc case
-        if (!feof(charfile))
-        {
-            auto startLoc = std::ftell(charfile);
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != ITEM_MARKER[0])
-            {
-                bHasMercId = false;
-            }
-
-            std::fseek(charfile, startLoc, SEEK_SET);
-        }
+        return;
     }
-    else
+
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != MERC_ITEM_MARKER[1])
     {
-        if (merc_location == 0)
+        return;
+    }
+
+    // look ahead for no merc case
+    if (!feof(charfile))
+    {
+        auto startLoc = std::ftell(charfile);
+        std::fread(&value, sizeof(value), 1, charfile);
+        if (value != ITEM_MARKER[0])
         {
             bHasMercId = false;
-            isMercHired = false;
         }
-        else
-        {
-            std::fseek(charfile, merc_location - 4, SEEK_SET);
-        }
+
+        std::fseek(charfile, startLoc, SEEK_SET);
     }
 
     if (bHasMercId)
     {
-        readItems(charfile, merc_location, NumOfMercItems, MercItems);
-        if (merc_location == 0)
+        if(!readItems(charfile, MercItems))
         {
             return;
         }
@@ -20813,8 +20712,10 @@ void d2ce::Items::readMercItems(std::FILE* charfile)
     readGolemItem(charfile);
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat)
 {
+    isMercHired = false;
+
     if (!isExpansionItems())
     {
         if (Version < EnumItemVersion::v109)
@@ -20825,9 +20726,6 @@ void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat,
             {
                 MercId_v100 = std::uint64_t(std::stoull(jsonValue.asString(), nullptr, 16));
             }
-
-            std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-            std::fwrite(&MercId_v100, 6, 1, charfile);
         }
         return;
     }
@@ -20845,6 +20743,11 @@ void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat,
             if (!value.isNull())
             {
                 mercId = bSerializedFormat ? std::uint32_t(value.asInt64()) : std::uint32_t(std::stoul(value.asString(), nullptr, 16));
+                isMercHired = mercId != 0;
+            }
+            else
+            {
+                isMercHired = false;
             }
         }
 
@@ -20892,109 +20795,49 @@ void d2ce::Items::readMercItems(const Json::Value& root, bool bSerializedFormat,
         }
     }
 
-    std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
     if (!readItemsList(mercItemsRoot, bSerializedFormat, MercItems))
     {
         // Corrupt file
-        merc_location = 0;
+        isMercHired = false;
         return;
     }
 
-    NumOfMercItems = std::uint16_t(MercItems.size());
-    if (mercId != 0 || (NumOfMercItems > 0))
-    {
-        std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-        std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
-        merc_location = std::ftell(charfile);
-        isMercHired = true;
-        for (auto& item : MercItems)
-        {
-            if (!item.writeItem(charfile))
-            {
-                // Corrupt file
-                merc_location = 0;
-                return;
-            }
-        }
-    }
-
-    readGolemItem(root, bSerializedFormat, charfile);
+    readGolemItem(root, bSerializedFormat);
 }
 //---------------------------------------------------------------------------
 void d2ce::Items::readGolemItem(std::FILE* charfile)
 {
-    HasGolem = 0;
     GolemItem.clear();
-    if (update_locations)
+    std::uint8_t value = 0;
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != GOLEM_ITEM_MARKER[0])
     {
-        // find items location
-        golem_location = 0;
-        std::uint8_t value = 0;
-        auto cur_pos = std::ftell(charfile);
-        if (cur_pos < (long)items_location)
-        {
-            cur_pos = items_location;
-            std::fseek(charfile, cur_pos, SEEK_SET);
-        }
-
-        while (!feof(charfile))
-        {
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != GOLEM_ITEM_MARKER[0])
-            {
-                continue;
-            }
-
-            std::fread(&value, sizeof(value), 1, charfile);
-            if (value != GOLEM_ITEM_MARKER[1])
-            {
-                continue;
-            }
-
-            // found golem item marker (0x464B). 
-            std::fread(&HasGolem, sizeof(HasGolem), 1, charfile);
-            golem_location = std::ftell(charfile);
-            break;
-        }
-
-        if (golem_location == 0)
-        {
-            return;
-        }
-    }
-    else
-    {
-        if (golem_location == 0)
-        {
-            return;
-        }
-
-        std::fseek(charfile, golem_location - sizeof(HasGolem), SEEK_SET);
-        std::fread(&HasGolem, sizeof(HasGolem), 1, charfile);
+        return;
     }
 
-    if (HasGolem != 0)
+    std::fread(&value, sizeof(value), 1, charfile);
+    if (value != GOLEM_ITEM_MARKER[1])
+    {
+        return;
+    }
+
+    // found golem item marker (0x464B). 
+    std::uint8_t hasGolem = 0;
+    std::fread(&hasGolem, sizeof(hasGolem), 1, charfile);
+    if (hasGolem != 0)
     {
         GolemItem.resize(GolemItem.size() + 1);
         auto& golemItem = GolemItem.back();
         if (!golemItem.readItem(Version, isExpansionItems(), charfile))
         {
             // Corrupt file
-            if (update_locations)
-            {
-                golem_location = 0;
-            }
-
-            golemItem.clear();
-            HasGolem = 0;
+            GolemItem.clear();
         }
     }
 }
 //---------------------------------------------------------------------------
-void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat)
 {
-    golem_location = 0;
-    HasGolem = 0;
     GolemItem.clear();
 
     Json::Value golemItemRoot;
@@ -21018,8 +20861,7 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
                 value = golemItemRoot["Exists"];
                 if (!value.isNull())
                 {
-                    HasGolem = value.asBool() ? 1 : 0;
-                    if (HasGolem)
+                    if (value.asBool())
                     {
                         golemItemRoot = golemItemRoot["Item"];
                     }
@@ -21045,18 +20887,6 @@ void d2ce::Items::readGolemItem(const Json::Value& root, bool bSerializedFormat,
             GolemItem.clear();
         }
     }
-
-    std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
-    HasGolem = GolemItem.size() > 0 ? 1 : 0;
-    std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
-    golem_location = std::ftell(charfile);
-    if (!GolemItem.empty())
-    {
-        if (!GolemItem.back().writeItem(charfile))
-        {
-            golem_location = 0;
-        }
-    }
 }
 //---------------------------------------------------------------------------
 bool d2ce::Items::writeCorpseItems(std::FILE* charfile) const
@@ -21065,14 +20895,11 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile) const
     if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
     {
         CorpseInfo.clear();
-        NumOfCorpseItems = 0;
         CorpseItems.clear();
-        corpse_item_location = 0;
     }
 
     std::fwrite(&CorpseInfo.IsDead, sizeof(CorpseInfo.IsDead), 1, charfile);
     std::fflush(charfile);
-    corpse_location = std::ftell(charfile);
 
     if (CorpseInfo.IsDead > 0)
     {
@@ -21081,9 +20908,8 @@ bool d2ce::Items::writeCorpseItems(std::FILE* charfile) const
         std::fwrite(&CorpseInfo.Y, sizeof(CorpseInfo.Y), 1, charfile);
 
         std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-        NumOfCorpseItems = (std::uint16_t)CorpseItems.size();
-        std::fwrite(&NumOfCorpseItems, sizeof(NumOfCorpseItems), 1, charfile);
-        corpse_item_location = std::ftell(charfile);
+        std::uint16_t numItems = (std::uint16_t)CorpseItems.size();
+        std::fwrite(&numItems, sizeof(numItems), 1, charfile);
         for (auto& item : CorpseItems)
         {
             if (!item.writeItem(charfile))
@@ -21109,12 +20935,12 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile) const
     }
 
     std::fwrite(MERC_ITEM_MARKER.data(), MERC_ITEM_MARKER.size(), 1, charfile);
-    NumOfMercItems = (std::uint16_t)MercItems.size();
-    if (NumOfMercItems > 0 || isMercHired)
+    std::uint16_t numItems = (std::uint16_t)MercItems.size();
+    if (numItems > 0 || isMercHired)
     {
         isMercHired = true;
         std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-        std::fwrite(&NumOfMercItems, sizeof(NumOfMercItems), 1, charfile);
+        std::fwrite(&numItems, sizeof(numItems), 1, charfile);
         for (auto& item : MercItems)
         {
             if (!item.writeItem(charfile))
@@ -21130,9 +20956,8 @@ bool d2ce::Items::writeMercItems(std::FILE* charfile) const
 bool d2ce::Items::writeGolemItem(std::FILE* charfile) const
 {
     std::fwrite(GOLEM_ITEM_MARKER.data(), GOLEM_ITEM_MARKER.size(), 1, charfile);
-    HasGolem = GolemItem.empty() ? 0 : 1;
-    std::fwrite(&HasGolem, sizeof(HasGolem), 1, charfile);
-    golem_location = std::ftell(charfile);
+    std::uint8_t hasGolem = GolemItem.empty() ? 0 : 1;
+    std::fwrite(&hasGolem, sizeof(hasGolem), 1, charfile);
     if (!GolemItem.empty())
     {
         if (!GolemItem.back().writeItem(charfile))
@@ -21169,25 +20994,23 @@ bool d2ce::Items::readItems(const Character& charInfo, std::FILE* charfile)
         break;
     }
 
-    update_locations = items_location == 0 ? true : false;
     isMercHired = false;
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
-    if (!readItems(charfile, items_location, NumOfItems, Inventory) || items_location == 0)
+    if (!readItems(charfile, Inventory))
     {
         return false;
     }
 
-    if (!readCorpseItems(charfile) || corpse_location == 0)
+    if (!readCorpseItems(charfile))
     {
         return false;
     }
 
     readMercItems(charfile);
 
-    update_locations = false;
     findItems();
     return true;
 }
@@ -21215,23 +21038,21 @@ bool d2ce::Items::readSharedStashPage(EnumCharVersion version, std::FILE* charfi
         break;
     }
 
-    update_locations = items_location == 0 ? true : false;
     isMercHired = false;
     GPSs.clear();
     Stackables.clear();
     Armor.clear();
     Weapons.clear();
-    if (!readSharedStashPage(charfile, items_location, NumOfItems, Inventory) || items_location == 0)
+    if (!readSharedStashPage(charfile, Inventory))
     {
         return false;
     }
 
-    update_locations = false;
     findSharedStashItems();
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo, std::FILE* charfile)
+bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, const Character& charInfo)
 {
     clear();
     bool isExpansion = charInfo.isExpansionCharacter();
@@ -21246,32 +21067,30 @@ bool d2ce::Items::readItems(const Json::Value& root, bool bSerializedFormat, con
         GameVersion = isExpansion ? 100 : 0;
         break;
 
-    case EnumCharVersion::v108: // v1.08
-    case EnumCharVersion::v109: // v1.09
-    case EnumCharVersion::v110: // v1.10 - v1.14d
+    case EnumCharVersion::v108:  // v1.08
+    case EnumCharVersion::v109:  // v1.09
+    case EnumCharVersion::v110:  // v1.10 - v1.14d
     case EnumCharVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected
-    case EnumCharVersion::v120: // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
-    case EnumCharVersion::v140: // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    case EnumCharVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumCharVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
         GameVersion = isExpansion ? 100 : 1;
         break;
     }
 
-    update_locations = true;
     isMercHired = false;
-    if (!readItems(root, bSerializedFormat, charfile, items_location, NumOfItems, Inventory) || items_location == 0)
+    if (!readItems(root, bSerializedFormat, Inventory))
     {
         return false;
     }
 
-    if (!readCorpseItems(root, bSerializedFormat, charfile) || corpse_location == 0)
+    if (!readCorpseItems(root, bSerializedFormat))
     {
         return false;
     }
 
-    readMercItems(root, bSerializedFormat, charfile);
+    readMercItems(root, bSerializedFormat);
 
-    update_locations = false;
     findItems();
     return true;
 }
@@ -21305,8 +21124,8 @@ bool d2ce::Items::writeItems(std::FILE* charfile, bool isExpansion, bool hasMerc
 
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-    NumOfItems = (std::uint16_t)Inventory.size();
-    std::fwrite(&NumOfItems, sizeof(NumOfItems), 1, charfile);
+    std::uint16_t numItems = (std::uint16_t)Inventory.size();
+    std::fwrite(&numItems, sizeof(numItems), 1, charfile);
     for (auto& item : Inventory)
     {
         if (!item.writeItem(charfile))
@@ -21333,8 +21152,8 @@ bool d2ce::Items::writeSharedStashPage(std::FILE* charfile) const
 {
     // Write Items
     std::fwrite(ITEM_MARKER.data(), ITEM_MARKER.size(), 1, charfile);
-    NumOfItems = (std::uint16_t)Inventory.size();
-    std::fwrite(&NumOfItems, sizeof(NumOfItems), 1, charfile);
+    std::uint16_t numItems = (std::uint16_t)Inventory.size();
+    std::fwrite(&numItems, sizeof(numItems), 1, charfile);
     for (auto& item : Inventory)
     {
         if (!item.writeItem(charfile))
@@ -21699,7 +21518,6 @@ void d2ce::Items::verifyBeltSlots()
                 {
                     const auto& itemType = iter->getItemTypeHelper();
                     itemToMove.splice(itemToMove.end(), Inventory, iter);
-                    --NumOfItems;
                     if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
                     {
                         d2ce::removeItem_if(GPSs, ItemPredicate(itemRef.get()));
@@ -21729,7 +21547,6 @@ void d2ce::Items::verifyBeltSlots()
             {
                 invLocationReference.push_back(item);
             }
-            ++NumOfItems;
 
             const auto& itemType = item.getItemTypeHelper();
             if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
@@ -21791,7 +21608,6 @@ void d2ce::Items::verifyBeltSlots()
             {
                 pInvLocationReference->push_back(item);
             }
-            ++NumOfItems;
 
             const auto& itemType = item.getItemTypeHelper();
             if (itemType.isPotion() || itemType.isGem() || itemType.isRune())
@@ -21917,7 +21733,6 @@ void d2ce::Items::verifyRestrictedItems()
                 {
                     invLocationReference.push_back(item);
                 }
-                ++NumOfItems;
 
                 auto& itemType = item.getItemTypeHelper();
                 if (itemType.isStackable())
@@ -21972,7 +21787,6 @@ void d2ce::Items::verifyRestrictedItems()
         {
             const auto& itemType = iter->getItemTypeHelper();
             itemToMove.splice(itemToMove.end(), Inventory, iter);
-            --NumOfItems;
 
             if (itemType.isStackable())
             {
@@ -22011,6 +21825,284 @@ void d2ce::Items::verifyRestrictedItems()
     BufferItems.splice(BufferItems.end(), itemToMove, itemToMove.begin(), itemToMove.end());
 }
 //---------------------------------------------------------------------------
+/*
+   Thanks goes to Stoned2000 for making his checksum calculation source
+   available to the public.  The Visual Basic source for his editor can be
+   found at http://stoned.d2network.com.
+*/
+void d2ce::Items::calculateChecksum(long& checksum, std::uint8_t& overflow, bool isExpansion, bool hasMercID)
+{
+    switch (getDefaultItemVersion())
+    {
+    case EnumItemVersion::v100: // v1.00 - v1.03 item
+    case EnumItemVersion::v104: // v1.04 - v1.06 item
+    case EnumItemVersion::v107: // v1.07 item
+    case EnumItemVersion::v108: // v1.08 item
+        return; // checksum not supported
+
+    case EnumItemVersion::v109:  // v1.09 item
+    case EnumItemVersion::v110:  // v1.10 - v1.14d item
+    case EnumItemVersion::v100R: // v1.0.x - v1.1.x Diablo II: Resurrected item
+    case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
+    case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
+    default:
+        GameVersion = isExpansion ? 100 : 1;
+        break;
+    }
+
+    isMercHired = !MercItems.empty() || hasMercID;
+
+    // Calulate checksum for inventory
+    for (auto& byteValue : ITEM_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    std::uint16_t numItems = (std::uint16_t)Inventory.size();
+    auto* pBytes = (std::uint8_t*)&numItems;
+    for (size_t i = 0; i < sizeof(numItems); ++i)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += pBytes[i] + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    for (auto& item : Inventory)
+    {
+        item.calculateChecksum(checksum, overflow);
+    }
+
+    // Calulate checksum for corpse
+    for (auto& byteValue : ITEM_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    if (CorpseInfo.IsDead != 1 || CorpseItems.empty())
+    {
+        CorpseInfo.clear();
+        CorpseItems.clear();
+    }
+
+    pBytes = (std::uint8_t*)&CorpseInfo.IsDead;
+    for (size_t i = 0; i < sizeof(CorpseInfo.IsDead); ++i)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += pBytes[i] + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    if (CorpseInfo.IsDead > 0)
+    {
+        pBytes = (std::uint8_t*)&CorpseInfo.Unknown;
+        for (size_t i = 0; i < sizeof(CorpseInfo.Unknown); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        pBytes = (std::uint8_t*)&CorpseInfo.X;
+        for (size_t i = 0; i < sizeof(CorpseInfo.X); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        pBytes = (std::uint8_t*)&CorpseInfo.Y;
+        for (size_t i = 0; i < sizeof(CorpseInfo.Y); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        for (auto& byteValue : ITEM_MARKER)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += byteValue + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        numItems = (std::uint16_t)CorpseItems.size();
+        pBytes = (std::uint8_t*)&numItems;
+        for (size_t i = 0; i < sizeof(numItems); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        for (auto& item : CorpseItems)
+        {
+            item.calculateChecksum(checksum, overflow);
+        }
+    }
+
+    if (!isExpansionItems())
+    {
+        return;
+    }
+
+    // Calulate checksum for mercenary
+    for (auto& byteValue : MERC_ITEM_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    numItems = (std::uint16_t)MercItems.size();
+    if (numItems > 0 || isMercHired)
+    {
+        isMercHired = true;
+        for (auto& byteValue : ITEM_MARKER)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += byteValue + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        pBytes = (std::uint8_t*)&numItems;
+        for (size_t i = 0; i < sizeof(numItems); ++i)
+        {
+            checksum <<= 1; // doubles the checksum result by left shifting once
+            checksum += pBytes[i] + overflow;
+            if (checksum < 0)
+            {
+                overflow = 1;
+            }
+            else
+            {
+                overflow = 0;
+            }
+        }
+
+        for (auto& item : MercItems)
+        {
+            item.calculateChecksum(checksum, overflow);
+        }
+    }
+
+    // Calulate checksum for Golem
+    for (auto& byteValue : GOLEM_ITEM_MARKER)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += byteValue + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    std::uint8_t hasGolem = GolemItem.empty() ? 0 : 1;
+    pBytes = &hasGolem;
+    for (size_t i = 0; i < sizeof(hasGolem); ++i)
+    {
+        checksum <<= 1; // doubles the checksum result by left shifting once
+        checksum += pBytes[i] + overflow;
+        if (checksum < 0)
+        {
+            overflow = 1;
+        }
+        else
+        {
+            overflow = 0;
+        }
+    }
+
+    if (!GolemItem.empty())
+    {
+        GolemItem.back().calculateChecksum(checksum, overflow);
+    }
+}
+//---------------------------------------------------------------------------
 d2ce::Items::Items() : BufferItems(Buffer)
 {
 }
@@ -22039,26 +22131,15 @@ d2ce::Items& d2ce::Items::operator=(const Items& other)
     Version = other.Version;
     GameVersion = other.GameVersion;
 
-    items_location = other.items_location;
-    corpse_location = other.corpse_location;
-    corpse_item_location = other.corpse_item_location;
-    merc_location = other.merc_location;
-    golem_location = other.golem_location;
-
-    NumOfItems = other.NumOfItems;
     Inventory = other.Inventory;
 
     CorpseInfo = other.CorpseInfo;
-    NumOfCorpseItems = other.NumOfCorpseItems;
     CorpseItems = other.CorpseItems;
 
-    NumOfMercItems = other.NumOfMercItems;
     MercItems = other.MercItems;
 
-    HasGolem = other.HasGolem;
     GolemItem = other.GolemItem;
 
-    update_locations = other.update_locations;
     isMercHired = other.isMercHired;
 
     Buffer = other.Buffer;
@@ -22084,12 +22165,6 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
     Version = std::exchange(other.Version, APP_ITEM_VERSION);
     GameVersion = std::exchange(other.GameVersion, APP_ITEM_GAME_VERSION);
 
-    items_location = std::exchange(other.items_location, 0);
-    corpse_location = std::exchange(other.corpse_location, 0);
-    corpse_item_location = std::exchange(other.corpse_item_location, 0);
-    merc_location = std::exchange(other.merc_location, 0);
-    golem_location = std::exchange(other.golem_location, 0);
-
     // copy reference to items
     GPSs.swap(other.GPSs);
     other.Inventory.clear();
@@ -22100,24 +22175,19 @@ d2ce::Items& d2ce::Items::operator=(Items&& other) noexcept
     Weapons.swap(other.Weapons);
     other.Weapons.clear();
 
-    NumOfItems = std::exchange(other.NumOfItems, std::uint16_t(0));
     Inventory.swap(other.Inventory);
     other.Inventory.clear();
 
     CorpseInfo.swap(other.CorpseInfo);
-    NumOfCorpseItems = std::exchange(other.NumOfCorpseItems, std::uint16_t(0));
     CorpseItems.swap(other.CorpseItems);
     other.CorpseItems.clear();
 
-    NumOfMercItems = std::exchange(other.NumOfMercItems, std::uint16_t(0));
     MercItems.swap(other.MercItems);
     other.MercItems.clear();
 
-    HasGolem = std::exchange(other.HasGolem, std::uint8_t(0));
     GolemItem.swap(other.GolemItem);
     other.GolemItem.clear();
 
-    update_locations = std::exchange(other.update_locations, true);
     isMercHired = std::exchange(other.isMercHired, false);
 
     Buffer.swap(other.Buffer);
@@ -22422,25 +22492,45 @@ bool d2ce::Items::getHasRestrictedItem(const d2ce::ItemType& itemType) const
 // number of bytes to store all item sections
 size_t d2ce::Items::getByteSize() const
 {
-    size_t byteSize = 0;
-    for (auto& item : GolemItem)
-    {
-        byteSize += item.getFullSize();
-    }
-
+    size_t byteSize = ITEM_MARKER.size() + sizeof(std::uint16_t);
     for (auto& item : Inventory)
     {
         byteSize += item.getFullSize();
     }
 
-    for (auto& item : CorpseItems)
+    byteSize += ITEM_MARKER.size() + sizeof(CorpseInfo.IsDead);
+    if (CorpseInfo.IsDead > 0)
     {
-        byteSize += item.getFullSize();
+        byteSize += sizeof(CorpseInfo.Unknown) + sizeof(CorpseInfo.X) + sizeof(CorpseInfo.Y) + ITEM_MARKER.size() + sizeof(std::uint16_t);
+        for (auto& item : CorpseItems)
+        {
+            byteSize += item.getFullSize();
+        }
     }
 
-    for (auto& item : MercItems)
+    if (!isExpansionItems())
     {
-        byteSize += item.getFullSize();
+        if (Version < EnumItemVersion::v109)
+        {
+            byteSize += ITEM_MARKER.size() + sizeof(MercId_v100);
+        }
+        return byteSize;
+    }
+
+    byteSize += MERC_ITEM_MARKER.size();
+    if (!MercItems.empty() || isMercHired)
+    {
+        byteSize += ITEM_MARKER.size() + sizeof(std::uint16_t);
+        for (auto& item : MercItems)
+        {
+            byteSize += item.getFullSize();
+        }
+    }
+
+    byteSize += GOLEM_ITEM_MARKER.size() + sizeof(std::uint8_t);
+    if (!GolemItem.empty())
+    {
+        byteSize += GolemItem.back().getFullSize();
     }
 
     return byteSize;
@@ -22678,7 +22768,7 @@ const std::list<d2ce::Item>& d2ce::Items::getCorpseItems() const
 //---------------------------------------------------------------------------
 bool d2ce::Items::hasGolem() const
 {
-    return HasGolem != 0 ? true : false;
+    return GolemItem.empty() ? false : true;
 }
 //---------------------------------------------------------------------------
 const std::list<d2ce::Item>& d2ce::Items::getGolemItem() const
@@ -22700,7 +22790,6 @@ d2ce::Item d2ce::Items::removeItem(const d2ce::Item& item)
             copy.swap(invItem);
             copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
             Inventory.erase(iter);
-            --NumOfItems;
             findItems();
             return copy;
         }
@@ -22718,7 +22807,6 @@ d2ce::Item d2ce::Items::removeItem(const d2ce::Item& item)
             copy.swap(invItem);
             copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
             CorpseItems.erase(iter);
-            --NumOfCorpseItems;
             findItems();
             return copy;
         }
@@ -22736,7 +22824,6 @@ d2ce::Item d2ce::Items::removeItem(const d2ce::Item& item)
             copy.swap(invItem);
             copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
             MercItems.erase(iter);
-            --NumOfMercItems;
             findItems();
             return copy;
         }
@@ -22754,7 +22841,6 @@ d2ce::Item d2ce::Items::removeItem(const d2ce::Item& item)
             copy.swap(invItem);
             copy.setLocation(EnumItemLocation::BUFFER, EnumAltItemLocation::UNKNOWN, 0, 0);
             GolemItem.erase(iter);
-            HasGolem = 0;
             findItems();
             return copy;
         }
@@ -24090,7 +24176,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     pMoveInv = &Inventory;
                     iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                     itemToMove.splice(itemToMove.end(), Inventory, iter);
-                    --NumOfItems;
 
                     if (itemType.isStackable())
                     {
@@ -24202,7 +24287,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     pMoveInv = &Inventory;
                     iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                     itemToMove.splice(itemToMove.end(), Inventory, iter);
-                    --NumOfItems;
 
                     if (itemType.isStackable())
                     {
@@ -24286,7 +24370,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                             pMoveInv = &MercItems;
                             iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                             itemToMove.splice(itemToMove.end(), MercItems, iter);
-                            --NumOfMercItems;
                         }
                     }
                 }
@@ -24314,7 +24397,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                         itemToMove.splice(itemToMove.end(), GolemItem, iter);
                         pMoveInv = &GolemItem;
                         iterMoveIdx = MAXSIZE_T;
-                        HasGolem = 0;
                     }
                 }
 
@@ -24498,7 +24580,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     pMoveInv = &Inventory;
                     iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                     itemToMove.splice(itemToMove.end(), Inventory, iter);
-                    --NumOfItems;
                 }
             }
             else
@@ -24560,7 +24641,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                             pMoveInv = &MercItems;
                             iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                             itemToMove.splice(itemToMove.end(), MercItems, iter);
-                            --NumOfMercItems;
                         }
                     }
                 }
@@ -24588,7 +24668,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                         itemToMove.splice(itemToMove.end(), GolemItem, iter);
                         pMoveInv = &GolemItem;
                         iterMoveIdx = MAXSIZE_T;
-                        HasGolem = 0;
                     }
                 }
 
@@ -24857,7 +24936,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
                     pMoveInv = &Inventory;
                     iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                     itemToMove.splice(itemToMove.end(), Inventory, iter);
-                    --NumOfItems;
                     d2ce::removeItem_if(ItemLocationReference[item.getLocation()][item.getAltPositionId()], ItemPredicate(item));
                     d2ce::removeItem_if(GPSs, ItemPredicate(item));
                 }
@@ -25064,7 +25142,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
         {
             invLocationReference.push_back(*iter);
         }
-        ++NumOfItems;
 
         if (itemType.isStackable())
         {
@@ -25438,7 +25515,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 pMoveInv = &Inventory;
                 iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                 itemToMove.splice(itemToMove.end(), Inventory, iter);
-                --NumOfItems;
 
                 if (itemType.isStackable())
                 {
@@ -25536,7 +25612,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 pMoveInv = &Inventory;
                 iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                 itemToMove.splice(itemToMove.end(), Inventory, iter);
-                --NumOfItems;
 
                 if (itemType.isStackable())
                 {
@@ -25622,7 +25697,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                         pMoveInv = &MercItems;
                         iterMoveIdx = std::distance(pMoveInv->begin(), iter);
                         itemToMove.splice(itemToMove.end(), MercItems, iter);
-                        --NumOfMercItems;
                     }
                 }
             }
@@ -25650,7 +25724,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     itemToMove.splice(itemToMove.end(), GolemItem, iter);
                     pMoveInv = &GolemItem;
                     iterMoveIdx = MAXSIZE_T;
-                    HasGolem = 0;
                 }
             }
 
@@ -25819,7 +25892,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
             {
                 BufferItems.splice(BufferItems.end(), MercItems, iter);
                 pRemovedItem = &BufferItems.back();
-                --NumOfMercItems;
             }
             else if (item.isTwoHandedWeapon())
             {
@@ -25831,7 +25903,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     {
                         BufferItems.splice(BufferItems.end(), MercItems, iter);
                         pRemovedItem = &BufferItems.back();
-                        --NumOfMercItems;
                     }
                     else
                     {
@@ -25859,7 +25930,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     {
                         BufferItems.splice(BufferItems.end(), MercItems, iter);
                         pRemovedItem = &BufferItems.back();
-                        --NumOfMercItems;
                     }
                     else
                     {
@@ -25886,7 +25956,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
             {
                 BufferItems.splice(BufferItems.end(), MercItems, iter);
                 pRemovedItem = &BufferItems.back();
-                --NumOfMercItems;
             }
         }
         else if (item.isTwoHandedWeapon())
@@ -25901,7 +25970,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 {
                     BufferItems.splice(BufferItems.end(), MercItems, iterOtherHand);
                     pRemovedItem = &BufferItems.back();
-                    --NumOfMercItems;
                 }
                 break;
 
@@ -25912,7 +25980,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 {
                     BufferItems.splice(BufferItems.end(), MercItems, iterOtherHand);
                     pRemovedItem = &BufferItems.back();
-                    --NumOfMercItems;
                 }
                 break;
             }
@@ -25923,7 +25990,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
         {
             iter = itemToMove.begin();
             MercItems.splice(MercItems.end(), itemToMove, iter);
-            ++NumOfMercItems;
         }
         LastItemMoved = nullptr;
         LastItemIdx = MAXSIZE_T;
@@ -25999,7 +26065,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 BufferItems.splice(BufferItems.end(), Inventory, iter);
                 d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                 pRemovedItem = &BufferItems.back();
-                --NumOfItems;
             }
             else if (item.isTwoHandedWeapon())
             {
@@ -26011,7 +26076,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                         BufferItems.splice(BufferItems.end(), Inventory, iter);
                         d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                         pRemovedItem = &BufferItems.back();
-                        --NumOfItems;
                     }
                     else
                     {
@@ -26039,7 +26103,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                         BufferItems.splice(BufferItems.end(), Inventory, iter);
                         d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                         pRemovedItem = &BufferItems.back();
-                        --NumOfItems;
                     }
                     else
                     {
@@ -26067,7 +26130,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                         BufferItems.splice(BufferItems.end(), Inventory, iter);
                         d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                         pRemovedItem = &BufferItems.back();
-                        --NumOfItems;
                     }
                     else
                     {
@@ -26095,7 +26157,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                         BufferItems.splice(BufferItems.end(), Inventory, iter);
                         d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                         pRemovedItem = &BufferItems.back();
-                        --NumOfItems;
                     }
                     else
                     {
@@ -26123,7 +26184,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                 BufferItems.splice(BufferItems.end(), Inventory, iter);
                 d2ce::removeItem_if(invLocationReference, ItemPredicate(*iter));
                 pRemovedItem = &BufferItems.back();
-                --NumOfItems;
             }
         }
         else if (item.isTwoHandedWeapon())
@@ -26138,7 +26198,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
                     d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
                     pRemovedItem = &BufferItems.back();
-                    --NumOfItems;
                 }
                 break;
 
@@ -26149,7 +26208,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
                     d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
                     pRemovedItem = &BufferItems.back();
-                    --NumOfItems;
                 }
                 break;
 
@@ -26160,7 +26218,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
                     d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
                     pRemovedItem = &BufferItems.back();
-                    --NumOfItems;
                 }
                 break;
 
@@ -26171,7 +26228,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
                     BufferItems.splice(BufferItems.end(), Inventory, iterOtherHand);
                     d2ce::removeItem_if(invLocationReference, ItemPredicate(*iterOtherHand));
                     pRemovedItem = &BufferItems.back();
-                    --NumOfItems;
                 }
                 break;
             }
@@ -26193,7 +26249,6 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, const d2ce::Character& charI
             {
                 invLocationReference.push_back(*iter);
             }
-            ++NumOfItems;
 
             if (itemType.isStackable())
             {
@@ -26299,7 +26354,6 @@ bool d2ce::Items::removeSocketedItems(d2ce::Item& item)
             {
                 pInvLocationReference->push_back(itemToMove);
             }
-            ++NumOfItems;
 
             const auto& itemType = itemToMove.getItemTypeHelper();
             if (itemType.isGPSItem())

@@ -62,6 +62,9 @@ namespace d2ce
         // nightmare act info starts at pos 441 (1.09+ only)
         // hell act info starts at pos 537 (1.09+ only)
         mutable std::array <ActsInfoData, NUM_OF_DIFFICULTY> Acts;
+        std::array<std::array<std::uint8_t, 28>, NUM_OF_DIFFICULTY> Quests_extraBits = { {{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }} };
+        std::array<std::uint8_t, 12> Quests_unknown = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        std::array<std::uint8_t, 4> Quests_version = { 0x06, 0x00, 0x00, 0x00 };
 
         // pos 438 (pre-1.09, otherwise pos 643), waypoints for normal level
         // pos 462 (pre-1.09, otherwise pos 667), waypoints for nightmare level
@@ -69,20 +72,11 @@ namespace d2ce
         std::array<std::uint16_t, NUM_OF_DIFFICULTY> Waypoints_unknown = { 0x0102, 0x0102, 0x0102 };
         std::array<std::uint64_t, NUM_OF_DIFFICULTY> Waypoints = { 0, 0, 0 };
         std::array<std::array<std::uint8_t, 14>, NUM_OF_DIFFICULTY> Waypoints_extraBits = { {{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }} };
+        std::array<std::uint8_t, 4> Waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
 
         // NPC
         std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCIntroductions = { 0, 0, 0 };
         std::array<std::uint64_t, NUM_OF_DIFFICULTY> NPCCongrats = { 0, 0, 0 };
-
-        std::uint32_t quests_start_location = 0,
-            quests_location = 0,
-            waypoints_start_location = 0,
-            waypoints_location = 0,
-            npc_start_location = 0,
-            npc_location = 0;
-        bool update_locations = true;
-        std::array<std::uint8_t, 4> quests_version = { 0x06, 0x00, 0x00, 0x00 };
-        std::array<std::uint8_t, 4> waypoints_version = { 0x01, 0x00, 0x00, 0x00 };
 
     private:
         Character& CharInfo;
@@ -97,16 +91,16 @@ namespace d2ce
         void applyJsonQuestAct(const Json::Value& questActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
         void applyJsonQuestDifficulty(const Json::Value& questDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
         void applyJsonQuests(const Json::Value& questsRoot, bool bSerializedFormat);
-        bool readQuests(const Json::Value& questsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readQuests(const Json::Value& questsRoot, bool bSerializedFormat);
         bool readWaypoints(std::FILE* charfile);
         void applyJsonWaypointAct(const Json::Value& waypointActRoot, bool bSerializedFormat, EnumDifficulty diff, EnumAct act);
         void applyJsonWaypointDifficulty(const Json::Value& waypointDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
         void applyJsonWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat);
-        bool readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readWaypoints(const Json::Value& waypointsRoot, bool bSerializedFormat);
         bool readNPC(std::FILE* charfile);
         void applyJsonNPCsDifficulty(const Json::Value& npcsDiffRoot, bool bSerializedFormat, EnumDifficulty diff);
         void applyJsonNPCs(const Json::Value& npcsRoot, bool bSerializedFormat);
-        bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat, std::FILE* charfile);
+        bool readNPC(const Json::Value& npcsRoot, bool bSerializedFormat);
         bool writeQuests(std::FILE* charfile) const;
         bool writeWaypoints(std::FILE* charfile) const;
         bool writeNPC(std::FILE* charfile) const;
@@ -115,7 +109,7 @@ namespace d2ce
 
     protected:
         bool readActs(std::FILE* charfile);
-        bool readActs(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
+        bool readActs(const Json::Value& root, bool bSerializedFormat);
         bool writeActs(std::FILE* charfile) const;
 
         void questsAsJson(Json::Value& parent, bool bSerializedFormat = false) const;
@@ -141,6 +135,8 @@ namespace d2ce
         bool getActCompletedStrict(EnumDifficulty diff, EnumAct act) const;
         void resetActs(EnumDifficulty diff);
 
+        void calculateChecksum(long& checksum, std::uint8_t& overflow);
+
     protected:
         ActsInfo(Character& charInfo);
 
@@ -154,6 +150,8 @@ namespace d2ce
         void swap(ActsInfo& other);
 
         void clear();
+
+        size_t getByteSize() const; // number of bytes to store all act data
 
         // Act info
         bool getActIntroduced(EnumDifficulty diff, EnumAct act) const;

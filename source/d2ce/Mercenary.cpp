@@ -29,6 +29,12 @@
 //---------------------------------------------------------------------------
 namespace d2ce
 {
+    constexpr std::uint32_t CHAR_V109_MERC_DEAD_BYTE_OFFSET = 177i32;       // pos 177 (1.09+ only)
+    constexpr std::uint32_t CHAR_V109_MERC_ID_BYTE_OFFSET = 179i32;         // pos 179 (1.09+ only)
+    constexpr std::uint32_t CHAR_V109_MERC_NAME_BYTE_OFFSET = 183i32;       // pos 183 (1.09+ only)
+    constexpr std::uint32_t CHAR_V109_MERC_TYPE_BYTE_OFFSET = 185i32;       // pos 185 (1.09+ only)
+    constexpr std::uint32_t CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET = 187i32; // Experience: pos 187 (1.09+ only)
+
     // must be in the form of "<string><number>"
     bool ExtractPrefixAndNumber(const std::string& input, std::string& prefix, std::uint16_t& value)
     {
@@ -996,7 +1002,7 @@ d2ce::Mercenary::~Mercenary()
 {
 }
 //---------------------------------------------------------------------------
-bool d2ce::Mercenary::readInfo(std::FILE* charfile)
+bool d2ce::Mercenary::readInfo()
 {
     if (getVersion() < EnumCharVersion::v109)
     {
@@ -1004,17 +1010,11 @@ bool d2ce::Mercenary::readInfo(std::FILE* charfile)
         return false;
     }
 
-    mercInfo_location = 177;
-    std::fseek(charfile, mercInfo_location, SEEK_SET);
-    std::fread(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
-    std::fread(&Merc.Id, sizeof(Merc.Id), 1, charfile);
-    std::fread(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
-    std::fread(&Merc.Type, sizeof(Merc.Type), 1, charfile);
-    std::fread(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
+    fillMercInfo(Merc);
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Mercenary::readInfo(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile)
+bool d2ce::Mercenary::readInfo(const Json::Value& root, bool bSerializedFormat)
 {
     if (getVersion() < EnumCharVersion::v109)
     {
@@ -1022,7 +1022,6 @@ bool d2ce::Mercenary::readInfo(const Json::Value& root, bool bSerializedFormat, 
         return false;
     }
 
-    mercInfo_location = std::ftell(charfile);
     Json::Value mercRoot = root[bSerializedFormat ? "Mercenary" : "header"];
     if (!mercRoot.isNull())
     {
@@ -1057,27 +1056,32 @@ bool d2ce::Mercenary::readInfo(const Json::Value& root, bool bSerializedFormat, 
         }
     }
 
-    std::fwrite(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
-    std::fwrite(&Merc.Id, sizeof(Merc.Id), 1, charfile);
-    std::fwrite(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
-    std::fwrite(&Merc.Type, sizeof(Merc.Type), 1, charfile);
-    std::fwrite(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
-    return true;
-}
-//---------------------------------------------------------------------------
-bool d2ce::Mercenary::writeInfo(std::FILE* charfile)
-{
-    if (getVersion() < EnumCharVersion::v109)
+
+    size_t current_byte_offset = CHAR_V109_MERC_DEAD_BYTE_OFFSET;
+    if (!CharInfo.setBytes(current_byte_offset, sizeof(Merc.Dead), Merc.Dead)) // pos 177 (1.09+ only)
     {
         return false;
     }
 
-    std::fseek(charfile, mercInfo_location, SEEK_SET);
-    std::fwrite(&Merc.Dead, sizeof(Merc.Dead), 1, charfile);
-    std::fwrite(&Merc.Id, sizeof(Merc.Id), 1, charfile);
-    std::fwrite(&Merc.NameId, sizeof(Merc.NameId), 1, charfile);
-    std::fwrite(&Merc.Type, sizeof(Merc.Type), 1, charfile);
-    std::fwrite(&Merc.Experience, sizeof(Merc.Experience), 1, charfile);
+    if (!CharInfo.setBytes(current_byte_offset, sizeof(Merc.Id), Merc.Id)) // pos 179 (1.09 + only)
+    {
+        return false;
+    }
+
+    if (!CharInfo.setBytes(current_byte_offset, sizeof(Merc.NameId), Merc.NameId)) // pos 183 (1.09+ only)
+    {
+        return false;
+    }
+
+    if (!CharInfo.setBytes(current_byte_offset, sizeof(Merc.Type), Merc.Type)) // pos 185 (1.09+ only)
+    {
+        return false;
+    }
+
+    if (!CharInfo.setBytes(current_byte_offset, sizeof(Merc.Experience), Merc.Experience)) // pos 187 (1.09+ only)
+    {
+        return false;
+    }
     return true;
 }
 //---------------------------------------------------------------------------
@@ -1094,11 +1098,31 @@ void d2ce::Mercenary::clear()
     Merc.NameId = 0;
     Merc.Type = 0;
     Merc.Experience = 0;
+
+    CharInfo.updateBytes(CHAR_V109_MERC_DEAD_BYTE_OFFSET, sizeof(Merc.Dead), Merc.Dead); // pos 177 (1.09+ only)
+    CharInfo.updateBytes(CHAR_V109_MERC_ID_BYTE_OFFSET, sizeof(Merc.Id), Merc.Id); // pos 179 (1.09 + only)
+    CharInfo.updateBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(Merc.NameId), Merc.NameId); // pos 183 (1.09+ only)
+    CharInfo.updateBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(Merc.Type), Merc.Type); // pos 185 (1.09+ only)
+    CharInfo.updateBytes(CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET, sizeof(Merc.Experience), Merc.Experience); // pos 187 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::fillMercInfo(MercInfo& merc) const
 {
-    std::memcpy(&merc, &Merc, sizeof(MercInfo));
+    if (getVersion() < EnumCharVersion::v109)
+    {
+        merc.Dead = 0;
+        merc.Id = 0;
+        merc.NameId = 0;
+        merc.Type = 0;
+        merc.Experience = 0;
+        return;
+    }
+
+    merc.Dead = std::uint16_t(CharInfo.readBytes(CHAR_V109_MERC_DEAD_BYTE_OFFSET, sizeof(merc.Dead))); // pos 177 (1.09+ only)
+    merc.Id = CharInfo.readBytes(CHAR_V109_MERC_ID_BYTE_OFFSET, sizeof(merc.Id)); // pos 179 (1.09 + only)
+    merc.NameId = std::uint16_t(CharInfo.readBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(merc.NameId))); // pos 183 (1.09+ only);
+    merc.Type = std::uint16_t(CharInfo.readBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(merc.Type))); // pos 185 (1.09+ only)
+    merc.Experience = CharInfo.readBytes(CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET, sizeof(merc.Experience)); // pos 187 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 void d2ce::Mercenary::updateMercInfo(MercInfo& merc)
@@ -1128,10 +1152,24 @@ void d2ce::Mercenary::updateMercInfo(MercInfo& merc)
 
     if (bHasItems && (oldMercClass != getClass()))
     {
+        CharInfo.updateBytes(CHAR_V109_MERC_DEAD_BYTE_OFFSET, sizeof(Merc.Dead), Merc.Dead); // pos 177 (1.09+ only)
+        CharInfo.updateBytes(CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET, sizeof(Merc.Experience), Merc.Experience); // pos 187 (1.09+ only)
+
         // Can't change type if we have items
         Merc.NameId = oldMercName;
+        CharInfo.updateBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(Merc.NameId), Merc.NameId); // pos 183 (1.09+ only)
+
         Merc.Id = oldMercId;
+        CharInfo.updateBytes(CHAR_V109_MERC_ID_BYTE_OFFSET, sizeof(Merc.Id), Merc.Id); // pos 179 (1.09 + only)
+
         setClass(oldMercClass);
+    }
+    else
+    {
+        CharInfo.updateBytes(CHAR_V109_MERC_DEAD_BYTE_OFFSET, sizeof(Merc.Dead), Merc.Dead); // pos 177 (1.09+ only)
+        CharInfo.updateBytes(CHAR_V109_MERC_ID_BYTE_OFFSET, sizeof(Merc.Id), Merc.Id); // pos 179 (1.09 + only)
+        CharInfo.updateBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(Merc.NameId), Merc.NameId); // pos 183 (1.09+ only)
+        CharInfo.updateBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(Merc.Type), Merc.Type); // pos 185 (1.09+ only)
     }
 
     // Check NameId
@@ -1180,6 +1218,7 @@ void d2ce::Mercenary::fillMercStats(CharStats& cs) const
         cs.MaxStamina = 0;
     }
 }
+//---------------------------------------------------------------------------
 d2ce::EnumCharVersion d2ce::Mercenary::getVersion() const
 {
     return CharInfo.getVersion();
@@ -1254,6 +1293,7 @@ void d2ce::Mercenary::setLevel(std::uint32_t level)
     }
 
     Merc.Experience = getMercExprForLevel(level, Merc.Type, getVersion());
+    CharInfo.updateBytes(CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET, sizeof(Merc.Experience), Merc.Experience); // pos 187 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getExperience() const
@@ -1296,6 +1336,7 @@ void d2ce::Mercenary::setExperience(std::uint32_t experience)
 
     // Make sure we can still use our items, is not at a higher level then our character and is at least our base level
     Merc.Experience = std::max(std::min(experience, getMaxExperience()), getMinExperience());
+    CharInfo.updateBytes(CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET, sizeof(Merc.Experience), Merc.Experience); // pos 187 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Mercenary::getStrength() const
@@ -1364,7 +1405,10 @@ void d2ce::Mercenary::setClass(EnumMercenaryClass mercClass)
     else
     {
         Merc.Type = getMercId(getVersion(), oldDifficulty, mercClass);
+        CharInfo.updateBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(Merc.Type), Merc.Type); // pos 185 (1.09+ only)
+
         Merc.NameId = std::min(Merc.NameId, maxMercId);
+        CharInfo.updateBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(Merc.NameId), Merc.NameId); // pos 183 (1.09+ only)
     }
 
     // restore difficulty level
@@ -1441,6 +1485,7 @@ void d2ce::Mercenary::setDifficulty(EnumDifficulty difficulty)
     }
 
     Merc.Type = *iterType;
+    CharInfo.updateBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(Merc.Type), Merc.Type); // pos 185 (1.09+ only)
 
     // check experience
     setExperience(Merc.Experience);
@@ -1514,6 +1559,7 @@ void d2ce::Mercenary::setAttributeId(std::uint8_t attributeId)
     }
 
     Merc.Type = *iterType;
+    CharInfo.updateBytes(CHAR_V109_MERC_TYPE_BYTE_OFFSET, sizeof(Merc.Type), Merc.Type); // pos 185 (1.09+ only)
 
     // check experience
     setExperience(Merc.Experience);
@@ -1572,6 +1618,7 @@ void d2ce::Mercenary::setNameId(std::uint16_t nameId)
     }
 
     Merc.NameId = std::min(nameId, maxMercId);
+    CharInfo.updateBytes(CHAR_V109_MERC_NAME_BYTE_OFFSET, sizeof(Merc.NameId), Merc.NameId); // pos 183 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Mercenary::getName() const
@@ -1860,6 +1907,7 @@ void d2ce::Mercenary::setIsHired(bool bIsHired)
     static std::mt19937 gen(rd());
     static std::uniform_int_distribution<std::uint32_t> spread(0, MAXUINT32);
     Merc.Id = std::uint32_t(spread(gen) | 0x10); // new id
+    CharInfo.updateBytes(CHAR_V109_MERC_ID_BYTE_OFFSET, sizeof(Merc.Id), Merc.Id); // pos 179 (1.09 + only)
 
     // check experience
     setExperience(Merc.Experience);
@@ -1883,6 +1931,7 @@ void d2ce::Mercenary::setIsDead(bool bIsDead)
     }
 
     Merc.Dead = bIsDead ? 1 : 0;
+    CharInfo.updateBytes(CHAR_V109_MERC_DEAD_BYTE_OFFSET, sizeof(Merc.Dead), Merc.Dead); // pos 177 (1.09+ only)
 }
 //---------------------------------------------------------------------------
 const std::optional<d2ce::EnumCharClass>& d2ce::Mercenary::getEquivClass() const

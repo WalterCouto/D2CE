@@ -41,8 +41,6 @@ namespace d2ce
                        // Type:       pos 185 (1.09+ only)
                        // Experience: pos 187 (1.09+ only), hireling's experience
 
-        std::uint32_t mercInfo_location = 177;
-
         Character& CharInfo;
 
     protected:
@@ -52,9 +50,8 @@ namespace d2ce
         ~Mercenary();
 
     protected:
-        bool readInfo(std::FILE* charfile);
-        bool readInfo(const Json::Value& root, bool bSerializedFormat, std::FILE* charfile);
-        bool writeInfo(std::FILE* charfile);
+        bool readInfo();
+        bool readInfo(const Json::Value& root, bool bSerializedFormat);
 
         void setTxtReader();
 
