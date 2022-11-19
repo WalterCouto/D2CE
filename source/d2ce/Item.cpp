@@ -17192,6 +17192,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         gameVersion = 0;
         rawVersion = 0;
         break;
+
     case EnumItemVersion::v107: // v1.07
         gameVersion = isExpansion ? 100 : 0;
         rawVersion = 0;
@@ -17222,6 +17223,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             break;
         }
         break;
+
     case EnumItemVersion::v110: // v1.10 - v1.14d
         switch (rawVersion)
         {

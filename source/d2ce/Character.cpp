@@ -4049,25 +4049,12 @@ std::uint32_t d2ce::Character::getLevel() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getRecommendedLevel() const
 {
-    auto lastAct = Bs.StartingAct;
-    auto title = Bs.getTitleDifficulty();
-    auto lastDiff = Bs.DifficultyLastPlayed;
-    if (title > lastDiff)
-    {
-        lastAct = EnumAct::I;
-    }
-    else if (title < lastDiff)
-    {
-        // this should not happen!
-        title = lastDiff;
-    }
-
     if (isExpansionCharacter())
     {
-        switch (title)
+        switch (Bs.getTitleDifficulty())
         {
         case EnumDifficulty::Normal:
-            switch (lastAct)
+            switch (Bs.getTitleAct())
             {
             case EnumAct::I:
                 return 1ui32;
@@ -4087,7 +4074,7 @@ std::uint32_t d2ce::Character::getRecommendedLevel() const
             }
 
         case EnumDifficulty::Nightmare:
-            switch (lastAct)
+            switch (Bs.getTitleAct())
             {
             case EnumAct::I:
                 return 37ui32;
@@ -4108,7 +4095,7 @@ std::uint32_t d2ce::Character::getRecommendedLevel() const
 
         case EnumDifficulty::Hell:
         default:
-            switch (lastAct)
+            switch (Bs.getTitleAct())
             {
             case EnumAct::I:
                 return 63ui32;
@@ -4129,10 +4116,10 @@ std::uint32_t d2ce::Character::getRecommendedLevel() const
         }
     }
 
-    switch (title)
+    switch (Bs.getTitleDifficulty())
     {
     case EnumDifficulty::Normal:
-        switch (lastAct)
+        switch (Bs.getTitleAct())
         {
         case EnumAct::I:
             return 1ui32;
@@ -4149,7 +4136,7 @@ std::uint32_t d2ce::Character::getRecommendedLevel() const
         }
 
     case EnumDifficulty::Nightmare:
-        switch (lastAct)
+        switch (Bs.getTitleAct())
         {
         case EnumAct::I:
             return 32ui32;
@@ -4167,7 +4154,7 @@ std::uint32_t d2ce::Character::getRecommendedLevel() const
 
     case EnumDifficulty::Hell:
     default:
-        switch (lastAct)
+        switch (Bs.getTitleAct())
         {
         case EnumAct::I:
             return 53ui32;

@@ -10,7 +10,7 @@ Integers are stored in [little endian](https://en.wikipedia.org/wiki/Endianness)
 Each .d2s file starts with a 765 byte header, after which data is of variable length.
 
 |Byte<br>'71' - '89'|Byte<br>'92' - '96'|Byte | Length | Desc                                                                                  |
-|-----------|-----------|-----|-------- |---------------------------------------------------------------------------------------|
+|-----------|-----------|-----|--------|---------------------------------------------------------------------------------------|
 |  0        |  0        |  0  |   4    | Signature (0xaa55aa55)                                                                |
 |  4        |  4        |  4  |   4    | [Version ID](#versions)                                                               |
 |           |  8        |  8  |   4    | File size                                                                             |
@@ -46,7 +46,7 @@ Each .d2s file starts with a 765 byte header, after which data is of variable le
 |           |132        |132  |   4    | Right Mouse (weapon switch) for versions '92"+                                        |
 |           |136        |136  |  32    | [Character Menu Appearance](#character-menu-appearance) for versions '92"+            |
 | 88        |           |     |   1    | first 4 bits difficulty, last 4 bits starting act for versions '71' - '89'            |
-| 89        |           |     |  36    | ? 0x00 for versions '71' - '89'                                                       |
+| 89        |           |     |  37    | ? 0x00 for versions '71' - '89'                                                       |
 |           |168        |168  |   3    | [Difficulty](#difficulty)                                                             |
 |126        |171        |171  |   4    | Map ID                                                                                |
 |           |175        |175  |   2    | ? 0x00 for versions '92"+                                                             |
@@ -66,7 +66,7 @@ Each .d2s file starts with a 765 byte header, after which data is of variable le
 |428        |633        |633  |  80    | [Waypoint](#waypoint)                                                                 |
 |508        |713        |713  |  52    | [NPC](#npc)                                                                           |
 |560        |765        |765  |        | [Attributes](#attributes)                                                             |
-|           |           |     |  30    | [Skills](#skills)                                                                     |
+|           |           |     |  32    | [Skills](#skills)                                                                     |
 |           |           |     |        | [Items](#items)                                                                       |
 
 ### Versions
@@ -251,9 +251,9 @@ Assigned skills section is a an array of 16 skill ids mapped to a hotkey, each a
 ### Difficulty
 3 bytes of data that indicates which of the three difficulties the character has unlocked. Each byte is representitive of one of the difficulties. In this order: Normal, Nightmare, and Hell. Each byte is a bitfield structured like this:
 
-| 7      | 6 | 5 | 4 | 3 | 2, 1, 0
-|--------|---|---|---|---|-----------
-|Active? |Unknown|Unknown|Unknown|Unknown|Which act (0-4)?
+|   7   |   6   |   5   |   4   |   3   | 2, 1, 0 |
+|-------|-------|-------|-------|-------|---------|
+|Active?|Unknown|Unknown|Unknown|Unknown|Act (0-4)|
 
 ### Quest
 The quests struct is a 298 byte section that describes all quests in the game but also contains data about act traveling. Each quest is 2 bytes long, with the following important bits:
@@ -380,7 +380,14 @@ It would appear that offsets 1 through 6 get set after you take the caravan to A
 When you return to a previous act and talk to the NPC's, these bits are cleared.
 
 ### Attributes
-Following the header is the attributes section, this sections layout consists of an array of  `9 bit` attribute id, followed by a `n bit` length attribute value. The section is terminated by a `9 bit` value of `0x1ff`. It's worth mentioning that these fields are [bit reversed](bitreader.go#L69). Basically if you find the bits `00100111` they are reversed into `11100100`.  
+Following the header is the attributes section, the sections starts with the string identifier of `gf` and is variable in length.
+
+|Offset<br>'71' - '92'|Offset| Length | Desc                                                                |
+|-----------|------|--------|---------------------------------------------------------------------|
+|  0        |  0   |  2     | `gf` { 0x67, 0x66 }                                                 |
+|           |  2   | 27-53  | An array of `9 bit` attribute id, followed by a `n bit` length<br>attribute value. The section is terminated by a `9 bit` value of<br>`0x1ff`. It's worth mentioning that these fields are [bit reversed](bitreader.go#L69).<br>Basically if you find the bits `00100111` they are reversed into<br> `11100100`.|
+|  2        |      |  2     | Bit field indicating the the presence or absence of each particular<br>statistic|
+|  4        |      | 36-64  | `4 byte` array of values for each statistic present according to<br>the bit field, in the order they appear in the bit field|
 
 #### Attribute IDs
 | ID | Attribute       |
@@ -432,13 +439,34 @@ for {
     // 4. read bit length nr of bits. 
 }
 ```
+
+#### Bit Filed For versions `92` or older,
+| Bit | Attribute                 |
+|-----|---------------------------|
+|  0  | Strength, always 1        |
+|  1  | Energy, always 1          |
+|  2  | Dexterity, always 1       |
+|  3  | Vitality, always 1        |
+|  4  | Unused stats              |
+|  5  | Unused skills             |
+|  6  | Current HP                |
+|  7  | Max HP                    |
+|  8  | Current mana, always 1    |
+|  9  | Max mana, always 1        |
+|  10 | Current stamina, always 1 |
+|  11 | Max stamina, always 1     |
+|  12 | Level, always 1           |
+|  13 | Experience                |
+|  14 | Gold                      |
+|  15 | Stashed gold              |
+
 ### Skills
 Skills are a `32 byte` section containing a `2 byte` header with the value `if` and `30 byte` of skill data. Each class has 30 skills available to them, so each skill get `1 byte` each. The tricky part about the skill mapping is that each class has a different offset into the Skill map where their class specific skills start, and then go 30 indexes into the map. So for example Assassin has an offset of `251`. Which means Assassin skills are between the indexes of `251` and `281` which is exactly 30 indexes.
 
 ##### Layout
 | Length | Desc                                              |
 |--------|---------------------------------------------------|
-|  2     |  `if` { 0x69, 0x66 }                              |
+|  2     | `if` { 0x69, 0x66 }                               |
 | 30     | Skill bitfield in order of least significant bit  |
 
 ##### Skill offset map
@@ -454,7 +482,6 @@ Skills are a `32 byte` section containing a `2 byte` header with the value `if` 
 
 
 ### Items
-
 Items are stored in lists described by this header:
 
 |Byte | Length | Desc                                              |
@@ -545,7 +572,7 @@ After this come N items, where N is the item count given above. This item count 
 |        |121     |  5   | Column<br>if socketed, then 0x00 always<br>if stored in belt, then 4 bits used, 2 for belt row and 2 for belt column|
 |        |126     |  3   | Row, if socketed, 3 bits used otherwise 2 bits, 0x00 always if stored in belt. |
 |        |127     |  76  | ? 0x00 to pad to 120 bits                                                      |
-|        |203     |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|        |203     |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |        |211     |  5   | ? 0x00 to pad to 216 bits                                                      |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                                                           |
@@ -580,7 +607,7 @@ After this come N items, where N is the item count given above. This item count 
 |121     | 153    |  5   | Column                                                            |
 |126     | 158    |  3   | Row                                                               |
 |129     | 161    | 72   | ? 0x00                                                            |
-|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                     |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                               |
@@ -620,7 +647,7 @@ After this come N items, where N is the item count given above. This item count 
 |129     | 161    |  8   | Set ID, Unique ID, or 0x00 if not part of a Set or Unique                           |
 |139     | 171    | 32   | DWA                                                                                 |
 |171     | 203    | 32   | DWB                                                                                 |
-|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-7 are 0, then stored and bits 0-3 are for [Stash](#parent)|
+|203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                                       |
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                                      |
@@ -749,7 +776,7 @@ All items are located somewhere and have a "parent" which can be another item, s
 | 4     | Cursor   |
 | 6     | Item     |
 
-For items that are "stored" a 3-bit integer encoded starting describes where to store the item:
+For items that are "stored" a 3-bit integer encoded starting at bit 73 describes where to store the item:
 
 | Value | Desc          |
 |-------|---------------|
