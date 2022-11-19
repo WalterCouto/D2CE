@@ -3534,11 +3534,37 @@ void CD2MainForm::OnFileExportAsJson()
 
     CWaitCursor wait;
     auto jsonfilename = utf8::utf16to8(reinterpret_cast<const char16_t*>(fileDialog.GetPathName().GetString()));
+    bool bIsOverwrite = jsonfilename == CharInfo.getPath() ? true : false;
+    if (BackupChar && bIsOverwrite)
+    {
+        if (!CharInfo.save(BackupChar))
+        {
+            CString errorMsg(CharInfo.getLastError().message().c_str());
+            if (errorMsg.IsEmpty())
+            {
+                errorMsg = _T("Corrupted Diablo II save file discovered!");
+            }
+
+            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+
+        CharInfo.fillBasicStats(Bs);
+        CharInfo.fillCharacterStats(Cs);
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
+
+        Initialize();
+        CheckStatsLeft();
+    }
+
     std::FILE* jsonFile = NULL;
     _wfopen_s(&jsonFile, fileDialog.GetPathName(), L"wb");
     std::rewind(jsonFile);
 
-    if (Editted && !CharInfo.save(BackupChar))
+    if (!bIsOverwrite && Editted && !CharInfo.save(BackupChar))
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -3554,7 +3580,7 @@ void CD2MainForm::OnFileExportAsJson()
     }
 
     // Save already done above
-    auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
+    auto saveOp = (!bIsOverwrite && BackupChar) ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
     auto output = CharInfo.asJson(bSerializedFormat, saveOp);
     if (!output.empty())
     {

@@ -17179,6 +17179,8 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
 
     bool isExpansion = isExpansionItem();
     bool bIsPersonalized = isPersonalized();
+
+    // We are converting versions, so strict compliance on game version and raw version values
     auto gameVersion = getGameVersion();
     auto rawVersion = getRawVersion();
     switch (version)
@@ -17225,20 +17227,14 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         {
         case 100:
         case 101:
-            gameVersion = 100;
-            break;
-
         case 5:
             gameVersion = 100;
             rawVersion = 101;
             break;
 
+        case 0:
         case 1:
         case 2:
-            gameVersion = 1;
-            break;
-
-        case 0:
         case 4:
             gameVersion = 1;
             rawVersion = 2;
