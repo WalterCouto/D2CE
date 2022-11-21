@@ -482,15 +482,25 @@ Skills are a `32 byte` section containing a `2 byte` header with the value `if` 
 
 
 ### Items
-Items are stored in lists described by this header:
+Player, Player Corpse, Mercenary and Iron Golem items are stored in lists described by this Layout:
 
-|Byte | Length | Desc                                              |
-|-----|--------|---------------------------------------------------|
-|0    | 2      | `JM` { 0x4A, 0x4D }                               |
-|2    | 2      | Item Count                                        |
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
+| 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
+| 4   |        | N items, where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+|     |   2    | `JM` { 0x4A, 0x4D }                                                              |
+|     |   2    | 1 if player is dead and has items on a corpse, otherwise 0                       |
+|     |   4    | Unknowns coprse data                                                             |
+|     |   4    | X location of corpse                                                             |
+|     |   4    | Y location of corpse                                                             |
+|     |        | The same structure of bytes 0-4 as the item list above, listing the items on<br> the corpse.|
+|     |  10    | '71' - '89' only, The first two bytes are `JM` followed by 8 bytes holding the<br>mercenary id or 0 if there is no mercenary|
+|     |   2+   | Expansion ony, `jf` { 0x6A, 0x66 }, if a mercenary is hired, following this<br>header is the same structure of bytes 0-4 as the item list above, listing the<br>items for the mercenary|
+|     |   2    | Expansion only, `kf` { 0x6B, 0x66 }, Iron Golem header                           |
+|     |   1    | Expansion only, 1 if player has an Iron Golem, otherwise 0. If 1, followed by a<br>single item| 
 
-After this come N items, where N is the item count given above. This item count does not include any items occupying sockets in another item. Those socketed items immediatly follow the item they are socketed into. Each item starts with a basic 14-byte structure. Many fields in this structure are not "byte-aligned" and are described by their bit position and sizes.
-
+##### Single Item Layout
 |Bit<br>'71' - '96'|Bit | Size | Desc                                                   |
 |-----------|----|------|--------------------------------------------------------|
 |  0        |    | 16   | "JM" (separate from the list header)                   |
@@ -665,13 +675,10 @@ After this come N items, where N is the item count given above. This item count 
 |106        |         |  2   | ? 0x00                                    |
 |108        | 61 - 83 |      | [Extended Item Data](#extended-item-data) |
 
-### Extended Item Data
+##### Extended Item Data
+If the item is marked as `Compact` (bit 37 is set) no extended item information will exist and the item is finished.
 
-If the item is marked as `Compact` (bit 37 is set) no extended
-item information will exist and the item is finished.
-
-Items with extended information store bits based on information in the item header. For example, an item marked as `Socketed` will store an
-extra 3-bit integer encoding how many sockets the item has.
+Items with extended information store bits based on information in the item header. For example, an item marked as `Socketed` will store an extra 3-bit integer encoding how many sockets the item has.
 
 |Bit<br>'87' - '96'|Bit      | Size | Desc                                                                                              |
 |-----------|---------|------|---------------------------------------------------------------------------------------------------|
@@ -691,7 +698,7 @@ extra 3-bit integer encoding how many sockets the item has.
 |           |         |  0+  | If the item is socketed, it will contain 4 bits of data which are the number of total sockets the item has,<br>regardless of how many are occupied by an item.|
 |           |         |  9+  | [Mods](#mods)                                                                                     |
 
-### Custom Graphics
+###### Custom Graphics
 Custom graphics are denoted by a single bit, which if set means a 3-bit number for the graphic index follows. If the bit is not set the 3-bits are not present.
 
 | Bit | Size | Desc                     |
@@ -699,7 +706,7 @@ Custom graphics are denoted by a single bit, which if set means a 3-bit number f
 | 0   | 1    | Item has custom graphics |
 | 1   | 3    | Alternate graphic index  |
 
-### Class Specific
+###### Class Specific
 Class items like Barbarian helms or Amazon bows have special properties specific to those kinds of items. If the first bit is empty the remaining 11 bits will not be present.
 
 | Bit | Size | Desc                         |
@@ -707,7 +714,7 @@ Class items like Barbarian helms or Amazon bows have special properties specific
 | 0   | 1    | Item has class specific data |
 | 1   | 11   | Class specific bits          |
 
-### Quality
+###### Quality
 Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 
 | Value | Size | Desc                                                                        |
@@ -722,7 +729,7 @@ Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 | 8     | 22+  | [Craft](#rare-craft-or-tempered)                                            |
 | 9     | 22+  | [Tempered](#rare-craft-or-tempered)                                         |
 
-#### Inferior
+###### Inferior
 Inferior items have a 3-bit integer follow the quality value.
 
 | Value | Desc        |
@@ -732,7 +739,7 @@ Inferior items have a 3-bit integer follow the quality value.
 | 2     | Damaged     |
 | 3     | Low Quality |
 
-#### Magically Enhanced
+###### Magically Enhanced
  Magically enhanced items have two 11-bit integers that follow each other.
 
 | Size | Desc                                      |
@@ -740,8 +747,8 @@ Inferior items have a 3-bit integer follow the quality value.
 |  11  | Prefix Id from the `MagicPrefix.txt` file |
 |  11  | Suffix Id from the `MagicSuffix.txt` file |
 
-#### Rare, Craft or Tempered
- Tempered items are not enabled, however these three Quality values have the same structure and contain a name with two words and between 3 and 6 affixes.  The name values have no affect on the item's magical properties.
+###### Rare, Craft or Tempered
+ Tempered items are not enabled, however these three Quality values have the same structure and contain a name with two words and between 3 and 6 affixes. The name values have no affect on the item's magical properties.
 
 | Size | Desc                                                                                              |
 |------|---------------------------------------------------------------------------------------------------|
@@ -754,7 +761,7 @@ Inferior items have a 3-bit integer follow the quality value.
 |1 - 12| if first bit is set, then ll bits follow for the third Prefix Id from the `MagicPrefix.txt` file  |
 |1 - 12| if first bit is set, then ll bits follow for the third Suffix Id from the `MagicSuffix.txt` file  |
 
-### Mods
+###### Mods
 After each item is a list of mods. The list is a series of key value pairs where the key is a 9-bit number and the value depends on the key. The list ends when key `511` (`0x1ff`) is found which is all 9-bits being set.
 
 Using the file `ItemStatCost.txt` as a tab-delimited CSV file you can extract the `ID` column which maps to the 9-bit keys. The columns `Save Bits` and `Param Bits` describe how large the mod is.
@@ -765,7 +772,7 @@ If the item is a set item, then there may follow upto 5 more list of mods contai
 
 If the item has a runeword set, then there is one more list of mods holding the magical properties of the applied runeword.
 
-#### Parent
+##### Parent
 All items are located somewhere and have a "parent" which can be another item, such as when inserting a jewel.
 
 | Value | Desc     |
@@ -784,7 +791,7 @@ For items that are "stored" a 3-bit integer encoded starting at bit 73 describes
 | 4     | Horadric Cube |
 | 5     | Stash         |
 
-### Equipped
+##### Equipped
 Items that are equipped describe their slot:
 
 | Value | Slot                    |
