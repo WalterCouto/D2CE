@@ -480,7 +480,6 @@ Skills are a `32 byte` section containing a `2 byte` header with the value `if` 
 | Druid       | `221`  |
 | Assassin    | `251`  |
 
-
 ### Items
 Player, Player Corpse, Mercenary and Iron Golem items are stored in lists described by this Layout:
 
@@ -488,21 +487,56 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 |-----|--------|----------------------------------------------------------------------------------|
 | 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
 | 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
-| 4   |   0+   | N items, where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
-|     |   2    | `JM` { 0x4A, 0x4D }                                                              |
-|     |   2    | 1 if player is dead and has items on a corpse, otherwise 0                       |
-|     |   4    | Unknowns coprse data                                                             |
-|     |   4    | X location of corpse                                                             |
-|     |   4    | Y location of corpse                                                             |
-|     |   0+   | The same structure of bytes 0-4 as the item list above, listing the items on<br>the corpse.|
-|     |  10    | '71' - '89' only, The first two bytes are `JM` followed by 8 bytes holding the<br>mercenary id or 0 if there is no mercenary|
-|     |   2    | Expansion ony, `jf` { 0x6A, 0x66 }                                               |
-|     |   0+   | Expansion ony, if merceneray is hired, the same structure of bytes 0-4 as the<br>item list above, listing the items on the corpse.|
-|     |   2    | Expansion only, `kf` { 0x6B, 0x66 }, Iron Golem header                           |
-|     |   1+   | Expansion only, 1 if player has an Iron Golem, otherwise 0                       |
-|     |   0+   | Expansion only, If player has an Iron Golem, a sigle item                        |
+| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+|     |   4+   | [Coprse Information](#coprse-information)                                        |
+|     |  10    | '71' - '89' only, [Mercenary ID](#pre-expansion-mercenary-information)           |
+|     |   2+   | Expansion only, [Mercenary Information](#mercenary-information)                  |
+|     |   3+   | Expansion only, [Iron Golem Information](#iron-golem-information)                |
 
-##### Single Item Layout
+#### Coprse Information
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
+| 2   |   2    | 1 if player is dead and has items on a corpse, otherwise 0                       |
+| 4   |   0+   | 1 if player is dead and has items on a corpse, [Coprse Items](#coprse-items)     |
+
+##### Coprse Items
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   4    | Unknown                                                                          |
+| 4   |   4    | X location of corpse                                                             |
+| 8   |   4    | Y location of corpse                                                             |
+| 12  |   2    | `JM` { 0x4A, 0x4D }                                                              |
+| 14  |   2    | Item Count. Does not include any items occupying sockets in another item         |
+| 16  |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+
+#### Mercenary Information
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `jf` { 0x6A, 0x66 }, Mercenary header                                            |
+| 2   |   0+   | If merceneray is hired, [Mercenary Items](#mercenary-items)                      |
+
+##### Mercenary Items
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
+| 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
+| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+
+##### Pre-Expansion Mercenary Information
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
+| 2   |   8    | mercenary id or 0 if there is no mercenary                                       |
+
+#### Iron Golem Information
+|Byte | Length | Desc                                                                             |
+|-----|--------|----------------------------------------------------------------------------------|
+| 0   |   2    | `kf` { 0x6B, 0x66 }                                                              |
+| 2   |   1    | 1 if player has an Iron Golem, otherwise 0                                       |
+| 3   |   0+   | If player has an Iron Golem, a sigle [item](#single-item-layout)                 |
+
+#### Single Item Layout
 |Bit<br>'71' - '96'|Bit | Size | Desc                                                   |
 |-----------|----|------|--------------------------------------------------------|
 |  0        |    | 16   | "JM" (separate from the list header)                   |
@@ -526,7 +560,6 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 | 41        | 25 |  1   | ? 0x00                                                 |
 | 42        | 26 |  1   | Runeword, ? 0x00 always for version '71'               |
 | 43        | 27 |  5   | ? 0x00                                                 |
-
 
 #### Ear Item:
 |Bit<br>'71'<br>26 bytes|Bit<br>'71'<br>27 bytes| Size | Desc                        |
@@ -774,7 +807,7 @@ If the item is a set item, then there may follow upto 5 more list of mods contai
 
 If the item has a runeword set, then there is one more list of mods holding the magical properties of the applied runeword.
 
-##### Parent
+#### Parent
 All items are located somewhere and have a "parent" which can be another item, such as when inserting a jewel.
 
 | Value | Desc     |
@@ -793,7 +826,7 @@ For items that are "stored" a 3-bit integer encoded starting at bit 73 describes
 | 4     | Horadric Cube |
 | 5     | Stash         |
 
-##### Equipped
+#### Equipped
 Items that are equipped describe their slot:
 
 | Value | Slot                    |
