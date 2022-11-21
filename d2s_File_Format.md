@@ -487,7 +487,7 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 |-----|--------|----------------------------------------------------------------------------------|
 | 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
 | 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
-| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items.|
 |     |   4+   | [Coprse Information](#coprse-information)                                        |
 |     |  10    | '71' - '89' only, [Mercenary ID](#pre-expansion-mercenary-information)           |
 |     |   2+   | Expansion only, [Mercenary Information](#mercenary-information)                  |
@@ -498,7 +498,7 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 |-----|--------|----------------------------------------------------------------------------------|
 | 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
 | 2   |   2    | 1 if player is dead and has items on a corpse, otherwise 0                       |
-| 4   |   0+   | 1 if player is dead and has items on a corpse, [Coprse Items](#coprse-items)     |
+| 4   |   0+   | If player is dead and has items on a corpse, [Coprse Items](#coprse-items)       |
 
 ##### Coprse Items
 |Byte | Length | Desc                                                                             |
@@ -508,12 +508,12 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 | 8   |   4    | Y location of corpse                                                             |
 | 12  |   2    | `JM` { 0x4A, 0x4D }                                                              |
 | 14  |   2    | Item Count. Does not include any items occupying sockets in another item         |
-| 16  |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+| 16  |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items.|
 
 #### Mercenary Information
 |Byte | Length | Desc                                                                             |
 |-----|--------|----------------------------------------------------------------------------------|
-| 0   |   2    | `jf` { 0x6A, 0x66 }, Mercenary header                                            |
+| 0   |   2    | `jf` { 0x6A, 0x66 }                                                              |
 | 2   |   0+   | If merceneray is hired, [Mercenary Items](#mercenary-items)                      |
 
 ##### Mercenary Items
@@ -521,13 +521,13 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 |-----|--------|----------------------------------------------------------------------------------|
 | 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
 | 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
-| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items. Each item<br>starts with a basic 14-byte structure. Many fields in this structure are not<br>"byte-aligned" and are described by their bit position and sizes.|
+| 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items.|
 
 ##### Pre-Expansion Mercenary Information
 |Byte | Length | Desc                                                                             |
 |-----|--------|----------------------------------------------------------------------------------|
 | 0   |   2    | `JM` { 0x4A, 0x4D }                                                              |
-| 2   |   8    | mercenary id or 0 if there is no mercenary                                       |
+| 2   |   8    | Mercenary id or 0 if there is no mercenary                                       |
 
 #### Iron Golem Information
 |Byte | Length | Desc                                                                             |
@@ -537,6 +537,8 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 | 3   |   0+   | If player has an Iron Golem, a sigle [item](#single-item-layout)                 |
 
 #### Single Item Layout
+Each item starts with a basic 14-byte structure. Many fields in this structure are not "byte-aligned" and are described by their bit position and sizes. If item is socketed, then following the item are the socketed items.
+
 |Bit<br>'71' - '96'|Bit | Size | Desc                                                   |
 |-----------|----|------|--------------------------------------------------------|
 |  0        |    | 16   | "JM" (separate from the list header)                   |
