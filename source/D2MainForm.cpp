@@ -3131,7 +3131,11 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
 
     CheckFileSize();
 
-    CurPathName = CharInfo.getPath().wstring().c_str();
+    {
+        auto& p = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p);
+        CurPathName = p.wstring().c_str();
+    }
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3189,6 +3193,18 @@ int CD2MainForm::DoFileCloseAction()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnFileSave()
 {
+    {
+        auto& p = CharInfo.getPath();
+        auto ftime = std::filesystem::last_write_time(p);
+        if (ftime > m_ftime)
+        {
+            if (AfxMessageBox(_T("Character has been modified by another application.\nAre you sure you want to overwrite the file?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+            {
+                return;
+            }
+        }
+    }
+
     CWaitCursor wait;
     if (!CharInfo.save(BackupChar))
     {
@@ -3205,7 +3221,12 @@ void CD2MainForm::OnFileSave()
         return;
     }
 
-    CurPathName = CharInfo.getPath().wstring().c_str();
+    {
+        auto& p = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p);
+        CurPathName = p.wstring().c_str();
+    }
+
     if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::AuxFileRenameError)
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
@@ -3293,7 +3314,11 @@ void CD2MainForm::OnFileSaveAs()
 
     CheckFileSize();
 
-    CurPathName = CharInfo.getPath().wstring().c_str();
+    {
+        auto& p2 = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p2);
+        CurPathName = p2.wstring().c_str();
+    }
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3482,7 +3507,9 @@ void CD2MainForm::OnFileSaveAsVersion()
 
     if (modifiedOpenedFile)
     {
-        CurPathName = CharInfo.getPath().wstring().c_str();
+        auto& p2 = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p2);
+        CurPathName = p2.wstring().c_str();
         EnableCharInfoBox(TRUE);
 
         hasBackupFile = HasBackupFile(CurPathName);
@@ -3623,7 +3650,81 @@ void CD2MainForm::OnViewRefresh()
 
     Initialize();
 
-    CharInfo.refresh();
+    // return if open not successful
+    CString curPathName = CurPathName;
+    if (!CharInfo.refresh())
+    {
+        CString errorMsg(CharInfo.getLastError().message().c_str());
+        if (errorMsg.IsEmpty())
+        {
+            errorMsg = _T("Not a valid Diablo II save file.");
+        }
+
+        CString backupname = GetLastBackupFile(curPathName.GetString());
+        if (backupname.IsEmpty())
+        {
+            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+
+        errorMsg += _T("  Would you like to restore from backup?");
+        if (AfxMessageBox(errorMsg, MB_YESNO | MB_ICONERROR) == IDNO)
+        {
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+
+        try
+        {
+            std::filesystem::remove(curPathName.GetString());
+
+            try
+            {
+                // rename temp file to character file
+                std::filesystem::rename(backupname.GetString(), curPathName.GetString());
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+                CString msg;
+                msg.Format(_T("Failed to rename backup character file: %s"), backupname.GetString());
+                AfxMessageBox(CString(msg), MB_YESNO | MB_ICONERROR);
+                return;
+            }
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+            CString msg;
+            msg.Format(_T("Failed to delete existing character file: %s"), curPathName.GetString());
+            AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+
+            // just reopen it again
+        }
+
+        // return if open not successful
+        if (!CharInfo.open(curPathName.GetString()))
+        {
+            errorMsg = CharInfo.getLastError().message().c_str();
+            if (errorMsg.IsEmpty())
+            {
+                errorMsg = _T("Not a valid Diablo II save file.");
+            }
+            AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+
+            Editted = false;
+            OnFileClose();
+            return;
+        }
+    }
+
+    {
+        auto& p = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p);
+        CurPathName = p.wstring().c_str();
+    }
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
@@ -4738,7 +4839,11 @@ void CD2MainForm::OnOptionsRestoreChar()
 
     Initialize();
 
-    CurPathName = CharInfo.getPath().wstring().c_str();
+    {
+        auto& p = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p);
+        CurPathName = p.wstring().c_str();
+    }
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);

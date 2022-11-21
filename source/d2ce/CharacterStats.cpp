@@ -1826,7 +1826,7 @@ bool d2ce::CharacterStats::readSkills(const Json::Value& root, const Json::Value
 size_t d2ce::CharacterStats::updateBits(size_t& current_bit_offset, size_t size, std::uint32_t value) const
 {
     size_t startIdx = current_bit_offset / 8;
-    size_t endIdx = (current_bit_offset + size) / 8;
+    size_t endIdx = (current_bit_offset + size - 1) / 8;
     if (endIdx >= data.size())
     {
         // not enough space
@@ -2014,7 +2014,7 @@ void d2ce::CharacterStats::updateDataBuffer()
             updateBits(current_bit_offset, sizeof(Cs.CurLife) * 8, Cs.CurLife);
         }
 
-        updateBits(current_bit_offset, sizeof(Cs.MaxLife * 8), Cs.MaxLife);        // always present so no need to check StatInfo 
+        updateBits(current_bit_offset, sizeof(Cs.MaxLife) * 8, Cs.MaxLife);        // always present so no need to check StatInfo 
         updateBits(current_bit_offset, sizeof(Cs.CurMana) * 8, Cs.CurMana);        // always present so no need to check StatInfo bits
         updateBits(current_bit_offset, sizeof(Cs.MaxMana) * 8, Cs.MaxMana);        // always present so no need to check StatInfo bits
         updateBits(current_bit_offset, sizeof(Cs.CurStamina) * 8, Cs.CurStamina);  // always present so no need to check StatInfo bits

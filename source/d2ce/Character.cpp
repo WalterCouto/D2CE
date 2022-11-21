@@ -3481,6 +3481,10 @@ void d2ce::Character::fillBasicStats(BasicStats& bs) const
     bs.Status = EnumCharStatus::NoDeaths;
     bs.Title = 0;
     bs.Class = EnumCharClass::Amazon;
+    if (data.empty())
+    {
+        return;
+    }
 
     size_t current_byte_offset = CHAR_V120_NAME_BYTE_OFFSET; // pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8), character's name
     if (bs.Version < EnumCharVersion::v109)
