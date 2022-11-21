@@ -9,59 +9,59 @@ Integers are stored in [little endian](https://en.wikipedia.org/wiki/Endianness)
 ## Header
 Each .d2s file starts with a 765 byte header, after which data is of variable length.
 
-|Byte<br>'71' - '89'|Byte<br>'92' - '96'|Byte | Length | Desc                                                                                  |
+|Byte<br> `71` - `89`|Byte<br>`92` - `96`|Byte | Length | Desc                                                                                  |
 |-----------|-----------|-----|--------|---------------------------------------------------------------------------------------|
 |  0        |  0        |  0  |   4    | Signature (0xaa55aa55)                                                                |
 |  4        |  4        |  4  |   4    | [Version ID](#versions)                                                               |
 |           |  8        |  8  |   4    | File size                                                                             |
 |           | 12        | 12  |   4    | [Checksum](#checksum)                                                                 |
 |           | 16        | 16  |   4    | [Active Weapon](#active-weapon)                                                       |
-|  8        | 20        | 20  |  16    | [Character Name](#character-name) for versions '71' - '97', otherwise 0x00            |
+|  8        | 20        | 20  |  16    | [Character Name](#character-name) for versions  `71` - `97`, otherwise 0x00           |
 | 24        | 36        | 36  |   1    | [Character Status](#character-status)                                                 |
 | 25        | 37        | 37  |   1    | [Character Progression](#Character-progression)                                       |
-| 26        |           |     |   1    | [Active Weapon](#active-weapon) for versions '71' - '89'                              |
+| 26        |           |     |   1    | [Active Weapon](#active-weapon) for versions  `71` - `89`                             |
 | 27        | 38        | 38  |   1    | ? always zero                                                                         |
-| 28        |           |     |   1    | ? 0x3F for versions '87' - '89', otherwise 0xDD for version '71'                      |
-| 29        |           |     |   1    | ? 0x00 for versions '87' - '89', otherwise 0x01 for version '71'                      |
-| 30        |           |     |   1    | ? 0x10 for versions '71' - '89'                                                       |
-| 31        |           |     |   1    | ? 0x00 for versions '71' - '89'                                                       |
-| 32        |           |     |   1    | ? 0x82 for versions '71' - '89'                                                       |
+| 28        |           |     |   1    | ? 0x3F for versions `87` - `89`, otherwise 0xDD for version  `71`                     |
+| 29        |           |     |   1    | ? 0x00 for versions `87` - `89`, otherwise 0x01 for version  `71`                     |
+| 30        |           |     |   1    | ? 0x10 for versions  `71` - `89`                                                      |
+| 31        |           |     |   1    | ? 0x00 for versions  `71` - `89`                                                      |
+| 32        |           |     |   1    | ? 0x82 for versions  `71` - `89`                                                      |
 | 33        | 39        | 39  |   1    | ? always zero                                                                         |
 | 34        | 40        | 40  |   1    | [Character Class](#character-class)                                                   |
-| 35        | 41        | 41  |   1    | ? 0x10 for versions '92"+, otherwise 0x00 for versions '71' - '89'                    |
-|           | 42        | 42  |   1    | ? 0x1E for versions '92"+                                                             |
+| 35        | 41        | 41  |   1    | ? 0x10 for versions `92`+, otherwise 0x00 for versions  `71` - `89`                   |
+|           | 42        | 42  |   1    | ? 0x1E for versions `92`+                                                             |
 | 36        | 43        | 43  |   1    | [Level](#level)                                                                       |
-| 37        |           |     |   1    | ? 0x00 for versions '71' - '89'                                                       |
+| 37        |           |     |   1    | ? 0x00 for versions  `71` - `89`                                                      |
 |           | 44        | 44  |   4    | Created [unix timestamp](https://en.wikipedia.org/wiki/Unix_time)?                    |
 |           | 48        | 48  |   4    | Last Played [unix timestamp](https://en.wikipedia.org/wiki/Unix_time)                 |
-|           | 52        | 52  |   4    | ? 0xFF all bytes for versions '92"+                                                   |
-| 38        |           |     |  32    | [Character Menu Appearance](#character-menu-appearance) for versions '71' - '89'      |
-|           | 56        | 56  |  64    | [Assigned Skills](#AssignedSkills) for versions '92"+                                 |
-| 70        |           |     |  16    | [Assigned Skills](#AssignedSkills) for versions '71' - '89'                           |
-| 86        |           |     |   1    | Left Mouse for versions '71' - '89'                                                   |
-|           |120        |120  |   4    | Left Mouse for versions '92"+                                                         |
-| 87        |           |     |   1    | Right Mouse for versions '71' - '89'                                                  |
-|           |124        |124  |   4    | Right Mouse for versions '92"+                                                        |
-|           |128        |128  |   4    | Left Mouse (weapon switch) for versions '92"+                                         |
-|           |132        |132  |   4    | Right Mouse (weapon switch) for versions '92"+                                        |
-|           |136        |136  |  32    | [Character Menu Appearance](#character-menu-appearance) for versions '92"+            |
-| 88        |           |     |   1    | first 4 bits difficulty, last 4 bits starting act for versions '71' - '89'            |
-| 89        |           |     |  37    | ? 0x00 for versions '71' - '89'                                                       |
+|           | 52        | 52  |   4    | ? 0xFF all bytes for versions `92`+                                                   |
+| 38        |           |     |  32    | [Character Menu Appearance](#character-menu-appearance) for versions  `71` - `89`     |
+|           | 56        | 56  |  64    | [Assigned Skills](#AssignedSkills) for versions `92`+                                 |
+| 70        |           |     |  16    | [Assigned Skills](#AssignedSkills) for versions  `71` - `89`                          |
+| 86        |           |     |   1    | Left Mouse for versions  `71` - `89`                                                  |
+|           |120        |120  |   4    | Left Mouse for versions `92`+                                                         |
+| 87        |           |     |   1    | Right Mouse for versions  `71` - `89`                                                 |
+|           |124        |124  |   4    | Right Mouse for versions `92`+                                                        |
+|           |128        |128  |   4    | Left Mouse (weapon switch) for versions `92`+                                         |
+|           |132        |132  |   4    | Right Mouse (weapon switch) for versions `92`+                                        |
+|           |136        |136  |  32    | [Character Menu Appearance](#character-menu-appearance) for versions `92`+            |
+| 88        |           |     |   1    | first 4 bits difficulty, last 4 bits starting act for versions  `71` - `89`           |
+| 89        |           |     |  37    | ? 0x00 for versions  `71` - `89`                                                      |
 |           |168        |168  |   3    | [Difficulty](#difficulty)                                                             |
 |126        |171        |171  |   4    | Map ID                                                                                |
-|           |175        |175  |   2    | ? 0x00 for versions '92"+                                                             |
-|           |177        |177  |   2    | Merc dead? for versions '92"+                                                         |
-|           |179        |179  |   4    | Merc seed? for versions '92"+                                                         |
-|           |183        |183  |   2    | Merc Name ID for versions '92"+                                                       |
-|           |185        |185  |   2    | Merc Type for versions '92"+                                                          |
-|           |187        |187  |   4    | Merc Experience for versions '92"+                                                    |
-|           |191        |     | 140    | ? 0x00 for versions '92' - '96'                                                       |
-|           |           |191  |  28    | ? 0x00 for versions '97"+                                                             |
-|           |           |219  |  48    | [D2R Character Menu Appearance](#d2r-character-menu-appearance) for versions '97"+    |
-|           |           |267  |  16    | [Character Name](#character-name) for versions '98'+, otherwise 0x00 for version '97' |
-|           |           |283  |  48    | ? 0x00 for versions '97"+                                                             |
-|           |331        |331  |   1    | ? 0x00 for versions '97"+, otherwise 0x01 for versions '92' - '96'                    |
-|           |332        |332  |   3    | ? 0x00 for versions '92"+                                                             |
+|           |175        |175  |   2    | ? 0x00 for versions `92`+                                                             |
+|           |177        |177  |   2    | Merc dead? for versions `92`+                                                         |
+|           |179        |179  |   4    | Merc seed? for versions `92`+                                                         |
+|           |183        |183  |   2    | Merc Name ID for versions `92`+                                                       |
+|           |185        |185  |   2    | Merc Type for versions `92`+                                                          |
+|           |187        |187  |   4    | Merc Experience for versions `92`+                                                    |
+|           |191        |     | 140    | ? 0x00 for versions `92` - `96`                                                       |
+|           |           |191  |  28    | ? 0x00 for versions `97`+                                                             |
+|           |           |219  |  48    | [D2R Character Menu Appearance](#d2r-character-menu-appearance) for versions `97`+    |
+|           |           |267  |  16    | [Character Name](#character-name) for versions `98`+, otherwise 0x00 for version `97` |
+|           |           |283  |  48    | ? 0x00 for versions `97`+                                                             |
+|           |331        |331  |   1    | ? 0x00 for versions `97`+, otherwise 0x01 for versions `92` - `96`                    |
+|           |332        |332  |   3    | ? 0x00 for versions `92`+                                                             |
 |130        |335        |335  | 298    | [Quest](#quest)                                                                       |
 |428        |633        |633  |  80    | [Waypoint](#waypoint)                                                                 |
 |508        |713        |713  |  52    | [NPC](#npc)                                                                           |
@@ -195,11 +195,11 @@ If the checksum is invalid, Diablo II will not open the save file.
 This value is either 0 or 1 indicating which weapons/shield/spell setup is in use 
 
 ### Character Name
-Character names are store as an array of 16 characters which contain a null terminated string padded with `0x00` for the remaining bytes. For for versions '98'+ characters are stored as UTF-8 while for older version it is stored as 7-bit ASCII. To be valid, they must follow these rules:
+Character names are store as an array of 16 characters which contain a null terminated string padded with `0x00` for the remaining bytes. For for versions `98`+ characters are stored as UTF-8 while for older version it is stored as 7-bit ASCII. To be valid, they must follow these rules:
  * Must be 2-15 bytes in length
  * Must begin with a letter
- * May contain up to one hyphen (`-`) or, since versions '89', underscore (`_`)
- * For versions '71' - '97', contains 7-bit ASCII letters while for versions 98'+, contains utf-8 characters
+ * May contain up to one hyphen (`-`) or, since versions `89`, underscore (`_`)
+ * For versions  `71` - `97`, contains 7-bit ASCII letters while for versions `98`+, contains utf-8 characters
 
 ### Character Status
 This is a 8-bit field:
@@ -270,7 +270,7 @@ The quests struct is a 298 byte section that describes all quests in the game bu
 | 13  | Quest Completed in Current Game   |
 
 #### Header
-|Byte<br>'71' - '89'|Byte | Length | Desc                                |
+|Byte<br> `71` - `89`|Byte | Length | Desc                                |
 |-----------|-----|--------|-------------------------------------|
 |130        |335  | 4      | Woo! { 0x57, 0x6F, 0x6F, 0x21 }     |
 |134        |339  | 4      | Version: { 0x06, 0x00, 0x00, 0x00 } |
@@ -279,7 +279,7 @@ The quests struct is a 298 byte section that describes all quests in the game bu
 #### Structure
 This structure repeats it self 3 times, once for Normal, Nightmare and Hell. The offset is the offset into the quest structure.
 
-| Offset<br>'71' | Offset | Length | Description                                                                             |
+| Offset<br> `71` | Offset | Length | Description                                                                             |
 |--------|--------|---------|-----------------------------------------------------------------------------------------|
 | 0      | 0      |  2     | Set to `1` if you have been introduced to Warriv in Act I.                              |
 | 2      | 2      | 12     | All six quests for Act I.                                                               |
@@ -306,7 +306,7 @@ This structure repeats it self 3 times, once for Normal, Nightmare and Hell. The
 ### Waypoint
 
 #### Header
-|Byte<br>'71' - '89'|Byte | Length | Desc                                |
+|Byte<br> `71` - `89`|Byte | Length | Desc                                |
 |-----------|-----|--------|-------------------------------------|
 |428        |633  | 2      | WS { 0x57, 0x53 }                   |
 |430        |636  | 4      | Version: { 0x01, 0x00, 0x00, 0x00 } |
@@ -326,7 +326,7 @@ In the waypoint bitfield, a bit value of 1 means that the waypoint is enabled. I
 ### NPC
 
 #### Header
-|Byte<br>'71' - '89'|Byte | Length | Desc            |
+|Byte<br> `71` - `89`|Byte | Length | Desc            |
 |-----------|-----|--------|-----------------|
 |508        |713  | 2      | { 0x01, 0x77 }  |
 |510        |715  | 2      | Size: 52 bytes  | 
@@ -382,7 +382,7 @@ When you return to a previous act and talk to the NPC's, these bits are cleared.
 ### Attributes
 Following the header is the attributes section, the sections starts with the string identifier of `gf` and is variable in length.
 
-|Offset<br>'71' - '92'|Offset| Length | Desc                                                                |
+|Offset<br> `71` - `92`|Offset| Length | Desc                                                                |
 |-----------|------|--------|---------------------------------------------------------------------|
 |  0        |  0   |  2     | `gf` { 0x67, 0x66 }                                                 |
 |           |  2   | 27-53  | An array of `9 bit` attribute id, followed by a `n bit` length<br>attribute value. The section is terminated by a `9 bit` value of<br>`0x1ff`. It's worth mentioning that these fields are [bit reversed](bitreader.go#L69).<br>Basically if you find the bits `00100111` they are reversed into<br> `11100100`.|
@@ -489,7 +489,7 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 | 2   |   2    | Item Count. Does not include any items occupying sockets in another item         |
 | 4   |   0+   | N [items](#single-item-layout), where N is the item count given above + socketed items.|
 |     |   4+   | [Coprse Information](#coprse-information)                                        |
-|     |  10    | '71' - '89' only, [Mercenary ID](#pre-expansion-mercenary-information)           |
+|     |  10    |  `71` - `89` only, [Mercenary ID](#pre-expansion-mercenary-information)           |
 |     |   2+   | Expansion only, [Mercenary Information](#mercenary-information)                  |
 |     |   3+   | Expansion only, [Iron Golem Information](#iron-golem-information)                |
 
@@ -539,9 +539,9 @@ Player, Player Corpse, Mercenary and Iron Golem items are stored in lists descri
 #### Single Item Layout
 Each item starts with a basic 14-byte structure. Many fields in this structure are not "byte-aligned" and are described by their bit position and sizes. If item is socketed, then following the item are the socketed items.
 
-|Bit<br>'71' - '96'|Bit | Size | Desc                                                   |
+|Bit<br> `71` - `96`|Bit | Size | Desc                                                   |
 |-----------|----|------|--------------------------------------------------------|
-|  0        |    | 16   | "JM" (separate from the list header)                   |
+|  0        |    | 16   | `JM` { 0x4A, 0x4D } (separate from the list header)    |
 | 16        |  0 |  4   | ? 0x00                                                 |
 | 20        |  4 |  1   | Identified                                             |
 | 21        |  5 |  3   | ? 0x00                                                 |
@@ -551,20 +551,20 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 | 28        | 12 |  1   | ? 0x00                                                 |
 | 29        | 13 |  1   | Picked up since last save                              |
 | 30        | 14 |  2   | ? 0x00                                                 |
-| 32        | 16 |  1   | Ear, 0x01 always for version '71' with 26 bytes,<br>always ? 0x00 for Version '71' with 15 and 31 bytes|
+| 32        | 16 |  1   | Ear, 0x01 always for version  `71` with 26 bytes,<br>always ? 0x00 for Version  `71` with 15 and 31 bytes|
 | 33        | 17 |  1   | Starter Gear                                           |
 | 34        | 18 |  1   | ? 0x00                                                 |
-| 35        | 19 |  2   | ? 0x03 for version '71' with 15, 26 or 31 bytes,<br> otherwise 0x00 |
-| 37        | 21 |  1   | Compact, 0x01 always for version '71' with 15 bytes,<br>? 0x00 always for version '71' with 27 bytes|
+| 35        | 19 |  2   | ? 0x03 for version  `71` with 15, 26 or 31 bytes,<br> otherwise 0x00 |
+| 37        | 21 |  1   | Compact, 0x01 always for version  `71` with 15 bytes,<br>? 0x00 always for version  `71` with 27 bytes|
 | 38        | 22 |  1   | Ethereal                                               |
-| 39        | 23 |  1   | ? 0x01 for versions '87'+, otherwise 0x00              |
-| 40        | 24 |  1   | Personalized, ? 0x00 always for version '71'           |
+| 39        | 23 |  1   | ? 0x01 for versions `87`+, otherwise 0x00              |
+| 40        | 24 |  1   | Personalized, ? 0x00 always for version  `71`           |
 | 41        | 25 |  1   | ? 0x00                                                 |
-| 42        | 26 |  1   | Runeword, ? 0x00 always for version '71'               |
+| 42        | 26 |  1   | Runeword, ? 0x00 always for version  `71`               |
 | 43        | 27 |  5   | ? 0x00                                                 |
 
 #### Ear Item:
-|Bit<br>'71'<br>26 bytes|Bit<br>'71'<br>27 bytes| Size | Desc                        |
+|Bit<br> `71`<br>26 bytes|Bit<br> `71`<br>27 bytes| Size | Desc                        |
 |--------|--------|------|-----------------------------|
 | 48     | 48     |  5   | ? 0x00                      |
 | 53     |        | 10   | ? 0x00                      |
@@ -584,7 +584,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |198     |        | 10   | ? 0x00                      |
 |        |205     | 11   | ? 0x00                      |
 
-|Bit<br>'87' - '96'|Bit | Size | Desc                               |
+|Bit<br>`87` - `96`|Bit | Size | Desc                               |
 |-----------|----|------ |------------------------------------|
 |           | 32 |  3   | ? 0x00                             |
 | 48        |    | 10   | ? 0x00                             |
@@ -602,7 +602,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |191        |    |  7   | ? 0x00                             |
 
 #### Simple Item:
-|Bit<br>'71'<br>15 bytes|Bit<br>'71'<br>27 bytes| Size | Desc                                                                           |
+|Bit<br> `71`<br>15 bytes|Bit<br> `71`<br>27 bytes| Size | Desc                                                                           |
 |--------|--------|------|--------------------------------------------------------------------------------|
 | 48     |        | 18   | ? 0x00                                                                         |
 |        | 48     | 20   | ? 0x00                                                                         |
@@ -622,7 +622,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |        |203     |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |        |211     |  5   | ? 0x00 to pad to 216 bits                                                      |
 
-|Bit<br>'87' - '96'|Bit      | Size | Desc                                                           |
+|Bit<br>`87` - `96`|Bit      | Size | Desc                                                           |
 |-----------|---------|------ |----------------------------------------------------------------|
 |           | 32      |  3   | ? 0x00                                                         |
 | 48        |         | 10   | ? 0x00                                                         |
@@ -639,7 +639,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |107 or 109 |         | 3-5  | ? 0x00 to pad to 112 bits                                      |
 
 #### Gold Item (unused):
-|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes| Size | Desc                                                              |
+|Bit<br> `71`<br>27 bytes|Bit<br> `71`<br>31 bytes| Size | Desc                                                              |
 |--------|--------|------|-------------------------------------------------------------------|
 |        |  48    | 10   | ? 0x00                                                            |
 |        |  58    | 30   | Type code (3 letters)                                             |
@@ -657,7 +657,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                     |
 
-|Bit<br>'87' - '96'|Bit      | Size | Desc                               |
+|Bit<br>`87` - `96`|Bit      | Size | Desc                               |
 |-----------|---------|------|------------------------------------|
 |           | 32      |  3   | ? 0x00                             |
 | 48        |         | 10   | ? 0x00                             |
@@ -673,7 +673,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |106        |         |  6   | ? 0x00 to pad to 112 bits          |
 
 #### Extended items:
-|Bit<br>'71'<br>27 bytes|Bit<br>'71'<br>31 bytes| Size | Desc                                                                                |
+|Bit<br> `71`<br>27 bytes|Bit<br> `71`<br>31 bytes| Size | Desc                                                                                |
 |--------|--------|------|-------------------------------------------------------------------------------------|
 |        |  48    | 10   | ? 0x00                                                                              |
 |        |  58    | 30   | Type code (3 letters)                                                               |
@@ -697,7 +697,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |203     | 235    |  8   | [Parent](#parent)<br>if bits 4-8 are 0, then stored and bits 0-3 are for [Stash](#parent)|
 |211     | 243    |  5   | ? 0x00 to pad to 216/248 bits                                                       |
 
-|Bit<br>'87' - '96'|Bit      | Size | Desc                                      |
+|Bit<br>`87` - `96`|Bit      | Size | Desc                                      |
 |-----------|---------|------|-------------------------------------------|
 |           | 32      |  3   | ? 0x00                                    |
 | 48        |         | 10   | ? 0x00                                    |
@@ -717,19 +717,19 @@ If the item is marked as `Compact` (bit 37 is set) no extended item information 
 
 Items with extended information store bits based on information in the item header. For example, an item marked as `Socketed` will store an extra 3-bit integer encoding how many sockets the item has.
 
-|Bit<br>'87' - '96'|Bit      | Size | Desc                                                                                              |
+|Bit<br>`87` - `96`|Bit      | Size | Desc                                                                                              |
 |-----------|---------|------|---------------------------------------------------------------------------------------------------|
 |108        | 61 - 83 |  3   | if quest item, then 2 bits for quest difficulty and 1 bit for number of occupied sockets,<br>otherwise 3 bits for number of occupied sockets. If there are occupied sockets,<br>then following this item will be the items contained in those sockets.|
 |111        | 64 - 86 |  1+  | [Custom Graphics](#custom-graphics)                                                               |
 |112 - 115  | 65 - 90 |  1+  | [Class Specific](#class-specific)                                                                 |
 |           |         |  4+  | [Quality](#quality)                                                                               |
 |           |         |  0+  | 16 bits exist only if a item is a runeword. The first 12 bits is the runeword Id from `Runes.txt`.<br>Runeword [Mods](#mods) will exist at the the end of the item data.|
-|           |         |  0+  | [Character Name](#character-name) exists only for personalize items.<br>For versions '87' - '97', 105 bits, otherwise 120 bits|
+|           |         |  0+  | [Character Name](#character-name) exists only for personalize items.<br>For versions `87` - `97`, 105 bits, otherwise 120 bits|
 |           |         |  0+  | 5 bits exist only if a tome indicating the spell Id<br>(0 - Tome of Town Portal, 1 - Tome of Identify )|
 |           |         |  0+  | 10 bits exist only if a body part item (unused in game) indicating the<br>monster Id from `monstats.txt`|
-|           |         |  1+  | Realm Data flag, if first bit is set then Realm Data bits follow.<br>For Miscellaneous items, Gems, Rings, Amultes, Charms and Runes,<br>96 bits follow for versions '87' - '96', otherwise 128 bits follow.<br>For all other items 3 bits follow.|
-|           |         |  0+  | For Armor, the defense rating.<br>Versions '87' - '92', 10 bits, otherwise 11 bits|
-|           |         |  0+  | For Armor or Weapons, the max durability value (8 bits).<br>If max durability is not zero, then current durablilty value follows.<br>Versions '87' - '92', 8 bits follow, otherwise 9 bits follow|
+|           |         |  1+  | Realm Data flag, if first bit is set then Realm Data bits follow.<br>For Miscellaneous items, Gems, Rings, Amultes, Charms and Runes,<br>96 bits follow for versions `87` - `96`, otherwise 128 bits follow.<br>For all other items 3 bits follow.|
+|           |         |  0+  | For Armor, the defense rating.<br>Versions `87` - `92`, 10 bits, otherwise 11 bits|
+|           |         |  0+  | For Armor or Weapons, the max durability value (8 bits).<br>If max durability is not zero, then current durablilty value follows.<br>Versions `87` - `92`, 8 bits follow, otherwise 9 bits follow|
 |           |         |  0+  | For Stackable items, the quanity of items stacked (9 bits)                                        |
 |           |         |  0+  | For Set items, the set bonus bits indicated how many Set [Mods](#mods) exists (5 bits)            |
 |           |         |  0+  | If the item is socketed, it will contain 4 bits of data which are the number of total sockets the item has,<br>regardless of how many are occupied by an item.|
