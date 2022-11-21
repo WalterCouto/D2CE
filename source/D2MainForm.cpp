@@ -3139,7 +3139,6 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
-
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
@@ -3221,12 +3220,6 @@ void CD2MainForm::OnFileSave()
         return;
     }
 
-    {
-        auto& p = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p);
-        CurPathName = p.wstring().c_str();
-    }
-
     if (static_cast<d2ce::CharacterErrc>(CharInfo.getLastError().value()) == d2ce::CharacterErrc::AuxFileRenameError)
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
@@ -3240,12 +3233,20 @@ void CD2MainForm::OnFileSave()
 
     CheckFileSize();
 
+    {
+        auto& p = CharInfo.getPath();
+        m_ftime = std::filesystem::last_write_time(p);
+        CurPathName = p.wstring().c_str();
+    }
+    EnableCharInfoBox(TRUE);
+
+    hasBackupFile = HasBackupFile(CurPathName);
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
-
-    Initialize();
-    CheckStatsLeft();
+    DisplayCharInfo();
+    CtrlEditted.clear();
+    UpdateAppTitle();
 
     CString msg(_T("Character stats saved"));
     StatusBar.SetWindowText(msg);
@@ -3290,7 +3291,6 @@ void CD2MainForm::OnFileSaveAs()
     }
 
     // Save already done above
-    bool bSuccess = true;
     auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
     if (!CharInfo.saveAsD2s(folderDialog.GetPathName().GetString(), saveOp))
     {
@@ -3329,12 +3329,9 @@ void CD2MainForm::OnFileSaveAs()
     CtrlEditted.clear();
     UpdateAppTitle();
 
-    if (bSuccess)
-    {
-        CString msg(_T("Character stats saved"));
-        StatusBar.SetWindowText(msg);
-        AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
-    }
+    CString msg(_T("Character stats saved"));
+    StatusBar.SetWindowText(msg);
+    AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
 }
 
 void CD2MainForm::OnUpdateFileSaveAs(CCmdUI* pCmdUI)
@@ -3720,17 +3717,22 @@ void CD2MainForm::OnViewRefresh()
         }
     }
 
+    CheckFileSize();
+
     {
         auto& p = CharInfo.getPath();
         m_ftime = std::filesystem::last_write_time(p);
         CurPathName = p.wstring().c_str();
     }
+    EnableCharInfoBox(TRUE);
+
+    hasBackupFile = HasBackupFile(CurPathName);
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
-
     CtrlEditted.clear();
+    UpdateAppTitle();
 
     StatusBar.SetWindowText(_T("Character stats have been refreshed"));
 }
@@ -4839,6 +4841,8 @@ void CD2MainForm::OnOptionsRestoreChar()
 
     Initialize();
 
+    CheckFileSize();
+
     {
         auto& p = CharInfo.getPath();
         m_ftime = std::filesystem::last_write_time(p);
@@ -4847,14 +4851,15 @@ void CD2MainForm::OnOptionsRestoreChar()
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
-
     CharInfo.fillBasicStats(Bs);
     CharInfo.fillCharacterStats(Cs);
+    CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
     CtrlEditted.clear();
+    UpdateAppTitle();
+
     CString msg(_T("Character stats have been restored"));
     StatusBar.SetWindowText(msg);
-    UpdateAppTitle();
     AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
 }
 
