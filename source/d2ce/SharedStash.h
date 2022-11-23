@@ -54,6 +54,7 @@ namespace d2ce
         std::vector<SharedStashPage> Pages;
         std::list<d2ce::Item> BufferItems;       // Buffer for items not in any page's inventory yet
         std::filesystem::path m_d2ifilename;
+        std::filesystem::file_time_type m_ftime; // Modified time of file at the time it was read
         EnumCharVersion CharVersion = APP_CHAR_VERSION;
 
     public:
@@ -72,6 +73,7 @@ namespace d2ce
         bool refresh();
         bool save(bool saveBackup = true);
         const std::filesystem::path& getPath() const;
+        bool hasBeenModifiedSinceLoad() const;
 
         bool hasSharedStash() const;
         bool isLoaded() const;

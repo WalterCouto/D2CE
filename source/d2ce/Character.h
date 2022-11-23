@@ -44,6 +44,7 @@ namespace d2ce
 
     private:
         mutable std::vector<std::uint8_t> data;
+        std::filesystem::file_time_type m_ftime; // Modified time of file at the time it was read
 
     protected:
         std::uint64_t readBytes(std::FILE* charfile, size_t& current_byte_offset, size_t byte);
@@ -156,6 +157,7 @@ namespace d2ce
         bool saveAsD2s(const std::filesystem::path& path, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup);
         void close();
         const std::filesystem::path& getPath() const;
+        bool hasBeenModifiedSinceLoad() const;
         std::string asJson(bool bSerializedFormat = false, EnumCharSaveOp backup = EnumCharSaveOp::SaveWithBackup); // utf-8
 
         void setDefaultTxtReader();

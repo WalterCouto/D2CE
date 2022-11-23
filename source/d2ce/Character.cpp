@@ -628,6 +628,14 @@ bool d2ce::Character::openD2S(const std::filesystem::path& path, bool validateCh
         }
     }
 
+    if (path.empty() || !std::filesystem::exists(path))
+    {
+        m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
+        return false;
+    }
+
+    m_ftime = std::filesystem::last_write_time(path);
+
     m_error_code.clear();
     std::FILE* charfile = nullptr;
     errno_t err = _wfopen_s(&charfile, path.wstring().c_str(), L"rb+");
@@ -708,6 +716,14 @@ bool d2ce::Character::openJson(const std::filesystem::path& path)
             close();
         }
     }
+
+    if (path.empty() || !std::filesystem::exists(path))
+    {
+        m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
+        return false;
+    }
+
+    m_ftime = std::filesystem::last_write_time(path);
 
     std::ifstream ifs;
     ifs.open(path.wstring().c_str());
@@ -1787,6 +1803,7 @@ bool d2ce::Character::save(bool backup)
             std::fclose(jsonFile);
         }
 
+        m_ftime = std::filesystem::last_write_time(m_jsonfilename);
         return true;
     }
 
@@ -1835,158 +1852,157 @@ bool d2ce::Character::save(bool backup)
         m_error_code = std::make_error_code(CharacterErrc::FileRenameError);
         return false;
     }
-    
-    if (m_jsonfilename.empty()) // Don't modify the name of a temporary file
-    {
-        // check to see if the m_d2sfilename needs to be changed
-        // to match the character's name
-        tempfilename = m_d2sfilename;
-        std::filesystem::path p = m_d2sfilename;
-        p.replace_extension();
-        std::filesystem::path origFileNameBase = p;
-        std::string tempname = utf8::utf16to8(p.filename().wstring());
 
-        // compare m_d2sfilename (w/o extension) to character's name
-        if (_stricmp(tempname.c_str(), Bs.Name.data()) != 0)
+    m_ftime = std::filesystem::last_write_time(m_d2sfilename);
+
+    // check to see if the m_d2sfilename needs to be changed
+    // to match the character's name
+    tempfilename = m_d2sfilename;
+    std::filesystem::path p = m_d2sfilename;
+    p.replace_extension();
+    std::filesystem::path origFileNameBase = p;
+    std::string tempname = utf8::utf16to8(p.filename().wstring());
+
+    // compare m_d2sfilename (w/o extension) to character's name
+    if (_stricmp(tempname.c_str(), Bs.Name.data()) != 0)
+    {
+        std::filesystem::path fileNameBase = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+        m_d2sfilename = fileNameBase;
+        m_d2sfilename.replace_extension(".d2s");
+        try
         {
-            std::filesystem::path fileNameBase = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
-            m_d2sfilename = fileNameBase;
-            m_d2sfilename.replace_extension(".d2s");
+            // rename temp file to character file
+            std::filesystem::rename(tempfilename, m_d2sfilename);
+        }
+        catch (std::filesystem::filesystem_error const&)
+        {
+            m_error_code = std::make_error_code(CharacterErrc::FileRenameError);
+            return false;
+        }
+
+        std::filesystem::path d2sfilename = m_d2sfilename;
+        if (!open(d2sfilename))
+        {
+            return false;
+        }
+
+        // rename other files (don't error out if it fails)
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".key");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".key");
             try
             {
-                // rename temp file to character file
-                std::filesystem::rename(tempfilename, m_d2sfilename);
+                std::filesystem::rename(tempfilename, tempname);
             }
             catch (std::filesystem::filesystem_error const&)
             {
-                m_error_code = std::make_error_code(CharacterErrc::FileRenameError);
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
                 return false;
             }
+        }
 
-            std::filesystem::path d2sfilename = m_d2sfilename;
-            if (!open(d2sfilename, false)) // checksum is calulated and written below
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".ma0");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".ma0");
+            try
             {
+                std::filesystem::rename(tempfilename, tempname);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
                 return false;
             }
+        }
 
-            // rename other files (don't error out if it fails)
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".key");
-            if (std::filesystem::exists(tempfilename))
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".ma1");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".ma1");
+            try
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".key");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                std::filesystem::rename(tempfilename, tempname);
             }
-
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".ma0");
-            if (std::filesystem::exists(tempfilename))
+            catch (std::filesystem::filesystem_error const&)
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".ma0");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                return false;
             }
+        }
 
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".ma1");
-            if (std::filesystem::exists(tempfilename))
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".ma2");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".ma2");
+            try
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".ma1");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                std::filesystem::rename(tempfilename, tempname);
             }
-
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".ma2");
-            if (std::filesystem::exists(tempfilename))
+            catch (std::filesystem::filesystem_error const&)
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".ma2");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                return false;
             }
+        }
 
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".ma3");
-            if (std::filesystem::exists(tempfilename))
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".ma3");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".ma3");
+            try
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".ma3");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                std::filesystem::rename(tempfilename, tempname);
             }
-
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".map");
-            if (std::filesystem::exists(tempfilename))
+            catch (std::filesystem::filesystem_error const&)
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".map");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                return false;
             }
+        }
 
-            tempfilename = origFileNameBase;
-            tempfilename.replace_extension(".ctl");
-            if (std::filesystem::exists(tempfilename))
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".map");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".map");
+            try
             {
-                std::filesystem::path tempPath = fileNameBase;
-                tempPath.replace_extension(".ctl");
-                try
-                {
-                    std::filesystem::rename(tempfilename, tempname);
-                }
-                catch (std::filesystem::filesystem_error const&)
-                {
-                    m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
-                    return false;
-                }
+                std::filesystem::rename(tempfilename, tempname);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                return false;
+            }
+        }
+
+        tempfilename = origFileNameBase;
+        tempfilename.replace_extension(".ctl");
+        if (std::filesystem::exists(tempfilename))
+        {
+            std::filesystem::path tempPath = fileNameBase;
+            tempPath.replace_extension(".ctl");
+            try
+            {
+                std::filesystem::rename(tempfilename, tempname);
+            }
+            catch (std::filesystem::filesystem_error const&)
+            {
+                m_error_code = std::make_error_code(CharacterErrc::AuxFileRenameError);
+                return false;
             }
         }
     }
@@ -3255,6 +3271,17 @@ void d2ce::Character::close()
 const std::filesystem::path& d2ce::Character::getPath() const
 {
     return m_jsonfilename.empty() ? m_d2sfilename : m_jsonfilename;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Character::hasBeenModifiedSinceLoad() const
+{
+    if (!is_open())
+    {
+        return false;
+    }
+
+    auto ftime = std::filesystem::last_write_time(getPath());
+    return (ftime > m_ftime) ? true : false;
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Character::asJson(EnumCharVersion version, bool bSerializedFormat, EnumCharSaveOp saveOp)

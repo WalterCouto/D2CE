@@ -84,6 +84,7 @@ d2ce::SharedStash& d2ce::SharedStash::operator=(const SharedStash& other)
     BufferItems = other.BufferItems;
     Pages = other.Pages;
     m_d2ifilename = other.m_d2ifilename;
+    m_ftime = other.m_ftime;
     return *this;
 }
 //---------------------------------------------------------------------------
@@ -101,6 +102,7 @@ d2ce::SharedStash& d2ce::SharedStash::operator=(SharedStash&& other) noexcept
     other.Pages.clear();
     m_d2ifilename.swap(other.m_d2ifilename);
     other.m_d2ifilename.clear();
+    std::swap(m_ftime, other.m_ftime);
     return *this;
 }
 //---------------------------------------------------------------------------
@@ -152,16 +154,14 @@ bool d2ce::SharedStash::refresh()
         return false;
     }
 
-    std::FILE* charfile = nullptr;
-#ifdef _MSC_VER
-    charfile = _wfsopen(m_d2ifilename.wstring().c_str(), L"rb+", _SH_DENYNO);
-#else
-    errno_t err = wfopen_s(&charfile, m_d2ifilename.wstring().c_str(), L"rb+");
+    m_ftime = std::filesystem::last_write_time(m_d2ifilename);
+
+    std::FILE* charfile = nullptr; 
+    errno_t err = _wfopen_s(&charfile, m_d2ifilename.wstring().c_str(), L"rb+");
     if (err != 0)
     {
         return false;
     }
-#endif
 
     if (!refresh(charfile))
     {
@@ -216,12 +216,24 @@ bool d2ce::SharedStash::save(bool saveBackup)
 
     std::fclose(charfile);
     charfile = nullptr;
+    m_ftime = std::filesystem::last_write_time(m_d2ifilename);
     return true;
 }
 //---------------------------------------------------------------------------
 const std::filesystem::path& d2ce::SharedStash::getPath() const
 {
     return m_d2ifilename;
+}
+//---------------------------------------------------------------------------
+bool d2ce::SharedStash::hasBeenModifiedSinceLoad() const
+{
+    if (m_d2ifilename.empty())
+    {
+        return false;
+    }
+
+    auto ftime = std::filesystem::last_write_time(m_d2ifilename);
+    return (ftime > m_ftime) ? true : false;
 }
 //---------------------------------------------------------------------------
 bool d2ce::SharedStash::hasSharedStash() const

@@ -3131,11 +3131,7 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
 
     CheckFileSize();
 
-    {
-        auto& p = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p);
-        CurPathName = p.wstring().c_str();
-    }
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3192,15 +3188,11 @@ int CD2MainForm::DoFileCloseAction()
 //---------------------------------------------------------------------------
 void CD2MainForm::OnFileSave()
 {
+    if (CharInfo.hasBeenModifiedSinceLoad())
     {
-        auto& p = CharInfo.getPath();
-        auto ftime = std::filesystem::last_write_time(p);
-        if (ftime > m_ftime)
+        if (AfxMessageBox(_T("Character has been modified by another application.\nAre you sure you want to overwrite the file?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
         {
-            if (AfxMessageBox(_T("Character has been modified by another application.\nAre you sure you want to overwrite the file?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
-            {
-                return;
-            }
+            return;
         }
     }
 
@@ -3233,11 +3225,7 @@ void CD2MainForm::OnFileSave()
 
     CheckFileSize();
 
-    {
-        auto& p = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p);
-        CurPathName = p.wstring().c_str();
-    }
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3245,6 +3233,7 @@ void CD2MainForm::OnFileSave()
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
+    Editted = false;
     CtrlEditted.clear();
     UpdateAppTitle();
 
@@ -3314,11 +3303,7 @@ void CD2MainForm::OnFileSaveAs()
 
     CheckFileSize();
 
-    {
-        auto& p2 = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p2);
-        CurPathName = p2.wstring().c_str();
-    }
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3326,6 +3311,7 @@ void CD2MainForm::OnFileSaveAs()
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
+    Editted = false;
     CtrlEditted.clear();
     UpdateAppTitle();
 
@@ -3504,9 +3490,7 @@ void CD2MainForm::OnFileSaveAsVersion()
 
     if (modifiedOpenedFile)
     {
-        auto& p2 = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p2);
-        CurPathName = p2.wstring().c_str();
+        CurPathName = CharInfo.getPath().wstring().c_str();
         EnableCharInfoBox(TRUE);
 
         hasBackupFile = HasBackupFile(CurPathName);
@@ -3515,6 +3499,7 @@ void CD2MainForm::OnFileSaveAsVersion()
         CharInfo.fillCharacterStats(Cs);
         CharInfo.fillDisplayedCharacterStats(DisplayedCs);
         DisplayCharInfo();
+        Editted = false;
         CtrlEditted.clear();
         StatusBar.SetWindowText(_T("Character stats have been refreshed"));
         UpdateAppTitle();
@@ -3719,11 +3704,7 @@ void CD2MainForm::OnViewRefresh()
 
     CheckFileSize();
 
-    {
-        auto& p = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p);
-        CurPathName = p.wstring().c_str();
-    }
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);
@@ -3731,6 +3712,7 @@ void CD2MainForm::OnViewRefresh()
     CharInfo.fillCharacterStats(Cs);
     CharInfo.fillDisplayedCharacterStats(DisplayedCs);
     DisplayCharInfo();
+    Editted = false;
     CtrlEditted.clear();
     UpdateAppTitle();
 
@@ -4843,11 +4825,7 @@ void CD2MainForm::OnOptionsRestoreChar()
 
     CheckFileSize();
 
-    {
-        auto& p = CharInfo.getPath();
-        m_ftime = std::filesystem::last_write_time(p);
-        CurPathName = p.wstring().c_str();
-    }
+    CurPathName = CharInfo.getPath().wstring().c_str();
     EnableCharInfoBox(TRUE);
 
     hasBackupFile = HasBackupFile(CurPathName);

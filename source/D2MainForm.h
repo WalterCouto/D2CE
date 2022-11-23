@@ -265,8 +265,6 @@ private:	// User declarations
     d2ce::CharStats DisplayedCs; // stats with item bonuses added
     std::vector<WORD> m_vecTemplate;
 
-    std::filesystem::file_time_type m_ftime; // Modified time of file at the time it was read
-
     CCharNameEdit CharName;
     CString InitialDir;
     CButton CharStatusHardcore;

@@ -2317,12 +2317,20 @@ void CD2SharedStashForm::OnCbnSelchangeStashPageCmb()
 //---------------------------------------------------------------------------
 void CD2SharedStashForm::OnBnClickedOk()
 {
+    if (Stash.hasBeenModifiedSinceLoad())
+    {
+        if (AfxMessageBox(_T("Stash has been modified by another application.\nAre you sure you want to overwrite the file?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+        {
+            return;
+        }
+    }
+
     {
         CWaitCursor wait;
         if (!Stash.save())
         {
             CStringW msg;
-            msg.Format(L"Failed to savefile: %s", Stash.getPath().wstring().c_str());
+            msg.Format(L"Failed to save file: %s", Stash.getPath().wstring().c_str());
             AfxMessageBox(CString(msg), MB_OK | MB_ICONERROR);
             return;
         }
