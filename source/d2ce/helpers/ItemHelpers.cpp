@@ -63,6 +63,7 @@ namespace d2ce
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
         bool getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs);
+        bool getPossibleCraftingRecipies(const ItemCreateParams& createParams, std::vector<CraftRecipieType>& attribs);
 
         bool getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
         bool getRareOrCraftedAttribs(const d2ce::RareAttributes& rareAttrib, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways = true);
@@ -72,6 +73,7 @@ namespace d2ce
         bool getFullSetBonusAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
         bool getUniqueQuestMagicAttribs(const std::array<std::uint8_t, 4>& strcode, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb = 0, bool bMaxAlways = true);
+        bool getCraftingRecipiesMagicAttribs(const ItemCreateParams& createParams, std::vector<MagicalAttribute>& attribs);
 
         std::uint8_t generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb = 0);
         bool findDWForMagicalAffixes(const MagicalAffixes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
@@ -103,6 +105,7 @@ namespace d2ce
         std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
+        void mergeMagicalAttributes(std::vector<MagicalAttribute>& attribs, const std::vector<MagicalAttribute>& newAttribs);
         bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version);
     }
 
@@ -4687,6 +4690,273 @@ namespace d2ce
         bool isPrefix = false;   // if affix is not zero, this flag indicates if it's a prefix or suffix
     };
 
+    struct CraftingItemType : public CraftRecipieType
+    {
+        std::string index; // The unique recipie index
+
+        //   0 = pre v1.08 affixes
+        //   1 - Non-Expansion (post v1.08 affixes) (affixes available in classic and LoD).
+        // 100 - Expansion only affixes
+        std::uint16_t version = 100;
+
+        std::uint16_t plvl = 50;
+        std::uint16_t ilvl = 50;
+
+        std::string category; // The category this recipie applies to
+        std::string code; // The item code this recipie applies to, if empty, applies to all items in the given category.
+                          // if not empty, then the normal, uber and ultra codes for this item can be uses for this recipie
+
+        std::vector<ItemAffixModType> modType; // The modifiers this recipie will give to item
+    };
+
+    std::map<std::uint16_t, CraftingItemType> s_CraftItemType;
+    std::map<std::string, std::vector<std::uint16_t>> s_ItemCodeToCraftItemType;
+    std::map<std::string, std::vector<std::uint16_t>> s_ItemCategoryToCraftItemType;
+    void InitCraftItemTypeData(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_CraftItemType.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_CraftItemType.clear();
+            s_ItemCodeToCraftItemType.clear();
+            s_ItemCategoryToCraftItemType.clear();
+        }
+
+        InitItemMiscTypesData(txtReader);
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetCraftModsTxt());
+        auto& doc = *pDoc;
+        std::map<std::uint16_t, CraftingItemType> craftItemType;
+        std::map<std::string, std::vector<std::uint16_t>> itemCodeToCraftItemType;
+        std::map<std::string, std::vector<std::uint16_t>> itemCategoryToCraftItemType;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T indexColumnIdx = doc.GetColumnIdx("index");
+        if (indexColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T recipeColumnIdx = doc.GetColumnIdx("recipe");
+        if (recipeColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T versionColumnIdx = doc.GetColumnIdx("version");
+        if (versionColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T plvlColumnIdx = doc.GetColumnIdx("plvl");
+        if (plvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T ilvlColumnIdx = doc.GetColumnIdx("ilvl");
+        if (ilvlColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T typeColumnIdx = doc.GetColumnIdx("type");
+        if (typeColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T codeColumnIdx = doc.GetColumnIdx("code");
+        if (codeColumnIdx < 0)
+        {
+            return;
+        }
+
+        size_t modParamSize = 4;
+        std::vector<SSIZE_T> modCode(modParamSize, -1);
+        std::vector<SSIZE_T> modParam(modParamSize, -1);
+        std::vector<SSIZE_T> modMin(modParamSize, -1);
+        std::vector<SSIZE_T> modMax(modParamSize, -1);
+        for (size_t idx = 1; idx <= modParamSize; ++idx)
+        {
+            modCode[idx - 1] = doc.GetColumnIdx("prop" + std::to_string(idx));
+            if (modCode[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modParam[idx - 1] = doc.GetColumnIdx("par" + std::to_string(idx));
+            if (modParam[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modMin[idx - 1] = doc.GetColumnIdx("min" + std::to_string(idx));
+            if (modMin[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+
+            modMax[idx - 1] = doc.GetColumnIdx("max" + std::to_string(idx));
+            if (modMax[idx - 1] < 0)
+            {
+                modParamSize = idx - 1;
+                modCode.resize(modParamSize);
+                modParam.resize(modParamSize);
+                modMin.resize(modParamSize);
+                modMax.resize(modParamSize);
+                break;
+            }
+        }
+
+        std::string strValue;
+        std::string index;
+        std::string type;
+        std::uint16_t id = 0;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            index = doc.GetCellString(indexColumnIdx, i);
+            if (index.empty())
+            {
+                // skip
+                continue;
+            }
+            
+            strValue = doc.GetCellString(recipeColumnIdx, i);
+            if (strValue.empty())
+            {
+                // skip
+                continue;
+            }
+
+            type = doc.GetCellString(typeColumnIdx, i);
+            if (type.empty())
+            {
+                // skip
+                continue;
+            }
+            else
+            {
+                auto& cat = GetItemCategory(type);
+                if (cat.code == type)
+                {
+                    type = cat.name;
+                }
+            }
+
+            auto& itemType = craftItemType[id];
+            itemType.id = id;
+            ++id;
+            itemType.index = index;
+            itemType.name = strValue;
+            itemType.category = type;
+            
+            strValue = doc.GetCellString(versionColumnIdx, i);
+            if (!strValue.empty())
+            {
+                itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(plvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                auto level = doc.GetCellUInt16(plvlColumnIdx, i);
+                if (level > 1)
+                {
+                    itemType.plvl = level;
+                }
+            }
+
+            strValue = doc.GetCellString(ilvlColumnIdx, i);
+            if (!strValue.empty())
+            {
+                auto level = doc.GetCellUInt16(ilvlColumnIdx, i);
+                if (level > 1)
+                {
+                    itemType.ilvl = level;
+                }
+            }
+
+            strValue = doc.GetCellString(codeColumnIdx, i);
+            if (strValue.empty())
+            {
+                itemCategoryToCraftItemType[itemType.category].push_back(itemType.id);
+            }
+            else
+            {
+                itemType.code = strValue;
+                auto& itemTypeHelper = GetItemTypeHelper(itemType.code);
+                if (itemTypeHelper.codes.empty())
+                {
+                    itemCodeToCraftItemType[itemType.code].push_back(itemType.id);
+                }
+                else
+                {
+                    for (auto& code : itemTypeHelper.codes)
+                    {
+                        itemCodeToCraftItemType[code].push_back(itemType.id);
+                    }
+                }
+            }
+
+            for (size_t idx = 0; idx < modParamSize; ++idx)
+            {
+                strValue = doc.GetCellString(modCode[idx], i);
+                if (strValue.empty())
+                {
+                    break;
+                }
+
+                itemType.modType.resize(itemType.modType.size() + 1);
+                auto& mod = itemType.modType.back();
+                mod.code = strValue;
+
+                strValue = doc.GetCellString(modParam[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.param = strValue;
+                }
+
+                strValue = doc.GetCellString(modMin[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.min = strValue;
+                }
+
+                strValue = doc.GetCellString(modMax[idx], i);
+                if (!strValue.empty())
+                {
+                    mod.max = strValue;
+                }
+            }
+        }
+
+        s_CraftItemType.swap(craftItemType);
+        s_ItemCodeToCraftItemType.swap(itemCodeToCraftItemType);
+        s_ItemCategoryToCraftItemType.swap(itemCategoryToCraftItemType);
+    }
+
     struct ItemAffixType
     {
         std::uint16_t code = 0; // index of the affix
@@ -4730,7 +5000,7 @@ namespace d2ce
 
         InitItemPropertiesData(txtReader);
         pCurTextReader = &txtReader;
-        auto pDoc(txtReader.GetSuperiorMods());
+        auto pDoc(txtReader.GetSuperiorModsTxt());
         auto& doc = *pDoc;
         std::map<std::uint16_t, ItemAffixType> superiorType;
 
@@ -5630,7 +5900,7 @@ namespace d2ce
             s_ItemUniqueItemsType.clear();
         }
 
-        InitItemMiscTypesData(txtReader);
+        InitCraftItemTypeData(txtReader);
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetUniqueItemsTxt());
         auto& doc = *pDoc;
@@ -9014,7 +9284,7 @@ namespace d2ce
         return true;
     }
 
-    bool GenerateRareOrCraftedAffixesBuffer(const ItemCreateParams& createParams, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes)
+    bool GenerateRareAffixesBuffer(const ItemCreateParams& createParams, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes)
     {
         prefixes.clear();
         suffixes.clear();
@@ -10669,7 +10939,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
         return result;
     }
 
-    if (!item.isExpansionItem())
+    if (!item.isExpansionGame())
     {
         return result;
     }
@@ -10680,7 +10950,7 @@ std::vector<d2ce::RunewordType> d2ce::ItemHelpers::getPossibleRunewords(const d2
     case EnumItemQuality::SET:
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::UNIQUE:
         // runewords do not work with these
         return result;
@@ -10811,7 +11081,7 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::v
 
     case EnumItemQuality::RARE:      // Rare items use magical affixes
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         break;
 
     default:
@@ -10870,7 +11140,7 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::m
 
     case EnumItemQuality::RARE:      // Rare items use magical affixes
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         break;
 
     default:
@@ -10928,7 +11198,7 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
 
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         break;
 
     default:
@@ -10939,7 +11209,7 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
     ItemCreateParams createParams(item.getVersion(), itemType, gameVersion);
     std::vector<ItemAffixType> affixPrefixes;
     std::vector<ItemAffixType> affixSuffixes;
-    if (!GenerateRareOrCraftedAffixesBuffer(createParams, affixPrefixes, affixSuffixes))
+    if (!GenerateRareAffixesBuffer(createParams, affixPrefixes, affixSuffixes))
     {
         return false;
     }
@@ -11046,6 +11316,71 @@ bool d2ce::ItemHelpers::getPossibleSuperiorAttributes(const d2ce::Item& item, st
     return attribs.empty() ? false : true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getPossibleCraftingRecipies(const ItemCreateParams& createParams, std::vector<CraftRecipieType>& attribs)
+{
+    attribs.clear();
+
+    if (createParams.gameVersion < 100)
+    {
+        return false;
+    }
+
+    if (!createParams.itemType.has_value())
+    {
+        return false;
+    }
+
+    const auto& itemType = createParams.itemType.value().get();
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        return false;
+    }
+
+    if (itemType.isJewel())
+    {
+        return false;
+    }
+
+    {
+        auto iter = s_ItemCodeToCraftItemType.find(itemType.code);
+        if (iter != s_ItemCodeToCraftItemType.end())
+        {
+            for (const auto& recipieId : iter->second)
+            {
+                auto recipie = s_CraftItemType.find(recipieId);
+                if (recipie != s_CraftItemType.end())
+                {
+                    attribs.resize(attribs.size() + 1);
+                    auto& attrib = attribs.back();
+                    attrib.id = recipie->second.id;
+                    attrib.name = recipie->second.name;
+                }
+            }
+        }
+    }
+
+    for (const auto& cat : itemType.categories)
+    {
+        auto iter = s_ItemCategoryToCraftItemType.find(cat);
+        if (iter != s_ItemCategoryToCraftItemType.end())
+        {
+            for (const auto& recipieId : iter->second)
+            {
+                auto recipie = s_CraftItemType.find(recipieId);
+                if (recipie != s_CraftItemType.end())
+                {
+                    attribs.resize(attribs.size() + 1);
+                    auto& attrib = attribs.back();
+                    attrib.id = recipie->second.id;
+                    attrib.name = recipie->second.name;
+                }
+            }
+        }
+    }
+
+    return attribs.empty() ? false : true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getMagicAttribs(const d2ce::MagicalAffixes& magicalAffixes, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, bool bMaxAlways)
 {
     attribs.clear();
@@ -11118,6 +11453,7 @@ bool d2ce::ItemHelpers::getRareOrCraftedAttribs(const d2ce::RareAttributes& rare
     attribs.clear();
 
     bool bExceptional = false;
+    bool bIsExpansion = createParams.gameVersion >= 100 ? true : false;
     if (createParams.itemType.has_value())
     {
         const auto& itemType = createParams.itemType.value().get();
@@ -11202,7 +11538,26 @@ bool d2ce::ItemHelpers::getRareOrCraftedAttribs(const d2ce::RareAttributes& rare
         }
     }
 
-    return attribs.empty() ? false : true;
+    if (attribs.empty())
+    {
+        return false;
+    }
+
+    bool bIsCraft = (bIsExpansion && createParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED) ? true : false;
+    if (bIsCraft)
+    {
+        std::vector<MagicalAttribute> craftAttribs;
+        if (!ItemHelpers::getCraftingRecipiesMagicAttribs(createParams, craftAttribs))
+        {
+            attribs.clear();
+            return false;
+        }
+
+        // Merge Craft attributes to rare attributes
+        ItemHelpers::mergeMagicalAttributes(attribs, craftAttribs);
+    }
+
+    return true;
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::getSetMagicAttribs(std::uint16_t id, std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
@@ -11441,6 +11796,57 @@ bool d2ce::ItemHelpers::getUniqueQuestMagicAttribs(const std::array<std::uint8_t
     return getUniqueMagicAttribs(iter->second, attribs, createParams, level, dwb, bMaxAlways);
 }
 //---------------------------------------------------------------------------
+bool d2ce::ItemHelpers::getCraftingRecipiesMagicAttribs(const ItemCreateParams& createParams, std::vector<MagicalAttribute>& attribs)
+{
+    attribs.clear();
+
+    if (createParams.gameVersion < 100)
+    {
+        return false;
+    }
+
+    std::vector<CraftRecipieType> recipies;
+    if (!getPossibleCraftingRecipies(createParams, recipies) || recipies.empty())
+    {
+        return false;
+    }
+
+    auto recipieId = recipies.front().id;
+    if (recipies.size() > 1 && createParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED && createParams.craftingRecipieId != MAXUINT16)
+    {
+        for (const auto& recipie : recipies)
+        {
+            if (recipie.id == createParams.craftingRecipieId)
+            {
+                recipieId = recipie.id;
+                break;
+            }
+        }
+    }
+
+    auto iter = s_CraftItemType.find(recipieId);
+    if (iter == s_CraftItemType.end())
+    {
+        return false;
+    }
+
+    auto level = iter->second.ilvl;
+    const auto& modType = iter->second.modType;
+
+    auto dwb = generarateRandomDW();
+    bool bExceptional = false;
+    if (createParams.itemType.has_value())
+    {
+        const auto& itemType = createParams.itemType.value().get();
+        bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
+    }
+    
+    ItemRandStruct rnd = { dwb, 666 };
+    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
+    ProcessMagicalProperites(modType, attribs, rnd, createParams, true);
+    return true;
+}
+//---------------------------------------------------------------------------
 std::uint8_t d2ce::ItemHelpers::generateInferiorQualityId(std::uint16_t level, std::uint32_t dwb)
 {
     if (dwb == 0)
@@ -11676,7 +12082,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
 
     std::vector<ItemAffixType> rarePrefixes;
     std::vector<ItemAffixType> rareSuffixes;
-    if (!GenerateRareOrCraftedAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
+    if (!GenerateRareAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
     {
         return false;
     }
@@ -11806,7 +12212,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
             }
         }
 
-        cache.affixes.resize(std::max(nPrefixes, nSuffixes));
+        cache.Affixes.resize(std::max(nPrefixes, nSuffixes));
         nPrefixes = 0;
         nSuffixes = 0;
         auto iterIsPrefix = isPrefix.begin();
@@ -11814,7 +12220,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
         {
             if (*iterIsPrefix)
             {
-                auto& affixItem = cache.affixes[nPrefixes];
+                auto& affixItem = cache.Affixes[nPrefixes];
                 ++nPrefixes;
 
                 affixItem.Affixes.PrefixId = iter->code;
@@ -11828,7 +12234,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
             }
             else
             {
-                auto& affixItem = cache.affixes[nSuffixes];
+                auto& affixItem = cache.Affixes[nSuffixes];
                 ++nSuffixes;
 
                 affixItem.Affixes.SuffixId = iter->code;
@@ -11843,7 +12249,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
         }
         
         cacheMaxAffixMatchCount = 0;
-        for (const auto& affix : cache.affixes)
+        for (const auto& affix : cache.Affixes)
         {
             if (affix.Affixes.PrefixId != 0)
             {
@@ -11859,7 +12265,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
         affixMatchCount = 0;
         for (const auto& affix : affixes.Affixes)
         {
-            for (const auto& check : cache.affixes)
+            for (const auto& check : cache.Affixes)
             {
                 if (affix.PrefixId != 0 && affix.PrefixId == check.Affixes.PrefixId)
                 {
@@ -11905,7 +12311,6 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
 
     return false;
 }
-
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
@@ -11918,6 +12323,14 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
     if (&itemType == &s_invalidItemType)
     {
         return false;
+    }
+
+    if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
+    {
+        if (itemType.isJewel() || itemType.isCharm() || !createParams.isExpansion)
+        {
+            return false;
+        }
     }
 
     std::vector<ItemAffixType> prefixes;
@@ -11934,7 +12347,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
 
     std::vector<ItemAffixType> rarePrefixes;
     std::vector<ItemAffixType> rareSuffixes;
-    if (!GenerateRareOrCraftedAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
+    if (!GenerateRareAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
     {
         return false;
     }
@@ -11965,11 +12378,18 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
 
     std::uint32_t nTotalPreSuffixes = (GenerateRandom(rnd) % 3ui32) + 4;
     std::uint32_t nMaxAffixes = nTotalPreSuffixes;
-    if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
+    if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
+    {
+        // Craft items can have up to 4 total affixes
+        nMaxAffixes = std::min(nMaxAffixes, 4ui32);
+        cache.CraftingRecipieId = createParams.craftingRecipieId;
+    }
+    else if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
     {
         // Post-1.09, Rare jewels can have up to 4 total affixes
         nMaxAffixes = std::min(nMaxAffixes, 4ui32);
     }
+
     std::uint32_t nPrefixes = 0;
     std::uint32_t nSuffixes = 0;
     std::uint32_t nAffixes = 0;
@@ -12043,7 +12463,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         }
     }
 
-    cache.affixes.resize(std::max(nPrefixes, nSuffixes));
+    cache.Affixes.resize(std::max(nPrefixes, nSuffixes));
     nPrefixes = 0;
     nSuffixes = 0;
     auto iterIsPrefix = isPrefix.begin();
@@ -12051,7 +12471,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
     {
         if (*iterIsPrefix)
         {
-            auto& affixItem = cache.affixes[nPrefixes];
+            auto& affixItem = cache.Affixes[nPrefixes];
             ++nPrefixes;
 
             affixItem.Affixes.PrefixId = iter->code;
@@ -12065,7 +12485,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         }
         else
         {
-            auto& affixItem = cache.affixes[nSuffixes];
+            auto& affixItem = cache.Affixes[nSuffixes];
             ++nSuffixes;
 
             affixItem.Affixes.SuffixId = iter->code;
@@ -12077,6 +12497,19 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
 
             ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams, bMaxAlways);
         }
+    }
+
+    if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
+    {
+        std::vector<MagicalAttribute> craftAttribs;
+        if (!ItemHelpers::getCraftingRecipiesMagicAttribs(createParams, craftAttribs))
+        {
+            cache.clear();
+            return false;
+        }
+
+        cache.Affixes.resize(cache.Affixes.size() + 1);
+        cache.Affixes.back().MagicalAttributes.swap(craftAttribs);
     }
 
     return true;
@@ -13190,6 +13623,73 @@ void d2ce::ItemHelpers::combineMagicalAttribute(std::multimap<size_t, size_t>& i
                 itemIndexMap.insert(std::make_pair(attrib.Id, attribs.size()));
                 attribs.push_back(attrib);
             }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+void d2ce::ItemHelpers::mergeMagicalAttributes(std::vector<MagicalAttribute>& attribs, const std::vector<MagicalAttribute>& newAttribs)
+{
+    for (const auto& newAttrib : newAttribs)
+    {
+        bool bMerged = false;
+        for (auto& attrib : attribs)
+        {
+            if (attrib.Id == newAttrib.Id)
+            {
+                // Check to see if we are a match to merge
+                switch (attrib.Id)
+                {
+                case 17:
+                case 48:
+                case 50:
+                case 52:
+                    attrib.Values[0] += newAttrib.Values[0];
+                    attrib.Values[1] += newAttrib.Values[1];
+                    bMerged = true;
+                    break;
+
+                case 54:
+                case 57:
+                    attrib.Values[0] += newAttrib.Values[0];
+                    attrib.Values[1] += newAttrib.Values[1];
+                    attrib.Values[2] = (attrib.Values[2] + newAttrib.Values[2]) / 2; // average
+                    bMerged = true;
+                    break;
+
+                default:
+                    bool goodMatch = true;
+                    size_t numMatchValue = 1;
+                    {
+                        const auto& stat = getItemStat(newAttrib.Version, newAttrib.Id);
+                        numMatchValue = (stat.encode == 3) ? 2 : 1;
+                    }
+                    for (size_t idx = 0; idx < attrib.Values.size() - numMatchValue; ++idx)
+                    {
+                        if (attrib.Values[idx] != newAttrib.Values[idx])
+                        {
+                            goodMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (goodMatch)
+                    {
+                        bMerged = true;
+                        for (std::int64_t idx = (std::int64_t)attrib.Values.size() - 1; idx >= (std::int64_t)attrib.Values.size() - (std::int64_t)numMatchValue; --idx)
+                        {
+                            attrib.Values[idx] += newAttrib.Values[idx];
+                        }
+                    }
+                    break;
+                }
+                break;
+            }
+        }
+
+        if (!bMerged)
+        {
+            // unique entry, add it to the list
+            attribs.push_back(newAttrib);
         }
     }
 }

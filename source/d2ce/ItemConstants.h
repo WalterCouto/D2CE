@@ -66,7 +66,7 @@ namespace d2ce
         SET,
         RARE,
         UNIQUE,
-        CRAFT,
+        CRAFTED,
         TEMPERED
     };
 

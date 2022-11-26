@@ -137,7 +137,8 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetSkillsTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSkillDescTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetMonStatsTxt() const = 0;
-        virtual std::unique_ptr<ITxtDocument> GetSuperiorMods() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetSuperiorModsTxt() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetCraftModsTxt() const = 0;
     };
 
     const ITxtReader& getDefaultTxtReader();

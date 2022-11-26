@@ -367,8 +367,8 @@ void CD2NewItemForm::OnBnClickedOk()
         auto idx = Quality.GetCurSel();
         if (idx >= 0)
         {
-            auto qualityIntValue = std::int16_t(Quality.GetItemData(idx));
-            if (qualityIntValue == -1)
+            auto qualityIntValue = std::int32_t(Quality.GetItemData(idx));
+            if (qualityIntValue < 0)
             {
                 CD2RunewordForm dlg(*this);
                 if (dlg.DoModal() != IDOK)
@@ -378,7 +378,7 @@ void CD2NewItemForm::OnBnClickedOk()
             }
             else
             {
-                auto quality = static_cast<d2ce::EnumItemQuality>(qualityIntValue);
+                auto quality = static_cast<d2ce::EnumItemQuality>(qualityIntValue & 0xFF);
                 switch (quality)
                 {
                 case d2ce::EnumItemQuality::SUPERIOR:
@@ -396,7 +396,6 @@ void CD2NewItemForm::OnBnClickedOk()
                     break;
 
                 case d2ce::EnumItemQuality::RARE:
-                case d2ce::EnumItemQuality::CRAFT:
                 case d2ce::EnumItemQuality::TEMPERED:
                 {
                     CD2RareAffixesForm rareAffixes(*this);
@@ -406,6 +405,16 @@ void CD2NewItemForm::OnBnClickedOk()
                     }
                 }
                     break;
+
+                case d2ce::EnumItemQuality::CRAFTED:
+                {
+                    CD2RareAffixesForm craftAffixes(*this, std::uint16_t(qualityIntValue >> 8));
+                    if (craftAffixes.DoModal() != IDOK)
+                    {
+                        return;
+                    }
+                }
+                break;
                 }
             }
         }
@@ -513,6 +522,43 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                         {
                             Quality.SetItemData(idx, static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::RARE));
                         }
+
+                        std::vector<d2ce::CraftRecipieType> recipies;
+                        if (item->getPossibleCraftingRecipies(recipies) && !recipies.empty())
+                        {
+                            if (recipies.size() == 1)
+                            {
+                                idx = Quality.AddString(_T("Crafted"));
+                                if (idx >= 0)
+                                {
+                                    std::int32_t qualityIntValue = std::int32_t(recipies.front().id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
+                                    Quality.SetItemData(idx, qualityIntValue);
+                                }
+                            }
+                            else
+                            {
+                                std::u16string uText;
+                                CString strText;
+                                for (const auto& recipie : recipies)
+                                {
+                                    {
+                                        std::stringstream ss;
+                                        ss << "Crafted (";
+                                        ss << recipie.name;
+                                        ss << ")";
+                                        uText = utf8::utf8to16(ss.str().c_str());
+                                    }
+
+                                    strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+                                    idx = Quality.AddString(strText);
+                                    if (idx >= 0)
+                                    {
+                                        std::int32_t qualityIntValue = std::int32_t(recipie.id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
+                                        Quality.SetItemData(idx, qualityIntValue);
+                                    }
+                                }
+                            }
+                        }
                     }
                     QualityStatic.EnableWindow(TRUE);
                     QualityStatic.ShowWindow(TRUE);
@@ -544,7 +590,7 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
             {
             case d2ce::EnumItemQuality::MAGIC:
             case d2ce::EnumItemQuality::RARE:
-            case d2ce::EnumItemQuality::CRAFT:
+            case d2ce::EnumItemQuality::CRAFTED:
             case d2ce::EnumItemQuality::TEMPERED:
                 Quality.ResetContent();
                 {
@@ -569,10 +615,47 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                         switch (item->getQuality())
                         {
                         case d2ce::EnumItemQuality::RARE:
-                        case d2ce::EnumItemQuality::CRAFT:
+                        case d2ce::EnumItemQuality::CRAFTED:
                         case d2ce::EnumItemQuality::TEMPERED:
                             Quality.SetCurSel(idx);
                             break;
+                        }
+                    }
+
+                    std::vector<d2ce::CraftRecipieType> recipies;
+                    if (item->getPossibleCraftingRecipies(recipies) && !recipies.empty())
+                    {
+                        if (recipies.size() == 1)
+                        {
+                            idx = Quality.AddString(_T("Crafted"));
+                            if (idx >= 0)
+                            {
+                                std::int32_t qualityIntValue = std::int32_t(recipies.front().id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
+                                Quality.SetItemData(idx, qualityIntValue);
+                            }
+                        }
+                        else
+                        {
+                            std::u16string uText;
+                            CString strText;
+                            for (const auto& recipie : recipies)
+                            {
+                                {
+                                    std::stringstream ss;
+                                    ss << "Crafted (";
+                                    ss << recipie.name;
+                                    ss << ")";
+                                    uText = utf8::utf8to16(ss.str().c_str());
+                                }
+
+                                strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+                                idx = Quality.AddString(strText);
+                                if (idx >= 0)
+                                {
+                                    std::int32_t qualityIntValue = std::int32_t(recipie.id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
+                                    Quality.SetItemData(idx, qualityIntValue);
+                                }
+                            }
                         }
                     }
                 }

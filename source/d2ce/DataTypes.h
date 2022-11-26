@@ -858,6 +858,7 @@ namespace d2ce
         std::string Name2;
         std::string Index2;
         std::vector<MagicalAffixes> Affixes;
+        std::uint16_t CraftingRecipieId = MAXUINT16;
 
         void clear()
         {
@@ -868,6 +869,7 @@ namespace d2ce
             Name2.clear();
             Index2.clear();
             Affixes.clear();
+            CraftingRecipieId = MAXUINT16;
         }
 
         void asJson(Json::Value& parent) const
@@ -1161,7 +1163,8 @@ namespace d2ce
         std::uint16_t Id2 = 0;
         std::string Name2;
         std::string Index2;
-        std::vector<MagicalCachev100> affixes;
+        std::vector<MagicalCachev100> Affixes;
+        std::uint16_t CraftingRecipieId = MAXUINT16;
 
         RareOrCraftedCachev100()
         {
@@ -1177,7 +1180,8 @@ namespace d2ce
             Id2 = MAXUINT16;
             Name2.clear();
             Index2.clear();
-            affixes.clear();
+            Affixes.clear();
+            CraftingRecipieId = MAXUINT16;
         }
     };
 
@@ -1421,6 +1425,12 @@ namespace d2ce
         d2ce::EnumItemVersion version = d2ce::EnumItemVersion::v107; // min required version
     };
 
+    struct CraftRecipieType
+    {
+        std::uint16_t id = 0; // id of the craft recipie
+        std::string name;     // what string will be displayed in-game for this recipie
+    };
+
     struct ItemCreateParams
     {
         EnumItemVersion itemVersion = APP_ITEM_VERSION;
@@ -1429,7 +1439,8 @@ namespace d2ce
         d2ce::EnumDifficulty difficulty = d2ce::EnumDifficulty::Normal;
         std::optional<d2ce::EnumCharClass> charClass;
         bool isExpansion = true;
-        EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create random magical or random rare
+        EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create random magical, random rare or random crafted
+        std::uint16_t craftingRecipieId = MAXUINT16;
 
         ItemCreateParams();
         explicit ItemCreateParams(EnumItemVersion version);

@@ -209,7 +209,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     // color codes as described in the text files
     static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), TOOLTIP_BLUE, RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
-    enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, UNIQUE = 4, GRAY = 5, CRAFT = 8, RARE = 9 };
+    enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, UNIQUE = 4, GRAY = 5, CRAFTED = 8, RARE = 9 };
 
     // Get color of top text
     COLORREF color = colors[WHITE];
@@ -225,7 +225,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
         }
         else if (currItem->isRune())
         {
-            color = colors[CRAFT];
+            color = colors[CRAFTED];
         }
         else if (isRuneword)
         {
@@ -250,9 +250,9 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
             color = colors[UNIQUE];
             break;
 
-        case d2ce::EnumItemQuality::CRAFT:
+        case d2ce::EnumItemQuality::CRAFTED:
         case d2ce::EnumItemQuality::TEMPERED:
-            color = colors[CRAFT];
+            color = colors[CRAFTED];
             break;
         }
     }

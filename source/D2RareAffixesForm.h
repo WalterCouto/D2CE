@@ -44,6 +44,7 @@ class CD2RareAffixesForm : public CDialogEx, public CD2ItemTooltipCallback
 
 public:
     CD2RareAffixesForm(CD2NewItemForm& form);   // standard constructor
+    CD2RareAffixesForm(CD2NewItemForm& form, std::uint16_t recipieId);   // standard constructor
     virtual ~CD2RareAffixesForm();
 
     enum { IDD = IDD_RARE_AFFIXES_DIALOG, IDD_V100 = IDD_RARE_AFFIXES_V100_DIALOG };

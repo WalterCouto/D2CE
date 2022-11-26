@@ -280,6 +280,7 @@
     <ClCompile Include="d2ce\helpers\ArmorTxt.cpp" />
     <ClCompile Include="d2ce\helpers\BeltsTxt.cpp" />
     <ClCompile Include="d2ce\helpers\CharStatsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\CraftItemsTxt.cpp" />
     <ClCompile Include="d2ce\helpers\DefaultTxtReader.cpp" />
     <ClCompile Include="d2ce\helpers\ExperienceTxt.cpp" />
     <ClCompile Include="d2ce\helpers\GemsTxt.cpp" />
@@ -957,6 +958,7 @@
     <Text Include="res\TXT\Belts.txt" />
     <Text Include="res\TXT\BodyLocs.txt" />
     <Text Include="res\TXT\CharStats.txt" />
+    <Text Include="res\TXT\CraftItems.txt" />
     <Text Include="res\TXT\DifficultyLevels.txt" />
     <Text Include="res\TXT\Experience.txt" />
     <Text Include="res\TXT\Gems.txt" />

@@ -1,0 +1,37 @@
+index	recipe	version	plvl	ilvl	type	code	*ItemName	prop1	par1	min1	max1	prop2	par2	min2	max2	prop3	par3	min3	max3	prop4	par4	min4	max4	*eol	recipeId
+Hit Power Helm	Hit Power	100	50	50	helm	fhl	Full Helm	gethit-skill	44	5	4	thorns		3	7	ac-miss		25	50					0	
+Hit Power Boots	Hit Power	100	50	50	boot	mbt	Chain Boots	gethit-skill	44	5	4	thorns		3	7	ac-hth		25	60					0	
+Hit Power Gloves	Hit Power	100	50	50	glov	mgl	Bracers	gethit-skill	44	5	4	thorns		3	7	knock		1	1					0	
+Hit Power Belt	Hit Power	100	50	50	belt	tbl	Heavy Belt	gethit-skill	44	5	4	thorns		3	7	dmg-to-mana		5	10					0	
+Hit Power Shield	Hit Power	100	50	50	shie	gts	Gothic Shield	gethit-skill	44	5	4	thorns		3	10	block		5	10					0	
+Hit Power Body	Hit Power	100	50	50	tors	fld	Field Plate	gethit-skill	44	5	4	thorns		3	10	balance1		10	20					0	
+Hit Power Amulet	Hit Power	100	50	50	amul	amu	Amulet	gethit-skill	44	5	4	thorns		3	10	howl		5	15					0	
+Hit Power Ring	Hit Power	100	50	50	ring	rin	Ring	gethit-skill	44	5	4	thorns		3	6	dex		1	5					0	
+Hit Power Weapon	Hit Power	100	50	50	blun		Blunt	gethit-skill	44	5	4	thorns		3	7	dmg%		35	60					0	
+Blood Helm	Blood	100	50	50	helm	hlm	Helm	lifesteal		1	3	hp		10	20	deadly		5	10					0	
+Blood Boots	Blood	100	50	50	boot	tbt	Light Plate Boots	lifesteal		1	3	hp		10	20	regen		5	10					0	
+Blood Gloves	Blood	100	50	50	glov	vgl	Heavy Gloves	lifesteal		1	3	hp		10	20	crush		5	10					0	
+Blood Belt	Blood	100	50	50	belt	mbl	Belt	lifesteal		1	3	hp		10	20	openwounds		5	10					0	
+Blood Shield	Blood	100	50	50	shie	spk	Spiked Shield	lifesteal		1	3	hp		10	20	thorns		4	7					0	
+Blood Body	Blood	100	50	50	tors	plt	Plate Mail	lifesteal		1	3	hp		10	20	demon-heal		1	3					0	
+Blood Amulet	Blood	100	50	50	amul	amu	Amulet	lifesteal		1	4	hp		10	20	move1		5	10					0	
+Blood Ring	Blood	100	50	50	ring	rin	Ring	lifesteal		1	3	hp		10	20	str		1	5					0	
+Blood Weapon	Blood	100	50	50	axe		Axe	lifesteal		1	4	hp		10	20	dmg%		35	60					0	
+Caster Helm	Caster	100	50	50	helm	msk	Mask	regen-mana		4	10	mana		10	20	manasteal		1	4					0	
+Caster Boots	Caster	100	50	50	boot	lbt	Leather Boots	regen-mana		4	10	mana		10	20	mana%		2	5					0	
+Caster Gloves	Caster	100	50	50	glov	lgl	Gloves	regen-mana		4	10	mana		10	20	mana-kill		1	3					0	
+Caster Belt	Caster	100	50	50	belt	vbl	Light Belt	regen-mana		4	10	mana		10	20	cast1		5	10					0	
+Caster Shield	Caster	100	50	50	shie	sml	Small Shield	regen-mana		4	10	mana		10	20	block		5	10					0	
+Caster Body	Caster	100	50	50	tors	ltp	Light Plate	regen-mana		4	10	mana		10	20	mana-kill		1	3					0	
+Caster Amulet	Caster	100	50	50	amul	amu	Amulet	regen-mana		4	10	mana		10	20	cast1		5	10					0	
+Caster Ring	Caster	100	50	50	ring	rin	Ring	regen-mana		4	10	mana		10	20	enr		1	5					0	
+Caster Weapon	Caster	100	50	50	rod		Staves And Rods	regen-mana		4	10	mana		10	20	mana%		1	5					0	
+Safety Helm	Safety	100	50	50	helm	crn	Crown	red-dmg		1	4	red-mag		1	2	res-ltng		5	10	ac%		10	30	0	
+Safety Boots	Safety	100	50	50	boot	hbt	Plate Boots	red-dmg		1	4	red-mag		1	2	res-fire		5	10	ac%		10	30	0	
+Safety Gloves	Safety	100	50	50	glov	hgl	Gauntlets	red-dmg		1	4	red-mag		1	2	res-cold		5	10	ac%		10	30	0	
+Safety Belt	Safety	100	50	50	belt	lbl	Sash	red-dmg		1	4	red-mag		1	2	res-pois		5	10	ac%		10	30	0	
+Safety Shield	Safety	100	50	50	shie	kit	Kite Shield	red-dmg		1	4	red-mag		1	2	res-mag		5	10	ac%		10	30	0	
+Safety Body	Safety	100	50	50	tors	brs	Breast Plate	red-dmg		1	4	red-mag		1	2	half-freeze		1	1	ac%		10	30	0	
+Safety Amulet	Safety	100	50	50	amul	amu	Amulet	red-dmg		1	4	red-mag		1	2	block		1	10					0	
+Safety Ring	Safety	100	50	50	ring	rin	Ring	red-dmg		1	4	red-mag		1	2	vit		1	5					0	
+Safety Weapon	Safety	100	50	50	spea		Spear	red-dmg		1	4	red-mag		1	2	ac%		5	10					0	

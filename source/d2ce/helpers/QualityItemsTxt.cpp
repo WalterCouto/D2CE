@@ -24,7 +24,7 @@ namespace d2ce
 {
     namespace TxtReaderHelper
     {
-        const std::string& GetSuperiorMods()
+        const std::string& GetSuperiorModsTxt()
         {
             static std::string defaultTxt;
             if (defaultTxt.empty())

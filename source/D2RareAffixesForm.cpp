@@ -63,7 +63,8 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
         auto charInfo = form.GetCharacterInfo();
         d2ce::EnumDifficulty diff = charInfo == nullptr ? d2ce::EnumDifficulty::Normal : charInfo->getTitleDifficulty();
         d2ce::EnumCharClass clazz = charInfo == nullptr ? d2ce::EnumCharClass::Amazon : charInfo->getClass();
-        CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionItem());
+        CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionGame());
+        CreateParams.createQualityOption = d2ce::EnumItemQuality::RARE;
         CurrentItem = *pItem;
         CurrentItem.makeRare();
         CurrentDWBCode = CurrentItem.getDWBCode();
@@ -73,6 +74,34 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form)
             // Post-1.09, Rare jewels can have up to 4 total affixes
             NumAllowedAffixes = 4ui32;
         }
+    }
+}
+//---------------------------------------------------------------------------
+CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form, std::uint16_t recipieId)
+    : CDialogEx(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? CD2RareAffixesForm::IDD_V100 : CD2RareAffixesForm::IDD, & form), NewItemForm(form), UseDWBCode(form.GetCharacterInfo()->getVersion() < d2ce::EnumCharVersion::v107 ? TRUE : FALSE)
+{
+    auto pItem = form.GetCreatedItem();
+    if (pItem != nullptr)
+    {
+        auto charInfo = form.GetCharacterInfo();
+        d2ce::EnumDifficulty diff = charInfo == nullptr ? d2ce::EnumDifficulty::Normal : charInfo->getTitleDifficulty();
+        d2ce::EnumCharClass clazz = charInfo == nullptr ? d2ce::EnumCharClass::Amazon : charInfo->getClass();
+        CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionGame());
+        CurrentItem = *pItem;
+        if (UseDWBCode)
+        {
+            // Craft not supported, will fail later
+            CreateParams.createQualityOption = d2ce::EnumItemQuality::RARE;
+            CurrentItem.makeRare();
+        }
+        else
+        {
+            CurrentItem.makeCrafted(recipieId);
+            CreateParams.createQualityOption = d2ce::EnumItemQuality::CRAFTED;
+            CreateParams.craftingRecipieId = recipieId;
+            NumAllowedAffixes = 4ui32;
+        }
+        CurrentDWBCode = CurrentItem.getDWBCode();
     }
 }
 //---------------------------------------------------------------------------
@@ -421,9 +450,20 @@ void CD2RareAffixesForm::InitAffixes()
     switch (CurrentItem.getQuality())
     {
     case d2ce::EnumItemQuality::RARE:
-    case d2ce::EnumItemQuality::CRAFT:
     case d2ce::EnumItemQuality::TEMPERED:
+        if (CreateParams.createQualityOption != d2ce::EnumItemQuality::RARE)
+        {
+            EndDialog(IDCANCEL);
+            return;
+        }
+
         CurrentItem.getRareOrCraftedAttributes(CurrentAffixes);
+        CurrentAffixes.CraftingRecipieId = MAXUINT16;
+        break;
+
+    case d2ce::EnumItemQuality::CRAFTED:
+        CurrentItem.getRareOrCraftedAttributes(CurrentAffixes);
+        CurrentAffixes.CraftingRecipieId = CreateParams.craftingRecipieId;
         break;
 
     default:
@@ -435,7 +475,13 @@ void CD2RareAffixesForm::InitAffixes()
             CurrentAffixes.Id2 = generated_rare_affixes.Id2;
             CurrentAffixes.Name2 = generated_rare_affixes.Name2;
             CurrentAffixes.Index2 = generated_rare_affixes.Index2;
-            for (auto& item : generated_rare_affixes.affixes)
+            CurrentAffixes.CraftingRecipieId = generated_rare_affixes.CraftingRecipieId;
+            if (CreateParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED)
+            {
+                generated_rare_affixes.Affixes.pop_back(); // remove crafted attributes list
+            }
+
+            for (auto& item : generated_rare_affixes.Affixes)
             {
                 CurrentAffixes.Affixes.push_back(item.Affixes);
             }
@@ -612,7 +658,13 @@ void CD2RareAffixesForm::SyncAffixes()
             CurrentAffixes.Id2 = generated_rare_affixes.Id2;
             CurrentAffixes.Name2 = generated_rare_affixes.Name2;
             CurrentAffixes.Index2 = generated_rare_affixes.Name;
-            for (auto& item : generated_rare_affixes.affixes)
+            CurrentAffixes.CraftingRecipieId = generated_rare_affixes.CraftingRecipieId;
+            if (CreateParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED)
+            {
+                generated_rare_affixes.Affixes.pop_back(); // remove crafted attributes list
+            }
+
+            for (auto& item : generated_rare_affixes.Affixes)
             {
                 CurrentAffixes.Affixes.push_back(item.Affixes);
             }

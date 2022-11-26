@@ -69,7 +69,8 @@ namespace d2ce
         const std::string& GetUniqueItems();
         const std::string& GetWeapons();
         const std::string& GetMonStats();
-        const std::string& GetSuperiorMods();
+        const std::string& GetSuperiorModsTxt();
+        const std::string& GetCraftModsTxt();
     }
 
     class CsvTxtDocument : public ITxtDocument
@@ -555,9 +556,14 @@ namespace d2ce
             return LoadTxtStream(TxtReaderHelper::GetMonStats);
         }
 
-        virtual std::unique_ptr<ITxtDocument> GetSuperiorMods() const override
+        virtual std::unique_ptr<ITxtDocument> GetSuperiorModsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSuperiorMods);
+            return LoadTxtStream(TxtReaderHelper::GetSuperiorModsTxt);
+        }
+
+        virtual std::unique_ptr<ITxtDocument> GetCraftModsTxt() const override
+        {
+            return LoadTxtStream(TxtReaderHelper::GetCraftModsTxt);
         }
     };
 

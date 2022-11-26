@@ -60,7 +60,7 @@ CD2MagicalAffixesForm::CD2MagicalAffixesForm(CD2NewItemForm& form)
         auto charInfo = form.GetCharacterInfo();
         d2ce::EnumDifficulty diff = charInfo == nullptr ? d2ce::EnumDifficulty::Normal : charInfo->getTitleDifficulty();
         d2ce::EnumCharClass clazz = charInfo == nullptr ? d2ce::EnumCharClass::Amazon : charInfo->getClass();
-        CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionItem());
+        CreateParams = d2ce::ItemCreateParams(pItem->getVersion(), pItem->getItemTypeHelper(), diff, clazz, pItem->isExpansionGame());
         CurrentItem = *pItem;
         CurrentItem.makeMagical();
         CurrentDWBCode = CurrentItem.getDWBCode();

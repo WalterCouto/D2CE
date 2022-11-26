@@ -512,6 +512,9 @@
     <ClCompile Include="d2ce\helpers\QualityItemsTxt.cpp">
       <Filter>Source Files\d2ce\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="d2ce\helpers\CraftItemsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2Editor.rc">
@@ -2357,6 +2360,9 @@
       <Filter>Resource Files\TXT</Filter>
     </Text>
     <Text Include="res\TXT\weapons.txt">
+      <Filter>Resource Files\TXT</Filter>
+    </Text>
+    <Text Include="res\TXT\CraftItems.txt">
       <Filter>Resource Files\TXT</Filter>
     </Text>
   </ItemGroup>

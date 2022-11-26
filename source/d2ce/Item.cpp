@@ -356,6 +356,7 @@ namespace d2ce
         bool getPossibleMagicalAffixes(const d2ce::Item& item, std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes);
         bool getPossibleRareAffixes(const d2ce::Item& item, std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes);
         bool getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<MagicalAttribute>& attribs);
+        bool getPossibleCraftingRecipies(const ItemCreateParams& createParams, std::vector<CraftRecipieType>& attribs);
         bool findDWForMagicalAffixes(const MagicalAffixes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
         bool findDWForRareOrCraftedAffixes(const d2ce::RareAttributes& affixes, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t& dwb);
 
@@ -394,6 +395,7 @@ namespace d2ce
         std::string formatMagicalAttributeValue(MagicalAttribute& attrib, std::uint32_t charLevel, size_t idx, const ItemStat& stat);
         bool formatDisplayedMagicalAttribute(MagicalAttribute& attrib, std::uint32_t charLevel);
         void combineMagicalAttribute(std::multimap<size_t, size_t>& itemIndexMap, const std::vector<MagicalAttribute>& newAttribs, std::vector<MagicalAttribute>& attribs);
+        void mergeMagicalAttributes(std::vector<MagicalAttribute>& attribs, const std::vector<MagicalAttribute>& newAttribs);
         bool ProcessNameNode(const Json::Value& node, std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version);
 
         const std::string& getMonsterNameFromId(std::uint16_t id);
@@ -1248,6 +1250,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     auto quality = EnumItemQuality::NORMAL;
+    std::uint16_t craftingRecipieId = MAXUINT16;
     if (itemType.isUniqueItem())
     {
         quality = EnumItemQuality::UNIQUE;
@@ -1275,12 +1278,29 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     {
         quality = EnumItemQuality::SET;
     }
-    else if (itemType.isRing() || itemType.isAmulet() || itemType.isJewel())
+    else if (itemType.isRing() || itemType.isAmulet())
     {
         switch (createParams.createQualityOption)
         {
-        case  EnumItemQuality::MAGIC:
-        case  EnumItemQuality::RARE:
+        case EnumItemQuality::MAGIC:
+        case EnumItemQuality::RARE:
+        case EnumItemQuality::CRAFTED:
+            quality = createParams.createQualityOption;
+            craftingRecipieId = createParams.craftingRecipieId;
+            break;
+
+        default:
+            quality = (ItemHelpers::generarateRandomDW() % 2 == 0) ? EnumItemQuality::MAGIC : EnumItemQuality::RARE;
+            break;
+
+        }
+    }
+    else if (itemType.isJewel())
+    {
+        switch (createParams.createQualityOption)
+        {
+        case EnumItemQuality::MAGIC:
+        case EnumItemQuality::RARE:
             quality = createParams.createQualityOption;
             break;
 
@@ -1298,9 +1318,11 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     {
         switch (createParams.createQualityOption)
         {
-        case  EnumItemQuality::MAGIC:
-        case  EnumItemQuality::RARE:
+        case EnumItemQuality::MAGIC:
+        case EnumItemQuality::RARE:
+        case EnumItemQuality::CRAFTED:
             quality = createParams.createQualityOption;
+            craftingRecipieId = createParams.craftingRecipieId;
             break;
         }
     }
@@ -1555,7 +1577,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 }
             }
 
-            value = std::min(1ui16, itemType.level.Quality);
+            value = std::max(1ui16, itemType.level.Quality);
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
             if (!setBits(current_bit_offset, 8, value))
             {
@@ -1878,7 +1900,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
                 }
             }
 
-            value = std::min(1ui16, itemType.level.Quality);
+            value = std::max(1ui16, itemType.level.Quality);
             current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
             if (!setBits(current_bit_offset, 8, value))
             {
@@ -2219,7 +2241,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET) = current_bit_offset;
-    value = itemType.level.Quality;
+    value = std::max(1ui16, itemType.level.Quality);
     bitSize = 7;
     if (!setBits(current_bit_offset, bitSize, value))
     {
@@ -2293,6 +2315,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     auto dwb = ItemHelpers::generarateRandomDW();
     MagicalCachev100 generated_magic_affixes;
     RareOrCraftedCachev100 generated_rare_affixes;
+    std::vector<MagicalAttribute> craftingAttributes;
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
@@ -2310,10 +2333,26 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
             return;
         }
 
-        for (const auto& affix : generated_rare_affixes.affixes)
+        for (const auto& affix : generated_rare_affixes.Affixes)
         {
             generated_magic_affixes.MagicalAttributes.insert(generated_magic_affixes.MagicalAttributes.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
         }
+        break;
+
+    case EnumItemQuality::CRAFTED:
+        if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), dwb, true))
+        {
+            *this = invalidItem;
+            return;
+        }
+
+        craftingAttributes.swap(generated_rare_affixes.Affixes.back().MagicalAttributes);
+        generated_rare_affixes.Affixes.pop_back();
+        for (const auto& affix : generated_rare_affixes.Affixes)
+        {
+            generated_magic_affixes.MagicalAttributes.insert(generated_magic_affixes.MagicalAttributes.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
+        }
+        ItemHelpers::mergeMagicalAttributes(generated_magic_affixes.MagicalAttributes, craftingAttributes);
         break;
 
     case EnumItemQuality::UNIQUE:
@@ -2366,7 +2405,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         break;
 
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
         value = generated_rare_affixes.Id;
@@ -2386,7 +2425,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         }
 
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
-        for (auto& affix : generated_rare_affixes.affixes)
+        for (auto& affix : generated_rare_affixes.Affixes)
         {
             value = affix.Affixes.PrefixId;
             if (!setBits(current_bit_offset, 1, (value != 0) ? 1 : 0))
@@ -2427,7 +2466,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
 
         // Fill in any missing affix missing flags
         value = 0;
-        bitSize = size_t((3ui64 - generated_rare_affixes.affixes.size()) * 2ui64);
+        bitSize = size_t((3ui64 - generated_rare_affixes.Affixes.size()) * 2ui64);
         if (bitSize > 0)
         {
             if (!setBits(current_bit_offset, bitSize, value))
@@ -3120,7 +3159,7 @@ std::uint16_t d2ce::Item::getRawVersion() const
     return (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + 32, (ItemVersion < EnumItemVersion::v100R ? 8 : 3));
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::isExpansionItem() const
+bool d2ce::Item::isExpansionGame() const
 {
     return getGameVersion() == 100 ? true : false;
 }
@@ -4358,7 +4397,7 @@ bool d2ce::Item::setLocation(EnumItemLocation locationId, EnumAltItemLocation al
 //---------------------------------------------------------------------------
 void d2ce::Item::verifyRuneword()
 {
-    if (!isSocketed() || !isExpansionItem())
+    if (!isSocketed() || !isExpansionGame())
     {
         return;
     }
@@ -5070,7 +5109,7 @@ const d2ce::ItemType& d2ce::Item::getItemTypeHelper() const
     }
 
     const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-    if (result.isExpansionItem() && !isExpansionItem())
+    if (result.isExpansionItem() && !isExpansionGame())
     {
         return ItemHelpers::getInvalidItemTypeHelper();
     }
@@ -5215,7 +5254,7 @@ bool d2ce::Item::updateGem(const std::array<std::uint8_t, 4>& newgem)
     }
 
     const auto& newResult = ItemHelpers::getItemTypeHelper(newgem);
-    if (newResult.isExpansionItem() && !isExpansionItem())
+    if (newResult.isExpansionItem() && !isExpansionGame())
     {
         // should not happen
         return false;
@@ -5734,7 +5773,7 @@ bool d2ce::Item::getRequirements(ItemRequirements& req) const
         }
         break;
 
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         if (getRareOrCraftedAttributes(rareAttrib))
         {
             std::uint16_t levelReq = 0;
@@ -6443,7 +6482,7 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     switch (getQuality())
     {
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         break;
 
@@ -7088,7 +7127,7 @@ bool d2ce::Item::isUpgradableItem() const
     case d2ce::EnumItemQuality::SUPERIOR:
     case d2ce::EnumItemQuality::MAGIC:
     case d2ce::EnumItemQuality::RARE:
-    case d2ce::EnumItemQuality::CRAFT:
+    case d2ce::EnumItemQuality::CRAFTED:
     case d2ce::EnumItemQuality::TEMPERED:
         break;
 
@@ -7459,7 +7498,7 @@ bool d2ce::Item::canHaveSockets() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::canPersonalize() const
 {
-    if (isSimpleItem() || isRuneword() || (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER) == 0) || !isExpansionItem())
+    if (isSimpleItem() || isRuneword() || (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER) == 0) || !isExpansionGame())
     {
         return false;
     }
@@ -7502,7 +7541,7 @@ bool d2ce::Item::canMakeSuperior() const
     case d2ce::EnumItemQuality::SUPERIOR:
     case d2ce::EnumItemQuality::MAGIC:
     case d2ce::EnumItemQuality::RARE:
-    case d2ce::EnumItemQuality::CRAFT:
+    case d2ce::EnumItemQuality::CRAFTED:
     case d2ce::EnumItemQuality::TEMPERED:
     case d2ce::EnumItemQuality::SET:
     case d2ce::EnumItemQuality::UNIQUE:
@@ -7539,7 +7578,7 @@ bool d2ce::Item::canMakeIndestructible() const
 //---------------------------------------------------------------------------
 bool d2ce::Item::canMakeEthereal() const
 {
-    if (!isExpansionItem() || isIndestructible())
+    if (!isExpansionGame() || isIndestructible())
     {
         return false;
     }
@@ -7599,7 +7638,7 @@ bool d2ce::Item::canAddMagicalAffixes() const
         break;
 
     case d2ce::EnumItemQuality::RARE:
-    case d2ce::EnumItemQuality::CRAFT:
+    case d2ce::EnumItemQuality::CRAFTED:
     case d2ce::EnumItemQuality::TEMPERED:
     case d2ce::EnumItemQuality::SET:
     case d2ce::EnumItemQuality::UNIQUE:
@@ -7660,7 +7699,7 @@ bool d2ce::Item::canAddRareAffixes() const
         break;
 
     case d2ce::EnumItemQuality::RARE:
-    case d2ce::EnumItemQuality::CRAFT:
+    case d2ce::EnumItemQuality::CRAFTED:
     case d2ce::EnumItemQuality::TEMPERED:
         break;
 
@@ -7693,7 +7732,7 @@ bool d2ce::Item::canEquip(EnumEquippedId equipId) const
     {
     case EnumEquippedId::ALT_RIGHT_ARM:
     case EnumEquippedId::ALT_LEFT_ARM:
-        if (!isExpansionItem())
+        if (!isExpansionGame())
         {
             return false;
         }
@@ -7721,7 +7760,7 @@ bool d2ce::Item::canEquip(EnumEquippedId equipId, EnumCharClass charClass) const
     {
     case EnumEquippedId::ALT_RIGHT_ARM:
     case EnumEquippedId::ALT_LEFT_ARM:
-        if (!isExpansionItem())
+        if (!isExpansionGame())
         {
             return false;
         }
@@ -7991,7 +8030,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
                 return false;
             }
 
-            if (!isExpansionItem() && itemType.isThrownWeapon())
+            if (!isExpansionGame() && itemType.isThrownWeapon())
             {
                 // Durability on throwing weapons is only in the Expansion
                 return false;
@@ -8017,7 +8056,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
                 return false;
             }
 
-            if (!isExpansionItem() && itemType.isThrownWeapon())
+            if (!isExpansionGame() && itemType.isThrownWeapon())
             {
                 // Durability on throwing weapons is only in the Expansion
                 return false;
@@ -8201,7 +8240,7 @@ std::uint8_t d2ce::Item::getMaxSocketCount() const
     }
 
     const auto& result = ItemHelpers::getItemTypeHelper(strcode);
-    if (result.isExpansionItem() && !isExpansionItem())
+    if (result.isExpansionItem() && !isExpansionGame())
     {
         // should not happen
         return false;
@@ -8649,7 +8688,7 @@ bool d2ce::Item::setIndestructible()
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET);
     std::vector<MagicalAttribute> attribs;
-    if (isExpansionItem())
+    if (isExpansionGame())
     {
         // Indestructible magical property only exists for Expansion
         if (!readPropertyList(current_bit_offset, attribs))
@@ -9184,7 +9223,7 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     case EnumItemQuality::SET:
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::UNIQUE:
         // runewords do not work with these
         return false;
@@ -9312,7 +9351,7 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
     }
 
     auto version = getVersion();
-    auto isExpansion = isExpansionItem();
+    auto isExpansion = isExpansionGame();
     auto gemApplyType = getGemApplyType();
     std::array<std::uint8_t, 4> strcode = { 0, 0, 0, 0 };
     for (const auto& runeCode : runeword.runeCodes)
@@ -9418,6 +9457,13 @@ bool d2ce::Item::getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, st
     return ItemHelpers::getPossibleRareAffixes(*this, prefixes, suffixes);
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::getPossibleCraftingRecipies(std::vector<CraftRecipieType>& attribs) const
+{
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.createQualityOption = EnumItemQuality::CRAFTED;
+    return ItemHelpers::getPossibleCraftingRecipies(createParams, attribs);
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 {
     if (isSimpleItem() || (isSocketFiller() && !isJewel()) || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
@@ -9435,7 +9481,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 
         case EnumItemQuality::RARE:      // converting to MAGIC
         case EnumItemQuality::TEMPERED:
-        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::CRAFTED:
             break;
 
         case EnumItemQuality::MAGIC:
@@ -9518,7 +9564,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 
     case EnumItemQuality::RARE:     // converting to MAGIC
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         break;
 
     case EnumItemQuality::MAGIC:
@@ -9593,7 +9639,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     {
     case EnumItemQuality::RARE:     // converting to MAGIC
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         makeNormal();
         break;
     }
@@ -10178,7 +10224,7 @@ bool d2ce::Item::makeNormal()
 
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         return removeRareOrCraftedAttributes();
 
     case EnumItemQuality::MAGIC:
@@ -10307,7 +10353,7 @@ bool d2ce::Item::makeMagical()
 
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         if (!isRing() && !isAmulet() && !isJewel())
         {
             if (!removeRareOrCraftedAttributes())
@@ -10363,9 +10409,18 @@ bool d2ce::Item::makeRare()
         }
         break;
 
+    case EnumItemQuality::CRAFTED:
+        if (!isRing() && !isAmulet() && !isJewel())
+        {
+            if (!removeRareOrCraftedAttributes())
+            {
+                return false;
+            }
+        }
+        break;
+
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
         return true;
 
     case EnumItemQuality::MAGIC:
@@ -10384,9 +10439,9 @@ bool d2ce::Item::makeRare()
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.createQualityOption = EnumItemQuality::RARE;
     if (isRing() || isAmulet() || isJewel())
     {
-        createParams.createQualityOption = EnumItemQuality::RARE;
         d2ce::Item newItem(createParams);
         if (newItem.data.empty())
         {
@@ -10410,12 +10465,130 @@ bool d2ce::Item::makeRare()
     affixes.Id2 = generated_rare_affixes.Id2;
     affixes.Name2 = generated_rare_affixes.Name2;
     affixes.Index2 = generated_rare_affixes.Index2;
-    for (auto& item : generated_rare_affixes.affixes)
+    for (auto& item : generated_rare_affixes.Affixes)
     {
         affixes.Affixes.push_back(item.Affixes);
     }
 
     return setRareOrCraftedAttributes(affixes);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::makeCrafted(std::uint16_t& id)
+{
+    std::vector<CraftRecipieType> recipies;
+    if (!d2ce::Item::getPossibleCraftingRecipies(recipies) || recipies.empty())
+    {
+        return false;
+    }
+
+    auto recipieId = recipies.front().id;
+    if (recipies.size() > 1)
+    {
+        if (id == MAXUINT16)
+        {
+            // pick a random id
+            id = recipies[ItemHelpers::generarateRandomDW() % recipies.size()].id;
+        }
+
+        for (const auto& recipie : recipies)
+        {
+            if (recipie.id == id)
+            {
+                recipieId = id;
+                break;
+            }
+        }
+    }
+
+    switch (getQuality())
+    {
+    case EnumItemQuality::NORMAL:
+        break;
+
+    case EnumItemQuality::INFERIOR:
+    case EnumItemQuality::SUPERIOR:
+        if (!makeNormal())
+        {
+            return false;
+        }
+        break;
+
+    case EnumItemQuality::RARE:
+    case EnumItemQuality::TEMPERED:
+        if (!isRing() && !isAmulet() && !isJewel())
+        {
+            if (!removeRareOrCraftedAttributes())
+            {
+                return false;
+            }
+        }
+        break;
+
+    case EnumItemQuality::CRAFTED:
+        return true;
+
+    case EnumItemQuality::MAGIC:
+        if (!isRing() && !isAmulet() && !isJewel())
+        {
+            if (!removeMagicalAffixes())
+            {
+                return false;
+            }
+        }
+        break;
+
+    default:
+        // not able to make it normal
+        return false;
+    }
+
+    ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.createQualityOption = EnumItemQuality::CRAFTED;
+    createParams.craftingRecipieId = recipieId;
+    if (isRing() || isAmulet())
+    {
+        d2ce::Item newItem(createParams);
+        if (newItem.data.empty())
+        {
+            return false;
+        }
+
+        swap(newItem);
+        return true;
+    }
+    else if (isJewel())
+    {
+        return false;
+    }
+
+    RareOrCraftedCachev100 generated_rare_affixes;
+    if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
+    {
+        return false;
+    }
+
+    RareAttributes affixes;
+    affixes.Id = generated_rare_affixes.Id;
+    affixes.Name = generated_rare_affixes.Name;
+    affixes.Index = generated_rare_affixes.Index;
+    affixes.Id2 = generated_rare_affixes.Id2;
+    affixes.Name2 = generated_rare_affixes.Name2;
+    affixes.Index2 = generated_rare_affixes.Index2;
+    affixes.CraftingRecipieId = createParams.craftingRecipieId;
+    generated_rare_affixes.Affixes.pop_back(); // remove crafted attributes list
+
+    for (auto& item : generated_rare_affixes.Affixes)
+    {
+        affixes.Affixes.push_back(item.Affixes);
+    }
+
+    return setRareOrCraftedAttributes(affixes);
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::makeCrafted()
+{
+    std::uint16_t id = MAXUINT16;
+    return makeCrafted(id);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::makeEthereal()
@@ -10425,7 +10598,7 @@ bool d2ce::Item::makeEthereal()
         return true;
     }
 
-    if (!isExpansionItem())
+    if (!isExpansionGame())
     {
         return false;
     }
@@ -10452,7 +10625,7 @@ bool d2ce::Item::removeEthereal()
         return true;
     }
 
-    if (!isExpansionItem())
+    if (!isExpansionGame())
     {
         return false;
     }
@@ -10570,7 +10743,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
             break;
 
         case EnumItemQuality::RARE:
-        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::CRAFTED:
         case EnumItemQuality::TEMPERED:
             break;
 
@@ -10616,6 +10789,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         
         // make a copy first
         d2ce::Item origItem(*this);
+        removeEthereal(); // craft items are not Ethereal
 
         std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::RARE);
         if (!updateBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET), numBits, value))
@@ -10637,6 +10811,34 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         return bRet;
     }
 
+
+
+    bool bIsCraft = false;
+    if (isJewel())
+    {
+        if (ItemVersion < EnumItemVersion::v109)
+        {
+            if (affixes.Affixes.size() > 6)
+            {
+                // Before 1.09, rare jewels could have up to three prefixes and three suffixes
+                return false;
+            }
+        }
+        else if (affixes.Affixes.size() > 4)
+        {
+            // Post-1.09, Rare jewels can have up to 4 total affixes
+            return false;
+        }
+    }
+    else
+    {
+        bIsCraft = (isExpansionGame() && affixes.CraftingRecipieId != MAXUINT16) ? true : false;
+        if (bIsCraft && affixes.Affixes.size() > 4)
+        {
+            return false;
+        }
+    }
+
     bool bRareOrCrafted = false;
     d2ce::RareAttributes curAffixes;
     switch (getQuality())
@@ -10654,7 +10856,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
 
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         if (!getRareOrCraftedAttributes(curAffixes))
         {
             return false;
@@ -10696,23 +10898,6 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     default:
         // rare affixes do not work with these
         return false;
-    }
-
-    if (isJewel())
-    {
-        if (ItemVersion < EnumItemVersion::v109)
-        {
-            if (affixes.Affixes.size() > 6)
-            {
-                // Before 1.09, rare jewels could have up to three prefixes and three suffixes
-                return false;
-            }
-        }
-        else if(affixes.Affixes.size() > 4)
-        {
-            // Post-1.09, Rare jewels can have up to 4 total affixes
-            return false;
-        }
     }
 
     // Check if the prefix and/or suffix is allowed
@@ -10791,6 +10976,16 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    if (bIsCraft)
+    {
+        createParams.createQualityOption = EnumItemQuality::CRAFTED;
+        createParams.craftingRecipieId = affixes.CraftingRecipieId;
+    }
+    else
+    {
+        createParams.createQualityOption = EnumItemQuality::RARE;
+    }
+
     std::vector<MagicalAttribute> attribs;
     if (!d2ce::ItemHelpers::getRareOrCraftedAttribs(affixes, attribs, createParams, getGameVersion()))
     {
@@ -10801,12 +10996,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     d2ce::Item origItem(*this);
     const auto& origData = origItem.data;
 
-    switch (getQuality())
-    {
-    case EnumItemQuality::MAGIC: // converting to RARE
-        makeNormal();
-        break;
-    }
+    makeNormal();
 
     // complex change: make item have magical quality
     if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
@@ -10815,7 +11005,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     }
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
-    std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::RARE);
+    std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(bIsCraft ? EnumItemQuality::CRAFTED : EnumItemQuality::RARE);
     if (!updateBits(current_bit_offset, 4, value))
     {
         swap(origItem);
@@ -10952,7 +11142,7 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
     {
     case EnumItemQuality::RARE:
     case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
         break;
 
     default:
@@ -11035,7 +11225,7 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
     case EnumItemVersion::v108: // v1.08 item
     case EnumItemVersion::v109: // v1.09 item
     case EnumItemVersion::v110: // v1.10 - v1.14d item
-        if (isExpansionItem())
+        if (isExpansionGame())
         {
             directExport = true;
         }
@@ -11047,7 +11237,7 @@ bool d2ce::Item::exportItem(const std::filesystem::path& path) const
     case EnumItemVersion::v120:  // v1.2.x - v1.3.x Diablo II: Resurrected Patch 2.4 item
     case EnumItemVersion::v140:  // v1.4.x+ Diablo II: Resurrected Patch 2.5 item
     default:
-        if (isExpansionItem())
+        if (isExpansionGame())
         {
             if (isPersonalized())
             {
@@ -11469,7 +11659,7 @@ std::string d2ce::Item::getDisplayedItemName() const
         break;
 
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         if (getRareOrCraftedAttributes(rareAttrib))
         {
@@ -11743,8 +11933,8 @@ std::uint16_t d2ce::Item::getDisplayedDefenseRating(std::uint32_t charLevel) con
         return 0;
     }
 
-    // Calculate item bonus
     std::vector<MagicalAttribute> magicalAttributes;
+    // Calculate item bonus
     if (getCombinedMagicalAttributes(magicalAttributes))
     {
         ItemHelpers::checkForRelatedMagicalAttributes(magicalAttributes);
@@ -13221,7 +13411,7 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
             break;
 
         case EnumItemQuality::RARE:
-        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::CRAFTED:
         case EnumItemQuality::TEMPERED:
             GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
             if (!skipBits(charfile, current_bit_offset, 2 * RARE_CRAFTED_ID_NUM_BITS))
@@ -13828,7 +14018,7 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     switch (getQuality())
     {
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         break;
 
@@ -13959,11 +14149,11 @@ bool d2ce::Item::readItemv100(const Json::Value& itemRoot, bool bSerializedForma
     node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
     if (node.isNull())
     {
-        value = itemType.level.Quality;
+        value = std::max(1ui16, itemType.level.Quality);
     }
     else
     {
-        value = std::uint32_t(node.asInt64());
+        value = std::max(1ui32, std::uint32_t(node.asInt64()));
     }
 
     current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
@@ -14869,7 +15059,7 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     switch (getQuality())
     {
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         break;
 
@@ -14982,11 +15172,11 @@ bool d2ce::Item::readItemv104(const Json::Value& itemRoot, bool bSerializedForma
     node = itemRoot[bSerializedFormat ? "ItemLevel" : "level"];
     if (node.isNull())
     {
-        value = itemType.level.Quality;
+        value = std::max(1ui16, itemType.level.Quality);
     }
     else
     {
-        value = std::uint32_t(node.asInt64());
+        value = std::max(1ui32, std::uint32_t(node.asInt64()));
     }
 
     current_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_LEVEL_BIT_OFFSET);
@@ -16398,7 +16588,7 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         break;
 
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
+    case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
         node = itemRoot[bSerializedFormat ? "RarePrefixId" : "rare_name_id"];
@@ -17177,7 +17367,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         return;
     }
 
-    bool isExpansion = isExpansionItem();
+    bool isExpansion = isExpansionGame();
     bool bIsPersonalized = isPersonalized();
 
     // We are converting versions, so strict compliance on game version and raw version values
@@ -17292,7 +17482,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
         if ((getLocation() == EnumItemLocation::STORED) && (getAltPositionId() == EnumAltItemLocation::STASH))
         {
             if ((ItemVersion >= d2ce::EnumItemVersion::v100R && version < d2ce::EnumItemVersion::v100R) ||
-                (isExpansionItem() && !isExpansion))
+                (isExpansionGame() && !isExpansion))
             {
 
                 // STASH is a 6 x 4/8 grid
@@ -17315,7 +17505,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
 
         // check for personaliztion string
         if ((ItemVersion >= d2ce::EnumItemVersion::v100R && version < d2ce::EnumItemVersion::v100R) ||
-            (isExpansionItem() && !isExpansion))
+            (isExpansionGame() && !isExpansion))
         {
             if ((ItemVersion >= d2ce::EnumItemVersion::v120) && (version <= d2ce::EnumItemVersion::v100R))
             {
@@ -17476,7 +17666,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             break;
 
         case EnumItemQuality::RARE:
-        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::CRAFTED:
         case EnumItemQuality::TEMPERED:
             if (getRareOrCraftedAttributes(rareAttrib))
             {
@@ -17703,7 +17893,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
                 break;
 
             case EnumItemQuality::RARE:
-            case EnumItemQuality::CRAFT:
+            case EnumItemQuality::CRAFTED:
             case EnumItemQuality::TEMPERED:
                 getRareOrCraftedAttributes(rareAttrib);
                 rareAttrib.asJson(item);
@@ -18040,7 +18230,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             break;
 
         case EnumItemQuality::RARE:
-        case EnumItemQuality::CRAFT:
+        case EnumItemQuality::CRAFTED:
         case EnumItemQuality::TEMPERED:
             if (getRareOrCraftedAttributes(rareAttrib))
             {
@@ -18087,7 +18277,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             }
             item["Durability"] = durValue;
         }
-        else if (!isExpansionItem() && itemType.isThrownWeapon())
+        else if (!isExpansionGame() && itemType.isThrownWeapon())
         {
             // Durability on throwing weapons is only in the Expansion
             item["MaxDurability"] = itemType.durability.Max;
@@ -18273,7 +18463,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                 break;
 
             case EnumItemQuality::RARE:
-            case EnumItemQuality::CRAFT:
+            case EnumItemQuality::CRAFTED:
             case EnumItemQuality::TEMPERED:
                 getRareOrCraftedAttributes(rareAttrib);
                 rareAttrib.asJson(item);
@@ -18320,7 +18510,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                     }
                     item["current_durability"] = durValue;
                 }
-                else if (!isExpansionItem() && itemType.isThrownWeapon())
+                else if (!isExpansionGame() && itemType.isThrownWeapon())
                 {
                     // Durability on throwing weapons is only in the Expansion
                     item["max_durability"] = itemType.durability.Max;
@@ -19901,14 +20091,31 @@ bool d2ce::Item::getMagicalAttributesv100(std::vector<MagicalAttribute>& attribs
         break;
 
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
     case EnumItemQuality::TEMPERED:
-        if (ItemHelpers::generateRareOrCraftedAffixes(rareAffixes, createParams, getLevel(), getDWBCode(), true) && !rareAffixes.affixes.empty())
+        createParams.createQualityOption = getQuality();
+        if (ItemHelpers::generateRareOrCraftedAffixes(rareAffixes, createParams, getLevel(), getDWBCode(), true) && !rareAffixes.Affixes.empty())
         {
-            for (const auto& affix : rareAffixes.affixes)
+            for (const auto& affix : rareAffixes.Affixes)
             {
                 attribs.insert(attribs.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
             }
+            return true;
+        }
+        break;
+
+    case EnumItemQuality::CRAFTED:
+        createParams.createQualityOption = getQuality();
+        if (ItemHelpers::generateRareOrCraftedAffixes(rareAffixes, createParams, getLevel(), getDWBCode(), true) && !rareAffixes.Affixes.empty())
+        {
+            std::vector<MagicalAttribute> craftingAttributes;
+            craftingAttributes.swap(rareAffixes.Affixes.back().MagicalAttributes);
+            rareAffixes.Affixes.pop_back();
+            for (const auto& affix : rareAffixes.Affixes)
+            {
+                attribs.insert(attribs.end(), affix.MagicalAttributes.begin(), affix.MagicalAttributes.end());
+            }
+
+            ItemHelpers::mergeMagicalAttributes(attribs, craftingAttributes);
             return true;
         }
         break;
@@ -19936,11 +20143,15 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         return false;
     }
 
+    bool bCrafted = false;
     switch (getQuality())
     {
     case EnumItemQuality::RARE:
-    case EnumItemQuality::CRAFT:
     case EnumItemQuality::TEMPERED:
+        break;
+
+    case EnumItemQuality::CRAFTED:
+        bCrafted = true;
         break;
 
     default:
@@ -19955,7 +20166,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
         attrib.Id2 = rare_affixes_v100.Id2;
         attrib.Name2 = rare_affixes_v100.Name2;
         attrib.Index2 = rare_affixes_v100.Index2;
-        for (auto& item : rare_affixes_v100.affixes)
+        for (auto& item : rare_affixes_v100.Affixes)
         {
             attrib.Affixes.push_back(item.Affixes);
         }
@@ -19963,6 +20174,7 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.createQualityOption = getQuality();
     if (!ItemHelpers::generateRareOrCraftedAffixes(rare_affixes_v100, createParams, getLevel(), getDWBCode()) || (rare_affixes_v100.Id == MAXUINT16))
     {
         return false;
@@ -19974,7 +20186,12 @@ bool d2ce::Item::getRareOrCraftedAttributesv100(RareAttributes& attrib) const
     attrib.Id2 = rare_affixes_v100.Id2;
     attrib.Name2 = rare_affixes_v100.Name2;
     attrib.Index2 = rare_affixes_v100.Name;
-    for (auto& item : rare_affixes_v100.affixes)
+    if (bCrafted)
+    {
+        rare_affixes_v100.Affixes.pop_back(); // remove crafted attributes
+    }
+
+    for (auto& item : rare_affixes_v100.Affixes)
     {
         attrib.Affixes.push_back(item.Affixes);
     }

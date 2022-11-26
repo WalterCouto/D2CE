@@ -18,7 +18,7 @@
 
 Revision History
 ================
-Version 2.20 (November 12, 2022)
+Version 2.20 (November 26, 2022)
    - Updated: Item tooltip to display red for unmet requirements and blue
               for magically enhanced attributes
    - Updated: Character progression logic to adjust character level to at

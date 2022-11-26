@@ -157,7 +157,7 @@ namespace d2ce
         // 100 - Expansion LoD
         std::uint16_t getGameVersion() const;
 
-        bool isExpansionItem() const;
+        bool isExpansionGame() const;
 
         bool isIdentified() const;
         bool isDisabled() const; // item is broken
@@ -314,6 +314,7 @@ namespace d2ce
         bool getPossibleMagicalAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
         bool getPossibleMagicalAffixes(std::map<std::uint16_t, std::vector<std::uint16_t>>& prefixes, std::map<std::uint16_t, std::vector<std::uint16_t>>& suffixes) const;
         bool getPossibleRareAffixes(std::vector<std::uint16_t>& prefixes, std::vector<std::uint16_t>& suffixes) const;
+        bool getPossibleCraftingRecipies(std::vector<CraftRecipieType>& attribs) const;
         bool setMagicalAffixes(const d2ce::MagicalAffixes& affixes);
         bool setMagicalPropertyList(const std::vector<MagicalAttribute>& attribs);
         bool setSetBonusPropertyLists(const std::vector<std::vector<MagicalAttribute>>& attribs);
@@ -323,6 +324,8 @@ namespace d2ce
         bool makeNormal();
         bool makeMagical(); // randoom magical
         bool makeRare();    // random rare
+        bool makeCrafted(std::uint16_t& id); // random crafted
+        bool makeCrafted(); // random crafted
         bool makeEthereal();
         bool removeEthereal();
         bool removeMagicalAffixes();
