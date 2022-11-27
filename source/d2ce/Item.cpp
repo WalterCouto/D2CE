@@ -56,6 +56,8 @@ namespace d2ce
     constexpr std::uint32_t QUALITY_BIT_OFFSET = 134ui32;
     constexpr std::uint32_t QUALITY_BIT_OFFSET_100 = 65ui32;
     constexpr std::uint32_t QUALITY_BIT_OFFSET_104 = 97ui32;
+    constexpr std::uint32_t QUALITY_NUM_BITS_100 = 3ui32;
+    constexpr std::uint16_t QUALITY_NUM_BITS = 4ui16;
 
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_100 = 69ui32;
     constexpr std::uint32_t QUANTITY_BIT_OFFSET_104 = 101ui32;
@@ -4482,8 +4484,7 @@ void d2ce::Item::verifyRuneword()
                 // Set item as having a runeword id
                 updateBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + IS_RUNEWORD_FLAG_OFFSET, 1, 1);
                 GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET) = current_bit_offset;
-                updateBits(GET_BIT_OFFSET(ItemOffsets::RUNEWORD_ID_BIT_OFFSET), diff, runeword.id);
-                current_bit_offset += diff;
+                updateBitsEx(current_bit_offset, diff, runeword.id);
 
                 // now copy the remaining bits
                 std::uint32_t value = 0;
@@ -4494,8 +4495,7 @@ void d2ce::Item::verifyRuneword()
                     bitsToCopy -= bits;
                     value = readtemp_bits(origData, old_current_bit_offset, bits);
                     old_current_bit_offset += bits;
-                    updateBits(current_bit_offset, bits, value);
-                    current_bit_offset += bits;
+                    updateBitsEx(current_bit_offset, bits, value);
                     bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
                 }
 
@@ -4504,7 +4504,7 @@ void d2ce::Item::verifyRuneword()
                 {
                     value = 0;
                     bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-                    updateBits(current_bit_offset, bits, 0);
+                    updateBitsEx(current_bit_offset, bits, 0);
                 }
 
                 updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_ID_BIT_OFFSET_MARKER), diff);
@@ -4553,8 +4553,7 @@ void d2ce::Item::verifyRuneword()
         bitsToCopy -= bits;
         value = readBits(old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -4564,7 +4563,7 @@ void d2ce::Item::verifyRuneword()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     // truncate data
@@ -5624,12 +5623,11 @@ bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::TYPE_CODE_OFFSET);
     size_t bitSize = 3;
-    if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Class)))
+    if (!updateBitsEx(current_bit_offset, bitSize, std::uint32_t(attrib.Class)))
     {
         swap(origItem);
         return false;
     }
-    current_bit_offset += bitSize;
 
     bitSize = 7;
     switch (getVersion())
@@ -5644,30 +5642,27 @@ bool d2ce::Item::setEarAttributes(const d2ce::EarAttributes& attrib)
         break;
     }
 
-    if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Level)))
+    if (!updateBitsEx(current_bit_offset, bitSize, std::uint32_t(attrib.Level)))
     {
         swap(origItem);
         return false;
     }
-    current_bit_offset += bitSize;
 
     // up to 15 7/8 bit characters
     bitSize = (ItemVersion >= EnumItemVersion::v120) ? 8 : 7;
     for (size_t idx = 0; idx <= 15; ++idx)
     {
-        if (!updateBits(current_bit_offset, bitSize, std::uint32_t(attrib.Name[idx])))
+        if (!updateBitsEx(current_bit_offset, bitSize, std::uint32_t(attrib.Name[idx])))
         {
             swap(origItem);
             return false;
         }
 
-        current_bit_offset += bitSize;
         if (attrib.Name[idx] == 0)
         {
             for (; idx <= 15; ++idx)
             {
-                updateBits(current_bit_offset, bitSize, 0ui32);
-                current_bit_offset += bitSize;
+                updateBitsEx(current_bit_offset, bitSize, 0ui32);
             }
             break;
         }
@@ -6262,12 +6257,10 @@ bool d2ce::Item::getMagicalAffixes(MagicalAffixes& affixes) const
     }
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET); // must copy value as readPropertyList will modify value
-    affixes.PrefixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
-    current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
+    affixes.PrefixId = (std::uint16_t)readBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
     affixes.PrefixName = ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
 
-    affixes.SuffixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
-    current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
+    affixes.SuffixId = (std::uint16_t)readBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
     affixes.SuffixName = ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
 
     return true;
@@ -6498,13 +6491,11 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     }
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
-    attrib.Id = (std::uint16_t)readBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
-    current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
+    attrib.Id = (std::uint16_t)readBitsEx(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     attrib.Name = ItemHelpers::getRareNameFromId(attrib.Id);
     attrib.Index = ItemHelpers::getRareIndexFromId(attrib.Id);
 
-    attrib.Id2 = (std::uint16_t)readBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
-    current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
+    attrib.Id2 = (std::uint16_t)readBitsEx(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS);
     attrib.Name2 = ItemHelpers::getRareNameFromId(attrib.Id2);
     attrib.Index2 = ItemHelpers::getRareIndexFromId(attrib.Id2);
 
@@ -6515,21 +6506,17 @@ bool d2ce::Item::getRareOrCraftedAttributes(RareAttributes& attrib) const
     for (size_t i = 3; i > 0; --i)
     {
         MagicalAffixes affixes;
-        prefix = (std::uint8_t)readBits(current_bit_offset, 1);
-        current_bit_offset += 1;
+        prefix = (std::uint8_t)readBitsEx(current_bit_offset, 1);
         if (prefix != 0)
         {
-            affixes.PrefixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
-            current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
+            affixes.PrefixId = (std::uint16_t)readBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
             affixes.PrefixName = ItemHelpers::getMagicalPrefixFromId(affixes.PrefixId);
         }
 
-        prefix = (std::uint8_t)readBits(current_bit_offset, 1);
-        current_bit_offset += 1;
+        prefix = (std::uint8_t)readBitsEx(current_bit_offset, 1);
         if (prefix != 0)
         {
-            affixes.SuffixId = (std::uint16_t)readBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
-            current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
+            affixes.SuffixId = (std::uint16_t)readBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS);
             affixes.SuffixName = ItemHelpers::getMagicalSuffixFromId(affixes.SuffixId);
         }
 
@@ -8450,8 +8437,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
             bitsToCopy -= bits;
             value = readBits(old_current_bit_offset, bits);
             old_current_bit_offset += bits;
-            updateBits(current_bit_offset, bits, value);
-            current_bit_offset += bits;
+            updateBitsEx(current_bit_offset, bits, value);
             bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         }
 
@@ -8460,7 +8446,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         {
             value = 0;
             bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-            updateBits(current_bit_offset, bits, 0);
+            updateBitsEx(current_bit_offset, bits, 0);
         }
 
         // Set item as not socketed
@@ -8501,8 +8487,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     // Set item as socketed
     updateBits(GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + IS_SOCKETED_FLAG_OFFSET, 1, 1);
     GET_BIT_OFFSET(ItemOffsets::SOCKET_COUNT_BIT_OFFSET) = current_bit_offset;
-    updateBits(GET_BIT_OFFSET(ItemOffsets::SOCKET_COUNT_BIT_OFFSET), SOCKET_COUNT_NUM_BITS, numSockets);
-    current_bit_offset += SOCKET_COUNT_NUM_BITS;
+    updateBitsEx(current_bit_offset, SOCKET_COUNT_NUM_BITS, numSockets);
 
     // now copy the remaining bits
     std::uint32_t value = 0;
@@ -8513,8 +8498,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         bitsToCopy -= bits;
         value = readtemp_bits(oldData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -8523,7 +8507,7 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::SOCKET_COUNT_BIT_OFFSET_MARKER), std::int64_t(SOCKET_COUNT_NUM_BITS));
@@ -8572,18 +8556,16 @@ bool d2ce::Item::addPersonalization(const std::string& name)
     // up to 15 7/8 bit characters
     for (size_t idx = 0; idx <= 15; ++idx)
     {
-        if (!updateBits(current_bit_offset, bitSize, std::uint32_t(playerName[idx])))
+        if (!updateBitsEx(current_bit_offset, bitSize, std::uint32_t(playerName[idx])))
         {
             return false;
         }
 
-        current_bit_offset += bitSize;
         if (playerName[idx] == 0)
         {
             for (; idx <= 15; ++idx)
             {
-                updateBits(current_bit_offset, bitSize, 0ui32);
-                current_bit_offset += bitSize;
+                updateBitsEx(current_bit_offset, bitSize, 0ui32);
             }
             break;
         }
@@ -8598,8 +8580,7 @@ bool d2ce::Item::addPersonalization(const std::string& name)
         bitsToCopy -= bits;
         value = readtemp_bits(oldData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -8608,7 +8589,7 @@ bool d2ce::Item::addPersonalization(const std::string& name)
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::PERSONALIZED_BIT_OFFSET_MARKER), std::int64_t(numberOfBitsToAdd));
@@ -8652,8 +8633,7 @@ bool d2ce::Item::removePersonalization()
         bitsToCopy -= bits;
         value = readBits(old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -8662,7 +8642,7 @@ bool d2ce::Item::removePersonalization()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     // Set item as not personlized
@@ -8708,8 +8688,7 @@ bool d2ce::Item::setIndestructible()
         }
 
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET);
-        updateBits(current_bit_offset, DURABILITY_MAX_NUM_BITS, 0);
-        current_bit_offset += DURABILITY_MAX_NUM_BITS;
+        updateBitsEx(current_bit_offset, DURABILITY_MAX_NUM_BITS, 0);
 
         size_t old_current_bit_offset = current_bit_offset + ((ItemVersion >= EnumItemVersion::v110) ? DURABILITY_CURRENT_NUM_BITS : DURABILITY_CURRENT_NUM_BITS_108);
         auto old_item_end_bit_offset = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET);
@@ -8725,8 +8704,7 @@ bool d2ce::Item::setIndestructible()
             bitsToCopy -= bits;
             value = readBits(old_current_bit_offset, bits);
             old_current_bit_offset += bits;
-            updateBits(current_bit_offset, bits, value);
-            current_bit_offset += bits;
+            updateBitsEx(current_bit_offset, bits, value);
             bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         }
 
@@ -8735,7 +8713,7 @@ bool d2ce::Item::setIndestructible()
         {
             value = 0;
             bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-            updateBits(current_bit_offset, bits, 0);
+            updateBitsEx(current_bit_offset, bits, 0);
         }
 
         // truncate data
@@ -8777,10 +8755,8 @@ bool d2ce::Item::setIndestructible()
     data.resize(newSize, 0);
 
     // add indestructible attribute
-    updateBits(current_bit_offset, PROPERTY_ID_NUM_BITS, id);
-    current_bit_offset += PROPERTY_ID_NUM_BITS;
-    updateBits(current_bit_offset, 1, 1);
-    current_bit_offset += 1;
+    updateBitsEx(current_bit_offset, PROPERTY_ID_NUM_BITS, id);
+    updateBitsEx(current_bit_offset, 1, 1);
 
     // now copy the remaining bits
     size_t bitsToCopy = old_item_end_bit_offset - old_current_bit_offset;
@@ -8792,8 +8768,7 @@ bool d2ce::Item::setIndestructible()
         bitsToCopy -= bits;
         value = readtemp_bits(oldData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -8802,7 +8777,7 @@ bool d2ce::Item::setIndestructible()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(old_current_bit_offset, std::int64_t(numberOfBitsToAdd));
@@ -9479,12 +9454,12 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         case EnumItemQuality::NORMAL:
             break;
 
-        case EnumItemQuality::RARE:      // converting to MAGIC
-        case EnumItemQuality::TEMPERED:
-        case EnumItemQuality::CRAFTED:
+        case EnumItemQuality::MAGIC:
             break;
 
-        case EnumItemQuality::MAGIC:
+        case EnumItemQuality::RARE:      // converting to MAGIC
+        case EnumItemQuality::CRAFTED:
+        case EnumItemQuality::TEMPERED:
             break;
 
         default:
@@ -9492,7 +9467,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
             return false;
         }
 
-        size_t numBits = 4;
+        size_t numBits = QUALITY_NUM_BITS;
         switch (ItemVersion)
         {
         case EnumItemVersion::v100: // v1.00 - v1.03 item
@@ -9506,7 +9481,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
             }
 
-            numBits = 3;
+            numBits = QUALITY_NUM_BITS_100;
             break;
 
         case EnumItemVersion::v104: // v1.04 - v1.06 item
@@ -9520,7 +9495,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
             }
 
-            numBits = 4;
+            numBits = QUALITY_NUM_BITS;
             break;
 
         default:
@@ -9671,20 +9646,18 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         // already magical so just change affix values and list of attributes
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET);
         std::uint32_t value = affixes.PrefixId;
-        if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+        if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
         
         value = affixes.SuffixId;
-        if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+        if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
 
         // you will only have magical list at the end, so truncate it to make room for new list
         GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET);
@@ -9719,20 +9692,18 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
         // update affixes
         current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
         value = affixes.PrefixId;
-        if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+        if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
 
         value = affixes.SuffixId;
-        if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+        if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
 
         // now copy the remaining bits
@@ -9743,8 +9714,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
             bitsToCopy -= bits;
             value = readtemp_bits(origData, old_current_bit_offset, bits);
             old_current_bit_offset += bits;
-            updateBits(current_bit_offset, bits, value);
-            current_bit_offset += bits;
+            updateBitsEx(current_bit_offset, bits, value);
             bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
         }
 
@@ -9820,8 +9790,7 @@ bool d2ce::Item::setMagicalPropertyList(const std::vector<MagicalAttribute>& att
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -9904,8 +9873,7 @@ bool d2ce::Item::setSetBonusPropertyLists(const std::vector<std::vector<MagicalA
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -10022,7 +9990,7 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
     std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::SUPERIOR);
-    if (!updateBits(current_bit_offset, 4, value))
+    if (!updateBits(current_bit_offset, QUALITY_NUM_BITS, value))
     {
         swap(origItem);
         return false;
@@ -10040,12 +10008,11 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
     // update Superior quality value
     current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
     value = 1;
-    if (!updateBits(current_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS, value))
+    if (!updateBitsEx(current_bit_offset, INFERIOR_SUPERIOR_ID_NUM_BITS, value))
     {
         swap(origItem);
         return false;
     }
-    current_bit_offset += INFERIOR_SUPERIOR_ID_NUM_BITS;
     GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
 
     // now copy the remaining bits
@@ -10056,8 +10023,7 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -10093,7 +10059,7 @@ bool d2ce::Item::makeSuperior()
         // make a copy first
         d2ce::Item origItem(*this);
 
-        size_t numBits = 4;
+        size_t numBits = QUALITY_NUM_BITS;
         switch (ItemVersion)
         {
         case EnumItemVersion::v100: // v1.00 - v1.03 item
@@ -10107,7 +10073,7 @@ bool d2ce::Item::makeSuperior()
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
             }
 
-            numBits = 3;
+            numBits = QUALITY_NUM_BITS_100;
             break;
 
         case EnumItemVersion::v104: // v1.04 - v1.06 item
@@ -10121,7 +10087,7 @@ bool d2ce::Item::makeSuperior()
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
             }
 
-            numBits = 4;
+            numBits = QUALITY_NUM_BITS;
             break;
 
         default:
@@ -10247,7 +10213,7 @@ bool d2ce::Item::makeNormal()
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
     std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::NORMAL);
-    if (!updateBits(current_bit_offset, 4, value))
+    if (!updateBitsEx(current_bit_offset, QUALITY_NUM_BITS, value))
     {
         swap(origItem);
         return false;
@@ -10313,8 +10279,7 @@ bool d2ce::Item::makeNormal()
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -10326,7 +10291,7 @@ bool d2ce::Item::makeNormal()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
@@ -10740,8 +10705,7 @@ bool d2ce::Item::removeMagicalAffixes()
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -10753,7 +10717,7 @@ bool d2ce::Item::removeMagicalAffixes()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
@@ -10791,7 +10755,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
             return false;
         }
 
-        size_t numBits = 4;
+        size_t numBits = QUALITY_NUM_BITS;
         switch (ItemVersion)
         {
         case EnumItemVersion::v100: // v1.00 - v1.03 item
@@ -10805,7 +10769,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
             }
 
-            numBits = 3;
+            numBits = QUALITY_NUM_BITS_100;
             break;
 
         case EnumItemVersion::v104: // v1.04 - v1.06 item
@@ -10819,13 +10783,13 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
                 GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
             }
 
-            numBits = 4;
+            numBits = QUALITY_NUM_BITS;
             break;
 
         default:
             return false;
         }
-        
+
         // make a copy first
         d2ce::Item origItem(*this);
         std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::RARE);
@@ -11053,7 +11017,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
     std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(bIsCraft ? EnumItemQuality::CRAFTED : EnumItemQuality::RARE);
-    if (!updateBits(current_bit_offset, 4, value))
+    if (!updateBitsEx(current_bit_offset, QUALITY_NUM_BITS, value))
     {
         swap(origItem);
         return false;
@@ -11069,58 +11033,52 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     data.resize(newSize, 0);
 
     // update affixes
-    current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
     value = affixes.Id;
-    if (!updateBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS, value))
+    if (!updateBitsEx(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS, value))
     {
         swap(origItem);
         return false;
     }
-    current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
 
     value = affixes.Id2;
-    if (!updateBits(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS, value))
+    if (!updateBitsEx(current_bit_offset, RARE_CRAFTED_ID_NUM_BITS, value))
     {
         swap(origItem);
         return false;
     }
-    current_bit_offset += RARE_CRAFTED_ID_NUM_BITS;
+
     for (auto& affix : affixes.Affixes)
     {
         value = affix.PrefixId;
-        if (!updateBits(current_bit_offset, 1, (value == 0) ? 0 : 1))
+        if (!updateBitsEx(current_bit_offset, 1, (value == 0) ? 0 : 1))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += 1;
 
         if (value != 0)
         {
-            if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+            if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
             {
                 swap(origItem);
                 return false;
             }
-            current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
         }
 
         value = affix.SuffixId;
-        if (!updateBits(current_bit_offset, 1, (value == 0) ? 0 : 1))
+        if (!updateBitsEx(current_bit_offset, 1, (value == 0) ? 0 : 1))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += 1;
 
         if (value != 0)
         {
-            if (!updateBits(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
+            if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
             {
                 swap(origItem);
                 return false;
             }
-            current_bit_offset += MAGICAL_AFFIX_NUM_BITS;
         }
     }
 
@@ -11129,12 +11087,11 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     size_t valueBitSize = size_t((3ui64 - affixes.Affixes.size()) * 2ui64);
     if (valueBitSize > 0)
     {
-        if (!updateBits(current_bit_offset, valueBitSize, value))
+        if (!updateBitsEx(current_bit_offset, valueBitSize, value))
         {
             swap(origItem);
             return false;
         }
-        current_bit_offset += valueBitSize;
     }
 
     GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
@@ -11147,8 +11104,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -11231,8 +11187,7 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
         bitsToCopy -= bits;
         value = readtemp_bits(origData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -11244,7 +11199,7 @@ bool d2ce::Item::removeRareOrCraftedAttributes()
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), -std::int64_t(diff));
@@ -13032,7 +12987,6 @@ bool d2ce::Item::skipBits(std::FILE* charfile, size_t& current_bit_offset, size_
 //---------------------------------------------------------------------------
 bool d2ce::Item::setBits(size_t& current_bit_offset, size_t bits, std::uint32_t value)
 {
-    size_t readOffset = current_bit_offset;
     if (bits > 32)
     {
         return false;
@@ -13045,13 +12999,11 @@ bool d2ce::Item::setBits(size_t& current_bit_offset, size_t bits, std::uint32_t 
         data.push_back(byte);
     }
 
-    current_bit_offset += bits;
-    return updateBits(readOffset, bits, value);
+    return updateBitsEx(current_bit_offset, bits, value);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::setBits64(size_t& current_bit_offset, size_t bits, std::uint64_t value)
 {
-    size_t readOffset = current_bit_offset;
     if (bits > 64)
     {
         return false;
@@ -13064,8 +13016,7 @@ bool d2ce::Item::setBits64(size_t& current_bit_offset, size_t bits, std::uint64_
         data.push_back(byte);
     }
 
-    current_bit_offset += bits;
-    return updateBits64(readOffset, bits, value);
+    return updateBits64Ex(current_bit_offset, bits, value);
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* charfile)
@@ -18743,8 +18694,7 @@ void d2ce::Item::unknownAsJson(Json::Value& parent, bool /*bSerializedFormat*/) 
                 std::stringstream ss;
                 ss << "b" << std::dec << current_bit_offset;
                 ss << "_" << std::dec << (current_bit_offset + readSize);
-                unknownBytes[ss.str()] = readBits(current_bit_offset, readSize);
-                current_bit_offset += readSize;
+                unknownBytes[ss.str()] = readBitsEx(current_bit_offset, readSize);
                 realmBits -= readSize;
             }
         }
@@ -18754,8 +18704,7 @@ void d2ce::Item::unknownAsJson(Json::Value& parent, bool /*bSerializedFormat*/) 
             std::stringstream ss;
             ss << "b" << std::dec << current_bit_offset;
             ss << "_" << std::dec << (current_bit_offset + numBits);
-            unknownBytes[ss.str()] = readBits(current_bit_offset, numBits);
-            current_bit_offset += numBits;
+            unknownBytes[ss.str()] = readBitsEx(current_bit_offset, numBits);
         }
         unknownData["realm_data"] = unknownBytes;
     }
@@ -19372,8 +19321,7 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
         return false;
     }
 
-    std::uint16_t id = (std::uint16_t)readBits(current_bit_offset, PROPERTY_ID_NUM_BITS);
-    current_bit_offset += PROPERTY_ID_NUM_BITS;
+    std::uint16_t id = (std::uint16_t)readBitsEx(current_bit_offset, PROPERTY_ID_NUM_BITS);
     std::uint16_t nextInChain = 0;
     auto itemVersion = getVersion();
     auto gameVersion = getGameVersion();
@@ -19416,14 +19364,9 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 6) - stat.saveAdd);
-            current_bit_offset += 6;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10) - stat.saveAdd);
-            current_bit_offset += 10;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
-            current_bit_offset += stat.saveBits;
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 6) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 10) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, stat.saveBits) - stat.saveAdd);
         }
         else if (stat.encode == 3)
         {
@@ -19433,17 +19376,10 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 6) - stat.saveAdd);
-            current_bit_offset += 6;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10) - stat.saveAdd);
-            current_bit_offset += 10;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 8) - stat.saveAdd);
-            current_bit_offset += 8;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 8) - stat.saveAdd);
-            current_bit_offset += 8;
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 6) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 10) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 8) - stat.saveAdd);
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 8) - stat.saveAdd);
         }
         else if (stat.encode == 4)
         {
@@ -19454,41 +19390,27 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 2));
-            current_bit_offset += 2;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10));
-            current_bit_offset += 10;
-
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, 10));
-            current_bit_offset += 10;
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 2));
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 10));
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 10));
         }
         else if (stat.saveParamBits > 0)
         {
             if (stat.name.compare("item_addskill_tab") == 0)
             {
-                magicalAttrib.Values.push_back(readBits64(current_bit_offset, 3) - stat.saveAdd);
-                current_bit_offset += 3;
-
-                magicalAttrib.Values.push_back(readBits64(current_bit_offset, 13) - stat.saveAdd);
-                current_bit_offset += 13;
-
-                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
-                current_bit_offset += stat.saveBits;
+                magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 3) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, 13) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, stat.saveBits) - stat.saveAdd);
             }
             else
             {
-                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveParamBits) - stat.saveAdd);
-                current_bit_offset += stat.saveParamBits;
-
-                magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
-                current_bit_offset += stat.saveBits;
+                magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, stat.saveParamBits) - stat.saveAdd);
+                magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, stat.saveBits) - stat.saveAdd);
             }
         }
         else
         {
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, stat.saveBits) - stat.saveAdd);
-            current_bit_offset += stat.saveBits;
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, stat.saveBits) - stat.saveAdd);
         }
 
         auto nextInChainIter = stat.nextInChain.begin();
@@ -19509,13 +19431,11 @@ bool d2ce::Item::readPropertyList(size_t& current_bit_offset, std::vector<Magica
                 return false;
             }
 
-            magicalAttrib.Values.push_back(readBits64(current_bit_offset, statNext.saveBits) - statNext.saveAdd);
-            current_bit_offset += statNext.saveBits;
+            magicalAttrib.Values.push_back(readBits64Ex(current_bit_offset, statNext.saveBits) - statNext.saveAdd);
         }
 
         attrib.push_back(magicalAttrib);
-        id = (std::uint16_t)readBits(current_bit_offset, PROPERTY_ID_NUM_BITS);
-        current_bit_offset += PROPERTY_ID_NUM_BITS;
+        id = (std::uint16_t)readBitsEx(current_bit_offset, PROPERTY_ID_NUM_BITS);
     }
 
     return true;
@@ -19883,6 +19803,13 @@ std::uint32_t d2ce::Item::readBits(size_t start, size_t size) const
     return read_uint32_bits(start, size);
 }
 //---------------------------------------------------------------------------
+std::uint32_t d2ce::Item::readBitsEx(size_t& start, size_t size) const
+{
+    auto value = readBits(start, size);
+    start += size;
+    return value;
+}
+//---------------------------------------------------------------------------
 std::uint64_t d2ce::Item::readBits64(size_t start, size_t size) const
 {
     if ((size > 56) || (start >= (data.size() * 8)))
@@ -19896,6 +19823,13 @@ std::uint64_t d2ce::Item::readBits64(size_t start, size_t size) const
     }
 
     return (std::uint64_t)read_uint32_bits(start, size);
+}
+//---------------------------------------------------------------------------
+std::uint64_t d2ce::Item::readBits64Ex(size_t& start, size_t size) const
+{
+    auto value = readBits64(start, size);
+    start += size;
+    return value;
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::updateBits(size_t start, size_t size, std::uint32_t value)
@@ -19924,6 +19858,17 @@ bool d2ce::Item::updateBits(size_t start, size_t size, std::uint32_t value)
     return true;
 }
 //---------------------------------------------------------------------------
+bool d2ce::Item::updateBitsEx(size_t& start, size_t size, std::uint32_t value)
+{
+    if (!updateBits(start, size, value))
+    {
+        return false;
+    }
+
+    start += size;
+    return true;
+}
+//---------------------------------------------------------------------------
 bool d2ce::Item::updateBits64(size_t start, size_t size, std::uint64_t value)
 {
     size_t startIdx = start / 8;
@@ -19947,6 +19892,17 @@ bool d2ce::Item::updateBits64(size_t start, size_t size, std::uint64_t value)
     std::memcpy((std::uint8_t*)&dest, &data[startIdx], numBytes);
     dest = (dest & ~mask) | (((std::uint64_t)value << (startBit)) & mask);
     std::memcpy(&data[startIdx], (std::uint8_t*)&dest, numBytes);
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::updateBits64Ex(size_t& start, size_t size, std::uint64_t value)
+{
+    if (!updateBits64(start, size, value))
+    {
+        return false;
+    }
+
+    start += size;
     return true;
 }
 //---------------------------------------------------------------------------
@@ -19985,8 +19941,7 @@ bool d2ce::Item::updateResurrectedItemCode(std::uint64_t code, size_t numBitsSet
         bitsToCopy -= bits;
         value = readtemp_bits(oldData, old_current_bit_offset, bits);
         old_current_bit_offset += bits;
-        updateBits(current_bit_offset, bits, value);
-        current_bit_offset += bits;
+        updateBitsEx(current_bit_offset, bits, value);
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
@@ -19995,7 +19950,7 @@ bool d2ce::Item::updateResurrectedItemCode(std::uint64_t code, size_t numBitsSet
     {
         value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
-        updateBits(current_bit_offset, bits, 0);
+        updateBitsEx(current_bit_offset, bits, 0);
     }
 
     updateOffset(GET_BIT_OFFSET(ItemOffsets::EXTENDED_DATA_OFFSET), diff);

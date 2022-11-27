@@ -82,9 +82,13 @@ namespace d2ce
         std::uint8_t getEncodedChar(std::FILE* charfile, size_t& current_bit_offset);
 
         std::uint32_t readBits(size_t start, size_t size) const;
+        std::uint32_t readBitsEx(size_t& start, size_t size) const;
         std::uint64_t readBits64(size_t start, size_t size) const;
+        std::uint64_t readBits64Ex(size_t& start, size_t size) const;
         bool updateBits(size_t start, size_t size, std::uint32_t value);
+        bool updateBitsEx(size_t& start, size_t size, std::uint32_t value);
         bool updateBits64(size_t start, size_t size, std::uint64_t value);
+        bool updateBits64Ex(size_t& start, size_t size, std::uint64_t value);
         bool updateResurrectedItemCode(std::uint64_t code, size_t numBitsSet);
 
         std::uint8_t getInferiorQualityIdv100() const;

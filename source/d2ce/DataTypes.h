@@ -1255,7 +1255,7 @@ namespace d2ce
         ItemRequirements req;
 
         // Base Durability
-        // Max value of 0 means then item is indestructible, othewise same value as Base
+        // Max value of 0 means then item is indestructible, otherwise same value as Base
         ItemDurability durability;
 
         // This is a 3-letter code
