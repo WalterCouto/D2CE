@@ -10711,10 +10711,13 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
 
     // make a copy first
     d2ce::Item origItem(*this);
-    if (!makeNormal())
+    if (!isRing() && !isAmulet() && !isJewel()) // // can't remove magical attributes
     {
-        swap(origItem);
-        return false;
+        if (!makeNormal())
+        {
+            swap(origItem);
+            return false;
+        }
     }
 
     if (!setRareOrCraftedAttributesSimple(affixes))
@@ -10742,8 +10745,6 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(RareAttributes& affixes)
             break;
 
         case EnumItemQuality::MAGIC: // converting to RARE
-            break;
-
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFTED:
         case EnumItemQuality::TEMPERED:
@@ -10852,8 +10853,12 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(RareAttributes& affixes)
     case EnumItemQuality::RARE:
     case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
-        // must be converted to NORMAL quality for method to work
-        return false;
+        if (!isRing() && !isAmulet() && !isJewel())
+        {
+            // must be converted to NORMAL quality for method to work
+            return false;
+        }
+        break;
 
     default:
         // rare affixes do not work with these
@@ -10944,6 +10949,18 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(RareAttributes& affixes)
     else
     {
         createParams.createQualityOption = EnumItemQuality::RARE;
+    }
+
+    if (isRing() || isAmulet() || isJewel())
+    {
+        d2ce::Item newItem(createParams);
+        if (newItem.data.empty())
+        {
+            return false;
+        }
+
+        swap(newItem);
+        return true;
     }
 
     std::vector<MagicalAttribute> attribs;
@@ -23995,6 +24012,14 @@ bool d2ce::Items::addItem(EnumItemLocation locationId, EnumAltItemLocation altPo
         // no room
         return false;
     }
+    
+    switch (locationId)
+    {
+    case EnumItemLocation::BELT:
+        positionX = freeSlot;
+        positionY = 0;
+        break;
+    }
 
     BufferItems.resize(BufferItems.size() + 1);
     auto& bufferItem = BufferItems.back();
@@ -25155,7 +25180,7 @@ bool d2ce::Items::setItemLocation(d2ce::Item& item, EnumItemLocation locationId,
         {
             for (std::uint16_t x = invItemPosX; x <= invItemPosX2; ++x)
             {
-                emptySlots.insert(y * invDimenstion.Width + x);
+                itemEmptySlots.insert(y * invDimenstion.Width + x);
             }
         }
 

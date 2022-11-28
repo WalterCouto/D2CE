@@ -64,7 +64,7 @@ namespace
         const std::map<std::string, d2ce::AvailableItemType>::const_iterator& iter_end,
         std::list<d2ce::Item>& bufferItems,
         std::map<HTREEITEM, d2ce::AvailableItemType>& availableItemTypes,
-        bool mustBeBeltable, const d2ce::ItemType* sourceItemTypePtr)
+        const d2ce::ItemType* sourceItemTypePtr)
     {
         if (iter == iter_end)
         {
@@ -80,8 +80,7 @@ namespace
             const auto& availItemType = iter->second;
             if (availItemType.folderType == d2ce::AvailableItemType::EnumFolderType::Item)
             {
-                if (availItemType.pItemType != nullptr && availItemType.pItemType->isGPSItem() &&
-                    (!mustBeBeltable || availItemType.pItemType->isBeltable()))
+                if (availItemType.pItemType != nullptr && availItemType.pItemType->isGPSItem())
                 {
                     // we found an item, add it to the tree
                     const auto& itemType = *(availItemType.pItemType);
@@ -203,7 +202,7 @@ namespace
                     parent.push_back({ strText, NULL });
                     auto childIter = availItemType.children.begin();
                     auto childIter_end = availItemType.children.end();
-                    InitTreeControl(tree, parent, childIter, childIter_end, bufferItems, availableItemTypes, mustBeBeltable, sourceItemTypePtr);
+                    InitTreeControl(tree, parent, childIter, childIter_end, bufferItems, availableItemTypes, sourceItemTypePtr);
                 }
             }
         }
@@ -260,19 +259,25 @@ BOOL CD2AddGemsForm::OnInitDialog()
 {
     __super::OnInitDialog();
 
-    bool isBeltable = false;
+    bool isBeltable = true;
     bool mustBeBeltable = false;
-    if (ItemsFormPtr != nullptr)
+    if (ItemPtr != nullptr)
     {
-        auto itemLocation = static_cast<d2ce::EnumItemLocation>(ItemsFormPtr->CurrItemLocation[0]);
-        if (itemLocation == d2ce::EnumItemLocation::BELT)
+        const auto& itemType = ItemPtr->getItemTypeHelper();
+        isBeltable = itemType.isBeltable();
+
+        if (ItemsFormPtr != nullptr && !isBeltable)
         {
-            mustBeBeltable = true;
+            auto itemLocation = static_cast<d2ce::EnumItemLocation>(ItemsFormPtr->CurrItemLocation[0]);
+            if (itemLocation == d2ce::EnumItemLocation::BELT)
+            {
+                mustBeBeltable = true;
+            }
         }
     }
 
     // Fill in from tree
-    InitTree(mustBeBeltable);
+    InitTree();
    
     // Fill in to combo
     CComboBox* pLocationCombo = (CComboBox*)GetDlgItem(IDC_LOCATION_COMBO);
@@ -294,9 +299,9 @@ BOOL CD2AddGemsForm::OnInitDialog()
             std::uint8_t& altLocationId = locationCode[1];
 
             std::uint16_t selectedItemData = 0;
-            if (ItemsFormPtr != nullptr)
+            if (!mustBeBeltable || isBeltable)
             {
-                if (!mustBeBeltable || isBeltable)
+                if (ItemsFormPtr != nullptr)
                 {
                     selectedItemData = *reinterpret_cast<std::uint16_t*>(ItemsFormPtr->CurrItemLocation.data());
                 }
@@ -489,7 +494,7 @@ void CD2AddGemsForm::OnNMDblclkItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
     OnBnClickedAdd();
 }
 //---------------------------------------------------------------------------
-void CD2AddGemsForm::InitTree(bool mustBeBeltable)
+void CD2AddGemsForm::InitTree()
 {
     auto& charInfo = MainForm.getCharacterInfo();
     std::map<std::string, d2ce::AvailableItemType> availableItemTypeMap;
@@ -503,7 +508,7 @@ void CD2AddGemsForm::InitTree(bool mustBeBeltable)
     {
         pSourceItemType = &ItemPtr->getItemTypeHelper();
     }
-    InitTreeControl(ItemTree, parent, iter, iter_end, AvailableItems, AvailableItemTypes, mustBeBeltable, pSourceItemType);
+    InitTreeControl(ItemTree, parent, iter, iter_end, AvailableItems, AvailableItemTypes, pSourceItemType);
 
     auto hTreeItem = ItemTree.GetSelectedItem();
     if (hTreeItem == NULL)

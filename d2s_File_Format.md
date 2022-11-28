@@ -720,9 +720,10 @@ Items with extended information store bits based on information in the item head
 |Bit<br>`87` - `96`|Bit      | Size | Desc                                                                                              |
 |-----------|---------|------|---------------------------------------------------------------------------------------------------|
 |108        | 61 - 83 |  3   | if quest item, then 2 bits for quest difficulty and 1 bit for number of occupied sockets,<br>otherwise 3 bits for number of occupied sockets. If there are occupied sockets,<br>then following this item will be the items contained in those sockets.|
-|111        | 64 - 86 |  1+  | [Custom Graphics](#custom-graphics)                                                               |
-|112 - 115  | 65 - 90 |  1+  | [Class Specific](#class-specific)                                                                 |
-|           |         |  4+  | [Quality](#quality)                                                                               |
+|111        | 64 - 86 |  4   | [Quality](#quality)                                                                               |
+|115        | 68 - 90 |  1+  | [Custom Graphics](#custom-graphics)                                                               |
+|116 - 119  | 69 - 94 |  1+  | [Class Specific](#class-specific)                                                                 |
+|           |         |  0+  | [Quality Attributes](#quality)                                                                    |
 |           |         |  0+  | 16 bits exist only if a item is a runeword. The first 12 bits is the runeword Id from `Runes.txt`.<br>Runeword [Mods](#mods) will exist at the the end of the item data.|
 |           |         |  0+  | [Character Name](#character-name) exists only for personalize items.<br>For versions `87` - `97`, 105 bits, otherwise 120 bits|
 |           |         |  0+  | 5 bits exist only if a tome indicating the spell Id<br>(0 - Tome of Town Portal, 1 - Tome of Identify )|
@@ -752,7 +753,7 @@ Class items like Barbarian helms or Amazon bows have special properties specific
 | 1   | 11   | Class specific bits          |
 
 ###### Quality
-Item quality is encoded as a 4-bit integer followed by a certain number of bits.
+Item quality is encoded as a 4-bit integer. For version `87`+, except for Normal Quality, the other quality values have Quality Attributes of a certian size that come after the Class Specific bits.
 
 | Value | Size | Desc                                                                        |
 |-------|------|-----------------------------------------------------------------------------|
@@ -764,7 +765,7 @@ Item quality is encoded as a 4-bit integer followed by a certain number of bits.
 | 6     | 22+  | [Rare](#rare-craft-or-tempered)                                             |
 | 7     | 12   | Unique (bits that follow are the Unique Id from the `UniqueItems.txt` file) |
 | 8     | 22+  | [Craft](#rare-craft-or-tempered)                                            |
-| 9     | 22+  | [Tempered](#rare-craft-or-tempered)                                         |
+| 9     | 22+  | [Tempered](#rare-craft-or-tempered) (Not Enabled)                           |
 
 ###### Inferior
 Inferior items have a 3-bit integer follow the quality value.

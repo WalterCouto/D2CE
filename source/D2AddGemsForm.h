@@ -51,7 +51,7 @@ public:
     virtual BOOL OnInitDialog();
 
 private:
-    void InitTree(bool mustBeBeltable);
+    void InitTree();
 
     const d2ce::Item* GetSelectedItem() const override;
 
