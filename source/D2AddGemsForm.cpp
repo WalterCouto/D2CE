@@ -457,10 +457,12 @@ void CD2AddGemsForm::OnBnClickedFill()
     size_t numAdded = 0;
     if (ItemsFormPtr != nullptr)
     {
+        CWaitCursor wait;
         numAdded = ItemsFormPtr->fillEmptySlots(static_cast<d2ce::EnumItemLocation>(locationID), static_cast<d2ce::EnumAltItemLocation>(altLocationId), gemCode);
     }
     else
     {
+        CWaitCursor wait;
         numAdded = MainForm.fillEmptySlots(static_cast<d2ce::EnumItemLocation>(locationID), static_cast<d2ce::EnumAltItemLocation>(altLocationId), gemCode);
     }
 

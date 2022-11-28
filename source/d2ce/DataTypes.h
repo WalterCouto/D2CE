@@ -1440,7 +1440,7 @@ namespace d2ce
         std::optional<d2ce::EnumCharClass> charClass;
         bool isExpansion = true;
         EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create random magical, random rare or random crafted
-        std::uint16_t craftingRecipieId = MAXUINT16;
+        d2ce::RareAttributes rareAttribs;
 
         ItemCreateParams();
         explicit ItemCreateParams(EnumItemVersion version);

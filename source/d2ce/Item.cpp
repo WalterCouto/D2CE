@@ -803,6 +803,30 @@ d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType
     }
 }
 //---------------------------------------------------------------------------
+d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, std::array<std::uint8_t, 4>& strcode, std::uint16_t gameVer)
+    : itemVersion(version), gameVersion(gameVer)
+{
+    switch (itemVersion)
+    {
+    case EnumItemVersion::v100:
+    case EnumItemVersion::v104:
+        isExpansion = false;
+        gameVersion = 0;
+        break;
+
+    case EnumItemVersion::v107:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 0;
+        break;
+
+    default:
+        isExpansion = gameVersion >= 100 ? true : false;
+        gameVersion = isExpansion ? 100 : 1;
+    }
+
+    itemType = std::ref(ItemHelpers::getItemTypeHelper(strcode));
+}
+//---------------------------------------------------------------------------
 d2ce::ItemCreateParams::ItemCreateParams(EnumItemVersion version, const ItemType& type, bool isExp)
     : itemVersion(version), itemType(std::ref(type)), isExpansion(isExp)
 {
@@ -1252,7 +1276,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     auto quality = EnumItemQuality::NORMAL;
-    std::uint16_t craftingRecipieId = MAXUINT16;
+    d2ce::RareAttributes rareAttribs;
     if (itemType.isUniqueItem())
     {
         quality = EnumItemQuality::UNIQUE;
@@ -1288,7 +1312,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFTED:
             quality = createParams.createQualityOption;
-            craftingRecipieId = createParams.craftingRecipieId;
+            rareAttribs = createParams.rareAttribs;
             break;
 
         default:
@@ -1324,7 +1348,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFTED:
             quality = createParams.createQualityOption;
-            craftingRecipieId = createParams.craftingRecipieId;
+            rareAttribs = createParams.rareAttribs;
             break;
         }
     }
@@ -10564,7 +10588,7 @@ bool d2ce::Item::makeCrafted(std::uint16_t& id)
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     createParams.createQualityOption = EnumItemQuality::CRAFTED;
-    createParams.craftingRecipieId = recipieId;
+    createParams.rareAttribs.CraftingRecipieId = recipieId;
     if (isRing() || isAmulet())
     {
         d2ce::Item newItem(createParams);
@@ -10597,7 +10621,7 @@ bool d2ce::Item::makeCrafted(std::uint16_t& id)
     affixes.Id2 = generated_rare_affixes.Id2;
     affixes.Name2 = generated_rare_affixes.Name2;
     affixes.Index2 = generated_rare_affixes.Index2;
-    affixes.CraftingRecipieId = createParams.craftingRecipieId;
+    affixes.CraftingRecipieId = createParams.rareAttribs.CraftingRecipieId;
     generated_rare_affixes.Affixes.pop_back(); // remove crafted attributes list
     for (auto& item : generated_rare_affixes.Affixes)
     {
@@ -10674,7 +10698,7 @@ bool d2ce::Item::removeEthereal()
 }
 
 //---------------------------------------------------------------------------
-bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
+bool d2ce::Item::setRareOrCraftedAttributes(const d2ce::RareAttributes& affixes)
 {
     if (isSimpleItem() || (isSocketFiller() && !isJewel()))
     {
@@ -10729,7 +10753,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(RareAttributes& affixes)
     return true;
 }
 //---------------------------------------------------------------------------
-bool d2ce::Item::setRareOrCraftedAttributesSimple(RareAttributes& affixes)
+bool d2ce::Item::setRareOrCraftedAttributesSimple(const d2ce::RareAttributes& affixes)
 {
     if (isSimpleItem() || (isSocketFiller() && !isJewel()))
     {
@@ -10941,10 +10965,10 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(RareAttributes& affixes)
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.rareAttribs = affixes;
     if (bIsCraft)
     {
         createParams.createQualityOption = EnumItemQuality::CRAFTED;
-        createParams.craftingRecipieId = affixes.CraftingRecipieId;
     }
     else
     {

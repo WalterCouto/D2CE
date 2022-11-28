@@ -4960,6 +4960,7 @@ namespace d2ce
     struct ItemAffixType
     {
         std::uint16_t code = 0; // index of the affix
+        bool onlyMagic = false; // false for affixes, that can appear on rare items, true for magic only affixes.
 
         std::string index; // The ID pointer that is referenced by the game to get the localized name
         std::string name; // what string will be displayed in-game for this affix
@@ -5289,6 +5290,18 @@ namespace d2ce
             return;
         }
 
+        const SSIZE_T spawnableColumnIdx = doc.GetColumnIdx("spawnable");
+        if (spawnableColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T rareColumnIdx = doc.GetColumnIdx("rare");
+        if (rareColumnIdx < 0)
+        {
+            return;
+        }
+
         const SSIZE_T levelColumnIdx = doc.GetColumnIdx("level");
         if (levelColumnIdx < 0)
         {
@@ -5417,10 +5430,12 @@ namespace d2ce
         }
 
         std::string strValue;
+        std::string spawnable;
         std::uint16_t code = 0;
         std::uint16_t codeOffset = 1;
         for (size_t i = 0; i < numRows; ++i)
         {
+
             strValue = doc.GetCellString(nameColumnIdx, i);
             if (strValue.empty())
             {
@@ -5435,6 +5450,14 @@ namespace d2ce
                 continue;
             }
 
+
+            spawnable = doc.GetCellString(spawnableColumnIdx, i);
+            if (spawnable.empty() || spawnable != "1")
+            {
+                // skip
+                continue;
+            }
+
             code = std::uint16_t(i + codeOffset);
             auto& itemType = itemMagicAffixType[code];
             itemType.code = code;
@@ -5445,6 +5468,12 @@ namespace d2ce
             if (!strValue.empty())
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
+            }
+
+            strValue = doc.GetCellString(rareColumnIdx, i);
+            if (strValue.empty() || strValue != "1")
+            {
+                itemType.onlyMagic = true;
             }
 
             strValue = doc.GetCellString(levelColumnIdx, i);
@@ -9181,6 +9210,17 @@ namespace d2ce
             return false;
         }
 
+        bool bRare = false;
+        switch (createParams.createQualityOption)
+        {
+        case d2ce::EnumItemQuality::RARE:
+        case d2ce::EnumItemQuality::CRAFTED:
+        case d2ce::EnumItemQuality::TEMPERED:
+            bRare = true;
+            break;
+        }
+
+
         const auto& itemType = createParams.itemType.value().get();
         if (&itemType == &s_invalidItemType)
         {
@@ -9189,7 +9229,12 @@ namespace d2ce
 
         for (auto& prefix : s_ItemMagicPrefixType)
         {
-            if ((prefix.second.version > createParams.gameVersion) || (prefix.second.version == 0 && createParams.gameVersion != 0))
+            if ((prefix.second.version > createParams.gameVersion) || (prefix.second.version == 0 && createParams.gameVersion != 0) )
+            {
+                continue;
+            }
+
+            if (bRare && prefix.second.onlyMagic)
             {
                 continue;
             }
@@ -9239,7 +9284,12 @@ namespace d2ce
 
         for (auto& suffix : s_ItemMagicSuffixType)
         {
-            if (suffix.second.version > createParams.gameVersion)
+            if ((suffix.second.version > createParams.gameVersion) || (suffix.second.version == 0 && createParams.gameVersion != 0))
+            {
+                continue;
+            }
+
+            if (bRare && suffix.second.onlyMagic)
             {
                 continue;
             }
@@ -11812,11 +11862,11 @@ bool d2ce::ItemHelpers::getCraftingRecipiesMagicAttribs(const ItemCreateParams& 
     }
 
     auto recipieId = recipies.front().id;
-    if (recipies.size() > 1 && createParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED && createParams.craftingRecipieId != MAXUINT16)
+    if (recipies.size() > 1 && createParams.createQualityOption == d2ce::EnumItemQuality::CRAFTED && createParams.rareAttribs.CraftingRecipieId != MAXUINT16)
     {
         for (const auto& recipie : recipies)
         {
-            if (recipie.id == createParams.craftingRecipieId)
+            if (recipie.id == createParams.rareAttribs.CraftingRecipieId)
             {
                 recipieId = recipie.id;
                 break;
@@ -12333,169 +12383,303 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         }
     }
 
-    std::vector<ItemAffixType> prefixes;
-    std::vector<ItemAffixType> suffixes;
-    if (!GenerateMagicalAffixesBuffer(createParams, prefixes, suffixes, level))
+    bool bHasValidAttribs = false;
+    if (!createParams.rareAttribs.Affixes.empty() && (createParams.itemVersion >= d2ce::EnumItemVersion::v107))
     {
-        return false;
-    }
-
-    if (prefixes.empty() || suffixes.empty())
-    {
-        return false;
-    }
-
-    std::vector<ItemAffixType> rarePrefixes;
-    std::vector<ItemAffixType> rareSuffixes;
-    if (!GenerateRareAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
-    {
-        return false;
-    }
-
-    if (rarePrefixes.empty() || rareSuffixes.empty())
-    {
-        return false;
-    }
-
-    if (dwb == 0)
-    {
-        dwb = generarateRandomDW();
-    }
-
-    bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
-    ItemRandStruct rnd = { dwb, 666 };
-    InitalizeItemRandomization(dwb, level, rnd, bExceptional);
-
-    const auto& affix1 = rarePrefixes[GenerateRandom(rnd) % rarePrefixes.size()];
-    cache.Id = affix1.code;
-    cache.Name = affix1.name;
-    cache.Index = affix1.index;
-
-    const auto& affix2 = rareSuffixes[GenerateRandom(rnd) % rareSuffixes.size()];
-    cache.Id2 = affix2.code;
-    cache.Name2 = affix2.name;
-    cache.Index2 = affix2.name;
-
-    std::uint32_t nTotalPreSuffixes = (GenerateRandom(rnd) % 3ui32) + 4;
-    std::uint32_t nMaxAffixes = nTotalPreSuffixes;
-    if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
-    {
-        // Craft items can have up to 4 total affixes
-        nMaxAffixes = std::min(nMaxAffixes, 4ui32);
-        cache.CraftingRecipieId = createParams.craftingRecipieId;
-    }
-    else if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
-    {
-        // Post-1.09, Rare jewels can have up to 4 total affixes
-        nMaxAffixes = std::min(nMaxAffixes, 4ui32);
-    }
-
-    std::uint32_t nPrefixes = 0;
-    std::uint32_t nSuffixes = 0;
-    std::uint32_t nAffixes = 0;
-    std::uint32_t infiniteGuard = 1000000; // no more loops then this
-    std::vector<ItemAffixType> curPreSuffix;
-    std::vector<bool> isPrefix;
-    for (size_t nCurPreSuffix = 0; (nCurPreSuffix < nTotalPreSuffixes) && (nAffixes < nMaxAffixes); ++nCurPreSuffix)
-    {
-        // Do we have a prefix?
-        auto PreSuf = GenerateRandom(rnd) % 2;
-        GenerateRandom(rnd); // skip the next random number
-        if ((PreSuf == 0 && nPrefixes < 3) || (nSuffixes > 2))
+        bHasValidAttribs = true;
+        if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
         {
-            bool bDone = false;
-            std::uint32_t idx = 0;
-            while (!bDone)
+            // Craft items can have up to 4 total affixes
+            if (createParams.rareAttribs.Affixes.size() > 2)
             {
-                if (infiniteGuard == 0)
+                size_t numAffixes = 0;
+                for (const auto& affix : createParams.rareAttribs.Affixes)
                 {
-                    return false;
-                }
-                --infiniteGuard;
-
-                idx = GenerateRandom(rnd) % prefixes.size();
-                bDone = true;
-                for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
-                {
-                    if (iter->group == prefixes[idx].group)
+                    if (affix.PrefixId != 0)
                     {
-                        GenerateRandom(rnd); // skip the next random number
-                        bDone = false;
-                        break;
+                        ++numAffixes;
+                        if (numAffixes > 4)
+                        {
+                            bHasValidAttribs = false;
+                            break;
+                        }
+                    }
+
+                    if (affix.SuffixId != 0)
+                    {
+                        ++numAffixes;
+                        if (numAffixes > 4)
+                        {
+                            bHasValidAttribs = false;
+                            break;
+                        }
                     }
                 }
             }
-
-            curPreSuffix.push_back(prefixes[idx]);
-            isPrefix.push_back(true);
-            ++nPrefixes;
-            ++nAffixes;
         }
-        else
+        else if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
         {
-            bool bDone = false;
-            std::uint32_t idx = 0;
-            while (!bDone)
+            // Post-1.09, Rare jewels can have up to 4 total affixes
+            if (createParams.rareAttribs.Affixes.size() > 2)
             {
-                if (infiniteGuard == 0)
+                size_t numAffixes = 0;
+                for (const auto& affix : createParams.rareAttribs.Affixes)
                 {
-                    return false;
-                }
-                --infiniteGuard;
-
-                idx = GenerateRandom(rnd) % suffixes.size();
-                bDone = true;
-                for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
-                {
-                    if (iter->group == suffixes[idx].group)
+                    if (affix.PrefixId != 0)
                     {
-                        GenerateRandom(rnd); // skip the next random number
-                        bDone = false;
-                        break;
+                        ++numAffixes;
+                        if (numAffixes > 4)
+                        {
+                            bHasValidAttribs = false;
+                            break;
+                        }
+                    }
+
+                    if (affix.SuffixId != 0)
+                    {
+                        ++numAffixes;
+                        if (numAffixes > 4)
+                        {
+                            bHasValidAttribs = false;
+                            break;
+                        }
+                    }
+                }  
+            }
+        }
+
+        if (bHasValidAttribs)
+        {
+            std::vector<MagicalAttribute> checkAttribs;
+            bHasValidAttribs = d2ce::ItemHelpers::getRareOrCraftedAttribs(createParams.rareAttribs, checkAttribs, createParams, createParams.gameVersion); // check if valid
+            if (bHasValidAttribs)
+            {
+                // we have already generated it
+                bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
+                ItemRandStruct rnd = { dwb, 666 };
+                InitalizeItemRandomization(dwb, level, rnd, bExceptional);
+
+                RareOrCraftedCachev100 cacheOrig = cache;
+                bHasValidAttribs = true;
+                cache.Id = createParams.rareAttribs.Id;
+                cache.Name = createParams.rareAttribs.Name;
+                cache.Index = createParams.rareAttribs.Index;
+                cache.Id2 = createParams.rareAttribs.Id2;
+                cache.Name2 = createParams.rareAttribs.Name2;
+                cache.Index2 = createParams.rareAttribs.Index2;
+                cache.CraftingRecipieId = createParams.rareAttribs.CraftingRecipieId;
+                cache.Affixes.reserve(createParams.rareAttribs.Affixes.size() + 1);
+                for (const auto& affix : createParams.rareAttribs.Affixes)
+                {
+                    cache.Affixes.resize(cache.Affixes.size() + 1);
+                    auto& cacheAffix = cache.Affixes.back();
+                    cacheAffix.Affixes = affix;
+                    if (cacheAffix.Affixes.PrefixId == 0)
+                    {
+                        cacheAffix.Affixes.PrefixId = MAXUINT16;
+                    }
+
+                    if (cacheAffix.Affixes.PrefixId != MAXUINT16)
+                    {
+                        auto iter = s_ItemMagicPrefixType.find(cacheAffix.Affixes.PrefixId);
+                        if (iter == s_ItemMagicPrefixType.end())
+                        {
+                            bHasValidAttribs = false;
+                            cache = cacheOrig;
+                            break;
+                        }
+
+                        ProcessMagicalProperites(iter->second.modType, cacheAffix.MagicalAttributes, rnd, createParams, bMaxAlways);
+                    }
+
+                    if (cacheAffix.Affixes.SuffixId == 0)
+                    {
+                        cacheAffix.Affixes.SuffixId = MAXUINT16;
+                    }
+
+                    if (cacheAffix.Affixes.SuffixId != MAXUINT16)
+                    {
+                        auto iter = s_ItemMagicSuffixType.find(cacheAffix.Affixes.SuffixId);
+                        if (iter == s_ItemMagicSuffixType.end())
+                        {
+                            bHasValidAttribs = false;
+                            cache = cacheOrig;
+                            break;
+                        }
+
+                        ProcessMagicalProperites(iter->second.modType, cacheAffix.MagicalAttributes, rnd, createParams, bMaxAlways);
                     }
                 }
             }
-
-            curPreSuffix.push_back(suffixes[idx]);
-            isPrefix.push_back(false);
-            ++nSuffixes;
-            ++nAffixes;
         }
     }
 
-    cache.Affixes.resize(std::max(nPrefixes, nSuffixes));
-    nPrefixes = 0;
-    nSuffixes = 0;
-    auto iterIsPrefix = isPrefix.begin();
-    for (auto iter = curPreSuffix.begin(); iter != curPreSuffix.end() && iterIsPrefix != isPrefix.end(); ++iter, ++iterIsPrefix)
+    if(!bHasValidAttribs)
     {
-        if (*iterIsPrefix)
+        std::vector<ItemAffixType> prefixes;
+        std::vector<ItemAffixType> suffixes;
+        if (!GenerateMagicalAffixesBuffer(createParams, prefixes, suffixes, level))
         {
-            auto& affixItem = cache.Affixes[nPrefixes];
-            ++nPrefixes;
-
-            affixItem.Affixes.PrefixId = iter->code;
-            affixItem.Affixes.PrefixName = iter->name;
-            if (affixItem.Affixes.SuffixId == MAXUINT16)
-            {
-                affixItem.Affixes.SuffixId = 0;
-            }
-
-            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams, bMaxAlways);
+            return false;
         }
-        else
+
+        if (prefixes.empty() || suffixes.empty())
         {
-            auto& affixItem = cache.Affixes[nSuffixes];
-            ++nSuffixes;
+            return false;
+        }
 
-            affixItem.Affixes.SuffixId = iter->code;
-            affixItem.Affixes.SuffixName = iter->name;
-            if (affixItem.Affixes.PrefixId == MAXUINT16)
+        std::vector<ItemAffixType> rarePrefixes;
+        std::vector<ItemAffixType> rareSuffixes;
+        if (!GenerateRareAffixesBuffer(createParams, rarePrefixes, rareSuffixes))
+        {
+            return false;
+        }
+
+        if (rarePrefixes.empty() || rareSuffixes.empty())
+        {
+            return false;
+        }
+
+        if (dwb == 0)
+        {
+            dwb = generarateRandomDW();
+        }
+
+        bool bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
+        ItemRandStruct rnd = { dwb, 666 };
+        InitalizeItemRandomization(dwb, level, rnd, bExceptional);
+
+        const auto& affix1 = rarePrefixes[GenerateRandom(rnd) % rarePrefixes.size()];
+        cache.Id = affix1.code;
+        cache.Name = affix1.name;
+        cache.Index = affix1.index;
+
+        const auto& affix2 = rareSuffixes[GenerateRandom(rnd) % rareSuffixes.size()];
+        cache.Id2 = affix2.code;
+        cache.Name2 = affix2.name;
+        cache.Index2 = affix2.name;
+
+        std::uint32_t nTotalPreSuffixes = (GenerateRandom(rnd) % 3ui32) + 4;
+        std::uint32_t nMaxAffixes = nTotalPreSuffixes;
+        if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
+        {
+            // Craft items can have up to 4 total affixes
+            nMaxAffixes = std::min(nMaxAffixes, 4ui32);
+            cache.CraftingRecipieId = createParams.rareAttribs.CraftingRecipieId;
+        }
+        else if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
+        {
+            // Post-1.09, Rare jewels can have up to 4 total affixes
+            nMaxAffixes = std::min(nMaxAffixes, 4ui32);
+        }
+
+        std::uint32_t nPrefixes = 0;
+        std::uint32_t nSuffixes = 0;
+        std::uint32_t nAffixes = 0;
+        std::uint32_t infiniteGuard = 1000000; // no more loops then this
+        std::vector<ItemAffixType> curPreSuffix;
+        std::vector<bool> isPrefix;
+        for (size_t nCurPreSuffix = 0; (nCurPreSuffix < nTotalPreSuffixes) && (nAffixes < nMaxAffixes); ++nCurPreSuffix)
+        {
+            // Do we have a prefix?
+            auto PreSuf = GenerateRandom(rnd) % 2;
+            GenerateRandom(rnd); // skip the next random number
+            if ((PreSuf == 0 && nPrefixes < 3) || (nSuffixes > 2))
             {
-                affixItem.Affixes.PrefixId = 0;
-            }
+                bool bDone = false;
+                std::uint32_t idx = 0;
+                while (!bDone)
+                {
+                    if (infiniteGuard == 0)
+                    {
+                        return false;
+                    }
+                    --infiniteGuard;
 
-            ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams, bMaxAlways);
+                    idx = GenerateRandom(rnd) % prefixes.size();
+                    bDone = true;
+                    for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
+                    {
+                        if (iter->group == prefixes[idx].group)
+                        {
+                            GenerateRandom(rnd); // skip the next random number
+                            bDone = false;
+                            break;
+                        }
+                    }
+                }
+
+                curPreSuffix.push_back(prefixes[idx]);
+                isPrefix.push_back(true);
+                ++nPrefixes;
+                ++nAffixes;
+            }
+            else
+            {
+                bool bDone = false;
+                std::uint32_t idx = 0;
+                while (!bDone)
+                {
+                    if (infiniteGuard == 0)
+                    {
+                        return false;
+                    }
+                    --infiniteGuard;
+
+                    idx = GenerateRandom(rnd) % suffixes.size();
+                    bDone = true;
+                    for (auto iter = curPreSuffix.rbegin(); iter != curPreSuffix.rend(); ++iter)
+                    {
+                        if (iter->group == suffixes[idx].group)
+                        {
+                            GenerateRandom(rnd); // skip the next random number
+                            bDone = false;
+                            break;
+                        }
+                    }
+                }
+
+                curPreSuffix.push_back(suffixes[idx]);
+                isPrefix.push_back(false);
+                ++nSuffixes;
+                ++nAffixes;
+            }
+        }
+
+        cache.Affixes.resize(std::max(nPrefixes, nSuffixes));
+        nPrefixes = 0;
+        nSuffixes = 0;
+        auto iterIsPrefix = isPrefix.begin();
+        for (auto iter = curPreSuffix.begin(); iter != curPreSuffix.end() && iterIsPrefix != isPrefix.end(); ++iter, ++iterIsPrefix)
+        {
+            if (*iterIsPrefix)
+            {
+                auto& affixItem = cache.Affixes[nPrefixes];
+                ++nPrefixes;
+
+                affixItem.Affixes.PrefixId = iter->code;
+                affixItem.Affixes.PrefixName = iter->name;
+                if (affixItem.Affixes.SuffixId == MAXUINT16)
+                {
+                    affixItem.Affixes.SuffixId = 0;
+                }
+
+                ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams, bMaxAlways);
+            }
+            else
+            {
+                auto& affixItem = cache.Affixes[nSuffixes];
+                ++nSuffixes;
+
+                affixItem.Affixes.SuffixId = iter->code;
+                affixItem.Affixes.SuffixName = iter->name;
+                if (affixItem.Affixes.PrefixId == MAXUINT16)
+                {
+                    affixItem.Affixes.PrefixId = 0;
+                }
+
+                ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams, bMaxAlways);
+            }
         }
     }
 

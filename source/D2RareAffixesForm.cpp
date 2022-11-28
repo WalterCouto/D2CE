@@ -98,7 +98,7 @@ CD2RareAffixesForm::CD2RareAffixesForm(CD2NewItemForm& form, std::uint16_t recip
         {
             CurrentItem.makeCrafted(recipieId);
             CreateParams.createQualityOption = d2ce::EnumItemQuality::CRAFTED;
-            CreateParams.craftingRecipieId = recipieId;
+            CreateParams.rareAttribs.CraftingRecipieId = recipieId;
             NumAllowedAffixes = 4ui32;
         }
         CurrentDWBCode = CurrentItem.getDWBCode();
@@ -463,7 +463,7 @@ void CD2RareAffixesForm::InitAffixes()
 
     case d2ce::EnumItemQuality::CRAFTED:
         CurrentItem.getRareOrCraftedAttributes(CurrentAffixes);
-        CurrentAffixes.CraftingRecipieId = CreateParams.craftingRecipieId;
+        CurrentAffixes.CraftingRecipieId = CreateParams.rareAttribs.CraftingRecipieId;
         break;
 
     default:

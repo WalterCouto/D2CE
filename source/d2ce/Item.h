@@ -132,7 +132,7 @@ namespace d2ce
         void calculateChecksum(long& checksum, std::uint8_t& overflow);
 
     private:
-        bool setRareOrCraftedAttributesSimple(RareAttributes& attrib); // Item has Normal Quality
+        bool setRareOrCraftedAttributesSimple(const RareAttributes& attrib); // Item has Normal Quality
 
     public:
         Item();
@@ -335,7 +335,7 @@ namespace d2ce
         bool makeCrafted(); // random crafted
         bool makeEthereal();
         bool removeEthereal();
-        bool setRareOrCraftedAttributes(RareAttributes& attrib);
+        bool setRareOrCraftedAttributes(const RareAttributes& attrib);
         bool exportItem(const std::filesystem::path& path) const;
         std::uint16_t getMonsterId() const; // only valid for when isBodyPart() return true
         bool setMonsterId(std::uint16_t id); // only valid isBodyPart() return true 
