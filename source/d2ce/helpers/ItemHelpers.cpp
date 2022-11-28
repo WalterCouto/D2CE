@@ -4960,7 +4960,7 @@ namespace d2ce
     struct ItemAffixType
     {
         std::uint16_t code = 0; // index of the affix
-        bool onlyMagic = false; // false for affixes, that can appear on rare items, true for magic only affixes.
+        bool onlyMagic = false; // false for affixes that can appear on rare items, true for magic only affixes.
 
         std::string index; // The ID pointer that is referenced by the game to get the localized name
         std::string name; // what string will be displayed in-game for this affix
@@ -5432,7 +5432,7 @@ namespace d2ce
         std::string strValue;
         std::string spawnable;
         std::uint16_t code = 0;
-        std::uint16_t codeOffset = 1;
+        std::uint16_t codeOffset = 1; // start at code 1 not 0
         for (size_t i = 0; i < numRows; ++i)
         {
 
@@ -5445,11 +5445,10 @@ namespace d2ce
 
             if (strValue == "Expansion")
             {
-                // skip
+                // skip, we no longer need the offset
                 codeOffset = 0;
                 continue;
             }
-
 
             spawnable = doc.GetCellString(spawnableColumnIdx, i);
             if (spawnable.empty() || spawnable != "1")
