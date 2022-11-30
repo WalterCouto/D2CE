@@ -847,6 +847,33 @@ namespace d2ce
                 parent["magic_suffix_name"] = SuffixName;
             }
         }
+
+        std::uint16_t getAffixCount() const
+        {
+            std::uint16_t count = 0;
+            if (PrefixId != 0 && PrefixId != MAXUINT16)
+            {
+                ++count;
+            }
+
+            if (SuffixId != 0 && SuffixId != MAXUINT16)
+            {
+                ++count;
+            }
+
+            return count;
+        }
+
+        bool isValid() const
+        {
+            if (PrefixId == MAXUINT16 || SuffixId == MAXUINT16)
+            {
+                // uninitialized
+                return false;
+            }
+
+            return getAffixCount() > 0 ? true : false;
+        }
     };
 
     struct RareAttributes
@@ -897,6 +924,33 @@ namespace d2ce
                 magicalNameIds.append(val.SuffixId);
             }
             parent["magical_name_ids"] = magicalNameIds;
+        }
+
+        std::uint16_t getAffixCount() const
+        {
+            std::uint16_t count = 0;
+            for (const auto& affix : Affixes)
+            {
+                count += affix.getAffixCount();
+            }
+
+            return count;
+        }
+
+        bool isValid() const
+        {
+            if (Id == MAXUINT16 || Id2 == MAXUINT16)
+            {
+                // uninitialized
+                return false;
+            }
+
+            if (Id == 0 && Id2 == 0)
+            {
+                return false;
+            }
+
+            return getAffixCount() > 0 ? true : false;
         }
     };
 
@@ -1153,14 +1207,24 @@ namespace d2ce
             Affixes.PrefixId = MAXUINT16;
             Affixes.SuffixId = MAXUINT16;
         }
+
+        std::uint16_t getAffixCount() const
+        {
+            return Affixes.getAffixCount();
+        }
+
+        bool isValid() const
+        {
+            return Affixes.isValid();
+        }
     };
 
     struct RareOrCraftedCachev100
     {
-        std::uint16_t Id = 0;
+        std::uint16_t Id = MAXUINT16;
         std::string Name;
         std::string Index;
-        std::uint16_t Id2 = 0;
+        std::uint16_t Id2 = MAXUINT16;
         std::string Name2;
         std::string Index2;
         std::vector<MagicalCachev100> Affixes;
@@ -1168,8 +1232,6 @@ namespace d2ce
 
         RareOrCraftedCachev100()
         {
-            Id = MAXUINT16;
-            Id2 = MAXUINT16;
         }
 
         void clear()
@@ -1182,6 +1244,33 @@ namespace d2ce
             Index2.clear();
             Affixes.clear();
             CraftingRecipieId = MAXUINT16;
+        }
+
+        std::uint16_t getAffixCount() const
+        {
+            std::uint16_t count = 0;
+            for (const auto& affix : Affixes)
+            {
+                count += affix.getAffixCount();
+            }
+
+            return count;
+        }
+
+        bool isValid() const
+        {
+            if (Id == MAXUINT16 || Id2 == MAXUINT16)
+            {
+                // uninitialized
+                return false;
+            }
+
+            if (Id == 0 && Id2 == 0)
+            {
+                return false;
+            }
+
+            return getAffixCount() > 0 ? true : false;
         }
     };
 
@@ -1439,8 +1528,9 @@ namespace d2ce
         d2ce::EnumDifficulty difficulty = d2ce::EnumDifficulty::Normal;
         std::optional<d2ce::EnumCharClass> charClass;
         bool isExpansion = true;
-        EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create random magical, random rare or random crafted
-        d2ce::RareAttributes rareAttribs;
+        EnumItemQuality createQualityOption = EnumItemQuality::NORMAL; // can be used to create a magical, rare or crafted item
+        d2ce::MagicalAffixes magicalAffixes; // magical affixes to use in the creation of a magical item, if not set, random magical affixes will be used
+        d2ce::RareAttributes rareAttribs; // rare or crafted attributes to use in creation of a rare or crafted item, if not set, random rare or crafted attributes will be used
 
         ItemCreateParams();
         explicit ItemCreateParams(EnumItemVersion version);

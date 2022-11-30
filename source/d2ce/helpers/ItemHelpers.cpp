@@ -126,7 +126,7 @@ namespace d2ce
             strFind = mr[1].str();
             strPos = descstr.find(strFind);
         }
-        else if(std::regex_search(descstr, mr, reAlt))
+        else if (std::regex_search(descstr, mr, reAlt))
         {
             useAlt = true;
             strFind = mr[1].str();
@@ -468,7 +468,7 @@ namespace d2ce
         bool isClassicTxt = false;
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetPatchStringTxt());
-        if(pDoc != nullptr)
+        if (pDoc != nullptr)
         {
             auto& doc = *pDoc;
             if (!isClassicTxt)
@@ -2382,7 +2382,7 @@ namespace d2ce
                 LocalizationHelpers::GetStringTxtValue(doc.GetCellString(dgrpstr2ColumnIdx, i), descstr2);
 
                 std::uint8_t descFunc = 0;
-                std::uint8_t descVal = 0; 
+                std::uint8_t descVal = 0;
                 strValue = doc.GetCellString(dgrpfuncColumnIdx, i);
                 if (!strValue.empty())
                 {
@@ -2640,7 +2640,7 @@ namespace d2ce
                     itemType.subCodes.push_back(strValue);
                 }
             }
-            
+
             strValue = doc.GetCellString(beltableColumnIdx, i);
             if (!strValue.empty() && (strValue != "0"))
             {
@@ -2652,7 +2652,7 @@ namespace d2ce
             {
                 static std::map<std::string, EnumEquippedId> s_equipMap = {
                     {"head", EnumEquippedId::HEAD}, {"neck", EnumEquippedId::NECK}, {"tors", EnumEquippedId::TORSO},
-                    {"rarm", EnumEquippedId::RIGHT_ARM}, {"larm", EnumEquippedId::LEFT_ARM}, 
+                    {"rarm", EnumEquippedId::RIGHT_ARM}, {"larm", EnumEquippedId::LEFT_ARM},
                     {"rrin", EnumEquippedId::RIGHT_RING}, {"lrin", EnumEquippedId::LEFT_RING}, {"belt", EnumEquippedId::BELT}, {"feet", EnumEquippedId::FEET},
                     {"glov", EnumEquippedId::GLOVES}
                 };
@@ -2667,7 +2667,7 @@ namespace d2ce
                     }
 
                     strValue = doc.GetCellString(bodyLoc2ColumnIdx, i);
-                    if (!strValue.empty() )
+                    if (!strValue.empty())
                     {
                         iter = s_equipMap.find(strValue);
                         if (iter != s_equipMap.end())
@@ -3538,7 +3538,7 @@ namespace d2ce
                 strValue = doc.GetCellString(normcodeColumnIdx, i);
                 if (!strValue.empty())
                 {
-                    itemType.codes.push_back(strValue); 
+                    itemType.codes.push_back(strValue);
                     if (ubercodeColumnIdx >= 0)
                     {
                         strValue = doc.GetCellString(ubercodeColumnIdx, i);
@@ -3557,7 +3557,7 @@ namespace d2ce
                     }
                 }
             }
-            
+
             addItemToSimpleCache(itemType);
         }
 
@@ -3798,7 +3798,7 @@ namespace d2ce
             strValue = doc.GetCellString(namestrColumnIdx, i);
             if (strValue.empty())
             {
-                if(LocalizationHelpers::GetStringTxtValue(code, name))
+                if (LocalizationHelpers::GetStringTxtValue(code, name))
                 {
                     itemType.name = name;
                 }
@@ -4066,7 +4066,7 @@ namespace d2ce
 
                 itemType.dimensions.InvHeight = numSlots / itemType.dimensions.InvWidth;
             }
-            
+
             strValue = doc.GetCellString(nameableColumnIdx, i);
             if (!strValue.empty() && (strValue != "0"))
             {
@@ -4329,7 +4329,7 @@ namespace d2ce
             {
                 // mark unused items
                 static std::set<std::string> unusedItems = { "Heart", "Brain", "Jawbone", "Eye", "Horn",
-                    "Tail", "Flag", "Fang", "Quill", "Soul", "Scalp", "Spleen", "Herb", "Torch", "Gold"};
+                    "Tail", "Flag", "Fang", "Quill", "Soul", "Scalp", "Spleen", "Herb", "Torch", "Gold" };
                 if (unusedItems.find(itemType.name) != unusedItems.end())
                 {
                     bAddUnused = true;
@@ -4661,7 +4661,7 @@ namespace d2ce
 
         // An extremely powerful but badly underused field. This controls the point at which this affix will no longer appear on items
         std::uint16_t maxLevel = 0;
-        
+
         // The general level requirement that your character must meet before he can use an item that has this affix.
         std::uint16_t levelreq = 0;
 
@@ -4842,7 +4842,7 @@ namespace d2ce
                 // skip
                 continue;
             }
-            
+
             strValue = doc.GetCellString(recipeColumnIdx, i);
             if (strValue.empty())
             {
@@ -4871,7 +4871,7 @@ namespace d2ce
             itemType.index = index;
             itemType.name = strValue;
             itemType.category = type;
-            
+
             strValue = doc.GetCellString(versionColumnIdx, i);
             if (!strValue.empty())
             {
@@ -5608,7 +5608,7 @@ namespace d2ce
 
     void InitItemMagicPrefixData(const ITxtReader& txtReader)
     {
-        static const ITxtReader* pCurTextReader = nullptr; 
+        static const ITxtReader* pCurTextReader = nullptr;
         if (!s_ItemMagicPrefixType.empty())
         {
             if (pCurTextReader == &txtReader)
@@ -6486,7 +6486,7 @@ namespace d2ce
         std::string setIndex; // string key to the index field in Sets.txt - the set the item is a part of.
 
         std::string transform_color; // Palette shift to apply to the the DC6 inventory-file
-       
+
         std::vector<ItemAffixModType> modType; // Different fixed modifiers a set item can grant you (Blue attributes)
 
         // a property mode field that controls how the variable attributes will appear and be functional on a set item.
@@ -6981,7 +6981,7 @@ namespace d2ce
                 pRootItem->folderType = AvailableItemType::EnumFolderType::ResourceString;
                 pRootItem->name = "act5";
             }
-            
+
             auto& item = pRootItem->children[itemType.code];
             item.folderType = AvailableItemType::EnumFolderType::Item;
             item.pItemType = &itemType;
@@ -7114,7 +7114,7 @@ namespace d2ce
             else if (itemType.hasCategoryCode("shld"))
             {
                 if (itemType.hasCategoryCode("head"))
-                { 
+                {
                     pRootItem = &(pRootItem->children["head"]);
                     pRootItem->folderType = AvailableItemType::EnumFolderType::Category;
                     pRootItem->name = "head";
@@ -7318,7 +7318,7 @@ namespace d2ce
         {
             pRootItem = getItemSubFolderHelper(*pRootItem, itemType);
         }
-       
+
         auto& item = pRootItem->children[itemType.name];
         item.folderType = AvailableItemType::EnumFolderType::Item;
         item.pItemType = &itemType;
@@ -7553,7 +7553,7 @@ namespace d2ce
             itemType.code = doc.GetCellString(itemColumnIdx, i);
             itemType.CopyParentItem(GetItemTypeHelper(itemType.code));
             itemType.nameable = false; // Set Items can't be named
-            
+
             {
                 auto iter = s_ItemSetsIndex.find(itemType.setIndex);
                 if (iter != s_ItemSetsIndex.end())
@@ -7784,7 +7784,7 @@ namespace d2ce
                 {
                     lastParam = std::uint16_t(std::atoi(modType.param.c_str()));
                 }
-                else if (modType.code == "aura" || 
+                else if (modType.code == "aura" ||
                     modType.code == "charged" ||
                     modType.code == "death-skill" ||
                     modType.code == "gethit-skill" ||
@@ -8165,7 +8165,7 @@ namespace d2ce
             ++iterChained;
             for (; iterChained != iterChainedEnd && nextInChain != 0; ++iterChained)
             {
-                if (iterChained->first != nextInChain || 
+                if (iterChained->first != nextInChain ||
                     iterChained->second.count == 0 ||
                     iterChained->second.idx >= magicalAttributes.size())
                 {
@@ -8208,7 +8208,7 @@ namespace d2ce
         std::vector<MagicalAttribute> helmAttribs;   // The modifiers a gem will give to items using GemApplyType 1 (by default this is used by body armors and helmets).
         std::vector<MagicalAttribute> shieldAttribs; // The modifiers a gem will give to items using GemApplyType 2 (by default this is used by shields).
     };
-    
+
     std::map<std::string, ItemGemType> s_ItemGemsType;
     void InitItemGemsTypeData(const ITxtReader& txtReader)
     {
@@ -8594,7 +8594,7 @@ namespace d2ce
         {
             return;
         }
-        
+
         std::string strValue;
         std::string index;
         std::string nameIndex;
@@ -8974,10 +8974,10 @@ namespace d2ce
                 {"Runeword36", d2ce::EnumItemVersion::v110}, {"Runeword37", d2ce::EnumItemVersion::v110},
                 {"Runeword38", d2ce::EnumItemVersion::v110}, {"Runeword40", d2ce::EnumItemVersion::v120},
                 {"Runeword41", d2ce::EnumItemVersion::v110}, {"Runeword44", d2ce::EnumItemVersion::v109},
-                {"Runeword45", d2ce::EnumItemVersion::v110}, {"Runeword47", d2ce::EnumItemVersion::v110}, 
+                {"Runeword45", d2ce::EnumItemVersion::v110}, {"Runeword47", d2ce::EnumItemVersion::v110},
                 {"Runeword48", d2ce::EnumItemVersion::v110}, {"Runeword49", d2ce::EnumItemVersion::v110},
-                {"Runeword51", d2ce::EnumItemVersion::v110}, {"Runeword54", d2ce::EnumItemVersion::v109}, 
-                {"Runeword55", d2ce::EnumItemVersion::v109}, {"Runeword59", d2ce::EnumItemVersion::v110}, 
+                {"Runeword51", d2ce::EnumItemVersion::v110}, {"Runeword54", d2ce::EnumItemVersion::v109},
+                {"Runeword55", d2ce::EnumItemVersion::v109}, {"Runeword59", d2ce::EnumItemVersion::v110},
                 {"Runeword60", d2ce::EnumItemVersion::v110}, {"Runeword62", d2ce::EnumItemVersion::v110},
                 {"Runeword65", d2ce::EnumItemVersion::v109}, {"Runeword66", d2ce::EnumItemVersion::v110},
                 {"Runeword69", d2ce::EnumItemVersion::v110}, {"Runeword71", d2ce::EnumItemVersion::v110},
@@ -9008,7 +9008,7 @@ namespace d2ce
             if (patchReleaseColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(patchReleaseColumnIdx, i);
-                if(strValue == "109")
+                if (strValue == "109")
                 {
                     itemType.version = d2ce::EnumItemVersion::v109;
                 }
@@ -9199,7 +9199,7 @@ namespace d2ce
         }
         return true;
     }
-    
+
     bool GenerateMagicalAffixesBuffer(const ItemCreateParams& createParams, std::vector<ItemAffixType>& prefixes, std::vector<ItemAffixType>& suffixes, std::uint16_t level)
     {
         prefixes.clear();
@@ -9228,7 +9228,7 @@ namespace d2ce
 
         for (auto& prefix : s_ItemMagicPrefixType)
         {
-            if ((prefix.second.version > createParams.gameVersion) || (prefix.second.version == 0 && createParams.gameVersion != 0) )
+            if ((prefix.second.version > createParams.gameVersion) || (prefix.second.version == 0 && createParams.gameVersion != 0))
             {
                 continue;
             }
@@ -9486,7 +9486,7 @@ bool d2ce::ItemType::hasCategoryCode(const std::string categoryCode) const
 
             return hasCategory(categoryKnif.name);
         }
-    
+
         return false;
     }
 
@@ -9671,7 +9671,7 @@ bool d2ce::ItemType::isUpgradableItem() const
         // already upgraded
         return false;
     }
-    
+
     return true;
 }
 //---------------------------------------------------------------------------
@@ -10304,7 +10304,7 @@ bool d2ce::ItemHelpers::isTxtReaderInitialized()
 //---------------------------------------------------------------------------
 const std::string& d2ce::ItemHelpers::getLanguage()
 {
-    return s_CurrentLanguage.empty()? s_DefaultLanguage : s_CurrentLanguage;
+    return s_CurrentLanguage.empty() ? s_DefaultLanguage : s_CurrentLanguage;
 }
 //---------------------------------------------------------------------------
 // work around bug in the debug compiler causing warning over range iterator
@@ -10528,7 +10528,7 @@ std::uint8_t d2ce::ItemHelpers::HuffmanDecodeBitString(const std::string& bitstr
 //---------------------------------------------------------------------------
 std::uint16_t d2ce::ItemHelpers::getGPSSortIndex(const std::array<std::uint8_t, 4>& strcode)
 {
-    auto &item = GetItemTypeHelper(strcode);
+    auto& item = GetItemTypeHelper(strcode);
 
     std::uint16_t idx = 0;
     if (item.isGem())
@@ -10640,7 +10640,7 @@ std::uint16_t d2ce::ItemHelpers::getGPSSortIndex(const std::array<std::uint8_t, 
         {
             return item.isUpgradableRejuvenationPotion() ? idx : idx + 1;
         }
-        
+
         idx += 2;
         if (item.hasCategoryCode("apot")) // antidote potion
         {
@@ -10738,7 +10738,7 @@ void d2ce::ItemHelpers::getValidGPSCodes(std::vector<std::string>& gpsCodes, boo
             continue;
         }
 
-        if(!isExpansion && gpsItem.second.isExpansionItem())
+        if (!isExpansion && gpsItem.second.isExpansionItem())
         {
             // Rune are only available in expansion
             continue;
@@ -11109,7 +11109,7 @@ bool d2ce::ItemHelpers::getPossibleMagicalAffixes(const d2ce::Item& item, std::v
     }
 
     const auto& itemType = item.getItemTypeHelper();
-    if(&itemType == &ItemHelpers::getInvalidItemTypeHelper())
+    if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
         return false;
     }
@@ -11278,7 +11278,7 @@ bool d2ce::ItemHelpers::getPossibleRareAffixes(const d2ce::Item& item, std::vect
 bool d2ce::ItemHelpers::getPossibleSuperiorAttributes(const d2ce::Item& item, std::vector<d2ce::MagicalAttribute>& attribs)
 {
     attribs.clear();
-    
+
     const auto& itemType = item.getItemTypeHelper();
     if (&itemType == &ItemHelpers::getInvalidItemTypeHelper())
     {
@@ -11798,7 +11798,7 @@ bool d2ce::ItemHelpers::getUniqueMagicAttribs(std::uint16_t id, std::vector<Magi
 {
     attribs.clear();
     auto iter = s_ItemUniqueItemsType.find(id);
-    if(iter == s_ItemUniqueItemsType.end())
+    if (iter == s_ItemUniqueItemsType.end())
     {
         return false;
     }
@@ -11889,7 +11889,7 @@ bool d2ce::ItemHelpers::getCraftingRecipiesMagicAttribs(const ItemCreateParams& 
         const auto& itemType = createParams.itemType.value().get();
         bExceptional = itemType.isExceptionalItem() || itemType.isEliteItem();
     }
-    
+
     ItemRandStruct rnd = { dwb, 666 };
     InitalizeItemRandomization(dwb, level, rnd, bExceptional);
     ProcessMagicalProperites(modType, attribs, rnd, createParams, true);
@@ -12016,13 +12016,6 @@ bool d2ce::ItemHelpers::findDWForMagicalAffixes(const MagicalAffixes& affixes, c
 //---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::generateMagicalAffixes(MagicalCachev100& cache, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
-    std::vector<ItemAffixType> prefixes;
-    std::vector<ItemAffixType> suffixes;
-    if (!GenerateMagicalAffixesBuffer(createParams, prefixes, suffixes, level))
-    {
-        return false;
-    }
-
     if (dwb == 0)
     {
         dwb = generarateRandomDW();
@@ -12037,6 +12030,62 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(MagicalCachev100& cache, const It
 
     ItemRandStruct rnd = { dwb, 666 };
     InitalizeItemRandomization(dwb, level, rnd, bExceptional);
+
+    bool bHasValidAttribs = createParams.magicalAffixes.isValid() && (createParams.itemVersion >= d2ce::EnumItemVersion::v107);
+    if (bHasValidAttribs)
+    {
+        MagicalCachev100 cacheOrig = cache;
+        cache.Affixes = createParams.magicalAffixes;
+        if (cache.Affixes.PrefixId == MAXUINT16)
+        {
+            cache.Affixes.PrefixId = 0;
+        }
+
+        if (cache.Affixes.SuffixId == MAXUINT16)
+        {
+            cache.Affixes.SuffixId = 0;
+        }
+
+        if (cache.Affixes.PrefixId != 0)
+        {
+            auto iter = s_ItemMagicPrefixType.find(cache.Affixes.PrefixId);
+            if (iter == s_ItemMagicPrefixType.end())
+            {
+                bHasValidAttribs = false;
+                cache = cacheOrig;
+            }
+            else
+            {
+                ProcessMagicalProperites(iter->second.modType, cache.MagicalAttributes, rnd, createParams, bMaxAlways);
+            }
+        }
+
+        if (bHasValidAttribs && cache.Affixes.SuffixId != 0)
+        {
+            auto iter = s_ItemMagicSuffixType.find(cache.Affixes.SuffixId);
+            if (iter == s_ItemMagicSuffixType.end())
+            {
+                bHasValidAttribs = false;
+                cache = cacheOrig;
+            }
+            else
+            {
+                ProcessMagicalProperites(iter->second.modType, cache.MagicalAttributes, rnd, createParams, bMaxAlways);
+            }
+        }
+
+        if (bHasValidAttribs)
+        {
+            return true;
+        }
+    }
+
+    std::vector<ItemAffixType> prefixes;
+    std::vector<ItemAffixType> suffixes;
+    if (!GenerateMagicalAffixesBuffer(createParams, prefixes, suffixes, level))
+    {
+        return false;
+    }
 
     // Do we have a prefix?
     cache.Affixes.PrefixId = 0;
@@ -12070,6 +12119,7 @@ bool d2ce::ItemHelpers::generateMagicalAffixes(MagicalCachev100& cache, const It
 
     return true;
 }
+//---------------------------------------------------------------------------
 bool d2ce::ItemHelpers::generateSuperiorAttributes(std::vector<MagicalAttribute>& attribs, const ItemCreateParams& createParams, std::uint16_t level, std::uint32_t dwb, bool bMaxAlways)
 {
     std::vector<ItemAffixType> affixes;
@@ -12296,7 +12346,7 @@ bool d2ce::ItemHelpers::findDWForRareOrCraftedAffixes(const d2ce::RareAttributes
                 ProcessMagicalProperites(iter->modType, affixItem.MagicalAttributes, rnd, createParams);
             }
         }
-        
+
         cacheMaxAffixMatchCount = 0;
         for (const auto& affix : cache.Affixes)
         {
@@ -12382,68 +12432,23 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         }
     }
 
-    bool bHasValidAttribs = false;
-    if (!createParams.rareAttribs.Affixes.empty() && (createParams.itemVersion >= d2ce::EnumItemVersion::v107))
+    bool bHasValidAttribs = createParams.rareAttribs.isValid() && (createParams.itemVersion >= d2ce::EnumItemVersion::v107);
+    if (bHasValidAttribs)
     {
-        bHasValidAttribs = true;
         if (createParams.createQualityOption == EnumItemQuality::CRAFTED)
         {
             // Craft items can have up to 4 total affixes
-            if (createParams.rareAttribs.Affixes.size() > 2)
+            if (createParams.rareAttribs.getAffixCount() > 4)
             {
-                size_t numAffixes = 0;
-                for (const auto& affix : createParams.rareAttribs.Affixes)
-                {
-                    if (affix.PrefixId != 0)
-                    {
-                        ++numAffixes;
-                        if (numAffixes > 4)
-                        {
-                            bHasValidAttribs = false;
-                            break;
-                        }
-                    }
-
-                    if (affix.SuffixId != 0)
-                    {
-                        ++numAffixes;
-                        if (numAffixes > 4)
-                        {
-                            bHasValidAttribs = false;
-                            break;
-                        }
-                    }
-                }
+                bHasValidAttribs = false;
             }
         }
         else if (itemType.isJewel() && createParams.itemVersion >= EnumItemVersion::v109)
         {
             // Post-1.09, Rare jewels can have up to 4 total affixes
-            if (createParams.rareAttribs.Affixes.size() > 2)
+            if (createParams.rareAttribs.getAffixCount() > 4)
             {
-                size_t numAffixes = 0;
-                for (const auto& affix : createParams.rareAttribs.Affixes)
-                {
-                    if (affix.PrefixId != 0)
-                    {
-                        ++numAffixes;
-                        if (numAffixes > 4)
-                        {
-                            bHasValidAttribs = false;
-                            break;
-                        }
-                    }
-
-                    if (affix.SuffixId != 0)
-                    {
-                        ++numAffixes;
-                        if (numAffixes > 4)
-                        {
-                            bHasValidAttribs = false;
-                            break;
-                        }
-                    }
-                }  
+                bHasValidAttribs = false;
             }
         }
 
@@ -12473,12 +12478,12 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
                     cache.Affixes.resize(cache.Affixes.size() + 1);
                     auto& cacheAffix = cache.Affixes.back();
                     cacheAffix.Affixes = affix;
-                    if (cacheAffix.Affixes.PrefixId == 0)
+                    if (cacheAffix.Affixes.PrefixId == MAXUINT16)
                     {
-                        cacheAffix.Affixes.PrefixId = MAXUINT16;
+                        cacheAffix.Affixes.PrefixId = 0;
                     }
 
-                    if (cacheAffix.Affixes.PrefixId != MAXUINT16)
+                    if (cacheAffix.Affixes.PrefixId != 0)
                     {
                         auto iter = s_ItemMagicPrefixType.find(cacheAffix.Affixes.PrefixId);
                         if (iter == s_ItemMagicPrefixType.end())
@@ -12491,12 +12496,12 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
                         ProcessMagicalProperites(iter->second.modType, cacheAffix.MagicalAttributes, rnd, createParams, bMaxAlways);
                     }
 
-                    if (cacheAffix.Affixes.SuffixId == 0)
+                    if (cacheAffix.Affixes.SuffixId == MAXUINT16)
                     {
-                        cacheAffix.Affixes.SuffixId = MAXUINT16;
+                        cacheAffix.Affixes.SuffixId = 0;
                     }
 
-                    if (cacheAffix.Affixes.SuffixId != MAXUINT16)
+                    if (cacheAffix.Affixes.SuffixId != 0)
                     {
                         auto iter = s_ItemMagicSuffixType.find(cacheAffix.Affixes.SuffixId);
                         if (iter == s_ItemMagicSuffixType.end())
@@ -12513,7 +12518,7 @@ bool d2ce::ItemHelpers::generateRareOrCraftedAffixes(RareOrCraftedCachev100& cac
         }
     }
 
-    if(!bHasValidAttribs)
+    if (!bHasValidAttribs)
     {
         std::vector<ItemAffixType> prefixes;
         std::vector<ItemAffixType> suffixes;
@@ -13184,7 +13189,7 @@ void d2ce::ItemHelpers::checkForRelatedMagicalAttributes(std::vector<MagicalAttr
                             attrib.Desc = stat.descRange;
                         }
                     }
-                    else if(pMaxDamage->Values[0] == attrib.Values[0])
+                    else if (pMaxDamage->Values[0] == attrib.Values[0])
                     {
                         pMaxDamage->Visible = false;
 
@@ -13315,7 +13320,7 @@ std::int64_t d2ce::ItemHelpers::getMagicalAttributeValue(MagicalAttribute& attri
 
     switch (descFunc)
     {
-    case  5: 
+    case  5:
     case 10:
         switch (idx)
         {
@@ -13669,7 +13674,7 @@ bool d2ce::ItemHelpers::formatDisplayedMagicalAttribute(MagicalAttribute& attrib
     }
     else if (attrib.Values.size() == 1 && attrib.Values[0] < 0)
     {
-        attrib.Desc = stat.descNeg; 
+        attrib.Desc = stat.descNeg;
         switch (stat.descFunc)
         {
         case 29: // [value] [string1] [string2]
@@ -14084,7 +14089,7 @@ namespace d2ce
 {
     namespace LocalizationHelpers
     {
-        bool GetLocalizedString(const std::map<size_t, std::map<std::string, std::string>>& stringTxtInfo, 
+        bool GetLocalizedString(const std::map<size_t, std::map<std::string, std::string>>& stringTxtInfo,
             size_t id, std::string& outStr, std::string& gender)
         {
             auto iter = stringTxtInfo.find(id);

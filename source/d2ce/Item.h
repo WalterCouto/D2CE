@@ -132,6 +132,7 @@ namespace d2ce
         void calculateChecksum(long& checksum, std::uint8_t& overflow);
 
     private:
+        bool setMagicalAffixesSimple(const d2ce::MagicalAffixes& affixes);  // Item has Normal Quality
         bool setRareOrCraftedAttributesSimple(const RareAttributes& attrib); // Item has Normal Quality
 
     public:

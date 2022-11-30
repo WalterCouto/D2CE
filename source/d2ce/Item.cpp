@@ -1276,7 +1276,6 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     max_bit_offset = std::max(max_bit_offset, current_bit_offset);
 
     auto quality = EnumItemQuality::NORMAL;
-    d2ce::RareAttributes rareAttribs;
     if (itemType.isUniqueItem())
     {
         quality = EnumItemQuality::UNIQUE;
@@ -1312,7 +1311,6 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFTED:
             quality = createParams.createQualityOption;
-            rareAttribs = createParams.rareAttribs;
             break;
 
         default:
@@ -1348,7 +1346,6 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
         case EnumItemQuality::RARE:
         case EnumItemQuality::CRAFTED:
             quality = createParams.createQualityOption;
-            rareAttribs = createParams.rareAttribs;
             break;
         }
     }
@@ -2345,7 +2342,7 @@ d2ce::Item::Item(const ItemCreateParams& createParams)
     switch (quality)
     {
     case EnumItemQuality::MAGIC:
-        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), dwb, true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
+        if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), dwb, true))
         {
             *this = invalidItem;
             return;
@@ -4526,7 +4523,6 @@ void d2ce::Item::verifyRuneword()
                 // clear any bits not written to
                 if ((current_bit_offset % 8) > 0)
                 {
-                    value = 0;
                     bits = (std::uint8_t)(8 - (current_bit_offset % 8));
                     updateBitsEx(current_bit_offset, bits, 0);
                 }
@@ -4585,7 +4581,6 @@ void d2ce::Item::verifyRuneword()
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -6208,7 +6203,7 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
             GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_100;
         }
 
-        numBits = 3;
+        numBits = QUALITY_NUM_BITS_100;
         break;
 
     case EnumItemVersion::v104: // v1.04 - v1.06 item
@@ -6222,7 +6217,7 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
             GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET_104;
         }
 
-        numBits = 4;
+        numBits = QUALITY_NUM_BITS;
         break;
 
     case EnumItemVersion::v107:  // v1.07 item
@@ -6243,7 +6238,7 @@ d2ce::EnumItemQuality d2ce::Item::getQuality() const
             GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET;
         }
 
-        numBits = 4;
+        numBits = QUALITY_NUM_BITS;
         break;
     }
 
@@ -8468,7 +8463,6 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
         // clear any bits not written to
         if ((current_bit_offset % 8) > 0)
         {
-            value = 0;
             bits = (std::uint8_t)(8 - (current_bit_offset % 8));
             updateBitsEx(current_bit_offset, bits, 0);
         }
@@ -8529,7 +8523,6 @@ bool d2ce::Item::setSocketCount(std::uint8_t numSockets)
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -8611,7 +8604,6 @@ bool d2ce::Item::addPersonalization(const std::string& name)
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -8664,7 +8656,6 @@ bool d2ce::Item::removePersonalization()
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -8735,7 +8726,6 @@ bool d2ce::Item::setIndestructible()
         // clear any bits not written to
         if ((current_bit_offset % 8) > 0)
         {
-            value = 0;
             bits = (std::uint8_t)(8 - (current_bit_offset % 8));
             updateBitsEx(current_bit_offset, bits, 0);
         }
@@ -8799,7 +8789,6 @@ bool d2ce::Item::setIndestructible()
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -9465,7 +9454,64 @@ bool d2ce::Item::getPossibleCraftingRecipies(std::vector<CraftRecipieType>& attr
 //---------------------------------------------------------------------------
 bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 {
-    if (isSimpleItem() || (isSocketFiller() && !isJewel()) || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
+    if (!affixes.isValid() || isSimpleItem() || (isSocketFiller() && !isJewel()) || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
+    {
+        return false;
+    }
+
+    if (ItemVersion < EnumItemVersion::v107)
+    {
+        return setMagicalAffixesSimple(affixes);
+    }
+
+    d2ce::MagicalAffixes curAffixes;
+    switch (getQuality())
+    {
+    case EnumItemQuality::NORMAL:
+        if (isRuneword())
+        {
+            // magical affixes do not work with these
+            return false;
+        }
+
+        return setMagicalAffixesSimple(affixes);
+
+    case EnumItemQuality::RARE:     // must convert to NORMAL quality
+    case EnumItemQuality::TEMPERED:
+    case EnumItemQuality::CRAFTED:
+        break;
+
+    case EnumItemQuality::MAGIC:
+        return setMagicalAffixesSimple(affixes);
+
+    default:
+        // magical affixes do not work with these
+        return false;
+    }
+
+    // make a copy first
+    d2ce::Item origItem(*this);
+    if (!isRing() && !isAmulet() && !isJewel()) // can't remove magical attributes
+    {
+        if (!makeNormal())
+        {
+            swap(origItem);
+            return false;
+        }
+    }
+
+    if (!setMagicalAffixesSimple(affixes))
+    {
+        swap(origItem);
+        return false;
+    }
+
+    return true;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::setMagicalAffixesSimple(const d2ce::MagicalAffixes& affixes)
+{
+    if (!affixes.isValid() || isSimpleItem() || (isSocketFiller() && !isJewel()) || (affixes.PrefixId == 0 && affixes.SuffixId == 0))
     {
         return false;
     }
@@ -9564,6 +9610,11 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     case EnumItemQuality::RARE:     // converting to MAGIC
     case EnumItemQuality::TEMPERED:
     case EnumItemQuality::CRAFTED:
+        if (!isRing() && !isAmulet() && !isJewel())
+        {
+            // must be converted to NORMAL quality for method to work
+            return false;
+        }
         break;
 
     case EnumItemQuality::MAGIC:
@@ -9623,6 +9674,9 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    createParams.createQualityOption = EnumItemQuality::MAGIC;
+    createParams.magicalAffixes = affixes;
+
     std::vector<MagicalAttribute> attribs;
     if (!d2ce::ItemHelpers::getMagicAttribs(affixes, attribs, createParams, getGameVersion()))
     {
@@ -9633,15 +9687,6 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     size_t diff = 0;
     d2ce::Item origItem(*this);
     const auto& origData = origItem.data;
-
-    switch (getQuality())
-    {
-    case EnumItemQuality::RARE:     // converting to MAGIC
-    case EnumItemQuality::TEMPERED:
-    case EnumItemQuality::CRAFTED:
-        makeNormal();
-        break;
-    }
 
     auto numSockets = getSocketCount();
     auto origNumSockets = numSockets;
@@ -9675,7 +9720,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
             swap(origItem);
             return false;
         }
-        
+
         value = affixes.SuffixId;
         if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
@@ -9690,6 +9735,18 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     }
     else
     {
+        if (isRing() || isAmulet() || isJewel())
+        {
+            d2ce::Item newItem(createParams);
+            if (newItem.data.empty())
+            {
+                return false;
+            }
+
+            swap(newItem);
+            return true;
+        }
+
         // complex change: make item have magical quality
         if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
         {
@@ -9698,23 +9755,23 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
 
         current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
         std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::MAGIC);
-        if (!updateBits(current_bit_offset, 4, value))
+        if (!updateBitsEx(current_bit_offset, QUALITY_NUM_BITS, value))
         {
             swap(origItem);
             return false;
         }
 
         // make room for affixes
-        size_t old_current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
-        size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
         diff = MAGICAL_AFFIX_NUM_BITS * 2;
-        GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) += diff;
+        current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
+        size_t old_current_bit_offset = current_bit_offset;
+        size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - old_current_bit_offset;
+        GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) += diff; // add new attribs
 
         size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
         data.resize(newSize, 0);
 
         // update affixes
-        current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
         value = affixes.PrefixId;
         if (!updateBitsEx(current_bit_offset, MAGICAL_AFFIX_NUM_BITS, value))
         {
@@ -9728,6 +9785,7 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
             swap(origItem);
             return false;
         }
+
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
 
         // now copy the remaining bits
@@ -9754,15 +9812,25 @@ bool d2ce::Item::setMagicalAffixes(const d2ce::MagicalAffixes& affixes)
     }
 
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
-    size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
-    data.resize(newSize, 0);
+    size_t diff2 = current_bit_offset - origItem.bitOffsets[static_cast<std::underlying_type_t<ItemOffsets>>(ItemOffsets::ITEM_END_BIT_OFFSET)] - diff;
+    updateOffset(GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET), diff2);
+
+    // clear any bits not written to
+    if ((current_bit_offset % 8) > 0)
+    {
+        std::uint8_t bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+        updateBitsEx(current_bit_offset, bits, 0);
+    }
 
     if (numSockets != origNumSockets)
     {
         setSocketCount(numSockets);
     }
 
+    fixDurability();
     cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -10000,7 +10068,10 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
         return false;
     }
 
-    setMaxDefenseRating();
+    if (isArmor())
+    {
+        setMaxDefenseRating();
+    }
 
     // make a copy first
     d2ce::Item origItem(*this);
@@ -10014,17 +10085,18 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
 
     size_t current_bit_offset = GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET);
     std::uint32_t value = static_cast<std::underlying_type_t<EnumItemQuality>>(EnumItemQuality::SUPERIOR);
-    if (!updateBits(current_bit_offset, QUALITY_NUM_BITS, value))
+    if (!updateBitsEx(current_bit_offset, QUALITY_NUM_BITS, value))
     {
         swap(origItem);
         return false;
     }
 
-    // make room for data
-    size_t old_current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
-    size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_ID_BIT_OFFSET_MARKER);
-    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) -= (GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::RUNEWORD_ID_BIT_OFFSET_MARKER) - GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER)); // remove old attribs
-    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) += INFERIOR_SUPERIOR_ID_NUM_BITS; // add new attribs
+    // make room for superior bits
+    size_t diff = INFERIOR_SUPERIOR_ID_NUM_BITS;
+    current_bit_offset = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
+    size_t old_current_bit_offset = current_bit_offset;
+    size_t bitsToCopy = GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) - old_current_bit_offset;
+    GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) += diff; // add new superior bits
 
     size_t newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
     data.resize(newSize, 0);
@@ -10037,6 +10109,7 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
         swap(origItem);
         return false;
     }
+
     GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER);
 
     // now copy the remaining bits
@@ -10051,7 +10124,7 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
         bits = (std::uint8_t)std::min(valueBitSize, bitsToCopy);
     }
 
-    updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), INFERIOR_SUPERIOR_ID_NUM_BITS);
+    updateOffset(GET_BIT_OFFSET_MARKER(ItemOffsetMarkers::QUALITY_ATTRIB_BIT_OFFSET_MARKER), diff);
 
     // write out new data
     current_bit_offset = GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET);
@@ -10062,11 +10135,20 @@ bool d2ce::Item::makeSuperior(const std::vector<MagicalAttribute>& attribs)
     }
 
     GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) = current_bit_offset;
-    newSize = (GET_BIT_OFFSET(ItemOffsets::ITEM_END_BIT_OFFSET) + 7) / 8;
-    data.resize(newSize, 0);
+    size_t diff2 = current_bit_offset - origItem.bitOffsets[static_cast<std::underlying_type_t<ItemOffsets>>(ItemOffsets::ITEM_END_BIT_OFFSET)] - diff;
+    updateOffset(GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET), diff2);
 
-    cachedCombinedMagicalAttributes.clear();
+    // clear any bits not written to
+    if ((current_bit_offset % 8) > 0)
+    {
+        bits = (std::uint8_t)(8 - (current_bit_offset % 8));
+        updateBitsEx(current_bit_offset, bits, 0);
+    }
+
     fixDurability();
+    cachedCombinedMagicalAttributes.clear();
+    magic_affixes_v100.clear();
+    rare_affixes_v100.clear();
     return true;
 }
 //---------------------------------------------------------------------------
@@ -10338,7 +10420,6 @@ bool d2ce::Item::makeNormal()
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         std::uint8_t bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -10352,6 +10433,8 @@ bool d2ce::Item::makeNormal()
     {
         updateOffset(GET_BIT_OFFSET(ItemOffsets::MAGICAL_PROPS_BIT_OFFSET), -std::int64_t(diff2));
     }
+
+    fixDurability();
     cachedCombinedMagicalAttributes.clear();
     magic_affixes_v100.clear();
     rare_affixes_v100.clear();
@@ -10403,9 +10486,17 @@ bool d2ce::Item::makeMagical()
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
+    MagicalCachev100 generated_magic_affixes;
+    if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true))
+    {
+        swap(origItem);
+        return false;
+    }
+
     if (isRing() || isAmulet() || isJewel())
     {
         createParams.createQualityOption = EnumItemQuality::MAGIC;
+        createParams.magicalAffixes = generated_magic_affixes.Affixes;
         d2ce::Item newItem(createParams);
         if (newItem.data.empty())
         {
@@ -10415,13 +10506,6 @@ bool d2ce::Item::makeMagical()
 
         swap(newItem);
         return true;
-    }
-
-    MagicalCachev100 generated_magic_affixes;
-    if (!ItemHelpers::generateMagicalAffixes(generated_magic_affixes, createParams, getLevel(), getDWBCode(), true) || (generated_magic_affixes.Affixes.PrefixId == MAXUINT16))
-    {
-        swap(origItem);
-        return false;
     }
 
     if (!setMagicalAffixes(generated_magic_affixes.Affixes))
@@ -10479,6 +10563,24 @@ bool d2ce::Item::makeRare()
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
     createParams.createQualityOption = EnumItemQuality::RARE;
+    RareOrCraftedCachev100 generated_rare_affixes;
+    if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
+    {
+        swap(origItem);
+        return false;
+    }
+
+    createParams.rareAttribs.Id = generated_rare_affixes.Id;
+    createParams.rareAttribs.Name = generated_rare_affixes.Name;
+    createParams.rareAttribs.Index = generated_rare_affixes.Index;
+    createParams.rareAttribs.Id2 = generated_rare_affixes.Id2;
+    createParams.rareAttribs.Name2 = generated_rare_affixes.Name2;
+    createParams.rareAttribs.Index2 = generated_rare_affixes.Index2;
+    for (auto& item : generated_rare_affixes.Affixes)
+    {
+        createParams.rareAttribs.Affixes.push_back(item.Affixes);
+    }
+
     if (isRing() || isAmulet() || isJewel())
     {
         d2ce::Item newItem(createParams);
@@ -10492,26 +10594,7 @@ bool d2ce::Item::makeRare()
         return true;
     }
 
-    RareOrCraftedCachev100 generated_rare_affixes;
-    if (!ItemHelpers::generateRareOrCraftedAffixes(generated_rare_affixes, createParams, getLevel(), getDWBCode(), true))
-    {
-        swap(origItem);
-        return false;
-    }
-
-    RareAttributes affixes;
-    affixes.Id = generated_rare_affixes.Id;
-    affixes.Name = generated_rare_affixes.Name;
-    affixes.Index = generated_rare_affixes.Index;
-    affixes.Id2 = generated_rare_affixes.Id2;
-    affixes.Name2 = generated_rare_affixes.Name2;
-    affixes.Index2 = generated_rare_affixes.Index2;
-    for (auto& item : generated_rare_affixes.Affixes)
-    {
-        affixes.Affixes.push_back(item.Affixes);
-    }
-
-    if (!setRareOrCraftedAttributes(affixes))
+    if (!setRareOrCraftedAttributes(createParams.rareAttribs))
     {
         swap(origItem);
         return false;
@@ -10722,7 +10805,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(const d2ce::RareAttributes& affixes)
 
         return setRareOrCraftedAttributesSimple(affixes);
 
-    case EnumItemQuality::MAGIC:  // must convedrt to NORMAL quality
+    case EnumItemQuality::MAGIC:  // must convert to NORMAL quality
     case EnumItemQuality::RARE:
     case EnumItemQuality::CRAFTED:
     case EnumItemQuality::TEMPERED:
@@ -10735,7 +10818,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(const d2ce::RareAttributes& affixes)
 
     // make a copy first
     d2ce::Item origItem(*this);
-    if (!isRing() && !isAmulet() && !isJewel()) // // can't remove magical attributes
+    if (!isRing() && !isAmulet() && !isJewel()) // can't remove magical attributes
     {
         if (!makeNormal())
         {
@@ -10755,7 +10838,7 @@ bool d2ce::Item::setRareOrCraftedAttributes(const d2ce::RareAttributes& affixes)
 //---------------------------------------------------------------------------
 bool d2ce::Item::setRareOrCraftedAttributesSimple(const d2ce::RareAttributes& affixes)
 {
-    if (isSimpleItem() || (isSocketFiller() && !isJewel()))
+    if (!affixes.isValid() || isSimpleItem() || (isSocketFiller() && !isJewel()))
     {
         return false;
     }
@@ -10839,24 +10922,20 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(const d2ce::RareAttributes& af
     bool bIsCraft = false;
     if (isJewel())
     {
-        if (ItemVersion < EnumItemVersion::v109)
+        // Before 1.09, rare jewels could have up to three prefixes and three suffixes
+        if (ItemVersion >= EnumItemVersion::v109)
         {
-            if (affixes.Affixes.size() > 6)
+            if (affixes.getAffixCount() > 4)
             {
-                // Before 1.09, rare jewels could have up to three prefixes and three suffixes
+                // Post-1.09, Rare jewels can have up to 4 total affixes
                 return false;
             }
-        }
-        else if (affixes.Affixes.size() > 4)
-        {
-            // Post-1.09, Rare jewels can have up to 4 total affixes
-            return false;
         }
     }
     else
     {
         bIsCraft = (isExpansionGame() && affixes.CraftingRecipieId != MAXUINT16) ? true : false;
-        if (bIsCraft && affixes.Affixes.size() > 4)
+        if (bIsCraft && affixes.getAffixCount() > 4)
         {
             return false;
         }
@@ -11006,7 +11085,7 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(const d2ce::RareAttributes& af
         }
     }
 
-    // complex change: make item have magical quality
+    // complex change: make item have RARE ore CRAFTED quality
     if (GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) == 0)
     {
         GET_BIT_OFFSET(ItemOffsets::QUALITY_BIT_OFFSET) = GET_BIT_OFFSET(ItemOffsets::START_BIT_OFFSET) + QUALITY_BIT_OFFSET;
@@ -11122,7 +11201,6 @@ bool d2ce::Item::setRareOrCraftedAttributesSimple(const d2ce::RareAttributes& af
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -19873,7 +19951,6 @@ bool d2ce::Item::updateResurrectedItemCode(std::uint64_t code, size_t numBitsSet
     // clear any bits not written to
     if ((current_bit_offset % 8) > 0)
     {
-        value = 0;
         bits = (std::uint8_t)(8 - (current_bit_offset % 8));
         updateBitsEx(current_bit_offset, bits, 0);
     }
@@ -19930,7 +20007,7 @@ bool d2ce::Item::getMagicalAffixesv100(MagicalAffixes& affixes) const
     }
 
     ItemCreateParams createParams(getVersion(), getItemTypeHelper(), getGameVersion());
-    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getLevel(), getDWBCode()) || (magic_affixes_v100.Affixes.PrefixId == MAXUINT16))
+    if (!ItemHelpers::generateMagicalAffixes(magic_affixes_v100, createParams, getLevel(), getDWBCode()))
     {
         return false;
     }
