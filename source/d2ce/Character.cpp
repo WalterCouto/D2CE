@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -676,12 +676,19 @@ bool d2ce::Character::openD2S(const std::filesystem::path& path, bool validateCh
     calculateChecksum();
     if (curChecksum != getChecksumBytes())
     {
-        m_error_code = std::make_error_code(CharacterErrc::InvalidChecksum);
-        if (validateChecksum)
+        // If data was correct, don't report invalid checksum.
+        // It will update on next save.
+        if (!Acts.QuestsDataCorrected)
         {
-            close();
-            return false;
+            m_error_code = std::make_error_code(CharacterErrc::InvalidChecksum);
+            if (validateChecksum)
+            {
+                close();
+                return false;
+            }
         }
+
+        Acts.QuestsDataCorrected = false; // reset
     }
 
     m_shared_stash.reset(*this);

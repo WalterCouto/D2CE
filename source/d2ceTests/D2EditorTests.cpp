@@ -660,6 +660,11 @@ namespace D2EditorTests
             TestOpenBase("HCharming.d2s", d2ce::EnumCharVersion::v140, true);
         }
 
+        TEST_METHOD(TestOpen48)
+        {
+            TestOpenBase("Markell.d2s", d2ce::EnumCharVersion::v140, true);
+        }
+
         TEST_METHOD(TestJsonExport01)
         {
             TestJsonExportBase("Merlina.d2s", d2ce::EnumCharVersion::v110, true);
@@ -939,6 +944,11 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonExport56)
         {
             TestJsonExportBase("Poison.d2s", d2ce::EnumCharVersion::v110, true, false);
+        }
+
+        TEST_METHOD(TestJsonExport57)
+        {
+            TestJsonExportBase("Markell.d2s", d2ce::EnumCharVersion::v140, true, false);
         }
 
         TEST_METHOD(TestJsonOpen01)
@@ -1229,6 +1239,11 @@ namespace D2EditorTests
         TEST_METHOD(TestJsonOpen58)
         {
             TestJsonOpenBaseNoOutputCheck("Poison.json", d2ce::EnumCharVersion::v110, true);
+        }
+
+        TEST_METHOD(TestJsonOpen59)
+        {
+            TestJsonOpenBaseNoOutputCheck("Markell.d2s", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)

@@ -1,6 +1,6 @@
 # Diablo II Character Editor
 Copyright (c) 2000-2003 By Burton Tsang<br>
-Copyright (c) 2021-2022 By Walter Couto<br>
+Copyright (c) 2021-2023 By Walter Couto<br>
 
 Diablo is a trademark or registered trademark of Blizzard Entertainment, Inc., in the U.S. and/or other countries.<br>
 This utility is in no way affiliated with Blizzard Entertainment.<br>
@@ -56,11 +56,12 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.20 (November 12, 2022)**
+**Version 2.20 (January 5, 2023)**
 - Updated: Item tooltip to display red for unmet requirements and blue for magically enhanced attributes<br>
 - Updated: Character progression logic to adjust character level to at least match the recommended level.<br>
 - Updated: Updated logic for level change to reduce outstanding Stat/Skill points when level is reduced.<br>
-- Updated: If file is corrupt on open and a back exists, ask if user would like to replace the file with the backup.<br>
+- Updated: If file is corrupt on open and a backup exists, ask if user would like to replace the file with the backup.<br>
+- Updated: Some character files may incorrectly mark Act IV complete and Act V introduced causing program to incorrectly mark all of the last quest of Act IV as completed. The program now corrects the data by checking if the town waypoint is active.<br>
 <br>
 
 - Added: Set Items now display all the possible Bonus attribues in the tooltip<br>

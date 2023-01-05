@@ -1,6 +1,6 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

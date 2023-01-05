@@ -743,6 +743,12 @@
     <CustomBuild Include="..\examples\chars\99\HCharming.json">
       <Filter>examples\char\99</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Markell.d2s">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\examples\chars\99\Markell.json">
+      <Filter>examples\char\99</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\d2ce\thirdparty\jsoncpp\src\lib_json\json_valueiterator.inl">

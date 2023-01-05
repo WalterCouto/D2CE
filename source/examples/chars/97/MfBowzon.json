@@ -3,14 +3,14 @@
     "identifier": "aa55aa55",
     "version": 97,
     "filesize": 2165,
-    "checksum": "61662801",
+    "checksum": "59662801",
     "name": "MfBowzon",
     "status": {
       "hardcore": false,
       "died": true,
       "expansion": true
     },
-    "progression": 9,
+    "progression": 8,
     "active_arms": 0,
     "class": "Amazon",
     "class_id": 0,
@@ -613,12 +613,10 @@
           "done_recently": false
         },
         "terrors_end": {
-          "is_completed": true,
+          "is_completed": false,
           "is_requirement_completed": false,
           "is_received": false,
-          "unk8": true,
-          "unk9": true,
-          "closed": true,
+          "closed": false,
           "done_recently": false
         },
         "hellforge": {
@@ -629,10 +627,10 @@
           "closed": false,
           "done_recently": false
         },
-        "completed": true
+        "completed": false
       },
       "act_v": {
-        "introduced": true,
+        "introduced": false,
         "siege_on_harrogath": {
           "is_completed": false,
           "is_requirement_completed": false,
@@ -982,7 +980,7 @@
           "river_of_flame": false
         },
         "act_v": {
-          "harrogath": true,
+          "harrogath": false,
           "frigid_highlands": false,
           "arreat_plateau": false,
           "crystalline_passage": false,

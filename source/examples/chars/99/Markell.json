@@ -1,0 +1,8801 @@
+{
+  "header": {
+    "identifier": "aa55aa55",
+    "version": 98,
+    "filesize": 2075,
+    "checksum": "3dc63e4d",
+    "name": "Markell",
+    "status": {
+      "hardcore": false,
+      "died": true,
+      "expansion": true
+    },
+    "progression": 3,
+    "active_arms": 0,
+    "class": "Necromancer",
+    "class_id": 2,
+    "level": 30,
+    "created": 0,
+    "last_played": 1670364205,
+    "assigned_skills": [
+      "Amplify Damage",
+      "Raise Skeleton",
+      "Clay Golem",
+      "Iron Maiden",
+      "Confuse",
+      "Life Tap",
+      null,
+      "Book of Townportal"
+    ],
+    "left_skill": "Attack",
+    "right_skill": "Book of Townportal",
+    "left_swap_skill": "Attack",
+    "right_swap_skill": "Iron Maiden",
+    "menu_appearance": {
+      "head": {
+        "graphic": 60,
+        "tint": 255
+      },
+      "torso": {
+        "graphic": 3,
+        "tint": 255
+      },
+      "legs": {
+        "graphic": 3,
+        "tint": 255
+      },
+      "right_arm": {
+        "graphic": 3,
+        "tint": 255
+      },
+      "left_arm": {
+        "graphic": 3,
+        "tint": 255
+      },
+      "right_hand": {
+        "graphic": 11,
+        "tint": 255
+      },
+      "left_hand": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "shield": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special1": {
+        "graphic": 2,
+        "tint": 255
+      },
+      "special2": {
+        "graphic": 2,
+        "tint": 255
+      },
+      "special3": {
+        "graphic": 96,
+        "tint": 255
+      },
+      "special4": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special5": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special6": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special7": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "special8": {
+        "graphic": 255,
+        "tint": 255
+      },
+      "d2r": {
+        "right_hand": {
+          "code": "gwn ",
+          "tint": 255,
+          "quality": 3,
+          "id": 5,
+          "unk1": 0,
+          "unk2": 4,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "left_hand": {
+          "code": "ne5 ",
+          "tint": 255,
+          "quality": 6,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 0,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "torso": {
+          "code": "plt ",
+          "tint": 255,
+          "quality": 4,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 2,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        },
+        "head": {
+          "code": "fhl ",
+          "tint": 255,
+          "quality": 6,
+          "id": 0,
+          "unk1": 0,
+          "unk2": 2,
+          "unk3": 0,
+          "unk4": 0,
+          "unk5": 0
+        }
+      }
+    },
+    "difficulty": {
+      "Normal": 128,
+      "Nightmare": 0,
+      "Hell": 0
+    },
+    "map_id": 900805928,
+    "dead_merc": 1,
+    "merc_id": "682c0b3c",
+    "merc_name_id": 21,
+    "merc_name": "Diane",
+    "merc_type": 0,
+    "merc_class": "Rogue Scout",
+    "merc_attribute": "Fire Arrow",
+    "merc_level": 29,
+    "merc_experience": 2605912,
+    "merc_difficulty": "Normal",
+    "quests_normal": {
+      "act_i": {
+        "introduced": true,
+        "den_of_evil": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": true,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk6": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk4": true,
+          "unk6": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_ii": {
+        "introduced": true,
+        "radaments_lair": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "unk8": true,
+          "unk9": true,
+          "unk10": true,
+          "unk11": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iii": {
+        "introduced": true,
+        "lam_esens_tome": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "unk3": true,
+          "unk4": true,
+          "unk5": true,
+          "unk6": true,
+          "consumed_scroll": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "unk4": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "consumed_scroll": true,
+          "unk8": true,
+          "unk9": true,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": true
+      },
+      "act_iv": {
+        "introduced": true,
+        "the_fallen_angel": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": true,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": true,
+          "unk3": true,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": true,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": true,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false,
+        "completed_value": 384
+      }
+    },
+    "quests_nm": {
+      "act_i": {
+        "introduced": false,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_ii": {
+        "introduced": false,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iii": {
+        "introduced": false,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iv": {
+        "introduced": false,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "quests_hell": {
+      "act_i": {
+        "introduced": false,
+        "den_of_evil": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_burial_grounds": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tools_of_the_trade": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_search_for_cain": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_forgotten_tower": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "sisters_to_the_slaughter": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_ii": {
+        "introduced": false,
+        "radaments_lair": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_horadric_staff": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "tainted_sun": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "arcane_sanctuary": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_summoner": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_seven_tombs": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iii": {
+        "introduced": false,
+        "lam_esens_tome": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "khalims_will": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "blade_of_the_old_religion": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_golden_bird": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_blackened_temple": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "the_guardian": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_iv": {
+        "introduced": false,
+        "the_fallen_angel": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "terrors_end": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "hellforge": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      },
+      "act_v": {
+        "introduced": false,
+        "siege_on_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rescue_on_mount_arreat": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "prison_of_ice": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "betrayal_of_harrogath": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "rite_of_passage": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "eve_of_destruction": {
+          "is_completed": false,
+          "is_requirement_completed": false,
+          "is_received": false,
+          "closed": false,
+          "done_recently": false
+        },
+        "completed": false
+      }
+    },
+    "waypoints": {
+      "normal": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": true,
+          "stony_field": true,
+          "dark_woods": true,
+          "black_marsh": true,
+          "outer_cloister": true,
+          "jail_lvl_1": true,
+          "inner_cloiste": true,
+          "catacombs_lvl_2": true
+        },
+        "act_ii": {
+          "lut_gholein": true,
+          "sewers_lvl_2": true,
+          "dry_hills": true,
+          "halls_of_the_dead_lvl_2": true,
+          "far_oasis": true,
+          "lost_city": true,
+          "palace_cellar_lvl_1": true,
+          "arcane_sanctuary": true,
+          "canyon_of_the_magi": true
+        },
+        "act_iii": {
+          "kurast_docks": true,
+          "spider_forest": true,
+          "great_marsh": true,
+          "flayer_jungle": true,
+          "lower_kurast": true,
+          "kurast_bazaar": true,
+          "upper_kurast": true,
+          "travincal": true,
+          "durance_of_hate_lvl_2": true
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": true,
+          "city_of_the_damned": true,
+          "river_of_flame": true
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      },
+      "nm": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": false,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": false,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": false,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      },
+      "hell": {
+        "act_i": {
+          "rogue_encampement": true,
+          "cold_plains": false,
+          "stony_field": false,
+          "dark_woods": false,
+          "black_marsh": false,
+          "outer_cloister": false,
+          "jail_lvl_1": false,
+          "inner_cloiste": false,
+          "catacombs_lvl_2": false
+        },
+        "act_ii": {
+          "lut_gholein": false,
+          "sewers_lvl_2": false,
+          "dry_hills": false,
+          "halls_of_the_dead_lvl_2": false,
+          "far_oasis": false,
+          "lost_city": false,
+          "palace_cellar_lvl_1": false,
+          "arcane_sanctuary": false,
+          "canyon_of_the_magi": false
+        },
+        "act_iii": {
+          "kurast_docks": false,
+          "spider_forest": false,
+          "great_marsh": false,
+          "flayer_jungle": false,
+          "lower_kurast": false,
+          "kurast_bazaar": false,
+          "upper_kurast": false,
+          "travincal": false,
+          "durance_of_hate_lvl_2": false
+        },
+        "act_iv": {
+          "the_pandemonium_fortress": false,
+          "city_of_the_damned": false,
+          "river_of_flame": false
+        },
+        "act_v": {
+          "harrogath": false,
+          "frigid_highlands": false,
+          "arreat_plateau": false,
+          "crystalline_passage": false,
+          "halls_of_pain": false,
+          "glacial_trail": false,
+          "frozen_tundra": false,
+          "the_ancients_way": false,
+          "worldstone_keep_lvl_2": false
+        }
+      }
+    },
+    "npcs": {
+      "normal": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "unk0x0001": {
+          "intro": true,
+          "congrats": true
+        },
+        "charsi": {
+          "intro": true,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": true,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": true,
+          "congrats": true
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": true
+        },
+        "unk0x0007": {
+          "intro": true,
+          "congrats": true
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": true
+        },
+        "jerhyn": {
+          "intro": true,
+          "congrats": true
+        },
+        "meshif_act_ii": {
+          "intro": true,
+          "congrats": true
+        },
+        "geglash": {
+          "intro": true,
+          "congrats": true
+        },
+        "lysnader": {
+          "intro": true,
+          "congrats": true
+        },
+        "fara": {
+          "intro": true,
+          "congrats": true
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": true
+        },
+        "unk0x000F": {
+          "intro": true,
+          "congrats": true
+        },
+        "alkor": {
+          "intro": true,
+          "congrats": true
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": true
+        },
+        "ashera": {
+          "intro": true,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": true,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": true,
+          "congrats": true
+        },
+        "malah": {
+          "intro": true,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": true,
+          "congrats": true
+        },
+        "meshif_act_iii": {
+          "intro": true,
+          "congrats": true
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "nm": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": false,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": false,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      },
+      "hell": {
+        "warriv_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "charsi": {
+          "intro": false,
+          "congrats": false
+        },
+        "warriv_act_i": {
+          "intro": false,
+          "congrats": false
+        },
+        "kashya": {
+          "intro": false,
+          "congrats": false
+        },
+        "akara": {
+          "intro": false,
+          "congrats": false
+        },
+        "gheed": {
+          "intro": false,
+          "congrats": false
+        },
+        "greiz": {
+          "intro": false,
+          "congrats": false
+        },
+        "jerhyn": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_ii": {
+          "intro": false,
+          "congrats": false
+        },
+        "geglash": {
+          "intro": false,
+          "congrats": false
+        },
+        "lysnader": {
+          "intro": false,
+          "congrats": false
+        },
+        "fara": {
+          "intro": false,
+          "congrats": false
+        },
+        "drogan": {
+          "intro": false,
+          "congrats": false
+        },
+        "alkor": {
+          "intro": false,
+          "congrats": false
+        },
+        "hratli": {
+          "intro": false,
+          "congrats": false
+        },
+        "ashera": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "elzix": {
+          "intro": false,
+          "congrats": false
+        },
+        "malah": {
+          "intro": false,
+          "congrats": false
+        },
+        "anya": {
+          "intro": false,
+          "congrats": false
+        },
+        "natalya": {
+          "intro": false,
+          "congrats": false
+        },
+        "meshif_act_iii": {
+          "intro": false,
+          "congrats": false
+        },
+        "ormus": {
+          "intro": false,
+          "congrats": false
+        },
+        "cain_act_v": {
+          "intro": false,
+          "congrats": false
+        },
+        "qualkehk": {
+          "intro": false,
+          "congrats": false
+        },
+        "nihlathak": {
+          "intro": false,
+          "congrats": false
+        }
+      }
+    }
+  },
+  "attributes": {
+    "strength": 35,
+    "energy": 25,
+    "dexterity": 25,
+    "vitality": 130,
+    "unused_stats": 15,
+    "unused_skill_points": 4,
+    "current_hp_remainder": 128,
+    "current_hp": 338,
+    "max_hp_remainder": 128,
+    "max_hp": 338,
+    "current_mana": 91,
+    "max_mana": 83,
+    "current_stamina": 223,
+    "max_stamina": 223,
+    "level": 30,
+    "experience": 4765921,
+    "gold": 6752,
+    "stashed_gold": 270333
+  },
+  "skills": [
+    {
+      "id": 66,
+      "points": 1,
+      "name": "Amplify Damage"
+    },
+    {
+      "id": 67,
+      "points": 16,
+      "name": "Teeth"
+    },
+    {
+      "id": 68,
+      "points": 0,
+      "name": "Bone Armor"
+    },
+    {
+      "id": 69,
+      "points": 0,
+      "name": "Skeleton Mastery"
+    },
+    {
+      "id": 70,
+      "points": 0,
+      "name": "Raise Skeleton"
+    },
+    {
+      "id": 71,
+      "points": 0,
+      "name": "Dim Vision"
+    },
+    {
+      "id": 72,
+      "points": 0,
+      "name": "Weaken"
+    },
+    {
+      "id": 73,
+      "points": 0,
+      "name": "Poison Dagger"
+    },
+    {
+      "id": 74,
+      "points": 1,
+      "name": "Corpse Explosion"
+    },
+    {
+      "id": 75,
+      "points": 1,
+      "name": "Clay Golem"
+    },
+    {
+      "id": 76,
+      "points": 1,
+      "name": "Iron Maiden"
+    },
+    {
+      "id": 77,
+      "points": 0,
+      "name": "Terror"
+    },
+    {
+      "id": 78,
+      "points": 0,
+      "name": "Bone Wall"
+    },
+    {
+      "id": 79,
+      "points": 0,
+      "name": "Golem Mastery"
+    },
+    {
+      "id": 80,
+      "points": 0,
+      "name": "Raise Skeletal Mage"
+    },
+    {
+      "id": 81,
+      "points": 0,
+      "name": "Confuse"
+    },
+    {
+      "id": 82,
+      "points": 0,
+      "name": "Life Tap"
+    },
+    {
+      "id": 83,
+      "points": 0,
+      "name": "Poison Explosion"
+    },
+    {
+      "id": 84,
+      "points": 9,
+      "name": "Bone Spear"
+    },
+    {
+      "id": 85,
+      "points": 0,
+      "name": "Blood Golem"
+    },
+    {
+      "id": 86,
+      "points": 0,
+      "name": "Attract"
+    },
+    {
+      "id": 87,
+      "points": 0,
+      "name": "Decrepify"
+    },
+    {
+      "id": 88,
+      "points": 0,
+      "name": "Bone Prison"
+    },
+    {
+      "id": 89,
+      "points": 0,
+      "name": "Summon Resist"
+    },
+    {
+      "id": 90,
+      "points": 0,
+      "name": "Iron Golem"
+    },
+    {
+      "id": 91,
+      "points": 0,
+      "name": "Lower Resist"
+    },
+    {
+      "id": 92,
+      "points": 0,
+      "name": "Poison Nova"
+    },
+    {
+      "id": 93,
+      "points": 0,
+      "name": "Bone Spirit"
+    },
+    {
+      "id": 94,
+      "points": 0,
+      "name": "Fire Golem"
+    },
+    {
+      "id": 95,
+      "points": 0,
+      "name": "Revive"
+    }
+  ],
+  "items": [
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "opm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 341291279,
+      "level": 13,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Exploding Potion",
+      "levelreq": 12,
+      "inv_file": "invopm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "opm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1128857777,
+      "level": 15,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Exploding Potion",
+      "levelreq": 12,
+      "inv_file": "invopm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 5,
+      "type": "key",
+      "categories": [
+        "Key",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1123816401,
+      "level": 3,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 5,
+      "magic_attributes": [],
+      "type_name": "Key",
+      "inv_file": "invkey",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "gpm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1713879959,
+      "level": 21,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Choking Gas Potion",
+      "levelreq": 16,
+      "inv_file": "invgpm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "yps",
+      "categories": [
+        "Antidote Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Antidote Potion",
+      "inv_file": "invnps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "opl",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1897300325,
+      "level": 5,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Fulminating Potion",
+      "inv_file": "invops",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "yps",
+      "categories": [
+        "Antidote Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Antidote Potion",
+      "inv_file": "invnps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "yps",
+      "categories": [
+        "Antidote Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Antidote Potion",
+      "inv_file": "invnps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "opl",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 440375343,
+      "level": 6,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Fulminating Potion",
+      "inv_file": "invops",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "opl",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 848757077,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Fulminating Potion",
+      "inv_file": "invops",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "opl",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3004398571,
+      "level": 10,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Fulminating Potion",
+      "inv_file": "invops",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "opm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1442675473,
+      "level": 22,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Exploding Potion",
+      "levelreq": 12,
+      "inv_file": "invopm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "gps",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3922519813,
+      "level": 21,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 20,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Rancid Gas Potion",
+      "levelreq": 24,
+      "inv_file": "invgpl",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "gpm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 289913544,
+      "level": 21,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Choking Gas Potion",
+      "levelreq": 16,
+      "inv_file": "invgpm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "ops",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3511235093,
+      "level": 23,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Oil Potion",
+      "levelreq": 20,
+      "inv_file": "invopl",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "gpm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3742844365,
+      "level": 21,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Choking Gas Potion",
+      "levelreq": 16,
+      "inv_file": "invgpm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "gpm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1105765077,
+      "level": 22,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Choking Gas Potion",
+      "levelreq": 16,
+      "inv_file": "invgpm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "opm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 869525108,
+      "level": 22,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Exploding Potion",
+      "levelreq": 12,
+      "inv_file": "invopm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "gps",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3339761994,
+      "level": 22,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Rancid Gas Potion",
+      "levelreq": 24,
+      "inv_file": "invgpl",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 5,
+      "alt_position_id": 5,
+      "type": "opm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1547238589,
+      "level": 23,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Exploding Potion",
+      "levelreq": 12,
+      "inv_file": "invopm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "ops",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3457461597,
+      "level": 23,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 1,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Oil Potion",
+      "levelreq": 20,
+      "inv_file": "invopl",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 5,
+      "alt_position_id": 5,
+      "type": "gpm",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 3645925890,
+      "level": 24,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Choking Gas Potion",
+      "levelreq": 16,
+      "inv_file": "invgpm",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "gps",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 2362992699,
+      "level": 23,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 10,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Rancid Gas Potion",
+      "levelreq": 24,
+      "inv_file": "invgpl",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 5,
+      "alt_position_id": 5,
+      "type": "opl",
+      "categories": [
+        "Missile Potion",
+        "Thrown Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 571354279,
+      "level": 9,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 25,
+      "max_durability": 2,
+      "current_durability": 1,
+      "magic_attributes": [],
+      "base_damage": {
+        "mindam": 0,
+        "maxdam": 1
+      },
+      "type_name": "Fulminating Potion",
+      "inv_file": "invops",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "rvs",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Rejuvenation Potion",
+      "inv_file": "invvps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 9,
+      "alt_position_id": 5,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 2,
+      "alt_position_id": 5,
+      "type": "ibk",
+      "categories": [
+        "Book",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 185091507,
+      "level": 12,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_suffix": 1,
+      "timestamp": 0,
+      "quantity": 20,
+      "magic_attributes": [],
+      "type_name": "Tome of Identify",
+      "inv_file": "invrbk",
+      "inv_height": 2,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 5,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "rvs",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Rejuvenation Potion",
+      "inv_file": "invvps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 8,
+      "alt_position_id": 5,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 7,
+      "alt_position_id": 5,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 6,
+      "alt_position_id": 5,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 1,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 8,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hbl",
+      "categories": [
+        "Belt",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 3680045812,
+      "level": 24,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "defense_rating": 8,
+      "max_durability": 24,
+      "current_durability": 24,
+      "magic_attributes": [],
+      "type_name": "Plated Belt",
+      "reqstr": 60,
+      "inv_file": "invhbl",
+      "inv_height": 1,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 9,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mbt",
+      "categories": [
+        "Boots",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1709389692,
+      "level": 18,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 144,
+      "magic_prefix_name": "Sturdy",
+      "magic_suffix": 402,
+      "magic_suffix_name": "of Self-Repair",
+      "timestamp": 0,
+      "defense_rating": 10,
+      "max_durability": 16,
+      "current_durability": 16,
+      "magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            23
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 252,
+          "values": [
+            3
+          ],
+          "name": "item_replenish_durability",
+          "description": "Repairs 1 durability in {0} seconds"
+        }
+      ],
+      "type_name": "Chain Boots",
+      "reqstr": 30,
+      "levelreq": 3,
+      "inv_file": "invmbt",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            23
+          ],
+          "name": "item_armor_percent",
+          "description": "+23% Enhanced Defense"
+        },
+        {
+          "id": 252,
+          "values": [
+            3
+          ],
+          "name": "item_replenish_durability",
+          "description": "Repairs 1 durability in 33 seconds"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            23
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 252,
+          "values": [
+            3
+          ],
+          "name": "item_replenish_durability",
+          "description": "Repairs 1 durability in {0} seconds"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            23
+          ],
+          "name": "item_armor_percent",
+          "description": "+23% Enhanced Defense"
+        },
+        {
+          "id": 252,
+          "values": [
+            3
+          ],
+          "name": "item_replenish_durability",
+          "description": "Repairs 1 durability in 33 seconds"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 1,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 1,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "fhl",
+      "categories": [
+        "Helm",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1981304737,
+      "level": 22,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "rare_name_id": 157,
+      "rare_name": "Eagle",
+      "rare_name_id2": 69,
+      "rare_name2": "Cowl",
+      "rare_index2": "cowl",
+      "magical_name_ids": [
+        350,
+        327,
+        144,
+        0,
+        410,
+        0
+      ],
+      "timestamp": 0,
+      "defense_rating": 27,
+      "max_durability": 30,
+      "current_durability": 30,
+      "magic_attributes": [
+        {
+          "id": 7,
+          "values": [
+            5
+          ],
+          "name": "maxhp",
+          "description": "+{0} to Life"
+        },
+        {
+          "id": 16,
+          "values": [
+            22
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 43,
+          "values": [
+            8
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 45,
+          "values": [
+            12
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        }
+      ],
+      "type_name": "Full Helm",
+      "reqstr": 41,
+      "levelreq": 9,
+      "inv_file": "invfhl",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            22
+          ],
+          "name": "item_armor_percent",
+          "description": "+22% Enhanced Defense"
+        },
+        {
+          "id": 7,
+          "values": [
+            5
+          ],
+          "name": "maxhp",
+          "description": "+5 to Life"
+        },
+        {
+          "id": 43,
+          "values": [
+            8
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +8%"
+        },
+        {
+          "id": 45,
+          "values": [
+            12
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +12%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 7,
+          "values": [
+            5
+          ],
+          "name": "maxhp",
+          "description": "+{0} to Life"
+        },
+        {
+          "id": 16,
+          "values": [
+            22
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 43,
+          "values": [
+            8
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +{0}%"
+        },
+        {
+          "id": 45,
+          "values": [
+            12
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            22
+          ],
+          "name": "item_armor_percent",
+          "description": "+22% Enhanced Defense"
+        },
+        {
+          "id": 7,
+          "values": [
+            5
+          ],
+          "name": "maxhp",
+          "description": "+5 to Life"
+        },
+        {
+          "id": 43,
+          "values": [
+            8
+          ],
+          "name": "coldresist",
+          "description": "Cold Resist +8%"
+        },
+        {
+          "id": 45,
+          "values": [
+            12
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +12%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 10,
+      "position_x": 10,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "vgl",
+      "categories": [
+        "Gloves",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 1016108443,
+      "level": 20,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 287,
+      "magic_suffix_name": "of Fortune",
+      "timestamp": 0,
+      "defense_rating": 5,
+      "max_durability": 14,
+      "current_durability": 13,
+      "magic_attributes": [
+        {
+          "id": 80,
+          "values": [
+            22
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "type_name": "Heavy Gloves",
+      "levelreq": 12,
+      "inv_file": "invvgl",
+      "inv_height": 2,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "transform_color": "lgld",
+      "displayed_magic_attributes": [
+        {
+          "id": 80,
+          "values": [
+            22
+          ],
+          "name": "item_magicbonus",
+          "description": "22% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 80,
+          "values": [
+            22
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 80,
+          "values": [
+            22
+          ],
+          "name": "item_magicbonus",
+          "description": "22% Better Chance of Getting Magic Items"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 6,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rin",
+      "categories": [
+        "Ring",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 4116842974,
+      "level": 22,
+      "quality": 6,
+      "multiple_pictures": 1,
+      "picture_id": 2,
+      "class_specific": 0,
+      "rare_name_id": 162,
+      "rare_name": "Blood",
+      "rare_name_id2": 124,
+      "rare_name2": "Eye",
+      "rare_index2": "eye",
+      "magical_name_ids": [
+        240,
+        286,
+        390,
+        299,
+        412,
+        0
+      ],
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+{0} to Energy"
+        },
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 41,
+          "values": [
+            19
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 45,
+          "values": [
+            22
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 80,
+          "values": [
+            11
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "type_name": "Ring",
+      "levelreq": 13,
+      "inv_file": "invrin",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+43 to Attack Rating"
+        },
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+2 to Energy"
+        },
+        {
+          "id": 41,
+          "values": [
+            19
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +19%"
+        },
+        {
+          "id": 45,
+          "values": [
+            22
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +22%"
+        },
+        {
+          "id": 80,
+          "values": [
+            11
+          ],
+          "name": "item_magicbonus",
+          "description": "11% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+{0} to Energy"
+        },
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 41,
+          "values": [
+            19
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 45,
+          "values": [
+            22
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +{0}%"
+        },
+        {
+          "id": 80,
+          "values": [
+            11
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            43
+          ],
+          "name": "tohit",
+          "description": "+43 to Attack Rating"
+        },
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+2 to Energy"
+        },
+        {
+          "id": 41,
+          "values": [
+            19
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +19%"
+        },
+        {
+          "id": 45,
+          "values": [
+            22
+          ],
+          "name": "poisonresist",
+          "description": "Poison Resist +22%"
+        },
+        {
+          "id": 80,
+          "values": [
+            11
+          ],
+          "name": "item_magicbonus",
+          "description": "11% Better Chance of Getting Magic Items"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 2,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "amu",
+      "categories": [
+        "Amulet",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1157267645,
+      "level": 13,
+      "quality": 5,
+      "multiple_pictures": 1,
+      "picture_id": 2,
+      "class_specific": 0,
+      "set_id": 1,
+      "set_name": "Civerb's Icon",
+      "set_list_count": 2,
+      "set_attributes": [
+        [
+          {
+            "id": 43,
+            "values": [
+              25
+            ],
+            "name": "coldresist",
+            "description": "Cold Resist +{0}%"
+          }
+        ],
+        [
+          {
+            "id": 31,
+            "values": [
+              25
+            ],
+            "name": "armorclass",
+            "description": "+{0} Defense"
+          }
+        ]
+      ],
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 27,
+          "values": [
+            40
+          ],
+          "name": "manarecoverybonus",
+          "description": "Regenerate Mana {0}%"
+        },
+        {
+          "id": 74,
+          "values": [
+            4
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +{0}"
+        }
+      ],
+      "type_name": "Amulet",
+      "levelreq": 9,
+      "inv_file": "invamu",
+      "inv_height": 1,
+      "inv_width": 1,
+      "transform_color": "lyel",
+      "displayed_magic_attributes": [
+        {
+          "id": 74,
+          "values": [
+            4
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +4"
+        },
+        {
+          "id": 27,
+          "values": [
+            40
+          ],
+          "name": "manarecoverybonus",
+          "description": "Regenerate Mana 40%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 27,
+          "values": [
+            40
+          ],
+          "name": "manarecoverybonus",
+          "description": "Regenerate Mana {0}%"
+        },
+        {
+          "id": 74,
+          "values": [
+            4
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +{0}"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 74,
+          "values": [
+            4
+          ],
+          "name": "hpregen",
+          "description": "Replenish Life +4"
+        },
+        {
+          "id": 27,
+          "values": [
+            40
+          ],
+          "name": "manarecoverybonus",
+          "description": "Regenerate Mana 40%"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 7,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rin",
+      "categories": [
+        "Ring",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 2372895387,
+      "level": 21,
+      "quality": 6,
+      "multiple_pictures": 1,
+      "picture_id": 3,
+      "class_specific": 0,
+      "rare_name_id": 161,
+      "rare_name": "Skull",
+      "rare_name_id2": 97,
+      "rare_name2": "Touch",
+      "rare_index2": "touch",
+      "magical_name_ids": [
+        238,
+        312,
+        281,
+        299,
+        601,
+        501
+      ],
+      "timestamp": 0,
+      "magic_attributes": [
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+{0} to Energy"
+        },
+        {
+          "id": 19,
+          "values": [
+            18
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 39,
+          "values": [
+            6
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 80,
+          "values": [
+            8
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 89,
+          "values": [
+            5
+          ],
+          "name": "item_lightradius",
+          "description": "+{0} to Light Radius"
+        },
+        {
+          "id": 119,
+          "values": [
+            5
+          ],
+          "name": "item_tohit_percent",
+          "description": "{0}% Bonus to Attack Rating"
+        },
+        {
+          "id": 204,
+          "values": [
+            1,
+            36,
+            14,
+            22
+          ],
+          "name": "item_charged_skill",
+          "description": "Level {0} {1} ({2}/{3} Charges)"
+        }
+      ],
+      "type_name": "Ring",
+      "levelreq": 14,
+      "inv_file": "invrin",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [
+        {
+          "id": 119,
+          "values": [
+            5
+          ],
+          "name": "item_tohit_percent",
+          "description": "5% Bonus to Attack Rating"
+        },
+        {
+          "id": 19,
+          "values": [
+            18
+          ],
+          "name": "tohit",
+          "description": "+18 to Attack Rating"
+        },
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+2 to Energy"
+        },
+        {
+          "id": 39,
+          "values": [
+            6
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +6%"
+        },
+        {
+          "id": 80,
+          "values": [
+            8
+          ],
+          "name": "item_magicbonus",
+          "description": "8% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 89,
+          "values": [
+            5
+          ],
+          "name": "item_lightradius",
+          "description": "+5 to Light Radius"
+        },
+        {
+          "id": 204,
+          "values": [
+            1,
+            36,
+            14,
+            22
+          ],
+          "name": "item_charged_skill",
+          "description": "Level 1 Fire Bolt (14/22 Charges)"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+{0} to Energy"
+        },
+        {
+          "id": 19,
+          "values": [
+            18
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 39,
+          "values": [
+            6
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +{0}%"
+        },
+        {
+          "id": 80,
+          "values": [
+            8
+          ],
+          "name": "item_magicbonus",
+          "description": "{0}% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 89,
+          "values": [
+            5
+          ],
+          "name": "item_lightradius",
+          "description": "+{0} to Light Radius"
+        },
+        {
+          "id": 119,
+          "values": [
+            5
+          ],
+          "name": "item_tohit_percent",
+          "description": "{0}% Bonus to Attack Rating"
+        },
+        {
+          "id": 204,
+          "values": [
+            1,
+            36,
+            14,
+            22
+          ],
+          "name": "item_charged_skill",
+          "description": "Level {0} {1} ({2}/{3} Charges)"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 119,
+          "values": [
+            5
+          ],
+          "name": "item_tohit_percent",
+          "description": "5% Bonus to Attack Rating"
+        },
+        {
+          "id": 19,
+          "values": [
+            18
+          ],
+          "name": "tohit",
+          "description": "+18 to Attack Rating"
+        },
+        {
+          "id": 1,
+          "values": [
+            2
+          ],
+          "name": "energy",
+          "description": "+2 to Energy"
+        },
+        {
+          "id": 39,
+          "values": [
+            6
+          ],
+          "name": "fireresist",
+          "description": "Fire Resist +6%"
+        },
+        {
+          "id": 80,
+          "values": [
+            8
+          ],
+          "name": "item_magicbonus",
+          "description": "8% Better Chance of Getting Magic Items"
+        },
+        {
+          "id": 89,
+          "values": [
+            5
+          ],
+          "name": "item_lightradius",
+          "description": "+5 to Light Radius"
+        },
+        {
+          "id": 204,
+          "values": [
+            1,
+            36,
+            14,
+            22
+          ],
+          "name": "item_charged_skill",
+          "description": "Level 1 Fire Bolt (14/22 Charges)"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 2,
+      "alt_position_id": 1,
+      "type": "key",
+      "categories": [
+        "Key",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 1385400541,
+      "level": 1,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "quantity": 12,
+      "magic_attributes": [],
+      "type_name": "Key",
+      "inv_file": "invkey",
+      "inv_height": 1,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "yps",
+      "categories": [
+        "Antidote Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Antidote Potion",
+      "inv_file": "invnps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 11,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "yps",
+      "categories": [
+        "Antidote Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Antidote Potion",
+      "inv_file": "invnps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 15,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "wms",
+      "categories": [
+        "Thawing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Thawing Potion",
+      "inv_file": "invyps",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 4,
+      "alt_position_id": 5,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 14,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 5,
+      "type": "box",
+      "categories": [
+        "Quest"
+      ],
+      "type_id": 4,
+      "quest_difficulty": 0,
+      "nr_of_items_in_sockets": 0,
+      "id": 62419569,
+      "level": 13,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "timestamp": 0,
+      "magic_attributes": [],
+      "type_name": "Horadric Cube",
+      "inv_file": "invbox",
+      "inv_height": 2,
+      "inv_width": 2,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 10,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp4",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Greater Mana Potion",
+      "inv_file": "invmp4",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp4",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Greater Mana Potion",
+      "inv_file": "invmp4",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 1,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 3,
+      "position_x": 3,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "plt",
+      "categories": [
+        "Armor",
+        "Any Armor"
+      ],
+      "type_id": 1,
+      "nr_of_items_in_sockets": 0,
+      "id": 2490302919,
+      "level": 24,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 143,
+      "magic_prefix_name": "Sturdy",
+      "magic_suffix": 115,
+      "magic_suffix_name": "of Health",
+      "timestamp": 0,
+      "defense_rating": 117,
+      "max_durability": 60,
+      "current_durability": 58,
+      "magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            12
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        }
+      ],
+      "type_name": "Plate Mail",
+      "reqstr": 65,
+      "levelreq": 5,
+      "inv_file": "invplt",
+      "inv_height": 3,
+      "inv_width": 2,
+      "inv_transform": 8,
+      "displayed_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            12
+          ],
+          "name": "item_armor_percent",
+          "description": "+12% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 1"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            12
+          ],
+          "name": "item_armor_percent",
+          "description": "+{0}% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 16,
+          "values": [
+            12
+          ],
+          "name": "item_armor_percent",
+          "description": "+12% Enhanced Defense"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 1"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 0,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "btl",
+      "categories": [
+        "Hand to Hand",
+        "Melee Weapon",
+        "Assassin Item",
+        "Weapon",
+        "Class Specific"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 1266926241,
+      "level": 26,
+      "quality": 4,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_prefix": 0,
+      "magic_suffix": 197,
+      "magic_suffix_name": "of Maiming",
+      "timestamp": 0,
+      "max_durability": 69,
+      "current_durability": 67,
+      "magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            4
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        }
+      ],
+      "base_damage": {
+        "mindam": 10,
+        "maxdam": 14
+      },
+      "type_name": "Blade Talons",
+      "reqstr": 50,
+      "reqdex": 50,
+      "levelreq": 5,
+      "inv_file": "invclw",
+      "inv_height": 3,
+      "inv_width": 1,
+      "inv_transform": 2,
+      "displayed_magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            4
+          ],
+          "name": "maxdamage",
+          "description": "+4 to Maximum Damage"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            4
+          ],
+          "name": "maxdamage",
+          "description": "+{0} to Maximum Damage"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 22,
+          "values": [
+            4
+          ],
+          "name": "maxdamage",
+          "description": "+4 to Maximum Damage"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 1,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 2,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mp2",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Light Mana Potion",
+      "inv_file": "invmp2",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp4",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Greater Mana Potion",
+      "inv_file": "invmp4",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 6,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "mp2",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Light Mana Potion",
+      "inv_file": "invmp2",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 7,
+      "position_y": 3,
+      "alt_position_id": 1,
+      "type": "mp5",
+      "categories": [
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Mana Potion",
+      "inv_file": "invmp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 0,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp4",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Greater Healing Potion",
+      "inv_file": "invhp4",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 8,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "hp5",
+      "categories": [
+        "Healing Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Super Healing Potion",
+      "inv_file": "invhp5",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 1,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 1
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 1,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 1,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 2,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "rvl",
+      "categories": [
+        "Rejuv Potion",
+        "Healing Potion",
+        "Mana Potion",
+        "Potion",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "type_name": "Full Rejuvenation Potion",
+      "inv_file": "invvpl",
+      "inv_height": 1,
+      "inv_width": 1
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 0,
+      "equipped_id": 0,
+      "position_x": 9,
+      "position_y": 0,
+      "alt_position_id": 1,
+      "type": "tbk",
+      "categories": [
+        "Book",
+        "Miscellaneous"
+      ],
+      "type_id": 4,
+      "nr_of_items_in_sockets": 0,
+      "id": 803406575,
+      "level": 12,
+      "quality": 2,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "magic_suffix": 0,
+      "timestamp": 0,
+      "quantity": 12,
+      "magic_attributes": [],
+      "type_name": "Tome of Town Portal",
+      "inv_file": "invbbk",
+      "inv_height": 2,
+      "inv_width": 1,
+      "displayed_magic_attributes": [],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [],
+      "displayed_combined_magic_attributes": []
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 1,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 4,
+      "position_x": 4,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "gwn",
+      "categories": [
+        "Wand",
+        "Staves And Rods",
+        "Blunt",
+        "Melee Weapon",
+        "Weapon"
+      ],
+      "type_id": 3,
+      "nr_of_items_in_sockets": 0,
+      "id": 4045389927,
+      "level": 30,
+      "quality": 3,
+      "multiple_pictures": 0,
+      "class_specific": 0,
+      "file_index": 5,
+      "timestamp": 0,
+      "max_durability": 15,
+      "current_durability": 15,
+      "total_nr_of_sockets": 2,
+      "magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            3
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 75,
+          "values": [
+            13
+          ],
+          "name": "item_maxdurability_percent",
+          "description": "Increase Maximum Durability {0}%"
+        },
+        {
+          "id": 107,
+          "values": [
+            74,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            84,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        }
+      ],
+      "base_damage": {
+        "mindam": 5,
+        "maxdam": 11
+      },
+      "socketed_items": [],
+      "type_name": "Grim Wand",
+      "levelreq": 18,
+      "inv_file": "invgwn",
+      "inv_height": 2,
+      "inv_width": 1,
+      "inv_transform": 2,
+      "displayed_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            3
+          ],
+          "name": "tohit",
+          "description": "+3 to Attack Rating"
+        },
+        {
+          "id": 107,
+          "values": [
+            84,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Bone Spear (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            74,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Corpse Explosion (Necromancer Only)"
+        },
+        {
+          "id": 75,
+          "values": [
+            13
+          ],
+          "name": "item_maxdurability_percent",
+          "description": "Increase Maximum Durability 13%"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            3
+          ],
+          "name": "tohit",
+          "description": "+{0} to Attack Rating"
+        },
+        {
+          "id": 75,
+          "values": [
+            13
+          ],
+          "name": "item_maxdurability_percent",
+          "description": "Increase Maximum Durability {0}%"
+        },
+        {
+          "id": 107,
+          "values": [
+            74,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            84,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+{0}% Damage to Undead"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 19,
+          "values": [
+            3
+          ],
+          "name": "tohit",
+          "description": "+3 to Attack Rating"
+        },
+        {
+          "id": 107,
+          "values": [
+            84,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Bone Spear (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            74,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Corpse Explosion (Necromancer Only)"
+        },
+        {
+          "id": 75,
+          "values": [
+            13
+          ],
+          "name": "item_maxdurability_percent",
+          "description": "Increase Maximum Durability 13%"
+        },
+        {
+          "id": 122,
+          "values": [
+            50
+          ],
+          "name": "item_undeaddamage_percent",
+          "description": "+50% Damage to Undead"
+        }
+      ]
+    },
+    {
+      "_unknown_data": {
+        "b0_3": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "b5_10": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "b12": {
+          "0": 0
+        },
+        "b14_15": {
+          "0": 0,
+          "1": 0
+        },
+        "b18_20": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "b23": {
+          "0": 1
+        },
+        "b25": {
+          "0": 0
+        },
+        "b27_31": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "identified": 1,
+      "socketed": 0,
+      "new": 0,
+      "is_ear": 0,
+      "starter_item": 0,
+      "simple_item": 0,
+      "ethereal": 0,
+      "personalized": 0,
+      "given_runeword": 0,
+      "version": 5,
+      "location_id": 1,
+      "equipped_id": 5,
+      "position_x": 5,
+      "position_y": 0,
+      "alt_position_id": 0,
+      "type": "ne5",
+      "categories": [
+        "Voodoo Heads",
+        "Any Shield",
+        "Necromancer Item",
+        "Any Armor",
+        "Second Hand",
+        "Class Specific"
+      ],
+      "type_id": 2,
+      "nr_of_items_in_sockets": 0,
+      "id": 3113761226,
+      "level": 26,
+      "quality": 6,
+      "multiple_pictures": 0,
+      "class_specific": 1,
+      "auto_affix_id": 33,
+      "rare_name_id": 193,
+      "rare_name": "Havoc",
+      "rare_name_id2": 89,
+      "rare_name2": "Emblem",
+      "rare_index2": "emblem",
+      "magical_name_ids": [
+        390,
+        173,
+        0,
+        115,
+        0,
+        0
+      ],
+      "timestamp": 0,
+      "defense_rating": 17,
+      "max_durability": 20,
+      "current_durability": 19,
+      "magic_attributes": [
+        {
+          "id": 20,
+          "values": [
+            20
+          ],
+          "name": "toblock",
+          "description": "{0}% Increased Chance of Blocking"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 41,
+          "values": [
+            11
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 57,
+          "values": [
+            8,
+            24,
+            75
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 102,
+          "values": [
+            30
+          ],
+          "name": "item_fasterblockrate",
+          "description": "+{0}% Faster Block Rate"
+        },
+        {
+          "id": 107,
+          "values": [
+            81,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            82,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            85,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        }
+      ],
+      "type_name": "Demon Head",
+      "reqstr": 25,
+      "levelreq": 18,
+      "inv_file": "invne5",
+      "inv_height": 2,
+      "inv_width": 2,
+      "displayed_magic_attributes": [
+        {
+          "id": 102,
+          "values": [
+            30
+          ],
+          "name": "item_fasterblockrate",
+          "description": "+30% Faster Block Rate"
+        },
+        {
+          "id": 20,
+          "values": [
+            20
+          ],
+          "name": "toblock",
+          "description": "20% Increased Chance of Blocking"
+        },
+        {
+          "id": 57,
+          "values": [
+            8,
+            24,
+            75
+          ],
+          "name": "poisonmindam",
+          "description": "Adds 2-7 poison damage over 3 seconds"
+        },
+        {
+          "id": 107,
+          "values": [
+            85,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Blood Golem (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            82,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Life Tap (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            81,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Confuse (Necromancer Only)"
+        },
+        {
+          "id": 41,
+          "values": [
+            11
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +11%"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 1"
+        }
+      ],
+      "displayed_runeword_attributes": [],
+      "combined_magic_attributes": [
+        {
+          "id": 20,
+          "values": [
+            20
+          ],
+          "name": "toblock",
+          "description": "{0}% Increased Chance of Blocking"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by {0}"
+        },
+        {
+          "id": 41,
+          "values": [
+            11
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +{0}%"
+        },
+        {
+          "id": 57,
+          "values": [
+            8,
+            24,
+            75
+          ],
+          "name": "poisonmindam",
+          "description": "Adds {0}-{1} poison damage over {2} seconds"
+        },
+        {
+          "id": 102,
+          "values": [
+            30
+          ],
+          "name": "item_fasterblockrate",
+          "description": "+{0}% Faster Block Rate"
+        },
+        {
+          "id": 107,
+          "values": [
+            81,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            82,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        },
+        {
+          "id": 107,
+          "values": [
+            85,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+{1} to {0} {2}"
+        }
+      ],
+      "displayed_combined_magic_attributes": [
+        {
+          "id": 102,
+          "values": [
+            30
+          ],
+          "name": "item_fasterblockrate",
+          "description": "+30% Faster Block Rate"
+        },
+        {
+          "id": 20,
+          "values": [
+            20
+          ],
+          "name": "toblock",
+          "description": "20% Increased Chance of Blocking"
+        },
+        {
+          "id": 57,
+          "values": [
+            8,
+            24,
+            75
+          ],
+          "name": "poisonmindam",
+          "description": "Adds 2-7 poison damage over 3 seconds"
+        },
+        {
+          "id": 107,
+          "values": [
+            85,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Blood Golem (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            82,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Life Tap (Necromancer Only)"
+        },
+        {
+          "id": 107,
+          "values": [
+            81,
+            1
+          ],
+          "name": "item_singleskill",
+          "description": "+1 to Confuse (Necromancer Only)"
+        },
+        {
+          "id": 41,
+          "values": [
+            11
+          ],
+          "name": "lightresist",
+          "description": "Lightning Resist +11%"
+        },
+        {
+          "id": 34,
+          "values": [
+            1
+          ],
+          "name": "normal_damage_reduction",
+          "description": "Damage Reduced by 1"
+        }
+      ]
+    }
+  ],
+  "corpse_items": [],
+  "is_dead": 0,
+  "merc_items": [],
+  "item_bonuses": [
+    {
+      "id": 16,
+      "values": [
+        57
+      ],
+      "name": "item_armor_percent",
+      "description": "+{0}% Enhanced Defense"
+    },
+    {
+      "id": 7,
+      "values": [
+        5
+      ],
+      "name": "maxhp",
+      "description": "+{0} to Life"
+    },
+    {
+      "id": 43,
+      "values": [
+        8
+      ],
+      "name": "coldresist",
+      "description": "Cold Resist +{0}%"
+    },
+    {
+      "id": 45,
+      "values": [
+        34
+      ],
+      "name": "poisonresist",
+      "description": "Poison Resist +{0}%"
+    },
+    {
+      "id": 80,
+      "values": [
+        41
+      ],
+      "name": "item_magicbonus",
+      "description": "{0}% Better Chance of Getting Magic Items"
+    },
+    {
+      "id": 1,
+      "values": [
+        4
+      ],
+      "name": "energy",
+      "description": "+{0} to Energy"
+    },
+    {
+      "id": 19,
+      "values": [
+        64
+      ],
+      "name": "tohit",
+      "description": "+{0} to Attack Rating"
+    },
+    {
+      "id": 41,
+      "values": [
+        30
+      ],
+      "name": "lightresist",
+      "description": "Lightning Resist +{0}%"
+    },
+    {
+      "id": 27,
+      "values": [
+        40
+      ],
+      "name": "manarecoverybonus",
+      "description": "Regenerate Mana {0}%"
+    },
+    {
+      "id": 74,
+      "values": [
+        4
+      ],
+      "name": "hpregen",
+      "description": "Replenish Life +{0}"
+    },
+    {
+      "id": 39,
+      "values": [
+        6
+      ],
+      "name": "fireresist",
+      "description": "Fire Resist +{0}%"
+    },
+    {
+      "id": 89,
+      "values": [
+        5
+      ],
+      "name": "item_lightradius",
+      "description": "+{0} to Light Radius"
+    },
+    {
+      "id": 107,
+      "values": [
+        74,
+        1
+      ],
+      "name": "item_singleskill",
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 107,
+      "values": [
+        84,
+        1
+      ],
+      "name": "item_singleskill",
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 102,
+      "values": [
+        30
+      ],
+      "name": "item_fasterblockrate",
+      "description": "+{0}% Faster Block Rate"
+    },
+    {
+      "id": 107,
+      "values": [
+        81,
+        1
+      ],
+      "name": "item_singleskill",
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 107,
+      "values": [
+        82,
+        1
+      ],
+      "name": "item_singleskill",
+      "description": "+{1} to {0} {2}"
+    },
+    {
+      "id": 107,
+      "values": [
+        85,
+        1
+      ],
+      "name": "item_singleskill",
+      "description": "+{1} to {0} {2}"
+    }
+  ]
+}

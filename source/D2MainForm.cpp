@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -389,7 +389,7 @@ protected:
 protected:
     CString ProductName = _T("Diablo II: Resurrected Character Editor");
     CString ProductNameAndVersion = _T("Diablo II: Resurrected Character Editor, Version 2.2.0");
-    CString LegalCopyright = _T("Copyright (c) 2021-2022 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
+    CString LegalCopyright = _T("Copyright (c) 2021-2023 By Walter Couto\nCopyright (c) 2000-2003 By Burton Tsang");
     d2ce::EnumCharVersion FileVersion = d2ce::APP_CHAR_VERSION;
 public:
     virtual BOOL OnInitDialog();

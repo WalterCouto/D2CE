@@ -1,6 +1,6 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2742,6 +2742,9 @@ namespace d2ce
         bool active = false;                             // is property active?
         std::uint16_t version = 0;                       // 0 = Classic D2, 100 = Expansion
         std::vector<ItemPropertiesParamType> parameters; // Parameters for the property function
+        bool isGroup = false;                            // is property a group of single propeties (e.g. res-all, dmg-elem, all-stats but not dmg-fire)
+        bool requiresOthers = false;                     // this property requires others to be present (e.g coldmindam, coldmaxdam, coldlength)
+        bool allowsDuplicate = false;                    // is property allowed to exist more then once in a propery list
     };
 
     std::map<std::string, ItemPropertiesType> s_ItemPropertiesType;
@@ -2868,13 +2871,35 @@ namespace d2ce
                 strValue = doc.GetCellString(statColumnIdx[idx], i);
                 if (!strValue.empty())
                 {
+                    static std::set<std::string> group = { "res-all", "res-all-max", "dmg-elem", "dmg-elem-min", "dmg-elem-max", "all-stats" };
+                    static std::set<std::string> allowsDuplicate = { "ama", "sor", "nec", "bar", "pal", "dru", "ass", "skill", "skilltab", "att-skill", "hit-skill",
+                        "gethit-skill", "kill-skill", "death-skill", "levelup-skill", "skill-rand", "oskill", "randclassskill" };
+                    static std::set<std::string> requiresOthers = { "coldmindam", "coldmaxdam", "coldlength", "firemindam", "firemaxdam", "lightmindam",
+                        "lightmaxdam", "poisonmindam", "poisonmaxdam", "poisonlength" };
+
                     params.stat = strValue;
                     bHasValue = true;
+
+                    if (group.find(params.stat) != group.end())
+                    {
+                        itemProp.isGroup = true;
+                    }
+
+                    if (allowsDuplicate.find(params.stat) != allowsDuplicate.end())
+                    {
+                        itemProp.allowsDuplicate = true;
+                    }
+
+                    if (requiresOthers.find(params.stat) != requiresOthers.end())
+                    {
+                        itemProp.requiresOthers = true;
+                    }
                 }
                 else
                 {
                     if (!params.func.empty())
                     {
+                        bHasValue = true;
                         auto func = std::uint16_t(std::atoi(params.func.c_str()));
                         switch (func)
                         {

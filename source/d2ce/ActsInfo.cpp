@@ -1,6 +1,6 @@
 /*
     Diablo II Character Editor
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -535,6 +535,45 @@ bool d2ce::ActsInfo::readWaypoints(std::FILE* charfile)
         std::fread(&Waypoints_unknown[i], sizeof(Waypoints_unknown[i]), 1, charfile); // skip 0x0102 marker
         std::fread(&Waypoints[i], sizeof(Waypoints[i]), 1, charfile);
         std::fread(Waypoints_extraBits[i].data(), Waypoints_extraBits[i].size(), 1, charfile); // skip extra bits
+
+        // verify act data. 
+        // Some Character files had incorrect Intro bit set for Act V causing the program to incorrectly force a completion of Act IV
+        std::bitset<d2ce::NUM_OF_WAYPOINTS> wp = Waypoints[i];
+        for (std::uint8_t actNum = 1; actNum < 4; ++actNum)
+        {
+            if (Acts[i].Act[actNum].Intro != 0)
+            {
+                // verify the truth
+                if (wp[MAX_WAYPOINTS_PER_ACT * actNum] == 0) // Town waypoint
+                {
+                    // Town waypoint not active, check if any quest started
+                    if (getActQuestYetToStart(static_cast<EnumDifficulty>(i), static_cast<EnumAct>(actNum)))
+                    {
+                        QuestsDataCorrected = true;
+                        Acts[i].Act[actNum].Intro = 0; // it was not introduced
+                        Acts[i].Act[actNum - 1].Completed = 0; // it was not completed
+                    }
+                }
+            }
+        }
+
+        if (CharInfo.isExpansionCharacter())
+        {
+            if (Acts[i].ActV.Intro != 0)
+            {
+                // verify the truth
+                if (wp[MAX_WAYPOINTS_PER_ACT * 3 + NUM_WAYPOINTS_ACT_IV] == 0) // Harrogath
+                {
+                    // Town waypoint not active, check if any quest started
+                    if (getActQuestYetToStart(static_cast<EnumDifficulty>(i), EnumAct::V))
+                    {
+                        QuestsDataCorrected = true;
+                        Acts[i].ActV.Intro = 0; // it was not introduced
+                        Acts[i].Act[3].Quests[3] = 0; // it was not completed
+                    }
+                }
+            }
+        }
     }
 
     return true;
@@ -547,7 +586,7 @@ void d2ce::ActsInfo::applyJsonWaypointAct(const Json::Value& waypointActRoot, bo
         return;
     }
 
-    std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
+    std::bitset<d2ce::NUM_OF_WAYPOINTS> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
     std::size_t offset = 0;
     if (act > CharInfo.getLastAct())
     {
@@ -1041,7 +1080,7 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
         }
     }
 
-    std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
+    std::bitset<d2ce::NUM_OF_WAYPOINTS> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
     switch (act)
     {
     case EnumAct::I:
@@ -1106,6 +1145,7 @@ void d2ce::ActsInfo::validateAct(EnumDifficulty diff, EnumAct act)
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readActs(std::FILE* charfile)
 {
+    QuestsDataCorrected = false;
     if (!readQuests(charfile))
     {
         return false;
@@ -1126,6 +1166,7 @@ bool d2ce::ActsInfo::readActs(std::FILE* charfile)
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat)
 {
+    QuestsDataCorrected = false;
     Json::Value childRoot = root[bSerializedFormat ? "Quests" : "header"];
     if (!readQuests(childRoot, bSerializedFormat))
     {
@@ -1150,6 +1191,7 @@ bool d2ce::ActsInfo::readActs(const Json::Value& root, bool bSerializedFormat)
 //---------------------------------------------------------------------------
 bool d2ce::ActsInfo::writeActs(std::FILE* charfile) const
 {
+    QuestsDataCorrected = false;
     if (!writeQuests(charfile))
     {
         return false;
@@ -2229,13 +2271,13 @@ std::uint16_t d2ce::ActsInfo::getActCompletedData(EnumDifficulty diff, EnumAct a
         return Acts[diffNum].Act[actNum].Completed;
     }
 
-if (actNum == 3)
-{
-    // "Completed" flag is at index 3 of the quests
-    return Acts[diffNum].Act[actNum].Quests[3];
-}
+    if (actNum == 3)
+    {
+        // "Completed" flag is at index 3 of the quests
+        return Acts[diffNum].Act[actNum].Quests[3];
+    }
 
-return Acts[diffNum].ActV.Completed;
+    return Acts[diffNum].ActV.Completed;
 }
 //---------------------------------------------------------------------------
 void d2ce::ActsInfo::setActCompletedData(EnumDifficulty diff, EnumAct act, std::uint16_t value) const
@@ -2725,7 +2767,7 @@ void d2ce::ActsInfo::updateAct(EnumAct act)
         return;
     }
 
-    std::bitset<64> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
+    std::bitset<d2ce::NUM_OF_WAYPOINTS> waypointValue = d2ce::ActsInfo::getWaypoints(diff);
     switch (act)
     {
     case EnumAct::I:

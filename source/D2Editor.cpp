@@ -1,7 +1,7 @@
 /*
     Diablo II Character Editor
     Copyright (C) 2000-2003  Burton Tsang
-    Copyright (C) 2021-2022 Walter Couto
+    Copyright (C) 2021-2023 Walter Couto
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,15 +18,19 @@
 
 Revision History
 ================
-Version 2.20 (November 26, 2022)
+Version 2.20 (January 5, 2023)
    - Updated: Item tooltip to display red for unmet requirements and blue
               for magically enhanced attributes
    - Updated: Character progression logic to adjust character level to at
               least match the recommended level.
    - Updated: Updated logic for level change to reduce outstanding Stat/Skill
               points when level is reduced.
-   - Updated: If file is corrupt on open and a back exists, ask if user would
+   - Updated: If file is corrupt on open and a backup exists, ask if user would
               like to replace the file with the backup.
+   - Updated: Some character files may incorrectly mark Act IV complete and 
+              Act V introduced causing program to incorrectly mark all of
+              the last quest of Act IV as completed. The program now corrects
+              the data by checking if the town waypoint is active.
 
    - Added: Set Items now display all the possible Bonus attribues in the
             tooltip.
