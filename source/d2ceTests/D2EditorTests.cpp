@@ -1243,7 +1243,7 @@ namespace D2EditorTests
 
         TEST_METHOD(TestJsonOpen59)
         {
-            TestJsonOpenBaseNoOutputCheck("Markell.d2s", d2ce::EnumCharVersion::v140, true);
+            TestJsonOpenBaseNoOutputCheck("Markell.json", d2ce::EnumCharVersion::v140, true);
         }
 
         TEST_METHOD(TestJsonTestComplexChange01)
