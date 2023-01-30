@@ -570,6 +570,7 @@ namespace std
 d2ce::Character::Character() : Cs(*this), Merc(*this), Acts(*this)
 {
     initialize();
+    m_error_code.clear();
 }
 //---------------------------------------------------------------------------
 d2ce::Character::~Character()
@@ -588,8 +589,6 @@ void d2ce::Character::initialize()
     Acts.clear();
 
     Cs.clear();
-
-    m_error_code.clear();
 
     m_items.clear();
 
@@ -628,6 +627,7 @@ bool d2ce::Character::openD2S(const std::filesystem::path& path, bool validateCh
         }
     }
 
+    m_error_code.clear();
     if (path.empty() || !std::filesystem::exists(path))
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
@@ -724,6 +724,7 @@ bool d2ce::Character::openJson(const std::filesystem::path& path)
         }
     }
 
+    m_error_code.clear();
     if (path.empty() || !std::filesystem::exists(path))
     {
         m_error_code = std::make_error_code(CharacterErrc::CannotOpenFile);
@@ -2169,6 +2170,7 @@ bool d2ce::Character::saveAsVersion(const std::filesystem::path& path, EnumCharV
         }
     }
 
+    m_error_code.clear();
     wchar_t name1[L_tmpnam_s];
     errno_t err = _wtmpnam_s(name1, L_tmpnam_s);
     if (err != 0)
