@@ -231,7 +231,7 @@ namespace d2ce
                 ss << u8"item_skillondeath\t197\t\t1\t7\t16\t\t\t\t\t\t1\t\t\t2\t11\t9\t\t21\t0\t7\t0\t16\t\t\t\t\t\t\t\t\t\t\tkilled\t30\t\t\t160\t15\t\tModitemskondeath\tModitemskondeath\t\t\t\t\t\t\t\t\t2\t0\n";
                 ss << u8"item_skillonhit\t198\t\t1\t7\t16\t\t\t\t\t\t1\t\t\t2\t190\t256\t\t21\t0\t7\t0\t16\t\t\t\t\t\t\t\t\t\t1\tdomeleedamage\t20\tdomissiledamage\t20\t160\t15\t\tItemExpansiveChanc1\tItemExpansiveChanc1\t\t\t\t\t\t\t\t\t2\t0\n";
                 ss << u8"item_skillonlevelup\t199\t\t1\t7\t16\t\t\t\t\t\t1\t\t\t2\t7\t6\t\t21\t0\t7\t0\t16\t\t\t\t\t\t\t\t\t\t\tlevelup\t30\t\t\t160\t15\t\tModitemskonLevel\tModitemskonLevel\t\t\t\t\t\t\t\t\t2\t0\n";
-                ss << u8"unused200\t200\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t21\t0\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0\n";
+                ss << u8"item_charge_noconsume\t200\t\t\t7\t\t\t\t\t\t\t\t\t\t\t106\t256\t\t\t\t7\t0\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t159\t19\t\tModStr6k\tModStr6k\t\t\t\t\t\t\t\t\t2\t0\n";
                 ss << u8"item_skillongethit\t201\t\t1\t7\t16\t\t\t\t\t\t1\t\t\t2\t190\t256\t\t21\t0\t7\t0\t16\t\t\t\t\t\t\t\t\t\t\tdamagedinmelee\t21\tdamagedbymissile\t21\t160\t15\t\tItemExpansiveChanc2\tItemExpansiveChanc2\t\t\t\t\t\t\t\t\t2\t0\n";
                 ss << u8"unused202\t202\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t21\t0\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0\n";
                 ss << u8"unused203\t203\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t21\t0\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t0\n";

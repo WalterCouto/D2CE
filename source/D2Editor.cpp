@@ -18,8 +18,9 @@
 
 Revision History
 ================
-Version 2.21 (January 30, 2023)
+Version 2.21 (February 16, 2023)
    - Updated: Fix error message from bad character file
+   - Updated: Support added PTR 2.6
 
 Version 2.20 (January 5, 2023)
    - Updated: Item tooltip to display red for unmet requirements and blue

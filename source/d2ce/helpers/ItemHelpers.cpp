@@ -8728,8 +8728,17 @@ namespace d2ce
             return;
         }
 
-        const SSIZE_T serverColumnIdx = doc.GetColumnIdx("server");
+        SSIZE_T lastLadderSeasonColumnIdx = doc.GetColumnIdx("lastLadderSeason");
+        SSIZE_T serverColumnIdx = doc.GetColumnIdx("firstLadderSeason");
         if (serverColumnIdx < 0)
+        {
+            serverColumnIdx = doc.GetColumnIdx("server"); // support old format (PTR 2.5 and older)
+            if (serverColumnIdx < 0)
+            {
+                return;
+            }
+        }
+        else if (lastLadderSeasonColumnIdx < 0)
         {
             return;
         }
@@ -8880,9 +8889,20 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(serverColumnIdx, i);
-            if (strValue == "1")
+            if (lastLadderSeasonColumnIdx < 0) // support old format
             {
-                itemType.serverOnly = true;
+                if (strValue == "1")
+                {
+                    itemType.serverOnly = true;
+                }
+            }
+            else if (!strValue.empty())
+            {
+                strValue = doc.GetCellString(lastLadderSeasonColumnIdx, i);
+                if (strValue.empty())
+                {
+                    itemType.serverOnly = true;
+                }
             }
 
             for (size_t idx = 0; idx < itypesParamSize; ++idx)
@@ -9027,7 +9047,11 @@ namespace d2ce
                 {"Runeword154", d2ce::EnumItemVersion::v109}, {"Runeword160", d2ce::EnumItemVersion::v109},
                 {"Runeword162", d2ce::EnumItemVersion::v109}, {"Runeword163", d2ce::EnumItemVersion::v110},
                 {"Runeword165", d2ce::EnumItemVersion::v120}, {"Runeword168", d2ce::EnumItemVersion::v110},
-                {"Runeword170", d2ce::EnumItemVersion::v109},
+                {"Runeword170", d2ce::EnumItemVersion::v109}, {"Runeword171", d2ce::EnumItemVersion::v140},
+                {"Runeword172", d2ce::EnumItemVersion::v140}, {"Runeword173", d2ce::EnumItemVersion::v140},
+                {"Runeword174", d2ce::EnumItemVersion::v140}, {"Runeword175", d2ce::EnumItemVersion::v140},
+                {"Runeword176", d2ce::EnumItemVersion::v140}, {"Runeword177", d2ce::EnumItemVersion::v140},
+                {"Runeword178", d2ce::EnumItemVersion::v140}, {"Runeword179", d2ce::EnumItemVersion::v140}
             };
 
             if (patchReleaseColumnIdx >= 0)
@@ -9044,6 +9068,10 @@ namespace d2ce
                 else if (strValue.find("D2R Ladder 1") == 0)
                 {
                     itemType.version = d2ce::EnumItemVersion::v120;
+                }
+                else if (strValue.find("D2R Ladder 2") == 0 || strValue.find("D2R Ladder 3") == 0)
+                {
+                    itemType.version = d2ce::EnumItemVersion::v140;
                 }
                 else
                 {

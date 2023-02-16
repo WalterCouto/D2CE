@@ -5562,7 +5562,7 @@
     "id": 23001,
     "Key": "ModStr2uPercent",
     "enUS": "Physical Damage Received Reduced by %d%%",
-    "zhTW": "傷害降低 %d%%",
+    "zhTW": "受到的物理傷害降低 %d%%",
     "deDE": "Schaden reduziert um %d%%",
     "esES": "Daño reducido un %d%%",
     "frFR": "Dégâts réduits de %d%%",
@@ -5573,7 +5573,7 @@
     "jaJP": "ダメージを軽減（%d%%）",
     "ptBR": "Dano reduzido em %d%%",
     "ruRU": "Урон уменьшен на %d%%",
-    "zhCN": "伤害降低 %d%%"
+    "zhCN": "受到的物理伤害降低 %d%%"
   },
   {
     "id": 23004,
@@ -5817,7 +5817,7 @@
     "id": 27351,
     "Key": "ModStr2uPercentNegative",
     "enUS": "Physical Damage Received Increased by %d%%",
-    "zhTW": "受到的傷害提高 %d%%",
+    "zhTW": "受到的物理傷害提高 %d%%",
     "deDE": "Erlittener Schaden um %d%% erhöht",
     "esES": "Daño sufrido aumentado un %d%%",
     "frFR": "Dégâts subis augmentés de %d%%",
@@ -5828,6 +5828,40 @@
     "jaJP": "受ける物理ダメージ%d%%増加",
     "ptBR": "Dano recebido aumentado em %d%%",
     "ruRU": "Получаемый урон увеличен на %d%%",
-    "zhCN": "受到的伤害提高 %d%%"
+    "zhCN": "受到的物理伤害提高 %d%%"
+  },
+  {
+    "id": 27371,
+    "Key": "ModStr6k",
+    "enUS": "%+d%% chance for finishing moves to not consume charges",
+    "zhTW": "%+d%% 機率使終結技不消耗集氣的力量",
+    "deDE": "%+d%% Chance, dass Finishing-Moves keine Aufladungen verbrauchen",
+    "esES": "%+d%% de probabilidad de que los remates no consuman cargas",
+    "frFR": "%+d%% de chances que les coups finaux ne consomment aucune charge",
+    "itIT": "Probabilità che le mosse finali non consumino cariche %+d%%",
+    "koKR": "필살기가 충전을 소모하지 않을 확률 %+d%%",
+    "plPL": "%+d%% do szansy na niewykorzystanie ładunków przez kończące uderzenia",
+    "esMX": "%+d%% de probabilidad de que los ataques finales no consuman cargas",
+    "jaJP": "%+d%%の確率で必殺技が使用回数を消費しなくなる",
+    "ptBR": "%+d%% de chance de finalizações não consumirem cargas",
+    "ruRU": "%+d%% к шансу не израсходовать заряды завершающими приемами",
+    "zhCN": "%+d%% 几率终结技不消耗充能层数"
+  },
+  {
+    "id": 27374,
+    "Key": "ModStr6l",
+    "enUS": "%+d%% Attack Speed",
+    "zhTW": "攻擊速度 %+d%% ",
+    "deDE": "%+d%% Angriffsgeschwindigkeit",
+    "esES": "%+d%% de velocidad de ataque",
+    "frFR": "Vitesse d’attaque augmentée de %+d%%",
+    "itIT": "%+d%% velocità d'attacco",
+    "koKR": "공격 속도 %+d%%",
+    "plPL": "%+d%% do szybkości ataku",
+    "esMX": "%+d%% de velocidad de ataque",
+    "jaJP": "攻撃速度+%+d%%",
+    "ptBR": "%+d%% de velocidade de ataque",
+    "ruRU": "%+d%% к скорости атаки",
+    "zhCN": "%+d%% 攻击速度"
   }
 ]

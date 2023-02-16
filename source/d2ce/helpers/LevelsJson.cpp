@@ -7020,7 +7020,7 @@ namespace d2ce
                 ss << u8"  },\n";
                 ss << u8"  {\n";
                 ss << u8"    \"id\": 27284,\n";
-                ss << u8"    \"Key\": \"Pit\",\n";
+                ss << u8"    \"Key\": \"Act 1 Pit\",\n";
                 ss << u8"    \"enUS\": \"Pit\",\n";
                 ss << u8"    \"zhTW\": \"地穴\",\n";
                 ss << u8"    \"deDE\": \"Grube\",\n";

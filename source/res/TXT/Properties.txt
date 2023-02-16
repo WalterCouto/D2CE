@@ -275,3 +275,4 @@ pierce-immunity-light	1	1	item_pierce_light_immunity																											M
 pierce-immunity-poison	1	1	item_pierce_poison_immunity																											Monster Poison Immunity is Sundered		Min %	Max %		0
 pierce-immunity-damage	1	1	item_pierce_damage_immunity																											Monster Physical Immunity is Sundered		Min %	Max %		0
 pierce-immunity-magic	1	1	item_pierce_magic_immunity																											Monster Magic Immunity is Sundered		Min %	Max %		0
+charge-noconsume	1	1	item_charge_noconsume																											+#% chance for finishing moves to not consume charges		Min %	Max %		0

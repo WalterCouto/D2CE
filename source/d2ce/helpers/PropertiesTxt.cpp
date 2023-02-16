@@ -307,6 +307,7 @@ namespace d2ce
                 ss << u8"pierce-immunity-poison\t1\t1\titem_pierce_poison_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Poison Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
                 ss << u8"pierce-immunity-damage\t1\t1\titem_pierce_damage_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Physical Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
                 ss << u8"pierce-immunity-magic\t1\t1\titem_pierce_magic_immunity\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMonster Magic Immunity is Sundered\t\tMin %\tMax %\t\t0\n";
+                ss << u8"charge-noconsume\t1\t1\titem_charge_noconsume\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t+#% chance for finishing moves to not consume charges\t\tMin %\tMax %\t\t0\n";
                 defaultTxt = ss.str();
             }
             return defaultTxt;
