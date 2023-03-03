@@ -23,6 +23,7 @@
 #include "afxdialogex.h"
 #include "d2ce/helpers/ItemHelpers.h"
 #include <utf8/utf8.h>
+#include <regex>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,6 +40,17 @@ namespace d2ce
 
 namespace
 {
+    CString& RemoveColorFromText(CString& coloredText)
+    {
+        // don't care about color
+        if (coloredText.Find(_T("ÿc")) >= 0)
+        {
+            static std::wregex re{ L"ÿc." };
+                coloredText = std::regex_replace(CStringW(coloredText).GetString(), re, L"").c_str();
+        }
+        return coloredText;
+    }
+
     std::array<std::uint8_t, 4> ItemCodeStringConverter(const std::string& sValue)
     {
         std::array<std::uint8_t, 4> strcode = { 0x20, 0x20, 0x20, 0x20 };
@@ -125,6 +137,8 @@ namespace
                         strText = strText.Left(idx);
                     }
 
+                    RemoveColorFromText(strText);
+
                     HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
                     if (hItem == NULL)
                     {
@@ -199,6 +213,7 @@ namespace
                 CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
                 if (!strText.IsEmpty())
                 {
+                    RemoveColorFromText(strText);
                     parent.push_back({ strText, NULL });
                     auto childIter = availItemType.children.begin();
                     auto childIter_end = availItemType.children.end();

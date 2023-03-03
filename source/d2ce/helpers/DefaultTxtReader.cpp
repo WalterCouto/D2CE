@@ -24,11 +24,36 @@
 #include <sstream>
 #include <iterator>
 #include <regex>
+#include <map>
+#include <memory>
 #include <utf8/utf8.h>
 
 //---------------------------------------------------------------------------
 namespace d2ce
 {
+    #define MAX_VALUE_NAME 4096
+    std::filesystem::path GetD2RModsPath()
+    {
+        // Search the Classic register position for the path to use
+        HKEY regKey = 0;
+        if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Diablo II Resurrected", 0, KEY_QUERY_VALUE, &regKey) != ERROR_SUCCESS)
+        {
+            return std::filesystem::path();
+        }
+
+        std::vector<wchar_t> valueName(MAX_VALUE_NAME + 1, 0);
+        DWORD valueNameLength = MAX_VALUE_NAME;
+        DWORD valueType = 0;
+        if ((RegQueryValueEx(regKey, L"InstallLocation", 0, &valueType, (LPBYTE)&valueName[0], &valueNameLength) == ERROR_SUCCESS) && (valueType == REG_SZ))
+        {
+            std::filesystem::path path(&valueName[0]);
+            path /= "mods";
+            return path;
+        }
+
+        return std::filesystem::path();
+    }
+
     namespace JsonReaderHelper
     {
         const std::string& GetItemGems();
@@ -72,6 +97,535 @@ namespace d2ce
         const std::string& GetSuperiorModsTxt();
         const std::string& GetCraftModsTxt();
     }
+
+    class D2RModReaderHelper
+    {
+    public:
+        D2RModReaderHelper(const std::filesystem::path& path) : modPath(path)
+        {
+            Init();
+        }
+
+        bool isValid() const
+        {
+            return !modPath.empty();
+        }
+
+        std::string GetModName() const
+        {
+            if (!isValid())
+            {
+                return std::string();
+            }
+
+            return modPath.filename().u8string();
+        }
+
+        // JsonReaderHelper
+        const std::string& GetItemGems()
+        {
+            if (!LoadJsonText(strItemGems, "item-gems.json").empty())
+            {
+                return strItemGems;
+            }
+
+            return JsonReaderHelper::GetItemGems();
+        }
+
+        const std::string& GetItemModifiers()
+        {
+            if (!LoadJsonText(strItemModifiers, "item-modifiers.json").empty())
+            {
+                return strItemModifiers;
+            }
+
+            return JsonReaderHelper::GetItemModifiers();
+        }
+
+        const std::string& GetItemNameAffixes()
+        {
+            if (!LoadJsonText(strItemNameAffixes, "item-nameaffixes.json").empty())
+            {
+                return strItemNameAffixes;
+            }
+
+            return JsonReaderHelper::GetItemNameAffixes();
+        }
+
+        const std::string& GetItemNames()
+        {
+            if (!LoadJsonText(strItemNames, "item-names.json").empty())
+            {
+                return strItemNames;
+            }
+
+            return JsonReaderHelper::GetItemNames();
+        }
+
+        const std::string& GetItemRunes()
+        {
+            if (!LoadJsonText(strItemRunes, "item-runes.json").empty())
+            {
+                return strItemRunes;
+            }
+
+            return JsonReaderHelper::GetItemRunes();
+        }
+
+        const std::string& GetLevels()
+        {
+            if (!LoadJsonText(strLevels, "levels.json").empty())
+            {
+                return strLevels;
+            }
+
+            return JsonReaderHelper::GetLevels();
+        }
+
+        const std::string& GetMercenaries()
+        {
+            if (!LoadJsonText(strMercenaries, "monsters.json").empty())
+            {
+                return strMercenaries;
+            }
+
+            return JsonReaderHelper::GetMercenaries();
+        }
+
+        const std::string& GetMonsters()
+        {
+            if (!LoadJsonText(strMonsters, "monsters.json").empty())
+            {
+                return strMonsters;
+            }
+
+            return JsonReaderHelper::GetMonsters();
+        }
+
+        const std::string& GetQuests()
+        {
+            if (!LoadJsonText(strQuests, "quests.json").empty())
+            {
+                return strQuests;
+            }
+
+            return JsonReaderHelper::GetQuests();
+        }
+
+        const std::string& GetSkills()
+        {
+            if (!LoadJsonText(strSkills, "skills.json").empty())
+            {
+                return strSkills;
+            }
+
+            return JsonReaderHelper::GetSkills();
+        }
+
+        const std::string& GetUI()
+        {
+            if (!LoadJsonText(strUI, "ui.json").empty())
+            {
+                return strUI;
+            }
+
+            return JsonReaderHelper::GetUI();
+        }
+
+        // TxtReaderHelper
+        const std::string& GetArmor()
+        {
+            if (!LoadExcelText(strArmor, "armor.txt").empty())
+            {
+                return strArmor;
+            }
+
+            return TxtReaderHelper::GetArmor();
+        }
+
+        const std::string& GetBelts()
+        {
+            if (!LoadExcelText(strBelts, "belts.txt").empty())
+            {
+                return strBelts;
+            }
+
+            return TxtReaderHelper::GetBelts();
+        }
+
+        const std::string& GetCharStats()
+        {
+            if (!LoadExcelText(strCharStats, "charstats.txt").empty())
+            {
+                return strCharStats;
+            }
+
+            return TxtReaderHelper::GetCharStats();
+        }
+
+        const std::string& GetExperience()
+        {
+            if (!LoadExcelText(strExperience, "experience.txt").empty())
+            {
+                return strExperience;
+            }
+
+            return TxtReaderHelper::GetExperience();
+        }
+
+        const std::string& GetGems()
+        {
+            if (!LoadExcelText(strGems, "gems.txt").empty())
+            {
+                return strGems;
+            }
+
+            return TxtReaderHelper::GetGems();
+        }
+
+        const std::string& GetHireling()
+        {
+            if (!LoadExcelText(strHireling, "hireling.txt").empty())
+            {
+                return strHireling;
+            }
+
+            return TxtReaderHelper::GetHireling();
+        }
+
+        const std::string& GetItemStatCost()
+        {
+            if (!LoadExcelText(strItemStatCost, "itemstatcost.txt").empty())
+            {
+                return strItemStatCost;
+            }
+
+            return TxtReaderHelper::GetItemStatCost();
+        }
+
+        const std::string& GetItemTypes()
+        {
+            if (!LoadExcelText(strItemTypes, "itemtypes.txt").empty())
+            {
+                return strItemTypes;
+            }
+
+            return TxtReaderHelper::GetItemTypes();
+        }
+
+        const std::string& GetMagicPrefix()
+        {
+            if (!LoadExcelText(strMagicPrefix, "magicprefix.txt").empty())
+            {
+                return strMagicPrefix;
+            }
+
+            return TxtReaderHelper::GetMagicPrefix();
+        }
+
+        const std::string& GetMagicSuffix()
+        {
+            if (!LoadExcelText(strMagicSuffix, "magicsuffix.txt").empty())
+            {
+                return strMagicSuffix;
+            }
+
+            return TxtReaderHelper::GetMagicSuffix();
+        }
+
+        const std::string& GetMisc()
+        {
+            if (!LoadExcelText(strMisc, "misc.txt").empty())
+            {
+                return strMisc;
+            }
+
+            return TxtReaderHelper::GetMisc();
+        }
+
+        const std::string& GetPlayerClass()
+        {
+            if (!LoadExcelText(strPlayerClass, "playerclass.txt").empty())
+            {
+                return strPlayerClass;
+            }
+
+            return TxtReaderHelper::GetPlayerClass();
+        }
+
+        const std::string& GetProperties()
+        {
+            if (!LoadExcelText(strProperties, "properties.txt").empty())
+            {
+                return strProperties;
+            }
+
+            return TxtReaderHelper::GetProperties();
+        }
+
+        const std::string& GetRarePrefix()
+        {
+            if (!LoadExcelText(strRarePrefix, "rareprefix.txt").empty())
+            {
+                return strRarePrefix;
+            }
+
+            return TxtReaderHelper::GetRarePrefix();
+        }
+
+        const std::string& GetRareSuffix()
+        {
+            if (!LoadExcelText(strRareSuffix, "raresuffix.txt").empty())
+            {
+                return strRareSuffix;
+            }
+
+            return TxtReaderHelper::GetRareSuffix();
+        }
+
+        const std::string& GetRunes()
+        {
+            if (!LoadExcelText(strRunes, "runes.txt").empty())
+            {
+                return strRunes;
+            }
+
+            return TxtReaderHelper::GetRunes();
+        }
+
+        const std::string& GetSetItems()
+        {
+            if (!LoadExcelText(strSetItems, "setitems.txt").empty())
+            {
+                return strSetItems;
+            }
+
+            return TxtReaderHelper::GetSetItems();
+        }
+
+        const std::string& GetSets()
+        {
+            if (!LoadExcelText(strSets, "sets.txt").empty())
+            {
+                return strSets;
+            }
+
+            return TxtReaderHelper::GetSets();
+        }
+
+        const std::string& GetSkillDesc()
+        {
+            if (!LoadExcelText(strSkillDesc, "skilldesc.txt").empty())
+            {
+                return strSkillDesc;
+            }
+
+            return TxtReaderHelper::GetSkillDesc();
+        }
+
+        const std::string& GetSkillsTxt()
+        {
+            if (!LoadExcelText(strSkillsTxt, "skills.txt").empty())
+            {
+                return strSkillsTxt;
+            }
+
+            return TxtReaderHelper::GetSkills();
+        }
+
+        const std::string& GetUniqueItems()
+        {
+            if (!LoadExcelText(strUniqueItems, "uniqueitems.txt").empty())
+            {
+                return strUniqueItems;
+            }
+
+            return TxtReaderHelper::GetUniqueItems();
+        }
+
+        const std::string& GetWeapons()
+        {
+            if (!LoadExcelText(strWeapons, "weapons.txt").empty())
+            {
+                return strWeapons;
+            }
+
+            return TxtReaderHelper::GetWeapons();
+        }
+
+        const std::string& GetMonStats()
+        {
+            if (!LoadExcelText(strMonStats, "monstats.txt").empty())
+            {
+                return strMonStats;
+            }
+
+            return TxtReaderHelper::GetMonStats();
+        }
+
+        const std::string& GetSuperiorModsTxt()
+        {
+            if (!LoadExcelText(strSuperiorModsTxt, "qualityitems.txt").empty())
+            {
+                return strSuperiorModsTxt;
+            }
+
+            return TxtReaderHelper::GetSuperiorModsTxt();
+        }
+
+        const std::string& GetCraftModsTxt()
+        {
+            if (!LoadExcelText(strCraftModsTxt, "craftitems.txt").empty())
+            {
+                return strCraftModsTxt;
+            }
+
+            return TxtReaderHelper::GetCraftModsTxt();
+        }
+
+    private:
+        void Init()
+        {
+            if (modPath.empty() || !std::filesystem::exists(modPath))
+            {
+                modPath.clear();
+                return;
+            }
+
+            // check for mpq file or directory
+            modPath /= modPath.filename();
+            modPath.replace_extension(".mpq");
+            if (!std::filesystem::exists(modPath))
+            {
+                modPath.clear();
+                return;
+            }
+
+            if (std::filesystem::is_directory(modPath))
+            {
+                // we are directly dealing with json and csv files
+                isArchive = false;
+                modPath /= "data";
+                if (!std::filesystem::exists(modPath) || !std::filesystem::is_directory(modPath))
+                {
+                    modPath.clear();
+                    return;
+                }
+
+                // Looks for the strings path
+                modStringsPath = modPath / "local" / "lng" / "strings";
+                if (!std::filesystem::exists(modStringsPath) || !std::filesystem::is_directory(modStringsPath))
+                {
+                    modStringsPath.clear();
+                }
+
+                // Looks for the excels path
+                modExcelPath = modPath / "global" / "excel";
+                if (!std::filesystem::exists(modExcelPath) || !std::filesystem::is_directory(modExcelPath))
+                {
+                    modExcelPath.clear();
+                }
+
+                return;
+            }
+
+            // TODO: extract from mpq file
+            isArchive = true;
+        }
+
+        std::string& LoadJsonText(std::string& jsonStr, const std::string& jsonFileName)
+        {
+            if (!jsonStr.empty())
+            {
+                return jsonStr;
+            }
+
+            if (modPath.empty() || modStringsPath.empty())
+            {
+                return jsonStr;
+            }
+
+            std::filesystem::path path = modStringsPath / jsonFileName;
+            jsonStr = LoadTextFromFile(path);
+            return jsonStr;
+        }
+
+        std::string& LoadExcelText(std::string& excelStr, const std::string& excelFileName)
+        {
+            if (!excelStr.empty())
+            {
+                return excelStr;
+            }
+
+            if (modPath.empty() || modExcelPath.empty())
+            {
+                return excelStr;
+            }
+
+            std::filesystem::path path = modExcelPath / excelFileName;
+            excelStr = LoadTextFromFile(path);
+            return excelStr;
+        }
+
+        static std::string LoadTextFromFile(const std::filesystem::path& path)
+        {
+            if (!std::filesystem::exists(path))
+            {
+                return std::string();
+            }
+
+            std::ifstream modFile(path, std::ios::binary);
+            if (!modFile.is_open() || !modFile.good() || modFile.eof())
+            {
+                return std::string();
+            }
+            return std::string((std::istreambuf_iterator<char>(modFile)), std::istreambuf_iterator<char>());
+        }
+
+    private:
+        std::filesystem::path modPath;
+        std::filesystem::path modStringsPath;
+        std::filesystem::path modExcelPath;
+        bool isArchive = false;
+
+        std::string strItemGems;
+        std::string strItemModifiers;
+        std::string strItemNameAffixes;
+        std::string strItemNames;
+        std::string strItemRunes;
+        std::string strLevels;
+        std::string strMercenaries;
+        std::string strMonsters;
+        std::string strQuests;
+        std::string strSkills;
+        std::string strUI;
+
+        std::string strArmor;
+        std::string strBelts;
+        std::string strCharStats;
+        std::string strExperience;
+        std::string strGems;
+        std::string strHireling;
+        std::string strItemStatCost;
+        std::string strItemTypes;
+        std::string strMagicPrefix;
+        std::string strMagicSuffix;
+        std::string strMisc;
+        std::string strPlayerClass;
+        std::string strProperties;
+        std::string strRarePrefix;
+        std::string strRareSuffix;
+        std::string strRunes;
+        std::string strSetItems;
+        std::string strSets;
+        std::string strSkillDesc;
+        std::string strSkillsTxt;
+        std::string strUniqueItems;
+        std::string strWeapons;
+        std::string strMonStats;
+        std::string strSuperiorModsTxt;
+        std::string strCraftModsTxt;
+    };
 
     class CsvTxtDocument : public ITxtDocument
     {
@@ -196,6 +750,11 @@ namespace d2ce
         JsonStringsDocument()
         {
             LoadAllJson();
+        }
+
+        JsonStringsDocument(D2RModReaderHelper& jsonReader)
+        {
+            LoadAllJson(jsonReader);
         }
 
         std::string GetRowName(SSIZE_T pRowIdx) const override
@@ -386,36 +945,86 @@ namespace d2ce
         template <typename F>
         void LoadJsonStream(F f)
         {
-            std::istringstream stream(f());
+            std::istringstream stream(f);
             LoadJson(stream);
         }
         
         void LoadItems()
         {
-            LoadJsonStream(JsonReaderHelper::GetItemGems);
-            LoadJsonStream(JsonReaderHelper::GetItemModifiers);
-            LoadJsonStream(JsonReaderHelper::GetItemNameAffixes);
-            LoadJsonStream(JsonReaderHelper::GetItemNames);
-            LoadJsonStream(JsonReaderHelper::GetItemRunes);
+            LoadJsonStream(JsonReaderHelper::GetItemGems());
+            LoadJsonStream(JsonReaderHelper::GetItemModifiers());
+            LoadJsonStream(JsonReaderHelper::GetItemNameAffixes());
+            LoadJsonStream(JsonReaderHelper::GetItemNames());
+            LoadJsonStream(JsonReaderHelper::GetItemRunes());
         }
 
+        void LoadItems(D2RModReaderHelper& jsonReader)
+        {
+            if (!jsonReader.isValid())
+            {
+                return LoadItems();
+            }
+
+            LoadJsonStream(jsonReader.GetItemGems());
+            LoadJsonStream(jsonReader.GetItemModifiers());
+            LoadJsonStream(jsonReader.GetItemNameAffixes());
+            LoadJsonStream(jsonReader.GetItemNames());
+            LoadJsonStream(jsonReader.GetItemRunes());
+        }
+        
         void LoadAllJson()
         {
             LoadItems();
-            LoadJsonStream(JsonReaderHelper::GetLevels);
-            LoadJsonStream(JsonReaderHelper::GetMercenaries);
-            LoadJsonStream(JsonReaderHelper::GetMonsters);
-            LoadJsonStream(JsonReaderHelper::GetQuests);
-            LoadJsonStream(JsonReaderHelper::GetItemGems);
-            LoadJsonStream(JsonReaderHelper::GetSkills);
-            LoadJsonStream(JsonReaderHelper::GetUI);
+            LoadJsonStream(JsonReaderHelper::GetLevels());
+            LoadJsonStream(JsonReaderHelper::GetMercenaries());
+            LoadJsonStream(JsonReaderHelper::GetMonsters());
+            LoadJsonStream(JsonReaderHelper::GetQuests());
+            LoadJsonStream(JsonReaderHelper::GetItemGems());
+            LoadJsonStream(JsonReaderHelper::GetSkills());
+            LoadJsonStream(JsonReaderHelper::GetUI());
+        }
+
+
+        void LoadAllJson(D2RModReaderHelper& jsonReader)
+        {
+            if (!jsonReader.isValid())
+            {
+                return LoadAllJson();
+            }
+
+            LoadItems(jsonReader);
+            LoadJsonStream(jsonReader.GetLevels());
+            LoadJsonStream(jsonReader.GetMercenaries());
+            LoadJsonStream(jsonReader.GetMonsters());
+            LoadJsonStream(jsonReader.GetQuests());
+            LoadJsonStream(jsonReader.GetItemGems());
+            LoadJsonStream(jsonReader.GetSkills());
+            LoadJsonStream(jsonReader.GetUI());
         }
     };
 
     class TxtReaderImpl : public ITxtReader
     {
+    public:
+        TxtReaderImpl()
+        {
+        }
+
+        TxtReaderImpl(const std::filesystem::path& path) : modReader(std::make_unique<D2RModReaderHelper>(path))
+        {
+            if (!modReader->isValid())
+            {
+                modReader.reset();
+            }
+        }
+
         virtual std::unique_ptr<ITxtDocument> GetStringTxt() const override
         {
+            if (modReader != nullptr)
+            {
+                return std::make_unique<JsonStringsDocument>(*modReader.get());
+            }
+
             return std::make_unique<JsonStringsDocument>();
         }
 
@@ -437,140 +1046,310 @@ namespace d2ce
             const rapidcsv::LineReaderParams& pLineReaderParams = rapidcsv::LineReaderParams(),
             size_t idx = 0) const
         {
-            std::istringstream stream(f());
+            std::istringstream stream(f);
             return std::make_unique<CsvTxtDocument>(stream, pLabelParams, pSeparatorParams, pConverterParams, pLineReaderParams, idx);
         }
 
         virtual std::unique_ptr<ITxtDocument> GetCharStatsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetCharStats);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetCharStats());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetCharStats());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetPlayerClassTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetPlayerClass);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetPlayerClass());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetPlayerClass());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetExperienceTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetExperience);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetExperience());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetExperience());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetHirelingTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetHireling);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetHireling());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetHireling());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetItemStatCostTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetItemStatCost);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetItemStatCost());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetItemStatCost());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetItemTypesTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetItemTypes);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetItemTypes());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetItemTypes());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetPropertiesTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetProperties);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetProperties());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetProperties());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetGemsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetGems);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetGems());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetGems());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetBeltsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetBelts);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetBelts());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetBelts());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetArmorTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetArmor);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetArmor());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetArmor());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetWeaponsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetWeapons);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetWeapons());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetWeapons());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetMiscTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetMisc);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetMisc());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetMisc());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetMagicPrefixTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetMagicPrefix);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetMagicPrefix());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetMagicPrefix());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetMagicSuffixTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetMagicSuffix);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetMagicSuffix());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetMagicSuffix());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetRarePrefixTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetRarePrefix);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetRarePrefix());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetRarePrefix());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetRareSuffixTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetRareSuffix);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetRareSuffix());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetRareSuffix());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetUniqueItemsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetUniqueItems);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetUniqueItems());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetUniqueItems());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetSetsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSets);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetSets());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetSets());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetSetItemsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSetItems);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetSetItems());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetSetItems());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetRunesTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetRunes);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetRunes());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetRunes());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetSkillsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSkills);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetSkillsTxt());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetSkills());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetSkillDescTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSkillDesc);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetSkillDesc());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetSkillDesc());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetMonStatsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetMonStats);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetMonStats());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetMonStats());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetSuperiorModsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetSuperiorModsTxt);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetSuperiorModsTxt());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetSuperiorModsTxt());
         }
 
         virtual std::unique_ptr<ITxtDocument> GetCraftModsTxt() const override
         {
-            return LoadTxtStream(TxtReaderHelper::GetCraftModsTxt);
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetCraftModsTxt());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetCraftModsTxt());
         }
+
+        virtual std::string GetModName() const override
+        {
+            if (modReader != nullptr)
+            {
+                return modReader->GetModName();
+            }
+
+            return std::string();
+        }
+
+    private:
+        std::unique_ptr<D2RModReaderHelper> modReader;
     };
 
     const ITxtReader& getDefaultTxtReader()
     {
         static TxtReaderImpl defaultTxtReader;
         return defaultTxtReader;
+    }
+
+    const ITxtReader& getDefaultTxtReader(const std::filesystem::path& modPath)
+    {
+        if (modPath.empty() || !std::filesystem::exists(modPath))
+        {
+            return getDefaultTxtReader();
+        }
+
+        static std::map<std::wstring, std::shared_ptr<TxtReaderImpl>> modTxtReaders;
+        auto path = modPath.wstring();
+        auto iter = modTxtReaders.find(path);
+        if (iter != modTxtReaders.end())
+        {
+            return *iter->second.get();
+        }
+
+        auto newModTextReader = std::make_shared<TxtReaderImpl>(modPath);
+        modTxtReaders[path] = newModTextReader;
+        return *newModTextReader.get();
+    }
+
+    const ITxtReader& getDefaultTxtReader(std::string modName)
+    {
+        static auto d2RModsPath = GetD2RModsPath();
+        if (d2RModsPath.empty() || !std::filesystem::exists(d2RModsPath))
+        {
+            return getDefaultTxtReader();
+        }
+
+        auto modPath = d2RModsPath / modName;
+        return getDefaultTxtReader(modPath);
     }
 }
 //---------------------------------------------------------------------------

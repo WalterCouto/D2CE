@@ -24,6 +24,8 @@
 namespace d2ce
 {
     const ITxtReader& getDefaultTxtReader();
+    const ITxtReader& getDefaultTxtReader(std::string modName);
+    const ITxtReader& getDefaultTxtReader(const std::filesystem::path& modPath);
 }
 //---------------------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 #include "D2EarAttributesForm.h"
 #include <utf8/utf8.h>
 #include "afxdialogex.h"
+#include <regex>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,6 +46,17 @@ namespace d2ce
 
 namespace
 {
+    CString& RemoveColorFromText(CString& coloredText)
+    {
+        // don't care about color
+        if (coloredText.Find(_T("ÿc")) >= 0)
+        {
+            static std::wregex re{ L"ÿc." };
+            coloredText = std::regex_replace(CStringW(coloredText).GetString(), re, L"").c_str();
+        }
+        return coloredText;
+    }
+
     D2TreeCtrlPath g_LastSelection;
 
     struct AvailableItemFolder
@@ -136,6 +148,8 @@ namespace
                         {
                             strText = strText.Left(idx);
                         }
+                        
+                        RemoveColorFromText(strText);
 
                         HTREEITEM hItem = tree.InsertItem(strText, hParent, TVI_SORT);
                         if (hItem == NULL)
@@ -196,6 +210,7 @@ namespace
                 CString strText(reinterpret_cast<LPCWSTR>(uText.c_str()));
                 if (!strText.IsEmpty())
                 {
+                    RemoveColorFromText(strText);
                     parent.push_back({ strText, NULL });
                     auto childIter = availItemType.children.begin();
                     auto childIter_end = availItemType.children.end();
@@ -550,7 +565,7 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                                     }
 
                                     strText = reinterpret_cast<LPCWSTR>(uText.c_str());
-                                    idx = Quality.AddString(strText);
+                                    idx = Quality.AddString(RemoveColorFromText(strText));
                                     if (idx >= 0)
                                     {
                                         std::int32_t qualityIntValue = std::int32_t(recipie.id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
@@ -649,7 +664,7 @@ void CD2NewItemForm::OnTvnSelchangedItemtree(NMHDR* /*pNMHDR*/, LRESULT* pResult
                                 }
 
                                 strText = reinterpret_cast<LPCWSTR>(uText.c_str());
-                                idx = Quality.AddString(strText);
+                                idx = Quality.AddString(RemoveColorFromText(strText));
                                 if (idx >= 0)
                                 {
                                     std::int32_t qualityIntValue = std::int32_t(recipie.id << 8) | static_cast<std::underlying_type_t<d2ce::EnumItemQuality>>(d2ce::EnumItemQuality::CRAFTED);
@@ -828,7 +843,7 @@ void CD2NewItemForm::InitTree()
         uText = utf8::utf8to16(monster.second.c_str());
         strText = reinterpret_cast<LPCWSTR>(uText.c_str());
         itemData = (DWORD_PTR)monster.first;
-        idx = Monsters.AddString(strText);
+        idx = Monsters.AddString(RemoveColorFromText(strText));
         if (idx >= 0)
         {
             Monsters.SetItemData(idx, itemData);

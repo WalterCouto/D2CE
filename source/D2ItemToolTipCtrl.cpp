@@ -28,6 +28,7 @@
 #include "D2RunewordForm.h"
 #include "D2AddGemsForm.h"
 #include "D2MagicalPropsRandomizer.h"
+#include <regex>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,21 +36,90 @@
 
 namespace
 {
-#define TOOLTIP_BLUE RGB(94,94,255)
+    COLORREF GetColorFromChar(char code)
+    {
+        static std::map<char, COLORREF> colorMap = {
+            { '0', RGB(255,255,255) }, // WHITE
+            { '=', RGB(255,255,255) }, // WHITE 2
+            { '1', RGB(255,  0,  0) }, // RED
+            { 'U', RGB(255,  0,  0) }, // RED 2
+            { '2', RGB(  0,255,  0) }, // GREEN (SET)
+            { 'Q', RGB(  0,255,  0) }, // GREEN 2
+            { 'C', RGB(  0,255,  0) }, // GREEN 3
+            { '<', RGB(  0,255,  0) }, // GREEN 4
+            { '3', RGB( 94, 94,255) }, // BLUE (MAGIC)
+            { 'B', RGB( 94, 94,255) }, // BLUE 2
+            { '4', RGB(148,128,100) }, // GOLD (UNIQUE)
+            { 'D', RGB(148,128,100) }, // GOLD 2
+            { '5', RGB(117,117,117) }, // GRAY
+            { 'K', RGB(117,117,117) }, // GRAY 2
+            { 'I', RGB(117,117,117) }, // GRAY 3
+            { '6', RGB(  0,  0,  0) }, // BLACK (won't show) 
+            { 'M', RGB(  0,  0,  0) }, // BLACK 2 (won't show) 
+            { '7', RGB(241,229,172) }, // LIGHT GOLD
+            { 'H', RGB(241,229,172) }, // LIGHT GOLD 2
+            { '8', RGB(255,128,  0) }, // ORANGE (CRAFTED)
+            { '@', RGB(255,128,  0) }, // ORANGE 2
+            { 'J', RGB(255,128,  0) }, // ORANGE 3
+            { 'L', RGB(255,128,  0) }, // ORANGE 4
+            { '9', RGB(255,255,  0) }, // YELLOW (RARE)
+            { 'R', RGB(255,255,  0) }, // YELLOW 2
+            { ';', RGB(128,  0,128) }, // PURPLE
+            { ':', RGB(  0,100,  0) }, // DARK GREEN
+            { 'A', RGB(  0,100,  0) }, // DARK GREEN 2
+            { 'N', RGB( 22,226,245) }, // TURQUOISE
+            { 'T', RGB(135,206,235) }, // SKY BLUE
+            { 'F', RGB(173,216,230) }, // LIGHT BLUE
+            { 'P', RGB(173,216,230) }, // LIGHT BLUE 2
+            { 'G', RGB(255,182,193) }, // LIGHT PINK
+            { 'O', RGB(250,175,186) }, // PINK
+            { 'E', RGB(255,114,118) }, // LIGHT RED
+            { 'S', RGB(139,  0,  0) }, // DARK RED
+        };
 
+        auto iter = colorMap.find(code);
+        if (iter == colorMap.end())
+        {
+            return RGB(255, 255, 255); // WHITE
+        }
+
+        return iter->second;
+    }
+
+    COLORREF GetColorFromChar(wchar_t code)
+    {
+        return GetColorFromChar((char)code);
+    }
+
+    // color codes as described in the text files
+    enum class D2Colors : char { WHITE = '0', RED = '1', GREEN = '2', BLUE = '3', UNIQUE = '4', GRAY = '5', CRAFTED = '8', RARE = '9' };
+    COLORREF GetColorFromChar(D2Colors code)
+    {
+        return GetColorFromChar(static_cast<std::underlying_type_t<D2Colors>>(code));
+    }
+
+    CString& RemoveColorFromText(CString& coloredText)
+    {
+        // don't care about color
+        static std::wregex re{ L"ÿc." };
+        coloredText = std::regex_replace(CStringW(coloredText).GetString(), re, L"").c_str();
+        return coloredText;
+    }
+   
     CSize CalcTextSize(CDC* pDC, CString& strText, CRect& rect, BOOL bCalcOnly)
     {
         CSize sizeText(0, 0);
 
         strText.Replace(_T("\t"), _T("    "));
 
-        if (bCalcOnly && (strText.Find(_T('\f')) >= 0))
+        if (bCalcOnly && (strText.Find(_T("ÿc")) >= 0))
         {
             // don't care about color
-            strText.Remove(_T('\f'));
+            RemoveColorFromText(strText);
         }
 
-        if (strText.Find(_T('\f')) >= 0) // Multi-color text
+        auto idxFirstColor = strText.Find(_T("ÿc"));
+        if (idxFirstColor >= 0) // Multi-color text
         {
             if (strText.Find(_T('\n')) >= 0) // Multi-line text
             {
@@ -58,36 +128,38 @@ namespace
                 CString strLineText = strText.Tokenize(_T("\n"), curLinePos);
                 while (!strLineText.IsEmpty())
                 {
-                    if (strLineText.Find(_T('\f')) >= 0) // Multi-color text
+                    idxFirstColor = strLineText.Find(_T("ÿc"));
+                    if (idxFirstColor >= 0) // Multi-color text
                     {
                         CSize colorSizeText(0, 0);
                         CString strNoColorText = strLineText;
-                        strNoColorText.Remove(_T('\f'));
+                        RemoveColorFromText(strNoColorText);
 
                         auto lineRect = rect;
                         colorSizeText = pDC->GetTextExtent(strNoColorText);
                         lineRect.left += (rect.Width() - colorSizeText.cx) / 2;
                         int curPos = 0;
                         auto origColor = pDC->GetTextColor();
-                        bool bBlue = false;
-                        CString strColorText = strLineText.Tokenize(_T("\f"), curPos);
+                        CString strColorText = strLineText.Tokenize(_T("ÿ"), curPos);
+                        bool startsWithColor = idxFirstColor == 0;
                         while (!strColorText.IsEmpty())
                         {
+                            if (startsWithColor && strColorText.GetLength() >= 2)
+                            {
+                                pDC->SetTextColor(GetColorFromChar(strColorText[1]));
+                                strColorText.Delete(0, 2);
+                            }
                             colorSizeText = pDC->GetTextExtent(strColorText);
                             lineSizeText.cy = std::max(colorSizeText.cy, lineSizeText.cy);
-                            if (bBlue)
-                            {
-                                pDC->SetTextColor(TOOLTIP_BLUE);
-                            }
-                            bBlue = !bBlue;
 
                             UINT nFormat = DT_LEFT | DT_NOCLIP | DT_SINGLELINE;
                             colorSizeText.cy = pDC->DrawText(strColorText, lineRect, nFormat);
                             lineRect.left += colorSizeText.cx;
                             lineSizeText.cx = (LONG)rect.Width();
-                            pDC->SetTextColor(origColor);
-                            strColorText = strLineText.Tokenize(_T("\f"), curPos);
+                            strColorText = strLineText.Tokenize(_T("ÿ"), curPos);
+                            startsWithColor = true;
                         }
+                        pDC->SetTextColor(origColor);
                     }
                     else
                     {
@@ -108,7 +180,7 @@ namespace
                 CSize lineSizeText(0, 0);
                 CSize colorSizeText(0, 0);
                 CString strNoColorText = strText;
-                strNoColorText.Remove(_T('\f'));
+                RemoveColorFromText(strNoColorText);
 
                 auto lineRect = rect;
                 colorSizeText = pDC->GetTextExtent(strNoColorText);
@@ -116,25 +188,26 @@ namespace
 
                 int curPos = 0;
                 auto origColor = pDC->GetTextColor();
-                bool bBlue = false;
-                CString strColorText = strText.Tokenize(_T("\f"), curPos);
+                CString strColorText = strText.Tokenize(_T("ÿ"), curPos);
+                bool startsWithColor = idxFirstColor == 0;
                 while (!strColorText.IsEmpty())
                 {
+                    if (startsWithColor && strColorText.GetLength() >= 2)
+                    {
+                        pDC->SetTextColor(GetColorFromChar(strColorText[1]));
+                        strColorText.Delete(0, 2);
+                    }
                     colorSizeText = pDC->GetTextExtent(strColorText);
                     lineSizeText.cy = std::max(colorSizeText.cy, lineSizeText.cy);
-                    if (bBlue)
-                    {
-                        pDC->SetTextColor(TOOLTIP_BLUE);
-                    }
-                    bBlue = !bBlue;
 
                     UINT nFormat = DT_LEFT | DT_NOCLIP | DT_SINGLELINE;
                     colorSizeText.cy = pDC->DrawText(strColorText, lineRect, nFormat);
                     lineRect.left += colorSizeText.cx;
                     lineSizeText.cx = (LONG)rect.Width();
-                    pDC->SetTextColor(origColor);
-                    strColorText = strText.Tokenize(_T("\f"), curPos);
+                    strColorText = strText.Tokenize(_T("ÿ"), curPos);
+                    startsWithColor = true;
                 }
+                pDC->SetTextColor(origColor);
 
                 sizeText.cx = std::max(sizeText.cx, lineSizeText.cx);
                 sizeText.cy = lineSizeText.cy;
@@ -207,58 +280,56 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     bool isRuneword = currItem->isRuneword();
 
-    // color codes as described in the text files
-    static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), TOOLTIP_BLUE, RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
-    enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, UNIQUE = 4, GRAY = 5, CRAFTED = 8, RARE = 9 };
+    
 
     // Get color of top text
-    COLORREF color = colors[WHITE];
+    COLORREF color = GetColorFromChar(D2Colors::WHITE);
     if (currItem->isIdentified())
     {
         if (currItem->isEthereal())
         {
-            color = colors[GRAY];
+            color = GetColorFromChar(D2Colors::GRAY);
         }
         else if (currItem->isQuestItem())
         {
-            color = colors[UNIQUE];
+            color = GetColorFromChar(D2Colors::UNIQUE);
         }
         else if (currItem->isRune())
         {
-            color = colors[CRAFTED];
+            color = GetColorFromChar(D2Colors::CRAFTED);
         }
         else if (isRuneword)
         {
-            color = colors[UNIQUE];
+            color = GetColorFromChar(D2Colors::UNIQUE);
         }
 
         switch (currItem->getQuality())
         {
         case d2ce::EnumItemQuality::MAGIC:
-            color = colors[BLUE];
+            color = GetColorFromChar(D2Colors::BLUE);
             break;
 
         case d2ce::EnumItemQuality::SET:
-            color = colors[GREEN];
+            color = GetColorFromChar(D2Colors::GREEN);
             break;
 
         case d2ce::EnumItemQuality::RARE:
-            color = colors[RARE];
+            color = GetColorFromChar(D2Colors::RARE);
             break;
 
         case d2ce::EnumItemQuality::UNIQUE:
-            color = colors[UNIQUE];
+            color = GetColorFromChar(D2Colors::UNIQUE);
             break;
 
         case d2ce::EnumItemQuality::CRAFTED:
         case d2ce::EnumItemQuality::TEMPERED:
-            color = colors[CRAFTED];
+            color = GetColorFromChar(D2Colors::CRAFTED);
             break;
         }
     }
     else
     {
-        color = colors[RED];
+        color = GetColorFromChar(D2Colors::RED);
     }
     pDC->SetTextColor(color);
 
@@ -284,7 +355,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
                 sizeText.cy += prevSizeText.cy;
                 sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
                 prevSizeText = sizeText;
-                pDC->SetTextColor(colors[GRAY]);
+                pDC->SetTextColor(GetColorFromChar(D2Colors::GRAY));
                 strLineText = strText.Tokenize(_T("\n"), curLinePos);
             }
         }
@@ -300,7 +371,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
     if (!strText.IsEmpty())
     {
         CSize prevSizeText = sizeText;
-        pDC->SetTextColor(colors[UNIQUE]);
+        pDC->SetTextColor(GetColorFromChar(D2Colors::UNIQUE));
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
         sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
@@ -324,51 +395,17 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
     {
         displayedCs.Level = 1;
     }
+
     auto charClass = pCharInfo == nullptr ? d2ce::EnumCharClass::Amazon : pCharInfo->getClass();
     uText = utf8::utf8to16(currItem->getDisplayedItemAttributes(charClass, displayedCs, true));
     strText = reinterpret_cast<LPCWSTR>(uText.c_str());
     if (!strText.IsEmpty())
     {
         CSize prevSizeText = sizeText;
-        pDC->SetTextColor(colors[WHITE]);
-
-        if (strText.Find(_T('\b')) >= 0) // red text
-        {
-            if (strText.Find(_T('\n')) >= 0) // Multi-line text
-            {
-                int curLinePos = 0;
-                CString strLineText = strText.Tokenize(_T("\n"), curLinePos);
-                while (!strLineText.IsEmpty())
-                {
-                    if (strLineText.Find(_T('\b')) >= 0) // red text
-                    {
-                        pDC->SetTextColor(colors[RED]);
-                        strLineText.Remove(_T('\b'));
-                    }
-
-                    sizeText = CalcTextSize(pDC, strLineText, rect, bCalcOnly);
-                    sizeText.cy += prevSizeText.cy;
-                    sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
-                    prevSizeText = sizeText;
-                    strLineText = strText.Tokenize(_T("\n"), curLinePos);
-                    pDC->SetTextColor(colors[WHITE]);
-                }
-            }
-            else
-            {
-                pDC->SetTextColor(colors[RED]);
-                strText.Remove(_T('\b'));
-                sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
-                sizeText.cy += prevSizeText.cy;
-                sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
-            }
-        }
-        else
-        {
-            sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
-            sizeText.cy += prevSizeText.cy;
-            sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
-        }
+        pDC->SetTextColor(GetColorFromChar(D2Colors::WHITE));
+        sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+        sizeText.cy += prevSizeText.cy;
+        sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
     }
 
     d2ce::ItemDurability durability;
@@ -380,7 +417,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
         strText = reinterpret_cast<LPCWSTR>(uText.c_str());
 
         CSize prevSizeText = sizeText;
-        pDC->SetTextColor(colors[BLUE]);
+        pDC->SetTextColor(GetColorFromChar(D2Colors::BLUE));
 
         sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
         sizeText.cy += prevSizeText.cy;
@@ -406,7 +443,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
             }
 
             CSize prevSizeText = sizeText;
-            pDC->SetTextColor(colors[BLUE]);
+            pDC->SetTextColor(GetColorFromChar(D2Colors::BLUE));
 
             sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
             sizeText.cy += prevSizeText.cy;
@@ -417,7 +454,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
     if (currItem->isEthereal())
     {
         CSize prevSizeText = sizeText;
-        pDC->SetTextColor(colors[BLUE]);
+        pDC->SetTextColor(GetColorFromChar(D2Colors::BLUE));
 
         std::string u8Text;
         uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetEtherealStringTxtValue(u8Text));
@@ -440,7 +477,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
     {
         // Socketed text
         CSize prevSizeText = sizeText;
-        pDC->SetTextColor(colors[BLUE]);
+        pDC->SetTextColor(GetColorFromChar(D2Colors::BLUE));
 
         std::string u8Text;
         uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetSocketedStringTxtValue(u8Text));
@@ -473,7 +510,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
             }
 
             CSize prevSizeText = sizeText;
-            pDC->SetTextColor(colors[GREEN]);
+            pDC->SetTextColor(GetColorFromChar(D2Colors::GREEN));
 
             sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
             sizeText.cy += prevSizeText.cy;
@@ -507,7 +544,7 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
             }
 
             CSize prevSizeText = sizeText;
-            pDC->SetTextColor(colors[UNIQUE]);
+            pDC->SetTextColor(GetColorFromChar(D2Colors::UNIQUE));
 
             sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
             sizeText.cy += prevSizeText.cy;

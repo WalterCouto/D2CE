@@ -2046,6 +2046,7 @@ namespace d2ce
 
         InitStringsTxtData(txtReader);
         pCurTextReader = &txtReader;
+        bool isMod = txtReader.GetModName().empty() ? false : true;
         auto pDoc(txtReader.GetItemStatCostTxt());
         auto& doc = *pDoc;
         std::map<std::string, std::uint16_t> itemStatsNameMap;
@@ -2223,16 +2224,17 @@ namespace d2ce
         std::string descstrneg;
         std::string descstr2;
         std::uint16_t id = 0;
+        auto baseVersion = isMod ? d2ce::EnumCharVersion::v140 : d2ce::EnumCharVersion::v100;
         for (size_t i = 0; i < numRows; ++i)
         {
             id = doc.GetCellUInt16(idColumnIdx, i);
-            if (itemStatsInfo[d2ce::EnumCharVersion::v100].find(id) != itemStatsInfo[d2ce::EnumCharVersion::v100].end())
+            if (itemStatsInfo[baseVersion].find(id) != itemStatsInfo[baseVersion].end())
             {
                 // skip
                 continue;
             }
 
-            auto& newValue = itemStatsInfo[d2ce::EnumCharVersion::v100][id];
+            auto& newValue = itemStatsInfo[baseVersion][id];
             newValue.id = id;
             newValue.name = doc.GetCellString(nameColumnIdx, i);
             itemStatsNameMap[newValue.name] = id;
@@ -2325,21 +2327,21 @@ namespace d2ce
 
             //op values
             strValue = doc.GetCellString(opColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 newValue.opAttribs.op = (std::uint8_t)doc.GetCellUInt16(opColumnIdx, i);
                 newValue.opAttribs.op_param = doc.GetCellString(op_paramColumnIdx, i).empty() ? 0ui8 : (std::uint8_t)doc.GetCellUInt16(op_paramColumnIdx, i);
                 newValue.opAttribs.op_base = doc.GetCellString(op_baseColumnIdx, i);
                 strValue = doc.GetCellString(op_stat1ColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     newValue.opAttribs.op_stats.push_back(strValue);
                     strValue = doc.GetCellString(op_stat2ColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         newValue.opAttribs.op_stats.push_back(strValue);
                         strValue = doc.GetCellString(op_stat3ColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             newValue.opAttribs.op_stats.push_back(strValue);
                         }
@@ -2348,19 +2350,19 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(descpriorityColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 newValue.descPriority = (std::uint8_t)doc.GetCellUInt16(descpriorityColumnIdx, i);
             }
 
             strValue = doc.GetCellString(descfuncColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 newValue.descFunc = (std::uint8_t)doc.GetCellUInt16(descfuncColumnIdx, i);
             }
 
             strValue = doc.GetCellString(descvalColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 newValue.descVal = (std::uint8_t)doc.GetCellUInt16(descvalColumnIdx, i);
             }
@@ -2384,13 +2386,13 @@ namespace d2ce
                 std::uint8_t descFunc = 0;
                 std::uint8_t descVal = 0;
                 strValue = doc.GetCellString(dgrpfuncColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     descFunc = (std::uint8_t)doc.GetCellUInt16(dgrpfuncColumnIdx, i);
                 }
 
                 strValue = doc.GetCellString(dgrpvalColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     descVal = (std::uint8_t)doc.GetCellUInt16(dgrpvalColumnIdx, i);
                 }
@@ -2420,62 +2422,80 @@ namespace d2ce
 
             if (saveBits109ColumnIdx >= 0)
             {
-                auto& newValue3 = itemStatsInfo[d2ce::EnumCharVersion::v140][id];
-                newValue3 = newValue;
-
-                if (newValue.name.compare("damageresist") == 0 ||
-                    newValue.name.compare("magicresist") == 0)
+                if (!isMod)
                 {
+                    // Handle older version of the data
+                    auto& newValue3 = itemStatsInfo[d2ce::EnumCharVersion::v140][id];
+                    newValue3 = newValue;
+
+                    if (newValue.name.compare("damageresist") == 0 ||
+                        newValue.name.compare("magicresist") == 0)
+                    {
+                        newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
+                        newValue.saveAdd = doc.GetCellString(saveAdd109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveAdd109ColumnIdx, i);
+                    }
+                    else if (newValue.name.compare("fireresist") == 0 ||
+                        newValue.name.compare("lightresist") == 0 ||
+                        newValue.name.compare("coldresist") == 0 ||
+                        newValue.name.compare("poisonresist") == 0)
+                    {
+                        newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
+                        newValue.saveAdd = 50;
+                    }
+                    else
+                    {
+                        // handle unused
+                        switch (newValue.id)
+                        {
+                        case 183:
+                        case 184:
+                        case 185:
+                        case 186:
+                        case 187:
+                            newValue.name = "unused" + std::to_string(newValue.id);
+                            newValue.saveBits = 14;
+                            newValue.saveAdd = 0;
+                            break;
+
+                        case 189:
+                        case 190:
+                        case 191:
+                        case 192:
+                        case 193:
+                            newValue.name = "unused" + std::to_string(newValue.id);
+                            newValue.saveBits = 10;
+                            newValue.saveAdd = 0;
+                            break;
+
+                        case 200:
+                        case 202:
+                        case 203:
+                            newValue.name = "unused" + std::to_string(newValue.id);
+                            newValue.saveBits = 21;
+                            newValue.saveAdd = 0;
+                            break;
+
+                        case 205:
+                        case 206:
+                        case 207:
+                        case 208:
+                        case 209:
+                        case 210:
+                        case 211:
+                        case 213:
+                            newValue.name = "unused" + std::to_string(newValue.id);
+                            newValue.saveBits = 30;
+                            newValue.saveAdd = 0;
+                            break;
+                        }
+                    }
+
+                    auto& newValue2 = itemStatsInfo[d2ce::EnumCharVersion::v109][id];
+                    newValue2 = newValue;
+
                     newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
                     newValue.saveAdd = doc.GetCellString(saveAdd109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveAdd109ColumnIdx, i);
                 }
-                else if (newValue.name.compare("fireresist") == 0 ||
-                    newValue.name.compare("lightresist") == 0 ||
-                    newValue.name.compare("coldresist") == 0 ||
-                    newValue.name.compare("poisonresist") == 0)
-                {
-                    newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
-                    newValue.saveAdd = 50;
-                }
-                else if (newValue.name.compare("lasthitreactframe") == 0)
-                {
-                    newValue.name = "unused183";
-                }
-                else if (newValue.name.compare("create_season") == 0)
-                {
-                    newValue.name = "unused184";
-                }
-                else if (newValue.name.compare("item_pierce_cold_immunity") == 0)
-                {
-                    newValue.name = "unused187";
-                    newValue.saveBits = 14;
-                    newValue.saveAdd = 0;
-                }
-                else if (newValue.name.compare("item_pierce_fire_immunity") == 0)
-                {
-                    newValue.name = "unused189";
-                }
-                else if (newValue.name.compare("item_pierce_light_immunity") == 0)
-                {
-                    newValue.name = "unused190";
-                }
-                else if (newValue.name.compare("item_pierce_poison_immunity") == 0)
-                {
-                    newValue.name = "unused191";
-                }
-                else if (newValue.name.compare("item_pierce_damage_immunity") == 0)
-                {
-                    newValue.name = "unused192";
-                }
-                else if (newValue.name.compare("item_pierce_magic_immunity") == 0)
-                {
-                    newValue.name = "unused193";
-                }
-                auto& newValue2 = itemStatsInfo[d2ce::EnumCharVersion::v109][id];
-                newValue2 = newValue;
-
-                newValue.saveBits = doc.GetCellString(saveBits109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveBits109ColumnIdx, i);
-                newValue.saveAdd = doc.GetCellString(saveAdd109ColumnIdx, i).empty() ? 0ui16 : doc.GetCellUInt16(saveAdd109ColumnIdx, i);
             }
         }
 
@@ -2631,11 +2651,11 @@ namespace d2ce
             itemType.name = doc.GetCellString(nameColumnIdx, i);
 
             strValue = doc.GetCellString(subCode1ColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.subCodes.push_back(strValue);
                 strValue = doc.GetCellString(subCode2ColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.subCodes.push_back(strValue);
                 }
@@ -2658,7 +2678,7 @@ namespace d2ce
                 };
 
                 strValue = doc.GetCellString(bodyLoc1ColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     auto iter = s_equipMap.find(strValue);
                     if (iter != s_equipMap.end())
@@ -2667,7 +2687,7 @@ namespace d2ce
                     }
 
                     strValue = doc.GetCellString(bodyLoc2ColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         iter = s_equipMap.find(strValue);
                         if (iter != s_equipMap.end())
@@ -2693,7 +2713,7 @@ namespace d2ce
                 if (maxSocketsLevelThreshold[idx] >= 0)
                 {
                     strValue = doc.GetCellString(maxSocketsLevelThreshold[idx], i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         levelThreshold = doc.GetCellUInt16(maxSocketsLevelThreshold[idx], i);
                     }
@@ -2705,7 +2725,7 @@ namespace d2ce
             if (std::find(itemType.subCodes.begin(), itemType.subCodes.end(), "misl") != itemType.subCodes.end())
             {
                 strValue = doc.GetCellString(shootsColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.quiverCode = strValue;
                 }
@@ -2848,28 +2868,28 @@ namespace d2ce
                 bool bHasValue = false;
                 ItemPropertiesParamType params;
                 strValue = doc.GetCellString(setColumnIdx[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     params.set = strValue;
                     bHasValue = true;
                 }
 
                 strValue = doc.GetCellString(valColumnIdx[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     params.val = strValue;
                     bHasValue = true;
                 }
 
                 strValue = doc.GetCellString(funcColumnIdx[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     params.func = strValue;
                     bHasValue = true;
                 }
 
                 strValue = doc.GetCellString(statColumnIdx[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     static std::set<std::string> group = { "res-all", "res-all-max", "dmg-elem", "dmg-elem-min", "dmg-elem-max", "all-stats" };
                     static std::set<std::string> allowsDuplicate = { "ama", "sor", "nec", "bar", "pal", "dru", "ass", "skill", "skilltab", "att-skill", "hit-skill",
@@ -3258,7 +3278,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
                 if (itemType.version == 0)
@@ -3270,13 +3290,13 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(compactsaveColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.compactsave = doc.GetCellUInt16(compactsaveColumnIdx, i) != 0 ? true : false;
             }
 
             strValue = doc.GetCellString(durabilityColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.durability.Base = doc.GetCellUInt16(durabilityColumnIdx, i);
                 if (itemType.durability.Base != 0)
@@ -3290,34 +3310,34 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(typeColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 codes.push_back(strValue);
             }
 
             strValue = doc.GetCellString(mindamColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dam.OneHanded.Min = doc.GetCellUInt16(mindamColumnIdx, i);
                 itemType.dam.OneHanded.Max = itemType.dam.OneHanded.Min;
             }
 
             strValue = doc.GetCellString(maxdamColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dam.OneHanded.Max = doc.GetCellUInt16(maxdamColumnIdx, i);
             }
 
             itemType.dam.bOneOrTwoHanded = false;
             strValue = doc.GetCellString(oneOrTwoHandedColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dam.bOneOrTwoHanded = strValue == "1" ? true : false;
             }
 
             itemType.dam.bTwoHanded = itemType.dam.bOneOrTwoHanded;
             strValue = doc.GetCellString(TwoHandedColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dam.bTwoHanded = strValue == "1" ? true : false;
             }
@@ -3325,14 +3345,14 @@ namespace d2ce
             if (itemType.dam.bOneOrTwoHanded || itemType.dam.bTwoHanded)
             {
                 strValue = doc.GetCellString(TwoHandmindamColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.dam.TwoHanded.Min = doc.GetCellUInt16(TwoHandmindamColumnIdx, i);
                     itemType.dam.TwoHanded.Max = itemType.dam.TwoHanded.Min;
                 }
 
                 strValue = doc.GetCellString(TwoHandmaxdamColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.dam.TwoHanded.Max = doc.GetCellUInt16(TwoHandmaxdamColumnIdx, i);
                 }
@@ -3340,33 +3360,33 @@ namespace d2ce
             else
             {
                 strValue = doc.GetCellString(minmisdamColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.dam.Missile.Min = doc.GetCellUInt16(minmisdamColumnIdx, i);
                     itemType.dam.Missile.Max = itemType.dam.Missile.Min;
                 }
 
                 strValue = doc.GetCellString(maxmisdamColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.dam.Missile.Max = doc.GetCellUInt16(maxmisdamColumnIdx, i);
                 }
             }
 
             strValue = doc.GetCellString(stackableColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
@@ -3379,49 +3399,49 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(levelColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.Quality = doc.GetCellUInt16(levelColumnIdx, i);
             }
 
             strValue = doc.GetCellString(magiclvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.Magic = doc.GetCellUInt16(magiclvlColumnIdx, i);
             }
 
             strValue = doc.GetCellString(autoprefixColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.auto_prefix = doc.GetCellUInt16(autoprefixColumnIdx, i);
             }
 
             strValue = doc.GetCellString(reqstrColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Strength = doc.GetCellUInt16(reqstrColumnIdx, i);
             }
 
             strValue = doc.GetCellString(reqdexColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Dexterity = doc.GetCellUInt16(reqdexColumnIdx, i);
             }
 
             strValue = doc.GetCellString(levelreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Level = doc.GetCellUInt16(levelreqColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invwidthColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Width = doc.GetCellUInt16(invwidthColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invheightColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Height = doc.GetCellUInt16(invheightColumnIdx, i);
             }
@@ -3429,18 +3449,18 @@ namespace d2ce
             itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
 
             strValue = doc.GetCellString(invTransColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_transform = doc.GetCellUInt16(invTransColumnIdx, i);
             }
 
             strValue = doc.GetCellString(gemsocketsColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 // has sockets
                 std::uint8_t maxSockets = std::uint8_t(doc.GetCellUInt16(gemsocketsColumnIdx, i));
                 strValue = doc.GetCellString(gemapplytypeColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     std::uint8_t gemApplyType = std::uint8_t(doc.GetCellUInt16(gemapplytypeColumnIdx, i));
                     switch (gemApplyType)
@@ -3531,7 +3551,7 @@ namespace d2ce
                     if (bAddType2Category)
                     {
                         strValue = doc.GetCellString(type2ColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             codes.push_back(strValue);
                         }
@@ -3561,19 +3581,19 @@ namespace d2ce
             if (normcodeColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(normcodeColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.codes.push_back(strValue);
                     if (ubercodeColumnIdx >= 0)
                     {
                         strValue = doc.GetCellString(ubercodeColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             itemType.codes.push_back(strValue);
                             if (ultracodeColumnIdx >= 0)
                             {
                                 strValue = doc.GetCellString(ultracodeColumnIdx, i);
-                                if (!strValue.empty())
+                                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                                 {
                                     itemType.codes.push_back(strValue);
                                 }
@@ -3834,7 +3854,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
                 if (itemType.version == 0)
@@ -3846,25 +3866,25 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(compactsaveColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.compactsave = doc.GetCellUInt16(compactsaveColumnIdx, i) != 0 ? true : false;
             }
 
             strValue = doc.GetCellString(minacColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.ac.Min = doc.GetCellUInt16(minacColumnIdx, i);
             }
 
             strValue = doc.GetCellString(maxacColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.ac.Max = doc.GetCellUInt16(maxacColumnIdx, i);
             }
 
             strValue = doc.GetCellString(durabilityColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.durability.Base = doc.GetCellUInt16(durabilityColumnIdx, i);
                 if (itemType.durability.Base != 0)
@@ -3878,25 +3898,25 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(typeColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 codes.push_back(strValue);
             }
 
             strValue = doc.GetCellString(stackableColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
@@ -3909,43 +3929,43 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(levelColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.Quality = doc.GetCellUInt16(levelColumnIdx, i);
             }
 
             strValue = doc.GetCellString(magiclvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.Magic = doc.GetCellUInt16(magiclvlColumnIdx, i);
             }
 
             strValue = doc.GetCellString(autoprefixColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.auto_prefix = doc.GetCellUInt16(autoprefixColumnIdx, i);
             }
 
             strValue = doc.GetCellString(reqstrColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Strength = doc.GetCellUInt16(reqstrColumnIdx, i);
             }
 
             strValue = doc.GetCellString(levelreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Level = doc.GetCellUInt16(levelreqColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invwidthColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Width = doc.GetCellUInt16(invwidthColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invheightColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Height = doc.GetCellUInt16(invheightColumnIdx, i);
             }
@@ -3953,18 +3973,18 @@ namespace d2ce
             itemType.inv_file = doc.GetCellString(invfileColumnIdx, i);
 
             strValue = doc.GetCellString(invTransColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_transform = doc.GetCellUInt16(invTransColumnIdx, i);
             }
 
             strValue = doc.GetCellString(gemsocketsColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 // has sockets
                 std::uint8_t maxSockets = std::uint8_t(doc.GetCellUInt16(gemsocketsColumnIdx, i));
                 strValue = doc.GetCellString(gemapplytypeColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     std::uint8_t gemApplyType = std::uint8_t(doc.GetCellUInt16(gemapplytypeColumnIdx, i));
                     switch (gemApplyType)
@@ -4054,7 +4074,7 @@ namespace d2ce
                     if (bAddType2Category)
                     {
                         strValue = doc.GetCellString(type2ColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             codes.push_back(strValue);
                         }
@@ -4077,7 +4097,7 @@ namespace d2ce
                 {
                     std::uint16_t beltIdx = 0;
                     strValue = doc.GetCellString(beltColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         beltIdx = doc.GetCellUInt16(beltColumnIdx, i);
                         if (beltIdx >= s_ItemBeltSlots.size())
@@ -4107,19 +4127,19 @@ namespace d2ce
             if (normcodeColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(normcodeColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     itemType.codes.push_back(strValue);
                     if (ubercodeColumnIdx >= 0)
                     {
                         strValue = doc.GetCellString(ubercodeColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             itemType.codes.push_back(strValue);
                             if (ultracodeColumnIdx >= 0)
                             {
                                 strValue = doc.GetCellString(ultracodeColumnIdx, i);
-                                if (!strValue.empty())
+                                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                                 {
                                     itemType.codes.push_back(strValue);
                                 }
@@ -4372,10 +4392,12 @@ namespace d2ce
             else if (LocalizationHelpers::GetStringTxtValue(strValue, name))
             {
                 itemType.name = name;
+                auto uText = utf8::utf8to16(name);
+                uText;
             }
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
                 if (itemType.version == 0)
@@ -4387,31 +4409,31 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(compactsaveColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.compactsave = doc.GetCellUInt16(compactsaveColumnIdx, i) != 0 ? true : false;
             }
 
             strValue = doc.GetCellString(typeColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 codes.push_back(strValue);
             }
 
             strValue = doc.GetCellString(stackableColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 std::uint32_t maxStackable = (itemType.code == "gld") ? MAX_GLD_QUANTITY : MAX_STACKED_QUANTITY;
                 if (doc.GetCellUInt16(stackableColumnIdx, i) != 0)
                 {
                     strValue = doc.GetCellString(minstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Min = std::min(doc.GetCellUInt32(minstackColumnIdx, i), maxStackable);
                     }
 
                     strValue = doc.GetCellString(maxstackColumnIdx, i);
-                    if (!strValue.empty())
+                    if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                     {
                         itemType.stackable.Max = std::max(itemType.stackable.Min, std::min(doc.GetCellUInt32(maxstackColumnIdx, i), maxStackable));
                     }
@@ -4424,48 +4446,48 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(levelColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.Quality = doc.GetCellUInt16(levelColumnIdx, i);
             }
 
             strValue = doc.GetCellString(levelreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.req.Level = doc.GetCellUInt16(levelreqColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invwidthColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Width = doc.GetCellUInt16(invwidthColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invheightColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.dimensions.Height = doc.GetCellUInt16(invheightColumnIdx, i);
             }
 
             strValue = doc.GetCellString(invfileColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_file = strValue;
             }
 
             strValue = doc.GetCellString(invTransColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_transform = doc.GetCellUInt16(invTransColumnIdx, i);
             }
 
             strValue = doc.GetCellString(gemsocketsColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 // has sockets
                 std::uint8_t maxSockets = std::uint8_t(doc.GetCellUInt16(gemsocketsColumnIdx, i));
                 strValue = doc.GetCellString(gemapplytypeColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     std::uint8_t gemApplyType = std::uint8_t(doc.GetCellUInt16(gemapplytypeColumnIdx, i));
                     switch (gemApplyType)
@@ -4555,7 +4577,7 @@ namespace d2ce
                     if (bAddType2Category)
                     {
                         strValue = doc.GetCellString(type2ColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             codes.push_back(strValue);
                         }
@@ -4621,13 +4643,13 @@ namespace d2ce
                     {
                         itemType.spellDesc.descFunc = std::uint8_t(doc.GetCellUInt16(spelldescColumnIdx, i));
                         strValue = doc.GetCellString(spelldescstrColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             LocalizationHelpers::GetStringTxtValue(strValue, itemType.spellDesc.desc);
                         }
 
                         strValue = doc.GetCellString(spelldesccalcColumnIdx, i);
-                        if (!strValue.empty())
+                        if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                         {
                             itemType.spellDesc.descCalc = doc.GetCellUInt64(spelldesccalcColumnIdx, i);
                         }
@@ -4898,13 +4920,13 @@ namespace d2ce
             itemType.category = type;
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
             }
 
             strValue = doc.GetCellString(plvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto level = doc.GetCellUInt16(plvlColumnIdx, i);
                 if (level > 1)
@@ -4914,7 +4936,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(ilvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto level = doc.GetCellUInt16(ilvlColumnIdx, i);
                 if (level > 1)
@@ -4958,19 +4980,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -5173,19 +5195,19 @@ namespace d2ce
                 mod.affix = itemType.code;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -5489,7 +5511,7 @@ namespace d2ce
             LocalizationHelpers::GetStringTxtValue(itemType.index, itemType.name);
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
             }
@@ -5501,19 +5523,19 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(levelColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.level = doc.GetCellUInt16(levelColumnIdx, i);
             }
 
             strValue = doc.GetCellString(maxlevelColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.maxLevel = doc.GetCellUInt16(maxlevelColumnIdx, i);
             }
 
             strValue = doc.GetCellString(levelreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.level.levelreq = doc.GetCellUInt16(levelreqColumnIdx, i);
             }
@@ -5522,13 +5544,13 @@ namespace d2ce
             itemType.classType.name = doc.GetCellString(classColumnIdx, i);
 
             strValue = doc.GetCellString(classlevelreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.classType.level = doc.GetCellUInt16(classlevelreqColumnIdx, i);
             }
 
             strValue = doc.GetCellString(groupColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.group = doc.GetCellUInt16(groupColumnIdx, i);
             }
@@ -5548,19 +5570,19 @@ namespace d2ce
                 mod.affix = itemType.code;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -5738,7 +5760,7 @@ namespace d2ce
             s_ItemRareIndex[itemType.index] = code;
             s_ItemRareNames[itemType.name] = code;
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
             }
@@ -6088,7 +6110,7 @@ namespace d2ce
             if (idColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(idColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     id = doc.GetCellUInt16(idColumnIdx, i);
                 }
@@ -6102,7 +6124,7 @@ namespace d2ce
             itemUniqueItemsIndex[itemType.index] = itemType.id;
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
             }
@@ -6123,7 +6145,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(lvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto level = doc.GetCellUInt16(lvlColumnIdx, i);
                 if (level > 1)
@@ -6133,7 +6155,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(lvlreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto reqLevel = doc.GetCellUInt16(lvlreqColumnIdx, i);
                 if (reqLevel > 1)
@@ -6143,7 +6165,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(invfileColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_file = strValue;
             }
@@ -6162,19 +6184,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -6403,7 +6425,7 @@ namespace d2ce
             itemSetsIndex[itemType.index] = itemType.id;
 
             strValue = doc.GetCellString(versionColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.version = doc.GetCellUInt16(versionColumnIdx, i);
             }
@@ -6446,19 +6468,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(pModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(pModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(pModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -6477,19 +6499,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(fModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(fModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(fModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -7555,7 +7577,7 @@ namespace d2ce
             if (idColumnIdx >= 0)
             {
                 strValue = doc.GetCellString(idColumnIdx, i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     id = doc.GetCellUInt16(idColumnIdx, i);
                 }
@@ -7598,7 +7620,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(lvlColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto level = doc.GetCellUInt16(lvlColumnIdx, i);
                 if (level > 1)
@@ -7616,7 +7638,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(lvlreqColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 auto reqLevel = doc.GetCellUInt16(lvlreqColumnIdx, i);
                 if (reqLevel > 1)
@@ -7626,7 +7648,7 @@ namespace d2ce
             }
 
             strValue = doc.GetCellString(invfileColumnIdx, i);
-            if (!strValue.empty())
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 itemType.inv_file = strValue;
             }
@@ -7646,19 +7668,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -7706,19 +7728,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(aModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(aModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(aModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -8466,19 +8488,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(weaponModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(weaponModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(weaponModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -8498,19 +8520,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(helmModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(helmModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(helmModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -8530,19 +8552,19 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(shieldModParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.param = strValue;
                 }
 
                 strValue = doc.GetCellString(shieldModMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(shieldModMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }
@@ -8896,7 +8918,7 @@ namespace d2ce
                     itemType.serverOnly = true;
                 }
             }
-            else if (!strValue.empty())
+            else if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
                 strValue = doc.GetCellString(lastLadderSeasonColumnIdx, i);
                 if (strValue.empty())
@@ -8971,7 +8993,7 @@ namespace d2ce
                 mod.code = strValue;
 
                 strValue = doc.GetCellString(modParam[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     auto c = strValue[0];
                     if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -8989,13 +9011,13 @@ namespace d2ce
                 }
 
                 strValue = doc.GetCellString(modMin[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.min = strValue;
                 }
 
                 strValue = doc.GetCellString(modMax[idx], i);
-                if (!strValue.empty())
+                if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
                 {
                     mod.max = strValue;
                 }

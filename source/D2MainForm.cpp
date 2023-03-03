@@ -3050,7 +3050,13 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
     }
 
     // return if open not successful
-    if (!CharInfo.open(filename, false))
+    bool ret = false;
+    {
+        CWaitCursor wait;
+        ret = CharInfo.open(filename, false);
+    }
+
+    if (!ret)
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())
@@ -3103,7 +3109,12 @@ void CD2MainForm::OpenFile(LPCTSTR filename)
         }
 
         // return if open not successful
-        if (!CharInfo.open(filename))
+        {
+            CWaitCursor wait;
+            ret = CharInfo.open(filename);
+        }
+
+        if (!ret)
         {
             errorMsg = CharInfo.getLastError().message().c_str();
             if (errorMsg.IsEmpty())
@@ -3687,7 +3698,13 @@ void CD2MainForm::OnViewRefresh()
         }
 
         // return if open not successful
-        if (!CharInfo.open(curPathName.GetString()))
+        bool ret = false;
+        {
+            CWaitCursor wait;
+            ret = CharInfo.open(curPathName.GetString());
+        }
+
+        if (!ret)
         {
             errorMsg = CharInfo.getLastError().message().c_str();
             if (errorMsg.IsEmpty())
@@ -4223,7 +4240,28 @@ void CD2MainForm::OnEnKillfocusCharDexterity()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
+    auto oldValue = cs.Dexterity;
     cs.Dexterity = std::min(ToInt(&CharDexterity), d2ce::MAX_BASICSTATS);
+    if (oldValue > cs.Dexterity)
+    {
+        Cs.StatsLeft += (oldValue - cs.Dexterity);
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
+    else if (cs.Dexterity > oldValue)
+    {
+        auto diff = cs.Dexterity - oldValue;
+        if (diff > Cs.StatsLeft)
+        {
+            Cs.StatsLeft = 0;
+        }
+        else
+        {
+            Cs.StatsLeft -= diff;
+        }
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4260,7 +4298,28 @@ void CD2MainForm::OnEnKillfocusCharEnergy()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
+    auto oldValue = cs.Energy;
     cs.Energy = std::min(ToInt(&CharEnergy), d2ce::MAX_BASICSTATS);
+    if (oldValue > cs.Energy)
+    {
+        Cs.StatsLeft += (oldValue - cs.Energy);
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
+    else if (cs.Energy > oldValue)
+    {
+        auto diff = cs.Energy - oldValue;
+        if (diff > Cs.StatsLeft)
+        {
+            Cs.StatsLeft = 0;
+        }
+        else
+        {
+            Cs.StatsLeft -= diff;
+        }
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4320,7 +4379,28 @@ void CD2MainForm::OnEnKillfocusCharStrength()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
+    auto oldValue = cs.Strength;
     cs.Strength = std::min(ToInt(&CharStrength), d2ce::MAX_BASICSTATS);
+    if (oldValue > cs.Strength)
+    {
+        Cs.StatsLeft += (oldValue - cs.Strength);
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
+    else if (cs.Strength > oldValue)
+    {
+        auto diff = cs.Strength - oldValue;
+        if (diff > Cs.StatsLeft)
+        {
+            Cs.StatsLeft = 0;
+        }
+        else
+        {
+            Cs.StatsLeft -= diff;
+        }
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4358,7 +4438,28 @@ void CD2MainForm::OnEnKillfocusCharVitality()
 {
     d2ce::CharStats cs;
     CharInfo.fillCharacterStats(cs);
+    auto oldValue = cs.Vitality;
     cs.Vitality = std::min(ToInt(&CharVitality), d2ce::MAX_BASICSTATS);
+    if (oldValue > cs.Vitality)
+    {
+        Cs.StatsLeft += (oldValue - cs.Vitality);
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
+    else if (cs.Vitality > oldValue)
+    {
+        auto diff = cs.Vitality - oldValue;
+        if (diff > Cs.StatsLeft)
+        {
+            Cs.StatsLeft = 0;
+        }
+        else
+        {
+            Cs.StatsLeft -= diff;
+        }
+        cs.StatsLeft = Cs.StatsLeft;
+        StatsLeftChanged = true;
+    }
     CharInfo.updateCharacterStats(cs);
     UpdateCharInfo();
 }
@@ -4807,7 +4908,13 @@ void CD2MainForm::OnOptionsRestoreChar()
     }
 
     // return if open not successful
-    if (!CharInfo.open(curPathName.GetString()))
+    bool ret = false;
+    {
+        CWaitCursor wait;
+        ret = CharInfo.open(curPathName.GetString());
+    }
+
+    if (!ret)
     {
         CString errorMsg(CharInfo.getLastError().message().c_str());
         if (errorMsg.IsEmpty())

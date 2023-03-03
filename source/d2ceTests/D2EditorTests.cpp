@@ -353,11 +353,7 @@ namespace D2EditorTests
 
     static std::string GetJsonText(const std::filesystem::path& path)
     {
-#ifdef _MSC_VER
         std::ifstream expectedFile(path, std::ios::binary);
-#else
-        std::ifstream expectedFile(path, std::ios::binary);
-#endif
         Assert::IsTrue(expectedFile.is_open() && expectedFile.good() && !expectedFile.eof()); // No fail, bad or EOF.
         std::string text((std::istreambuf_iterator<char>(expectedFile)), std::istreambuf_iterator<char>());
         return ConvertNewLines(text);

@@ -564,6 +564,7 @@ CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
     }
 
     // Fix up Skill Choices
+    auto oldSkillChoices = SkillChoices;
     EarnedSkillPoints = MainForm.getSkillPointsEarned();
     if (SkillsUsed >= EarnedSkillPoints)
     {
@@ -572,6 +573,11 @@ CD2SkillTreeForm::CD2SkillTreeForm(CD2MainForm& form)
     else
     {
         SkillChoices = EarnedSkillPoints - SkillsUsed;
+    }
+
+    if (oldSkillChoices != SkillChoices)
+    {
+        SkillsChanged = true;
     }
 }
 //---------------------------------------------------------------------------
@@ -1402,6 +1408,7 @@ void CD2SkillTreeForm::OnBnClickedSetAll()
     }
     CheckTab3Skills();
 
+    auto oldSkillChoices = SkillChoices;
     if (SkillsUsed >= EarnedSkillPoints)
     {
         SkillChoices = 0;
@@ -1409,6 +1416,11 @@ void CD2SkillTreeForm::OnBnClickedSetAll()
     else
     {
         SkillChoices = EarnedSkillPoints - SkillsUsed;
+    }
+
+    if (oldSkillChoices != SkillChoices)
+    {
+        SkillsChanged = true;
     }
     UpdateCaption();
 }

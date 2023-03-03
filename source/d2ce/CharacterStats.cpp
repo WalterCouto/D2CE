@@ -1172,6 +1172,7 @@ void d2ce::CharacterStats::updateSkillChoices(std::uint16_t skillPointsEarned)
             Cs.SkillChoices = std::min(earnedPoints - curPoints, MAX_SKILL_CHOICES);
         }
     }
+    updateDataBuffer();
 }
 //---------------------------------------------------------------------------
 void d2ce::CharacterStats::updateLifePointsEarned(std::uint16_t lifePointsEarned)

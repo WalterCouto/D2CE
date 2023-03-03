@@ -12551,8 +12551,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
             auto pos = temp.find("%d");
             if (pos != temp.npos)
             {
-                temp.insert(pos + 2, "\f");
-                temp.insert(pos, "\f");
+                temp.insert(pos + 2, "\xC3\xBF""c0");
+                temp.insert(pos, "\xC3\xBF""c0");
             }
         }
 
@@ -12611,8 +12611,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.find("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\f");
-                            temp.insert(pos, "\f");
+                            temp.insert(pos + 2, "\xC3\xBF""c0");
+                            temp.insert(pos, "\xC3\xBF""c0");
                         }
                     }
 
@@ -12621,8 +12621,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.rfind("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\f");
-                            temp.insert(pos, "\f");
+                            temp.insert(pos + 2, "\xC3\xBF""c0");
+                            temp.insert(pos, "\xC3\xBF""c0");
                         }
                     }
                 }
@@ -12639,8 +12639,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.rfind("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\f");
-                            temp.insert(pos, "\f");
+                            temp.insert(pos + 2, "\xC3\xBF""c0");
+                            temp.insert(pos, "\xC3\xBF""c0");
                         }
                     }
                 }
@@ -12668,8 +12668,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.find("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\f");
-                        temp.insert(pos, "\f");
+                        temp.insert(pos + 2, "\xC3\xBF""c0");
+                        temp.insert(pos, "\xC3\xBF""c0");
                     }
                 }
 
@@ -12678,8 +12678,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.rfind("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\f");
-                        temp.insert(pos, "\f");
+                        temp.insert(pos + 2, "\xC3\xBF""c0");
+                        temp.insert(pos, "\xC3\xBF""c0");
                     }
                 }
             }
@@ -12706,8 +12706,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.find("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\f");
-                        temp.insert(pos, "\f");
+                        temp.insert(pos + 2, "\xC3\xBF""c0");
+                        temp.insert(pos, "\xC3\xBF""c3");
                     }
                 }
 
@@ -12716,8 +12716,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.rfind("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\f");
-                        temp.insert(pos, "\f");
+                        temp.insert(pos + 2, "\xC3\xBF""c0");
+                        temp.insert(pos, "\xC3\xBF""c3");
                     }
                 }
             }
@@ -12806,10 +12806,14 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
 
             if (bAddColorChar && charClass != *itemClass)
             {
-                ss << "\b";  // red text
+                ss << "\xC3\xBF""c1";  // red text
+                ss << temp;
+                ss << "\xC3\xBF""c0";
             }
-
-            ss << temp;
+            else
+            {
+                ss << temp;
+            }
         }
     }
 
@@ -12831,11 +12835,17 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1f", temp, "Required Dexterity: %d");
+        temp = d2ce::LocalizationHelpers::string_format(temp, req.Dexterity);
         if (bAddColorChar && req.Dexterity > cs.Dexterity)
         {
-            temp.insert(0, "\b"); // red text
+            ss << "\xC3\xBF""c1";  // red text
+            ss << temp;
+            ss << "\xC3\xBF""c0";
         }
-        ss << d2ce::LocalizationHelpers::string_format(temp, req.Dexterity);
+        else
+        {
+            ss << temp;
+        }
     }
 
     if (req.Strength > 0)
@@ -12850,11 +12860,17 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1e", temp, "Required Strength: %d");
+        temp = d2ce::LocalizationHelpers::string_format(temp, req.Strength);
         if (bAddColorChar && req.Strength > cs.Strength)
         {
-            temp.insert(0, "\b"); // red text
+            ss << "\xC3\xBF""c1";  // red text
+            ss << temp;
+            ss << "\xC3\xBF""c0";
         }
-        ss << d2ce::LocalizationHelpers::string_format(temp, req.Strength);
+        else
+        {
+            ss << temp;
+        }
     }
 
     if (req.Level > 0)
@@ -12869,11 +12885,17 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         }
 
         LocalizationHelpers::GetStringTxtValue("ItemStats1p", temp, "Required Level: %d");
+        temp = d2ce::LocalizationHelpers::string_format(temp, req.Level);
         if (bAddColorChar && req.Level > cs.Level)
         {
-            temp.insert(0, "\b"); // red text
+            ss << "\xC3\xBF""c1";  // red text
+            ss << temp;
+            ss << "\xC3\xBF""c0";
         }
-        ss << d2ce::LocalizationHelpers::string_format(temp, req.Level);
+        else
+        {
+            ss << temp;
+        }
     }
 
     return ss.str();

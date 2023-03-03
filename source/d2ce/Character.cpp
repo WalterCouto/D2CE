@@ -29,6 +29,8 @@
 #include "helpers/ItemHelpers.h"
 #include <fstream>
 #include <utf8/utf8.h>
+#include <shlobj.h>
+#include <objbase.h>
 
 //---------------------------------------------------------------------------
 namespace d2ce
@@ -510,6 +512,26 @@ namespace d2ce
 
 #define read_uint64_bits(start,size) \
     ((*((std::uint64_t*) &data[(start) / 8]) >> ((start) & 7))& (((std::uint64_t)1 << (size)) - 1))
+
+
+    std::filesystem::path GetD2RGamesFolder()
+    {
+        PWSTR saveBasePath;
+        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_SavedGames, 0, nullptr, &saveBasePath)))
+        {
+            std::filesystem::path savePath(saveBasePath);
+            CoTaskMemFree(saveBasePath);
+
+            // Look for Ressurected path first
+            auto d2Path = savePath / "Diablo II Resurrected";
+            if (std::filesystem::exists(d2Path))
+            {
+                return d2Path;
+            }
+        }
+
+        return std::filesystem::path();
+    }
 }
 //---------------------------------------------------------------------------
 
@@ -1200,6 +1222,7 @@ void d2ce::Character::readBasicInfo(std::FILE* charFile)
     skipBytes(charFile, current_byte_offset, numBytes);
 
     Bs.Version = getVersion();
+    checkForD2RMod();
 
     // read in the remaining fixed number of bytes
     if (Bs.Version >= EnumCharVersion::v109)
@@ -3341,6 +3364,41 @@ std::string d2ce::Character::asJson(EnumCharVersion version, bool bSerializedFor
     builder["indentation"] = jsonIndentStr;
     builder["enableYAMLCompatibility"] = true;
     return Json::writeString(builder, root);
+}
+//---------------------------------------------------------------------------
+void d2ce::Character::checkForD2RMod()
+{
+    // D2R games folder
+    static auto d2rGamesFolder = GetD2RGamesFolder();
+    if (d2rGamesFolder.empty())
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    if (Bs.Version < EnumCharVersion::v100R)
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    // check if we are a sub path
+    if (m_d2sfilename.empty())
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    auto rel = std::filesystem::relative(m_d2sfilename.parent_path(), d2rGamesFolder);
+    if (rel.empty() || rel.native()[0] == '.')
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    // we are a subpath, get Mod name
+    auto modName = m_d2sfilename.parent_path().filename().u8string();
+    setTxtReader(getDefaultTxtReader(modName));
 }
 //---------------------------------------------------------------------------
 std::string d2ce::Character::asJson(bool bSerializedFormat, EnumCharSaveOp saveOp)
