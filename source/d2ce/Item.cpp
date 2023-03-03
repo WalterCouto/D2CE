@@ -12551,8 +12551,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
             auto pos = temp.find("%d");
             if (pos != temp.npos)
             {
-                temp.insert(pos + 2, "\xC3\xBF""c0");
-                temp.insert(pos, "\xC3\xBF""c0");
+                temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
             }
         }
 
@@ -12611,8 +12611,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.find("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\xC3\xBF""c0");
-                            temp.insert(pos, "\xC3\xBF""c0");
+                            temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                            temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                         }
                     }
 
@@ -12621,8 +12621,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.rfind("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\xC3\xBF""c0");
-                            temp.insert(pos, "\xC3\xBF""c0");
+                            temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                            temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                         }
                     }
                 }
@@ -12639,8 +12639,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                         auto pos = temp.rfind("%d");
                         if (pos != temp.npos)
                         {
-                            temp.insert(pos + 2, "\xC3\xBF""c0");
-                            temp.insert(pos, "\xC3\xBF""c0");
+                            temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                            temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                         }
                     }
                 }
@@ -12668,8 +12668,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.find("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\xC3\xBF""c0");
-                        temp.insert(pos, "\xC3\xBF""c0");
+                        temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                        temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                     }
                 }
 
@@ -12678,8 +12678,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.rfind("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\xC3\xBF""c0");
-                        temp.insert(pos, "\xC3\xBF""c0");
+                        temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                        temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                     }
                 }
             }
@@ -12706,8 +12706,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.find("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\xC3\xBF""c0");
-                        temp.insert(pos, "\xC3\xBF""c3");
+                        temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                        temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                     }
                 }
 
@@ -12716,8 +12716,8 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
                     auto pos = temp.rfind("%d");
                     if (pos != temp.npos)
                     {
-                        temp.insert(pos + 2, "\xC3\xBF""c0");
-                        temp.insert(pos, "\xC3\xBF""c3");
+                        temp.insert(pos + 2, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE));
+                        temp.insert(pos, ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::BLUE));
                     }
                 }
             }
@@ -12806,9 +12806,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
 
             if (bAddColorChar && charClass != *itemClass)
             {
-                ss << "\xC3\xBF""c1";  // red text
+                ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::RED);
                 ss << temp;
-                ss << "\xC3\xBF""c0";
+                ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE);
             }
             else
             {
@@ -12838,9 +12838,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         temp = d2ce::LocalizationHelpers::string_format(temp, req.Dexterity);
         if (bAddColorChar && req.Dexterity > cs.Dexterity)
         {
-            ss << "\xC3\xBF""c1";  // red text
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::RED);
             ss << temp;
-            ss << "\xC3\xBF""c0";
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE);
         }
         else
         {
@@ -12863,9 +12863,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         temp = d2ce::LocalizationHelpers::string_format(temp, req.Strength);
         if (bAddColorChar && req.Strength > cs.Strength)
         {
-            ss << "\xC3\xBF""c1";  // red text
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::RED);
             ss << temp;
-            ss << "\xC3\xBF""c0";
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE);
         }
         else
         {
@@ -12888,9 +12888,9 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         temp = d2ce::LocalizationHelpers::string_format(temp, req.Level);
         if (bAddColorChar && req.Level > cs.Level)
         {
-            ss << "\xC3\xBF""c1";  // red text
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::RED);
             ss << temp;
-            ss << "\xC3\xBF""c0";
+            ss << ColorHelpers::GetColorEscapeString(ColorHelpers::D2Colors::WHITE);
         }
         else
         {

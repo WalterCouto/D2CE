@@ -24,6 +24,7 @@
 #include "ItemConstants.h"
 #include "DataTypes.h"
 #include <json/json.h>
+#include <string>
 
 namespace d2ce
 {
@@ -269,6 +270,23 @@ namespace d2ce
         const std::string& CheckCharName(std::string& curName, d2ce::EnumItemVersion version);
         const std::vector<std::string> GetCharacterTitles(bool isFemale = false, bool isHardcore = false, bool isExpansion = true);
         const std::vector<std::string> GetCharacterTypes(bool isExpansion = true);
+    }
+    //---------------------------------------------------------------------------
+
+    namespace ColorHelpers
+    {
+        COLORREF GetColorFromChar(char code);
+        COLORREF GetColorFromChar(wchar_t code);
+        
+        // color codes as described in the text files
+        enum class D2Colors : char { WHITE = '0', RED = '1', GREEN = '2', BLUE = '3', UNIQUE = '4', GRAY = '5', CRAFTED = '8', RARE = '9' };
+        COLORREF GetColorFromChar(D2Colors code);
+        std::string GetColorEscapeString(D2Colors code); // UTF-8
+
+        std::wstring& RemoveColorFromText(std::wstring& coloredText);
+        std::wstring RemoveColorFromText(LPCWSTR coloredText);
+        std::string& RemoveColorFromText(std::string& coloredText); // UTF-8
+        std::string RemoveColorFromText(LPCSTR coloredText); // UTF-8
     }
     //---------------------------------------------------------------------------
 }

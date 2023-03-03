@@ -45,9 +45,9 @@ namespace
         // don't care about color
         if (coloredText.Find(_T("ÿc")) >= 0)
         {
-            static std::wregex re{ L"ÿc." };
-                coloredText = std::regex_replace(CStringW(coloredText).GetString(), re, L"").c_str();
+            coloredText = d2ce::ColorHelpers::RemoveColorFromText(coloredText.GetString()).c_str();
         }
+
         return coloredText;
     }
 

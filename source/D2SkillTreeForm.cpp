@@ -211,14 +211,10 @@ public:
             return __super::OnDrawLabel(pDC, rect, bCalcOnly);
         }
 
-        // color codes as described in the statdesc file
-        static const COLORREF colors[] = { RGB(255,255,255), RGB(255, 0, 0), RGB(0,255,0), RGB(94,94,255), RGB(148,128,100), RGB(117, 117, 117), RGB(255,255,255), RGB(255,255,255), RGB(255,128,0), RGB(255,255,0) };
-        enum { WHITE = 0, RED = 1, GREEN = 2, BLUE = 3, GOLD = 4, GRAY = 5, ORANGE = 8, YELLOW = 9 };
-
         const auto& skillInfo = d2ce::CharClassHelper::getSkillById(*CurrSkillId);
 
         // Get color of top text
-        COLORREF color = colors[GREEN];
+        COLORREF color = d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::GREEN);
         pDC->SetTextColor(color);
 
         std::u16string uText = utf8::utf8to16(skillInfo.name);
@@ -227,8 +223,8 @@ public:
         auto skipLineHeight = sizeText.cy;
 
         // Get color of description
-        auto colorDesc = (Enabled && (BasePoints > 0)) ? WHITE : RED;
-        color = colors[colorDesc];
+        auto colorDesc = (Enabled && (BasePoints > 0)) ? d2ce::ColorHelpers::D2Colors::WHITE : d2ce::ColorHelpers::D2Colors::RED;
+        color = d2ce::ColorHelpers::GetColorFromChar(colorDesc);
         pDC->SetTextColor(color);
 
         // long description

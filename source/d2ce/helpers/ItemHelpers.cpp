@@ -14528,3 +14528,116 @@ const std::vector<std::string> d2ce::LocalizationHelpers::GetCharacterTypes(bool
     return results;
 }
 //---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+COLORREF d2ce::ColorHelpers::GetColorFromChar(char code)
+{
+    static std::map<char, COLORREF> colorMap = {
+        { '0', RGB(255,255,255) }, // WHITE
+        { '=', RGB(255,255,255) }, // WHITE 2
+        { '1', RGB(255,  0,  0) }, // RED
+        { 'U', RGB(255,  0,  0) }, // RED 2
+        { '2', RGB(0,255,  0) }, // GREEN (SET)
+        { 'Q', RGB(0,255,  0) }, // GREEN 2
+        { 'C', RGB(0,255,  0) }, // GREEN 3
+        { '<', RGB(0,255,  0) }, // GREEN 4
+        { '3', RGB(94, 94,255) }, // BLUE (MAGIC)
+        { 'B', RGB(94, 94,255) }, // BLUE 2
+        { '4', RGB(148,128,100) }, // GOLD (UNIQUE)
+        { 'D', RGB(148,128,100) }, // GOLD 2
+        { '5', RGB(117,117,117) }, // GRAY
+        { 'K', RGB(117,117,117) }, // GRAY 2
+        { 'I', RGB(117,117,117) }, // GRAY 3
+        { '6', RGB(0,  0,  0) }, // BLACK (won't show) 
+        { 'M', RGB(0,  0,  0) }, // BLACK 2 (won't show) 
+        { '7', RGB(241,229,172) }, // LIGHT GOLD
+        { 'H', RGB(241,229,172) }, // LIGHT GOLD 2
+        { '8', RGB(255,128,  0) }, // ORANGE (CRAFTED)
+        { '@', RGB(255,128,  0) }, // ORANGE 2
+        { 'J', RGB(255,128,  0) }, // ORANGE 3
+        { 'L', RGB(255,128,  0) }, // ORANGE 4
+        { '9', RGB(255,255,  0) }, // YELLOW (RARE)
+        { 'R', RGB(255,255,  0) }, // YELLOW 2
+        { ';', RGB(128,  0,128) }, // PURPLE
+        { ':', RGB(0,100,  0) }, // DARK GREEN
+        { 'A', RGB(0,100,  0) }, // DARK GREEN 2
+        { 'N', RGB(22,226,245) }, // TURQUOISE
+        { 'T', RGB(135,206,235) }, // SKY BLUE
+        { 'F', RGB(173,216,230) }, // LIGHT BLUE
+        { 'P', RGB(173,216,230) }, // LIGHT BLUE 2
+        { 'G', RGB(255,182,193) }, // LIGHT PINK
+        { 'O', RGB(250,175,186) }, // PINK
+        { 'E', RGB(255,114,118) }, // LIGHT RED
+        { 'S', RGB(139,  0,  0) }, // DARK RED
+    };
+
+    auto iter = colorMap.find(code);
+    if (iter == colorMap.end())
+    {
+        return RGB(255, 255, 255); // WHITE
+    }
+
+    return iter->second;
+}
+//---------------------------------------------------------------------------
+COLORREF d2ce::ColorHelpers::GetColorFromChar(wchar_t code)
+{
+    return GetColorFromChar((char)code);
+}
+//---------------------------------------------------------------------------
+COLORREF d2ce::ColorHelpers::GetColorFromChar(D2Colors code)
+{
+    return GetColorFromChar(static_cast<std::underlying_type_t<D2Colors>>(code));
+}
+//---------------------------------------------------------------------------
+std::string d2ce::ColorHelpers::GetColorEscapeString(D2Colors code)
+{
+    std::stringstream ss;
+    ss << "\xC3\xBF" << "c" << static_cast<std::underlying_type_t<D2Colors>>(code);
+    return ss.str();
+}
+//---------------------------------------------------------------------------
+std::wstring& d2ce::ColorHelpers::RemoveColorFromText(std::wstring& coloredText)
+{
+    if (coloredText.find(L"ÿc") != std::wstring::npos)
+    {
+        static std::wregex re{ L"ÿc." };
+        coloredText = std::regex_replace(coloredText, re, L"");
+    }
+    
+    return coloredText;
+}
+//---------------------------------------------------------------------------
+std::wstring d2ce::ColorHelpers::RemoveColorFromText(LPCWSTR coloredText)
+{
+    if (coloredText == nullptr)
+    {
+        return std::wstring();
+    }
+
+    std::wstring ret(coloredText);
+    return RemoveColorFromText(ret);
+}
+//---------------------------------------------------------------------------
+std::string& d2ce::ColorHelpers::RemoveColorFromText(std::string& coloredText) // UTF-8
+{
+    if (coloredText.find("\xC3\xBF""c") != std::wstring::npos)
+    {
+        static std::regex re{ "\xC3\xBF""c." };
+        coloredText = std::regex_replace(coloredText, re, "");
+    }
+
+    return coloredText;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::ColorHelpers::RemoveColorFromText(LPCSTR coloredText)
+{
+    if (coloredText == nullptr)
+    {
+        return std::string();
+    }
+
+    std::string ret(coloredText);
+    return RemoveColorFromText(ret);
+}
+//---------------------------------------------------------------------------
