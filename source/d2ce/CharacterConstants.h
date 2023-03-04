@@ -118,6 +118,7 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetPlayerClassTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetExperienceTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetHirelingTxt() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetItemsCodeTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetItemStatCostTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetItemTypesTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetPropertiesTxt() const = 0;
@@ -137,6 +138,7 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetSkillsTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSkillDescTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetMonStatsTxt() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetMonTypeTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSuperiorModsTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetCraftModsTxt() const = 0;
         virtual std::string GetModName() const = 0;

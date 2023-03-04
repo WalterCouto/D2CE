@@ -170,8 +170,9 @@ namespace d2ce
         template<typename ... Args>
         std::string string_formatDiablo(const std::string& format, Args ... args)
         {
+            static constexpr size_t num_args = sizeof...(args);
             std::string result = format;
-            if (sizeof...(args) == 0)
+            if constexpr(num_args == 0)
             {
                 return format;
             }
@@ -211,7 +212,8 @@ namespace d2ce
         template <typename... Args>
         std::string string_posformat(const std::string& format, Args&&... args)
         {
-            if (sizeof...(args) == 0)
+            static constexpr size_t num_args = sizeof...(args);
+            if constexpr (num_args == 0)
             {
                 return format;
             }
@@ -291,4 +293,3 @@ namespace d2ce
     //---------------------------------------------------------------------------
 }
 //---------------------------------------------------------------------------
-

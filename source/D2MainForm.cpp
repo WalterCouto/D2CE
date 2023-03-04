@@ -5674,11 +5674,29 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
         bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
         return bitmap.GetSafeHandle() == NULL ? false : true;
     }
-    else if (!baseInvFile.IsEmpty())
+
+    if (!baseInvFile.IsEmpty())
     {
         std::stringstream ss;
         ss << "^[\\s]*#define\\s+IDB_";
         ss << baseInvFile.MakeUpper().GetString();
+        ss << "\\s+([0-9]+)\\s*$";
+        std::regex regexDefineBase(ss.str(), std::regex::ECMAScript | std::regex::icase);
+        if (std::regex_search(pStr, m, regexDefineBase))
+        {
+            bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+            return bitmap.GetSafeHandle() == NULL ? false : true;
+        }
+    }
+
+    // try our best to get base type image
+    const auto& helper = item.getItemTypeHelper();
+    if (!helper.codes.empty())
+    {
+        CStringA base = helper.codes.front().c_str();
+        std::stringstream ss;
+        ss << "^[\\s]*#define\\s+IDB_INV";
+        ss << base.MakeUpper().GetString();
         ss << "\\s+([0-9]+)\\s*$";
         std::regex regexDefineBase(ss.str(), std::regex::ECMAScript | std::regex::icase);
         if (std::regex_search(pStr, m, regexDefineBase))

@@ -2793,14 +2793,10 @@ namespace d2ce
             return;
         }
 
-        SSIZE_T doneColumnIdx = doc.GetColumnIdx("*Enabled");
+        SSIZE_T doneColumnIdx = doc.GetColumnIdx("*Enabled"); // not required
         if (doneColumnIdx < 0)
         {
             doneColumnIdx = doc.GetColumnIdx("*done"); // support the alternate version of this file format
-            if (doneColumnIdx < 0)
-            {
-                return;
-            };
         }
 
         const size_t paramSize = 7;
@@ -2857,10 +2853,13 @@ namespace d2ce
             itemProp.code = strValue;
             itemProp.version = version;
 
-            strValue = doc.GetCellString(doneColumnIdx, i);
-            if (!strValue.empty() && strValue != "0")
+            if (doneColumnIdx >= 0)
             {
-                itemProp.active = true;
+                strValue = doc.GetCellString(doneColumnIdx, i);
+                if (!strValue.empty() && strValue != "0")
+                {
+                    itemProp.active = true;
+                }
             }
 
             for (size_t idx = 0; idx < paramSize; ++idx)
@@ -2948,6 +2947,10 @@ namespace d2ce
                 }
 
                 itemProp.parameters.push_back(params);
+                if ((idx == 0) && (doneColumnIdx < 0))
+                {
+                    itemProp.active = true;
+                }
             }
         }
 
@@ -3840,6 +3843,12 @@ namespace d2ce
             auto& itemType = itemArmorType[code];
             itemType.code = code;
             itemType.name = doc.GetCellString(nameColumnIdx, i);
+            if (itemType.name.empty())
+            {
+                // should not happen
+                itemType.name = code;
+            }
+
             strValue = doc.GetCellString(namestrColumnIdx, i);
             if (strValue.empty())
             {
@@ -4392,8 +4401,6 @@ namespace d2ce
             else if (LocalizationHelpers::GetStringTxtValue(strValue, name))
             {
                 itemType.name = name;
-                auto uText = utf8::utf8to16(name);
-                uText;
             }
 
             strValue = doc.GetCellString(versionColumnIdx, i);

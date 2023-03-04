@@ -67,6 +67,63 @@
     <Filter Include="examples\char\99">
       <UniqueIdentifier>{9037db8b-164d-4e1a-b5af-c84e6b90e5d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\StormLib">
+      <UniqueIdentifier>{29fbba60-e4f9-460f-b161-e32b40342e8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib">
+      <UniqueIdentifier>{1d939171-a968-47a2-a5cb-bd743c80ee08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\adpcm">
+      <UniqueIdentifier>{821e2065-6b91-4fe3-bc1e-84383e66ce7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\zlib">
+      <UniqueIdentifier>{cdb0b68c-62d4-4db9-8bce-05187286d709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\sparse">
+      <UniqueIdentifier>{e206ab1b-ea0a-4404-8c32-59513ea7b227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\pklib">
+      <UniqueIdentifier>{968c34eb-3c0e-443b-a956-a39290a87034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\lzma">
+      <UniqueIdentifier>{121f5b3a-cdd7-4790-9a1b-7a90a57fb001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\jenkins">
+      <UniqueIdentifier>{9d4f3309-61d2-477e-9f7e-4127aa1d78cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\huffman">
+      <UniqueIdentifier>{0a8a0a39-5eb1-4b26-b8d8-a31fa4ddf047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StormLib\bzip2">
+      <UniqueIdentifier>{31be4647-86b5-426b-9956-763e7e1842ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\adpcm">
+      <UniqueIdentifier>{734ad123-d1ba-45cc-b94e-9bbccf59a60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\bzip2">
+      <UniqueIdentifier>{196122d7-1603-48f7-b349-45eb396c574d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\huffman">
+      <UniqueIdentifier>{8a3abf1a-b3f9-455e-afa0-fbe9da53b423}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\jenkins">
+      <UniqueIdentifier>{8f3811a0-766f-46f3-83fd-bc9adf883b00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\lzma">
+      <UniqueIdentifier>{7fa85383-d39c-4cee-84dd-cc7b5264e1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\zlib">
+      <UniqueIdentifier>{d0093fa3-8d0b-44e5-9fa4-b0a5f536af2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\sparse">
+      <UniqueIdentifier>{7fa3d8c5-5607-4eeb-8b77-7e47a5c2cab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\pklib">
+      <UniqueIdentifier>{2f8e94ba-0929-4de3-9014-eaa7d82af726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StormLib\Doc Files">
+      <UniqueIdentifier>{4d3fc10d-69da-4917-9834-29a7598a3fd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2EditorTests.cpp">
@@ -216,6 +273,162 @@
     <ClCompile Include="..\d2ce\helpers\CraftItemsTxt.cpp">
       <Filter>Source Files\d2ce\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\FileStream.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\LibTomCrypt.c">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\LibTomMath.c">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\LibTomMathDesc.c">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SBaseCommon.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SBaseFileTable.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SBaseSubTypes.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SCompression.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileAddFile.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileAttributes.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileCompactArchive.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileCreateArchive.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileExtractFile.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileFindFile.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileGetFileInfo.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileListFile.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileOpenArchive.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileOpenFileEx.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFilePatchArchives.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileReadFile.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\SFileVerify.cpp">
+      <Filter>Source Files\StormLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\adpcm\adpcm.cpp">
+      <Filter>Source Files\StormLib\adpcm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\blocksort.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\bzlib.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\compress.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\crctable.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\decompress.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\huffman.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\bzip2\randtable.c">
+      <Filter>Source Files\StormLib\bzip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\huffman\huff.cpp">
+      <Filter>Source Files\StormLib\huffman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\jenkins\lookup3.c">
+      <Filter>Source Files\StormLib\jenkins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzFind.c">
+      <Filter>Source Files\StormLib\lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzFindMt.c">
+      <Filter>Source Files\StormLib\lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzmaDec.c">
+      <Filter>Source Files\StormLib\lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzmaEnc.c">
+      <Filter>Source Files\StormLib\lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\lzma\C\Threads.c">
+      <Filter>Source Files\StormLib\lzma</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\pklib\explode.c">
+      <Filter>Source Files\StormLib\pklib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\pklib\implode.c">
+      <Filter>Source Files\StormLib\pklib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\sparse\sparse.cpp">
+      <Filter>Source Files\StormLib\sparse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\adler32.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\compress_zlib.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\crc32.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\deflate.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\inffast.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\inflate.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\inftrees.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\trees.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\thirdparty\StormLib\src\zlib\zutil.c">
+      <Filter>Source Files\StormLib\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\helpers\BodyLocsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\helpers\MonTypeTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\helpers\NPCsJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\d2ce\helpers\ItemsCode.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -328,6 +541,90 @@
     </ClInclude>
     <ClInclude Include="..\d2ce\helpers\ItemHelpers.h">
       <Filter>Header Files\d2ce\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\FileStream.h">
+      <Filter>Header Files\StormLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\StormCommon.h">
+      <Filter>Header Files\StormLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\StormLib.h">
+      <Filter>Header Files\StormLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\adpcm\adpcm.h">
+      <Filter>Header Files\StormLib\adpcm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\bzip2\bzlib.h">
+      <Filter>Header Files\StormLib\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\bzip2\bzlib_private.h">
+      <Filter>Header Files\StormLib\bzip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\huffman\huff.h">
+      <Filter>Header Files\StormLib\huffman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\jenkins\lookup.h">
+      <Filter>Header Files\StormLib\jenkins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzFind.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzFindMt.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzHash.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzmaDec.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\LzmaEnc.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\Threads.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\lzma\C\Types.h">
+      <Filter>Header Files\StormLib\lzma</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\pklib\pklib.h">
+      <Filter>Header Files\StormLib\pklib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\sparse\sparse.h">
+      <Filter>Header Files\StormLib\sparse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\crc32.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\deflate.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\gzguts.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\inffast.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\inffixed.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\inflate.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\inftrees.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\trees.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\zconf.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\zutil.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d2ce\thirdparty\StormLib\src\zlib\zlib.h">
+      <Filter>Header Files\StormLib\zlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -765,5 +1062,19 @@
     <None Include="..\d2ce\thirdparty\utf8\include\utf8\LICENSE">
       <Filter>Header Files\utf8</Filter>
     </None>
+    <None Include="..\d2ce\thirdparty\StormLib\LICENSE">
+      <Filter>Header Files\StormLib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\d2ce\thirdparty\StormLib\doc\History.txt">
+      <Filter>Header Files\StormLib\Doc Files</Filter>
+    </Text>
+    <Text Include="..\d2ce\thirdparty\StormLib\doc\The MoPaQ File Format 0.9.txt">
+      <Filter>Header Files\StormLib\Doc Files</Filter>
+    </Text>
+    <Text Include="..\d2ce\thirdparty\StormLib\doc\The MoPaQ File Format 1.0.txt">
+      <Filter>Header Files\StormLib\Doc Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
