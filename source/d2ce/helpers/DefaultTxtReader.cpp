@@ -1622,15 +1622,37 @@ namespace d2ce
             {
                 auto pDoc = LoadTxtStream(GetItemsCode());
                 std::uint32_t numRows = std::uint32_t(pDoc->GetRowCount());
+                const SSIZE_T offsetColumnIdx = pDoc->GetColumnIdx("offset");
+                if (offsetColumnIdx < 0)
+                {
+                    return;
+                }
+
                 const SSIZE_T codeColumnIdx = pDoc->GetColumnIdx("code");
                 if (codeColumnIdx < 0)
                 {
                     return;
                 }
 
+                std::string strValue;
+                std::uint32_t offset = 0;
                 for (std::uint32_t i = 0; i < numRows; ++i)
                 {
-                    calcExpressionMap[i] = pDoc->GetCellString(codeColumnIdx, i);
+                    strValue = pDoc->GetCellString(offsetColumnIdx, i);
+                    if (strValue.empty())
+                    {
+                        // skip
+                        continue;
+                    }
+
+                    offset = pDoc->GetCellUInt32(offsetColumnIdx, i);
+                    strValue = pDoc->GetCellString(codeColumnIdx, i);
+                    if (strValue.empty())
+                    {
+                        // skip
+                        continue;
+                    }
+                    calcExpressionMap[offset] = strValue;
                 }
             }
         }
@@ -2000,7 +2022,7 @@ namespace d2ce
                 std::string strValue;
                 for (std::uint32_t i = 0; i < numRows; ++i)
                 {
-                    strValue = pDoc->GetCellString(codeColumnIdx, i);;
+                    strValue = pDoc->GetCellString(codeColumnIdx, i);
                     if (strValue == "Expansion")
                     {
                         // skip
@@ -2042,7 +2064,7 @@ namespace d2ce
                 std::string strValue;
                 for (std::uint32_t i = 0; i < numRows; ++i)
                 {
-                    strValue = pDoc->GetCellString(codeColumnIdx, i);;
+                    strValue = pDoc->GetCellString(codeColumnIdx, i);
                     if (strValue == "Expansion")
                     {
                         // skip
@@ -2832,15 +2854,22 @@ namespace d2ce
         }
 
         std::stringstream ss;
-        ss << "code\n";
+        ss << "offset\tcode\n";
 
         auto data = bin.c_str();
         auto length = bin.length();
+        auto origLen = length;
+        size_t offset = MAXSIZE_T;
         std::stack<std::variant<std::uint8_t, std::uint16_t, std::uint32_t, std::string>> stack;
         std::variant<std::uint8_t, std::uint16_t, std::uint32_t, std::string> value;
         std::uint8_t operatorCode = 0;
         while (length > 0)
         {
+            if (offset == MAXSIZE_T)
+            {
+                offset = origLen - length;
+            }
+
             operatorCode = data[0];
             ++data;
             --length;
@@ -2895,12 +2924,14 @@ namespace d2ce
                 {
                     return std::string();
                 }
+                ss << offset << "\t";
                 ss << processExpressionStack(stack) << "\n";
                 if (length == 1 && data[0] == 0)
                 {
                     // we are at the end
                     length = 0;
                 }
+                offset = MAXSIZE_T;
                 break;
 
             case 0x01:
@@ -3067,19 +3098,18 @@ namespace d2ce
         static std::function<std::string(std::uint32_t, const D2RModReaderHelper&, size_t)> calcExpression = std::function<std::string(std::uint32_t, const D2RModReaderHelper&, size_t)>(D2RBinReader::processCalcExpression);
         static std::function<bool(const std::string&, size_t)> isExpansionRow = std::function<bool(const std::string&, size_t)>(D2RBinReader::isExpansionVersion);
 
-        size_t versionTestCol = 12;
+        size_t versionTestCol = 17;
         auto data = bin.c_str();
         auto length = bin.length();
-        static std::vector<D2RFormatDescriptor::D2RExcelFormat> format = { {"name", 4, false, true, nullptr, nullptr, &itemNameFunc}, {"compactsave", 32}, {"version", versionTestCol}, {"level", 13}, {"levelreq", 30},
-            {"reqstr", 16}, {"reqdex", 17}, {"durability", 20}, {"nodurability", 21},  {"code", 4}, {"alternategfx", 5}, {"namestr", 4, false, true},  {"invwidth", 18}, {"invheight", 19}, {"gemsockets", 28},
-            {"gemapplytype", 29}, {"flippyfile", 0}, {"invfile", 1}, {"uniqueinvfile", 2}, {"setinvfile", 3}, {"type", 22, true, false, nullptr, &typeFunc}, {"type2", 23, true, false, nullptr, &typeFunc}, {"unique", 24},
-            {"belt", 26}, {"stackable", 27}, {"minstack", 10}, {"maxstack", 11}, {"quest", 25, true}, {"stat1", 6, true, false, nullptr, &statNameFunc}, {"spelldesc", 7, true},
-            {"spelldescstr", 8, true, false, nullptr, &stringResourceFiltered}, {"spelldesccalc", 9, true, false, nullptr, &calcExpression}, {"mindam", 14, true}, {"maxdam", 15, true}, {"InvTrans", 31},
-            {"SkipName", 33, true}, {"Nameable", 34, true}
+        static std::vector<D2RFormatDescriptor::D2RExcelFormat> format = { {"name", 4, false, true, nullptr, nullptr, &itemNameFunc}, {"compactsave", 37}, {"version", versionTestCol}, {"level", 18}, {"levelreq", 35},
+            {"reqstr", 21}, {"reqdex", 22}, {"durability", 25}, {"nodurability", 26},  {"code", 4}, {"alternategfx", 5}, {"namestr", 4, false, true},  {"invwidth", 23}, {"invheight", 24}, {"gemsockets", 33},
+            {"gemapplytype", 34}, {"flippyfile", 0}, {"invfile", 1}, {"uniqueinvfile", 2}, {"setinvfile", 3}, {"type", 27, true, false, nullptr, &typeFunc}, {"type2", 28, true, false, nullptr, &typeFunc}, {"unique", 29},
+            {"belt", 31}, {"stackable", 32}, {"minstack", 15}, {"maxstack", 16}, {"quest", 30, true}, {"stat1", 6, true, false, nullptr, &statNameFunc}, {"calc1", 9, true, false, nullptr, &calcExpression},
+            {"stat2", 7, true, false, nullptr, &statNameFunc}, {"calc2", 10, true, false, nullptr,& calcExpression}, {"stat3", 8, true, false, nullptr, &statNameFunc}, {"calc3", 11, true, false, nullptr, &calcExpression},
+            {"spelldesc", 12, true}, {"spelldescstr", 13, true, false, nullptr, &stringResourceFiltered}, {"spelldesccalc", 14, true, false, nullptr, &calcExpression}, {"mindam", 19, true}, {"maxdam", 20, true},
+            {"InvTrans", 36}, {"SkipName", 38, true}, {"Nameable", 39, true}
         };
-        //                                                                 11   1  111   1111  22   22  22  2
-        //                               0  1  2  3  4    5    6   78  9   01   2  345   6789  01   23  45  6
-        static D2RFormatDescriptor desc("a32a32a32a32a4x12a4x10wx20wwx4ux44uux10bx6bbbx10wwbbx1bbx11bbx9bbx5bx1bx5bx5bbx2bbbbx102", format, versionTestCol);
+        static D2RFormatDescriptor desc("a32a32a32a32a4x12a4x10wwwuuux4wwx4ux44uux10bx6bbbx10wwbbx1bbx11bbx9bbx5bx1bx5bx5bbx2bbbbx102", format, versionTestCol);
         return processBin(data, length, desc, parent, &isExpansionRow);
     }
 
