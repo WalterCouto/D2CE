@@ -5706,6 +5706,16 @@ bool CD2MainForm::getItemBitmap(const d2ce::Item& item, CBitmap& bitmap) const
         }
     }
 
+    // just load a dummy
+    {
+        std::regex regexDefineBase("^[\\s]*#define\\s+IDB_INVSOL\\s+([0-9]+)\\s*$", std::regex::ECMAScript | std::regex::icase);
+        if (std::regex_search(pStr, m, regexDefineBase))
+        {
+            bitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(atoi(m[1].str().c_str()))));
+            return bitmap.GetSafeHandle() == NULL ? false : true;
+        }
+    }
+
     return false;
 }
 //---------------------------------------------------------------------------
