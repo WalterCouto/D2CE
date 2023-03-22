@@ -281,7 +281,7 @@ namespace d2ce
         COLORREF GetColorFromChar(wchar_t code);
         
         // color codes as described in the text files
-        enum class D2Colors : char { WHITE = '0', RED = '1', GREEN = '2', BLUE = '3', UNIQUE = '4', GRAY = '5', CRAFTED = '8', RARE = '9' };
+        enum class D2Colors : char { WHITE = '0', RED = '1', GREEN = '2', BLUE = '3', UNIQUE = '4', GRAY = '5', CRAFTED = '8', RARE = '9', TEMPERED = ':' };
         COLORREF GetColorFromChar(D2Colors code);
         std::string GetColorEscapeString(D2Colors code); // UTF-8
 

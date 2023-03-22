@@ -263,8 +263,11 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
             break;
 
         case d2ce::EnumItemQuality::CRAFTED:
-        case d2ce::EnumItemQuality::TEMPERED:
             color = d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::CRAFTED);
+            break;
+
+        case d2ce::EnumItemQuality::TEMPERED:
+            color = d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::TEMPERED);
             break;
         }
     }
