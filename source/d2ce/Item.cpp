@@ -22550,36 +22550,7 @@ bool d2ce::Items::getItemLocationDimensions(EnumItemLocation locationId, EnumAlt
     switch (locationId)
     {
     case EnumItemLocation::STORED:
-        switch (altPositionId)
-        {
-        case EnumAltItemLocation::INVENTORY:
-            // Inventory is a 10 x 4 grid
-            dimensions.Width = dimensions.InvWidth = 10;
-            dimensions.Height = dimensions.InvHeight = 4;
-            return true;
-
-        case EnumAltItemLocation::STASH:
-            if ((Version < d2ce::EnumItemVersion::v100R) || !isExpansionItems())
-            {
-                // STASH is a 6 x 4/8 grid
-                dimensions.Width = dimensions.InvWidth = 6;
-                dimensions.Height = dimensions.InvHeight = !isExpansionItems() ? 4 : 8;
-            }
-            else
-            {
-                // STASH is at most a 10 x 10 grid
-                dimensions.Width = dimensions.InvWidth = 10;
-                dimensions.Height = dimensions.InvHeight = 10;
-            }
-            return true;
-
-        case EnumAltItemLocation::HORADRIC_CUBE:
-            // HORADRIC CUBE is a 3 x 4 grid
-            dimensions.Width = dimensions.InvWidth = 3;
-            dimensions.Height = dimensions.InvHeight = 4;
-            return true;
-        }
-        break;
+        return InventoryGridHelpers::GetSize(altPositionId, dimensions, ConvertItemVersion(Version), isExpansionItems());
 
     case EnumItemLocation::BELT:
         dimensions.Width = dimensions.InvWidth = 4;

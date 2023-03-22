@@ -291,5 +291,11 @@ namespace d2ce
         std::string RemoveColorFromText(LPCSTR coloredText); // UTF-8
     }
     //---------------------------------------------------------------------------
+
+    namespace InventoryGridHelpers
+    {
+        bool GetSize(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions, d2ce::EnumCharVersion version, bool isExpansion = true);
+    }
+    //---------------------------------------------------------------------------
 }
 //---------------------------------------------------------------------------

@@ -8585,7 +8585,6 @@ namespace d2ce
         s_ItemGemsType.swap(itemGemsType);
     }
 
-
     struct MonStatsType
     {
         std::string index;     // The ID pointer that is referenced by the game in levels.txt, monstat2.txt and superuniques.txt
@@ -9131,11 +9130,196 @@ namespace d2ce
         s_ItemNumRunesRunewordsMap.swap(itemNumRunesRunewordsMap);
     }
 
+    struct ItemGridDimensionsUnit
+    {
+        d2ce::ItemDimensions inventory;
+        d2ce::ItemDimensions stash;
+        d2ce::ItemDimensions cube;
+    }; 
+    
+    struct ItemGridDimensions
+    {
+        ItemGridDimensions()
+        {
+            clear();
+        }
+
+        ItemGridDimensionsUnit original;     // size for non-expansion characters
+        ItemGridDimensionsUnit expansion;    // size for expansion characters
+        ItemGridDimensionsUnit d2r;          // size for expansion characters of D2R
+
+        void clear()
+        {
+            // Inventory is a 10 x 4 grid
+            original.inventory.Width = original.inventory.InvWidth = 10;
+            original.inventory.Height = original.inventory.InvHeight = 4;
+
+            // STASH is a 6 x 4 grid
+            original.stash.Width = original.stash.InvWidth = 6;
+            original.stash.Height = original.stash.InvHeight = 4;
+
+            // HORADRIC CUBE is a 3 x 4 grid
+            original.cube.Width = original.cube.InvWidth = 3;
+            original.cube.Height = original.cube.InvHeight = 4;
+
+            // Inventory is a 10 x 4 grid
+            expansion.inventory.Width = expansion.inventory.InvWidth = 10;
+            expansion.inventory.Height = expansion.inventory.InvHeight = 4;
+
+            // STASH is a 6 x 8 grid
+            expansion.stash.Width = expansion.stash.InvWidth = 6;
+            expansion.stash.Height = expansion.stash.InvHeight = 8;
+
+            // HORADRIC CUBE is a 3 x 4 grid
+            expansion.cube.Width = expansion.cube.InvWidth = 3;
+            expansion.cube.Height = expansion.cube.InvHeight = 4;
+
+            d2r = expansion;
+
+            // STASH is a 10 x 10 grid
+            d2r.stash.Width = d2r.stash.InvWidth = 10;
+            d2r.stash.Height = d2r.stash.InvHeight = 10;
+        }
+    };
+
+    ItemGridDimensions s_ItemGridDimensions;
+    void InitItemGridDimensions(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (pCurTextReader == &txtReader)
+        {
+            // already initialized
+            return;
+        }
+
+        s_ItemGridDimensions.clear();
+
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetGridDimensionsTxt());
+        auto& doc = *pDoc;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T nameColumnIdx = doc.GetColumnIdx("name");
+        if (nameColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T versionColumnIdx = doc.GetColumnIdx("version");
+        if (versionColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T xColumnIdx = doc.GetColumnIdx("X");
+        if (xColumnIdx < 0)
+        {
+            return;
+        }
+
+        const SSIZE_T yColumnIdx = doc.GetColumnIdx("Y");
+        if (yColumnIdx < 0)
+        {
+            return;
+        }
+
+        std::string strValue;
+        std::uint16_t version;
+        d2ce::ItemGridDimensionsUnit* pDimensionUnit = nullptr;
+        d2ce::ItemDimensions* pDimension = nullptr;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            version = 0;
+            strValue = doc.GetCellString(versionColumnIdx, i);
+            if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
+            {
+                version = doc.GetCellUInt16(versionColumnIdx, i);
+            }
+
+            pDimensionUnit = nullptr;
+            switch (version)
+            {
+            case 0:
+                pDimensionUnit = &(s_ItemGridDimensions.original);
+                break;
+
+            case 5:
+                pDimensionUnit = &(s_ItemGridDimensions.d2r);
+                break;
+
+            case 100:
+                pDimensionUnit = &(s_ItemGridDimensions.expansion);
+                break;
+            }
+
+            if (pDimensionUnit == nullptr)
+            {
+                // skip
+                continue;
+            }
+
+            pDimension = nullptr;
+            strValue = doc.GetCellString(nameColumnIdx, i);
+            if (strValue == "Stash")
+            {
+                pDimension = &(pDimensionUnit->stash);
+            }
+            else if (strValue == "Inventory")
+            {
+                pDimension = &(pDimensionUnit->inventory);
+            }
+            else if (strValue == "Horadric Cube")
+            {
+                pDimension = &(pDimensionUnit->cube);
+            }
+
+            if (pDimension == nullptr)
+            {
+                // skip
+                continue;
+            }
+
+            // must have non empty values for both X and Y
+            strValue = doc.GetCellString(xColumnIdx, i);
+            if (strValue.empty() || std::all_of(strValue.begin(), strValue.end(), isspace))
+            {
+                // skip
+                continue;
+            }
+
+            strValue = doc.GetCellString(yColumnIdx, i);
+            if (strValue.empty() || std::all_of(strValue.begin(), strValue.end(), isspace))
+            {
+                // skip
+                continue;
+            }
+
+            pDimension->Width = pDimension->InvWidth = doc.GetCellUInt16(xColumnIdx, i);
+            pDimension->Height = pDimension->InvHeight = doc.GetCellUInt16(yColumnIdx, i);
+        }
+    }
+
+    const ItemGridDimensionsUnit& GetGridDimensions(d2ce::EnumCharVersion version, bool isExpansion)
+    {
+        if (version < d2ce::EnumCharVersion::v100R || !isExpansion)
+        {
+            if (!isExpansion)
+            {
+                return  s_ItemGridDimensions.original;
+            }
+
+            return s_ItemGridDimensions.expansion;
+        }
+
+        return s_ItemGridDimensions.d2r;
+    }
+    
+
     void InitItemData(const ITxtReader& txtReader)
     {
         InitItemStatsData(txtReader);
         InitItemRarePrefixData(txtReader);
         InitItemGemsTypeData(txtReader);
+        InitItemGridDimensions(txtReader);
     }
 
     const std::map<std::string, std::uint8_t> huffmanDecodeMap = {
@@ -14540,33 +14724,33 @@ const std::vector<std::string> d2ce::LocalizationHelpers::GetCharacterTypes(bool
 COLORREF d2ce::ColorHelpers::GetColorFromChar(char code)
 {
     static std::map<char, COLORREF> colorMap = {
-        { '0', RGB(240,240,240) }, // WHITE
+        { '0', RGB(255,255,255) }, // WHITE
         { '=', RGB(240,240,240) }, // WHITE 2
-        { '1', RGB(252, 70, 70) }, // RED
+        { '1', RGB(255, 77, 77) }, // RED
         { 'U', RGB(252, 70, 70) }, // RED 2
-        { '2', RGB(  0,252,  0) }, // GREEN (SET)
+        { '2', RGB(  0,255,  0) }, // GREEN (SET)
         { 'Q', RGB(  0,252,  0) }, // GREEN 2
         { 'C', RGB(  0,252,  0) }, // GREEN 3
-        { '<', RGB(  0,252,  0) }, // GREEN 4
+        { '<', RGB( 79,194, 56) }, // GREEN 4
         { '3', RGB(110,110,255) }, // BLUE (MAGIC)
         { 'B', RGB(110,110,255) }, // BLUE 2
         { '4', RGB(199,179,119) }, // GOLD (UNIQUE)
         { 'D', RGB(209,195,120) }, // GOLD 2
-        { '5', RGB( 99, 99, 99) }, // GRAY
+        { '5', RGB(105,105,105) }, // GRAY
         { 'K', RGB( 99, 99, 99) }, // GRAY 2
-        { 'I', RGB( 99, 99, 99) }, // GRAY 3
+        { 'I', RGB(148,148,148) }, // GRAY 3
         { '6', RGB(  0,  0,  0) }, // BLACK (won't show) 
         { 'M', RGB(  0,  0,  0) }, // BLACK 2 (won't show) 
-        { '7', RGB(255,246,227) }, // LIGHT GOLD
+        { '7', RGB(208,194,125) }, // LIGHT GOLD
         { 'H', RGB(255,246,227) }, // LIGHT GOLD 2
         { '8', RGB(255,168,  0) }, // ORANGE (CRAFTED)
         { '@', RGB(255,168,  0) }, // ORANGE 2
         { 'J', RGB(255,168,  0) }, // ORANGE 3
-        { 'L', RGB(255,168,  0) }, // ORANGE 4
+        { 'L', RGB(196,129,  0) }, // ORANGE 4
         { '9', RGB(255,255,100) }, // YELLOW (RARE)
-        { 'R', RGB(255,255,100) }, // YELLOW 2
-        { ';', RGB(192,128,242) }, // PURPLE
-        { ':', RGB(  0,128,  0) }, // DARK GREEN
+        { 'R', RGB(255,235,164) }, // YELLOW 2
+        { ';', RGB(174,  0,255) }, // PURPLE
+        { ':', RGB(  0,200,  0) }, // DARK GREEN
         { 'A', RGB(  0,128,  0) }, // DARK GREEN 2
         { 'N', RGB( 22,226,245) }, // TURQUOISE
         { 'T', RGB(135,206,235) }, // SKY BLUE
@@ -14648,3 +14832,27 @@ std::string d2ce::ColorHelpers::RemoveColorFromText(LPCSTR coloredText)
     return RemoveColorFromText(ret);
 }
 //---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+bool d2ce::InventoryGridHelpers::GetSize(d2ce::EnumAltItemLocation altPositionId, d2ce::ItemDimensions& dimensions, d2ce::EnumCharVersion version, bool isExpansion)
+{
+    dimensions.clear();
+
+    const auto& gridDimensions = GetGridDimensions(version, isExpansion);
+    switch (altPositionId)
+    {
+    case d2ce::EnumAltItemLocation::INVENTORY:
+        dimensions = gridDimensions.inventory;
+        return true;
+
+    case d2ce::EnumAltItemLocation::STASH:
+        dimensions = gridDimensions.stash;
+        return true;
+
+    case d2ce::EnumAltItemLocation::HORADRIC_CUBE:
+        dimensions = gridDimensions.cube;
+        return true;
+    }
+
+    return false;
+}

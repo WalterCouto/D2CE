@@ -306,6 +306,7 @@
     <ClCompile Include="d2ce\Character.cpp" />
     <ClCompile Include="d2ce\CharacterStats.cpp" />
     <ClCompile Include="d2ce\helpers\ArmorTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\LayoutJson.cpp" />
     <ClCompile Include="d2ce\helpers\BeltsTxt.cpp" />
     <ClCompile Include="d2ce\helpers\BodyLocsTxt.cpp" />
     <ClCompile Include="d2ce\helpers\CharStatsTxt.cpp" />
@@ -313,6 +314,7 @@
     <ClCompile Include="d2ce\helpers\DefaultTxtReader.cpp" />
     <ClCompile Include="d2ce\helpers\ExperienceTxt.cpp" />
     <ClCompile Include="d2ce\helpers\GemsTxt.cpp" />
+    <ClCompile Include="d2ce\helpers\GridDimensionsTxt.cpp" />
     <ClCompile Include="d2ce\helpers\HirelingTxt.cpp" />
     <ClCompile Include="d2ce\helpers\ItemGemsJson.cpp" />
     <ClCompile Include="d2ce\helpers\ItemHelpers.cpp" />

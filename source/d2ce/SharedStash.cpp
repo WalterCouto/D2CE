@@ -20,6 +20,7 @@
 #include "pch.h"
 #include "SharedStash.h"
 #include "Character.h"
+#include "helpers/ItemHelpers.h"
 
 //---------------------------------------------------------------------------
 namespace d2ce
@@ -53,7 +54,8 @@ d2ce::SharedStash::SharedStash()
 d2ce::SharedStash::SharedStash(const Character& charInfo)
 {
     CharVersion = charInfo.getVersion();
-    if (CharVersion >= EnumCharVersion::v100R && charInfo.isExpansionCharacter())
+    IsExpansionCharacter = charInfo.isExpansionCharacter();
+    if (CharVersion >= EnumCharVersion::v100R && IsExpansionCharacter)
     {
         m_d2ifilename = charInfo.getPath();
         m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
@@ -119,7 +121,8 @@ void d2ce::SharedStash::reset(const Character& charInfo)
 {
     clear();
     CharVersion = charInfo.getVersion();
-    if (CharVersion >= EnumCharVersion::v100R && charInfo.isExpansionCharacter())
+    IsExpansionCharacter = charInfo.isExpansionCharacter();
+    if (CharVersion >= EnumCharVersion::v100R && IsExpansionCharacter)
     {
         m_d2ifilename = charInfo.getPath();
         m_d2ifilename.replace_filename("SharedStashSoftCoreV2").replace_extension("d2i");
@@ -285,9 +288,7 @@ bool d2ce::SharedStash::setGoldInStash(std::uint32_t goldValue, size_t page)
 //---------------------------------------------------------------------------
 bool d2ce::SharedStash::getDimensions(ItemDimensions& dimensions) const
 {
-    dimensions.Width = dimensions.InvWidth = 10;
-    dimensions.Height = dimensions.InvHeight = 10;
-    return true;
+    return InventoryGridHelpers::GetSize(EnumAltItemLocation::STASH, dimensions, CharVersion, IsExpansionCharacter);
 }
 //---------------------------------------------------------------------------
 bool d2ce::SharedStash::anyUpgradableGems() const

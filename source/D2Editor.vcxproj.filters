@@ -812,6 +812,12 @@
     <ClCompile Include="d2ce\helpers\ItemsCode.cpp">
       <Filter>Source Files\d2ce\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="d2ce\helpers\LayoutJson.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="d2ce\helpers\GridDimensionsTxt.cpp">
+      <Filter>Source Files\d2ce\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2Editor.rc">

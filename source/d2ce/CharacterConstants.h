@@ -141,6 +141,7 @@ namespace d2ce
         virtual std::unique_ptr<ITxtDocument> GetMonTypeTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetSuperiorModsTxt() const = 0;
         virtual std::unique_ptr<ITxtDocument> GetCraftModsTxt() const = 0;
+        virtual std::unique_ptr<ITxtDocument> GetGridDimensionsTxt() const = 0;
         virtual std::string GetModName() const = 0;
     };
 

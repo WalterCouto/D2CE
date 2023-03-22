@@ -57,6 +57,51 @@ namespace d2ce
         return std::filesystem::path();
     }
 
+    Json::Value GetGridSize(const std::string& layout)
+    {
+        static Json::Value badValue;
+
+        std::istringstream stream(layout);
+        Json::Value root;
+        Json::Value jsonValue;
+        std::string typeName;
+        Json::CharReaderBuilder builder;
+        JSONCPP_STRING errs;
+        if (parseFromStream(builder, stream, &root, &errs) && !root.isNull())
+        {
+            root = root["children"];
+            auto iter_end = root.end();
+            for (auto iter = root.begin(); iter != iter_end; ++iter)
+            {
+                if (iter->isNull())
+                {
+                    continue;
+                }
+
+                jsonValue = (*iter)["type"];
+                if (jsonValue.isNull())
+                {
+                    continue;
+                }
+
+                typeName = jsonValue.asString();
+                if (typeName == "InventoryGridWidget")
+                {
+                    jsonValue = (*iter)["fields"];
+                    if (jsonValue.isNull())
+                    {
+                        return badValue;
+                    }
+
+                    return jsonValue["cellCount"];
+
+                }
+            }
+        }
+
+        return badValue;
+    }
+
     namespace JsonReaderHelper
     {
         const std::string& GetItemGems();
@@ -71,6 +116,10 @@ namespace d2ce
         const std::string& GetQuests();
         const std::string& GetSkills();
         const std::string& GetUI();
+
+        const std::string& GetBankExpansionLayout();
+        const std::string& GetHoradricCubeLayout();
+        const std::string& GetPlayerInventoryExpansionLayout();
     }
 
     namespace TxtReaderHelper
@@ -103,6 +152,7 @@ namespace d2ce
         const std::string& GetMonType();
         const std::string& GetSuperiorModsTxt();
         const std::string& GetCraftModsTxt();
+        const std::string& GetGridDimensionsTxt();
     }
 
     class D2RModReaderHelper;
@@ -932,6 +982,36 @@ namespace d2ce
             return JsonReaderHelper::GetUI();
         }
 
+        const std::string& GetBankExpansionLayout()
+        {
+            if (!LoadLayoutJsonText(strBankExpansionLayout, "bankexpansionlayouthd.json").empty())
+            {
+                return strBankExpansionLayout;
+            }
+
+            return JsonReaderHelper::GetBankExpansionLayout();
+        }
+
+        const std::string& GetHoradricCubeLayout()
+        {
+            if (!LoadLayoutJsonText(strHoradricCubeLayout, "horadriccubelayouthd.json").empty())
+            {
+                return strHoradricCubeLayout;
+            }
+
+            return JsonReaderHelper::GetHoradricCubeLayout();
+        }
+
+        const std::string& GetPlayerInventoryExpansionLayout()
+        {
+            if (!LoadLayoutJsonText(strPlayerInventoryExpansionLayout, "playerinventoryoriginallayouthd.json").empty())
+            {
+                return strPlayerInventoryExpansionLayout;
+            }
+
+            return JsonReaderHelper::GetPlayerInventoryExpansionLayout();
+        }
+
         // TxtReaderHelper
         const std::string& GetArmor()
         {
@@ -1500,6 +1580,80 @@ namespace d2ce
             return TxtReaderHelper::GetCraftModsTxt();
         }
 
+        const std::string& GetGridDimensionsTxt()
+        {
+            auto& strValue = strGridDimensionsTxt;
+            if (!strValue.empty())
+            {
+                return strValue;
+            }
+
+            bool hasEntries = false;
+            std::stringstream ss;
+            ss << u8"name\tversion\tX\tY\n";
+            {
+                Json::Value root = GetGridSize(GetBankExpansionLayout());
+                if (!root.isNull())
+                {
+                    hasEntries = false;
+                    Json::Value x = root["x"];
+                    if (!x.isNull())
+                    {
+                        Json::Value y = root["y"];
+                        if (!y.isNull())
+                        {
+                            hasEntries = true;
+                            ss << "Stash\t5\t" << x.asString() << "\t" << y.asString() << "\n";
+                        }
+                    }
+                }
+            }
+
+            {
+                Json::Value root = GetGridSize(GetPlayerInventoryExpansionLayout());
+                if (!root.isNull())
+                {
+                    hasEntries = false;
+                    Json::Value x = root["x"];
+                    if (!x.isNull())
+                    {
+                        Json::Value y = root["y"];
+                        if (!y.isNull())
+                        {
+                            hasEntries = true;
+                            ss << "Inventory\t5\t" << x.asString() << "\t" << y.asString() << "\n";
+                        }
+                    }
+                }
+            }
+
+            {
+                Json::Value root = GetGridSize(GetHoradricCubeLayout());
+                if (!root.isNull())
+                {
+                    hasEntries = false;
+                    Json::Value x = root["x"];
+                    if (!x.isNull())
+                    {
+                        Json::Value y = root["y"];
+                        if (!y.isNull())
+                        {
+                            hasEntries = true;
+                            ss << "Horadric Cube\t5\t" << x.asString() << "\t" << y.asString() << "\n";
+                        }
+                    }
+                }
+            }
+
+            if (hasEntries)
+            {
+                strValue = ss.str();
+                return strValue;
+            }
+
+            return TxtReaderHelper::GetGridDimensionsTxt();
+        }
+
     private:
         void LoadAll()
         {
@@ -1551,6 +1705,7 @@ namespace d2ce
             GetMonType();
             GetSuperiorModsTxt();
             GetCraftModsTxt();
+            GetGridDimensionsTxt();
 
             // done reading MPQ archive, so prevent any future read attemps
             if (hMpq != NULL)
@@ -1561,6 +1716,7 @@ namespace d2ce
 
             modPath.clear();
             modStringsPath.clear();
+            modLayoutPath.clear();
             modExcelPath.clear();
 
             // clear maps
@@ -2404,6 +2560,13 @@ namespace d2ce
                     modStringsPath.clear();
                 }
 
+                // Looks for the json layout path
+                modLayoutPath = modPath / "global" / "ui" / "layouts";
+                if (!std::filesystem::exists(modLayoutPath) || !std::filesystem::is_directory(modLayoutPath))
+                {
+                    modLayoutPath.clear();
+                }
+                
                 // Looks for the excels path
                 modExcelPath = modPath / "global" / "excel";
                 if (!std::filesystem::exists(modExcelPath) || !std::filesystem::is_directory(modExcelPath))
@@ -2448,6 +2611,32 @@ namespace d2ce
             }
 
             std::filesystem::path path = modStringsPath / jsonFileName;
+            jsonStr = LoadTextFromFile(path);
+            return jsonStr;
+        }
+
+        std::string& LoadLayoutJsonText(std::string& jsonStr, const std::string& jsonFileName)
+        {
+            if (!jsonStr.empty() || modPath.empty())
+            {
+                return jsonStr;
+            }
+
+            if (hMpq != NULL)
+            {
+                std::stringstream ss;
+                ss << "data\\global\\ui\\layouts\\";
+                ss << jsonFileName;
+                jsonStr = LoadTextFromMpq(ss.str());
+                return jsonStr;
+            }
+
+            if (modLayoutPath.empty())
+            {
+                return jsonStr;
+            }
+
+            std::filesystem::path path = modLayoutPath / jsonFileName;
             jsonStr = LoadTextFromFile(path);
             return jsonStr;
         }
@@ -2598,6 +2787,7 @@ namespace d2ce
     private:
         std::filesystem::path modPath;
         std::filesystem::path modStringsPath;
+        std::filesystem::path modLayoutPath;
         std::filesystem::path modExcelPath;
         HANDLE hMpq = NULL;
         std::string modName;
@@ -2614,6 +2804,9 @@ namespace d2ce
         std::string strQuests;
         std::string strSkills;
         std::string strUI;
+        std::string strBankExpansionLayout;
+        std::string strHoradricCubeLayout;
+        std::string strPlayerInventoryExpansionLayout;
 
         std::string strArmor;
         std::string strBelts;
@@ -2641,8 +2834,8 @@ namespace d2ce
         std::string strMonStats;
         std::string strMonType;
         std::string strSuperiorModsTxt;
-        std::string strCraftModsTxt;
         std::string strItemsCode;
+        std::string strGridDimensionsTxt;
         
         std::map<std::uint32_t, std::string> stringTxtInfo;
         std::map<std::string, std::string> stringEnTxtByKey;
@@ -4823,6 +5016,16 @@ namespace d2ce
             }
 
             return LoadTxtStream(TxtReaderHelper::GetCraftModsTxt());
+        }
+
+        virtual std::unique_ptr<ITxtDocument> GetGridDimensionsTxt() const override
+        {
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetGridDimensionsTxt());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetGridDimensionsTxt());
         }
 
         virtual std::string GetModName() const override

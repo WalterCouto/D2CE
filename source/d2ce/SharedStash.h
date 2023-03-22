@@ -56,6 +56,7 @@ namespace d2ce
         std::filesystem::path m_d2ifilename;
         std::filesystem::file_time_type m_ftime; // Modified time of file at the time it was read
         EnumCharVersion CharVersion = APP_CHAR_VERSION;
+        bool IsExpansionCharacter = true;
 
     public:
         SharedStash();

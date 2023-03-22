@@ -37,6 +37,9 @@
 #define new DEBUG_NEW
 #endif
 
+#define CELL_SIZE_X 30
+#define CELL_SIZE_Y 32
+
 namespace
 {
     int FindPopupPosition(CMenu& parent, UINT childId)
@@ -591,6 +594,11 @@ namespace
         invBox.GetClientRect(&rect);
         slotSize.cx = rect.Width() / slots.cx;
         slotSize.cy = rect.Height() / slots.cy;
+
+        // keep same ratio
+        slotSize.cx = std::min(slotSize.cx, slotSize.cy);
+        slotSize.cy = (slotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+
         rect.top = rect.bottom - dimension.Height * slotSize.cy;
         rect.right = rect.left + dimension.Width * slotSize.cx;
         return true;
@@ -1757,40 +1765,77 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
         InvGridImage.DeleteObject();
     }
 
+    GridBoxSize = GetInvGridSize();
     SlotSize.cx = 0;
     SlotSize.cy = 0;
+    LONG diffX = 0;
+    LONG diffY = 0;
     auto id = GetDlgCtrlID();
     switch (id)
     {
     case IDC_INV_GRID:
-        // Inventory is a 10 x 4 grid
-        SlotSize.cx = GridRect.Width() / 10;
-        SlotSize.cy = GridRect.Height() / 4;
+        // Inventory 
+        SlotSize.cx = std::min(CELL_SIZE_X, GridRect.Width() / (int)GridBoxSize.cx);
+        SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
+
+        // keep same ratio
+        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
+        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+
+        diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
         break;
 
     case IDC_INV_BELT_GRID:
         // Belts is at most a 4 x 4 grid
-        SlotSize.cx = GridRect.Width() / 4;
-        SlotSize.cy = GridRect.Height() / 4;
+        SlotSize.cx = std::min(CELL_SIZE_X, GridRect.Width() / 4);
+        SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / 4);
+
+        // keep same ratio
+        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
+        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
         break;
 
     case IDC_INV_STASH_GRID:
-        // STASH is at most a 10 x 10 grid
-        SlotSize.cx = GridRect.Width() / 10;
-        SlotSize.cy = GridRect.Height() / 10;
+        // STASH
+        SlotSize.cx = std::min(CELL_SIZE_X, GridRect.Width() / (int)GridBoxSize.cx);
+        SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
+
+        // keep same ratio
+        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
+        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+
+        diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
+        diffY = (GridRect.Height() - SlotSize.cy * GridBoxSize.cy) / 2;
         break;
 
     case IDC_INV_CUBE_GRID:
-        // HORADRIC CUBE is a 3 x 4 grid
-        SlotSize.cx = GridRect.Width() / 3;
-        SlotSize.cy = GridRect.Height() / 4;
+        // HORADRIC CUBE
+        SlotSize.cx = std::min(CELL_SIZE_X, GridRect.Width() / (int)GridBoxSize.cx);
+        SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
+
+        // keep same ratio
+        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
+        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+
+        diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
+        diffY = (GridRect.Height() - SlotSize.cy * GridBoxSize.cy) / 2;
         break;
 
     default:
         return FALSE;
     }
 
-    GridBoxSize = GetInvGridSize();
+    if (diffX > 0)
+    {
+        GridRect.left += diffX;
+        GridRect.right += diffX;
+    }
+
+    if (diffY > 0)
+    {
+        GridRect.top += diffY;
+        GridRect.bottom += diffY;
+    }
 
     CBitmap slotBitmap;
     slotBitmap.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INVEMPTY)));
