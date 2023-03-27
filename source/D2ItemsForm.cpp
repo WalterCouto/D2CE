@@ -544,6 +544,7 @@ namespace
    
     bool CalcItemRect(const d2ce::Item& item, const CStatic& invBox, CRect& rect, CSize& slotSize, UINT id)
     {
+        CSize work;
         CSize slots;
         switch (id)
         {
@@ -596,8 +597,17 @@ namespace
         slotSize.cy = rect.Height() / slots.cy;
 
         // keep same ratio
-        slotSize.cx = std::min(slotSize.cx, slotSize.cy);
-        slotSize.cy = (slotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        work.cx = std::min(slotSize.cx, slotSize.cy);
+        work.cy = (work.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        if (work.cy > slotSize.cy)
+        {
+            // too big
+            work.cy = slotSize.cy;
+            work.cx = (work.cy * CELL_SIZE_X) / CELL_SIZE_Y;
+
+        }
+        slotSize.cx = work.cx;
+        slotSize.cy = work.cy;
 
         rect.top = rect.bottom - dimension.Height * slotSize.cy;
         rect.right = rect.left + dimension.Width * slotSize.cx;
@@ -1768,6 +1778,7 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
     GridBoxSize = GetInvGridSize();
     SlotSize.cx = 0;
     SlotSize.cy = 0;
+    CSize work;
     LONG diffX = 0;
     LONG diffY = 0;
     auto id = GetDlgCtrlID();
@@ -1779,8 +1790,17 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
         SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
 
         // keep same ratio
-        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
-        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        work.cx = std::min(SlotSize.cx, SlotSize.cy);
+        work.cy = (work.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        if (work.cy > SlotSize.cy)
+        {
+            // too big
+            work.cy = SlotSize.cy;
+            work.cx = (work.cy * CELL_SIZE_X) / CELL_SIZE_Y;
+
+        }
+        SlotSize.cx = work.cx;
+        SlotSize.cy = work.cy;
 
         diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
         break;
@@ -1791,8 +1811,17 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
         SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / 4);
 
         // keep same ratio
-        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
-        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        work.cx = std::min(SlotSize.cx, SlotSize.cy);
+        work.cy = (work.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        if (work.cy > SlotSize.cy)
+        {
+            // too big
+            work.cy = SlotSize.cy;
+            work.cx = (work.cy * CELL_SIZE_X) / CELL_SIZE_Y;
+
+        }
+        SlotSize.cx = work.cx;
+        SlotSize.cy = work.cy;
         break;
 
     case IDC_INV_STASH_GRID:
@@ -1801,8 +1830,17 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
         SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
 
         // keep same ratio
-        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
-        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        work.cx = std::min(SlotSize.cx, SlotSize.cy);
+        work.cy = (work.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        if (work.cy > SlotSize.cy)
+        {
+            // too big
+            work.cy = SlotSize.cy;
+            work.cx = (work.cy * CELL_SIZE_X) / CELL_SIZE_Y;
+
+        }
+        SlotSize.cx = work.cx;
+        SlotSize.cy = work.cy;
 
         diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
         diffY = (GridRect.Height() - SlotSize.cy * GridBoxSize.cy) / 2;
@@ -1814,8 +1852,17 @@ BOOL CD2ItemsGridStatic::LoadBackgroundImage()
         SlotSize.cy = std::min(CELL_SIZE_Y, GridRect.Height() / (int)GridBoxSize.cy);
 
         // keep same ratio
-        SlotSize.cx = std::min(SlotSize.cx, SlotSize.cy);
-        SlotSize.cy = (SlotSize.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        work.cx = std::min(SlotSize.cx, SlotSize.cy);
+        work.cy = (work.cx * CELL_SIZE_Y) / CELL_SIZE_X;
+        if (work.cy > SlotSize.cy)
+        {
+            // too big
+            work.cy = SlotSize.cy;
+            work.cx = (work.cy * CELL_SIZE_X) / CELL_SIZE_Y;
+
+        }
+        SlotSize.cx = work.cx;
+        SlotSize.cy = work.cy;
 
         diffX = (GridRect.Width() - SlotSize.cx * GridBoxSize.cx) / 2;
         diffY = (GridRect.Height() - SlotSize.cy * GridBoxSize.cy) / 2;

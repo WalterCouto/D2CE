@@ -4658,7 +4658,8 @@ namespace d2ce
         {
             if (!jsonReader.isValid())
             {
-                return LoadItems();
+                LoadItems();
+                return;
             }
 
             LoadJsonStream(jsonReader.GetItemGems());
@@ -4686,7 +4687,8 @@ namespace d2ce
         {
             if (!jsonReader.isValid())
             {
-                return LoadAllJson();
+                LoadAllJson();
+                return;
             }
 
             LoadItems(jsonReader);

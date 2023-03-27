@@ -4424,7 +4424,14 @@ namespace d2ce
             strValue = doc.GetCellString(typeColumnIdx, i);
             if (!strValue.empty() && !std::all_of(strValue.begin(), strValue.end(), isspace))
             {
-                codes.push_back(strValue);
+                if (strValue == "spot" && code != "vps") // weird case in some mods
+                {
+                    codes.push_back("ques");
+                }
+                else
+                {
+                    codes.push_back(strValue);
+                }
             }
 
             strValue = doc.GetCellString(stackableColumnIdx, i);
@@ -9766,7 +9773,7 @@ bool d2ce::ItemType::isStackable() const
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isWeapon() const
 {
-    return hasCategoryCode("weap");
+    return hasCategoryCode("weap") && !isCharm();
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isThrownWeapon() const
