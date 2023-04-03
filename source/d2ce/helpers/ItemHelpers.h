@@ -267,6 +267,7 @@ namespace d2ce
         const std::string& GetSocketedStringTxtValue(std::string& outStr, std::string& gender);
         const std::string& GetSocketedStringTxtValue(std::string& outStr);
         const std::string& GetDifficultyStringTxtValue(EnumDifficulty diff, std::string& outStr);
+        const std::string& GetCharmsStringTxtValue(std::string& outStr);
 
         const std::string& CheckCharName(std::string& curName, d2ce::EnumCharVersion version);
         const std::string& CheckCharName(std::string& curName, d2ce::EnumItemVersion version);

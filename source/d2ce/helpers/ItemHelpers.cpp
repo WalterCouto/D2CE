@@ -14584,6 +14584,15 @@ const std::string& d2ce::LocalizationHelpers::GetDifficultyStringTxtValue(EnumDi
     }
     return outStr;
 }
+//---------------------------------------------------------------------------
+const std::string& d2ce::LocalizationHelpers::GetCharmsStringTxtValue(std::string& outStr)
+{
+    std::string gender;
+    const std::string str("Charmdes");
+    GetStringTxtValue(str, outStr, gender, "Keep in Inventory to Gain Bonus");
+    return outStr;
+}
+//---------------------------------------------------------------------------
 const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName, EnumCharVersion version)
 {
     bool bASCII = (version <= EnumCharVersion::v100R) ? true : false;

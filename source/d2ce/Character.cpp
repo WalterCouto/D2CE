@@ -930,6 +930,22 @@ void d2ce::Character::readHeader(const Json::Value& root)
     std::uint32_t uint = m_bJsonSerializedFormat ? std::uint32_t(value.asInt64()) : std::uint32_t(std::stoul(value.asString(), nullptr, 16));
     size_t current_byte_offset = 0;
     setBytes(current_byte_offset, HEADER_LENGTH, uint);
+
+    if (Bs.Version < EnumCharVersion::v100R)
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    value = header[m_bJsonSerializedFormat ? "ModName" : "mod_name"];
+    if (value.isNull())
+    {
+        setTxtReader(getDefaultTxtReader());
+        return;
+    }
+
+    std::string modName(value.asString());
+    setTxtReader(getDefaultTxtReader(modName));
 }
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getHeaderBytes() const
@@ -2358,9 +2374,19 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         headerAsJson(parent, bSerializedFormat);
         return;
     }
+
     if (bSerializedFormat)
     {
         Json::Value header;
+        if (version >= EnumCharVersion::v100R)
+        {
+            const auto& txtReader = getTxtReader();
+            if (!txtReader.GetModName().empty())
+            {
+                header["ModName"] = txtReader.GetModName();
+            }
+        }
+
         header["Magic"] = getHeaderBytes();
         header["Version"] = static_cast<std::underlying_type_t<EnumCharVersion>>(version);
         if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
@@ -2576,6 +2602,15 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
     else
     {
         Json::Value header;
+        if (version >= EnumCharVersion::v100R)
+        {
+            const auto& txtReader = getTxtReader();
+            if (!txtReader.GetModName().empty())
+            {
+                header["mod_name"] = txtReader.GetModName();
+            }
+        }
+
         {
             std::stringstream ss;
             ss << std::hex << getHeaderBytes();
@@ -2809,6 +2844,15 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
     if (bSerializedFormat)
     {
         Json::Value header;
+        if (Bs.Version >= EnumCharVersion::v100R)
+        {
+            const auto& txtReader = getTxtReader();
+            if (!txtReader.GetModName().empty())
+            {
+                header["Mod"] = txtReader.GetModName();
+            }
+        }
+
         header["Magic"] = getHeaderBytes();
         header["Version"] = getVersionBytes();
         if (Bs.Version >= EnumCharVersion::v109)
@@ -3026,6 +3070,15 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
     else
     {
         Json::Value header;
+        if (Bs.Version >= EnumCharVersion::v100R)
+        {
+            const auto& txtReader = getTxtReader();
+            if (!txtReader.GetModName().empty())
+            {
+                header["mod_name"] = txtReader.GetModName();
+            }
+        }
+
         {
             std::stringstream ss;
             ss << std::hex << getHeaderBytes();

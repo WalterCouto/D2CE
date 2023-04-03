@@ -393,7 +393,20 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
         }
     }
 
-    if (currItem->isEthereal())
+    if (currItem->isCharm())
+    {
+        std::string u8Text;
+        uText = utf8::utf8to16(d2ce::LocalizationHelpers::GetCharmsStringTxtValue(u8Text));
+        strText = reinterpret_cast<LPCWSTR>(uText.c_str());
+
+        CSize prevSizeText = sizeText;
+        pDC->SetTextColor(d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::WHITE));
+
+        sizeText = CalcTextSize(pDC, strText, rect, bCalcOnly);
+        sizeText.cy += prevSizeText.cy;
+        sizeText.cx = std::max(prevSizeText.cx, sizeText.cx);
+    }
+    else if (currItem->isEthereal())
     {
         CSize prevSizeText = sizeText;
         pDC->SetTextColor(d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::BLUE));
