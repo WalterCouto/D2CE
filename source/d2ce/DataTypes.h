@@ -1091,7 +1091,11 @@ namespace d2ce
                 baseDamage["minmisdam"] = Missile.Min;
                 baseDamage["maxmisdam"] = Missile.Max;
             }
-            parent["base_damage"] = baseDamage;
+
+            if (!baseDamage.isNull())
+            {
+                parent["base_damage"] = baseDamage;
+            }
         }
     };
 

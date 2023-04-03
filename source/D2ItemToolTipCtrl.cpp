@@ -221,8 +221,6 @@ CSize CD2ItemToolTipCtrl::DoDrawItemInfo(CDC* pDC, CRect rect, BOOL bCalcOnly, c
 
     bool isRuneword = currItem->isRuneword();
 
-    
-
     // Get color of top text
     COLORREF color = d2ce::ColorHelpers::GetColorFromChar(d2ce::ColorHelpers::D2Colors::WHITE);
     if (currItem->isIdentified())

@@ -78,6 +78,7 @@ namespace d2ce
     constexpr std::uint16_t RUNEWORD_PADDING_NUM_BITS = 4ui16;
     constexpr std::uint16_t MAGICAL_AFFIX_NUM_BITS = 11ui16;
     constexpr std::uint16_t SET_UNIQUE_ID_NUM_BITS = 12ui16;
+    constexpr std::uint16_t NORMAL_CHARM_ID_NUM_BITS = 12ui16;
     constexpr std::uint16_t INFERIOR_SUPERIOR_ID_NUM_BITS = 3ui16;
     constexpr std::uint16_t RARE_CRAFTED_ID_NUM_BITS = 8ui16;
     constexpr std::uint16_t PROPERTY_ID_NUM_BITS = 9ui16;
@@ -6834,6 +6835,14 @@ std::uint16_t d2ce::Item::getFileIndex() const
 
     switch (getQuality())
     {
+    case EnumItemQuality::NORMAL:
+        if (isCharm())
+        {
+            // If the item is a NORMAL quality Charm, the next 12 bits will contain the Charm specific data.
+            return (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), NORMAL_CHARM_ID_NUM_BITS);
+        }
+        break;
+
     case EnumItemQuality::INFERIOR:
     case EnumItemQuality::SUPERIOR:
         return (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET), INFERIOR_SUPERIOR_ID_NUM_BITS);
@@ -7004,6 +7013,18 @@ bool d2ce::Item::isMissile() const
     }
 
     return result.isMissile();
+}
+//---------------------------------------------------------------------------
+bool d2ce::Item::isMiscellaneous() const
+{
+    const auto& result = getItemTypeHelper();
+    if (&result == &ItemHelpers::getInvalidItemTypeHelper())
+    {
+        // should not happen
+        return false;
+    }
+
+    return result.isMiscellaneous();
 }
 //---------------------------------------------------------------------------
 bool d2ce::Item::isTome() const
@@ -8009,7 +8030,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
     {
     case EnumItemVersion::v100: // v1.00 - v1.03 item
     case EnumItemVersion::v104: // v1.04 - v1.06 item
-        if (!(itemType.isArmor() || itemType.isWeapon()) || itemType.isMissileWeapon() || itemType.isThrownWeapon())
+        if (!(itemType.isArmor() || itemType.isWeapon()) || itemType.isMissileWeapon() || itemType.isThrownWeapon() || itemType.isMiscellaneous())
         {
             return false;
         }
@@ -8031,7 +8052,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         durability.Max = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET), DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
-            if (itemType.isMissileWeapon())
+            if (itemType.isMissileWeapon() || itemType.isMiscellaneous())
             {
                 return false;
             }
@@ -8057,7 +8078,7 @@ bool d2ce::Item::getDurability(ItemDurability& durability) const
         durability.Max = (std::uint16_t)readBits(GET_BIT_OFFSET(ItemOffsets::DURABILITY_BIT_OFFSET), DURABILITY_MAX_NUM_BITS);
         if (durability.Max == 0)
         {
-            if (itemType.isMissileWeapon())
+            if (itemType.isMissileWeapon() || itemType.isMiscellaneous())
             {
                 return false;
             }
@@ -9285,7 +9306,7 @@ bool d2ce::Item::setRuneword(std::uint16_t id)
             const auto& itemType = getItemTypeHelper();
             if (itemType.isWeapon())
             {
-                bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !isIndestructible();
+                bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !itemType.isMiscellaneous() && !isIndestructible();
                 if (usesDurablility)
                 {
                     ItemDurability durability;
@@ -10243,7 +10264,7 @@ bool d2ce::Item::makeSuperior()
 
             if (attribs.size() > 2)
             {
-                bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !isIndestructible();
+                bool usesDurablility = !itemType.isMissileWeapon() && !itemType.isThrownWeapon() && !itemType.isMiscellaneous() && !isIndestructible();
                 if (usesDurablility)
                 {
                     ItemDurability durability;
@@ -12590,8 +12611,10 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
         ItemDamage base;
         bool bCheckBase = bAddColorChar && getDamage(base);
 
+        bool bHasDamage = false;
         if (dam.Missile.Max != 0 && dam.Missile.Min)
         {
+            bHasDamage = true;
             if (bFirst)
             {
                 bFirst = false;
@@ -12651,6 +12674,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
 
         if (dam.OneHanded.Max != 0 && dam.OneHanded.Min != 0)
         {
+            bHasDamage = true;
             if (bFirst)
             {
                 bFirst = false;
@@ -12689,6 +12713,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
 
         if (dam.bTwoHanded && dam.TwoHanded.Max != 0 && dam.TwoHanded.Min != 0)
         {
+            bHasDamage = true;
             if (bFirst)
             {
                 bFirst = false;
@@ -12723,6 +12748,22 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
             }
 
             ss << d2ce::LocalizationHelpers::string_format(temp, dam.TwoHanded.Min, dam.TwoHanded.Max);
+        }
+
+        if (!bHasDamage)
+        {
+            // Edge case where Min and Max are zero for a weapon, then Max is 1
+            if (bFirst)
+            {
+                bFirst = false;
+            }
+            else
+            {
+                ss << "\n";
+            }
+
+            LocalizationHelpers::GetStringTxtValue("ItemStats1l", temp, "One-Hand Damage: %d to %d");
+            ss << d2ce::LocalizationHelpers::string_format(temp, 0, 1);
         }
     }
 
@@ -12793,7 +12834,7 @@ std::string d2ce::Item::getDisplayedItemAttributes(EnumCharClass charClass, cons
             break;
         }
 
-        if (!temp.empty() )
+        if (!temp.empty())
         {
             if (bFirst)
             {
@@ -13417,6 +13458,18 @@ bool d2ce::Item::readItem(EnumItemVersion version, bool isExpansion, std::FILE* 
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = 0;
         switch (quality)
         {
+        case EnumItemQuality::NORMAL:
+            if (itemType.isCharm())
+            {
+                // If the item is a NORMAL quality Charm, the next 12 bits will contain the Charm specific data.
+                GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
+                if (!skipBits(charfile, current_bit_offset, NORMAL_CHARM_ID_NUM_BITS))
+                {
+                    return false;
+                }
+            }
+            break;
+
         case EnumItemQuality::INFERIOR:
         case EnumItemQuality::SUPERIOR:
             GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
@@ -16531,6 +16584,27 @@ bool d2ce::Item::readItem(const Json::Value& itemRoot, bool bSerializedFormat, E
         max_bit_offset = std::max(max_bit_offset, current_bit_offset);
         break;
 
+    case EnumItemQuality::NORMAL:
+        if (itemType.isCharm())
+        {
+            // If the item is a NORMAL quality Charm, the next 12 bits will contain the Charm specific data.
+            GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
+            value = 0;
+            node = itemRoot[bSerializedFormat ? "FileIndex" : "file_index"];
+            if (!node.isNull())
+            {
+                value = std::uint16_t(node.asInt64());
+            }
+
+            bitSize = NORMAL_CHARM_ID_NUM_BITS;
+            if (!setBits(current_bit_offset, bitSize, value))
+            {
+                return false;
+            }
+            max_bit_offset = std::max(max_bit_offset, current_bit_offset);
+        }
+        break;
+
     case EnumItemQuality::SUPERIOR:
         GET_BIT_OFFSET(ItemOffsets::QUALITY_ATTRIB_BIT_OFFSET) = current_bit_offset;
         value = 0;
@@ -17885,32 +17959,36 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
             {
                 item["auto_affix_id"] = getAutoAffixId();
             }
-            if (quality == EnumItemQuality::INFERIOR)
-            {
-                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
-            }
-            else if (quality == EnumItemQuality::SUPERIOR)
-            {
-                item["file_index"] = std::uint16_t(getFileIndex());
-            }
-            else if (quality == EnumItemQuality::MAGIC)
-            {
-                d2ce::MagicalAffixes magicalAffixes;
-                getMagicalAffixes(magicalAffixes);
-                magicalAffixes.asJson(item);
-            }
 
-            if (isExpansion && isRuneword())
-            {
-                getRunewordAttributes(runewordAttrib);
-                runewordAttrib.asJson(item);
-            }
-
+            d2ce::MagicalAffixes magicalAffixes;
             d2ce::SetAttributes setAttrib;
             d2ce::RareAttributes rareAttrib;
             d2ce::UniqueAttributes uniqueAttrib;
             switch (quality)
             {
+            case EnumItemQuality::INFERIOR:
+                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
+                break;
+
+            case EnumItemQuality::NORMAL:
+                if (itemType.isCharm())
+                {
+                    item["file_index"] = std::uint16_t(getFileIndex());
+                }
+                break;
+
+            case EnumItemQuality::SUPERIOR:
+                if (itemType.isCharm())
+                {
+                    item["file_index"] = std::uint16_t(getFileIndex());
+                }
+                break;
+
+            case EnumItemQuality::MAGIC:
+                getMagicalAffixes(magicalAffixes);
+                magicalAffixes.asJson(item);
+                break;
+
             case EnumItemQuality::SET:
                 getSetAttributes(setAttrib);
                 setAttrib.asJson(item);
@@ -17927,6 +18005,12 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, EnumItemVe
                 getUniqueAttributes(uniqueAttrib);
                 uniqueAttrib.asJson(item);
                 break;
+            }
+
+            if (isExpansion && isRuneword())
+            {
+                getRunewordAttributes(runewordAttrib);
+                runewordAttrib.asJson(item);
             }
 
             if (bIsPersonalized)
@@ -18455,32 +18539,33 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
             {
                 item["auto_affix_id"] = getAutoAffixId();
             }
-            if (quality == EnumItemQuality::INFERIOR)
-            {
-                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
-            }
-            else if (quality == EnumItemQuality::SUPERIOR)
-            {
-                item["file_index"] = std::uint16_t(getFileIndex());
-            }
-            else if (quality == EnumItemQuality::MAGIC)
-            {
-                d2ce::MagicalAffixes magicalAffixes;
-                getMagicalAffixes(magicalAffixes);
-                magicalAffixes.asJson(item);
-            }
 
-            if (isRuneword())
-            {
-                getRunewordAttributes(runewordAttrib);
-                runewordAttrib.asJson(item);
-            }
-
+            d2ce::MagicalAffixes magicalAffixes;
             d2ce::SetAttributes setAttrib;
             d2ce::RareAttributes rareAttrib;
             d2ce::UniqueAttributes uniqueAttrib;
             switch (quality)
             {
+            case EnumItemQuality::INFERIOR:
+                item["low_quality_id"] = std::uint16_t(getInferiorQualityId());
+                break;
+
+            case EnumItemQuality::NORMAL:
+                if (itemType.isCharm())
+                {
+                    item["file_index"] = std::uint16_t(getFileIndex());
+                }
+                break;
+
+            case EnumItemQuality::SUPERIOR:
+                item["file_index"] = std::uint16_t(getFileIndex());
+                break;
+
+            case EnumItemQuality::MAGIC:
+                getMagicalAffixes(magicalAffixes);
+                magicalAffixes.asJson(item);
+                break;
+
             case EnumItemQuality::SET:
                 getSetAttributes(setAttrib);
                 setAttrib.asJson(item);
@@ -18497,6 +18582,12 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
                 getUniqueAttributes(uniqueAttrib);
                 uniqueAttrib.asJson(item);
                 break;
+            }
+
+            if (isRuneword())
+            {
+                getRunewordAttributes(runewordAttrib);
+                runewordAttrib.asJson(item);
             }
 
             if (isPersonalized())

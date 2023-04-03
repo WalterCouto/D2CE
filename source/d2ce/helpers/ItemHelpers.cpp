@@ -9773,7 +9773,7 @@ bool d2ce::ItemType::isStackable() const
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isWeapon() const
 {
-    return hasCategoryCode("weap") && !isCharm();
+    return hasCategoryCode("weap");
 }
 //---------------------------------------------------------------------------
 bool d2ce::ItemType::isThrownWeapon() const

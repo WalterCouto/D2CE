@@ -236,6 +236,7 @@ namespace d2ce
         bool isThrownWeapon() const;
         bool isMissileWeapon() const;
         bool isMissile() const;
+        bool isMiscellaneous() const;
         bool isTome() const;
         bool isBodyPart() const;
         bool isStackable() const;
