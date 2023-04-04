@@ -18,6 +18,9 @@
 
 Revision History
 ================
+Version 2.22 (April 4, 2023)
+   - Updated: Fix error message from bad character file
+
 Version 2.21 (April 4, 2023)
    - Updated: Fix error message from bad character file
    - Updated: Support added PTR 2.6

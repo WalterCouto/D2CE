@@ -391,7 +391,7 @@ static unsigned int FindRep(TCmpStruct * pWork, unsigned char * input_data)
 
             // Update the additional elements in the "offs09BC" table
             // to reflect new rep length
-            while(offs_in_rep < rep_length2)
+            while((unsigned int)offs_in_rep < rep_length2)
             {
                 if(input_data[offs_in_rep] != input_data[di_val])
                 {
