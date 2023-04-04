@@ -623,7 +623,7 @@ Each item starts with a basic 14-byte structure. Many fields in this structure a
 |        |211     |  5   | ? 0x00 to pad to 216 bits                                                      |
 
 |Bit<br>`87` - `96`|Bit      | Size | Desc                                                           |
-|-----------|---------|------ |----------------------------------------------------------------|
+|-----------|---------|------|----------------------------------------------------------------|
 |           | 32      |  3   | ? 0x00                                                         |
 | 48        |         | 10   | ? 0x00                                                         |
 | 58        | 35      |  3   | [Parent](#parent)                                              |
@@ -758,7 +758,7 @@ Item quality is encoded as a 4-bit integer. For version `87`+, except for Normal
 | Value | Size | Desc                                                                        |
 |-------|------|-----------------------------------------------------------------------------|
 | 1     |  3   | [Inferior](#inferior)                                                       |
-| 2     |  0   | Normal                                                                      |
+| 2     | 0/12 | Normal (12 bits if it is a Charm, otherwise 0)                              |
 | 3     |  3   | Superior (bits that follow are set to 0)                                    |
 | 4     | 22   | [Magically Enhanced](#magically-enhanced)                                   |
 | 5     | 12   | Part of a Set (bit that follow are the Set Id from the `Sets.txt` file)     |

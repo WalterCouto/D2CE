@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Diablo II Character Editor</Program_Name>
-		<Program_Version>2.1.9</Program_Version>
-		<Program_Release_Month>10</Program_Release_Month>
-		<Program_Release_Day>03</Program_Release_Day>
-		<Program_Release_Year>2022</Program_Release_Year>
+		<Program_Version>2.2.1</Program_Version>
+		<Program_Release_Month>04</Program_Release_Month>
+		<Program_Release_Day>04</Program_Release_Day>
+		<Program_Release_Year>2023</Program_Release_Year>
 		<Program_Cost_Dollars>0</Program_Cost_Dollars>
 		<Program_Cost_Other_Code>CAD</Program_Cost_Other_Code>
 		<Program_Cost_Other />
@@ -51,9 +51,9 @@
 		<Program_Category_Class />
 		<Program_System_Requirements />
 		<File_Info>
-			<File_Size_Bytes>19676672</File_Size_Bytes>
-			<File_Size_K>19215</File_Size_K>
-			<File_Size_MB>18.7</File_Size_MB>
+			<File_Size_Bytes>21084160</File_Size_Bytes>
+			<File_Size_K>20590</File_Size_K>
+			<File_Size_MB>20.1</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -72,7 +72,7 @@
 			<Char_Desc_80 />
 			<Char_Desc_250 />
 			<Char_Desc_450 />
-			<Char_Desc_2000>The Diablo II Character Editor is an updated release of the original Diablo 2 Character Editor v1.97 by Burton Tsan. It has been tested with Diablo II: Resurrected (Patch 2.4 included) as well as Diablo II Classic v1.14d is this simple application designed to offer individuals the possibility to alter their Diablo II character's particularities through its simple settings and menus. The following stats can be edited:
+			<Char_Desc_2000>The Diablo II Character Editor is an updated release of the original Diablo 2 Character Editor v1.97 by Burton Tsan. It has been tested with Diablo II: Resurrected (PTR 2.6 included) as well as Diablo II Classic v1.14d is this simple application designed to offer individuals the possibility to alter their Diablo II character's particularities through its simple settings and menus. The following stats can be edited:
 
   - Character class
   - Character name

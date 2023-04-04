@@ -37,6 +37,9 @@ You can do the following:<br>
 - Tested with Diablo II: Resurrected v1.5.73090 (PTR 2.6) and Diablo II Classic v1.14d **(It has unit tests confirming it supports all versions of the d2s file format, but the files used in testing, other than v1.14d and D2R files, have not been tested in a real game)**
 - Starting with Diablo II Classic V1.13c the maximum gold in your stash no longer depends on your character's level, and is now a flat cap of 2,500,000 instead.  The editor will now use this value when editing Resurrected files or Classic files marked as v1.10 or higher when determining the limit for your gold in your stash.
 - For changes to take effect, you must not have Diablo II running and you should close the character file before playing Diablo II.
+- To open a d2s from a D2R Mod, the D2R Mod must be properly installed on the system and you must open the file from it's mod location i.e. \Saved Games\Diablo II Resurrected\mods\btdiablo.
+- A json export file that contains the D2R Mod name can be opened from any location and will work properly if the D2R Mod is properly installed on the system.
+- An item that has an unknown image, will display with a default image.
 
 ### Distribution
 
@@ -56,9 +59,14 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
-**Version 2.21 (February 16, 2023)**
+**Version 2.21 (April 4, 2023)**
 - Updated: Fix error message from bad character file<br>
 - Updated: Support added PTR 2.6<br>
+- Updated: Layout of Items Form to take into account possible sizes  of inventories in D2R mods.<br>
+- Updated: Json export now adds the D2R mod name if applicable.<br>
+<br>
+
+- Added: Support to read D2R standard mod character files, for example BTDiablo and Rebirth.<br>
 <br>
 
 **Version 2.20 (January 5, 2023)**

@@ -18,9 +18,15 @@
 
 Revision History
 ================
-Version 2.21 (February 16, 2023)
+Version 2.21 (April 4, 2023)
    - Updated: Fix error message from bad character file
    - Updated: Support added PTR 2.6
+   - Updated: Layout of Items Form to take into account possible sizes 
+              of inventories in D2R mods.
+   - Updated: Json export now adds the D2R mod name if applicable.
+
+   - Added: Support to read D2R standard mod character files, for example
+            BTDiablo and Rebirth.
 
 Version 2.20 (January 5, 2023)
    - Updated: Item tooltip to display red for unmet requirements and blue
