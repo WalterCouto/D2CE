@@ -578,7 +578,6 @@
 #define IDB_SKILL_SOR56                 720
 #define IDB_SKILL_SOR58                 721
 #define IDB_SKILL_UNK                   722
-#define IDR_HIRELING_TXT                723
 #define IDC_TRASH_CURSOR                724
 #define IDD_NEW_ITEM_DIALOG             725
 #define IDD_MAGICAL_AFFIXES_DIALOG      727

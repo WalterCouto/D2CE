@@ -121,9 +121,6 @@
     <Filter Include="Resource Files\Skills">
       <UniqueIdentifier>{411c5705-7630-4a7c-85f1-9499ab2b5de8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\TXT\LNG">
-      <UniqueIdentifier>{338fc447-c8c7-45a9-9e8e-230af3e693bb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\d2ce\Helpers">
       <UniqueIdentifier>{b32fd661-ff94-4015-9910-8064e812a414}</UniqueIdentifier>
     </Filter>
@@ -186,6 +183,27 @@
     </Filter>
     <Filter Include="Header Files\StormLib\Doc Files">
       <UniqueIdentifier>{a66a4079-2185-4955-b4ba-b94e5aa60d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\global">
+      <UniqueIdentifier>{b8b6f7df-4b6c-4640-bd71-bd0155d35822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\local">
+      <UniqueIdentifier>{9f6be9b0-a43e-4fc6-8b9d-3ce3a1348e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\global\excel">
+      <UniqueIdentifier>{d8f2b294-bef7-41f5-a1c9-7b76950295d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\global\ui">
+      <UniqueIdentifier>{3b97bb50-90ed-4a42-9e0c-066f3f03b228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\global\ui\layouts">
+      <UniqueIdentifier>{7ecf0057-0263-4f78-ba13-f2f203791398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\local\lng">
+      <UniqueIdentifier>{7676fd20-ea8e-424d-9829-b9f40a8e2d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\TXT\local\lng\strings">
+      <UniqueIdentifier>{31dd546f-396d-49ea-8ab2-d094917e91db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -840,44 +858,59 @@
     <None Include="d2ce\thirdparty\utf8\include\utf8\LICENSE">
       <Filter>Header Files\utf8</Filter>
     </None>
-    <None Include="res\TXT\LNG\item-gems.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\item-modifiers.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\item-nameaffixes.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\item-names.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\item-runes.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\mercenaries.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\monsters.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\quests.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\skills.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\ui.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
-    <None Include="res\TXT\LNG\levels.json">
-      <Filter>Resource Files\TXT\LNG</Filter>
-    </None>
     <None Include="res\trash.cur">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="d2ce\thirdparty\StormLib\LICENSE">
       <Filter>Header Files\StormLib</Filter>
+    </None>
+    <None Include="res\TXT\global\ui\layouts\bankexpansionlayouthd.json">
+      <Filter>Resource Files\TXT\global\ui\layouts</Filter>
+    </None>
+    <None Include="res\TXT\global\ui\layouts\hirelinginventorypanelhd.json">
+      <Filter>Resource Files\TXT\global\ui\layouts</Filter>
+    </None>
+    <None Include="res\TXT\global\ui\layouts\horadriccubelayouthd.json">
+      <Filter>Resource Files\TXT\global\ui\layouts</Filter>
+    </None>
+    <None Include="res\TXT\global\ui\layouts\playerinventoryexpansionlayouthd.json">
+      <Filter>Resource Files\TXT\global\ui\layouts</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\item-gems.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\item-modifiers.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\item-nameaffixes.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\item-names.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\item-runes.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\levels.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\mercenaries.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\monsters.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\npcs.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\quests.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\skills.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
+    </None>
+    <None Include="res\TXT\local\lng\strings\ui.json">
+      <Filter>Resource Files\TXT\local\lng\strings</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -2587,90 +2620,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="res\TXT\hireling.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Armor.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Belts.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\BodyLocs.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\CharStats.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\DifficultyLevels.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Experience.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Gems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\HireDesc.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\ItemStatCost.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\ItemTypes.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\LowQualityItems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\MagicPrefix.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\MagicSuffix.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Misc.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\PlayerClass.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Properties.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\QualityItems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\RarePrefix.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\RareSuffix.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Runes.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\SetItems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Sets.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\SkillDesc.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\Skills.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\UniqueItems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\weapons.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
-    <Text Include="res\TXT\CraftItems.txt">
-      <Filter>Resource Files\TXT</Filter>
-    </Text>
     <Text Include="d2ce\thirdparty\StormLib\doc\History.txt">
       <Filter>Header Files\StormLib\Doc Files</Filter>
     </Text>
@@ -2679,6 +2628,93 @@
     </Text>
     <Text Include="d2ce\thirdparty\StormLib\doc\The MoPaQ File Format 1.0.txt">
       <Filter>Header Files\StormLib\Doc Files</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\armor.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\belts.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\bodylocs.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\charstats.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\CraftItems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\difficultylevels.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\experience.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\gems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\hireling.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\itemstatcost.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\itemtypes.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\lowqualityitems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\magicprefix.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\magicsuffix.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\misc.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\monstats.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\montype.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\playerclass.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\properties.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\qualityitems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\rareprefix.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\raresuffix.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\runes.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\setitems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\sets.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\skilldesc.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\skills.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\uniqueitems.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
+    </Text>
+    <Text Include="res\TXT\global\excel\weapons.txt">
+      <Filter>Resource Files\TXT\global\excel</Filter>
     </Text>
   </ItemGroup>
 </Project>
