@@ -173,3 +173,7 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 
 - Added: Helper methods for character progression changes along with unit tests.<br>
 <br>
+
+## 🌟 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=WalterCouto/D2CE&type=Date)](https://star-history.com/#WalterCouto/D2CE&Date)
