@@ -194,6 +194,7 @@ namespace
         switch (id)
         {
         case IDC_INV_MERC_HEAD:
+        case IDC_INV_MERC_FEET:
             slots = CSize(2, 2);
             break;
 
@@ -201,6 +202,16 @@ namespace
         case IDC_INV_MERC_TORSO:
         case IDC_INV_MERC_LEFT_ARM:
             slots = CSize(2, 4);
+            break;
+
+        case IDC_INV_MERC_NECK:
+        case IDC_INV_MERC_RIGHT_RING:
+        case IDC_INV_MERC_LEFT_RING:
+            slots = CSize(1, 1);
+            break;
+
+        case IDC_INV_MERC_BELT:
+            slots = CSize(2, 1);
             break;
         }
 
@@ -300,9 +311,15 @@ void CD2MercenaryForm::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAR_RESIST_LIGHTNING, ResistLightning);
     DDX_Control(pDX, IDC_CHAR_RESIST_POISON, ResistPoison);
     DDX_Control(pDX, IDC_INV_MERC_HEAD, InvMercHeadBox);
+    DDX_Control(pDX, IDC_INV_MERC_NECK, InvMercNeckBox);
     DDX_Control(pDX, IDC_INV_MERC_RIGHT_ARM, InvMercHandRightBox);
     DDX_Control(pDX, IDC_INV_MERC_TORSO, InvMercTorsoBox);
     DDX_Control(pDX, IDC_INV_MERC_LEFT_ARM, InvMercHandLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_GLOVES, InvMercGloveBox);
+    DDX_Control(pDX, IDC_INV_MERC_RIGHT_RING, InvMercRingRightBox);
+    DDX_Control(pDX, IDC_INV_MERC_BELT, InvMercBeltBox);
+    DDX_Control(pDX, IDC_INV_MERC_LEFT_RING, InvMercRingLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_FEET, InvMercBootsBox);
 }
 //---------------------------------------------------------------------------
 BOOL CD2MercenaryForm::PreTranslateMessage(MSG* pMsg)
@@ -458,8 +475,89 @@ void CD2MercenaryForm::EnableMercInfoBox()
     InvMercTorsoBox.ShowWindow(bEnable ? SW_SHOW : SW_HIDE);
     InvMercHandLeftBox.EnableWindow(bEnable);
     InvMercHandLeftBox.ShowWindow(bEnable ? SW_SHOW : SW_HIDE);
-    if (!bEnable)
+    if (bEnable)
     {
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::NECK))
+        {
+            InvMercNeckBox.EnableWindow(TRUE);
+            InvMercNeckBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercNeckBox.EnableWindow(FALSE);
+            InvMercNeckBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::GLOVES))
+        {
+            InvMercGloveBox.EnableWindow(TRUE);
+            InvMercGloveBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercGloveBox.EnableWindow(FALSE);
+            InvMercGloveBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::RIGHT_RING))
+        {
+            InvMercRingRightBox.EnableWindow(TRUE);
+            InvMercRingRightBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercRingRightBox.EnableWindow(FALSE);
+            InvMercRingRightBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::BELT))
+        {
+            InvMercBeltBox.EnableWindow(TRUE);
+            InvMercBeltBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercBeltBox.EnableWindow(FALSE);
+            InvMercBeltBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::LEFT_RING))
+        {
+            InvMercRingLeftBox.EnableWindow(TRUE);
+            InvMercRingLeftBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercRingLeftBox.EnableWindow(FALSE);
+            InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::FEET))
+        {
+            InvMercBootsBox.EnableWindow(TRUE);
+            InvMercBootsBox.ShowWindow(SW_SHOW);
+        }
+        else
+        {
+            InvMercBootsBox.EnableWindow(FALSE);
+            InvMercBootsBox.ShowWindow(SW_HIDE);
+        }
+    }
+    else
+    {
+        InvMercNeckBox.EnableWindow(FALSE);
+        InvMercNeckBox.ShowWindow(SW_HIDE);
+        InvMercGloveBox.EnableWindow(FALSE);
+        InvMercGloveBox.ShowWindow(SW_HIDE);
+        InvMercRingRightBox.EnableWindow(FALSE);
+        InvMercRingRightBox.ShowWindow(SW_HIDE);
+        InvMercBeltBox.EnableWindow(FALSE);
+        InvMercBeltBox.ShowWindow(SW_HIDE);
+        InvMercRingLeftBox.EnableWindow(FALSE);
+        InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        InvMercBootsBox.EnableWindow(FALSE);
+        InvMercBootsBox.ShowWindow(SW_HIDE);
+
         Attribute.ResetContent();
         CurAttributeClass = d2ce::EnumMercenaryClass::None;
         MercName.ResetContent();
@@ -653,9 +751,15 @@ void CD2MercenaryForm::LoadMercItemImages()
     if (!MainForm.isExpansionCharacter() || !Merc.isHired())
     {
         InvMercHeadBox.ShowWindow(SW_HIDE);
+        InvMercNeckBox.ShowWindow(SW_HIDE);
         InvMercHandRightBox.ShowWindow(SW_HIDE);
         InvMercTorsoBox.ShowWindow(SW_HIDE);
         InvMercHandLeftBox.ShowWindow(SW_HIDE);
+        InvMercGloveBox.ShowWindow(SW_HIDE);
+        InvMercRingRightBox.ShowWindow(SW_HIDE);
+        InvMercBeltBox.ShowWindow(SW_HIDE);
+        InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        InvMercBootsBox.ShowWindow(SW_HIDE);
         return;
     }
 
@@ -667,6 +771,66 @@ void CD2MercenaryForm::LoadMercItemImages()
     InvMercTorsoBox.LoadItemImage();
     InvMercHandLeftBox.ShowWindow(SW_SHOW);
     InvMercHandLeftBox.LoadItemImage();
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::NECK))
+    {
+        InvMercNeckBox.ShowWindow(SW_SHOW);
+        InvMercNeckBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercNeckBox.ShowWindow(SW_HIDE);
+    }
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::GLOVES))
+    {
+        InvMercGloveBox.ShowWindow(SW_SHOW);
+        InvMercGloveBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercGloveBox.ShowWindow(SW_HIDE);
+    }
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::RIGHT_RING))
+    {
+        InvMercRingRightBox.ShowWindow(SW_SHOW);
+        InvMercRingRightBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercRingRightBox.ShowWindow(SW_HIDE);
+    }
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::BELT))
+    {
+        InvMercBeltBox.ShowWindow(SW_SHOW);
+        InvMercBeltBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercBeltBox.ShowWindow(SW_HIDE);
+    }
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::LEFT_RING))
+    {
+        InvMercRingLeftBox.ShowWindow(SW_SHOW);
+        InvMercRingLeftBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercRingLeftBox.ShowWindow(SW_HIDE);
+    }
+
+    if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::FEET))
+    {
+        InvMercBootsBox.ShowWindow(SW_SHOW);
+        InvMercBootsBox.LoadItemImage();
+    }
+    else
+    {
+        InvMercBootsBox.ShowWindow(SW_HIDE);
+    }
 }
 //---------------------------------------------------------------------------
 void CD2MercenaryForm::refreshEquipped(const d2ce::Item& item)
@@ -688,6 +852,10 @@ void CD2MercenaryForm::refreshEquipped(d2ce::EnumEquippedId id)
         InvMercHeadBox.LoadItemImage();
         break;
 
+    case d2ce::EnumEquippedId::NECK:
+        InvMercNeckBox.LoadItemImage();
+        break;
+
     case d2ce::EnumEquippedId::LEFT_ARM:
     case d2ce::EnumEquippedId::RIGHT_ARM:
         InvMercHandRightBox.LoadItemImage();
@@ -696,6 +864,24 @@ void CD2MercenaryForm::refreshEquipped(d2ce::EnumEquippedId id)
 
     case d2ce::EnumEquippedId::TORSO:
         InvMercTorsoBox.LoadItemImage();
+        break;
+
+    case d2ce::EnumEquippedId::LEFT_RING:
+    case d2ce::EnumEquippedId::RIGHT_RING:
+        InvMercRingRightBox.LoadItemImage();
+        InvMercRingLeftBox.LoadItemImage();
+        break;
+
+    case d2ce::EnumEquippedId::BELT:
+        InvMercBeltBox.LoadItemImage();
+        break;
+
+    case d2ce::EnumEquippedId::GLOVES:
+        InvMercGloveBox.LoadItemImage();
+        break;
+
+    case d2ce::EnumEquippedId::FEET:
+        InvMercBootsBox.LoadItemImage();
         break;
     }
 }
@@ -878,6 +1064,9 @@ const d2ce::Item* CD2MercenaryForm::GetInvItem(UINT id, UINT /*offset*/) const
     case IDC_INV_MERC_HEAD:
         return InvMercHeadBox.GetInvItem();
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.GetInvItem();
+
     case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.GetInvItem();
 
@@ -886,7 +1075,21 @@ const d2ce::Item* CD2MercenaryForm::GetInvItem(UINT id, UINT /*offset*/) const
 
     case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.GetInvItem();
-        break;
+
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.GetInvItem();
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.GetInvItem();
+
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.GetInvItem();
+
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.GetInvItem();
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.GetInvItem();
     }
 
     return nullptr;
@@ -901,6 +1104,9 @@ const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* 
     case IDC_INV_MERC_HEAD:
         return InvMercHeadBox.InvHitTest(point, pTI);
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.InvHitTest(point, pTI);
+
     case IDC_INV_MERC_RIGHT_ARM:
         return InvMercHandRightBox.InvHitTest(point, pTI);
 
@@ -909,7 +1115,21 @@ const d2ce::Item* CD2MercenaryForm::InvHitTest(UINT id, CPoint point, TOOLINFO* 
 
     case IDC_INV_MERC_LEFT_ARM:
         return InvMercHandLeftBox.InvHitTest(point, pTI);
-        break;
+
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.InvHitTest(point, pTI);
     }
 
     return nullptr;
@@ -1374,9 +1594,15 @@ BOOL CD2MercenaryForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
             break;
 
         case IDC_INV_MERC_HEAD:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_MERC_TORSO:
         case IDC_INV_MERC_LEFT_ARM:
+        case IDC_INV_MERC_GLOVES:
+        case IDC_INV_MERC_RIGHT_RING:
+        case IDC_INV_MERC_BELT:
+        case IDC_INV_MERC_LEFT_RING:
+        case IDC_INV_MERC_FEET:
             strTipText = _T("N/A");
             break;
         }

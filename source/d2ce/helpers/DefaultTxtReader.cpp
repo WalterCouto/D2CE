@@ -56,46 +56,60 @@ namespace d2ce
 
         return std::filesystem::path();
     }
-
-    Json::Value GetGridSize(const std::string& layout)
+    
+    Json::Value GetChildrenNode(const std::string& layout)
     {
         static Json::Value badValue;
 
         std::istringstream stream(layout);
         Json::Value root;
-        Json::Value jsonValue;
-        std::string typeName;
         Json::CharReaderBuilder builder;
         JSONCPP_STRING errs;
         if (parseFromStream(builder, stream, &root, &errs) && !root.isNull())
         {
-            root = root["children"];
-            auto iter_end = root.end();
-            for (auto iter = root.begin(); iter != iter_end; ++iter)
-            {
-                if (iter->isNull())
-                {
-                    continue;
-                }
+            return root["children"];
+        }
 
-                jsonValue = (*iter)["type"];
+        return badValue;
+    }
+
+    Json::Value GetGridSize(const std::string& layout)
+    {
+        static Json::Value badValue;
+        Json::Value jsonValue;
+        std::string typeName;
+
+        Json::Value root = GetChildrenNode(layout);
+        if (root.isNull())
+        {
+            return badValue;
+        }
+        
+        auto iter_end = root.end();
+        for (auto iter = root.begin(); iter != iter_end; ++iter)
+        {
+            if (iter->isNull())
+            {
+                continue;
+            }
+
+            jsonValue = (*iter)["type"];
+            if (jsonValue.isNull())
+            {
+                continue;
+            }
+
+            typeName = jsonValue.asString();
+            if (typeName == "InventoryGridWidget")
+            {
+                jsonValue = (*iter)["fields"];
                 if (jsonValue.isNull())
                 {
-                    continue;
+                    return badValue;
                 }
 
-                typeName = jsonValue.asString();
-                if (typeName == "InventoryGridWidget")
-                {
-                    jsonValue = (*iter)["fields"];
-                    if (jsonValue.isNull())
-                    {
-                        return badValue;
-                    }
+                return jsonValue["cellCount"];
 
-                    return jsonValue["cellCount"];
-
-                }
             }
         }
 
@@ -118,6 +132,7 @@ namespace d2ce
         const std::string& GetUI();
 
         const std::string& GetBankExpansionLayout();
+        const std::string& GetHirelingInventoryPanel();
         const std::string& GetHoradricCubeLayout();
         const std::string& GetPlayerInventoryExpansionLayout();
     }
@@ -153,6 +168,7 @@ namespace d2ce
         const std::string& GetSuperiorModsTxt();
         const std::string& GetCraftModsTxt();
         const std::string& GetGridDimensionsTxt();
+        const std::string& GetMercInventoryTxt();
     }
 
     class D2RModReaderHelper;
@@ -992,6 +1008,16 @@ namespace d2ce
             return JsonReaderHelper::GetBankExpansionLayout();
         }
 
+        const std::string& GetHirelingInventoryPanel()
+        {
+            if (!LoadLayoutJsonText(strHirelingInventoryPanel, "hirelinginventorypanelhd.json").empty())
+            {
+                return strHirelingInventoryPanel;
+            }
+
+            return JsonReaderHelper::GetBankExpansionLayout();
+        }
+
         const std::string& GetHoradricCubeLayout()
         {
             if (!LoadLayoutJsonText(strHoradricCubeLayout, "horadriccubelayouthd.json").empty())
@@ -1651,6 +1677,65 @@ namespace d2ce
                 return strValue;
             }
 
+            return TxtReaderHelper::GetMercInventoryTxt();
+        }
+        
+        const std::string& GetMercInventoryTxt()
+        {
+            auto& strValue = strMercInventoryTxt;
+            if (!strValue.empty())
+            {
+                return strValue;
+            }
+
+            bool hasEntries = false;
+            std::stringstream ss;
+            ss << u8"location\n";
+            {
+                Json::Value root = GetChildrenNode(GetHirelingInventoryPanel());
+                if (!root.isNull())
+                {
+                    Json::Value jsonValue;
+                    std::string typeName;
+
+                    auto iter_end = root.end();
+                    for (auto iter = root.begin(); iter != iter_end; ++iter)
+                    {
+                        if (iter->isNull())
+                        {
+                            continue;
+                        }
+
+                        jsonValue = (*iter)["type"];
+                        if (jsonValue.isNull())
+                        {
+                            continue;
+                        }
+
+                        typeName = jsonValue.asString();
+                        if (typeName == "InventorySlotWidget")
+                        {
+                            jsonValue = (*iter)["fields"];
+                            if (!jsonValue.isNull())
+                            {
+                                jsonValue = jsonValue["location"];
+                                if (!jsonValue.isNull())
+                                {
+                                    hasEntries = true;
+                                    ss << jsonValue.asString() << "\n";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (hasEntries)
+            {
+                strValue = ss.str();
+                return strValue;
+            }
+
             return TxtReaderHelper::GetGridDimensionsTxt();
         }
 
@@ -1706,6 +1791,7 @@ namespace d2ce
             GetSuperiorModsTxt();
             GetCraftModsTxt();
             GetGridDimensionsTxt();
+            GetMercInventoryTxt();
 
             // done reading MPQ archive, so prevent any future read attemps
             if (hMpq != NULL)
@@ -2805,6 +2891,7 @@ namespace d2ce
         std::string strSkills;
         std::string strUI;
         std::string strBankExpansionLayout;
+        std::string strHirelingInventoryPanel;
         std::string strHoradricCubeLayout;
         std::string strPlayerInventoryExpansionLayout;
 
@@ -2836,6 +2923,7 @@ namespace d2ce
         std::string strSuperiorModsTxt;
         std::string strItemsCode;
         std::string strGridDimensionsTxt;
+        std::string strMercInventoryTxt;
         
         std::map<std::uint32_t, std::string> stringTxtInfo;
         std::map<std::string, std::string> stringEnTxtByKey;
@@ -5028,6 +5116,16 @@ namespace d2ce
             }
 
             return LoadTxtStream(TxtReaderHelper::GetGridDimensionsTxt());
+        }
+
+        virtual std::unique_ptr<ITxtDocument> GetMercInventoryTxt() const override
+        {
+            if (modReader != nullptr)
+            {
+                return LoadTxtStream(modReader->GetMercInventoryTxt());
+            }
+
+            return LoadTxtStream(TxtReaderHelper::GetMercInventoryTxt());
         }
 
         virtual std::string GetModName() const override

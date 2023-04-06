@@ -18,8 +18,9 @@
 
 Revision History
 ================
-Version 2.22 (April 4, 2023)
-   - Updated: Fix error message from bad character file
+Version 2.22 (April 6, 2023)
+   - Added: Add logic to read supported slots for Mercenary and update 
+            UI to display all supported slots
 
 Version 2.21 (April 4, 2023)
    - Updated: Fix error message from bad character file

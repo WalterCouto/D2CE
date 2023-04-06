@@ -912,9 +912,15 @@
 #define IDC_BUTTON_TREE_3_ROW_6_COL_2   1146
 #define IDC_FILL_BUTTON                 1147
 #define IDC_BUTTON_TREE_3_ROW_6_COL_3   1147
+#define IDC_INV_MERC_NECK               1147
 #define IDC_FILL_BUTTON2                1148
+#define IDC_INV_MERC_BELT               1148
+#define IDC_INV_MERC_FEET               1149
 #define IDC_PAGE_COMBO                  1150
+#define IDC_INV_MERC_RIGHT_RING         1150
 #define IDC_SHARED_STASH_BUTTON         1151
+#define IDC_INV_MERC_LEFT_RING          1152
+#define IDC_INV_MERC_GLOVES             1153
 #define ID_VIEW_REFRESH                 32772
 #define ID_VIEW_LEVEL_REQ               32773
 #define ID_OPTIONS_BACKUP_CHAR          32774

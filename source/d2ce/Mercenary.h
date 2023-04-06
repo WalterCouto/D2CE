@@ -113,6 +113,8 @@ namespace d2ce
         static const std::vector<std::string>& getMercClassNames();
         static const std::vector<std::string>& getMercAttributes(EnumMercenaryClass mercClass, EnumCharVersion version);
         static const std::string& getMercClassName(EnumMercenaryClass mercClass);
+        static const std::vector<d2ce::EnumEquippedId>& getSupportedEquippedIds();
+        static bool supportsEquippedId(d2ce::EnumEquippedId slot);
     };
 }
 //---------------------------------------------------------------------------

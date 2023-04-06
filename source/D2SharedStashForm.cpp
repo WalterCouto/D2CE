@@ -454,15 +454,19 @@ namespace
         case IDC_INV_CORPSE_GLOVES:
         case IDC_INV_FEET:
         case IDC_INV_CORPSE_FEET:
+        case IDC_INV_MERC_FEET:
             slots = CSize(2, 2);
             break;
 
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_RIGHT_RING:
         case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_MERC_RIGHT_RING:
         case IDC_INV_LEFT_RING:
         case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_MERC_LEFT_RING:
             slots = CSize(1, 1);
             break;
 
@@ -481,6 +485,7 @@ namespace
 
         case IDC_INV_BELT:
         case IDC_INV_CORPSE_BELT:
+        case IDC_INV_MERC_BELT:
             slots = CSize(2, 1);
             break;
         }

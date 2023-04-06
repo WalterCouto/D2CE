@@ -555,15 +555,19 @@ namespace
         case IDC_INV_CORPSE_GLOVES:
         case IDC_INV_FEET:
         case IDC_INV_CORPSE_FEET:
+        case IDC_INV_MERC_FEET:
             slots = CSize(2, 2);
             break;
 
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_RIGHT_RING:
         case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_MERC_RIGHT_RING:
         case IDC_INV_LEFT_RING:
         case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_MERC_LEFT_RING:
             slots = CSize(1, 1);
             break;
 
@@ -582,6 +586,7 @@ namespace
 
         case IDC_INV_BELT:
         case IDC_INV_CORPSE_BELT:
+        case IDC_INV_MERC_BELT:
             slots = CSize(2, 1);
             break;
         }
@@ -950,23 +955,28 @@ BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
 
     case IDC_INV_GLOVES:
     case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_MERC_GLOVES:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_HELM_GLOVES_0_0)));
         break;
 
     case IDC_INV_FEET:
     case IDC_INV_CORPSE_FEET:
+    case IDC_INV_MERC_FEET:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_FEET)));
         break;
 
     case IDC_INV_NECK:
     case IDC_INV_CORPSE_NECK:
+    case IDC_INV_MERC_NECK:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_RING_AMULET_0_0)));
         break;
 
     case IDC_INV_RIGHT_RING:
     case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_MERC_RIGHT_RING:
     case IDC_INV_LEFT_RING:
     case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_MERC_LEFT_RING:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_RING_AMULET_0_1)));
         break;
 
@@ -988,6 +998,7 @@ BOOL CD2EquippedItemStatic::LoadBackgroundImage(BOOL isAltImage)
 
     case IDC_INV_BELT:
     case IDC_INV_CORPSE_BELT:
+    case IDC_INV_MERC_BELT:
         invImage.Attach(::LoadBitmap(AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_INV_BELT)));
         break;
     }
@@ -1203,22 +1214,27 @@ d2ce::EnumEquippedId CD2EquippedItemStatic::GetEquippedId(BOOL isAltImage) const
 
     case IDC_INV_GLOVES:
     case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_MERC_GLOVES:
         return d2ce::EnumEquippedId::GLOVES;
 
     case IDC_INV_RIGHT_RING:
     case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_MERC_RIGHT_RING:
         return d2ce::EnumEquippedId::RIGHT_RING;
 
     case IDC_INV_BELT:
     case IDC_INV_CORPSE_BELT:
+    case IDC_INV_MERC_BELT:
         return d2ce::EnumEquippedId::BELT;
 
     case IDC_INV_LEFT_RING:
     case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_MERC_LEFT_RING:
         return d2ce::EnumEquippedId::LEFT_RING;
 
     case IDC_INV_FEET:
     case IDC_INV_CORPSE_FEET:
+    case IDC_INV_MERC_FEET:
         return d2ce::EnumEquippedId::FEET;
     }
 
@@ -1242,9 +1258,15 @@ d2ce::EnumItemInventory CD2EquippedItemStatic::GetItemInventory() const
         return d2ce::EnumItemInventory::CORPSE;
 
     case IDC_INV_MERC_HEAD:
+    case IDC_INV_MERC_NECK:
     case IDC_INV_MERC_RIGHT_ARM:
     case IDC_INV_MERC_TORSO:
     case IDC_INV_MERC_LEFT_ARM:
+    case IDC_INV_MERC_GLOVES:
+    case IDC_INV_MERC_RIGHT_RING:
+    case IDC_INV_MERC_BELT:
+    case IDC_INV_MERC_LEFT_RING:
+    case IDC_INV_MERC_FEET:
         return d2ce::EnumItemInventory::MERCENARY;
 
     case IDC_INV_GOLEM:
@@ -2278,9 +2300,15 @@ void CD2ItemsForm::DoDataExchange(CDataExchange* pDX)
 
     DDX_Control(pDX, IDC_MERC_GROUP, MercGroupBox);
     DDX_Control(pDX, IDC_INV_MERC_HEAD, InvMercHeadBox);
+    DDX_Control(pDX, IDC_INV_MERC_NECK, InvMercNeckBox);
     DDX_Control(pDX, IDC_INV_MERC_RIGHT_ARM, InvMercHandRightBox);
     DDX_Control(pDX, IDC_INV_MERC_TORSO, InvMercTorsoBox);
     DDX_Control(pDX, IDC_INV_MERC_LEFT_ARM, InvMercHandLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_GLOVES, InvMercGloveBox);
+    DDX_Control(pDX, IDC_INV_MERC_RIGHT_RING, InvMercRingRightBox);
+    DDX_Control(pDX, IDC_INV_MERC_BELT, InvMercBeltBox);
+    DDX_Control(pDX, IDC_INV_MERC_LEFT_RING, InvMercRingLeftBox);
+    DDX_Control(pDX, IDC_INV_MERC_FEET, InvMercBootsBox);
 
     DDX_Control(pDX, IDC_GOLEM_GROUP, GolemGroupBox);
     DDX_Control(pDX, IDC_INV_GOLEM, InvGolemBox);
@@ -2453,18 +2481,30 @@ void CD2ItemsForm::LoadMercItemImages()
     {
         MercGroupBox.ShowWindow(SW_HIDE);
         InvMercHeadBox.ShowWindow(SW_HIDE);
+        InvMercNeckBox.ShowWindow(SW_HIDE);
         InvMercHandRightBox.ShowWindow(SW_HIDE);
         InvMercTorsoBox.ShowWindow(SW_HIDE);
         InvMercHandLeftBox.ShowWindow(SW_HIDE);
+        InvMercGloveBox.ShowWindow(SW_HIDE);
+        InvMercRingRightBox.ShowWindow(SW_HIDE);
+        InvMercBeltBox.ShowWindow(SW_HIDE);
+        InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        InvMercBootsBox.ShowWindow(SW_HIDE);
         return;
     }
 
     if (!Merc.isHired())
     {
         InvMercHeadBox.ShowWindow(SW_HIDE);
+        InvMercNeckBox.ShowWindow(SW_HIDE);
         InvMercHandRightBox.ShowWindow(SW_HIDE);
         InvMercTorsoBox.ShowWindow(SW_HIDE);
         InvMercHandLeftBox.ShowWindow(SW_HIDE);
+        InvMercGloveBox.ShowWindow(SW_HIDE);
+        InvMercRingRightBox.ShowWindow(SW_HIDE);
+        InvMercBeltBox.ShowWindow(SW_HIDE);
+        InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        InvMercBootsBox.ShowWindow(SW_HIDE);
     }
     else
     {
@@ -2476,6 +2516,66 @@ void CD2ItemsForm::LoadMercItemImages()
         InvMercTorsoBox.LoadItemImage();
         InvMercHandLeftBox.ShowWindow(SW_SHOW);
         InvMercHandLeftBox.LoadItemImage();
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::NECK))
+        {
+            InvMercNeckBox.ShowWindow(SW_SHOW);
+            InvMercNeckBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercNeckBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::GLOVES))
+        {
+            InvMercGloveBox.ShowWindow(SW_SHOW);
+            InvMercGloveBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercGloveBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::RIGHT_RING))
+        {
+            InvMercRingRightBox.ShowWindow(SW_SHOW);
+            InvMercRingRightBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercRingRightBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::BELT))
+        {
+            InvMercBeltBox.ShowWindow(SW_SHOW);
+            InvMercBeltBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercBeltBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::LEFT_RING))
+        {
+            InvMercRingLeftBox.ShowWindow(SW_SHOW);
+            InvMercRingLeftBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercRingLeftBox.ShowWindow(SW_HIDE);
+        }
+
+        if (d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId::FEET))
+        {
+            InvMercBootsBox.ShowWindow(SW_SHOW);
+            InvMercBootsBox.LoadItemImage();
+        }
+        else
+        {
+            InvMercBootsBox.ShowWindow(SW_HIDE);
+        }
     }
 
     auto uName = utf8::utf8to16(Merc.getClassName());
@@ -3136,9 +3236,15 @@ void CD2ItemsForm::SetCurrItemInfo(CPoint point)
                 break;
 
             case IDC_INV_MERC_HEAD:
+            case IDC_INV_MERC_NECK:
             case IDC_INV_MERC_RIGHT_ARM:
             case IDC_INV_MERC_TORSO:
             case IDC_INV_MERC_LEFT_ARM:
+            case IDC_INV_MERC_GLOVES:
+            case IDC_INV_MERC_RIGHT_RING:
+            case IDC_INV_MERC_BELT:
+            case IDC_INV_MERC_LEFT_RING:
+            case IDC_INV_MERC_FEET:
                 CurrItemLocation[1] = 3; // Mercenary body
                 break;
 
@@ -3193,9 +3299,15 @@ void CD2ItemsForm::SetCurrItemInfo(CPoint point)
         break;
 
     case IDC_INV_MERC_HEAD:
+    case IDC_INV_MERC_NECK:
     case IDC_INV_MERC_RIGHT_ARM:
     case IDC_INV_MERC_TORSO:
     case IDC_INV_MERC_LEFT_ARM:
+    case IDC_INV_MERC_GLOVES:
+    case IDC_INV_MERC_RIGHT_RING:
+    case IDC_INV_MERC_BELT:
+    case IDC_INV_MERC_LEFT_RING:
+    case IDC_INV_MERC_FEET:
         CurrItemLocation[0] = static_cast<std::underlying_type_t<d2ce::EnumItemLocation>>(d2ce::EnumItemLocation::EQUIPPED);
         CurrItemLocation[1] = 3; // Mercenary body
         break;

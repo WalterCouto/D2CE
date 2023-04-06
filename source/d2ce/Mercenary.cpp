@@ -34,6 +34,64 @@ namespace d2ce
     constexpr std::uint32_t CHAR_V109_MERC_NAME_BYTE_OFFSET = 183i32;       // pos 183 (1.09+ only)
     constexpr std::uint32_t CHAR_V109_MERC_TYPE_BYTE_OFFSET = 185i32;       // pos 185 (1.09+ only)
     constexpr std::uint32_t CHAR_V109_MERC_EXPERIENCE_BYTE_OFFSET = 187i32; // Experience: pos 187 (1.09+ only)
+    
+    std::vector<d2ce::EnumEquippedId> s_MercSupportedEquippedIds;
+    void InitSupportedMercIds(const ITxtReader& txtReader)
+    {
+        static const ITxtReader* pCurTextReader = nullptr;
+        if (!s_MercSupportedEquippedIds.empty())
+        {
+            if (pCurTextReader == &txtReader)
+            {
+                // already initialized
+                return;
+            }
+
+            s_MercSupportedEquippedIds.clear();
+        }
+
+        pCurTextReader = &txtReader;
+        auto pDoc(txtReader.GetMercInventoryTxt());
+        auto& doc = *pDoc;
+
+        static std::map<std::string, EnumEquippedId> s_equipMap = {
+                    {"head", EnumEquippedId::HEAD}, {"neck", EnumEquippedId::NECK}, {"torso", EnumEquippedId::TORSO},
+                    {"right_arm", EnumEquippedId::RIGHT_ARM}, {"left_arm", EnumEquippedId::LEFT_ARM},
+                    {"right_hand", EnumEquippedId::RIGHT_RING}, {"left_hand", EnumEquippedId::LEFT_RING}, {"belt", EnumEquippedId::BELT}, {"feet", EnumEquippedId::FEET},
+                    {"gloves", EnumEquippedId::GLOVES}
+        };
+        
+        std::vector<d2ce::EnumEquippedId> mercSupportedEquippedIds;
+        size_t numRows = doc.GetRowCount();
+        const SSIZE_T locationColumnIdx = doc.GetColumnIdx("location");
+        if (locationColumnIdx < 0)
+        {
+            return;
+        }
+
+        auto iter = s_equipMap.end();
+        std::string strValue;
+        for (size_t i = 0; i < numRows; ++i)
+        {
+            strValue = doc.GetCellString(locationColumnIdx, i);
+            if (strValue.empty())
+            {
+                // should not happen
+                continue;
+            }
+
+            iter = s_equipMap.find(strValue);
+            if (iter == s_equipMap.end())
+            {
+                // should not happen
+                continue;
+            }
+
+            mercSupportedEquippedIds.push_back(iter->second);
+        }
+
+        s_MercSupportedEquippedIds.swap(mercSupportedEquippedIds);
+    }
 
     // must be in the form of "<string><number>"
     bool ExtractPrefixAndNumber(const std::string& input, std::string& prefix, std::uint16_t& value)
@@ -139,6 +197,8 @@ namespace d2ce
             s_LegacyBarbarianTypes.clear();
             s_MercTypeInfo.clear();
         }
+
+        InitSupportedMercIds(txtReader);
 
         pCurTextReader = &txtReader;
         auto pDoc(txtReader.GetHirelingTxt());
@@ -2037,7 +2097,11 @@ d2ce::EnumEquippedId d2ce::Mercenary::verifyEquippedId(const d2ce::Item& item, E
             break;
 
         default:
-            return d2ce::EnumEquippedId::NONE;
+            if (std::find(s_MercSupportedEquippedIds.begin(), s_MercSupportedEquippedIds.end(), equipId) == s_MercSupportedEquippedIds.end())
+            {
+                return d2ce::EnumEquippedId::NONE;
+            }
+            break;
         }
         break;
 
@@ -2058,7 +2122,11 @@ d2ce::EnumEquippedId d2ce::Mercenary::verifyEquippedId(const d2ce::Item& item, E
             break;
 
         default:
-            return d2ce::EnumEquippedId::NONE;
+            if (std::find(s_MercSupportedEquippedIds.begin(), s_MercSupportedEquippedIds.end(), equipId) == s_MercSupportedEquippedIds.end())
+            {
+                return d2ce::EnumEquippedId::NONE;
+            }
+            break;
         }
         break;
 
@@ -2084,7 +2152,11 @@ d2ce::EnumEquippedId d2ce::Mercenary::verifyEquippedId(const d2ce::Item& item, E
             break;
 
         default:
-            return d2ce::EnumEquippedId::NONE;
+            if (std::find(s_MercSupportedEquippedIds.begin(), s_MercSupportedEquippedIds.end(), equipId) == s_MercSupportedEquippedIds.end())
+            {
+                return d2ce::EnumEquippedId::NONE;
+            }
+            break;
         }
         break;
 
@@ -2162,7 +2234,11 @@ d2ce::EnumEquippedId d2ce::Mercenary::verifyEquippedId(const d2ce::Item& item, E
             break;
 
         default:
-            return d2ce::EnumEquippedId::NONE;
+            if (std::find(s_MercSupportedEquippedIds.begin(), s_MercSupportedEquippedIds.end(), equipId) == s_MercSupportedEquippedIds.end())
+            {
+                return d2ce::EnumEquippedId::NONE;
+            }
+            break;
         }
         break;
 
@@ -2317,5 +2393,25 @@ const std::string& d2ce::Mercenary::getMercClassName(EnumMercenaryClass mercClas
     }
 
     return s_MercClassNames[idx];
+}
+//---------------------------------------------------------------------------
+const std::vector<d2ce::EnumEquippedId>& d2ce::Mercenary::getSupportedEquippedIds()
+{
+    return s_MercSupportedEquippedIds;
+}
+//---------------------------------------------------------------------------
+bool d2ce::Mercenary::supportsEquippedId(d2ce::EnumEquippedId slot)
+{
+    switch (slot)
+    {
+    case d2ce::EnumEquippedId::HEAD:
+    case d2ce::EnumEquippedId::TORSO:
+    case d2ce::EnumEquippedId::RIGHT_ARM:
+    case d2ce::EnumEquippedId::LEFT_ARM:
+        return true;
+
+    default:
+        return std::find(s_MercSupportedEquippedIds.begin(), s_MercSupportedEquippedIds.end(), slot) == s_MercSupportedEquippedIds.end() ? false : true;
+    }
 }
 //---------------------------------------------------------------------------

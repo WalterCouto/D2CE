@@ -266,9 +266,15 @@ protected:
 
     CStatic MercGroupBox;
     CD2EquippedItemStatic InvMercHeadBox;
+    CD2EquippedItemStatic InvMercNeckBox;
     CD2EquippedItemStatic InvMercHandRightBox;
     CD2EquippedItemStatic InvMercTorsoBox;
     CD2EquippedItemStatic InvMercHandLeftBox;
+    CD2EquippedItemStatic InvMercGloveBox;
+    CD2EquippedItemStatic InvMercRingRightBox;
+    CD2EquippedItemStatic InvMercBeltBox;
+    CD2EquippedItemStatic InvMercRingLeftBox;
+    CD2EquippedItemStatic InvMercBootsBox;
 
     CStatic GolemGroupBox;
     CD2EquippedItemStatic InvGolemBox;
