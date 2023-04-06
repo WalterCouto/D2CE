@@ -552,9 +552,15 @@ void CD2ItemToolTipCtrl::OnShow(NMHDR* pNMHDR, LRESULT* pResult)
     switch (currID)
     {
     case IDC_INV_MERC_HEAD:
+    case IDC_INV_MERC_NECK:
     case IDC_INV_MERC_RIGHT_ARM:
     case IDC_INV_MERC_TORSO:
     case IDC_INV_MERC_LEFT_ARM:
+    case IDC_INV_MERC_GLOVES:
+    case IDC_INV_MERC_RIGHT_RING:
+    case IDC_INV_MERC_BELT:
+    case IDC_INV_MERC_LEFT_RING:
+    case IDC_INV_MERC_FEET:
         IsMerc = true;
         isInvItem = true;
         break;
