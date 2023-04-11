@@ -4397,6 +4397,12 @@ namespace d2ce
                 {
                     itemType.name = name;
                 }
+                else
+                {
+                    strValue = "unused";
+                    LocalizationHelpers::GetStringTxtValue(strValue, name, "an evil force");
+                    itemType.name = name;
+                }
             }
             else if (LocalizationHelpers::GetStringTxtValue(strValue, name))
             {

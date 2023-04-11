@@ -59,10 +59,14 @@ Check the following site for updates at https://github.com/WalterCouto/D2CE<br>
 * [d2s Binary File Format](d2s_File_Format.md)<br>
 
 ### Revision History
+**Version 2.22 (April 11, 2023)**
+- Added: Add logic to read supported slots for Mercenary and update UI to display all supported slots.<br>
+<br>
+
 **Version 2.21 (April 4, 2023)**
 - Updated: Fix error message from bad character file<br>
 - Updated: Support added PTR 2.6<br>
-- Updated: Layout of Items Form to take into account possible sizes  of inventories in D2R mods.<br>
+- Updated: Layout of Items Form to take into account possible sizes of inventories in D2R mods.<br>
 - Updated: Json export now adds the D2R mod name if applicable.<br>
 <br>
 

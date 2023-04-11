@@ -2915,6 +2915,7 @@ void CD2MainForm::UpdateCharInfo()
     if (statsChanged)
     {
         CheckStatsLeft();
+        CharInfo.fillDisplayedCharacterStats(DisplayedCs);
         StatsChanged();
     }
 }

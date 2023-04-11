@@ -553,6 +553,7 @@ namespace
         case IDC_INV_MERC_HEAD:
         case IDC_INV_GLOVES:
         case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_MERC_GLOVES:
         case IDC_INV_FEET:
         case IDC_INV_CORPSE_FEET:
         case IDC_INV_MERC_FEET:
@@ -671,9 +672,9 @@ bool CD2EquippedItemStatic::CanPlaceItem(const d2ce::Item& item, CPoint /*point*
                 {
                     return false;
                 }
-
-                return true;
             }
+
+            return true;
         }
         return false; // wrong method called
 
@@ -1191,6 +1192,7 @@ d2ce::EnumEquippedId CD2EquippedItemStatic::GetEquippedId(BOOL isAltImage) const
 
     case IDC_INV_NECK:
     case IDC_INV_CORPSE_NECK:
+    case IDC_INV_MERC_NECK:
         return d2ce::EnumEquippedId::NECK;
 
     case IDC_INV_RIGHT_ARM:
@@ -2953,6 +2955,10 @@ bool CD2ItemsForm::refreshEquipped(d2ce::EnumEquippedId id)
 
     case d2ce::EnumEquippedId::NECK:
         InvNeckBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercNeckBox.IsWindowVisible())
+        {
+            InvMercNeckBox.LoadItemImage();
+        }
         return true;
 
     case d2ce::EnumEquippedId::LEFT_ARM:
@@ -2982,22 +2988,42 @@ bool CD2ItemsForm::refreshEquipped(d2ce::EnumEquippedId id)
 
     case d2ce::EnumEquippedId::GLOVES:
         InvGloveBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercGloveBox.IsWindowVisible())
+        {
+            InvMercGloveBox.LoadItemImage();
+        }
         return true;
 
     case d2ce::EnumEquippedId::RIGHT_RING:
         InvRingRightBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercRingRightBox.IsWindowVisible())
+        {
+            InvMercRingRightBox.LoadItemImage();
+        }
         return true;
 
     case d2ce::EnumEquippedId::BELT:
         InvBeltBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercBeltBox.IsWindowVisible())
+        {
+            InvMercBeltBox.LoadItemImage();
+        }
         return true;
 
     case d2ce::EnumEquippedId::LEFT_RING:
         InvRingLeftBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercRingLeftBox.IsWindowVisible())
+        {
+            InvMercRingLeftBox.LoadItemImage();
+        }
         return true;
 
     case d2ce::EnumEquippedId::FEET:
         InvBootsBox.LoadItemImage();
+        if (MainForm.isExpansionCharacter() && Merc.isHired() && InvMercBootsBox.IsWindowVisible())
+        {
+            InvMercBootsBox.LoadItemImage();
+        }
         return true;
     }
 
@@ -3384,6 +3410,9 @@ bool CD2ItemsForm::GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO*
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.GetInvBitmap(image, point, pTI);
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.GetInvBitmap(image, point, pTI);
+
     case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.GetInvBitmap(image, point, pTI);
 
@@ -3417,11 +3446,17 @@ bool CD2ItemsForm::GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO*
     case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.GetInvBitmap(image, point, pTI);
 
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.GetInvBitmap(image, point, pTI);
+
     case IDC_INV_RIGHT_RING:
         return InvRingRightBox.GetInvBitmap(image, point, pTI);
 
     case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.GetInvBitmap(image, point, pTI);
 
     case IDC_INV_BELT:
         return InvBeltBox.GetInvBitmap(image, point, pTI);
@@ -3429,17 +3464,26 @@ bool CD2ItemsForm::GetInvBitmap(UINT id, CBitmap& image, CPoint point, TOOLINFO*
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.GetInvBitmap(image, point, pTI);
 
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.GetInvBitmap(image, point, pTI);
+
     case IDC_INV_LEFT_RING:
         return InvRingLeftBox.GetInvBitmap(image, point, pTI);
 
     case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.GetInvBitmap(image, point, pTI);
 
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.GetInvBitmap(image, point, pTI);
+
     case IDC_INV_FEET:
         return InvBootsBox.GetInvBitmap(image, point, pTI);
 
     case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.GetInvBitmap(image, point, pTI);
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.GetInvBitmap(image, point, pTI);
 
     case IDC_INV_GOLEM:
         return InvGolemBox.GetInvBitmap(image, point, pTI);
@@ -3482,6 +3526,9 @@ bool CD2ItemsForm::CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point)
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.CanPlaceItem(item, point);
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.CanPlaceItem(item, point);
+
     case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.CanPlaceItem(item, point);
 
@@ -3515,11 +3562,17 @@ bool CD2ItemsForm::CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point)
     case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.CanPlaceItem(item, point);
 
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.CanPlaceItem(item, point);
+
     case IDC_INV_RIGHT_RING:
         return InvRingRightBox.CanPlaceItem(item, point);
 
     case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.CanPlaceItem(item, point);
 
     case IDC_INV_BELT:
         return InvBeltBox.CanPlaceItem(item, point);
@@ -3527,17 +3580,26 @@ bool CD2ItemsForm::CanPlaceItem(UINT id, const d2ce::Item& item, CPoint point)
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.CanPlaceItem(item, point);
 
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.CanPlaceItem(item, point);
+
     case IDC_INV_LEFT_RING:
         return InvRingLeftBox.CanPlaceItem(item, point);
 
     case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.CanPlaceItem(item, point);
 
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.CanPlaceItem(item, point);
+
     case IDC_INV_FEET:
         return InvBootsBox.CanPlaceItem(item, point);
 
     case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.CanPlaceItem(item, point);
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.CanPlaceItem(item, point);
 
     case IDC_INV_GOLEM:
         return InvGolemBox.CanPlaceItem(item, point);
@@ -3580,6 +3642,9 @@ const d2ce::Item* CD2ItemsForm::PlaceItem(UINT id, d2ce::Item& item, CPoint poin
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.PlaceItem(item, point, bitmap);
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.PlaceItem(item, point, bitmap);
+
     case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.PlaceItem(item, point, bitmap);
 
@@ -3613,11 +3678,17 @@ const d2ce::Item* CD2ItemsForm::PlaceItem(UINT id, d2ce::Item& item, CPoint poin
     case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.PlaceItem(item, point, bitmap);
 
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.PlaceItem(item, point, bitmap);
+
     case IDC_INV_RIGHT_RING:
         return InvRingRightBox.PlaceItem(item, point, bitmap);
 
     case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.PlaceItem(item, point, bitmap);
 
     case IDC_INV_BELT:
         return InvBeltBox.PlaceItem(item, point, bitmap);
@@ -3625,17 +3696,26 @@ const d2ce::Item* CD2ItemsForm::PlaceItem(UINT id, d2ce::Item& item, CPoint poin
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.PlaceItem(item, point, bitmap);
 
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.PlaceItem(item, point, bitmap);
+
     case IDC_INV_LEFT_RING:
         return InvRingLeftBox.PlaceItem(item, point, bitmap);
 
     case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.PlaceItem(item, point, bitmap);
 
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.PlaceItem(item, point, bitmap);
+
     case IDC_INV_FEET:
         return InvBootsBox.PlaceItem(item, point, bitmap);
 
     case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.PlaceItem(item, point, bitmap);
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.PlaceItem(item, point, bitmap);
 
     case IDC_INV_GOLEM:
         return InvGolemBox.PlaceItem(item, point, bitmap);
@@ -3747,6 +3827,9 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.GetInvItem();
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.GetInvItem();
+
     case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.GetInvItem();
 
@@ -3780,11 +3863,17 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.GetInvItem();
 
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.GetInvItem();
+
     case IDC_INV_RIGHT_RING:
         return InvRingRightBox.GetInvItem();
 
     case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.GetInvItem();
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.GetInvItem();
 
     case IDC_INV_BELT:
         return InvBeltBox.GetInvItem();
@@ -3792,17 +3881,26 @@ const d2ce::Item* CD2ItemsForm::GetInvItem(UINT id, UINT offset) const
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.GetInvItem();
 
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.GetInvItem();
+
     case IDC_INV_LEFT_RING:
         return InvRingLeftBox.GetInvItem();
 
     case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.GetInvItem();
 
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.GetInvItem();
+
     case IDC_INV_FEET:
         return InvBootsBox.GetInvItem();
 
     case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.GetInvItem();
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.GetInvItem();
 
     case IDC_INV_GOLEM:
         return InvGolemBox.GetInvItem();
@@ -3845,6 +3943,9 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_CORPSE_NECK:
         return InvCorpseNeckBox.InvHitTest(point, pTI);
 
+    case IDC_INV_MERC_NECK:
+        return InvMercNeckBox.InvHitTest(point, pTI);
+
     case IDC_INV_RIGHT_ARM:
         return InvHandRightBox.InvHitTest(point, pTI);
 
@@ -3878,11 +3979,17 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_CORPSE_GLOVES:
         return InvCorpseGloveBox.InvHitTest(point, pTI);
 
+    case IDC_INV_MERC_GLOVES:
+        return InvMercGloveBox.InvHitTest(point, pTI);
+
     case IDC_INV_RIGHT_RING:
         return InvRingRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_CORPSE_RIGHT_RING:
         return InvCorpseRingRightBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_RIGHT_RING:
+        return InvMercRingRightBox.InvHitTest(point, pTI);
 
     case IDC_INV_BELT:
         return InvBeltBox.InvHitTest(point, pTI);
@@ -3890,17 +3997,26 @@ const d2ce::Item* CD2ItemsForm::InvHitTest(UINT id, CPoint point, TOOLINFO* pTI)
     case IDC_INV_CORPSE_BELT:
         return InvCorpseBeltBox.InvHitTest(point, pTI);
 
+    case IDC_INV_MERC_BELT:
+        return InvMercBeltBox.InvHitTest(point, pTI);
+
     case IDC_INV_LEFT_RING:
         return InvRingLeftBox.InvHitTest(point, pTI);
 
     case IDC_INV_CORPSE_LEFT_RING:
         return InvCorpseRingLeftBox.InvHitTest(point, pTI);
 
+    case IDC_INV_MERC_LEFT_RING:
+        return InvMercRingLeftBox.InvHitTest(point, pTI);
+
     case IDC_INV_FEET:
         return InvBootsBox.InvHitTest(point, pTI);
 
     case IDC_INV_CORPSE_FEET:
         return InvCorpseBootsBox.InvHitTest(point, pTI);
+
+    case IDC_INV_MERC_FEET:
+        return InvMercBootsBox.InvHitTest(point, pTI);
 
     case IDC_INV_GOLEM:
         return InvGolemBox.InvHitTest(point, pTI);
@@ -4337,6 +4453,7 @@ BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         case IDC_INV_MERC_HEAD:
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_RIGHT_ARM:
         case IDC_INV_CORPSE_RIGHT_ARM:
         case IDC_INV_MERC_RIGHT_ARM:
@@ -4348,14 +4465,19 @@ BOOL CD2ItemsForm::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
         case IDC_INV_MERC_LEFT_ARM:
         case IDC_INV_GLOVES:
         case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_MERC_GLOVES:
         case IDC_INV_RIGHT_RING:
         case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_MERC_RIGHT_RING:
         case IDC_INV_BELT:
         case IDC_INV_CORPSE_BELT:
+        case IDC_INV_MERC_BELT:
         case IDC_INV_LEFT_RING:
         case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_MERC_LEFT_RING:
         case IDC_INV_FEET:
         case IDC_INV_CORPSE_FEET:
+        case IDC_INV_MERC_FEET:
         case IDC_INV_GRID:
         case IDC_INV_STASH_GRID:
         case IDC_INV_CUBE_GRID:
@@ -4804,14 +4926,19 @@ void CD2ItemsForm::OnLButtonDown(UINT nFlags, CPoint point)
     case IDC_INV_MERC_HEAD:
     case IDC_INV_GLOVES:
     case IDC_INV_CORPSE_GLOVES:
+    case IDC_INV_MERC_GLOVES:
     case IDC_INV_FEET:
     case IDC_INV_CORPSE_FEET:
+    case IDC_INV_MERC_FEET:
     case IDC_INV_NECK:
     case IDC_INV_CORPSE_NECK:
+    case IDC_INV_MERC_NECK:
     case IDC_INV_RIGHT_RING:
     case IDC_INV_CORPSE_RIGHT_RING:
+    case IDC_INV_MERC_RIGHT_RING:
     case IDC_INV_LEFT_RING:
     case IDC_INV_CORPSE_LEFT_RING:
+    case IDC_INV_MERC_LEFT_RING:
     case IDC_INV_RIGHT_ARM:
     case IDC_INV_CORPSE_RIGHT_ARM:
     case IDC_INV_MERC_RIGHT_ARM:
@@ -4824,6 +4951,7 @@ void CD2ItemsForm::OnLButtonDown(UINT nFlags, CPoint point)
     case IDC_INV_GOLEM:
     case IDC_INV_BELT:
     case IDC_INV_CORPSE_BELT:
+    case IDC_INV_MERC_BELT:
         break;
 
     default:
@@ -4872,9 +5000,15 @@ void CD2ItemsForm::OnLButtonDown(UINT nFlags, CPoint point)
 
         case IDC_MERC_GROUP:
         case IDC_INV_MERC_HEAD:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_MERC_RIGHT_ARM:
         case IDC_INV_MERC_TORSO:
         case IDC_INV_MERC_LEFT_ARM:
+        case IDC_INV_MERC_GLOVES:
+        case IDC_INV_MERC_RIGHT_RING:
+        case IDC_INV_MERC_BELT:
+        case IDC_INV_MERC_LEFT_RING:
+        case IDC_INV_MERC_FEET:
             CurrDragItemInv = d2ce::EnumItemInventory::MERCENARY;
             break;
 
@@ -4964,14 +5098,19 @@ void CD2ItemsForm::OnMouseMove(UINT nFlags, CPoint point)
         case IDC_INV_MERC_HEAD:
         case IDC_INV_GLOVES:
         case IDC_INV_CORPSE_GLOVES:
+        case IDC_INV_MERC_GLOVES:
         case IDC_INV_FEET:
         case IDC_INV_CORPSE_FEET:
+        case IDC_INV_MERC_FEET:
         case IDC_INV_NECK:
         case IDC_INV_CORPSE_NECK:
+        case IDC_INV_MERC_NECK:
         case IDC_INV_RIGHT_RING:
         case IDC_INV_CORPSE_RIGHT_RING:
+        case IDC_INV_MERC_RIGHT_RING:
         case IDC_INV_LEFT_RING:
         case IDC_INV_CORPSE_LEFT_RING:
+        case IDC_INV_MERC_LEFT_RING:
         case IDC_INV_RIGHT_ARM:
         case IDC_INV_CORPSE_RIGHT_ARM:
         case IDC_INV_MERC_RIGHT_ARM:
@@ -4984,6 +5123,7 @@ void CD2ItemsForm::OnMouseMove(UINT nFlags, CPoint point)
         case IDC_INV_GOLEM:
         case IDC_INV_BELT:
         case IDC_INV_CORPSE_BELT:
+        case IDC_INV_MERC_BELT:
             break;
 
         default:
