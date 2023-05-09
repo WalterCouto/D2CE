@@ -143,6 +143,7 @@ namespace d2ce
 
         std::string asJson(EnumCharVersion version, bool bSerializedFormat = false, EnumCharSaveOp saveOp = EnumCharSaveOp::SaveWithBackup); // utf-8
 
+        void initVersion();
         void checkForD2RMod();
 
     public:

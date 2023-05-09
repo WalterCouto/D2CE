@@ -838,7 +838,7 @@ void d2ce::Character::calculateChecksum()
 {
     // make sure we start at the beginning of the file
     long checksum = 0;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         // checksum not supported
         return;
@@ -931,7 +931,7 @@ void d2ce::Character::readHeader(const Json::Value& root)
     size_t current_byte_offset = 0;
     setBytes(current_byte_offset, HEADER_LENGTH, uint);
 
-    if (Bs.Version < EnumCharVersion::v100R)
+    if (getVersion() < EnumCharVersion::v100R)
     {
         setTxtReader(getDefaultTxtReader());
         return;
@@ -960,7 +960,7 @@ std::uint32_t d2ce::Character::getVersionBytes() const
 //---------------------------------------------------------------------------
 bool d2ce::Character::setFileSizeBytes(std::uint32_t bytes)
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return false;
     }
@@ -970,7 +970,7 @@ bool d2ce::Character::setFileSizeBytes(std::uint32_t bytes)
 //---------------------------------------------------------------------------
 long d2ce::Character::getChecksumBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return 0ui32;
     }
@@ -980,7 +980,7 @@ long d2ce::Character::getChecksumBytes() const
 //---------------------------------------------------------------------------
 bool d2ce::Character::setChecksumBytes(long checksum)
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return false;
     }
@@ -992,7 +992,7 @@ bool d2ce::Character::setStatusBytes(std::uint8_t status)
 {
     Bs.Status = static_cast<EnumCharStatus>(status);
     size_t current_byte_offset = CHAR_V109_STAUTS_BYTE_OFFSET; // pos 36 (1.09+, otherwise, pos 24), character's status
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_STATUS_BYTE_OFFSET;
     }
@@ -1003,7 +1003,7 @@ bool d2ce::Character::setTitleBytes(std::uint8_t Title)
 {
     Bs.Title = std::min(Title, Bs.getGameCompleteTitle());;
     size_t current_byte_offset = CHAR_V109_TITLE_BYTE_OFFSET; // pos 37 (1.09+, otherwise pos 25), character's title
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_TITLE_BYTE_OFFSET;
     }
@@ -1013,7 +1013,7 @@ bool d2ce::Character::setTitleBytes(std::uint8_t Title)
 std::uint8_t d2ce::Character::getDisplayLevelBytes() const
 {
     size_t current_byte_offset = CHAR_V109_DISPLAYLEVEL_BYTE_OFFSET;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_DISPLAYLEVEL_BYTE_OFFSET;
     }
@@ -1024,7 +1024,7 @@ std::uint8_t d2ce::Character::getDisplayLevelBytes() const
 bool d2ce::Character::setDisplayLevelBytes(std::uint8_t level)
 {
     size_t current_byte_offset = CHAR_V109_DISPLAYLEVEL_BYTE_OFFSET;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_DISPLAYLEVEL_BYTE_OFFSET;
     }
@@ -1036,7 +1036,7 @@ bool d2ce::Character::setDifficultyLastPlayedBytes(EnumDifficulty difficultyLast
 {
     Bs.DifficultyLastPlayed = difficultyLastPlayed;
     Bs.StartingAct = startingAct;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         std::uint8_t value = static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
         value <<= 4;
@@ -1054,7 +1054,7 @@ bool d2ce::Character::setDifficultyLastPlayedBytes(EnumDifficulty difficultyLast
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getCreatedBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return 0ui32;
     }
@@ -1064,7 +1064,7 @@ std::uint32_t d2ce::Character::getCreatedBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLastPlayedBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return 0ui32;
     }
@@ -1074,7 +1074,7 @@ std::uint32_t d2ce::Character::getLastPlayedBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLeftSkillBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return readBytes(CHAR_V100_LEFTSKILL_BYTE_OFFSET, CHAR_V100_LEFTSKILL_NUM_BYTES); // pos 86
     }
@@ -1084,7 +1084,7 @@ std::uint32_t d2ce::Character::getLeftSkillBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getRightSkillBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return readBytes(CHAR_V100_RIGHTSKILL_BYTE_OFFSET, CHAR_V100_RIGHTSKILL_NUM_BYTES); // pos 87
     }
@@ -1094,7 +1094,7 @@ std::uint32_t d2ce::Character::getRightSkillBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getLeftSwapSkillBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return 0ui32;
     }
@@ -1104,7 +1104,7 @@ std::uint32_t d2ce::Character::getLeftSwapSkillBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getRightSwapSkillBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return 0ui32;
     }
@@ -1114,7 +1114,7 @@ std::uint32_t d2ce::Character::getRightSwapSkillBytes() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getMapIDBytes() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return readBytes(CHAR_V100_MAPID_BYTE_OFFSET, CHAR_V100_MAPID_NUM_BYTES); // pos 87
     }
@@ -1237,11 +1237,11 @@ void d2ce::Character::readBasicInfo(std::FILE* charFile)
     size_t numBytes = CHAR_V100_VERSION_NUM_BYTES;
     skipBytes(charFile, current_byte_offset, numBytes);
 
-    Bs.Version = getVersion();
+    initVersion();
     checkForD2RMod();
 
     // read in the remaining fixed number of bytes
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (getVersion() >= EnumCharVersion::v109)
     {
         numBytes = CHAR_V109_BASICINFO_NUM_BYTES - data.size();
         skipBytes(charFile, current_byte_offset, numBytes);
@@ -1249,7 +1249,7 @@ void d2ce::Character::readBasicInfo(std::FILE* charFile)
         fillBasicStats(Bs);
 
         // ladder is for 1.10 or higher
-        if (Bs.Version < EnumCharVersion::v110)
+        if (getVersion() < EnumCharVersion::v110)
         {
             Bs.Status &= ~EnumCharStatus::Ladder;
         }
@@ -1295,10 +1295,10 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     {
         return false;
     }
-    Bs.Version = getVersion();
+    initVersion();
 
     // read in the remaining fixed number of bytes
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (getVersion() >= EnumCharVersion::v109)
     {
         data.resize(CHAR_V109_BASICINFO_NUM_BYTES, 0);
     }
@@ -1308,7 +1308,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     std::uint32_t value;
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (getVersion() >= EnumCharVersion::v109)
     {
         value = 0;
         current_byte_offset = CHAR_V109_FILESIZE_BYTE_OFFSET;
@@ -1357,17 +1357,17 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     // Check Name
     // Remove any invalid characters from the name
     std::string curName(jsonValue.asString());
-    LocalizationHelpers::CheckCharName(curName, Bs.Version);
+    LocalizationHelpers::CheckCharName(curName, getVersion());
     Bs.Name.fill(0);
     strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
     Bs.Name[15] = 0; // must be zero
 
     current_byte_offset = CHAR_V120_NAME_BYTE_OFFSET; // pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8), character's name
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_NAME_BYTE_OFFSET;
     }
-    else if (Bs.Version < EnumCharVersion::v120)
+    else if (getVersion() < EnumCharVersion::v120)
     {
         current_byte_offset = CHAR_V109_NAME_BYTE_OFFSET;
     }
@@ -1478,11 +1478,11 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         }
 
         // ladder is for 1.10 or higher
-        if (Bs.Version < EnumCharVersion::v110)
+        if (getVersion() < EnumCharVersion::v110)
         {
             Bs.Status &= ~EnumCharStatus::Ladder;
 
-            if (Bs.Version < EnumCharVersion::v107 || Bs.Version == EnumCharVersion::v108)
+            if (getVersion() < EnumCharVersion::v107 || getVersion() == EnumCharVersion::v108)
             {
                 // expansion not supported
                 switch (Bs.Class)
@@ -1503,7 +1503,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     current_byte_offset = CHAR_V109_STAUTS_BYTE_OFFSET; // pos 36 (1.09+, otherwise, pos 24), character's status
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_STATUS_BYTE_OFFSET;
     }
@@ -1522,7 +1522,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     current_byte_offset = CHAR_V109_TITLE_BYTE_OFFSET; // pos 36 (1.09+, otherwise, pos 24), character's status
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_TITLE_BYTE_OFFSET;
     }
@@ -1532,7 +1532,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         return false;
     }
 
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         value = 0;
         current_byte_offset = CHAR_V100_WEAPONSET_BYTE_OFFSET; // pos 26
@@ -1548,7 +1548,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         }
 
         current_byte_offset += 2;
-        if (Bs.Version < EnumCharVersion::v107)
+        if (getVersion() < EnumCharVersion::v107)
         {
             if (!updateBytes(current_byte_offset, UNKNOWN_01C_v100.size(), (std::uint8_t*)UNKNOWN_01C_v100.data())) // pos 28
             {
@@ -1565,7 +1565,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     current_byte_offset = CHAR_V109_CLASS_BYTE_OFFSET; // pos 40 (1.09+, otherwise pos 34), character's class
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_CLASS_BYTE_OFFSET;
     }
@@ -1576,7 +1576,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         return false;
     }
 
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (getVersion() >= EnumCharVersion::v109)
     {
         if (!updateBytes(0x29, UNKNOWN_029.size(), (std::uint8_t*)UNKNOWN_029.data())) // pos 41
         {
@@ -1592,7 +1592,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     current_byte_offset = CHAR_V109_DISPLAYLEVEL_BYTE_OFFSET; // pos 43 (1.09+, otherwise pos 36)
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_DISPLAYLEVEL_BYTE_OFFSET;
     }
@@ -1607,11 +1607,11 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         return false;
     }
 
-    auto menuAppearances = &data[(Bs.Version >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
+    auto menuAppearances = &data[(getVersion() >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
     jsonValue = m_bJsonSerializedFormat ? root["Appearances"] : header["menu_appearance"];
     ApplyJsonAppearnces(jsonValue, menuAppearances);
 
-    if (Bs.Version >= EnumCharVersion::v100R)
+    if (getVersion() >= EnumCharVersion::v100R)
     {
         auto menuD2RAppearances = &data[CHAR_v100R_APPEARANCES_BYTE_OFFSET]; // pos 219 (D2R only) Character menu appearance
         if (!jsonValue.isNull())
@@ -1622,7 +1622,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     jsonValue = m_bJsonSerializedFormat ? root["AssignedSkills"] : header["assigned_skills"];
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         ApplyJsonAssignedSkills(jsonValue, &data[CHAR_V100_ASSIGNED_SKILLS_BYTE_OFFSET]);
     }
@@ -1634,7 +1634,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     jsonValue = m_bJsonSerializedFormat ? root["LeftSkill"] : header["left_skill"];
     value = ApplyJsonSkill(jsonValue);
     current_byte_offset = CHAR_V109_LEFTSKILL_BYTE_OFFSET; 
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_LEFTSKILL_BYTE_OFFSET; // pos 36
         if (!updateBytes(current_byte_offset, CHAR_V100_DISPLAYLEVEL_NUM_BYTES, value))
@@ -1654,7 +1654,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     jsonValue = m_bJsonSerializedFormat ? root["RightSkill"] : header["right_skill"];
     value = ApplyJsonSkill(jsonValue);
     current_byte_offset = CHAR_V109_LEFTSKILL_BYTE_OFFSET;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_RIGHTSKILL_BYTE_OFFSET; // pos 36
         if (!updateBytes(current_byte_offset, CHAR_V100_RIGHTSKILL_NUM_BYTES, value))
@@ -1679,7 +1679,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     }
 
     current_byte_offset = CHAR_V109_MAPID_BYTE_OFFSET; // pos 43 (1.09+, otherwise pos 36)
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_MAPID_BYTE_OFFSET;
     }
@@ -1689,7 +1689,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
         return false;
     }
 
-    if (Bs.Version >= EnumCharVersion::v109)
+    if (getVersion() >= EnumCharVersion::v109)
     {
         value = 0;
         jsonValue = m_bJsonSerializedFormat ? root["Created"] : header["created"];
@@ -1739,7 +1739,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
             return false;
         }
 
-        if (Bs.Version < EnumCharVersion::v100R)
+        if (getVersion() < EnumCharVersion::v100R)
         {
             if (!updateBytes(0x14B, UNKNOWN_14B.size(), (std::uint8_t*)UNKNOWN_14B.data()))
             {
@@ -2369,7 +2369,7 @@ bool d2ce::Character::writeItems(std::FILE* charFile) const
 //---------------------------------------------------------------------------
 void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version, bool bSerializedFormat) const
 {
-    if (version == Bs.Version)
+    if (version == getVersion())
     {
         headerAsJson(parent, bSerializedFormat);
         return;
@@ -2389,7 +2389,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
 
         header["Magic"] = getHeaderBytes();
         header["Version"] = static_cast<std::underlying_type_t<EnumCharVersion>>(version);
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             header["Filesize"] = getFileSize();
             header["Checksum"] = getChecksumBytes();
@@ -2413,7 +2413,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         parent["Progression"] = std::uint16_t(getTitle());
         parent["ClassId"] = std::uint16_t(getClass());
         parent["Level"] = std::uint16_t(getDisplayLevelBytes());
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             parent["Created"] = getCreatedBytes();
             parent["LastPlayed"] = getLastPlayedBytes();
@@ -2421,7 +2421,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
 
         // assigned_skills
         Json::Value assignedSkills(Json::arrayValue);
-        if (Bs.Version < EnumCharVersion::v109)
+        if (getVersion() < EnumCharVersion::v109)
         {
             auto assigned = &data[CHAR_V100_ASSIGNED_SKILLS_BYTE_OFFSET]; // pos 70
             std::uint32_t tempValue = 0;
@@ -2461,7 +2461,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
             skill["Id"] = getRightSkillBytes();
             parent["RightSkill"] = skill;
         }
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             {
                 Json::Value skill;
@@ -2481,7 +2481,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
 
         size_t idx = 0;
         Json::Value appearances;
-        auto menuAppearances = &data[(Bs.Version >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
+        auto menuAppearances = &data[(getVersion() >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
         for (const auto& prop : all_appearance_props)
         {
             Json::Value appearance;
@@ -2491,7 +2491,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         }
 
         // D2R Appearances
-        if ((version >= EnumCharVersion::v100R) && (Bs.Version >= EnumCharVersion::v100R))
+        if ((version >= EnumCharVersion::v100R) && (getVersion() >= EnumCharVersion::v100R))
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
 
@@ -2590,7 +2590,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         parent["Location"] = location;
         parent["MapId"] = getMapIDBytes();
 
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             Merc.asJson(parent, bSerializedFormat);
         }
@@ -2617,7 +2617,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
             header["identifier"] = ss.str();
         }
         header["version"] = getVersionBytes();
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             header["filesize"] = getFileSize();
             {
@@ -2649,7 +2649,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         header["class"] = getClassName();
         header["class_id"] = std::uint16_t(getClass());
         header["level"] = std::uint16_t(getDisplayLevelBytes());
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             header["created"] = getCreatedBytes();
             header["last_played"] = getLastPlayedBytes();
@@ -2660,7 +2660,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         std::uint32_t skillId = 0;
         Json::Value nullValue;
         Json::Value assignedSkills(Json::arrayValue);
-        if (Bs.Version < EnumCharVersion::v109)
+        if (getVersion() < EnumCharVersion::v109)
         {
             auto assigned = &data[CHAR_V100_ASSIGNED_SKILLS_BYTE_OFFSET]; // pos 70
             for (std::uint16_t i = 0; i < NUM_OF_SKILL_HOTKEYS; ++i)
@@ -2705,7 +2705,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         header["assigned_skills"] = assignedSkills;
         header["left_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getLeftSkillBytes()));
         header["right_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getRightSkillBytes()));
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             header["left_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getLeftSwapSkillBytes()));
             header["right_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getRightSwapSkillBytes()));
@@ -2717,7 +2717,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
 
         size_t idx = 0;
         Json::Value appearances;
-        auto menuAppearances = &data[(Bs.Version >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
+        auto menuAppearances = &data[(getVersion() >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
         for (const auto& prop : all_appearance_props)
         {
             Json::Value appearance;
@@ -2727,7 +2727,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         }
 
         // D2R Appearances
-        if ((version >= EnumCharVersion::v100R) && (Bs.Version >= EnumCharVersion::v100R))
+        if ((version >= EnumCharVersion::v100R) && (getVersion() >= EnumCharVersion::v100R))
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
 
@@ -2804,7 +2804,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         {
 
             Json::Value difficulty;
-            if ((Bs.Version < EnumCharVersion::v109))
+            if ((getVersion() < EnumCharVersion::v109))
             {
                 std::array<std::uint8_t, NUM_OF_DIFFICULTY> startingAct = { 0 };
                 startingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
@@ -2826,7 +2826,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         }
         header["map_id"] = getMapIDBytes();
 
-        if ((version >= EnumCharVersion::v109) && (Bs.Version >= EnumCharVersion::v109))
+        if ((version >= EnumCharVersion::v109) && (getVersion() >= EnumCharVersion::v109))
         {
             Merc.asJson(header, bSerializedFormat);
         }
@@ -2844,7 +2844,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
     if (bSerializedFormat)
     {
         Json::Value header;
-        if (Bs.Version >= EnumCharVersion::v100R)
+        if (getVersion() >= EnumCharVersion::v100R)
         {
             const auto& txtReader = getTxtReader();
             if (!txtReader.GetModName().empty())
@@ -2855,7 +2855,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
 
         header["Magic"] = getHeaderBytes();
         header["Version"] = getVersionBytes();
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             header["Filesize"] = getFileSize();
             header["Checksum"] = getChecksumBytes();
@@ -2879,7 +2879,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         parent["Progression"] = std::uint16_t(getTitle());
         parent["ClassId"] = std::uint16_t(getClass());
         parent["Level"] = std::uint16_t(getDisplayLevelBytes());
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             parent["Created"] = getCreatedBytes();
             parent["LastPlayed"] = getLastPlayedBytes();
@@ -2887,7 +2887,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
 
         // assigned_skills
         Json::Value assignedSkills(Json::arrayValue);
-        if (Bs.Version < EnumCharVersion::v109)
+        if (getVersion() < EnumCharVersion::v109)
         {
             auto assigned = &data[CHAR_V100_ASSIGNED_SKILLS_BYTE_OFFSET]; // pos 70
             std::uint32_t tempValue = 0;
@@ -2928,7 +2928,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             skill["Id"] = getRightSkillBytes();
             parent["RightSkill"] = skill;
         }
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             {
                 Json::Value skill;
@@ -2948,7 +2948,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
 
         size_t idx = 0;
         Json::Value appearances;
-        auto menuAppearances = &data[(Bs.Version >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
+        auto menuAppearances = &data[(getVersion() >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
         for (const auto& prop : all_appearance_props)
         {
             Json::Value appearance;
@@ -2958,7 +2958,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
 
         // D2R Appearances
-        if (Bs.Version >= EnumCharVersion::v100R)
+        if (getVersion() >= EnumCharVersion::v100R)
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "RightHand", "LeftHand", "Torso", "Head" };
 
@@ -3058,7 +3058,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         parent["Location"] = location;
         parent["MapId"] = getMapIDBytes();
 
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             Merc.asJson(parent, bSerializedFormat);
         }
@@ -3070,7 +3070,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
     else
     {
         Json::Value header;
-        if (Bs.Version >= EnumCharVersion::v100R)
+        if (getVersion() >= EnumCharVersion::v100R)
         {
             const auto& txtReader = getTxtReader();
             if (!txtReader.GetModName().empty())
@@ -3085,7 +3085,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
             header["identifier"] = ss.str();
         }
         header["version"] = getVersionBytes();
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             header["filesize"] = getFileSize();
             {
@@ -3117,7 +3117,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         header["class"] = getClassName();
         header["class_id"] = std::uint16_t(getClass());
         header["level"] = std::uint16_t(getDisplayLevelBytes());
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             header["created"] = getCreatedBytes();
             header["last_played"] = getLastPlayedBytes();
@@ -3128,7 +3128,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         std::uint32_t skillId = 0;
         Json::Value nullValue;
         Json::Value assignedSkills(Json::arrayValue);
-        if (Bs.Version < EnumCharVersion::v109)
+        if (getVersion() < EnumCharVersion::v109)
         {
             auto assigned = &data[CHAR_V100_ASSIGNED_SKILLS_BYTE_OFFSET]; // pos 70
             for (std::uint16_t i = 0; i < NUM_OF_SKILL_HOTKEYS; ++i)
@@ -3173,7 +3173,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         header["assigned_skills"] = assignedSkills;
         header["left_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getLeftSkillBytes()));
         header["right_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getRightSkillBytes()));
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             header["left_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getLeftSwapSkillBytes()));
             header["right_swap_skill"] = CharClassHelper::getSkillIndexById(std::uint16_t(getRightSwapSkillBytes()));
@@ -3185,7 +3185,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
 
         size_t idx = 0;
         Json::Value appearances;
-        auto menuAppearances = &data[(Bs.Version >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
+        auto menuAppearances = &data[(getVersion() >= EnumCharVersion::v109) ? CHAR_V109_APPEARANCES_BYTE_OFFSET : CHAR_V100_APPEARANCES_BYTE_OFFSET]; // pos 136 (1.09+, otherwise pos 38) Character menu appearance
         for (const auto& prop : all_appearance_props)
         {
             Json::Value appearance;
@@ -3195,7 +3195,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
 
         // D2R Appearances
-        if (Bs.Version >= EnumCharVersion::v100R)
+        if (getVersion() >= EnumCharVersion::v100R)
         {
             static std::initializer_list<std::string> all_d2r_appearance_props = { "right_hand", "left_hand", "torso", "head" };
 
@@ -3271,7 +3271,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         // StartingAct
         {
             Json::Value difficulty;
-            if ((Bs.Version < EnumCharVersion::v109))
+            if ((getVersion() < EnumCharVersion::v109))
             {
                 std::array<std::uint8_t, NUM_OF_DIFFICULTY> startingAct = { 0 };
                 startingAct[static_cast<std::underlying_type_t<EnumDifficulty>>(Bs.DifficultyLastPlayed)] = 0x80 | static_cast<std::underlying_type_t<EnumAct>>(Bs.StartingAct);
@@ -3292,7 +3292,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         }
         header["map_id"] = getMapIDBytes();
 
-        if (Bs.Version >= EnumCharVersion::v109)
+        if (getVersion() >= EnumCharVersion::v109)
         {
             Merc.asJson(header, bSerializedFormat);
         }
@@ -3419,6 +3419,54 @@ std::string d2ce::Character::asJson(EnumCharVersion version, bool bSerializedFor
     return Json::writeString(builder, root);
 }
 //---------------------------------------------------------------------------
+void d2ce::Character::initVersion()
+{
+    std::uint32_t version = readBytes(CHAR_V100_VERSION_BYTE_OFFSET, CHAR_V100_VERSION_NUM_BYTES); // pos 4 in file, character file version
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v107))
+    {
+        Bs.Version = EnumCharVersion::v100;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v108))
+    {
+        Bs.Version = EnumCharVersion::v107;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v109))
+    {
+        Bs.Version = EnumCharVersion::v108;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v110))
+    {
+        Bs.Version = EnumCharVersion::v109;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v100R))
+    {
+        Bs.Version = EnumCharVersion::v110;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v120))
+    {
+        Bs.Version = EnumCharVersion::v100R;
+        return;
+    }
+
+    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v140))
+    {
+        Bs.Version = EnumCharVersion::v120;
+        return;
+    }
+
+    Bs.Version = EnumCharVersion::v140;
+}
+//---------------------------------------------------------------------------
 void d2ce::Character::checkForD2RMod()
 {
     // D2R games folder
@@ -3429,7 +3477,7 @@ void d2ce::Character::checkForD2RMod()
         return;
     }
 
-    if (Bs.Version < EnumCharVersion::v100R)
+    if (getVersion() < EnumCharVersion::v100R)
     {
         setTxtReader(getDefaultTxtReader());
         return;
@@ -3551,7 +3599,7 @@ std::error_code d2ce::Character::getLastError() const
 //---------------------------------------------------------------------------
 std::uint32_t d2ce::Character::getFileSize() const
 {
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         return std::uint32_t(getByteSize());
     }
@@ -3832,11 +3880,11 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     }
 
     size_t current_byte_offset = CHAR_V120_NAME_BYTE_OFFSET; // pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8), character's name
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_NAME_BYTE_OFFSET;
     }
-    else if (Bs.Version < EnumCharVersion::v120)
+    else if (getVersion() < EnumCharVersion::v120)
     {
         current_byte_offset = CHAR_V109_NAME_BYTE_OFFSET;
     }
@@ -3844,7 +3892,7 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     updateBytes(current_byte_offset, Bs.Name.size(), (std::uint8_t*)Bs.Name.data());
 
     current_byte_offset = CHAR_V109_STAUTS_BYTE_OFFSET; // pos 36 (1.09+, otherwise, pos 24), character's status
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_STATUS_BYTE_OFFSET;
     }
@@ -3852,14 +3900,14 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
     updateBytes(current_byte_offset, CHAR_V100_STAUTS_NUM_BYTES, value);
 
     current_byte_offset = CHAR_V109_TITLE_BYTE_OFFSET; // pos 37 (1.09+, otherwise pos 25), character's title
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_TITLE_BYTE_OFFSET;
     }
     updateBytes(current_byte_offset, CHAR_V100_TITLE_NUM_BYTES, Bs.Title);
 
     current_byte_offset = CHAR_V109_CLASS_BYTE_OFFSET; // pos 40 (1.09+, otherwise pos 34), character's class
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_CLASS_BYTE_OFFSET;
     }
@@ -3966,43 +4014,7 @@ void d2ce::Character::resetStats()
 //---------------------------------------------------------------------------
 d2ce::EnumCharVersion d2ce::Character::getVersion() const
 {
-    std::uint32_t version = readBytes(CHAR_V100_VERSION_BYTE_OFFSET, CHAR_V100_VERSION_NUM_BYTES); // pos 4 in file, character file version
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v107))
-    {
-        return EnumCharVersion::v100;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v108))
-    {
-        return EnumCharVersion::v107;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v109))
-    {
-        return EnumCharVersion::v108;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v110))
-    {
-        return EnumCharVersion::v109;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v100R))
-    {
-        return EnumCharVersion::v110;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v120))
-    {
-        return EnumCharVersion::v100R;
-    }
-
-    if (version < static_cast<std::underlying_type_t<EnumCharVersion>>(EnumCharVersion::v140))
-    {
-        return EnumCharVersion::v120;
-    }
-
-    return EnumCharVersion::v140;
+    return Bs.Version;
 }
 //---------------------------------------------------------------------------
 const std::array<char, d2ce::NAME_LENGTH>& d2ce::Character::getName() const
@@ -4124,7 +4136,7 @@ std::uint32_t d2ce::Character::getWeaponSet() const
 {
     size_t current_byte_offset = CHAR_V109_WEAPONSET_BYTE_OFFSET;
     size_t numBytes = CHAR_V109_WEAPONSET_NUM_BYTES;
-    if (Bs.Version < EnumCharVersion::v109)
+    if (getVersion() < EnumCharVersion::v109)
     {
         current_byte_offset = CHAR_V100_WEAPONSET_BYTE_OFFSET;
         numBytes = CHAR_V100_WEAPONSET_NUM_BYTES;
