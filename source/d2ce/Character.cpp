@@ -1359,8 +1359,7 @@ bool d2ce::Character::readBasicInfo(const Json::Value& root)
     std::string curName(jsonValue.asString());
     LocalizationHelpers::CheckCharName(curName, getVersion());
     Bs.Name.fill(0);
-    strcpy_s(Bs.Name.data(), curName.length() + 1, curName.c_str());
-    Bs.Name[15] = 0; // must be zero
+    std::memcpy(Bs.Name.data(), curName.c_str(), std::min(Bs.Name.size(), curName.length()));
 
     current_byte_offset = CHAR_V120_NAME_BYTE_OFFSET; // pos 267 (D2R 1.2+, pos 20 for 1.09 - 1.14d, otherwise pos 8), character's name
     if (getVersion() < EnumCharVersion::v109)
@@ -1909,11 +1908,12 @@ bool d2ce::Character::save(bool backup)
     p.replace_extension();
     std::filesystem::path origFileNameBase = p;
     std::string tempname = utf8::utf16to8(p.filename().wstring());
+    std::string utf8name = getNameAsString();
 
     // compare m_d2sfilename (w/o extension) to character's name
-    if (_stricmp(tempname.c_str(), Bs.Name.data()) != 0)
+    if (_stricmp(tempname.c_str(), utf8name.c_str()) != 0)
     {
-        std::filesystem::path fileNameBase = p.replace_filename(std::filesystem::u8path(Bs.Name.data()));
+        std::filesystem::path fileNameBase = p.replace_filename(std::filesystem::u8path(utf8name));
         m_d2sfilename = fileNameBase;
         m_d2sfilename.replace_extension(".d2s");
         try
@@ -2329,7 +2329,7 @@ bool d2ce::Character::saveAsD2s(const std::filesystem::path& path, EnumCharSaveO
     m_jsonfilename.clear();
 
     // move d2s file to json file path
-    m_d2sfilename = path / std::filesystem::u8path(Bs.Name.data());
+    m_d2sfilename = path / std::filesystem::u8path(getNameAsString());
     m_d2sfilename.replace_extension(".d2s");
     if (!save(bBackup))
     {
@@ -2397,7 +2397,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
         parent["Header"] = header;
 
         parent["ActiveWeapon"] = getWeaponSet();
-        parent["Name"] = Bs.Name.data();
+        parent["Name"] = getNameAsString();
 
         // status
         Json::Value status;
@@ -2626,7 +2626,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, EnumCharVersion version,
                 header["checksum"] = ss.str();
             }
         }
-        header["name"] = Bs.Name.data();
+        header["name"] = getNameAsString();
 
         // status
         Json::Value status;
@@ -2863,7 +2863,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
         parent["Header"] = header;
 
         parent["ActiveWeapon"] = getWeaponSet();
-        parent["Name"] = Bs.Name.data();
+        parent["Name"] = getNameAsString();
 
         // status
         Json::Value status;
@@ -3094,7 +3094,7 @@ void d2ce::Character::headerAsJson(Json::Value& parent, bool bSerializedFormat) 
                 header["checksum"] = ss.str();
             }
         }
-        header["name"] = Bs.Name.data();
+        header["name"] = getNameAsString();
 
         // status
         Json::Value status;
@@ -3691,8 +3691,31 @@ void d2ce::Character::fillBasicStats(BasicStats& bs) const
         current_byte_offset = CHAR_V109_NAME_BYTE_OFFSET;
     }
 
-    std::memcpy(bs.Name.data(), &data[current_byte_offset], bs.Name.size()); // name includes terminating NULL
-    bs.Name[15] = 0; // must be zero
+    // Name is UTF-8 so should all be valid
+    std::memcpy(bs.Name.data(), &data[current_byte_offset], bs.Name.size());
+    if (bs.Version < EnumCharVersion::v120)
+    {
+        bs.Name[15] = 0; // must be zero
+    }
+    else
+    {
+        // check for valid UTF-8
+        try
+        {
+            auto test = utf8::utf8to16(LocalizationHelpers::ConvertCharNameToString(bs.Name, bs.Version));
+        }
+        catch (std::exception)
+        {
+            // invalid name, use filename to replace it
+            std::filesystem::path p = m_d2sfilename;
+            p.replace_extension();
+            std::filesystem::path origFileNameBase = p;
+            std::string tempname = utf8::utf16to8(p.filename().wstring());
+            LocalizationHelpers::CheckCharName(tempname, bs.Version);
+            bs.Name.fill(0);
+            std::memcpy(bs.Name.data(), tempname.c_str(), std::min(tempname.size(), bs.Name.size()));
+        }
+    }
 
     current_byte_offset = CHAR_V109_STAUTS_BYTE_OFFSET; // pos 36 (1.09+, otherwise, pos 24), character's status
     if (bs.Version < EnumCharVersion::v109)
@@ -3837,12 +3860,10 @@ void d2ce::Character::updateBasicStats(BasicStats& bs)
 
     // Check Name
     // Remove any invalid characters from the name
-    bs.Name[15] = 0; // must be zero
-    std::string curName(bs.Name.data());
+    std::string curName = LocalizationHelpers::ConvertCharNameToString(bs.Name, bs.Version);
     LocalizationHelpers::CheckCharName(curName, bs.Version);
     bs.Name.fill(0);
-    strcpy_s(bs.Name.data(), curName.length() + 1, curName.c_str());
-    bs.Name[15] = 0; // must be zero
+    std::memcpy(bs.Name.data(), curName.c_str(), std::min(bs.Name.size(), curName.length()));
 
     // Check Title
     if (bs.isExpansionCharacter() != oldBs.isExpansionCharacter())
@@ -4020,6 +4041,11 @@ d2ce::EnumCharVersion d2ce::Character::getVersion() const
 const std::array<char, d2ce::NAME_LENGTH>& d2ce::Character::getName() const
 {
     return Bs.Name;
+}
+//---------------------------------------------------------------------------
+std::string d2ce::Character::getNameAsString() const
+{
+    return LocalizationHelpers::ConvertCharNameToString(Bs.Name, Bs.Version);
 }
 //---------------------------------------------------------------------------
 bitmask::bitmask<d2ce::EnumCharStatus> d2ce::Character::getStatus() const

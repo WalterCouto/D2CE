@@ -362,7 +362,7 @@ namespace D2EditorTests
     static std::string GetCharExpectedJsonOutput(const d2ce::Character& character, d2ce::EnumCharVersion version, bool bSerializedFormat = false)
     {
         std::stringstream ss;
-        ss << character.getName().data();
+        ss << character.getNameAsString();
         if (bSerializedFormat)
         {
             ss << "_serialized";

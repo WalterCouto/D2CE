@@ -11449,7 +11449,7 @@ std::string d2ce::Item::getDisplayedItemName() const
     EarAttributes earAttrib;
     if (getEarAttributes(earAttrib))
     {
-        strValue = earAttrib.getName().data();
+        strValue = earAttrib.getNameAsString();
         if (strValue.back() != 's')
         {
             LocalizationHelpers::GetStringTxtValue("PlayerNameOnItemstring", strFormat, "%s's");
@@ -18279,7 +18279,7 @@ void d2ce::Item::asJson(Json::Value& parent, std::uint32_t charLevel, bool bSeri
         if (bIsEar)
         {
             item["EarLevel"] = earAttrib.getLevel();
-            item["PlayerName"] = earAttrib.getName().data();
+            item["PlayerName"] = earAttrib.getNameAsString();
             item["Code"] = "";
         }
         else

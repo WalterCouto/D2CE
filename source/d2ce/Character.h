@@ -205,6 +205,7 @@ namespace d2ce
 
         EnumCharVersion getVersion() const;
         const std::array<char, NAME_LENGTH>& getName() const;
+        std::string getNameAsString() const;
         bitmask::bitmask<EnumCharStatus> getStatus() const;
         std::uint8_t getTitle() const;
         EnumCharTitle getTitleEnum() const;

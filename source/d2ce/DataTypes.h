@@ -330,13 +330,24 @@ namespace d2ce
             return Name;
         }
 
+        std::string getNameAsString() const
+        {
+            if (Name[Name.size() - 1] != 0)
+            {
+                // we have a name that takes up all char slots
+                return std::string(Name.data(), Name.size());
+            }
+
+            return Name.data();
+        }
+
         void asJson(Json::Value& parent) const
         {
             Json::Value ear_attributes;
             ear_attributes["class"] = getClassName();
             ear_attributes["class_id"] = std::uint16_t(getClass());
             ear_attributes["level"] = getLevel();
-            ear_attributes["name"] = getName().data();
+            ear_attributes["name"] = getNameAsString();
             parent["ear_attributes"] = ear_attributes;
         }
     };

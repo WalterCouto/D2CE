@@ -14657,6 +14657,26 @@ const std::string& d2ce::LocalizationHelpers::CheckCharName(std::string& curName
     return LocalizationHelpers::CheckCharName(curName, ConvertItemVersion(version));
 }
 //---------------------------------------------------------------------------
+std::string d2ce::LocalizationHelpers::ConvertCharNameToString(const std::array<char, NAME_LENGTH>& name, d2ce::EnumCharVersion version)
+{
+    if (version < EnumCharVersion::v120)
+    {
+        return name.data();
+    }
+
+    if (name[15] != 0)
+    {
+        // we have a name that takes up all char slots
+        return std::string(name.data(), name.size());
+    }
+
+    return name.data();
+}
+std::string d2ce::LocalizationHelpers::ConvertCharNameToString(const std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version)
+{
+    return LocalizationHelpers::ConvertCharNameToString(name, ConvertItemVersion(version));
+}
+//---------------------------------------------------------------------------
 const std::vector<std::string> d2ce::LocalizationHelpers::GetCharacterTitles(bool isFemale, bool isHardcore, bool isExpansion)
 {
     std::string placeholder(" %s");

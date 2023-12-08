@@ -271,6 +271,8 @@ namespace d2ce
 
         const std::string& CheckCharName(std::string& curName, d2ce::EnumCharVersion version);
         const std::string& CheckCharName(std::string& curName, d2ce::EnumItemVersion version);
+        std::string ConvertCharNameToString(const std::array<char, NAME_LENGTH>& name, d2ce::EnumCharVersion version);
+        std::string ConvertCharNameToString(const std::array<char, NAME_LENGTH>& name, d2ce::EnumItemVersion version);
         const std::vector<std::string> GetCharacterTitles(bool isFemale = false, bool isHardcore = false, bool isExpansion = true);
         const std::vector<std::string> GetCharacterTypes(bool isExpansion = true);
     }

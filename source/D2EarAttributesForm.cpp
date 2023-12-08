@@ -152,7 +152,8 @@ BOOL CD2EarAttributesForm::OnInitDialog()
     }
     CharLevel.SetLimitText(2);
 
-    SetUTF8Text(&CharName, EarAttrib.getName().data());
+    auto curName = EarAttrib.getNameAsString();
+    SetUTF8Text(&CharName, curName.c_str());
     UpdateClassDisplay();
     SetInt(&CharLevel, EarAttrib.getLevel());
 

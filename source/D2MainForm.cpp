@@ -2250,10 +2250,12 @@ void CD2MainForm::UpdateCharInfo()
     CharInfo.fillBasicStats(bs);
 
     auto strValue = ToStdString(&CharName);
-    if (_stricmp(strValue.c_str(), CharInfo.getName().data()) != 0)
+    auto charInfoName = CharInfo.getNameAsString();
+    auto bsName = d2ce::LocalizationHelpers::ConvertCharNameToString(Bs.Name, Bs.Version);
+    if (_stricmp(strValue.c_str(), charInfoName.c_str()) != 0)
     {
-        SetUTF8Text(&CharName, CharInfo.getName().data());
-        if (_stricmp(CharInfo.getName().data(), Bs.Name.data()) == 0)
+        SetUTF8Text(&CharName, charInfoName.c_str());
+        if (_stricmp(charInfoName.c_str(), bsName.c_str()) == 0)
         {
             auto iter = CtrlEditted.find(CharName.GetDlgCtrlID());
             if (iter != CtrlEditted.end())
@@ -2267,7 +2269,7 @@ void CD2MainForm::UpdateCharInfo()
             statsChanged = true;
         }
     }
-    else if (_stricmp(CharInfo.getName().data(), Bs.Name.data()) == 0)
+    else if (_stricmp(charInfoName.c_str(), bsName.c_str()) == 0)
     {
         auto iter = CtrlEditted.find(CharName.GetDlgCtrlID());
         if (iter != CtrlEditted.end())
@@ -3368,7 +3370,7 @@ void CD2MainForm::OnFileSaveAsVersion()
     auto saveOp = BackupChar ? d2ce::Character::EnumCharSaveOp::BackupOnly : d2ce::Character::EnumCharSaveOp::NoSave;
     if (CharInfo.is_json())
     {
-        auto uName = utf8::utf8to16(CharInfo.getName().data());
+        auto uName = utf8::utf8to16(CharInfo.getNameAsString());
         CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
         filename += _T(".json");
 
@@ -3535,7 +3537,7 @@ void CD2MainForm::OnFileExportAsJson()
         return;
     }
 
-    auto uName = utf8::utf8to16(CharInfo.getName().data());
+    auto uName = utf8::utf8to16(CharInfo.getNameAsString());
     CString filename(reinterpret_cast<LPCWSTR>(uName.c_str()));
     filename += _T(".json");
 
@@ -4221,8 +4223,8 @@ void CD2MainForm::OnEnKillfocusCharName()
         CtrlEditted.insert(CharName.GetDlgCtrlID());
         d2ce::BasicStats bs;
         CharInfo.fillBasicStats(bs);
-        strcpy_s(bs.Name.data(), sizeof(bs.Name), newName.c_str());
-        bs.Name[15] = 0; // must be zero
+        bs.Name.fill(0);
+        strcpy_s(bs.Name.data(), bs.Name.size(), newName.c_str());
         CharInfo.updateBasicStats(bs);
         UpdateCharInfo();
         StatsChanged();
@@ -5174,7 +5176,7 @@ const d2ce::CharStats& CD2MainForm::getDisplayedCharStats() const
 //---------------------------------------------------------------------------
 std::string CD2MainForm::getCharacterName()
 {
-    return std::string(CharInfo.getName().data());
+    return CharInfo.getNameAsString();
 }
 //---------------------------------------------------------------------------
 d2ce::EnumCharVersion CD2MainForm::getCharacterVersion() const
